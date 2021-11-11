@@ -1,6 +1,7 @@
 package productservice
 
 import (
+	"fmt"
 	"os"
 	"smlcloudplatform/internal/microservice"
 )
@@ -14,5 +15,6 @@ func NewProductService(ms *microservice.Microservice, cfg microservice.IConfig) 
 		ctx.ResponseS(200, os.Getenv("SERVICE_ID"))
 		return nil
 	})
-
+	a := "s"
+	fmt.Print(a)
 }
