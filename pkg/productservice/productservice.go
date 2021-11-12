@@ -15,6 +15,13 @@ func NewProductService(ms *microservice.Microservice, cfg microservice.IConfig) 
 		ctx.ResponseS(200, os.Getenv("SERVICE_ID"))
 		return nil
 	})
-	a := "s"
-	fmt.Print(a)
+	
+
+	ms.GET("/fetchupdate", func(ctx microservice.IServiceContext) error {
+		ctx.ResponseS(200, os.Getenv("SERVICE_ID"))
+		return nil
+	})
+
+	fmt.Print("Start Product Service")
+
 }
