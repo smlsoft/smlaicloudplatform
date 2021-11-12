@@ -13,7 +13,7 @@ import (
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/go-playground/validator/v10"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type IMicroservice interface {
@@ -28,6 +28,7 @@ type IMicroservice interface {
 	PATCH(path string, h ServiceHandleFunc)
 	DELETE(path string, h ServiceHandleFunc)
 	// CRUD(cfg IConfig, pathName string, modelx GenCrud)
+	ECHO() *echo.Echo
 }
 
 type Microservice struct {
@@ -182,4 +183,9 @@ func (ms *Microservice) newKafkaConsumer(servers string, groupID string) (*kafka
 		return nil, err
 	}
 	return kc, err
+}
+
+
+func (ms *Microservice) Echo() *echo.Echo {
+	return ms.echo
 }
