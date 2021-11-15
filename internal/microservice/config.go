@@ -6,6 +6,7 @@ import (
 
 type IConfig interface {
 	PersisterConfig() IPersisterConfig
+	MongoPersisterConfig() IPersisterConfig
 	MQServer() string
 	TopicName() string
 }
@@ -26,6 +27,10 @@ func NewConfig() IConfig {
 
 func (cfg *Config) PersisterConfig() IPersisterConfig {
 	return NewPersisterConfig()
+}
+
+func (cfg *Config) MongoPersisterConfig() IPersisterConfig {
+	return NewMongoPersisterConfig()
 }
 
 //kafka server
@@ -79,4 +84,38 @@ func (cfg *PersisterConfig) TimeZone() string {
 	}
 
 	return timezoneEnvironment
+}
+
+type MongoPersisterConfig struct{}
+
+func NewMongoPersisterConfig() *MongoPersisterConfig {
+	return &MongoPersisterConfig{}
+}
+
+func (cfg *MongoPersisterConfig) Host() string {
+	return "localhost"
+}
+
+func (cfg *MongoPersisterConfig) Port() string {
+	return "27017"
+}
+
+func (cfg *MongoPersisterConfig) DB() string {
+	return "smlanalyze"
+}
+
+func (cfg *MongoPersisterConfig) Username() string {
+	return "root"
+}
+
+func (cfg *MongoPersisterConfig) Password() string {
+	return "rootx"
+}
+
+func (cfg *MongoPersisterConfig) SSLMode() string {
+	return ""
+}
+
+func (cfg *MongoPersisterConfig) TimeZone() string {
+	return ""
 }
