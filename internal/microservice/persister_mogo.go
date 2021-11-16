@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"sync"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -14,13 +13,15 @@ import (
 
 // IPersister is interface for persister
 type IPersisterMongo interface {
-	Find(model interface{}, filter interface{}) ([]interface{}, error)
-	FindOne(model interface{}, id string) (interface{}, error)
-	Create(model interface{}) error
+	Find(model interface{}, data interface{}, filter interface{}) error
+	FindOne(model interface{}, filter interface{}) error
+	FindByID(model interface{}, id string) error
+	Create(model interface{}) (primitive.ObjectID, error)
 	Update(model interface{}, id string) error
-
 	CreateInBatch(model interface{}, data []interface{}) error
 	Count(model interface{}, args ...interface{}) (int64, error)
+	Exec(model interface{}) (*mongo.Collection, error)
+	Delete(model interface{}, id string) error
 	Cleanup() error
 }
 
@@ -29,18 +30,23 @@ type MongoModel interface {
 }
 
 type PersisterMongo struct {
-	config  IPersisterConfig
-	db      *mongo.Database
-	dbMutex sync.Mutex
-	client  *mongo.Client
-	ctx     context.Context
+	config    IPersisterConfig
+	db        *mongo.Database
+	dbMutex   sync.Mutex
+	client    *mongo.Client
+	ctx       context.Context
+	ctxCancel context.CancelFunc
 }
 
 func NewPersisterMongo(config IPersisterConfig) *PersisterMongo {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx := context.TODO()
+	// defer cancel()
+
 	return &PersisterMongo{
-		config: config,
-		ctx:    ctx,
+		config:    config,
+		ctx:       ctx,
+		ctxCancel: nil,
 	}
 }
 
@@ -69,8 +75,6 @@ func (pst *PersisterMongo) getClient() (*mongo.Database, error) {
 		return nil, err
 	}
 
-	fmt.Println(connectionStr)
-
 	client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr))
 	if err != nil {
 		return nil, err
@@ -78,8 +82,7 @@ func (pst *PersisterMongo) getClient() (*mongo.Database, error) {
 
 	pst.client = client
 
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	err = client.Connect(ctx)
+	err = client.Connect(pst.ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -100,11 +103,13 @@ func (pst *PersisterMongo) getClient() (*mongo.Database, error) {
 }
 
 func (pst *PersisterMongo) getCollectionName(model interface{}) (string, error) {
+
 	mongoModel, ok := model.(MongoModel)
+
 	if ok {
 		return mongoModel.CollectionName(), nil
 	}
-	return "", fmt.Errorf("model is not implement MongoModel")
+	return "", fmt.Errorf("struct is not implement MongoModel")
 }
 
 func (pst *PersisterMongo) toDoc(v interface{}) (doc *bson.D, err error) {
@@ -136,51 +141,30 @@ func (pst *PersisterMongo) Count(model interface{}, args ...interface{}) (int64,
 	return count, nil
 }
 
-func (pst *PersisterMongo) Find(model interface{}, filter interface{}) ([]interface{}, error) {
+func (pst *PersisterMongo) Find(model interface{}, data interface{}, filter interface{}) error {
 	db, err := pst.getClient()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	collectionName, err := pst.getCollectionName(model)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	filterCursor, err := db.Collection(collectionName).Find(pst.ctx, filter)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var results []interface{}
-	if err = filterCursor.All(pst.ctx, &results); err != nil {
-		return nil, err
+	if err = filterCursor.All(pst.ctx, data); err != nil {
+		return err
 	}
 
-	return results, nil
+	return nil
 }
 
-func (pst *PersisterMongo) FindOne(model interface{}, id string) (interface{}, error) {
-	db, err := pst.getClient()
-	if err != nil {
-		return nil, err
-	}
-
-	collectionName, err := pst.getCollectionName(model)
-	if err != nil {
-		return nil, err
-	}
-
-	idx, _ := primitive.ObjectIDFromHex(id)
-	err = db.Collection(collectionName).FindOne(pst.ctx, bson.M{"_id": idx}).Decode(&model)
-	if err != nil {
-		return nil, err
-	}
-
-	return model, nil
-}
-
-func (pst *PersisterMongo) Create(model interface{}) error {
+func (pst *PersisterMongo) FindOne(model interface{}, filter interface{}) error {
 	db, err := pst.getClient()
 	if err != nil {
 		return err
@@ -191,13 +175,52 @@ func (pst *PersisterMongo) Create(model interface{}) error {
 		return err
 	}
 
-	_, err = db.Collection(collectionName).InsertOne(pst.ctx, &model)
-
+	err = db.Collection(collectionName).FindOne(pst.ctx, filter).Decode(model)
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (pst *PersisterMongo) FindByID(model interface{}, id string) error {
+	db, err := pst.getClient()
+	if err != nil {
+		return err
+	}
+
+	collectionName, err := pst.getCollectionName(model)
+	if err != nil {
+		return err
+	}
+
+	idx, _ := primitive.ObjectIDFromHex(id)
+	err = db.Collection(collectionName).FindOne(pst.ctx, bson.M{"_id": idx}).Decode(model)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (pst *PersisterMongo) Create(model interface{}) (primitive.ObjectID, error) {
+	db, err := pst.getClient()
+	if err != nil {
+		return primitive.NilObjectID, err
+	}
+
+	collectionName, err := pst.getCollectionName(model)
+	if err != nil {
+		return primitive.NilObjectID, err
+	}
+
+	result, err := db.Collection(collectionName).InsertOne(pst.ctx, &model)
+
+	if err != nil {
+		return primitive.NilObjectID, err
+	}
+
+	return result.InsertedID.(primitive.ObjectID), nil
 }
 
 func (pst *PersisterMongo) CreateInBatch(model interface{}, data []interface{}) error {
@@ -242,7 +265,7 @@ func (pst *PersisterMongo) Update(model interface{}, id string) error {
 		pst.ctx,
 		bson.M{"_id": idx},
 		bson.D{
-			{"$set", updateDoc},
+			{Key: "$set", Value: updateDoc},
 		},
 	)
 
@@ -253,10 +276,49 @@ func (pst *PersisterMongo) Update(model interface{}, id string) error {
 	return nil
 }
 
+func (pst *PersisterMongo) Delete(model interface{}, id string) error {
+	db, err := pst.getClient()
+	if err != nil {
+		return err
+	}
+
+	collectionName, err := pst.getCollectionName(model)
+	if err != nil {
+		return err
+	}
+
+	idx, _ := primitive.ObjectIDFromHex(id)
+	_, err = db.Collection(collectionName).DeleteOne(pst.ctx, bson.M{"_id": idx})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (pst *PersisterMongo) Exec(model interface{}) (*mongo.Collection, error) {
+	db, err := pst.getClient()
+	if err != nil {
+		return nil, err
+	}
+
+	collectionName, err := pst.getCollectionName(model)
+	if err != nil {
+		return nil, err
+	}
+
+	mongoCollection := db.Collection(collectionName)
+
+	return mongoCollection, nil
+}
+
 func (pst *PersisterMongo) Cleanup() error {
 	err := pst.client.Disconnect(pst.ctx)
 	if err != nil {
 		return err
 	}
+
+	pst.ctxCancel()
+
 	return nil
 }
