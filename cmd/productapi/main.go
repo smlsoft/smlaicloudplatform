@@ -6,24 +6,15 @@ import (
 	"log"	
 	"net/http"
 	"github.com/joho/godotenv"
-	"github.com/swaggo/echo-swagger"
+	// "github.com/swaggo/echo-swagger"
 
-	_ "smlcloudplatform/cmd/productapi/docs"	
+	// _ "smlcloudplatform/cmd/productapi/docs"	
 	// "smlcloudplatform/pkg/models"
 	"smlcloudplatform/internal/microservice"
-	
+	"smlcloudplatform/api/swagger"
 )
 
-// @title ProductAPI
-// @version 1.0
-// @description This Api for Manage Product For SMLCloudPlatform
 
-// @contact.name API Support
-// @contact.url http://www.smlcloudplatform.io
-// @contact.email info@smlcloudplatform.io
-
-// @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 func main() {
 
 	err := godotenv.Load()
@@ -42,7 +33,10 @@ func main() {
 
 	NewProductService(ms, cfg)
 
-	ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)
+	//ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)
+
+	
+	ms.Echo().GET("/swagger/*", swagger.EchoWrapHandler)
 	ms.Start()
 	// find by shop_id
 
@@ -79,7 +73,7 @@ func NewProductService(ms *microservice.Microservice, cfg microservice.IConfig) 
 // FetchProduct godoc
 // @Summary Fetch Product
 // @Tags Inventory
-// @Success 200 {array} models.Inventory
+// @Success 200 {array} smlcloudplatform.pkg.models.Inventory
 // @Router / [get]
 func FetchProduct(ctx microservice.IServiceContext) error {
 	ctx.ResponseS(200, "TEST")
