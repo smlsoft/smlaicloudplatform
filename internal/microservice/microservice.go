@@ -35,6 +35,7 @@ type Microservice struct {
 	echo            *echo.Echo
 	exitChannel     chan bool
 	persisters      map[string]IPersister
+	mongoPersisters map[string]IPersisterMongo
 	persistersMutex sync.Mutex
 	prod            IProducer
 }
@@ -46,8 +47,9 @@ func NewMicroservice(config IConfig) *Microservice {
 	e.Validator = &msValidator.CustomValidator{Validator: validator.New()}
 
 	return &Microservice{
-		echo:       e,
-		persisters: map[string]IPersister{},
+		echo:            e,
+		persisters:      map[string]IPersister{},
+		mongoPersisters: map[string]IPersisterMongo{},
 	}
 }
 
@@ -115,6 +117,11 @@ func (ms *Microservice) Cleanup() error {
 	if ms.prod != nil {
 		ms.prod.Close()
 	}
+
+	for _, pst := range ms.mongoPersisters {
+		pst.Cleanup()
+	}
+
 	return nil
 }
 
@@ -131,6 +138,17 @@ func (ms *Microservice) Persister(cfg IPersisterConfig) IPersister {
 		pst = NewPersister(cfg)
 		ms.persistersMutex.Lock()
 		ms.persisters[cfg.Host()] = pst
+		ms.persistersMutex.Unlock()
+	}
+	return pst
+}
+
+func (ms *Microservice) MongoPersister(cfg IPersisterConfig) IPersisterMongo {
+	pst, ok := ms.mongoPersisters[cfg.Host()]
+	if !ok {
+		pst = NewPersisterMongo(cfg)
+		ms.persistersMutex.Lock()
+		ms.mongoPersisters[cfg.Host()] = pst
 		ms.persistersMutex.Unlock()
 	}
 	return pst
