@@ -1,12 +1,13 @@
 package models
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 type Barcode struct {
+	Id primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 
-	Id string `json:"id,omitempty"`
+	Barcode string `json:"barcode,omitempty" bson:"barcode,omitempty"`
 
-	Barcode string `json:"barcode,omitempty"`
+	Unit string `json:"unit,omitempty" bson:"unit,omitempty"`
 
-	Unit string `json:"unit,omitempty"`
-
-	Price float32 `json:"price,omitempty"`
+	Price float32 `json:"price" bson:"price"`
 }

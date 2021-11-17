@@ -1,8 +1,11 @@
 package inventoryapi
 
 import (
+	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/models"
+	"time"
 )
 
 type InventoryOperation interface {
@@ -15,21 +18,22 @@ type InventoryOperation interface {
 	SearchInventory() error
 }
 
-
-type InventoryApi struct  {
-	ms	*microservice.Microservice
+type InventoryApi struct {
+	ms  *microservice.Microservice
+	cfg microservice.IConfig
 }
 
 func NewInventoryAPI(ms *microservice.Microservice, cfg microservice.IConfig) *InventoryApi {
 
 	inventoryapi := &InventoryApi{
-		ms: ms,
+		ms:  ms,
+		cfg: cfg,
 	}
 	return inventoryapi
 }
 
-func (api *InventoryApi)RouteSetup() {
-	
+func (api *InventoryApi) RouteSetup() {
+
 	api.ms.GET("/", microservice.MicroServiceHealthyHandler)
 	api.ms.POST("/inventory", api.AddInventory)
 	api.ms.GET("/inventory", api.SearchInventory)
@@ -39,37 +43,107 @@ func (api *InventoryApi)RouteSetup() {
 	api.ms.DELETE("/inventory/:id", api.DeleteInventory)
 }
 
-func (api *InventoryApi)AddInventory(ctx microservice.IServiceContext) error {
+func (api *InventoryApi) AddInventory(ctx microservice.IServiceContext) error {
 	ctx.Log("AddInventory")
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
+
+	input := ctx.ReadInput()
+
+	inventory := &models.Inventory{}
+	err := json.Unmarshal([]byte(input), &inventory)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	inventory.LatestUpdate = time.Now()
+
+	pst := api.ms.MongoPersister(api.cfg.MongoPersisterConfig())
+
+	idx, err := pst.Create(inventory)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "id": idx})
 	return nil
 }
 
-func (api *InventoryApi)DeleteInventory(ctx microservice.IServiceContext) error {
+func (api *InventoryApi) DeleteInventory(ctx microservice.IServiceContext) error {
 	ctx.Log("DeleteInventory")
+	id := ctx.Param("id")
+
+	pst := api.ms.MongoPersister(api.cfg.MongoPersisterConfig())
+
+	inventory := &models.Inventory{}
+	err := pst.Delete(inventory, id)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
 	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
 	return nil
 }
 
-func (api *InventoryApi)EditInventory(ctx microservice.IServiceContext) error {
+func (api *InventoryApi) EditInventory(ctx microservice.IServiceContext) error {
 	ctx.Log("EditInventory")
+
+	id := ctx.Param("id")
+	input := ctx.ReadInput()
+
+	inventory := &models.Inventory{}
+	err := json.Unmarshal([]byte(input), &inventory)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	inventory.LatestUpdate = time.Now()
+
+	pst := api.ms.MongoPersister(api.cfg.MongoPersisterConfig())
+
+	err = pst.Update(inventory, id)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
 	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
 	return nil
 }
 
-func (api *InventoryApi)GetInventoryInfo(ctx microservice.IServiceContext) error {
+func (api *InventoryApi) GetInventoryInfo(ctx microservice.IServiceContext) error {
 	ctx.Log("GetInventoryInfo")
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
+
+	id := ctx.Param("id")
+
+	pst := api.ms.MongoPersister(api.cfg.MongoPersisterConfig())
+
+	inventory := &models.Inventory{}
+	err := pst.FindByID(inventory, id)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "data": inventory})
 	return nil
 }
 
-func (api *InventoryApi)GetInventorySync(ctx microservice.IServiceContext) error {
+func (api *InventoryApi) GetInventorySync(ctx microservice.IServiceContext) error {
 	ctx.Log("GetInventorySync")
 	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
 	return nil
 }
 
-func (api *InventoryApi)SearchInventory(ctx microservice.IServiceContext) error {
+func (api *InventoryApi) SearchInventory(ctx microservice.IServiceContext) error {
 	ctx.Log("SearchInventory")
 	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
 	return nil
