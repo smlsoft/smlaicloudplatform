@@ -60,14 +60,14 @@
         ],
         "parameters": [
           {
-            "name": "searchString",
+            "name": "q",
             "in": "query",
             "description": "pass an optional search string for looking up inventory",
             "required": false,
             "type": "string"
           },
           {
-            "name": "skip",
+            "name": "page",
             "in": "query",
             "description": "number of records to skip for pagination",
             "required": false,

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sync"
 
+	paginate "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -14,6 +15,7 @@ import (
 // IPersister is interface for persister
 type IPersisterMongo interface {
 	Find(model interface{}, data interface{}, filter interface{}) error
+	FindPage(model interface{}, data interface{}, limit int, page int, filter interface{}) (paginate.PaginationData, error)
 	FindOne(model interface{}, filter interface{}) error
 	FindByID(model interface{}, id string) error
 	Create(model interface{}) (primitive.ObjectID, error)
@@ -139,6 +141,31 @@ func (pst *PersisterMongo) Count(model interface{}, args ...interface{}) (int64,
 	}
 
 	return count, nil
+}
+
+func (pst *PersisterMongo) FindPage(model interface{}, data interface{}, limit int, page int, filter interface{}) (paginate.PaginationData, error) {
+	db, err := pst.getClient()
+
+	emptyPage := paginate.PaginationData{}
+
+	if err != nil {
+		return emptyPage, err
+	}
+
+	collectionName, err := pst.getCollectionName(model)
+	if err != nil {
+		return emptyPage, err
+	}
+
+	var limit64 int64 = int64(limit)
+	var page64 int64 = int64(page)
+
+	paginatedData, err := paginate.New(db.Collection(collectionName)).Context(pst.ctx).Limit(limit64).Page(page64).Filter(filter).Decode(data).Find()
+	if err != nil {
+		return emptyPage, err
+	}
+
+	return paginatedData.Pagination, nil
 }
 
 func (pst *PersisterMongo) Find(model interface{}, data interface{}, filter interface{}) error {

@@ -109,6 +109,28 @@ func TestMongodbFind(t *testing.T) {
 
 }
 
+func TestMongodbFindPage(t *testing.T) {
+	cfg := &ConfigDBTest{}
+
+	pst := NewPersisterMongo(cfg)
+
+	products := []Product{}
+	pagination, err := pst.FindPage(&Product{}, &products, 5, 1, bson.M{})
+
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+	fmt.Println(pagination)
+	fmt.Println(products)
+
+	if len(products) < 1 {
+		t.Error("Find not found item")
+	}
+
+}
+
 func TestMongodbFindOne(t *testing.T) {
 	cfg := &ConfigDBTest{}
 
@@ -199,15 +221,13 @@ func TestMongodbCreateInBatch(t *testing.T) {
 
 	pst := NewPersisterMongo(cfg)
 
-	products := []interface{}{
-		Product{
-			ProductCode: "pdt-01",
-			ProductName: "pdt name 01",
-		},
-		Product{
-			ProductCode: "pdt-02",
-			ProductName: "pdt name 02",
-		},
+	products := make([]interface{}, 0)
+
+	for i := 1; i <= 25; i++ {
+		products = append(products, Product{
+			ProductCode: fmt.Sprintf("pdt-%02d", i),
+			ProductName: fmt.Sprintf("pdt name %d", i),
+		})
 	}
 
 	// x := make([]interface{}, len(products))

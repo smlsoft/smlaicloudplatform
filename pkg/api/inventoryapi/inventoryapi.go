@@ -5,7 +5,11 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
+	"strconv"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type InventoryOperation interface {
@@ -145,6 +149,34 @@ func (api *InventoryApi) GetInventorySync(ctx microservice.IServiceContext) erro
 
 func (api *InventoryApi) SearchInventory(ctx microservice.IServiceContext) error {
 	ctx.Log("SearchInventory")
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
+
+	q := ctx.QueryParam("q")
+	page, err := strconv.Atoi(ctx.QueryParam("page"))
+	if err != nil {
+		ctx.ResponseError(400, "page number invalid.")
+		return err
+	}
+
+	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
+
+	if err != nil {
+		ctx.ResponseError(400, "limit number invalid.")
+		return err
+	}
+
+	pst := api.ms.MongoPersister(api.cfg.MongoPersisterConfig())
+
+	inventories := []models.Inventory{}
+	pagination, err := pst.FindPage(&models.Inventory{}, &inventories, limit, page, bson.M{"product_name": bson.M{"$regex": primitive.Regex{
+		Pattern: ".*" + q + ".*",
+		Options: "",
+	}}})
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "pagination": pagination, "data": inventories})
 	return nil
 }
