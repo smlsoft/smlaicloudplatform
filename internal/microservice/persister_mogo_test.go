@@ -95,8 +95,9 @@ func TestMongodbFind(t *testing.T) {
 
 	pst := NewPersisterMongo(cfg)
 
+	// products := []Product{}
 	products := []Product{}
-	err := pst.Find(&Product{}, &products, bson.M{})
+	err := pst.Find(&Product{}, bson.M{}, &products)
 
 	if err != nil {
 		t.Error(err.Error())

@@ -1,9 +1,9 @@
 package microservice
 
-
 import (
 	"fmt"
 	"io/ioutil"
+	"smlcloudplatform/internal/microservice/models"
 
 	"github.com/labstack/echo/v4"
 )
@@ -16,6 +16,7 @@ type HTTPContext struct {
 
 // NewHTTPContext is the constructor function for HTTPContext
 func NewHTTPContext(ms *Microservice, c echo.Context) *HTTPContext {
+
 	return &HTTPContext{
 		ms: ms,
 		c:  c,
@@ -44,6 +45,15 @@ func (ctx *HTTPContext) ReadInput() string {
 		return ""
 	}
 	return string(body)
+}
+
+func (ctx *HTTPContext) UserInfo() models.UserInfo {
+	userInfo := ctx.c.Get("UserInfo")
+	if userInfo == nil {
+		return models.UserInfo{}
+	}
+	return userInfo.(models.UserInfo)
+
 }
 
 func (ctx *HTTPContext) Validate(model interface{}) error {

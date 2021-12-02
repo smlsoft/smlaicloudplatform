@@ -1,7 +1,10 @@
 package microservice
 
+import "smlcloudplatform/internal/microservice/models"
+
 type IServiceContext interface {
 	Log(message string)
+	UserInfo() models.UserInfo
 	Param(name string) string
 	QueryParam(name string) string
 	ReadInput() string

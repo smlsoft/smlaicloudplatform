@@ -22,11 +22,12 @@ type IMicroservice interface {
 	Log(tag string, message string)
 
 	// HTTP Services
-	GET(path string, h ServiceHandleFunc)
-	POST(path string, h ServiceHandleFunc)
-	PUT(path string, h ServiceHandleFunc)
-	PATCH(path string, h ServiceHandleFunc)
-	DELETE(path string, h ServiceHandleFunc)
+	HttpMiddleware(middleware ...echo.MiddlewareFunc)
+	GET(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc)
+	POST(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc)
+	PUT(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc)
+	PATCH(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc)
+	DELETE(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc)
 	// CRUD(cfg IConfig, pathName string, modelx GenCrud)
 	ECHO() *echo.Echo
 }
@@ -154,6 +155,10 @@ func (ms *Microservice) MongoPersister(cfg IPersisterConfig) IPersisterMongo {
 	return pst
 }
 
+func (ms *Microservice) HttpMiddleware(middleware ...echo.MiddlewareFunc) {
+	ms.echo.Use(middleware...)
+}
+
 // newKafkaConsumer create new Kafka consumer
 func (ms *Microservice) newKafkaConsumer(servers string, groupID string) (*kafka.Consumer, error) {
 	// Configurations
@@ -202,7 +207,6 @@ func (ms *Microservice) newKafkaConsumer(servers string, groupID string) (*kafka
 	}
 	return kc, err
 }
-
 
 func (ms *Microservice) Echo() *echo.Echo {
 	return ms.echo

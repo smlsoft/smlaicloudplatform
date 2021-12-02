@@ -101,7 +101,7 @@ func (cfg *MongoPersisterConfig) Port() string {
 }
 
 func (cfg *MongoPersisterConfig) DB() string {
-	return "smlanalyze"
+	return "smldev"
 }
 
 func (cfg *MongoPersisterConfig) Username() string {

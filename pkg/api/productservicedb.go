@@ -1,20 +1,19 @@
-package productservice
+package api
 
 func NewProductServiceDB() {
 
 }
 
-
 func GetProduct() {
 
 }
 
-func NewProduct(){
+func NewProduct() {
 
 }
 
 func DeleteProduct() {
-	
+
 }
 
 func SaveProduct() {
