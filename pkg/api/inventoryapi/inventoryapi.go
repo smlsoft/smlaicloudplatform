@@ -64,7 +64,7 @@ func (api *InventoryApi) AddInventory(ctx microservice.IServiceContext) error {
 
 	pst := api.ms.MongoPersister(api.cfg.MongoPersisterConfig())
 
-	idx, err := pst.Create(inventory)
+	idx, err := pst.Create(&models.Inventory{}, inventory)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -82,7 +82,7 @@ func (api *InventoryApi) DeleteInventory(ctx microservice.IServiceContext) error
 	pst := api.ms.MongoPersister(api.cfg.MongoPersisterConfig())
 
 	inventory := &models.Inventory{}
-	err := pst.Delete(inventory, id)
+	err := pst.DeleteByID(inventory, id)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -130,7 +130,7 @@ func (api *InventoryApi) GetInventoryInfo(ctx microservice.IServiceContext) erro
 	pst := api.ms.MongoPersister(api.cfg.MongoPersisterConfig())
 
 	inventory := &models.Inventory{}
-	err := pst.FindByID(inventory, id)
+	err := pst.FindByID(&models.Inventory{}, id, inventory)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -167,10 +167,10 @@ func (api *InventoryApi) SearchInventory(ctx microservice.IServiceContext) error
 	pst := api.ms.MongoPersister(api.cfg.MongoPersisterConfig())
 
 	inventories := []models.Inventory{}
-	pagination, err := pst.FindPage(&models.Inventory{}, &inventories, limit, page, bson.M{"product_name": bson.M{"$regex": primitive.Regex{
+	pagination, err := pst.FindPage(&models.Inventory{}, limit, page, bson.M{"product_name": bson.M{"$regex": primitive.Regex{
 		Pattern: ".*" + q + ".*",
 		Options: "",
-	}}})
+	}}}, &inventories)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

@@ -78,7 +78,7 @@ func TestMongodbCreate(t *testing.T) {
 
 	pst := NewPersisterMongo(cfg)
 
-	objID, err := pst.Create(&Product{
+	objID, err := pst.Create(&Product{}, &Product{
 		ProductCode: productCode,
 		ProductName: productName,
 	})
@@ -116,7 +116,7 @@ func TestMongodbFindPage(t *testing.T) {
 	pst := NewPersisterMongo(cfg)
 
 	products := []Product{}
-	pagination, err := pst.FindPage(&Product{}, &products, 5, 1, bson.M{})
+	pagination, err := pst.FindPage(&Product{}, 5, 1, bson.M{}, &products)
 
 	if err != nil {
 		t.Error(err.Error())
@@ -139,7 +139,7 @@ func TestMongodbFindOne(t *testing.T) {
 
 	product := &Product{}
 
-	err := pst.FindOne(product, bson.M{"product_code": productCode})
+	err := pst.FindOne(&Product{}, bson.M{"product_code": productCode}, product)
 
 	if err != nil {
 		t.Error(err.Error())
@@ -159,7 +159,7 @@ func TestMongodbFindByID(t *testing.T) {
 
 	productFind := &Product{}
 
-	err := pst.FindOne(productFind, bson.M{"product_code": productCode})
+	err := pst.FindOne(&Product{}, bson.M{"product_code": productCode}, productFind)
 
 	if err != nil {
 		t.Error(err.Error())
@@ -167,7 +167,7 @@ func TestMongodbFindByID(t *testing.T) {
 	}
 
 	product := &Product{}
-	err = pst.FindByID(product, productFind.ID.Hex())
+	err = pst.FindByID(&Product{}, productFind.ID.Hex(), product)
 
 	if err != nil {
 		t.Error(err.Error())
@@ -189,7 +189,7 @@ func TestMongodbUpdate(t *testing.T) {
 	pst := NewPersisterMongo(cfg)
 
 	productFind := &Product{}
-	err := pst.FindOne(productFind, bson.M{"product_code": productCode})
+	err := pst.FindOne(&Product{}, bson.M{"product_code": productCode}, productFind)
 
 	if err != nil {
 		t.Error(err.Error())
@@ -205,7 +205,7 @@ func TestMongodbUpdate(t *testing.T) {
 	}
 
 	productCheck := &Product{}
-	err = pst.FindOne(productCheck, bson.M{"product_code": productCode})
+	err = pst.FindOne(&Product{}, bson.M{"product_code": productCode}, productCheck)
 
 	if err != nil {
 		t.Error(err.Error())
@@ -250,7 +250,7 @@ func TestMongodbDelete(t *testing.T) {
 
 	productFind := &Product{}
 
-	err := pst.FindOne(productFind, bson.M{"product_code": productCode})
+	err := pst.FindOne(&Product{}, bson.M{"product_code": productCode}, productFind)
 
 	if err != nil {
 		t.Error(err.Error())
@@ -261,7 +261,7 @@ func TestMongodbDelete(t *testing.T) {
 	t.Log(productFind.ID.Hex())
 
 	product := &Product{}
-	err = pst.Delete(product, productFind.ID.Hex())
+	err = pst.DeleteByID(product, productFind.ID.Hex())
 
 	if err != nil {
 		t.Error(err.Error())
