@@ -6,6 +6,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type ConfigDBTest struct{}
@@ -47,7 +48,7 @@ func (pdt *Product) CollectionName() string {
 }
 
 var (
-	productCode = "pdtx01"
+	productCode = "pdt-01"
 	productName = "product name 01"
 )
 
@@ -57,7 +58,7 @@ func TestMongodbCount(t *testing.T) {
 
 	pst := NewPersisterMongo(cfg)
 
-	count, err := pst.Count(&Product{})
+	count, err := pst.Count(&Product{}, bson.M{"product_code": "pdt-02"})
 	if err != nil {
 		t.Error(err.Error())
 		return
@@ -108,6 +109,8 @@ func TestMongodbFind(t *testing.T) {
 		t.Error("Find not found item")
 	}
 
+	t.Log("product all :: ", len(products))
+
 }
 
 func TestMongodbFindPage(t *testing.T) {
@@ -138,8 +141,7 @@ func TestMongodbFindOne(t *testing.T) {
 	pst := NewPersisterMongo(cfg)
 
 	product := &Product{}
-
-	err := pst.FindOne(&Product{}, bson.M{"product_code": productCode}, product)
+	err := pst.FindOne(&Product{}, bson.D{{Key: "product_code", Value: productCode}}, product)
 
 	if err != nil {
 		t.Error(err.Error())
@@ -161,13 +163,14 @@ func TestMongodbFindByID(t *testing.T) {
 
 	err := pst.FindOne(&Product{}, bson.M{"product_code": productCode}, productFind)
 
+	t.Log(productFind.ID.Hex())
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
 
 	product := &Product{}
-	err = pst.FindByID(&Product{}, productFind.ID.Hex(), product)
+	err = pst.FindByID(&Product{}, "_id", productFind.ID, product)
 
 	if err != nil {
 		t.Error(err.Error())
@@ -195,10 +198,10 @@ func TestMongodbUpdate(t *testing.T) {
 		t.Error(err.Error())
 	}
 
-	err = pst.Update(&Product{
+	err = pst.Update(&Product{}, &Product{
 		ProductCode: productCode,
 		ProductName: productNameModified,
-	}, productFind.ID.Hex())
+	}, "_id", productFind.ID)
 
 	if err != nil {
 		t.Error(err.Error())
@@ -268,4 +271,46 @@ func TestMongodbDelete(t *testing.T) {
 		return
 	}
 
+}
+
+func TestMongodbSoftDeleteByID(t *testing.T) {
+	cfg := &ConfigDBTest{}
+
+	pst := NewPersisterMongo(cfg)
+
+	product := &Product{}
+	err := pst.DeleteByID(product, "6195af880e33cec3af136720")
+
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+}
+
+func TestMongodbSoftDelete(t *testing.T) {
+	cfg := &ConfigDBTest{}
+
+	pst := NewPersisterMongo(cfg)
+
+	err := pst.SoftDelete(&Product{}, []string{"6195af880e33cec3af136724", "6195af880e33cec3af136725"})
+
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+}
+
+func TestMongodbAggregate(t *testing.T) {
+	cfg := &ConfigDBTest{}
+
+	pst := NewPersisterMongo(cfg)
+
+	pipeline := mongo.Pipeline{}
+	products := []Product{}
+
+	pst.Aggregate(&Product{}, pipeline, &products)
+
+	t.Log("count :: ", products)
 }

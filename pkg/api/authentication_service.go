@@ -6,8 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/utils"
 	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/utils"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"

@@ -23,5 +23,4 @@ func main() {
 	//ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)
 
 	ms.Start()
-	// find by shop_id
 }

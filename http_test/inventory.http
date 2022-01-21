@@ -1,0 +1,54 @@
+@baseUrl = http://localhost:8088
+@auth = Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDM0MjM1NjAsInVzZXJuYW1lIjoiZGV2MDEiLCJuYW1lIjoiZGV2IGRldiJ9.V2a-bl0dPCx2_-JW6v9xlF9lKQP91MNAsMEsOe2LB0zGDq-QpCG0ZezCOmGwXHETLGjQErUz4XfyKv90xacpkBvdVkeF4XqJRUL7jtAIEwAXZ2KVcNGY7QmFCyIOos-sVvEAmpFbtau1jSzGZj6UEYyI1S_tX5Wi5MVRfv7iV6y0esdUJCS3UUnF9xClmfM4UdpiQ0_jHphHf4z_WjcSmuidZib2Mrh2X4QFRnlOWpRdwhtIWkZ0ndL3UzJXVRV3_D4V0IPmWTYqPAhPiLmTbdH4BgZ8HNDmSpOfxX_8CHTz3Bj7f3kDHpR9jD8e3Rk9yQI3zJfZUMgGFqwAFPOHyoTu9eOZWAuzEjUf8kkIAMJLSdxGRaeFqGzVaoqDUgwAOCIYF_joUicVkQSvmj2LqMbv9uKYCY114GhNZeAhXhciNJr9LMeOAVjh4-zVFNATUC4oBviJLvzlAwvthILoeklTSOS2cZZ7yLlYB1zX6cIawm1DkpkkyJyYsOxgld6j560UHIvlqj6AnXsoV_OlAMFue6niq3DeeD8e8f9S0Uddzy9YqmRe7m5ZKgQnPuBIii_r-DBo9dhfr8Ui5iFIk36BZ5Qp0WRcGclDZCaeBDh-n-Ozx5haVN3DOjdNg0ChaDYxNCETqDdpYNVzs8MSsygSupaui3EYIuS1QTkt_f4
+@merchantID = 23xK48ZSaDPzoxZVXIbV8w6kFVw
+
+@invID = 23xK6RQTUe8UGFcZsbi6fFkmIFz
+
+###
+POST {{baseUrl}}/merchant/{{merchantID}}/inventory
+Authorization: {{auth}}
+Content-Type: application/json
+
+{
+    "itemSku": "dev01",
+    "merchantId": "23twO9nFtgsLGAuQ9JXPzi3C65N",
+    "categoryGuid": "cat1234",
+    "lineNumber": 1,
+    "price": 99.0,
+    "recommended": false,
+    "haveImage": false,
+    "activated": true,
+    "name1": "Name 1",
+    "description1": "Description 1"
+}
+
+###
+GET {{baseUrl}}/merchant/{{merchantID}}/inventory
+Authorization: {{auth}}
+Content-Type: application/json
+
+###
+GET {{baseUrl}}/merchant/{{merchantID}}/inventory/{{invID}}
+Authorization: {{auth}}
+Content-Type: application/json
+
+###
+PUT {{baseUrl}}/merchant/{{merchantID}}/inventory/{{invID}}
+Authorization: {{auth}}
+Content-Type: application/json
+
+{
+    "itemSku": "dev01",
+    "categoryGuid": "cat1234",
+    "lineNumber": 1,
+    "price": 99.0,
+    "recommended": false,
+    "haveImage": false,
+    "activated": true,
+    "name1": "Name 3 Edited",
+    "description1": "Description 3"
+}
+###
+DELETE {{baseUrl}}/merchant/{{merchantID}}/inventory/{{invID}}
+Authorization: {{auth}}
+Content-Type: application/json

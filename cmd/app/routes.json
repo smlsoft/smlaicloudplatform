@@ -1,0 +1,112 @@
+[
+  {
+    "method": "DELETE",
+    "path": "/merchant/:merchant_id/member/:id",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).DELETE.func1"
+  },
+  {
+    "method": "POST",
+    "path": "/inventory",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).POST.func1"
+  },
+  {
+    "method": "GET",
+    "path": "/inventory/:id",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).GET.func1"
+  },
+  {
+    "method": "GET",
+    "path": "/routes",
+    "name": "main.main.func1"
+  },
+  {
+    "method": "GET",
+    "path": "/",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).GET.func1"
+  },
+  {
+    "method": "POST",
+    "path": "/login",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).POST.func1"
+  },
+  {
+    "method": "POST",
+    "path": "/register",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).POST.func1"
+  },
+  {
+    "method": "PUT",
+    "path": "/inventory/:id",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).PUT.func1"
+  },
+  {
+    "method": "DELETE",
+    "path": "/inventory/:id",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).DELETE.func1"
+  },
+  {
+    "method": "GET",
+    "path": "/merchant/:id",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).GET.func1"
+  },
+  {
+    "method": "GET",
+    "path": "/merchant/:merchant_id/member",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).GET.func1"
+  },
+  {
+    "method": "PUT",
+    "path": "/merchant/:merchant_id/member/:id",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).PUT.func1"
+  },
+  {
+    "method": "DELETE",
+    "path": "/merchant/:id",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).DELETE.func1"
+  },
+  {
+    "method": "POST",
+    "path": "/merchant/:merchant_id/member",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).POST.func1"
+  },
+  {
+    "method": "GET",
+    "path": "/inventory",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).GET.func1"
+  },
+  {
+    "method": "PUT",
+    "path": "/merchant/:id",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).PUT.func1"
+  },
+  {
+    "method": "GET",
+    "path": "/merchant/:merchant_id/member/:id",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).GET.func1"
+  },
+  {
+    "method": "PUT",
+    "path": "/merchant/:merchant_id/member/:id/password",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).PUT.func1"
+  },
+  {
+    "method": "GET",
+    "path": "/inventorysync",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).GET.func1"
+  },
+  {
+    "method": "GET",
+    "path": "/profile",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).GET.func1"
+  },
+  {
+    "method": "GET",
+    "path": "/merchant",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).GET.func1"
+  },
+  {
+    "method": "POST",
+    "path": "/merchant",
+    "name": "smlcloudplatform/internal/microservice.(*Microservice).POST.func1"
+  }
+]

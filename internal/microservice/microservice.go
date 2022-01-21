@@ -14,6 +14,7 @@ import (
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type IMicroservice interface {
@@ -46,6 +47,11 @@ type ServiceHandleFunc func(context IServiceContext) error
 func NewMicroservice(config IConfig) *Microservice {
 	e := echo.New()
 	e.Validator = &msValidator.CustomValidator{Validator: validator.New()}
+
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
+	}))
 
 	return &Microservice{
 		echo:            e,

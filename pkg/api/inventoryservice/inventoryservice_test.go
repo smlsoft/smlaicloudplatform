@@ -1,4 +1,4 @@
-package inventoryapi
+package inventoryservice
 
 import (
 	"testing"

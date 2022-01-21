@@ -74,7 +74,7 @@ func (ctx *HTTPContext) ResponseS(responseCode int, responseData string) {
 func (ctx *HTTPContext) ResponseError(responseCode int, errorMessage string) {
 	ctx.c.JSON(responseCode, map[string]interface{}{
 		"success": false,
-		"error":   errorMessage,
+		"message": errorMessage,
 	})
 }
 

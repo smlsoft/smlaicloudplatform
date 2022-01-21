@@ -106,7 +106,7 @@ func (pst *Persister) Exec(sql string, args ...interface{}) error {
 		return err
 	}
 
-	if err := db.Exec(sql, args).Error; err != nil {
+	if err := db.Exec(sql, args...).Error; err != nil {
 		return err
 	}
 	return nil
