@@ -98,3 +98,16 @@ type InventoryOptionGroup struct {
 func (*InventoryOptionGroup) CollectionName() string {
 	return "inventoryOptionGroup"
 }
+
+type InventoryOption struct {
+	Id            string    `json:"id" bson:"id,omitempty"`
+	GuidFixed     string    `json:"guidFixed" bson:"guidFixed"`
+	MerchantId    string    `json:"merchantId" bson:"merchantId"`
+	InventoryId   string    `json:"inventoryId" bson:"inventoryId"`
+	OptionGroupId string    `json:"optionGroupId" bson:"optionGroupId"`
+	CreatedBy     string    `json:"-" bson:"createdBy"`
+	CreatedAt     time.Time `json:"-" bson:"createdAt"`
+	UpdatedBy     string    `json:"-" bson:"updatedBy,omitempty"`
+	UpdatedAt     time.Time `json:"-" bson:"updatedAt,omitempty"`
+	Deleted       bool      `json:"-" bson:"deleted"`
+}

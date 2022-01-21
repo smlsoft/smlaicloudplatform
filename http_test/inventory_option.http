@@ -9,39 +9,6 @@ Authorization: {{auth}}
 Content-Type: application/json
 
 {
-    "optionName1": "category name 2",
-    "productSelectoPtion1": true,
-    "productSelectoPtion2": false,
-    "productSelectOptionMin": 1,
-    "productSelectOptionMax": 3,
-    "details": [
-        {"detailName1": "opt detail 1", "amount": 1}
-    ]
+    "inventoryId": "23xK6RQTUe8UGFcZsbi6fFkmIFz",
+    "optionGroupId": "23xDhN6d95gghNmjeBvm4rr5OSv",
 }
-###
-GET {{baseUrl}}/merchant/{{merchantID}}/option
-Authorization: {{auth}}
-Content-Type: application/json
-###
-GET {{baseUrl}}/merchant/{{merchantID}}/option/{{optID}}
-Authorization: {{auth}}
-Content-Type: application/json
-###
-PUT {{baseUrl}}/merchant/{{merchantID}}/option/{{optID}}
-Authorization: {{auth}}
-Content-Type: application/json
-
-{
-    "optionName1": "category name 1",
-    "productSelectoPtion1": true,
-    "productSelectoPtion2": false,
-    "productSelectOptionMin": 1,
-    "productSelectOptionMax": 3,
-    "details": [
-        {"detailName1": "opt detail 1", "amount": 1}
-    ]
-}
-###
-DELETE {{baseUrl}}/merchant/{{merchantID}}/option/{{optID}}
-Authorization: {{auth}}
-Content-Type: application/json

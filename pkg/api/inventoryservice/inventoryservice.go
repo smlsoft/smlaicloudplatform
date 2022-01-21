@@ -85,12 +85,16 @@ func (svc *InventoryService) RouteSetup() {
 	svc.ms.PUT("/merchant/:merchant_id/category/:id", svc.EditCategory)
 	svc.ms.DELETE("/merchant/:merchant_id/category/:id", svc.DeleteCategory)
 
-	svc.ms.GET("/merchant/:merchant_id/option", svc.SearchOptionGroup)
-	svc.ms.POST("/merchant/:merchant_id/option", svc.CreateOptionGroup)
-	svc.ms.GET("/merchant/:merchant_id/option/:id", svc.InfoOptionGroup)
-	svc.ms.PUT("/merchant/:merchant_id/option/:id", svc.EditOptionGroup)
-	svc.ms.DELETE("/merchant/:merchant_id/option/:id", svc.DeleteOptionGroup)
+	svc.ms.GET("/merchant/:merchant_id/optgroup", svc.SearchOptionGroup)
+	svc.ms.POST("/merchant/:merchant_id/optgroup", svc.CreateOptionGroup)
+	svc.ms.GET("/merchant/:merchant_id/optgroup/:id", svc.InfoOptionGroup)
+	svc.ms.PUT("/merchant/:merchant_id/optgroup/:id", svc.EditOptionGroup)
+	svc.ms.DELETE("/merchant/:merchant_id/optgroup/:id", svc.DeleteOptionGroup)
 
+	svc.ms.POST("/merchant/:merchant_id/option", svc.CreateInventoryOption)
+	svc.ms.GET("/merchant/:merchant_id/option/:id", svc.InfoInventoryOption)
+	svc.ms.PUT("/merchant/:merchant_id/option/:id", svc.EditInventoryOption)
+	svc.ms.DELETE("/merchant/:merchant_id/option/:id", svc.DeleteInventoryOption)
 }
 
 func (svc *InventoryService) CreateInventory(ctx microservice.IServiceContext) error {
