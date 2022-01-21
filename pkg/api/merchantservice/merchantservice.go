@@ -3,7 +3,7 @@ package merchantservice
 import (
 	"crypto/rsa"
 	"encoding/json"
-	"io/ioutil"
+	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
@@ -11,7 +11,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/golang-jwt/jwt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -25,28 +24,10 @@ type MerchantService struct {
 }
 
 func NewMerchantService(ms *microservice.Microservice, cfg microservice.IConfig) *MerchantService {
-	signBytes, err := ioutil.ReadFile("./../../private.key")
+	signKey, verifyKey, err := utils.LoadKey(cfg.SignKeyPath(), cfg.VerifyKeyPath())
 
 	if err != nil {
-		ms.Log("auth", err.Error())
-	}
-
-	signKey, err := jwt.ParseRSAPrivateKeyFromPEM(signBytes)
-
-	if err != nil {
-		ms.Log("auth", err.Error())
-	}
-
-	verifyBytes, err := ioutil.ReadFile("./../../public.key")
-
-	if err != nil {
-		ms.Log("auth", err.Error())
-	}
-
-	verifyKey, err := jwt.ParseRSAPublicKeyFromPEM(verifyBytes)
-
-	if err != nil {
-		ms.Log("auth", err.Error())
+		fmt.Println("jwt key error :: " + err.Error())
 	}
 
 	jwtService := microservice.NewJwtService(signKey, verifyKey, 60*24*10)

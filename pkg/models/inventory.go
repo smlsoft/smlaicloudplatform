@@ -98,3 +98,9 @@ type InventoryOptionGroup struct {
 func (*InventoryOptionGroup) CollectionName() string {
 	return "inventoryOptionGroup"
 }
+
+type InventoryOption struct {
+	Id            string `json:"id" bson:"id,omitempty"`
+	MerchantId    string `json:"merchantId" bson:"merchantId"`
+	OptionGroupId string `json:"optionGroupId" bson:"optionGroupId"`
+}

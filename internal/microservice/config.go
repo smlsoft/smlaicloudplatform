@@ -9,6 +9,8 @@ type IConfig interface {
 	MongoPersisterConfig() IPersisterConfig
 	MQServer() string
 	TopicName() string
+	SignKeyPath() string
+	VerifyKeyPath() string
 }
 
 func getEnv(key string, fallback string) string {
@@ -40,6 +42,14 @@ func (cfg *Config) MQServer() string {
 
 func (cfg *Config) TopicName() string {
 	return os.Getenv("TOPIC_NAME")
+}
+
+func (*Config) SignKeyPath() string {
+	return getEnv("PUBLIC_KEY_PATH", "./../../private.key")
+}
+
+func (*Config) VerifyKeyPath() string {
+	return getEnv("PRIVATE_KEY_PATH", "./../../public.key")
 }
 
 type PersisterConfig struct{}
