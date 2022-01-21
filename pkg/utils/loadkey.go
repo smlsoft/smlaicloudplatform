@@ -1,21 +1,48 @@
 package utils
 
-import "io/ioutil"
+import (
+	"crypto/rsa"
+	"io/ioutil"
 
-func LoadKey(signKeyPath string, verifyKeyPath string) ([]byte, []byte, error) {
+	"github.com/golang-jwt/jwt"
+)
 
-	signBytes, err := ioutil.ReadFile(signKeyPath)
+func LoadFile(filePath string) ([]byte, error) {
+
+	fileBytes, err := ioutil.ReadFile(filePath)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return fileBytes, nil
+}
+
+func LoadKey(signPath string, verifyPath string) (*rsa.PrivateKey, *rsa.PublicKey, error) {
+
+	signBytes, err := LoadFile(signPath)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
-	verifyBytes, err := ioutil.ReadFile(verifyKeyPath)
+	signKey, err := jwt.ParseRSAPrivateKeyFromPEM(signBytes)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return signBytes, verifyBytes, err
+	verifyBytes, err := LoadFile(verifyPath)
 
+	if err != nil {
+		return nil, nil, err
+	}
+
+	verifyKey, err := jwt.ParseRSAPublicKeyFromPEM(verifyBytes)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return signKey, verifyKey, nil
 }
