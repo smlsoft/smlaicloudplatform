@@ -39,6 +39,7 @@ type Microservice struct {
 	mongoPersisters map[string]IPersisterMongo
 	persistersMutex sync.Mutex
 	prod            IProducer
+	Mode            string
 }
 
 type ServiceHandleFunc func(context IServiceContext) error
@@ -51,6 +52,7 @@ func NewMicroservice(config IConfig) *Microservice {
 		echo:            e,
 		persisters:      map[string]IPersister{},
 		mongoPersisters: map[string]IPersisterMongo{},
+		Mode:            os.Getenv("MODE"),
 	}
 }
 
@@ -64,6 +66,12 @@ func (ms *Microservice) getProducer(mqServers string) IProducer {
 // Start start all registered services
 func (ms *Microservice) Start() error {
 
+	fmt.Println("Start App: " + os.Getenv("APP_NAME") + " Mode: " + ms.Mode)
+
+	if ms.Mode == "development" {
+		// register swagger api spec
+		ms.echo.Static("/swagger/doc.json", "./../../api/swagger/swagger.json")
+	}
 	httpN := len(ms.echo.Routes())
 	var exitHTTP chan bool
 	if httpN > 0 {
@@ -101,6 +109,7 @@ func (ms *Microservice) Start() error {
 	}
 
 	defer ms.Cleanup()
+
 	return nil
 }
 

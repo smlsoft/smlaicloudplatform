@@ -62,6 +62,7 @@ func NewAuthenticationService(ms *microservice.Microservice, cfg microservice.IC
 func (svc *AuthenticationService) RouteSetup() {
 
 	svc.ms.GET("/", svc.Index)
+	svc.ms.GET("/healty", svc.Healty)
 	svc.ms.POST("/login", svc.Login)
 	svc.ms.POST("/register", svc.Register)
 	svc.ms.GET("/profile", svc.Profile, svc.jwtService.MWFunc())
@@ -69,6 +70,11 @@ func (svc *AuthenticationService) RouteSetup() {
 
 func (svc *AuthenticationService) Index(ctx microservice.IServiceContext) error {
 	ctx.ResponseS(http.StatusOK, "ok")
+	return nil
+}
+
+func (svc *AuthenticationService) Healty(ctx microservice.IServiceContext) error {
+	ctx.ResponseS(http.StatusOK, "Feel Good.")
 	return nil
 }
 

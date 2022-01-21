@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  kafka:
+  zookeeper:
+  
+networks:
+  frontend:
+    external:
+      name: frontend_network
