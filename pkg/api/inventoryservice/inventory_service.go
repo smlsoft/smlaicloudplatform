@@ -15,7 +15,6 @@ import (
 )
 
 type InventoryOperation interface {
-	// defint e
 	AddInventory() error
 	DeleteInventory() error
 	EditInventory() error
@@ -92,17 +91,9 @@ func (svc *InventoryService) CreateInventory(ctx microservice.IServiceContext) e
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
 
-	merchant := &models.Merchant{}
-	pst.FindOne(&models.Merchant{}, bson.M{"guidFixed": merchantId, "deleted": false}, merchant)
-
-	if len(merchant.GuidFixed) < 1 {
-		ctx.ResponseError(400, "merchant invalid")
+	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
+		ctx.ResponseError(400, err.Error())
 		return nil
-	}
-
-	if merchant.CreatedBy != authUsername {
-		ctx.ResponseError(400, "username invalid")
-		return err
 	}
 
 	inventory.MerchantId = merchantId
@@ -128,9 +119,12 @@ func (svc *InventoryService) DeleteInventory(ctx microservice.IServiceContext) e
 	merchantId := ctx.Param("merchant_id")
 	authUsername := ctx.UserInfo().Username
 
-	fmt.Printf("auth ::  %s", authUsername)
-
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
+
+	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return nil
+	}
 
 	findDoc := &models.Inventory{}
 	err := pst.FindOne(&models.Inventory{}, bson.M{"merchantId": merchantId, "guidFixed": id, "deleted": false}, findDoc)
@@ -172,9 +166,12 @@ func (svc *InventoryService) EditInventory(ctx microservice.IServiceContext) err
 		return err
 	}
 
-	inventoryReq.UpdatedAt = time.Now()
-
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
+
+	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return nil
+	}
 
 	findInv := &models.Inventory{}
 	err = pst.FindOne(&models.Inventory{}, bson.M{"merchantId": merchantId, "guidFixed": id, "createdBy": authUsername, "deleted": false}, findInv)
@@ -225,11 +222,21 @@ func (svc *InventoryService) InfoInventory(ctx microservice.IServiceContext) err
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
 
+	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return nil
+	}
+
 	inventory := &models.Inventory{}
 	err := pst.FindOne(&models.Inventory{}, bson.M{"merchantId": merchantId, "guidFixed": id, "deleted": false}, inventory)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if len(inventory.GuidFixed) < 1 {
+		ctx.ResponseError(404, "Not found.")
 		return err
 	}
 
@@ -250,20 +257,21 @@ func (svc *InventoryService) SearchInventory(ctx microservice.IServiceContext) e
 	q := ctx.QueryParam("q")
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
 	if err != nil {
-		// ctx.ResponseError(400, "page number invalid.")
-		// return err
 		page = 1
 	}
 
 	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
 
 	if err != nil {
-		// ctx.ResponseError(400, "limit number invalid.")
-		// return err
 		limit = 20
 	}
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
+
+	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return nil
+	}
 
 	inventories := []models.Inventory{}
 

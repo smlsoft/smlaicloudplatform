@@ -1,4 +1,4 @@
-package inventoryservice
+package inventoryservice_test
 
 import (
 	"testing"

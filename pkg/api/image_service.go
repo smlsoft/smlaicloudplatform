@@ -18,3 +18,8 @@ func NewImageService(ms *microservice.Microservice, cfg microservice.IConfig) *I
 func (svc *ImageService) RouteSetup() {
 
 }
+
+func (svc *ImageService) UploadImage(ctx microservice.IServiceContext) error {
+
+	return nil
+}

@@ -2,6 +2,7 @@ package microservice
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"sync"
 
@@ -14,7 +15,7 @@ import (
 
 // IPersister is interface for persister
 type IPersisterMongo interface {
-	Aggregate(model interface{}, pipeline interface{}, decode interface{}, opts ...*options.AggregateOptions) error
+	Aggregate(model interface{}, pipeline []bson.D, decode interface{}, opts ...*options.AggregateOptions) error
 	Find(model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOptions) error
 	FindPage(model interface{}, limit int, page int, filter interface{}, decode interface{}) (paginate.PaginationData, error)
 	FindOne(model interface{}, filter interface{}, decode interface{}) error
@@ -407,7 +408,7 @@ func (pst *PersisterMongo) Exec(model interface{}) (*mongo.Collection, error) {
 	return mongoCollection, nil
 }
 
-func (pst *PersisterMongo) Aggregate(model interface{}, pipeline interface{}, decode interface{}, opts ...*options.AggregateOptions) error {
+func (pst *PersisterMongo) Aggregate(model interface{}, pipeline []bson.D, decode interface{}, opts ...*options.AggregateOptions) error {
 	db, err := pst.getClient()
 	if err != nil {
 		return err
@@ -418,45 +419,81 @@ func (pst *PersisterMongo) Aggregate(model interface{}, pipeline interface{}, de
 		return err
 	}
 
-	filterCursor, err := db.Collection(collectionName).Aggregate(pst.ctx, pipeline, opts...)
+	// Value: bson.D{
+	// 	bson.E{Key: "meta", Value: bson.E{Key: "$count", Value: "total"}},
+	// }
+
+	// query1 := bson.D{
+	// 	{"meta", bson.A{
+	// 		bson.E{Key: "$count", Value: "total"},
+	// 	}},
+	// }
+
+	pageFilter := []bson.D{
+		bson.D{
+			{"$facet", bson.D{
+				{"meta", bson.A{bson.D{{"$count", "total"}}}},
+				{"data", bson.A{bson.D{{"$limit", 2}}}},
+			}},
+		},
+	}
+
+	// var pipelinePage primitive.D
+	if len(pipeline) > 0 {
+		pageFilter = append(pipeline, pageFilter...)
+	}
+
+	// fmt.Printf("%s\n\n", pageFilter)
+	fmt.Printf("%s\n\n", pipeline[0])
+
+	//facetStage := bson.D{{"$facet", query1}}
+
+	filterCursor, err := db.Collection(collectionName).Aggregate(pst.ctx, mongo.Pipeline(pageFilter), opts...)
 
 	if err != nil {
 		return err
 	}
 
-	if err = filterCursor.All(pst.ctx, decode); err != nil {
+	var resultx []interface{}
+	if err = filterCursor.All(pst.ctx, &resultx); err != nil {
 		return err
 	}
+
+	rx, err := json.Marshal(resultx[0])
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("\n\n%s\n", rx)
+
+	fmt.Printf("\n===result===\n%v\n\n", resultx)
 
 	return nil
 }
 
-func (pst *PersisterMongo) AggregatePage(model interface{}, limit int, page int, pipeline interface{}, decode interface{}, opts ...*options.AggregateOptions) error {
+func (pst *PersisterMongo) AggregatePage(model interface{}, limit int, page int, filter interface{}, decode interface{}) (*paginate.PaginatedData, error) {
 	db, err := pst.getClient()
+
+	emptyPage := &paginate.PaginatedData{}
+
 	if err != nil {
-		return err
+		return emptyPage, err
 	}
 
 	collectionName, err := pst.getCollectionName(model)
 	if err != nil {
-		return err
+		return emptyPage, err
 	}
 
-	mongoPipeline := pipeline.(mongo.Pipeline)
+	var limit64 int64 = int64(limit)
+	var page64 int64 = int64(page)
 
-	mongoPipeline = append(mongoPipeline, bson.D{{Key: "$limit", Value: 3}})
-
-	filterCursor, err := db.Collection(collectionName).Aggregate(pst.ctx, mongoPipeline, opts...)
-
+	paginatedData, err := paginate.New(db.Collection(collectionName)).Context(pst.ctx).Limit(limit64).Page(page64).Aggregate(filter)
 	if err != nil {
-		return err
+		return emptyPage, err
 	}
 
-	if err = filterCursor.All(pst.ctx, decode); err != nil {
-		return err
-	}
-
-	return nil
+	return paginatedData, nil
 }
 
 func (pst *PersisterMongo) Cleanup() error {

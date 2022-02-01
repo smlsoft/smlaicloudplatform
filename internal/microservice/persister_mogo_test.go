@@ -1,12 +1,12 @@
-package microservice
+package microservice_test
 
 import (
 	"fmt"
+	"smlcloudplatform/internal/microservice"
 	"testing"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type ConfigDBTest struct{}
@@ -56,7 +56,7 @@ func TestMongodbCount(t *testing.T) {
 
 	cfg := &ConfigDBTest{}
 
-	pst := NewPersisterMongo(cfg)
+	pst := microservice.NewPersisterMongo(cfg)
 
 	count, err := pst.Count(&Product{}, bson.M{"product_code": "pdt-02"})
 	if err != nil {
@@ -77,7 +77,7 @@ func TestMongodbCreate(t *testing.T) {
 
 	cfg := &ConfigDBTest{}
 
-	pst := NewPersisterMongo(cfg)
+	pst := microservice.NewPersisterMongo(cfg)
 
 	objID, err := pst.Create(&Product{}, &Product{
 		ProductCode: productCode,
@@ -94,7 +94,7 @@ func TestMongodbCreate(t *testing.T) {
 func TestMongodbFind(t *testing.T) {
 	cfg := &ConfigDBTest{}
 
-	pst := NewPersisterMongo(cfg)
+	pst := microservice.NewPersisterMongo(cfg)
 
 	// products := []Product{}
 	products := []Product{}
@@ -116,7 +116,7 @@ func TestMongodbFind(t *testing.T) {
 func TestMongodbFindPage(t *testing.T) {
 	cfg := &ConfigDBTest{}
 
-	pst := NewPersisterMongo(cfg)
+	pst := microservice.NewPersisterMongo(cfg)
 
 	products := []Product{}
 	pagination, err := pst.FindPage(&Product{}, 5, 1, bson.M{}, &products)
@@ -138,7 +138,7 @@ func TestMongodbFindPage(t *testing.T) {
 func TestMongodbFindOne(t *testing.T) {
 	cfg := &ConfigDBTest{}
 
-	pst := NewPersisterMongo(cfg)
+	pst := microservice.NewPersisterMongo(cfg)
 
 	product := &Product{}
 	err := pst.FindOne(&Product{}, bson.D{{Key: "product_code", Value: productCode}}, product)
@@ -157,7 +157,7 @@ func TestMongodbFindOne(t *testing.T) {
 func TestMongodbFindByID(t *testing.T) {
 	cfg := &ConfigDBTest{}
 
-	pst := NewPersisterMongo(cfg)
+	pst := microservice.NewPersisterMongo(cfg)
 
 	productFind := &Product{}
 
@@ -189,7 +189,7 @@ func TestMongodbUpdate(t *testing.T) {
 
 	cfg := &ConfigDBTest{}
 
-	pst := NewPersisterMongo(cfg)
+	pst := microservice.NewPersisterMongo(cfg)
 
 	productFind := &Product{}
 	err := pst.FindOne(&Product{}, bson.M{"product_code": productCode}, productFind)
@@ -223,7 +223,7 @@ func TestMongodbUpdate(t *testing.T) {
 func TestMongodbCreateInBatch(t *testing.T) {
 	cfg := &ConfigDBTest{}
 
-	pst := NewPersisterMongo(cfg)
+	pst := microservice.NewPersisterMongo(cfg)
 
 	products := make([]interface{}, 0)
 
@@ -249,7 +249,7 @@ func TestMongodbCreateInBatch(t *testing.T) {
 func TestMongodbDelete(t *testing.T) {
 	cfg := &ConfigDBTest{}
 
-	pst := NewPersisterMongo(cfg)
+	pst := microservice.NewPersisterMongo(cfg)
 
 	productFind := &Product{}
 
@@ -276,7 +276,7 @@ func TestMongodbDelete(t *testing.T) {
 func TestMongodbSoftDeleteByID(t *testing.T) {
 	cfg := &ConfigDBTest{}
 
-	pst := NewPersisterMongo(cfg)
+	pst := microservice.NewPersisterMongo(cfg)
 
 	product := &Product{}
 	err := pst.DeleteByID(product, "6195af880e33cec3af136720")
@@ -291,7 +291,7 @@ func TestMongodbSoftDeleteByID(t *testing.T) {
 func TestMongodbSoftDelete(t *testing.T) {
 	cfg := &ConfigDBTest{}
 
-	pst := NewPersisterMongo(cfg)
+	pst := microservice.NewPersisterMongo(cfg)
 
 	err := pst.SoftDelete(&Product{}, []string{"6195af880e33cec3af136724", "6195af880e33cec3af136725"})
 
@@ -305,12 +305,51 @@ func TestMongodbSoftDelete(t *testing.T) {
 func TestMongodbAggregate(t *testing.T) {
 	cfg := &ConfigDBTest{}
 
-	pst := NewPersisterMongo(cfg)
+	pst := microservice.NewPersisterMongo(cfg)
 
-	pipeline := mongo.Pipeline{}
+	// pipeline := mongo.Pipeline{}
 	products := []Product{}
 
-	pst.Aggregate(&Product{}, pipeline, &products)
+	// query1 := bson.A{bson.D{{"$match", bson.D{{"product_code", "pdt-02"}}}}, bson.D{{"$count", "count"}}}
+	// query2 := bson.A{bson.D{{"$match", bson.D{{"product_code", "pdt-03"}}}}, bson.D{{"$count", "count"}}}
+	// query3 := bson.A{bson.D{{"$count", "total"}}}
 
+	// facetStage := bson.D{{"$facet", bson.D{{"query1", query1}, {"query2", query2}, {"query3", query3}}}}
+
+	err := pst.Aggregate(&Product{}, []bson.D{
+		bson.D{{"$match", bson.M{"product_code": "pdt-01"}}},
+	}, &products)
+
+	if err != nil {
+		fmt.Println("=====[Error]======")
+		fmt.Println(err.Error())
+	}
+
+	t.Log("count :: ", products)
+}
+
+func TestMongodbAggregatePage(t *testing.T) {
+	cfg := &ConfigDBTest{}
+
+	pst := microservice.NewPersisterMongo(cfg)
+
+	products := []Product{}
+
+	aggPaginatedData, err := pst.AggregatePage(&Product{}, 2, 0, bson.M{"$match": bson.M{"product_code": "pdt-01"}}, &products)
+
+	// var aggProductList []Product
+	for _, raw := range aggPaginatedData.Data {
+		var product *Product
+
+		if marshallErr := bson.Unmarshal(raw, &product); marshallErr == nil {
+			products = append(products, *product)
+		}
+
+	}
+
+	if err != nil {
+		fmt.Println("=====[Error]======")
+		fmt.Println(err.Error())
+	}
 	t.Log("count :: ", products)
 }

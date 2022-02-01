@@ -28,17 +28,9 @@ func (svc *InventoryService) CreateOptionGroup(ctx microservice.IServiceContext)
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
 
-	merchant := &models.Merchant{}
-	pst.FindOne(&models.Merchant{}, bson.M{"guidFixed": merchantId, "deleted": false}, merchant)
-
-	if len(merchant.GuidFixed) < 1 {
-		ctx.ResponseError(400, "merchant invalid")
-		return nil
-	}
-
-	if err != nil {
+	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
 		ctx.ResponseError(400, err.Error())
-		return err
+		return nil
 	}
 
 	inventoryOperationGroup.MerchantId = merchantId
@@ -78,16 +70,13 @@ func (svc *InventoryService) EditOptionGroup(ctx microservice.IServiceContext) e
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
 
-	merchant := &models.Merchant{}
-	pst.FindOne(&models.Merchant{}, bson.M{"guidFixed": merchantId, "deleted": false}, merchant)
-
-	if len(merchant.GuidFixed) < 1 {
-		ctx.ResponseError(400, "merchant invalid")
+	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
+		ctx.ResponseError(400, err.Error())
 		return nil
 	}
 
 	findDoc := &models.InventoryOptionGroup{}
-	err = pst.FindOne(&models.InventoryOptionGroup{}, bson.M{"guidFixed": id, "deleted": false}, findDoc)
+	err = pst.FindOne(&models.InventoryOptionGroup{}, bson.M{"guidFixed": id, "merchantId": merchantId, "deleted": false}, findDoc)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -121,6 +110,11 @@ func (svc *InventoryService) InfoOptionGroup(ctx microservice.IServiceContext) e
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
 
+	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return nil
+	}
+
 	category := &models.InventoryOptionGroup{}
 
 	err := pst.FindOne(&models.InventoryOptionGroup{}, bson.M{"guidFixed": id, "merchantId": merchantId, "createdBy": username, "deleted": false}, category)
@@ -140,6 +134,11 @@ func (svc *InventoryService) DeleteOptionGroup(ctx microservice.IServiceContext)
 	id := ctx.Param("id")
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
+
+	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return nil
+	}
 
 	findCategory := &models.InventoryOptionGroup{}
 	err := pst.FindOne(&models.Category{}, bson.M{"guidFixed": id, "merchantId": merchantId}, findCategory)
@@ -184,6 +183,11 @@ func (svc *InventoryService) SearchOptionGroup(ctx microservice.IServiceContext)
 	}
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
+
+	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return nil
+	}
 
 	inventoryOptionGroupList := []models.InventoryOptionGroup{}
 	pagination, err := pst.FindPage(&models.InventoryOptionGroup{}, limit, page, bson.M{"merchantId": merchantId, "createdBy": username, "deleted": false, "optionName1": bson.M{"$regex": primitive.Regex{
