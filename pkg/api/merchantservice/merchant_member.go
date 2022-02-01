@@ -55,7 +55,11 @@ func (svc *MerchantService) SearchMember(ctx microservice.IServiceContext) error
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "pagination": pagination, "data": merchantList})
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success:    true,
+		Pagination: pagination,
+		Data:       merchantList,
+	})
 	return nil
 }
 
@@ -130,7 +134,11 @@ func (svc *MerchantService) CreateMember(ctx microservice.IServiceContext) error
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "id": idx})
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success: true,
+		Id:      idx,
+	})
+
 	return nil
 }
 
@@ -190,7 +198,9 @@ func (svc *MerchantService) EditMember(ctx microservice.IServiceContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success: true,
+	})
 	return nil
 }
 
@@ -232,7 +242,9 @@ func (svc *MerchantService) DeleteMember(ctx microservice.IServiceContext) error
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success: true,
+	})
 	return nil
 }
 
@@ -257,7 +269,10 @@ func (svc *MerchantService) GetMemberInfo(ctx microservice.IServiceContext) erro
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "data": memberInfo})
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success: true,
+		Data:    memberInfo,
+	})
 	return nil
 }
 
@@ -316,6 +331,8 @@ func (svc *MerchantService) ChangePasswordMember(ctx microservice.IServiceContex
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success: true,
+	})
 	return nil
 }

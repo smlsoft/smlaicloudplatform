@@ -54,7 +54,10 @@ func (svc *InventoryService) CreateCategory(ctx microservice.IServiceContext) er
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "id": idx})
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success: true,
+		Id:      idx,
+	})
 	return nil
 }
 
@@ -99,7 +102,10 @@ func (svc *InventoryService) EditCategory(ctx microservice.IServiceContext) erro
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
+	ctx.Response(http.StatusOK,
+		models.ApiResponse{
+			Success: true,
+		})
 	return nil
 }
 
@@ -124,7 +130,11 @@ func (svc *InventoryService) InfoCategory(ctx microservice.IServiceContext) erro
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "data": category})
+	ctx.Response(http.StatusOK,
+		models.ApiResponse{
+			Success: true,
+			Data:    category,
+		})
 	return nil
 }
 
@@ -162,7 +172,10 @@ func (svc *InventoryService) DeleteCategory(ctx microservice.IServiceContext) er
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
+	ctx.Response(http.StatusOK,
+		models.ApiResponse{
+			Success: true,
+		})
 	return nil
 }
 
@@ -200,6 +213,11 @@ func (svc *InventoryService) SearchCategory(ctx microservice.IServiceContext) er
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "pagination": pagination, "data": categoryList})
+	ctx.Response(http.StatusOK,
+		models.ApiResponse{
+			Success:    true,
+			Pagination: pagination,
+			Data:       categoryList,
+		})
 	return nil
 }

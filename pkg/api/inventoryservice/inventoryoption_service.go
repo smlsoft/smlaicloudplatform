@@ -46,7 +46,10 @@ func (svc *InventoryService) CreateInventoryOption(ctx microservice.IServiceCont
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "id": idx})
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success: true,
+		Id:      idx,
+	})
 	return nil
 }
 
@@ -91,7 +94,9 @@ func (svc *InventoryService) EditInventoryOption(ctx microservice.IServiceContex
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success: true,
+	})
 	return nil
 }
 
@@ -107,16 +112,19 @@ func (svc *InventoryService) InfoInventoryOption(ctx microservice.IServiceContex
 		return nil
 	}
 
-	category := &models.InventoryOption{}
+	doc := &models.InventoryOption{}
 
-	err := pst.FindOne(&models.InventoryOption{}, bson.M{"guidFixed": id, "merchantId": merchantId, "createdBy": username, "deleted": false}, category)
+	err := pst.FindOne(&models.InventoryOption{}, bson.M{"guidFixed": id, "merchantId": merchantId, "createdBy": username, "deleted": false}, doc)
 
 	if err != nil {
 		ctx.ResponseError(400, "not found")
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "data": category})
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
 	return nil
 }
 
@@ -154,7 +162,10 @@ func (svc *InventoryService) DeleteInventoryOption(ctx microservice.IServiceCont
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success: true,
+	})
+
 	return nil
 }
 
@@ -181,17 +192,21 @@ func (svc *InventoryService) SearchInventoryOption(ctx microservice.IServiceCont
 		return nil
 	}
 
-	inventoryOptionGroupList := []models.InventoryOption{}
+	docList := []models.InventoryOption{}
 	pagination, err := pst.FindPage(&models.InventoryOption{}, limit, page, bson.M{"merchantId": merchantId, "createdBy": username, "deleted": false, "optionName1": bson.M{"$regex": primitive.Regex{
 		Pattern: ".*" + q + ".*",
 		Options: "",
-	}}}, &inventoryOptionGroupList)
+	}}}, &docList)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "pagination": pagination, "data": inventoryOptionGroupList})
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success:    true,
+		Pagination: pagination,
+		Data:       docList,
+	})
 	return nil
 }

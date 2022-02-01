@@ -110,7 +110,11 @@ func (svc *InventoryService) CreateInventory(ctx microservice.IServiceContext) e
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "id": idx})
+	ctx.Response(http.StatusOK,
+		models.ApiResponse{
+			Success: true,
+			Id:      idx,
+		})
 	return nil
 }
 
@@ -148,7 +152,11 @@ func (svc *InventoryService) DeleteInventory(ctx microservice.IServiceContext) e
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
+	ctx.Response(http.StatusOK,
+		models.ApiResponse{
+			Success: true,
+		})
+
 	return nil
 }
 
@@ -211,7 +219,10 @@ func (svc *InventoryService) EditInventory(ctx microservice.IServiceContext) err
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
+	ctx.Response(http.StatusOK,
+		models.ApiResponse{
+			Success: true,
+		})
 	return nil
 }
 
@@ -240,13 +251,21 @@ func (svc *InventoryService) InfoInventory(ctx microservice.IServiceContext) err
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "data": inventory})
+	ctx.Response(http.StatusOK,
+		models.ApiResponse{
+			Success: true,
+			Data:    inventory,
+		},
+	)
 	return nil
 }
 
 func (svc *InventoryService) GetInventorySync(ctx microservice.IServiceContext) error {
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
+	ctx.Response(http.StatusOK,
+		models.ApiResponse{
+			Success: true,
+		})
 	return nil
 }
 
@@ -292,6 +311,10 @@ func (svc *InventoryService) SearchInventory(ctx microservice.IServiceContext) e
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "pagination": pagination, "data": inventories})
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success:    true,
+		Pagination: pagination,
+		Data:       inventories,
+	})
 	return nil
 }
