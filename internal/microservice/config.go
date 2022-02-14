@@ -6,7 +6,7 @@ import (
 
 type IConfig interface {
 	PersisterConfig() IPersisterConfig
-	MongoPersisterConfig() IPersisterConfig
+	MongoPersisterConfig() IPersisterMongoConfig
 	MQServer() string
 	TopicName() string
 	SignKeyPath() string
@@ -31,7 +31,7 @@ func (cfg *Config) PersisterConfig() IPersisterConfig {
 	return NewPersisterConfig()
 }
 
-func (cfg *Config) MongoPersisterConfig() IPersisterConfig {
+func (cfg *Config) MongoPersisterConfig() IPersisterMongoConfig {
 	return NewMongoPersisterConfig()
 }
 
@@ -45,11 +45,11 @@ func (cfg *Config) TopicName() string {
 }
 
 func (*Config) SignKeyPath() string {
-	return getEnv("PUBLIC_KEY_PATH", "./../../private.key")
+	return getEnv("PRIVATE_KEY_PATH", "./../../private.key")
 }
 
 func (*Config) VerifyKeyPath() string {
-	return getEnv("PRIVATE_KEY_PATH", "./../../public.key")
+	return getEnv("PUBLIC_KEY_PATH", "./../../public.key")
 }
 
 type PersisterConfig struct{}
@@ -101,31 +101,10 @@ type MongoPersisterConfig struct{}
 func NewMongoPersisterConfig() *MongoPersisterConfig {
 	return &MongoPersisterConfig{}
 }
-
-func (cfg *MongoPersisterConfig) Host() string {
-	return "localhost"
-}
-
-func (cfg *MongoPersisterConfig) Port() string {
-	return "27017"
+func (cfg *MongoPersisterConfig) MongodbURI() string {
+	return getEnv("MONGODB_URI", "mongodb://root:rootx@localhost:27017/")
 }
 
 func (cfg *MongoPersisterConfig) DB() string {
-	return "smldev"
-}
-
-func (cfg *MongoPersisterConfig) Username() string {
-	return "root"
-}
-
-func (cfg *MongoPersisterConfig) Password() string {
-	return "rootx"
-}
-
-func (cfg *MongoPersisterConfig) SSLMode() string {
-	return ""
-}
-
-func (cfg *MongoPersisterConfig) TimeZone() string {
-	return ""
+	return getEnv("MONGODB_DB", "smldev")
 }
