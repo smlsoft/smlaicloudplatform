@@ -10,6 +10,7 @@ import (
 	"smlcloudplatform/pkg/api"
 	"smlcloudplatform/pkg/api/inventoryservice"
 	"smlcloudplatform/pkg/api/merchantservice"
+	"smlcloudplatform/pkg/api/toolsservice"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -32,6 +33,10 @@ func main() {
 
 	inventoryapi := inventoryservice.NewInventoryService(ms, cfg)
 	inventoryapi.RouteSetup()
+
+	toolSvc := toolsservice.NewToolsService(ms, cfg)
+
+	toolSvc.RouteSetup()
 
 	ms.Echo().GET("/routes", func(ctx echo.Context) error {
 		data, err := json.MarshalIndent(ms.Echo().Routes(), "", "  ")
