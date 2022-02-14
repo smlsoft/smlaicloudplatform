@@ -1,7 +1,6 @@
 package microservice
 
 import (
-	"crypto/rsa"
 	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice/models"
@@ -17,23 +16,36 @@ type CustomClaims struct {
 	models.UserInfo
 }
 
-func NewJwtService(signKey *rsa.PrivateKey, verifyKey *rsa.PublicKey, expireMinute int) *JwtService {
+// func NewJwtService(signKey *rsa.PrivateKey, verifyKey *rsa.PublicKey, expireMinute int) *JwtService {
+
+// 	return &JwtService{
+// 		signKey:   signKey,
+// 		verifyKey: verifyKey,
+// 		duration:  time.Duration(expireMinute) * time.Minute,
+// 	}
+// }
+
+func NewJwtService(jwtSecretKey string, expireMinute int) *JwtService {
 
 	return &JwtService{
-		signKey:   signKey,
-		verifyKey: verifyKey,
-		duration:  time.Duration(expireMinute) * time.Minute,
+		jwtSecretKey: jwtSecretKey,
+		duration:     time.Duration(expireMinute) * time.Minute,
 	}
 }
 
 // Service provides a Json-Web-Token authentication implementation
-type JwtService struct {
-	// Secret key used for signing.
-	signKey   *rsa.PrivateKey
-	verifyKey *rsa.PublicKey
+// type JwtService struct {
+// 	// Secret key used for signing.
+// 	signKey   *rsa.PrivateKey
+// 	verifyKey *rsa.PublicKey
 
-	// Duration for which the jwt token is valid.
-	duration time.Duration
+// 	// Duration for which the jwt token is valid.
+// 	duration time.Duration
+// }
+
+type JwtService struct {
+	jwtSecretKey string
+	duration     time.Duration
 }
 
 // MWFunc makes JWT implement the Middleware interface.
@@ -88,10 +100,22 @@ func (jwtService *JwtService) ParseTokenFromContext(c echo.Context) (*jwt.Token,
 }
 
 func (jwtService *JwtService) ParseToken(tokenString string) (*jwt.Token, error) {
+	/*
+		token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+			// since we only use the one private key to sign the tokens,
+			// we also only use its public counter part to verify
+			return jwtService.verifyKey, nil
+		})
+
+		if err != nil {
+			return nil, err
+		}
+
+		return token, nil
+	*/
+
 	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
-		// since we only use the one private key to sign the tokens,
-		// we also only use its public counter part to verify
-		return jwtService.verifyKey, nil
+		return []byte(jwtService.jwtSecretKey), nil
 	})
 
 	if err != nil {
@@ -99,23 +123,26 @@ func (jwtService *JwtService) ParseToken(tokenString string) (*jwt.Token, error)
 	}
 
 	return token, nil
-
-	// token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
-	// 	return []byte("35WPe96UooYISzbsn5Q5QsPax1mzc3F0kkkSp7ecVGNlHR0Lbf7jpVYvunv9xbasLBJRzCG5PuFMeHIKoJ3P7EwF4PQWfnxbdWWF"), nil
-	// })
-
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// return token, nil
 }
 
 func (jwtService *JwtService) GenerateToken(userInfo models.UserInfo, expire time.Duration) (string, error) {
-	t := jwt.New(jwt.GetSigningMethod("RS256"))
+	/*
+		t := jwt.New(jwt.GetSigningMethod("RS256"))
 
-	// set claims
-	t.Claims = &CustomClaims{
+		// set claims
+		t.Claims = &CustomClaims{
+			&jwt.RegisteredClaims{
+				// set the expire time
+				// ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 1)),
+				ExpiresAt: jwt.NewNumericDate(time.Now().Add(expire)),
+			},
+			userInfo,
+		}
+
+		// Creat token string
+		return t.SignedString(jwtService.signKey)
+	*/
+	claims := &CustomClaims{
 		&jwt.RegisteredClaims{
 			// set the expire time
 			// ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 1)),
@@ -124,19 +151,7 @@ func (jwtService *JwtService) GenerateToken(userInfo models.UserInfo, expire tim
 		userInfo,
 	}
 
-	// Creat token string
-	return t.SignedString(jwtService.signKey)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	// claims := &CustomClaims{
-	// 	&jwt.RegisteredClaims{
-	// 		// set the expire time
-	// 		// ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 1)),
-	// 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(expire)),
-	// 	},
-	// 	userInfo,
-	// }
-
-	// token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	// return token.SignedString([]byte("35WPe96UooYISzbsn5Q5QsPax1mzc3F0kkkSp7ecVGNlHR0Lbf7jpVYvunv9xbasLBJRzCG5PuFMeHIKoJ3P7EwF4PQWfnxbdWWF"))
+	return token.SignedString([]byte(jwtService.jwtSecretKey))
 }

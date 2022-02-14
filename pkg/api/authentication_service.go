@@ -3,7 +3,6 @@ package api
 import (
 	"crypto/rsa"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
@@ -24,19 +23,20 @@ type AuthenticationService struct {
 }
 
 func NewAuthenticationService(ms *microservice.Microservice, cfg microservice.IConfig) *AuthenticationService {
-	signKey, verifyKey, err := utils.LoadKey(cfg.SignKeyPath(), cfg.VerifyKeyPath())
+	// signKey, verifyKey, err := utils.LoadKey(cfg.SignKeyPath(), cfg.VerifyKeyPath())
 
-	if err != nil {
-		fmt.Println("jwt key error :: " + err.Error())
-	}
+	// if err != nil {
+	// 	fmt.Println("jwt key error :: " + err.Error())
+	// }
 
-	jwtService := microservice.NewJwtService(signKey, verifyKey, 60*24*10)
+	// jwtService := microservice.NewJwtService(signKey, verifyKey, 60*24*10)
+
+	jwtService := microservice.NewJwtService(cfg.JwtSecretKey(), 60*24*10)
+
 	return &AuthenticationService{
 		ms:         ms,
 		cfg:        cfg,
 		jwtService: jwtService,
-		signKey:    signKey,
-		verifyKey:  verifyKey,
 	}
 }
 
