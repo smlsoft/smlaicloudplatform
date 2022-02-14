@@ -71,7 +71,8 @@ func (svc *AuthenticationService) Login(ctx microservice.IServiceContext) error 
 	err = pst.FindOne(&models.User{}, bson.M{"username": userReq.Username}, findUser)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
-		ctx.ResponseError(400, "find user error")
+		svc.ms.Log("Authentication service", err.Error())
+		ctx.ResponseError(400, "database error")
 		return err
 	}
 

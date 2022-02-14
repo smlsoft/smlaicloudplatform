@@ -42,15 +42,24 @@ func (jwtService *JwtService) MWFunc() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 
-			if c.Path() == "/login" {
-				next(c)
+			publicPathList := []string{
+				"/login",
+				"/register",
+			}
+
+			currentPath := c.Path()
+
+			for _, publicPath := range publicPathList {
+				if currentPath == publicPath {
+					return next(c)
+				}
 			}
 
 			token, err := jwtService.ParseTokenFromContext(c)
 
 			if err != nil || !token.Valid {
 
-				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Unauthorized. "})
+				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Unauthorized."})
 			}
 
 			claims := token.Claims.(*CustomClaims)
