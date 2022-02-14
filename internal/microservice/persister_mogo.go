@@ -32,12 +32,18 @@ type IPersisterMongo interface {
 	Cleanup() error
 }
 
+// IPersisterConfig is interface for persister
+type IPersisterMongoConfig interface {
+	MongodbURI() string
+	DB() string
+}
+
 type MongoModel interface {
 	CollectionName() string
 }
 
 type PersisterMongo struct {
-	config    IPersisterConfig
+	config    IPersisterMongoConfig
 	db        *mongo.Database
 	dbMutex   sync.Mutex
 	client    *mongo.Client
@@ -45,7 +51,7 @@ type PersisterMongo struct {
 	ctxCancel context.CancelFunc
 }
 
-func NewPersisterMongo(config IPersisterConfig) *PersisterMongo {
+func NewPersisterMongo(config IPersisterMongoConfig) *PersisterMongo {
 	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	ctx := context.TODO()
 	// defer cancel()
@@ -60,13 +66,7 @@ func NewPersisterMongo(config IPersisterConfig) *PersisterMongo {
 func (pst *PersisterMongo) getConnectionString() (string, error) {
 	cfg := pst.config
 
-	return fmt.Sprintf("mongodb://%s:%s@%s:%s/",
-
-		cfg.Username(),
-		cfg.Password(),
-		cfg.Host(),
-		cfg.Port(),
-	), nil
+	return cfg.MongodbURI(), nil
 }
 
 func (pst *PersisterMongo) getClient() (*mongo.Database, error) {
