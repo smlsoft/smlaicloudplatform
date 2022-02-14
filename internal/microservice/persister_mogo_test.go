@@ -11,30 +11,12 @@ import (
 
 type ConfigDBTest struct{}
 
-func (c *ConfigDBTest) Host() string {
-	return "localhost"
+func (c *ConfigDBTest) MongodbURI() string {
+	return "mongodb://root:rootx@localhost:27017/"
 }
 
 func (c *ConfigDBTest) DB() string {
 	return "micro_test"
-}
-
-func (c *ConfigDBTest) Port() string {
-	return "27017"
-}
-
-func (c *ConfigDBTest) Username() string {
-	return "root"
-}
-func (c *ConfigDBTest) Password() string {
-	return "rootx"
-}
-
-func (c *ConfigDBTest) SSLMode() string {
-	return ""
-}
-func (c *ConfigDBTest) TimeZone() string {
-	return ""
 }
 
 type Product struct {

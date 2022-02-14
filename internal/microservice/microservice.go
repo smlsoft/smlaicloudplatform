@@ -150,12 +150,12 @@ func (ms *Microservice) Persister(cfg IPersisterConfig) IPersister {
 	return pst
 }
 
-func (ms *Microservice) MongoPersister(cfg IPersisterConfig) IPersisterMongo {
-	pst, ok := ms.mongoPersisters[cfg.Host()]
+func (ms *Microservice) MongoPersister(cfg IPersisterMongoConfig) IPersisterMongo {
+	pst, ok := ms.mongoPersisters[cfg.MongodbURI()]
 	if !ok {
 		pst = NewPersisterMongo(cfg)
 		ms.persistersMutex.Lock()
-		ms.mongoPersisters[cfg.Host()] = pst
+		ms.mongoPersisters[cfg.MongodbURI()] = pst
 		ms.persistersMutex.Unlock()
 	}
 	return pst
