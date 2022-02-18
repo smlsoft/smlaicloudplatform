@@ -28,7 +28,7 @@ func NewMerchantService(ms *microservice.Microservice, cfg microservice.IConfig)
 
 	// jwtService := microservice.NewJwtService(signKey, verifyKey, 60*24*10)
 
-	jwtService := microservice.NewJwtService(cfg.JwtSecretKey(), 60*24*10)
+	jwtService := microservice.NewJwtService(ms.Cacher(cfg.CacherConfig()), cfg.JwtSecretKey(), 60*24*10)
 
 	return &MerchantService{
 		ms:         ms,
@@ -39,18 +39,18 @@ func NewMerchantService(ms *microservice.Microservice, cfg microservice.IConfig)
 
 func (svc *MerchantService) RouteSetup() {
 
-	svc.ms.GET("/merchant", svc.SearchMerchant, svc.jwtService.MWFunc())
-	svc.ms.POST("/merchant", svc.CreateMerchant, svc.jwtService.MWFunc())
-	svc.ms.GET("/merchant/:id", svc.InfoMerchant, svc.jwtService.MWFunc())
-	svc.ms.PUT("/merchant/:id", svc.EditMerchant, svc.jwtService.MWFunc())
-	svc.ms.DELETE("/merchant/:id", svc.DeleteMerchant, svc.jwtService.MWFunc())
+	svc.ms.GET("/merchant", svc.SearchMerchant)
+	svc.ms.POST("/merchant", svc.CreateMerchant)
+	svc.ms.GET("/merchant/:id", svc.InfoMerchant)
+	svc.ms.PUT("/merchant/:id", svc.EditMerchant)
+	svc.ms.DELETE("/merchant/:id", svc.DeleteMerchant)
 
-	svc.ms.GET("/merchant/:merchant_id/member", svc.SearchMember, svc.jwtService.MWFunc())
-	svc.ms.POST("/merchant/:merchant_id/member", svc.CreateMember, svc.jwtService.MWFunc())
-	svc.ms.GET("/merchant/:merchant_id/member/:id", svc.GetMemberInfo, svc.jwtService.MWFunc())
-	svc.ms.PUT("/merchant/:merchant_id/member/:id", svc.EditMember, svc.jwtService.MWFunc())
-	svc.ms.PUT("/merchant/:merchant_id/member/:id/password", svc.ChangePasswordMember, svc.jwtService.MWFunc())
-	svc.ms.DELETE("/merchant/:merchant_id/member/:id", svc.DeleteMember, svc.jwtService.MWFunc())
+	svc.ms.GET("/merchant/:merchant_id/member", svc.SearchMember)
+	svc.ms.POST("/merchant/:merchant_id/member", svc.CreateMember)
+	svc.ms.GET("/merchant/:merchant_id/member/:id", svc.GetMemberInfo)
+	svc.ms.PUT("/merchant/:merchant_id/member/:id", svc.EditMember)
+	svc.ms.PUT("/merchant/:merchant_id/member/:id/password", svc.ChangePasswordMember)
+	svc.ms.DELETE("/merchant/:merchant_id/member/:id", svc.DeleteMember)
 
 }
 

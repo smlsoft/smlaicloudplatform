@@ -1,8 +1,8 @@
 package api
 
 import (
-	"crypto/rsa"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
@@ -18,8 +18,6 @@ type AuthenticationService struct {
 	ms         *microservice.Microservice
 	cfg        microservice.IConfig
 	jwtService *microservice.JwtService
-	signKey    *rsa.PrivateKey
-	verifyKey  *rsa.PublicKey
 }
 
 func NewAuthenticationService(ms *microservice.Microservice, cfg microservice.IConfig) *AuthenticationService {
@@ -31,7 +29,7 @@ func NewAuthenticationService(ms *microservice.Microservice, cfg microservice.IC
 
 	// jwtService := microservice.NewJwtService(signKey, verifyKey, 60*24*10)
 
-	jwtService := microservice.NewJwtService(cfg.JwtSecretKey(), 60*24*10)
+	jwtService := microservice.NewJwtService(ms.Cacher(cfg.CacherConfig()), cfg.JwtSecretKey(), 60*24*10)
 
 	return &AuthenticationService{
 		ms:         ms,
@@ -45,6 +43,7 @@ func (svc *AuthenticationService) RouteSetup() {
 	svc.ms.GET("/", svc.Index)
 	svc.ms.POST("/login", svc.Login)
 	svc.ms.POST("/register", svc.Register)
+	svc.ms.POST("/logout", svc.Logout)
 	svc.ms.GET("/profile", svc.Profile, svc.jwtService.MWFunc())
 }
 
@@ -88,7 +87,8 @@ func (svc *AuthenticationService) Login(ctx microservice.IServiceContext) error 
 		return err
 	}
 
-	tokenString, err := svc.jwtService.GenerateToken(micromodel.UserInfo{Username: findUser.Username, Name: findUser.Name}, time.Duration(60*24*10)*time.Minute)
+	tokenString, err := svc.jwtService.GenerateTokenWithRedis(micromodel.UserInfo{Username: findUser.Username, Name: findUser.Name})
+
 	if err != nil {
 		svc.ms.Log("auth", err.Error())
 		// ctx.ResponseError(http.StatusBadRequest, "can't create token.")
@@ -155,6 +155,16 @@ func (svc *AuthenticationService) Register(ctx microservice.IServiceContext) err
 func (svc *AuthenticationService) Profile(ctx microservice.IServiceContext) error {
 
 	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "user": ctx.UserInfo()})
+
+	return nil
+}
+
+func (svc *AuthenticationService) Logout(ctx microservice.IServiceContext) error {
+
+	svc.jwtService.ExpireToken(ctx.Header("Authorization"))
+	fmt.Println(ctx.Header("Authorization"))
+	h := ctx.Header("Authorization")
+	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "h": h})
 
 	return nil
 }

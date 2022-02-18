@@ -3,18 +3,36 @@ package microservice
 import (
 	"smlcloudplatform/internal/microservice/models"
 	"testing"
-	"time"
 )
 
 const (
 	jwtKey = "946796991b2ece76900bfbc65612debc2e54554ef692cef6ec52181abe063d4d"
 )
 
+type TestCacherConfig struct{}
+
+func (cfg *TestCacherConfig) Endpoint() string {
+	return "127.0.0.1:6379"
+}
+
+func (cfg *TestCacherConfig) Password() string {
+	return ""
+}
+
+func (cfg *TestCacherConfig) DB() int {
+	return 0
+}
+
+func (cfg *TestCacherConfig) ConnectionSettings() ICacherConnectionSettings {
+	return NewDefaultCacherConnectionSettings()
+}
 func TestGenerateToken(t *testing.T) {
 
-	jwtService := NewJwtService(jwtKey, 60*24*10)
+	cacher := NewCacher(&TestCacherConfig{})
 
-	token, err := jwtService.GenerateToken(models.UserInfo{Username: "u001", Name: "My Name"}, time.Duration(60*24*10)*time.Minute)
+	jwtService := NewJwtService(cacher, jwtKey, 60*24*10)
+
+	token, err := jwtService.GenerateToken(models.UserInfo{Username: "u001", Name: "My Name"})
 
 	if err != nil {
 		t.Error(err.Error())
@@ -32,9 +50,11 @@ func TestGenerateToken(t *testing.T) {
 
 func TestParseToken(t *testing.T) {
 
-	jwtService := NewJwtService(jwtKey, 60*24*10)
+	cacher := NewCacher(&TestCacherConfig{})
 
-	tokenString, err := jwtService.GenerateToken(models.UserInfo{Username: "u001", Name: "My Name"}, time.Duration(60*24*10)*time.Minute)
+	jwtService := NewJwtService(cacher, jwtKey, 60*24*10)
+
+	tokenString, err := jwtService.GenerateToken(models.UserInfo{Username: "u001", Name: "My Name"})
 
 	if err != nil {
 		t.Error(err.Error())
@@ -65,9 +85,10 @@ func TestParseToken(t *testing.T) {
 
 func TestParseTokenReal(t *testing.T) {
 
-	jwtService := NewJwtService(jwtKey, 60*24*10)
+	cacher := NewCacher(&TestCacherConfig{})
+	jwtService := NewJwtService(cacher, jwtKey, 60*24*10)
 
-	tokenGen, err := jwtService.GenerateToken(models.UserInfo{Username: "u001", Name: "My Name"}, time.Duration(60*24*10)*time.Minute)
+	tokenGen, err := jwtService.GenerateToken(models.UserInfo{Username: "u001", Name: "My Name"})
 
 	if err != nil {
 		t.Error(err.Error())

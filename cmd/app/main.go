@@ -25,6 +25,16 @@ func main() {
 	cfg := microservice.NewConfig()
 	ms := microservice.NewMicroservice(cfg)
 
+	cacher := ms.Cacher(cfg.CacherConfig())
+	jwtService := microservice.NewJwtService(cacher, cfg.JwtSecretKey(), 24*3)
+
+	publicPath := []string{
+		"/login",
+		"/register",
+	}
+
+	ms.HttpMiddleware(jwtService.MWFuncWithRedis(cacher, publicPath...))
+
 	svcAuth := api.NewAuthenticationService(ms, cfg)
 	svcAuth.RouteSetup()
 
