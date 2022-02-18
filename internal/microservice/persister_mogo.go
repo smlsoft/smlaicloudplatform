@@ -22,6 +22,7 @@ type IPersisterMongo interface {
 	FindByID(model interface{}, keyName string, id interface{}, decode interface{}) error
 	Create(model interface{}, data interface{}) (primitive.ObjectID, error)
 	UpdateOne(model interface{}, keyName string, id interface{}, data interface{}) error
+	Update(model interface{}, filter interface{}, data interface{}) error
 	CreateInBatch(model interface{}, data []interface{}) error
 	Count(model interface{}, filter interface{}) (int, error)
 	Exec(model interface{}) (*mongo.Collection, error)
@@ -266,6 +267,30 @@ func (pst *PersisterMongo) CreateInBatch(model interface{}, data []interface{}) 
 	}
 
 	_, err = db.Collection(collectionName).InsertMany(pst.ctx, data)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (pst *PersisterMongo) Update(model interface{}, filter interface{}, data interface{}) error {
+	db, err := pst.getClient()
+	if err != nil {
+		return err
+	}
+
+	collectionName, err := pst.getCollectionName(model)
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Collection(collectionName).UpdateMany(
+		pst.ctx,
+		filter,
+		data,
+	)
 
 	if err != nil {
 		return err

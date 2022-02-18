@@ -165,7 +165,7 @@ func TestMongodbFindByID(t *testing.T) {
 	}
 }
 
-func TestMongodbUpdate(t *testing.T) {
+func TestMongodbUpdateOne(t *testing.T) {
 
 	productNameModified := "product name modify"
 
@@ -184,6 +184,42 @@ func TestMongodbUpdate(t *testing.T) {
 		ProductCode: productCode,
 		ProductName: productNameModified,
 	})
+
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	productCheck := &Product{}
+	err = pst.FindOne(&Product{}, bson.M{"product_code": productCode}, productCheck)
+
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	if productCheck.ProductName != productNameModified {
+		t.Error("Product not modified")
+	}
+}
+
+func TestMongodbUpdate(t *testing.T) {
+
+	productNameModified := "test modify"
+
+	cfg := &ConfigDBTest{}
+
+	pst := microservice.NewPersisterMongo(cfg)
+
+	productFind := &Product{}
+	err := pst.FindOne(&Product{}, bson.M{"product_code": productCode}, productFind)
+
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	err = pst.Update(&Product{}, bson.M{"_id": productFind.ID}, bson.M{"$set": &Product{
+		ProductCode: productCode,
+		ProductName: productNameModified,
+	}})
 
 	if err != nil {
 		t.Error(err.Error())
