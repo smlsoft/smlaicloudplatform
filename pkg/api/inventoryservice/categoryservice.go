@@ -95,7 +95,7 @@ func (svc *InventoryService) EditCategory(ctx microservice.IServiceContext) erro
 	findCategory.UpdatedBy = authUsername
 	findCategory.UpdatedAt = time.Now()
 
-	err = pst.Update(&models.Category{}, findCategory, "guidFixed", id)
+	err = pst.UpdateOne(&models.Category{}, "guidFixed", id, findCategory)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

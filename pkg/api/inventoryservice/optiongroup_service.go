@@ -95,7 +95,7 @@ func (svc *InventoryService) EditOptionGroup(ctx microservice.IServiceContext) e
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = pst.Update(&models.InventoryOptionGroup{}, findDoc, "guidFixed", id)
+	err = pst.UpdateOne(&models.InventoryOptionGroup{}, "guidFixed", id, findDoc)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

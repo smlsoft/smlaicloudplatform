@@ -180,10 +180,10 @@ func TestMongodbUpdate(t *testing.T) {
 		t.Error(err.Error())
 	}
 
-	err = pst.Update(&Product{}, &Product{
+	err = pst.UpdateOne(&Product{}, "_id", productFind.ID, &Product{
 		ProductCode: productCode,
 		ProductName: productNameModified,
-	}, "_id", productFind.ID)
+	})
 
 	if err != nil {
 		t.Error(err.Error())

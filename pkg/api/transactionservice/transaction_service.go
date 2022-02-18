@@ -165,7 +165,7 @@ func (svc *TransactionService) EditTransaction(ctx microservice.IServiceContext)
 	findTrans.UpdatedBy = authUsername
 	findTrans.UpdatedAt = time.Now()
 
-	err = pst.Update(&models.Transaction{}, findTrans, "guidFixed", id)
+	err = pst.UpdateOne(&models.Transaction{}, "guidFixed", id, findTrans)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

@@ -21,7 +21,7 @@ type IPersisterMongo interface {
 	FindOne(model interface{}, filter interface{}, decode interface{}) error
 	FindByID(model interface{}, keyName string, id interface{}, decode interface{}) error
 	Create(model interface{}, data interface{}) (primitive.ObjectID, error)
-	Update(model interface{}, data interface{}, keyName string, id interface{}) error
+	UpdateOne(model interface{}, keyName string, id interface{}, data interface{}) error
 	CreateInBatch(model interface{}, data []interface{}) error
 	Count(model interface{}, filter interface{}) (int, error)
 	Exec(model interface{}) (*mongo.Collection, error)
@@ -274,7 +274,7 @@ func (pst *PersisterMongo) CreateInBatch(model interface{}, data []interface{}) 
 	return nil
 }
 
-func (pst *PersisterMongo) Update(model interface{}, data interface{}, keyName string, id interface{}) error {
+func (pst *PersisterMongo) UpdateOne(model interface{}, keyName string, id interface{}, data interface{}) error {
 	db, err := pst.getClient()
 	if err != nil {
 		return err
@@ -312,7 +312,7 @@ func (pst *PersisterMongo) Update(model interface{}, data interface{}, keyName s
 
 func (pst *PersisterMongo) SoftDeleteByID(model interface{}, id string) error {
 
-	err := pst.Update(model, map[string]bool{"deleted": true}, "guidFixed", id)
+	err := pst.UpdateOne(model, "guidFixed", id, map[string]bool{"deleted": true})
 
 	if err != nil {
 		return err
@@ -429,26 +429,26 @@ func (pst *PersisterMongo) Aggregate(model interface{}, pipeline []bson.D, decod
 	// 	}},
 	// }
 
-	pageFilter := []bson.D{
-		bson.D{
-			{"$facet", bson.D{
-				{"meta", bson.A{bson.D{{"$count", "total"}}}},
-				{"data", bson.A{bson.D{{"$limit", 2}}}},
-			}},
-		},
-	}
+	// pageFilter := []bson.D{
+	// 	bson.D{
+	// 		{"$facet", bson.D{
+	// 			{"meta", bson.A{bson.D{{"$count", "total"}}}},
+	// 			{"data", bson.A{bson.D{{"$limit", 2}}}},
+	// 		}},
+	// 	},
+	// }
 
-	// var pipelinePage primitive.D
-	if len(pipeline) > 0 {
-		pageFilter = append(pipeline, pageFilter...)
-	}
+	//** var pipelinePage primitive.D
+	// if len(pipeline) > 0 {
+	// 	pageFilter = append(pipeline, pageFilter...)
+	// }
 
 	// fmt.Printf("%s\n\n", pageFilter)
 	fmt.Printf("%s\n\n", pipeline[0])
 
 	//facetStage := bson.D{{"$facet", query1}}
 
-	filterCursor, err := db.Collection(collectionName).Aggregate(pst.ctx, mongo.Pipeline(pageFilter), opts...)
+	filterCursor, err := db.Collection(collectionName).Aggregate(pst.ctx, mongo.Pipeline(pipeline), opts...)
 
 	if err != nil {
 		return err

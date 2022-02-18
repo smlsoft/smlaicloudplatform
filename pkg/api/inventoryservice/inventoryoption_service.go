@@ -87,7 +87,7 @@ func (svc *InventoryService) EditInventoryOption(ctx microservice.IServiceContex
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = pst.Update(&models.InventoryOption{}, findDoc, "guidFixed", id)
+	err = pst.UpdateOne(&models.InventoryOption{}, "guidFixed", id, findDoc)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

@@ -191,7 +191,7 @@ func (svc *MerchantService) EditMember(ctx microservice.IServiceContext) error {
 	findMember.Name = memberReq.Name
 
 	idx, _ := primitive.ObjectIDFromHex(id)
-	err = pst.Update(&models.Member{}, findMember, "guidFixed", idx)
+	err = pst.UpdateOne(&models.Member{}, "guidFixed", idx, findMember)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -324,7 +324,7 @@ func (svc *MerchantService) ChangePasswordMember(ctx microservice.IServiceContex
 		findMember.Password = hashPassword
 	}
 
-	err = pst.Update(&models.Member{}, findMember, "guidFixed", id)
+	err = pst.UpdateOne(&models.Member{}, "guidFixed", id, findMember)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
