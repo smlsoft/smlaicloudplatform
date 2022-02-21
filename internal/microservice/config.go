@@ -9,8 +9,9 @@ type IConfig interface {
 	MongoPersisterConfig() IPersisterMongoConfig
 	MQServer() string
 	TopicName() string
-	SignKeyPath() string
-	VerifyKeyPath() string
+	// SignKeyPath() string
+	// VerifyKeyPath() string
+	JwtSecretKey() string
 }
 
 func getEnv(key string, fallback string) string {
@@ -27,7 +28,7 @@ func NewConfig() IConfig {
 	return &Config{}
 }
 
-func (cfg *Config) PersisterConfig() IPersisterConfig {
+func (*Config) PersisterConfig() IPersisterConfig {
 	return NewPersisterConfig()
 }
 
@@ -36,20 +37,24 @@ func (cfg *Config) MongoPersisterConfig() IPersisterMongoConfig {
 }
 
 //kafka server
-func (cfg *Config) MQServer() string {
+func (*Config) MQServer() string {
 	return os.Getenv("KAFKA_SERVER_URL")
 }
 
-func (cfg *Config) TopicName() string {
+func (*Config) TopicName() string {
 	return os.Getenv("TOPIC_NAME")
 }
 
-func (*Config) SignKeyPath() string {
-	return getEnv("PRIVATE_KEY_PATH", "./../../private.key")
-}
+// func (*Config) SignKeyPath() string {
+// 	return getEnv("PUBLIC_KEY_PATH", "./../../private.key")
+// }
 
-func (*Config) VerifyKeyPath() string {
-	return getEnv("PUBLIC_KEY_PATH", "./../../public.key")
+// func (*Config) VerifyKeyPath() string {
+// 	return getEnv("PRIVATE_KEY_PATH", "./../../public.key")
+// }
+
+func (*Config) JwtSecretKey() string {
+	return getEnv("JWT_SECRET_KEY", "54cfcbf5437a029d48a9f67552eeb04b48a65703")
 }
 
 type PersisterConfig struct{}

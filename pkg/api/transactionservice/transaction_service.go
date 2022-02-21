@@ -2,11 +2,9 @@ package transactionservice
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/utils"
 	"strconv"
 	"time"
 
@@ -22,13 +20,15 @@ type TransactionService struct {
 
 func NewTransactionService(ms *microservice.Microservice, cfg microservice.IConfig) *TransactionService {
 
-	signKey, verifyKey, err := utils.LoadKey(cfg.SignKeyPath(), cfg.VerifyKeyPath())
+	// signKey, verifyKey, err := utils.LoadKey(cfg.SignKeyPath(), cfg.VerifyKeyPath())
 
-	if err != nil {
-		fmt.Println("jwt key error :: " + err.Error())
-	}
+	// if err != nil {
+	// 	fmt.Println("jwt key error :: " + err.Error())
+	// }
 
-	jwtService := microservice.NewJwtService(signKey, verifyKey, 60*24*10)
+	// jwtService := microservice.NewJwtService(signKey, verifyKey, 60*24*10)
+
+	jwtService := microservice.NewJwtService(cfg.JwtSecretKey(), 60*24*10)
 
 	inventoryapi := &TransactionService{
 		ms:         ms,

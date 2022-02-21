@@ -1,15 +1,92 @@
 package microservice
 
 import (
-	"crypto/rsa"
-	"io/ioutil"
 	"smlcloudplatform/internal/microservice/models"
 	"testing"
 	"time"
-
-	"github.com/golang-jwt/jwt"
 )
 
+const (
+	jwtKey = "946796991b2ece76900bfbc65612debc2e54554ef692cef6ec52181abe063d4d"
+)
+
+func TestGenerateToken(t *testing.T) {
+
+	jwtService := NewJwtService(jwtKey, 60*24*10)
+
+	token, err := jwtService.GenerateToken(models.UserInfo{Username: "u001", Name: "My Name"}, time.Duration(60*24*10)*time.Minute)
+
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+	if len(token) == 0 {
+		t.Error("token is empty")
+		return
+	}
+
+	t.Log(token)
+
+}
+
+func TestParseToken(t *testing.T) {
+
+	jwtService := NewJwtService(jwtKey, 60*24*10)
+
+	tokenString, err := jwtService.GenerateToken(models.UserInfo{Username: "u001", Name: "My Name"}, time.Duration(60*24*10)*time.Minute)
+
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+	if len(tokenString) == 0 {
+		t.Error("token is empty")
+		return
+	}
+
+	token, err := jwtService.ParseToken(tokenString)
+
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+	claims := token.Claims.(*CustomClaims)
+
+	if claims.UserInfo.Username != "u001" {
+		t.Error("username in token invalid")
+		return
+	}
+
+	t.Log(claims.UserInfo.Name)
+}
+
+func TestParseTokenReal(t *testing.T) {
+
+	jwtService := NewJwtService(jwtKey, 60*24*10)
+
+	tokenGen, err := jwtService.GenerateToken(models.UserInfo{Username: "u001", Name: "My Name"}, time.Duration(60*24*10)*time.Minute)
+
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+	token, err := jwtService.ParseToken(tokenGen)
+
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+	claims := token.Claims.(*CustomClaims)
+
+	t.Log(claims.UserInfo.Name)
+}
+
+/*
 func getKey() (*rsa.PrivateKey, *rsa.PublicKey, error) {
 	signBytes, err := ioutil.ReadFile("./../../private.key")
 
@@ -127,3 +204,4 @@ func TestParseTokenReal(t *testing.T) {
 
 	t.Log(claims.UserInfo.Name)
 }
+*/
