@@ -15,7 +15,7 @@ import (
 
 func (svc *InventoryService) CreateCategory(ctx microservice.IServiceContext) error {
 	authUsername := ctx.UserInfo().Username
-	merchantId := ctx.Param("merchant_id")
+	merchantId := ctx.UserInfo().MerchantId
 	input := ctx.ReadInput()
 
 	categoryReq := &models.Category{}
@@ -27,11 +27,6 @@ func (svc *InventoryService) CreateCategory(ctx microservice.IServiceContext) er
 	}
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return nil
-	}
 
 	countCategory, err := pst.Count(&models.Category{}, bson.M{"merchantId": merchantId})
 
@@ -62,8 +57,10 @@ func (svc *InventoryService) CreateCategory(ctx microservice.IServiceContext) er
 }
 
 func (svc *InventoryService) EditCategory(ctx microservice.IServiceContext) error {
-	authUsername := ctx.UserInfo().Username
-	merchantId := ctx.Param("merchant_id")
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	merchantId := userInfo.MerchantId
+
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
@@ -76,11 +73,6 @@ func (svc *InventoryService) EditCategory(ctx microservice.IServiceContext) erro
 	}
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return nil
-	}
 
 	findCategory := &models.Category{}
 	err = pst.FindOne(&models.Category{}, bson.M{"guidFixed": id, "merchantId": merchantId, "deleted": false}, findCategory)
@@ -110,20 +102,17 @@ func (svc *InventoryService) EditCategory(ctx microservice.IServiceContext) erro
 }
 
 func (svc *InventoryService) InfoCategory(ctx microservice.IServiceContext) error {
-	username := ctx.UserInfo().Username
-	merchantId := ctx.Param("merchant_id")
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	merchantId := userInfo.MerchantId
+
 	id := ctx.Param("id")
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
 
-	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return nil
-	}
-
 	category := &models.Category{}
 
-	err := pst.FindOne(&models.Category{}, bson.M{"guidFixed": id, "merchantId": merchantId, "createdBy": username, "deleted": false}, category)
+	err := pst.FindOne(&models.Category{}, bson.M{"guidFixed": id, "merchantId": merchantId, "createdBy": authUsername, "deleted": false}, category)
 
 	if err != nil {
 		ctx.ResponseError(400, "not found")
@@ -139,16 +128,13 @@ func (svc *InventoryService) InfoCategory(ctx microservice.IServiceContext) erro
 }
 
 func (svc *InventoryService) DeleteCategory(ctx microservice.IServiceContext) error {
-	authUsername := ctx.UserInfo().Username
-	merchantId := ctx.Param("merchant_id")
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	merchantId := userInfo.MerchantId
+
 	id := ctx.Param("id")
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return nil
-	}
 
 	findCategory := &models.Category{}
 	err := pst.FindOne(&models.Category{}, bson.M{"guidFixed": id, "merchantId": merchantId}, findCategory)
@@ -180,8 +166,9 @@ func (svc *InventoryService) DeleteCategory(ctx microservice.IServiceContext) er
 }
 
 func (svc *InventoryService) SearchCategory(ctx microservice.IServiceContext) error {
-	merchantId := ctx.Param("merchant_id")
-	username := ctx.UserInfo().Username
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	merchantId := userInfo.MerchantId
 
 	q := ctx.QueryParam("q")
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
@@ -197,13 +184,8 @@ func (svc *InventoryService) SearchCategory(ctx microservice.IServiceContext) er
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
 
-	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return nil
-	}
-
 	categoryList := []models.Category{}
-	pagination, err := pst.FindPage(&models.Category{}, limit, page, bson.M{"merchantId": merchantId, "createdBy": username, "deleted": false, "name1": bson.M{"$regex": primitive.Regex{
+	pagination, err := pst.FindPage(&models.Category{}, limit, page, bson.M{"merchantId": merchantId, "createdBy": authUsername, "deleted": false, "name1": bson.M{"$regex": primitive.Regex{
 		Pattern: ".*" + q + ".*",
 		Options: "",
 	}}}, &categoryList)

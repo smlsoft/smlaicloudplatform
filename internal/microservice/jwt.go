@@ -109,6 +109,48 @@ func (jwtService *JwtService) MWFuncWithRedis(cacher ICacher, publicPath ...stri
 			}
 
 			cacheKey := jwtService.prefixCacheKey + tokenStr
+			tempUserInfo, err := jwtService.cacher.HMGet(cacheKey, []string{"username", "name", "merchantId"})
+
+			if err != nil {
+				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
+			}
+			tempMerchantId := ""
+
+			if tempUserInfo[2] != nil {
+				tempMerchantId = fmt.Sprintf("%v", tempUserInfo[2])
+			}
+
+			if len(string(tempMerchantId)) < 1 {
+				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Merchant not selected."})
+			}
+
+			userInfo := models.UserInfo{
+				Username:   fmt.Sprintf("%v", tempUserInfo[0]),
+				Name:       fmt.Sprintf("%v", tempUserInfo[1]),
+				MerchantId: fmt.Sprintf("%v", tempUserInfo[2]),
+			}
+
+			cacher.Expire("auth-"+tokenStr, jwtService.expire)
+
+			c.Set("UserInfo", userInfo)
+
+			return next(c)
+		}
+	}
+}
+
+func (jwtService *JwtService) MWFuncWithMerchant(cacher ICacher) echo.MiddlewareFunc {
+
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+
+			tokenStr, err := jwtService.GetTokenFromContext(c)
+
+			if err != nil {
+				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
+			}
+
+			cacheKey := jwtService.prefixCacheKey + tokenStr
 			tempUserInfo, err := jwtService.cacher.HMGet(cacheKey, []string{"username", "name"})
 
 			if err != nil {
@@ -120,13 +162,15 @@ func (jwtService *JwtService) MWFuncWithRedis(cacher ICacher, publicPath ...stri
 				Name:     fmt.Sprintf("%v", tempUserInfo[1]),
 			}
 
-			cacher.Expire("auth-"+tokenStr, jwtService.expire)
-
 			c.Set("UserInfo", userInfo)
 
 			return next(c)
 		}
 	}
+}
+
+func (jwtService *JwtService) GetPrefixCacheKey() string {
+	return jwtService.prefixCacheKey
 }
 
 func (jwtService *JwtService) GetTokenFromContext(c echo.Context) (string, error) {
@@ -250,6 +294,20 @@ func (jwtService *JwtService) GenerateTokenWithRedis(userInfo models.UserInfo) (
 	})
 
 	return tokenStr, nil
+}
+
+func (jwtService *JwtService) SelectMerchant(tokenStr string, merchantId string) error {
+	cacheKey := jwtService.prefixCacheKey + tokenStr
+	err := jwtService.cacher.HMSet(cacheKey, map[string]interface{}{
+		"merchantId": merchantId,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+
 }
 
 func (jwtService *JwtService) ExpireToken(tokenAuthorizationHeader string) error {

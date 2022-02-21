@@ -24,6 +24,10 @@ func (*User) CollectionName() string {
 	return "user"
 }
 
+type MerchantSelectRequest struct {
+	MerchantId string `json:"merchantId"`
+}
+
 type UserMerchant struct {
 	MerchantId string   `json:"merchantId" bson:"merchantId"`
 	Role       UserRole `json:"role" bson:"role"`

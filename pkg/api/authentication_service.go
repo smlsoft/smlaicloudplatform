@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	micromodel "smlcloudplatform/internal/microservice/models"
 )
@@ -40,16 +41,12 @@ func NewAuthenticationService(ms *microservice.Microservice, cfg microservice.IC
 
 func (svc *AuthenticationService) RouteSetup() {
 
-	svc.ms.GET("/", svc.Index)
+	cacher := svc.ms.Cacher(svc.cfg.CacherConfig())
 	svc.ms.POST("/login", svc.Login)
 	svc.ms.POST("/register", svc.Register)
 	svc.ms.POST("/logout", svc.Logout)
-	svc.ms.GET("/profile", svc.Profile, svc.jwtService.MWFunc())
-}
-
-func (svc *AuthenticationService) Index(ctx microservice.IServiceContext) error {
-	ctx.ResponseS(http.StatusOK, "ok")
-	return nil
+	svc.ms.GET("/profile", svc.Profile, svc.jwtService.MWFuncWithRedis(cacher))
+	svc.ms.POST("/select-merchant", svc.SelectMerchant, svc.jwtService.MWFuncWithMerchant(cacher))
 }
 
 func (svc *AuthenticationService) Login(ctx microservice.IServiceContext) error {
@@ -90,8 +87,7 @@ func (svc *AuthenticationService) Login(ctx microservice.IServiceContext) error 
 	tokenString, err := svc.jwtService.GenerateTokenWithRedis(micromodel.UserInfo{Username: findUser.Username, Name: findUser.Name})
 
 	if err != nil {
-		svc.ms.Log("auth", err.Error())
-		// ctx.ResponseError(http.StatusBadRequest, "can't create token.")
+		svc.ms.Log("Authentication service", err.Error())
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}
@@ -159,12 +155,58 @@ func (svc *AuthenticationService) Profile(ctx microservice.IServiceContext) erro
 	return nil
 }
 
+func (svc *AuthenticationService) SelectMerchant(ctx microservice.IServiceContext) error {
+	userInfo := ctx.UserInfo()
+	input := ctx.ReadInput()
+
+	merchantSelectReq := &models.MerchantSelectRequest{}
+	err := json.Unmarshal([]byte(input), &merchantSelectReq)
+
+	if err != nil {
+		ctx.ResponseError(400, "merchant payload invalid.")
+		return err
+	}
+
+	tokenStr, err := svc.jwtService.GetTokenFromAuthorizationHeader(ctx.Header("Authorization"))
+
+	if len(tokenStr) < 1 {
+		ctx.ResponseError(400, "token invalid.")
+		return err
+	}
+
+	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
+
+	merchantMember := &models.MerchantMember{}
+	err = pst.FindOne(&models.MerchantMember{}, bson.M{"username": userInfo.Username, "merchantId": merchantSelectReq.MerchantId}, merchantMember)
+
+	if merchantMember.Id == primitive.NilObjectID {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if merchantMember.Id == primitive.NilObjectID {
+		ctx.ResponseError(400, "merchant invalid.")
+		return err
+	}
+
+	err = svc.jwtService.SelectMerchant(tokenStr, merchantSelectReq.MerchantId)
+
+	if err != nil {
+		ctx.ResponseError(400, "failed merchant select.")
+		return err
+	}
+
+	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
+
+	return nil
+}
+
 func (svc *AuthenticationService) Logout(ctx microservice.IServiceContext) error {
 
 	svc.jwtService.ExpireToken(ctx.Header("Authorization"))
 	fmt.Println(ctx.Header("Authorization"))
-	h := ctx.Header("Authorization")
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "h": h})
+
+	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
 
 	return nil
 }

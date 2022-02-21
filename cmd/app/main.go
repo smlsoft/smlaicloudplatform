@@ -31,6 +31,7 @@ func main() {
 	publicPath := []string{
 		"/login",
 		"/register",
+		"/select-merchant",
 	}
 
 	ms.HttpMiddleware(jwtService.MWFuncWithRedis(cacher, publicPath...))

@@ -79,9 +79,11 @@ func (svc *InventoryService) RouteSetup() {
 }
 
 func (svc *InventoryService) CreateInventory(ctx microservice.IServiceContext) error {
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	merchantId := userInfo.MerchantId
+
 	input := ctx.ReadInput()
-	merchantId := ctx.Param("merchant_id")
-	authUsername := ctx.UserInfo().Username
 
 	inventory := &models.Inventory{}
 	err := json.Unmarshal([]byte(input), &inventory)
@@ -92,11 +94,6 @@ func (svc *InventoryService) CreateInventory(ctx microservice.IServiceContext) e
 	}
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return nil
-	}
 
 	inventory.MerchantId = merchantId
 	inventory.GuidFixed = utils.NewGUID()
@@ -121,16 +118,13 @@ func (svc *InventoryService) CreateInventory(ctx microservice.IServiceContext) e
 }
 
 func (svc *InventoryService) DeleteInventory(ctx microservice.IServiceContext) error {
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	merchantId := userInfo.MerchantId
+
 	id := ctx.Param("id")
-	merchantId := ctx.Param("merchant_id")
-	authUsername := ctx.UserInfo().Username
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return nil
-	}
 
 	findDoc := &models.Inventory{}
 	err := pst.FindOne(&models.Inventory{}, bson.M{"merchantId": merchantId, "guidFixed": id, "deleted": false}, findDoc)
@@ -163,8 +157,10 @@ func (svc *InventoryService) DeleteInventory(ctx microservice.IServiceContext) e
 }
 
 func (svc *InventoryService) EditInventory(ctx microservice.IServiceContext) error {
-	authUsername := ctx.UserInfo().Username
-	merchantId := ctx.Param("merchant_id")
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	merchantId := userInfo.MerchantId
+
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
@@ -177,11 +173,6 @@ func (svc *InventoryService) EditInventory(ctx microservice.IServiceContext) err
 	}
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return nil
-	}
 
 	findInv := &models.Inventory{}
 	err = pst.FindOne(&models.Inventory{}, bson.M{"merchantId": merchantId, "guidFixed": id, "createdBy": authUsername, "deleted": false}, findInv)
@@ -230,15 +221,12 @@ func (svc *InventoryService) EditInventory(ctx microservice.IServiceContext) err
 
 func (svc *InventoryService) InfoInventory(ctx microservice.IServiceContext) error {
 
+	userInfo := ctx.UserInfo()
+	merchantId := userInfo.MerchantId
+
 	id := ctx.Param("id")
-	merchantId := ctx.Param("merchant_id")
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return nil
-	}
 
 	inventory := &models.Inventory{}
 	err := pst.FindOne(&models.Inventory{}, bson.M{"merchantId": merchantId, "guidFixed": id, "deleted": false}, inventory)
@@ -273,7 +261,8 @@ func (svc *InventoryService) GetInventorySync(ctx microservice.IServiceContext) 
 
 func (svc *InventoryService) SearchInventory(ctx microservice.IServiceContext) error {
 
-	merchantId := ctx.Param("merchant_id")
+	userInfo := ctx.UserInfo()
+	merchantId := userInfo.MerchantId
 
 	q := ctx.QueryParam("q")
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
@@ -288,11 +277,6 @@ func (svc *InventoryService) SearchInventory(ctx microservice.IServiceContext) e
 	}
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return nil
-	}
 
 	inventories := []models.Inventory{}
 

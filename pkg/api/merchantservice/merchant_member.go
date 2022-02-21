@@ -15,15 +15,11 @@ import (
 
 func (svc *MerchantService) SearchMember(ctx microservice.IServiceContext) error {
 
-	authUsername := ctx.UserInfo().Username
-	merchantID := ctx.Param("merchant_id")
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	merchantId := userInfo.MerchantId
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return nil
-	}
 
 	q := ctx.QueryParam("q")
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
@@ -44,7 +40,7 @@ func (svc *MerchantService) SearchMember(ctx microservice.IServiceContext) error
 		Options: "",
 	}}
 
-	pagination, err := pst.FindPage(&models.MemberInfo{}, limit, page, bson.M{"createdby": authUsername, "merchantId": merchantID, "$or": []interface{}{
+	pagination, err := pst.FindPage(&models.MemberInfo{}, limit, page, bson.M{"createdby": authUsername, "merchantId": merchantId, "$or": []interface{}{
 		bson.M{"email": searchText},
 		bson.M{"username": searchText},
 		bson.M{"name": searchText},
@@ -64,8 +60,9 @@ func (svc *MerchantService) SearchMember(ctx microservice.IServiceContext) error
 }
 
 func (svc *MerchantService) CreateMember(ctx microservice.IServiceContext) error {
-	authUsername := ctx.UserInfo().Username
-	merchantID := ctx.Param("merchant_id")
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	merchantId := userInfo.MerchantId
 
 	input := ctx.ReadInput()
 
@@ -84,13 +81,8 @@ func (svc *MerchantService) CreateMember(ctx microservice.IServiceContext) error
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
 
-	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return nil
-	}
-
 	findMember := &models.Member{}
-	err = pst.FindOne(&models.Member{}, bson.M{"merchant_id": merchantID, "$or": []interface{}{
+	err = pst.FindOne(&models.Member{}, bson.M{"merchant_id": merchantId, "$or": []interface{}{
 		bson.M{"email": memberReq.Email},
 		bson.M{"username": memberReq.Username},
 	}}, findMember)
@@ -118,7 +110,7 @@ func (svc *MerchantService) CreateMember(ctx microservice.IServiceContext) error
 	}
 
 	member := &models.Member{
-		MerchantID: merchantID,
+		MerchantID: merchantId,
 		Email:      memberReq.Email,
 		Username:   memberReq.Username,
 		Password:   hashPassword,
@@ -143,15 +135,12 @@ func (svc *MerchantService) CreateMember(ctx microservice.IServiceContext) error
 }
 
 func (svc *MerchantService) EditMember(ctx microservice.IServiceContext) error {
-	authUsername := ctx.UserInfo().Username
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+
 	id := ctx.Param("id")
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return nil
-	}
 
 	input := ctx.ReadInput()
 
@@ -205,25 +194,17 @@ func (svc *MerchantService) EditMember(ctx microservice.IServiceContext) error {
 }
 
 func (svc *MerchantService) DeleteMember(ctx microservice.IServiceContext) error {
-	username := ctx.UserInfo().Username
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+
 	id := ctx.Param("id")
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
 
-	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return nil
-	}
-
-	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return nil
-	}
-
 	findMember := &models.Member{}
 
 	idx, _ := primitive.ObjectIDFromHex(id)
-	err := pst.FindOne(&models.Member{}, bson.M{"_id": idx, "createdby": username}, findMember)
+	err := pst.FindOne(&models.Member{}, bson.M{"_id": idx, "createdby": authUsername}, findMember)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		ctx.ResponseError(400, err.Error())
@@ -249,20 +230,17 @@ func (svc *MerchantService) DeleteMember(ctx microservice.IServiceContext) error
 }
 
 func (svc *MerchantService) GetMemberInfo(ctx microservice.IServiceContext) error {
-	username := ctx.UserInfo().Username
-	merchantID := ctx.Param("merchant_id")
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	merchantId := userInfo.MerchantId
+
 	id := ctx.Param("id")
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
 
-	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return nil
-	}
-
 	memberInfo := &models.MemberInfo{}
 
-	err := pst.FindOne(&models.MemberInfo{}, bson.M{"guidFixed": id, "createdby": username, "merchant_id": merchantID}, memberInfo)
+	err := pst.FindOne(&models.MemberInfo{}, bson.M{"guidFixed": id, "createdby": authUsername, "merchant_id": merchantId}, memberInfo)
 
 	if err != nil {
 		ctx.ResponseError(400, "not found")
@@ -277,15 +255,12 @@ func (svc *MerchantService) GetMemberInfo(ctx microservice.IServiceContext) erro
 }
 
 func (svc *MerchantService) ChangePasswordMember(ctx microservice.IServiceContext) error {
-	authUsername := ctx.UserInfo().Username
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+
 	id := ctx.Param("id")
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	if _, err := utils.HasPermissionMerchant(pst, ctx); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return nil
-	}
 
 	input := ctx.ReadInput()
 
