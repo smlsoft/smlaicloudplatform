@@ -23,59 +23,45 @@ type InventoryOperation interface {
 }
 
 type InventoryService struct {
-	ms         *microservice.Microservice
-	cfg        microservice.IConfig
-	jwtService *microservice.JwtService
+	ms  *microservice.Microservice
+	cfg microservice.IConfig
 }
 
 func NewInventoryService(ms *microservice.Microservice, cfg microservice.IConfig) *InventoryService {
 
-	// signKey, verifyKey, err := utils.LoadKey(cfg.SignKeyPath(), cfg.VerifyKeyPath())
-
-	// if err != nil {
-	// 	fmt.Println("jwt key error :: " + err.Error())
-	// }
-
-	// jwtService := microservice.NewJwtService(signKey, verifyKey, 60*24*10)
-
-	jwtService := microservice.NewJwtService(ms.Cacher(cfg.CacherConfig()), cfg.JwtSecretKey(), 60*24*10)
-
 	inventoryapi := &InventoryService{
-		ms:         ms,
-		cfg:        cfg,
-		jwtService: jwtService,
+		ms:  ms,
+		cfg: cfg,
 	}
 	return inventoryapi
 }
 
 func (svc *InventoryService) RouteSetup() {
 
-	// cacher := svc.ms.Cacher(svc.cfg.CacherConfig())
-	// svc.ms.HttpMiddleware(svc.jwtService.MWFuncWithRedis(cacher))
 	svc.ms.GET("/", microservice.MicroServiceHealthyHandler)
-	svc.ms.GET("/merchant/:merchant_id/inventory", svc.SearchInventory)
-	svc.ms.POST("/merchant/:merchant_id/inventory", svc.CreateInventory)
-	svc.ms.GET("/merchant/:merchant_id/inventory/:id", svc.InfoInventory)
-	svc.ms.PUT("/merchant/:merchant_id/inventory/:id", svc.EditInventory)
-	svc.ms.GET("/merchant/:merchant_id/inventorysync", svc.GetInventorySync)
-	svc.ms.DELETE("/merchant/:merchant_id/inventory/:id", svc.DeleteInventory)
+	svc.ms.GET("/inventory", svc.SearchInventory)
+	svc.ms.POST("/inventory", svc.CreateInventory)
+	svc.ms.GET("/inventory/:id", svc.InfoInventory)
+	svc.ms.PUT("/inventory/:id", svc.EditInventory)
+	svc.ms.GET("/inventorysync", svc.GetInventorySync)
+	svc.ms.DELETE("/inventory/:id", svc.DeleteInventory)
 
-	svc.ms.GET("/merchant/:merchant_id/category", svc.SearchCategory)
-	svc.ms.POST("/merchant/:merchant_id/category", svc.CreateCategory)
-	svc.ms.GET("/merchant/:merchant_id/category/:id", svc.InfoCategory)
-	svc.ms.PUT("/merchant/:merchant_id/category/:id", svc.EditCategory)
-	svc.ms.DELETE("/merchant/:merchant_id/category/:id", svc.DeleteCategory)
+	svc.ms.GET("/category", svc.SearchCategory)
+	svc.ms.POST("/category", svc.CreateCategory)
+	svc.ms.GET("/category/:id", svc.InfoCategory)
+	svc.ms.PUT("/category/:id", svc.EditCategory)
+	svc.ms.DELETE("/category/:id", svc.DeleteCategory)
 
-	svc.ms.GET("/merchant/:merchant_id/optgroup", svc.SearchOptionGroup)
-	svc.ms.POST("/merchant/:merchant_id/optgroup", svc.CreateOptionGroup)
-	svc.ms.GET("/merchant/:merchant_id/optgroup/:id", svc.InfoOptionGroup)
-	svc.ms.PUT("/merchant/:merchant_id/optgroup/:id", svc.EditOptionGroup)
-	svc.ms.DELETE("/merchant/:merchant_id/optgroup/:id", svc.DeleteOptionGroup)
+	svc.ms.GET("/optgroup", svc.SearchOptionGroup)
+	svc.ms.POST("/optgroup", svc.CreateOptionGroup)
+	svc.ms.GET("/optgroup/:id", svc.InfoOptionGroup)
+	svc.ms.PUT("/optgroup/:id", svc.EditOptionGroup)
+	svc.ms.DELETE("/optgroup/:id", svc.DeleteOptionGroup)
 
-	svc.ms.POST("/merchant/:merchant_id/option", svc.CreateInventoryOption)
-	svc.ms.GET("/merchant/:merchant_id/option/:id", svc.InfoInventoryOption)
-	svc.ms.PUT("/merchant/:merchant_id/option/:id", svc.EditInventoryOption)
-	svc.ms.DELETE("/merchant/:merchant_id/option/:id", svc.DeleteInventoryOption)
+	svc.ms.POST("/option", svc.CreateInventoryOption)
+	svc.ms.GET("/option/:id", svc.InfoInventoryOption)
+	svc.ms.PUT("/option/:id", svc.EditInventoryOption)
+	svc.ms.DELETE("/option/:id", svc.DeleteInventoryOption)
 }
 
 func (svc *InventoryService) CreateInventory(ctx microservice.IServiceContext) error {

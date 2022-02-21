@@ -14,9 +14,8 @@ import (
 )
 
 type MerchantService struct {
-	ms         *microservice.Microservice
-	cfg        microservice.IConfig
-	jwtService *microservice.JwtService
+	ms  *microservice.Microservice
+	cfg microservice.IConfig
 }
 
 func NewMerchantService(ms *microservice.Microservice, cfg microservice.IConfig) *MerchantService {
@@ -28,12 +27,11 @@ func NewMerchantService(ms *microservice.Microservice, cfg microservice.IConfig)
 
 	// jwtService := microservice.NewJwtService(signKey, verifyKey, 60*24*10)
 
-	jwtService := microservice.NewJwtService(ms.Cacher(cfg.CacherConfig()), cfg.JwtSecretKey(), 60*24*10)
+	// jwtService := microservice.NewJwtService(ms.Cacher(cfg.CacherConfig()), cfg.JwtSecretKey(), 60*24*10)
 
 	return &MerchantService{
-		ms:         ms,
-		cfg:        cfg,
-		jwtService: jwtService,
+		ms:  ms,
+		cfg: cfg,
 	}
 }
 
@@ -45,12 +43,12 @@ func (svc *MerchantService) RouteSetup() {
 	svc.ms.PUT("/merchant/:id", svc.EditMerchant)
 	svc.ms.DELETE("/merchant/:id", svc.DeleteMerchant)
 
-	svc.ms.GET("/merchant/:merchant_id/member", svc.SearchMember)
-	svc.ms.POST("/merchant/:merchant_id/member", svc.CreateMember)
-	svc.ms.GET("/merchant/:merchant_id/member/:id", svc.GetMemberInfo)
-	svc.ms.PUT("/merchant/:merchant_id/member/:id", svc.EditMember)
-	svc.ms.PUT("/merchant/:merchant_id/member/:id/password", svc.ChangePasswordMember)
-	svc.ms.DELETE("/merchant/:merchant_id/member/:id", svc.DeleteMember)
+	svc.ms.GET("/member", svc.SearchMember)
+	svc.ms.POST("/member", svc.CreateMember)
+	svc.ms.GET("/member/:id", svc.GetMemberInfo)
+	svc.ms.PUT("/member/:id", svc.EditMember)
+	svc.ms.PUT("/member/:id/password", svc.ChangePasswordMember)
+	svc.ms.DELETE("/member/:id", svc.DeleteMember)
 
 }
 

@@ -13,44 +13,34 @@ import (
 )
 
 type TransactionService struct {
-	ms         *microservice.Microservice
-	cfg        microservice.IConfig
-	jwtService *microservice.JwtService
+	ms  *microservice.Microservice
+	cfg microservice.IConfig
 }
 
 func NewTransactionService(ms *microservice.Microservice, cfg microservice.IConfig) *TransactionService {
 
-	// signKey, verifyKey, err := utils.LoadKey(cfg.SignKeyPath(), cfg.VerifyKeyPath())
-
-	// if err != nil {
-	// 	fmt.Println("jwt key error :: " + err.Error())
-	// }
-
-	// jwtService := microservice.NewJwtService(signKey, verifyKey, 60*24*10)
-
-	jwtService := microservice.NewJwtService(ms.Cacher(cfg.CacherConfig()), cfg.JwtSecretKey(), 60*24*10)
-
 	inventoryapi := &TransactionService{
-		ms:         ms,
-		cfg:        cfg,
-		jwtService: jwtService,
+		ms:  ms,
+		cfg: cfg,
 	}
 	return inventoryapi
 }
 
 func (svc *TransactionService) RouteSetup() {
-	svc.ms.HttpMiddleware(svc.jwtService.MWFunc())
-	svc.ms.GET("/merchant/:merchant_id/transaction", svc.SearchTransaction)
-	svc.ms.POST("/merchant/:merchant_id/transaction", svc.CreateTransaction)
-	svc.ms.GET("/merchant/:merchant_id/transaction/:id", svc.InfoTransaction)
-	svc.ms.PUT("/merchant/:merchant_id/transaction/:id", svc.EditTransaction)
-	svc.ms.DELETE("/merchant/:merchant_id/transaction/:id", svc.DeleteTransaction)
+
+	svc.ms.GET("/transaction", svc.SearchTransaction)
+	svc.ms.POST("/transaction", svc.CreateTransaction)
+	svc.ms.GET("/transaction/:id", svc.InfoTransaction)
+	svc.ms.PUT("/transaction/:id", svc.EditTransaction)
+	svc.ms.DELETE("/transaction/:id", svc.DeleteTransaction)
 }
 
 func (svc *TransactionService) CreateTransaction(ctx microservice.IServiceContext) error {
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	merchantId := userInfo.MerchantId
+
 	input := ctx.ReadInput()
-	merchantId := ctx.Param("merchant_id")
-	authUsername := ctx.UserInfo().Username
 
 	trans := &models.Transaction{}
 	err := json.Unmarshal([]byte(input), &trans)
@@ -98,9 +88,11 @@ func (svc *TransactionService) CreateTransaction(ctx microservice.IServiceContex
 }
 
 func (svc *TransactionService) DeleteTransaction(ctx microservice.IServiceContext) error {
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	merchantId := userInfo.MerchantId
+
 	id := ctx.Param("id")
-	merchantId := ctx.Param("merchant_id")
-	authUsername := ctx.UserInfo().Username
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
 
@@ -131,8 +123,10 @@ func (svc *TransactionService) DeleteTransaction(ctx microservice.IServiceContex
 }
 
 func (svc *TransactionService) EditTransaction(ctx microservice.IServiceContext) error {
-	authUsername := ctx.UserInfo().Username
-	merchantId := ctx.Param("merchant_id")
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	merchantId := userInfo.MerchantId
+
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
@@ -178,8 +172,10 @@ func (svc *TransactionService) EditTransaction(ctx microservice.IServiceContext)
 
 func (svc *TransactionService) InfoTransaction(ctx microservice.IServiceContext) error {
 
+	userInfo := ctx.UserInfo()
+	merchantId := userInfo.MerchantId
+
 	id := ctx.Param("id")
-	merchantId := ctx.Param("merchant_id")
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
 
@@ -197,7 +193,8 @@ func (svc *TransactionService) InfoTransaction(ctx microservice.IServiceContext)
 
 func (svc *TransactionService) SearchTransaction(ctx microservice.IServiceContext) error {
 
-	merchantId := ctx.Param("merchant_id")
+	userInfo := ctx.UserInfo()
+	merchantId := userInfo.MerchantId
 
 	q := ctx.QueryParam("q")
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
@@ -237,7 +234,9 @@ func (svc *TransactionService) SearchTransaction(ctx microservice.IServiceContex
 
 func (svc *TransactionService) SearchTransactionItems(ctx microservice.IServiceContext) error {
 
-	merchantId := ctx.Param("merchant_id")
+	userInfo := ctx.UserInfo()
+	merchantId := userInfo.MerchantId
+
 	transId := ctx.Param("trans_id")
 
 	q := ctx.QueryParam("q")

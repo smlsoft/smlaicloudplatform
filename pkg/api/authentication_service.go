@@ -16,9 +16,9 @@ import (
 )
 
 type AuthenticationService struct {
-	ms         *microservice.Microservice
-	cfg        microservice.IConfig
-	jwtService *microservice.JwtService
+	ms          *microservice.Microservice
+	cfg         microservice.IConfig
+	authService *microservice.AuthService
 }
 
 func NewAuthenticationService(ms *microservice.Microservice, cfg microservice.IConfig) *AuthenticationService {
@@ -30,12 +30,12 @@ func NewAuthenticationService(ms *microservice.Microservice, cfg microservice.IC
 
 	// jwtService := microservice.NewJwtService(signKey, verifyKey, 60*24*10)
 
-	jwtService := microservice.NewJwtService(ms.Cacher(cfg.CacherConfig()), cfg.JwtSecretKey(), 60*24*10)
+	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 60*24*10)
 
 	return &AuthenticationService{
-		ms:         ms,
-		cfg:        cfg,
-		jwtService: jwtService,
+		ms:          ms,
+		cfg:         cfg,
+		authService: authService,
 	}
 }
 
@@ -45,8 +45,8 @@ func (svc *AuthenticationService) RouteSetup() {
 	svc.ms.POST("/login", svc.Login)
 	svc.ms.POST("/register", svc.Register)
 	svc.ms.POST("/logout", svc.Logout)
-	svc.ms.GET("/profile", svc.Profile, svc.jwtService.MWFuncWithRedis(cacher))
-	svc.ms.POST("/select-merchant", svc.SelectMerchant, svc.jwtService.MWFuncWithMerchant(cacher))
+	svc.ms.GET("/profile", svc.Profile, svc.authService.MWFuncWithRedis(cacher))
+	svc.ms.POST("/select-merchant", svc.SelectMerchant, svc.authService.MWFuncWithMerchant(cacher))
 }
 
 func (svc *AuthenticationService) Login(ctx microservice.IServiceContext) error {
@@ -84,7 +84,7 @@ func (svc *AuthenticationService) Login(ctx microservice.IServiceContext) error 
 		return err
 	}
 
-	tokenString, err := svc.jwtService.GenerateTokenWithRedis(micromodel.UserInfo{Username: findUser.Username, Name: findUser.Name})
+	tokenString, err := svc.authService.GenerateTokenWithRedis(micromodel.UserInfo{Username: findUser.Username, Name: findUser.Name})
 
 	if err != nil {
 		svc.ms.Log("Authentication service", err.Error())
@@ -167,7 +167,7 @@ func (svc *AuthenticationService) SelectMerchant(ctx microservice.IServiceContex
 		return err
 	}
 
-	tokenStr, err := svc.jwtService.GetTokenFromAuthorizationHeader(ctx.Header("Authorization"))
+	tokenStr, err := svc.authService.GetTokenFromAuthorizationHeader(ctx.Header("Authorization"))
 
 	if len(tokenStr) < 1 {
 		ctx.ResponseError(400, "token invalid.")
@@ -189,7 +189,7 @@ func (svc *AuthenticationService) SelectMerchant(ctx microservice.IServiceContex
 		return err
 	}
 
-	err = svc.jwtService.SelectMerchant(tokenStr, merchantSelectReq.MerchantId)
+	err = svc.authService.SelectMerchant(tokenStr, merchantSelectReq.MerchantId)
 
 	if err != nil {
 		ctx.ResponseError(400, "failed merchant select.")
@@ -203,7 +203,7 @@ func (svc *AuthenticationService) SelectMerchant(ctx microservice.IServiceContex
 
 func (svc *AuthenticationService) Logout(ctx microservice.IServiceContext) error {
 
-	svc.jwtService.ExpireToken(ctx.Header("Authorization"))
+	svc.authService.ExpireToken(ctx.Header("Authorization"))
 	fmt.Println(ctx.Header("Authorization"))
 
 	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
