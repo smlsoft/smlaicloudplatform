@@ -22,7 +22,7 @@ type IPersisterMongo interface {
 	FindByID(model interface{}, keyName string, id interface{}, decode interface{}) error
 	Create(model interface{}, data interface{}) (primitive.ObjectID, error)
 	UpdateOne(model interface{}, keyName string, id interface{}, data interface{}) error
-	Update(model interface{}, filter interface{}, data interface{}) error
+	Update(model interface{}, filter interface{}, data interface{}, opts ...*options.UpdateOptions) error
 	CreateInBatch(model interface{}, data []interface{}) error
 	Count(model interface{}, filter interface{}) (int, error)
 	Exec(model interface{}) (*mongo.Collection, error)
@@ -54,7 +54,7 @@ type PersisterMongo struct {
 
 func NewPersisterMongo(config IPersisterMongoConfig) *PersisterMongo {
 	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	ctx := context.TODO()
+	ctx := context.Background()
 	// defer cancel()
 
 	return &PersisterMongo{
@@ -275,7 +275,7 @@ func (pst *PersisterMongo) CreateInBatch(model interface{}, data []interface{}) 
 	return nil
 }
 
-func (pst *PersisterMongo) Update(model interface{}, filter interface{}, data interface{}) error {
+func (pst *PersisterMongo) Update(model interface{}, filter interface{}, data interface{}, opts ...*options.UpdateOptions) error {
 	db, err := pst.getClient()
 	if err != nil {
 		return err
@@ -290,6 +290,7 @@ func (pst *PersisterMongo) Update(model interface{}, filter interface{}, data in
 		pst.ctx,
 		filter,
 		data,
+		opts...,
 	)
 
 	if err != nil {

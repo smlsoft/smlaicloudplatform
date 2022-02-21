@@ -104,8 +104,8 @@ func (svc *MerchantService) SearchMerchant(ctx microservice.IServiceContext) err
 }
 
 func (svc *MerchantService) CreateMerchant(ctx microservice.IServiceContext) error {
-
-	if len(ctx.UserInfo().Username) < 1 {
+	authUsername := ctx.UserInfo().Username
+	if len(authUsername) < 1 {
 		ctx.ResponseError(400, "user authentication invalid")
 	}
 
@@ -121,7 +121,8 @@ func (svc *MerchantService) CreateMerchant(ctx microservice.IServiceContext) err
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
 
-	merchantReq.GuidFixed = utils.NewGUID()
+	merchantId := utils.NewGUID()
+	merchantReq.GuidFixed = merchantId
 	merchantReq.CreatedBy = ctx.UserInfo().Username
 	merchantReq.CreatedAt = time.Now()
 
@@ -132,6 +133,28 @@ func (svc *MerchantService) CreateMerchant(ctx microservice.IServiceContext) err
 		return err
 	}
 
+	findUser := &models.User{}
+	err = pst.FindOne(&models.User{}, bson.M{"username": authUsername}, findUser)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if findUser.ID == primitive.NilObjectID {
+		ctx.ResponseError(400, "user not found.")
+		return err
+	}
+
+	userMerchant := models.UserMerchant{
+		MerchantId: merchantId,
+		Role:       models.ROLE_OWNER,
+	}
+
+	findUser.Merchants = append(findUser.Merchants, userMerchant)
+
+	pst.UpdateOne(&models.User{}, "username", authUsername, findUser)
+
 	ctx.Response(http.StatusOK, models.ApiResponse{
 		Success: true,
 		Id:      merchantReq.GuidFixed,
@@ -140,7 +163,7 @@ func (svc *MerchantService) CreateMerchant(ctx microservice.IServiceContext) err
 }
 
 func (svc *MerchantService) DeleteMerchant(ctx microservice.IServiceContext) error {
-	username := ctx.UserInfo().Username
+	authUsername := ctx.UserInfo().Username
 	id := ctx.Param("id")
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
@@ -154,12 +177,21 @@ func (svc *MerchantService) DeleteMerchant(ctx microservice.IServiceContext) err
 		return err
 	}
 
-	if findMerchant.CreatedBy != username {
+	if findMerchant.CreatedBy != authUsername {
 		ctx.ResponseError(400, "username invalid")
 		return err
 	}
 
 	err = pst.SoftDeleteByID(&models.Merchant{}, id)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = pst.Update(&models.User{}, bson.M{"username": authUsername}, bson.M{
+		"$pull": bson.M{"merchants": bson.M{"merchantId": id}},
+	})
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -201,7 +233,7 @@ func (svc *MerchantService) EditMerchant(ctx microservice.IServiceContext) error
 	findMerchant.UpdatedBy = username
 	findMerchant.UpdatedAt = time.Now()
 
-	err = pst.Update(&models.Merchant{}, findMerchant, "guidFixed", id)
+	err = pst.UpdateOne(&models.Merchant{}, "guidFixed", id, findMerchant)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

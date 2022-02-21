@@ -16,8 +16,23 @@ type User struct {
 	Name string `json:"name,omitempty" bson:"name"`
 
 	CreatedAt time.Time `json:"-" bson:"created_at,omitempty"`
+
+	Merchants []UserMerchant `json:"merchants " bson:"merchants"`
 }
 
 func (*User) CollectionName() string {
 	return "user"
 }
+
+type UserMerchant struct {
+	MerchantId string   `json:"merchantId" bson:"merchantId"`
+	Role       UserRole `json:"role" bson:"role"`
+}
+
+type UserRole string
+
+const (
+	ROLE_OWNER  UserRole = "OWNER"
+	ROLE_ADMIN  UserRole = "ADMIN"
+	ROLE_MEMBER UserRole = "MEMBER"
+)
