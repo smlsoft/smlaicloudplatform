@@ -9,6 +9,8 @@ require (
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.9.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/swaggo/echo-swagger v1.3.0
+	github.com/swaggo/swag v1.7.9
 	gorm.io/driver/postgres v1.2.1
 	gorm.io/gorm v1.22.2
 )
@@ -36,8 +38,6 @@ require (
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/swaggo/echo-swagger v1.3.0 // indirect
-	github.com/swaggo/swag v1.7.9 // indirect
 	github.com/ttacon/chalk v0.0.0-20160626202418-22c06c80ed31 // indirect
 	github.com/valyala/fasthttp v1.30.0 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
