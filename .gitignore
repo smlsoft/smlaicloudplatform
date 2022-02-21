@@ -24,3 +24,4 @@ runtest
 
 *.key
 .scannerwork/*
+server/*/*
