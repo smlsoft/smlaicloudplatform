@@ -4,52 +4,38 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	micromodel "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/utils"
-
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 type AuthenticationHttp struct {
 	ms                    *microservice.Microservice
 	cfg                   microservice.IConfig
-	jwtService            *microservice.JwtService
+	authService           microservice.AuthService
 	authenticationService *AuthenticationService
 }
 
 func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConfig) *AuthenticationHttp {
-	// signKey, verifyKey, err := utils.LoadKey(cfg.SignKeyPath(), cfg.VerifyKeyPath())
 
-	// if err != nil {
-	// 	fmt.Println("jwt key error :: " + err.Error())
-	// }
-
-	// jwtService := microservice.NewJwtService(signKey, verifyKey, 60*24*10)
-
-	jwtService := microservice.NewJwtService(ms.Cacher(cfg.CacherConfig()), cfg.JwtSecretKey(), 60*24*10)
-
+	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
-	authenticationService := NewAuthenticationService(pst, jwtService)
+	authenticationService := NewAuthenticationService(pst, authService)
 
 	return &AuthenticationHttp{
 		ms:                    ms,
 		cfg:                   cfg,
-		jwtService:            jwtService,
 		authenticationService: authenticationService,
 	}
 }
 
-// func (svc *AuthenticationHttp) RouteSetup() {
+func (h *AuthenticationHttp) RouteSetup() {
 
-// 	svc.ms.GET("/", svc.Index)
-// 	svc.ms.POST("/login", svc.Login)
-// 	svc.ms.POST("/register", svc.Register)
-// 	svc.ms.POST("/logout", svc.Logout)
-// 	svc.ms.GET("/profile", svc.Profile, svc.jwtService.MWFunc())
-// }
+	h.ms.POST("/login", h.Login)
+	// h.ms.POST("/register", h.Register)
+	// h.ms.POST("/logout", h.Logout)
+	// h.ms.GET("/profile", h.Profile, h.jwtService.MWFunc())
+}
 
-func (svc *AuthenticationHttp) Login(ctx microservice.IServiceContext) error {
+func (h *AuthenticationHttp) Login(ctx microservice.IServiceContext) error {
 
 	input := ctx.ReadInput()
 
@@ -61,35 +47,10 @@ func (svc *AuthenticationHttp) Login(ctx microservice.IServiceContext) error {
 		return err
 	}
 
-	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	findUser := &models.User{}
-	err = pst.FindOne(&models.User{}, bson.M{"username": userReq.Username}, findUser)
-
-	if err != nil && err.Error() != "mongo: no documents in result" {
-		svc.ms.Log("Authentication service", err.Error())
-		ctx.ResponseError(400, "database error")
-		return err
-	}
-
-	if len(findUser.Username) < 1 {
-		ctx.ResponseError(400, "username is not exists")
-		return err
-	}
-
-	passwordInvalid := !utils.CheckPasswordHash(userReq.Password, findUser.Password)
-
-	if passwordInvalid {
-		ctx.ResponseError(400, "password is not invalid")
-		return err
-	}
-
-	tokenString, err := svc.jwtService.GenerateTokenWithRedis(micromodel.UserInfo{Username: findUser.Username, Name: findUser.Name})
+	tokenString, err := h.authenticationService.Login(userReq)
 
 	if err != nil {
-		svc.ms.Log("auth", err.Error())
-		// ctx.ResponseError(http.StatusBadRequest, "can't create token.")
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		ctx.ResponseError(400, "login failed.")
 		return err
 	}
 

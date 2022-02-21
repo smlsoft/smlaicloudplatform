@@ -12,18 +12,18 @@ import (
 )
 
 type AuthenticationService struct {
-	pst        microservice.IPersisterMongo
-	jwtService *microservice.JwtService
+	pst         microservice.IPersisterMongo
+	authService *microservice.AuthService
 }
 
-func NewAuthenticationService(pst microservice.IPersisterMongo, jwtService *microservice.JwtService) *AuthenticationService {
+func NewAuthenticationService(pst microservice.IPersisterMongo, authService *microservice.AuthService) *AuthenticationService {
 	return &AuthenticationService{
-		pst:        pst,
-		jwtService: jwtService,
+		pst:         pst,
+		authService: authService,
 	}
 }
 
-func (svc *AuthenticationService) Login(userReq models.UserRequest) (string, error) {
+func (svc *AuthenticationService) Login(userReq *models.UserRequest) (string, error) {
 
 	findUser := &models.User{}
 	err := svc.pst.FindOne(&models.User{}, bson.M{"username": userReq.Username}, findUser)
@@ -43,7 +43,7 @@ func (svc *AuthenticationService) Login(userReq models.UserRequest) (string, err
 		return "", errors.New("password is not invalid")
 	}
 
-	tokenString, err := svc.jwtService.GenerateTokenWithRedis(micromodel.UserInfo{Username: findUser.Username, Name: findUser.Name})
+	tokenString, err := svc.authService.GenerateTokenWithRedis(micromodel.UserInfo{Username: findUser.Username, Name: findUser.Name})
 
 	if err != nil {
 		// svc.ms.Log("Authentication service", err.Error())
