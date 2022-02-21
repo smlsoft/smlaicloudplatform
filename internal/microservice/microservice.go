@@ -36,6 +36,8 @@ type IMicroservice interface {
 type Microservice struct {
 	echo            *echo.Echo
 	exitChannel     chan bool
+	cachers         map[string]ICacher
+	cachersMutex    sync.Mutex
 	persisters      map[string]IPersister
 	mongoPersisters map[string]IPersisterMongo
 	persistersMutex sync.Mutex
@@ -55,6 +57,7 @@ func NewMicroservice(config IConfig) *Microservice {
 
 	return &Microservice{
 		echo:            e,
+		cachers:         map[string]ICacher{},
 		persisters:      map[string]IPersister{},
 		mongoPersisters: map[string]IPersisterMongo{},
 	}
@@ -159,6 +162,17 @@ func (ms *Microservice) MongoPersister(cfg IPersisterMongoConfig) IPersisterMong
 		ms.persistersMutex.Unlock()
 	}
 	return pst
+}
+
+func (ms *Microservice) Cacher(cfg ICacherConfig) ICacher {
+	cacher, ok := ms.cachers[cfg.Endpoint()]
+	if !ok {
+		cacher = NewCacher(cfg)
+		ms.cachersMutex.Lock()
+		ms.cachers[cfg.Endpoint()] = cacher
+		ms.cachersMutex.Unlock()
+	}
+	return cacher
 }
 
 func (ms *Microservice) HttpMiddleware(middleware ...echo.MiddlewareFunc) {

@@ -47,6 +47,11 @@ func (ctx *HTTPContext) ReadInput() string {
 	return string(body)
 }
 
+// Header return header value by key
+func (ctx *HTTPContext) Header(attribute string) string {
+	return ctx.c.Request().Header.Get(attribute)
+}
+
 func (ctx *HTTPContext) UserInfo() models.UserInfo {
 	userInfo := ctx.c.Get("UserInfo")
 	if userInfo == nil {

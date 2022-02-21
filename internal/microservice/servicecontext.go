@@ -5,6 +5,7 @@ import "smlcloudplatform/internal/microservice/models"
 type IServiceContext interface {
 	Log(message string)
 	UserInfo() models.UserInfo
+	Header(attribute string) string
 	Param(name string) string
 	QueryParam(name string) string
 	ReadInput() string

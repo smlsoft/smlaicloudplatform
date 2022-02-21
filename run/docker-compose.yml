@@ -1,0 +1,14 @@
+version: "3"
+services:
+  redis:
+    image: bitnami/redis:5.0
+    restart: always
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - 6379:6379
+  redis-ui:
+    image: redislabs/redisinsight:1.11.1
+    restart: always
+    ports:
+      - 8001:8001

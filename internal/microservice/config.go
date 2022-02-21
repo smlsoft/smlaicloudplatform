@@ -7,8 +7,10 @@ import (
 type IConfig interface {
 	PersisterConfig() IPersisterConfig
 	MongoPersisterConfig() IPersisterMongoConfig
+	CacherConfig() ICacherConfig
 	MQServer() string
 	TopicName() string
+
 	// SignKeyPath() string
 	// VerifyKeyPath() string
 	JwtSecretKey() string
@@ -112,4 +114,30 @@ func (cfg *MongoPersisterConfig) MongodbURI() string {
 
 func (cfg *MongoPersisterConfig) DB() string {
 	return getEnv("MONGODB_DB", "smldev")
+}
+
+func (cfg *Config) CacherConfig() ICacherConfig {
+	return NewCacherConfig()
+}
+
+type CacherConfig struct{}
+
+func NewCacherConfig() *CacherConfig {
+	return &CacherConfig{}
+}
+
+func (cfg *CacherConfig) Endpoint() string {
+	return getEnv("REDIS_CACHE_URI", "127.0.0.1:6379")
+}
+
+func (cfg *CacherConfig) Password() string {
+	return ""
+}
+
+func (cfg *CacherConfig) DB() int {
+	return 0
+}
+
+func (cfg *CacherConfig) ConnectionSettings() ICacherConnectionSettings {
+	return NewDefaultCacherConnectionSettings()
 }

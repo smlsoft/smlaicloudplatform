@@ -38,7 +38,7 @@ func NewInventoryService(ms *microservice.Microservice, cfg microservice.IConfig
 
 	// jwtService := microservice.NewJwtService(signKey, verifyKey, 60*24*10)
 
-	jwtService := microservice.NewJwtService(cfg.JwtSecretKey(), 60*24*10)
+	jwtService := microservice.NewJwtService(ms.Cacher(cfg.CacherConfig()), cfg.JwtSecretKey(), 60*24*10)
 
 	inventoryapi := &InventoryService{
 		ms:         ms,
@@ -50,7 +50,8 @@ func NewInventoryService(ms *microservice.Microservice, cfg microservice.IConfig
 
 func (svc *InventoryService) RouteSetup() {
 
-	svc.ms.HttpMiddleware(svc.jwtService.MWFunc())
+	// cacher := svc.ms.Cacher(svc.cfg.CacherConfig())
+	// svc.ms.HttpMiddleware(svc.jwtService.MWFuncWithRedis(cacher))
 	svc.ms.GET("/", microservice.MicroServiceHealthyHandler)
 	svc.ms.GET("/merchant/:merchant_id/inventory", svc.SearchInventory)
 	svc.ms.POST("/merchant/:merchant_id/inventory", svc.CreateInventory)

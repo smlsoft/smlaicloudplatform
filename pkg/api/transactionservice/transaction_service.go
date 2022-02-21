@@ -28,7 +28,7 @@ func NewTransactionService(ms *microservice.Microservice, cfg microservice.IConf
 
 	// jwtService := microservice.NewJwtService(signKey, verifyKey, 60*24*10)
 
-	jwtService := microservice.NewJwtService(cfg.JwtSecretKey(), 60*24*10)
+	jwtService := microservice.NewJwtService(ms.Cacher(cfg.CacherConfig()), cfg.JwtSecretKey(), 60*24*10)
 
 	inventoryapi := &TransactionService{
 		ms:         ms,
