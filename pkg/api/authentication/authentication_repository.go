@@ -14,10 +14,11 @@ type IAuthenticationRepository interface {
 }
 
 type AuthenticationRepository struct {
-	pst *microservice.IPersisterMongo
+	pst microservice.IPersisterMongo
 }
 
-func NewAuthenticationRepository(pst *microservice.IPersisterMongo) *AuthenticationRepository {
+func NewAuthenticationRepository(pst microservice.IPersisterMongo) *AuthenticationRepository {
+
 	authenticationRepository := &AuthenticationRepository{
 		pst: pst,
 	}
@@ -28,9 +29,11 @@ func (r *AuthenticationRepository) FindUser(username string) (*models.User, erro
 
 	findUser := &models.User{}
 	err := r.pst.FindOne(&models.User{}, bson.M{"username": username}, findUser)
+
 	if err != nil {
 		return nil, err
 	}
+
 	return findUser, nil
 }
 
