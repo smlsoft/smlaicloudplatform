@@ -7,3 +7,8 @@ type ApiResponse struct {
 	Data       interface{} `json:"data,omitempty"`
 	Pagination interface{} `json:"pagination,omitempty"`
 }
+
+type AuthResponse struct {
+	Success bool   `json:"success"`
+	Token   string `json:"token"`
+}

@@ -9,34 +9,35 @@ import (
 type User struct {
 	ID primitive.ObjectID `json:"-" bson:"_id,omitempty"`
 
-	Username string `json:"username,omitempty" bson:"username"`
+	Username string `json:"username" bson:"username"`
 
-	Password string `json:"password,omitempty" bson:"password"`
+	Password string `json:"password" bson:"password"`
 
 	Name string `json:"name,omitempty" bson:"name"`
 
 	CreatedAt time.Time `json:"-" bson:"created_at,omitempty"`
-
-	Merchants []UserMerchant `json:"merchants " bson:"merchants"`
 }
 
 func (*User) CollectionName() string {
 	return "user"
 }
 
-type MerchantSelectRequest struct {
-	MerchantId string `json:"merchantId"`
+type UserProfile struct {
+	Username string `json:"username" bson:"username"`
+
+	Name string `json:"name,omitempty" bson:"name"`
+
+	CreatedAt time.Time `json:"-" bson:"created_at,omitempty"`
 }
 
-type UserMerchant struct {
-	MerchantId string   `json:"merchantId" bson:"merchantId"`
-	Role       UserRole `json:"role" bson:"role"`
+type MerchantSelectRequest struct {
+	MerchantId string `json:"merchantId"`
 }
 
 type UserRole string
 
 const (
-	ROLE_OWNER  UserRole = "OWNER"
-	ROLE_ADMIN  UserRole = "ADMIN"
-	ROLE_MEMBER UserRole = "MEMBER"
+	ROLE_OWNER UserRole = "OWNER"
+	ROLE_ADMIN UserRole = "ADMIN"
+	ROLE_User  UserRole = "User"
 )

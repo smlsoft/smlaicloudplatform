@@ -10,15 +10,16 @@ import (
 type AuthenticationHttp struct {
 	ms                    *microservice.Microservice
 	cfg                   microservice.IConfig
-	authService           microservice.AuthService
 	authenticationService IAuthenticationService
 }
 
 func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConfig) AuthenticationHttp {
 
-	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
-	authenticationService := NewAuthenticationService(pst, authService)
+
+	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
+	authRepository := NewAuthenticationRepository(pst)
+	authenticationService := NewAuthenticationService(authRepository, authService)
 
 	return AuthenticationHttp{
 		ms:                    ms,
@@ -63,7 +64,10 @@ func (h *AuthenticationHttp) Login(ctx microservice.IServiceContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "token": tokenString})
+	ctx.Response(http.StatusOK, models.AuthResponse{
+		Success: true,
+		Token:   tokenString,
+	})
 
 	return nil
 }
@@ -77,14 +81,66 @@ func (h *AuthenticationHttp) Login(ctx microservice.IServiceContext) error {
 // @Accept 		json
 // @Router		/register [post]
 func (h *AuthenticationHttp) Register(ctx microservice.IServiceContext) error {
+	input := ctx.ReadInput()
+
+	userReq := models.UserRequest{}
+	err := json.Unmarshal([]byte(input), &userReq)
+
+	if err != nil {
+		ctx.ResponseError(400, "user payload invalid")
+		return err
+	}
+
+	idx, err := h.authenticationService.Register(userReq)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, models.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success: true,
+		Id:      idx,
+	})
 	return nil
 }
 
 func (h *AuthenticationHttp) Logout(ctx microservice.IServiceContext) error {
+
+	authorizationHeader := ctx.Header("Authorization")
+
+	err := h.authenticationService.Logout(authorizationHeader)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, models.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
 	return nil
 }
 
 func (h *AuthenticationHttp) Profile(ctx microservice.IServiceContext) error {
+
+	userProfile, err := h.authenticationService.Profile(ctx.UserInfo().Username)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, models.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success: true,
+		Data:    userProfile,
+	})
 	return nil
 }
 

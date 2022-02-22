@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
@@ -180,11 +179,6 @@ func (svc *AuthenticationService) SelectMerchant(ctx microservice.IServiceContex
 	err = pst.FindOne(&models.MerchantMember{}, bson.M{"username": userInfo.Username, "merchantId": merchantSelectReq.MerchantId}, merchantMember)
 
 	if merchantMember.Id == primitive.NilObjectID {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	if merchantMember.Id == primitive.NilObjectID {
 		ctx.ResponseError(400, "merchant invalid.")
 		return err
 	}
@@ -204,8 +198,6 @@ func (svc *AuthenticationService) SelectMerchant(ctx microservice.IServiceContex
 func (svc *AuthenticationService) Logout(ctx microservice.IServiceContext) error {
 
 	svc.authService.ExpireToken(ctx.Header("Authorization"))
-	fmt.Println(ctx.Header("Authorization"))
-
 	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
 
 	return nil

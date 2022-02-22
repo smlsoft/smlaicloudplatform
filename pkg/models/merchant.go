@@ -28,6 +28,7 @@ type MerchantInfo struct {
 	TotalMember int                `json:"totalMember"`
 }
 
+//-->MerchantUser
 type MerchantMember struct {
 	Id         primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Username   string             `json:"username" bson:"username"`

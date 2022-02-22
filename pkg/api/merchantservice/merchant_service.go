@@ -140,12 +140,12 @@ func (svc *MerchantService) CreateMerchant(ctx microservice.IServiceContext) err
 		return err
 	}
 
-	userMerchant := models.UserMerchant{
-		MerchantId: merchantId,
-		Role:       models.ROLE_OWNER,
-	}
+	// userMerchant := models.UserMerchant{
+	// 	MerchantId: merchantId,
+	// 	Role:       models.ROLE_OWNER,
+	// }
 
-	findUser.Merchants = append(findUser.Merchants, userMerchant)
+	// findUser.Merchants = append(findUser.Merchants, userMerchant)
 
 	pst.UpdateOne(&models.User{}, "username", authUsername, findUser)
 
