@@ -10,6 +10,7 @@ import (
 type IMerchantService interface {
 	CreateMerchant(username string, merchant models.Merchant) (string, error)
 	UpdateMerchant(guid string, username string, merchant models.Merchant) error
+	DeleteMerchant(guid string, username string) error
 }
 
 type MerchantService struct {
@@ -61,5 +62,25 @@ func (svc *MerchantService) UpdateMerchant(guid string, username string, merchan
 		return err
 	}
 
+	return nil
+}
+
+func (svc *MerchantService) DeleteMerchant(guid string, username string) error {
+	findMerchant, err := svc.repo.FindByGuid(guid)
+
+	if err != nil {
+		return err
+	}
+
+	// *** warning feature change to check by role owner
+	if len(findMerchant.CreatedBy) < 1 {
+		return errors.New("username invalid")
+	}
+
+	err = svc.repo.Delete(guid)
+
+	if err != nil {
+		return err
+	}
 	return nil
 }

@@ -9,6 +9,8 @@ import (
 
 type IMerchantHttp interface {
 	CreateMerchant(ctx microservice.IServiceContext) error
+	UpdateMerchant(ctx microservice.IServiceContext) error
+	DeleteMerchant(ctx microservice.IServiceContext) error
 }
 
 type MerchantHttp struct {
@@ -51,6 +53,7 @@ func (h *MerchantHttp) CreateMerchant(ctx microservice.IServiceContext) error {
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, &models.ApiResponse{
 			Success: false,
+			Message: err.Error(),
 		})
 		return err
 	}
@@ -60,5 +63,57 @@ func (h *MerchantHttp) CreateMerchant(ctx microservice.IServiceContext) error {
 		Id:      idx,
 	})
 
+	return nil
+}
+
+func (h *MerchantHttp) UpdateMerchant(ctx microservice.IServiceContext) error {
+
+	authUsername := ctx.UserInfo().Username
+	id := ctx.Param("id")
+	input := ctx.ReadInput()
+
+	merchantRequest := &models.Merchant{}
+	err := json.Unmarshal([]byte(input), &merchantRequest)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.service.UpdateMerchant(id, authUsername, *merchantRequest)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, &models.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	ctx.Response(http.StatusOK, &models.ApiResponse{
+		Success: true,
+		Id:      id,
+	})
+	return nil
+}
+
+func (h *MerchantHttp) DeleteMerchant(ctx microservice.IServiceContext) error {
+
+	authUsername := ctx.UserInfo().Username
+	id := ctx.Param("id")
+
+	err := h.service.DeleteMerchant(id, authUsername)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, &models.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+	ctx.Response(http.StatusOK, &models.ApiResponse{
+		Success: true,
+		Id:      id,
+	})
 	return nil
 }
