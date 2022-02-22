@@ -11,6 +11,7 @@ type IMerchantHttp interface {
 	CreateMerchant(ctx microservice.IServiceContext) error
 	UpdateMerchant(ctx microservice.IServiceContext) error
 	DeleteMerchant(ctx microservice.IServiceContext) error
+	InfoMerchant(ctx microservice.IServiceContext) error
 }
 
 type MerchantHttp struct {
@@ -114,6 +115,27 @@ func (h *MerchantHttp) DeleteMerchant(ctx microservice.IServiceContext) error {
 	ctx.Response(http.StatusOK, &models.ApiResponse{
 		Success: true,
 		Id:      id,
+	})
+	return nil
+}
+
+func (h *MerchantHttp) InfoMerchant(ctx microservice.IServiceContext) error {
+
+	authUsername := ctx.UserInfo().Username
+	id := ctx.Param("id")
+
+	merchantInfo, err := h.service.InfoMerchant(id, authUsername)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, &models.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+	ctx.Response(http.StatusOK, &models.ApiResponse{
+		Success: true,
+		Data:    merchantInfo,
 	})
 	return nil
 }

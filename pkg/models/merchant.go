@@ -22,10 +22,9 @@ func (*Merchant) CollectionName() string {
 }
 
 type MerchantInfo struct {
-	Id          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	GuidFixed   string             `json:"guidFixed" bson:"guidFixed"`
-	Name1       string             `json:"name1" bson:"name1"`
-	TotalMember int                `json:"totalMember"`
+	Id        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	GuidFixed string             `json:"guidFixed" bson:"guidFixed"`
+	Name1     string             `json:"name1" bson:"name1"`
 }
 
 //-->MerchantUser

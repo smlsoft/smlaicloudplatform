@@ -81,13 +81,13 @@ func (svc *MerchantServiceOld) SearchMerchant(ctx microservice.IServiceContext) 
 		return err
 	}
 
-	for mid := range merchantList {
-		count, err := pst.Count(&models.Member{}, bson.M{"merchantId": merchantList[mid].Id})
-		if err != nil {
-			merchantList[mid].TotalMember = 0
-		}
-		merchantList[mid].TotalMember = count
-	}
+	// for mid := range merchantList {
+	// 	count, err := pst.Count(&models.Member{}, bson.M{"merchantId": merchantList[mid].Id})
+	// 	if err != nil {
+	// 		merchantList[mid].TotalMember = 0
+	// 	}
+	// 	merchantList[mid].TotalMember = count
+	// }
 
 	ctx.Response(http.StatusOK, models.ApiResponse{
 		Success:    true,
