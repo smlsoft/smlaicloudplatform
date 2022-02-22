@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  cloud_authentication:
+    image: smlsoft/cloudauthentication
+    expose:
+      - 8080
+    ports:
+      - 8080:8080

@@ -43,6 +43,7 @@ http://localhost:1323/swagger/doc.json
 ### Build Docker Command
 ```
 docker build -t inventoryservice -f cmd/inventoryservice/Dockerfile .
+docker build -t smlsoft/cloudauthentication -f ./cmd/authenticationservice/Dockerfile .
 ```
 
 Get Mock Package

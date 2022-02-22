@@ -44,7 +44,7 @@ func (h *AuthenticationHttp) RouteSetup() {
 // @Accept 		json
 // @Success		200	{object}	models.ApiResponse
 // @Failure		401 {object}	models.ApiResponse
-// @Router /login [post]
+// @Router /authentication/login [post]
 func (h *AuthenticationHttp) Login(ctx microservice.IServiceContext) error {
 
 	input := ctx.ReadInput()
@@ -79,7 +79,7 @@ func (h *AuthenticationHttp) Login(ctx microservice.IServiceContext) error {
 // @Param		User  body      models.UserRequest  true  "Add account"
 // @Success		200	{object}	models.ApiResponse
 // @Accept 		json
-// @Router		/register [post]
+// @Router		/authentication/register [post]
 func (h *AuthenticationHttp) Register(ctx microservice.IServiceContext) error {
 	input := ctx.ReadInput()
 
