@@ -13,7 +13,7 @@ func init() {
 
 }
 
-// @title           SML Clout Platform API
+// @title           SML Cloud Platform API
 // @version         1.0
 // @contact.name   API Support
 // @contact.url    http://www.swagger.io/support

@@ -29,8 +29,8 @@ openssl rsa -in private.key -pubout -out public.key
 ```
 
 ### Run Swagger 
-
 ```
+swag init
 go run main.go
 ```
 
@@ -45,3 +45,7 @@ http://localhost:1323/swagger/doc.json
 docker build -t inventoryservice -f cmd/inventoryservice/Dockerfile .
 ```
 
+Get Mock Package
+```
+go install github.com/vektra/mockery/v2@latest
+```

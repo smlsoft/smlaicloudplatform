@@ -11,16 +11,16 @@ type AuthenticationHttp struct {
 	ms                    *microservice.Microservice
 	cfg                   microservice.IConfig
 	authService           microservice.AuthService
-	authenticationService *AuthenticationService
+	authenticationService IAuthenticationService
 }
 
-func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConfig) *AuthenticationHttp {
+func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConfig) AuthenticationHttp {
 
 	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	authenticationService := NewAuthenticationService(pst, authService)
 
-	return &AuthenticationHttp{
+	return AuthenticationHttp{
 		ms:                    ms,
 		cfg:                   cfg,
 		authenticationService: authenticationService,
@@ -30,11 +30,20 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 func (h *AuthenticationHttp) RouteSetup() {
 
 	h.ms.POST("/login", h.Login)
-	// h.ms.POST("/register", h.Register)
-	// h.ms.POST("/logout", h.Logout)
-	// h.ms.GET("/profile", h.Profile, h.jwtService.MWFunc())
+	h.ms.POST("/register", h.Register)
+	h.ms.POST("/logout", h.Logout)
+	h.ms.GET("/profile", h.Profile)
+	h.ms.POST("/select-merchant", h.SelectMerchant)
 }
 
+// Login login
+// @Description get struct array by ID
+// @Tags		Authentication
+// @Param		User  body      models.UserRequest  true  "Add account"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Router /login [post]
 func (h *AuthenticationHttp) Login(ctx microservice.IServiceContext) error {
 
 	input := ctx.ReadInput()
@@ -56,5 +65,29 @@ func (h *AuthenticationHttp) Login(ctx microservice.IServiceContext) error {
 
 	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "token": tokenString})
 
+	return nil
+}
+
+// RegisterMember register
+// @Summary		Register An Account
+// @Description	For User Register Application
+// @Tags		Authentication
+// @Param		User  body      models.UserRequest  true  "Add account"
+// @Success		200	{object}	models.ApiResponse
+// @Accept 		json
+// @Router		/register [post]
+func (h *AuthenticationHttp) Register(ctx microservice.IServiceContext) error {
+	return nil
+}
+
+func (h *AuthenticationHttp) Logout(ctx microservice.IServiceContext) error {
+	return nil
+}
+
+func (h *AuthenticationHttp) Profile(ctx microservice.IServiceContext) error {
+	return nil
+}
+
+func (h *AuthenticationHttp) SelectMerchant(ctx microservice.IServiceContext) error {
 	return nil
 }

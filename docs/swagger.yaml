@@ -1,3 +1,23 @@
+definitions:
+  models.ApiResponse:
+    properties:
+      data: {}
+      id: {}
+      message:
+        type: string
+      pagination: {}
+      success:
+        type: boolean
+    type: object
+  models.UserRequest:
+    properties:
+      name:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -7,7 +27,50 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  title: SML Clout Platform API
+  title: SML Cloud Platform API
   version: "1.0"
-paths: {}
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Add account
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      tags:
+      - Authentication
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: For User Register Application
+      parameters:
+      - description: Add account
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      summary: Register An Account
+      tags:
+      - Authentication
 swagger: "2.0"
