@@ -7,6 +7,7 @@ import (
 	"time"
 
 	paginate "github.com/gobeam/mongo-go-pagination"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ITransactionService interface {
@@ -77,6 +78,26 @@ func (svc *TransactionService) UpdateTransaction(guid string, merchantId string,
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (svc *TransactionService) DeleteTransaction(guid string, merchantId string, username string) error {
+
+	findTrans, err := svc.transactionRepository.FindByGuid(guid, merchantId)
+
+	if err != nil {
+		return err
+	}
+
+	if findTrans.Id == primitive.NewObjectID() {
+		return nil
+	}
+
+	err = svc.transactionRepository.Delete(guid)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
