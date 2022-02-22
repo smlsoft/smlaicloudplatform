@@ -24,7 +24,7 @@ const docTemplate_swagger = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/login": {
+        "/authentication/login": {
             "post": {
                 "description": "get struct array by ID",
                 "consumes": [
@@ -60,7 +60,7 @@ const docTemplate_swagger = `{
                 }
             }
         },
-        "/register": {
+        "/authentication/register": {
             "post": {
                 "description": "For User Register Application",
                 "consumes": [

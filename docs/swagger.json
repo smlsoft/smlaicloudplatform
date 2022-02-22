@@ -15,7 +15,7 @@
     },
     "host": "localhost:8080",
     "paths": {
-        "/login": {
+        "/authentication/login": {
             "post": {
                 "description": "get struct array by ID",
                 "consumes": [
@@ -51,7 +51,7 @@
                 }
             }
         },
-        "/register": {
+        "/authentication/register": {
             "post": {
                 "description": "For User Register Application",
                 "consumes": [

@@ -30,7 +30,7 @@ info:
   title: SML Cloud Platform API
   version: "1.0"
 paths:
-  /login:
+  /authentication/login:
     post:
       consumes:
       - application/json
@@ -53,7 +53,7 @@ paths:
             $ref: '#/definitions/models.ApiResponse'
       tags:
       - Authentication
-  /register:
+  /authentication/register:
     post:
       consumes:
       - application/json
