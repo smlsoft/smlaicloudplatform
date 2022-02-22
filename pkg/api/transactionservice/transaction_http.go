@@ -8,19 +8,27 @@ import (
 	"strconv"
 )
 
+type ITransactionHttp interface {
+	CreateTransaction(ctx microservice.IServiceContext) error
+	UpdateTransaction(ctx microservice.IServiceContext) error
+	InfoTransaction(ctx microservice.IServiceContext) error
+	SearchTransaction(ctx microservice.IServiceContext) error
+	SearchTransactionItems(ctx microservice.IServiceContext) error
+}
+
 type TransactionHttp struct {
 	ms      *microservice.Microservice
 	cfg     microservice.IConfig
 	service ITransactionService
 }
 
-func NewTransactionHttp(ms *microservice.Microservice, cfg microservice.IConfig) TransactionHttp {
+func NewTransactionHttp(ms *microservice.Microservice, cfg microservice.IConfig) ITransactionHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	transRepo := NewTransactionRepository(pst)
 	service := NewTransactionService(transRepo)
-	return TransactionHttp{
+	return &TransactionHttp{
 		ms:      ms,
 		cfg:     cfg,
 		service: service,
