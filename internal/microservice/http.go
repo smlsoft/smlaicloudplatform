@@ -2,6 +2,7 @@ package microservice
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -16,28 +17,33 @@ func (ms *Microservice) GET(path string, h ServiceHandleFunc, m ...echo.Middlewa
 
 // POST register service endpoint for HTTP POST
 func (ms *Microservice) POST(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc) {
-	ms.echo.POST(path, func(c echo.Context) error {
+
+	fullPath := ms.pathPrefix + path
+	ms.echo.POST(fullPath, func(c echo.Context) error {
 		return h(NewHTTPContext(ms, c))
 	}, m...)
 }
 
 // PUT register service endpoint for HTTP PUT
 func (ms *Microservice) PUT(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc) {
-	ms.echo.PUT(path, func(c echo.Context) error {
+	fullPath := ms.pathPrefix + path
+	ms.echo.PUT(fullPath, func(c echo.Context) error {
 		return h(NewHTTPContext(ms, c))
 	}, m...)
 }
 
 // PATCH register service endpoint for HTTP PATCH
 func (ms *Microservice) PATCH(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc) {
-	ms.echo.PATCH(path, func(c echo.Context) error {
+	fullPath := ms.pathPrefix + path
+	ms.echo.PATCH(fullPath, func(c echo.Context) error {
 		return h(NewHTTPContext(ms, c))
 	}, m...)
 }
 
 // DELETE register service endpoint for HTTP DELETE
 func (ms *Microservice) DELETE(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc) {
-	ms.echo.DELETE(path, func(c echo.Context) error {
+	fullPath := ms.pathPrefix + path
+	ms.echo.DELETE(fullPath, func(c echo.Context) error {
 		return h(NewHTTPContext(ms, c))
 	}, m...)
 }
@@ -51,7 +57,13 @@ func (ms *Microservice) startHTTP(exitChannel chan bool) error {
 		<-exitChannel
 		ms.stopHTTP()
 	}()
-	return ms.echo.Start("0.0.0.0:" + port)
+	err := ms.echo.Start("0.0.0.0:" + port)
+	if err == nil {
+		if ms.pathPrefix != "" {
+			fmt.Println("Start " + ms.pathPrefix)
+		}
+	}
+	return err
 }
 
 func (ms *Microservice) stopHTTP() {

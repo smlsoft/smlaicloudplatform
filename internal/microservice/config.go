@@ -5,6 +5,7 @@ import (
 )
 
 type IConfig interface {
+	PathPrefix() string
 	PersisterConfig() IPersisterConfig
 	MongoPersisterConfig() IPersisterMongoConfig
 	CacherConfig() ICacherConfig
@@ -28,6 +29,10 @@ type Config struct{}
 
 func NewConfig() IConfig {
 	return &Config{}
+}
+
+func (cfg *Config) PathPrefix() string {
+	return getEnv("PATH_PREFIX", "")
 }
 
 func (*Config) PersisterConfig() IPersisterConfig {

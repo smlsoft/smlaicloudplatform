@@ -2,6 +2,7 @@ package microservice
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"runtime"
@@ -42,6 +43,8 @@ type Microservice struct {
 	mongoPersisters map[string]IPersisterMongo
 	persistersMutex sync.Mutex
 	prod            IProducer
+	pathPrefix      string
+	logger          *log.Logger
 }
 
 type ServiceHandleFunc func(context IServiceContext) error
@@ -55,11 +58,15 @@ func NewMicroservice(config IConfig) *Microservice {
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 	}))
 
+	e.Use(middleware.Logger())
+
 	return &Microservice{
 		echo:            e,
 		cachers:         map[string]ICacher{},
 		persisters:      map[string]IPersister{},
 		mongoPersisters: map[string]IPersisterMongo{},
+		pathPrefix:      config.PathPrefix(),
+		logger:          log.New(os.Stdout, "", 0),
 	}
 }
 
@@ -80,6 +87,7 @@ func (ms *Microservice) Start() error {
 		go func() {
 			ms.startHTTP(exitHTTP)
 		}()
+
 	}
 
 	// There are 2 ways to exit from Microservices
@@ -140,6 +148,7 @@ func (ms *Microservice) Log(tag string, message string) {
 	_, fn, line, _ := runtime.Caller(1)
 	fns := strings.Split(fn, "/")
 	fmt.Println(tag+":", fns[len(fns)-1], line, message)
+
 }
 
 func (ms *Microservice) Persister(cfg IPersisterConfig) IPersister {
