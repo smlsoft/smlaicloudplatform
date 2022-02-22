@@ -13,6 +13,7 @@ import (
 type ITransactionService interface {
 	CreateTransaction(merchantId string, username string, trans models.Transaction) (string, error)
 	UpdateTransaction(guid string, merchantId string, username string, trans models.Transaction) error
+	DeleteTransaction(guid string, merchantId string, username string) error
 	InfoTransaction(guid string, merchantId string) (models.Transaction, error)
 	SearchTransaction(merchantId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error)
 	SearchItemsTransaction(guid string, merchantId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error)

@@ -11,6 +11,7 @@ import (
 type ITransactionHttp interface {
 	CreateTransaction(ctx microservice.IServiceContext) error
 	UpdateTransaction(ctx microservice.IServiceContext) error
+	DeleteTransaction(ctx microservice.IServiceContext) error
 	InfoTransaction(ctx microservice.IServiceContext) error
 	SearchTransaction(ctx microservice.IServiceContext) error
 	SearchTransactionItems(ctx microservice.IServiceContext) error
@@ -81,6 +82,26 @@ func (h *TransactionHttp) UpdateTransaction(ctx microservice.IServiceContext) er
 	}
 
 	err = h.service.UpdateTransaction(id, merchantId, authUsername, *transReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success: true,
+	})
+	return nil
+}
+
+func (h *TransactionHttp) DeleteTransaction(ctx microservice.IServiceContext) error {
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	merchantId := userInfo.MerchantId
+
+	id := ctx.Param("id")
+
+	err := h.service.DeleteTransaction(id, merchantId, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
