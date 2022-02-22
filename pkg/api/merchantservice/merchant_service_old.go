@@ -71,10 +71,13 @@ func (svc *MerchantServiceOld) SearchMerchant(ctx microservice.IServiceContext) 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
 
 	merchantList := []models.MerchantInfo{}
-	pagination, err := pst.FindPage(&models.Merchant{}, limit, page, bson.M{"createdBy": username, "deleted": false, "name1": bson.M{"$regex": primitive.Regex{
-		Pattern: ".*" + q + ".*",
-		Options: "",
-	}}}, &merchantList)
+	pagination, err := pst.FindPage(&models.Merchant{}, limit, page, bson.M{
+		"createdBy": username,
+		"deleted":   false,
+		"name1": bson.M{"$regex": primitive.Regex{
+			Pattern: ".*" + q + ".*",
+			Options: "",
+		}}}, &merchantList)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

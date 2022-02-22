@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
+	"strconv"
 )
 
 type IMerchantHttp interface {
@@ -12,6 +13,7 @@ type IMerchantHttp interface {
 	UpdateMerchant(ctx microservice.IServiceContext) error
 	DeleteMerchant(ctx microservice.IServiceContext) error
 	InfoMerchant(ctx microservice.IServiceContext) error
+	SearchMerchant(ctx microservice.IServiceContext) error
 }
 
 type MerchantHttp struct {
@@ -137,5 +139,33 @@ func (h *MerchantHttp) InfoMerchant(ctx microservice.IServiceContext) error {
 		Success: true,
 		Data:    merchantInfo,
 	})
+	return nil
+}
+
+func (h *MerchantHttp) SearchMerchant(ctx microservice.IServiceContext) error {
+
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+
+	q := ctx.QueryParam("q")
+	page, err := strconv.Atoi(ctx.QueryParam("page"))
+	if err != nil {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
+
+	if err != nil {
+		limit = 20
+	}
+
+	merchantList, pagination, err := h.service.SearchMerchant(authUsername, q, page, limit)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "pagination": pagination, "data": merchantList})
 	return nil
 }

@@ -5,6 +5,8 @@ import (
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"time"
+
+	paginate "github.com/gobeam/mongo-go-pagination"
 )
 
 type IMerchantService interface {
@@ -12,6 +14,7 @@ type IMerchantService interface {
 	UpdateMerchant(guid string, username string, merchant models.Merchant) error
 	DeleteMerchant(guid string, username string) error
 	InfoMerchant(guid string, username string) (models.MerchantInfo, error)
+	SearchMerchant(username string, q string, page int, limit int) ([]models.MerchantInfo, paginate.PaginationData, error)
 }
 
 type MerchantService struct {
@@ -103,4 +106,14 @@ func (svc *MerchantService) InfoMerchant(guid string, username string) (models.M
 		GuidFixed: findMerchant.GuidFixed,
 		Name1:     findMerchant.Name1,
 	}, nil
+}
+
+func (svc *MerchantService) SearchMerchant(username string, q string, page int, limit int) ([]models.MerchantInfo, paginate.PaginationData, error) {
+	merchantList, pagination, err := svc.repo.FindPage(username, q, page, limit)
+
+	if err != nil {
+		return merchantList, pagination, err
+	}
+
+	return merchantList, pagination, nil
 }
