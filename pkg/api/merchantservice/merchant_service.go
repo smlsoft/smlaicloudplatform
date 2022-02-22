@@ -1,6 +1,7 @@
 package merchantservice
 
 import (
+	"errors"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"time"
@@ -8,6 +9,7 @@ import (
 
 type IMerchantService interface {
 	CreateMerchant(username string, merchant models.Merchant) (string, error)
+	UpdateMerchant(guid string, username string, merchant models.Merchant) error
 }
 
 type MerchantService struct {
@@ -34,4 +36,30 @@ func (svc *MerchantService) CreateMerchant(username string, merchant models.Merc
 	}
 
 	return merchantId, nil
+}
+
+func (svc *MerchantService) UpdateMerchant(guid string, username string, merchant models.Merchant) error {
+
+	findMerchant, err := svc.repo.FindByGuid(guid)
+
+	if err != nil {
+		return err
+	}
+
+	// *** warning feature change to check by role owner
+	if len(findMerchant.CreatedBy) < 1 {
+		return errors.New("username invalid")
+	}
+
+	findMerchant.Name1 = merchant.Name1
+	findMerchant.UpdatedBy = username
+	findMerchant.UpdatedAt = time.Now()
+
+	err = svc.repo.Update(guid, merchant)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
