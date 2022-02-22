@@ -1,69 +1,34 @@
 package transactionservice
 
 import (
-	"encoding/json"
-	"net/http"
-	"smlcloudplatform/internal/microservice"
+	"errors"
 	"smlcloudplatform/pkg/models"
-	"strconv"
+	"smlcloudplatform/pkg/utils"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	paginate "github.com/gobeam/mongo-go-pagination"
 )
 
+type ITransactionService interface {
+	CreateTransaction(merchantId string, username string, trans models.Transaction) (string, error)
+	UpdateTransaction(guid string, merchantId string, username string, trans models.Transaction) error
+	InfoTransaction(guid string, merchantId string) (models.Transaction, error)
+	SearchTransaction(merchantId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error)
+	SearchItemsTransaction(guid string, merchantId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error)
+}
+
 type TransactionService struct {
-	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	transactionRepository ITransactionRepository
 }
 
-func NewTransactionService(ms *microservice.Microservice, cfg microservice.IConfig) *TransactionService {
+func NewTransactionService(transactionRepository ITransactionRepository) ITransactionService {
 
-	inventoryapi := &TransactionService{
-		ms:  ms,
-		cfg: cfg,
+	return &TransactionService{
+		transactionRepository: transactionRepository,
 	}
-	return inventoryapi
 }
 
-func (svc *TransactionService) RouteSetup() {
-
-	svc.ms.GET("/transaction", svc.SearchTransaction)
-	svc.ms.POST("/transaction", svc.CreateTransaction)
-	svc.ms.GET("/transaction/:id", svc.InfoTransaction)
-	svc.ms.PUT("/transaction/:id", svc.EditTransaction)
-	svc.ms.DELETE("/transaction/:id", svc.DeleteTransaction)
-}
-
-func (svc *TransactionService) CreateTransaction(ctx microservice.IServiceContext) error {
-	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
-
-	input := ctx.ReadInput()
-
-	trans := &models.Transaction{}
-	err := json.Unmarshal([]byte(input), &trans)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	merchant := &models.Merchant{}
-	pst.FindOne(&models.Merchant{}, bson.M{"guidFixed": merchantId, "deleted": false}, merchant)
-
-	if len(merchant.GuidFixed) < 1 {
-		ctx.ResponseError(400, "merchant invalid")
-		return nil
-	}
-
-	if merchant.CreatedBy != authUsername {
-		ctx.ResponseError(400, "username invalid")
-		return err
-	}
+func (svc *TransactionService) CreateTransaction(merchantId string, username string, trans models.Transaction) (string, error) {
 
 	sumAmount := 0.0
 	for i, transDetail := range trans.Items {
@@ -71,81 +36,29 @@ func (svc *TransactionService) CreateTransaction(ctx microservice.IServiceContex
 		sumAmount += transDetail.Price * transDetail.Qty
 	}
 
+	newGuidFixed := utils.NewGUID()
+	trans.MerchantId = merchantId
+	trans.GuidFixed = newGuidFixed
 	trans.SumAmount = sumAmount
 	trans.Deleted = false
-	trans.CreatedBy = authUsername
+	trans.CreatedBy = username
 	trans.CreatedAt = time.Now()
 
-	idx, err := pst.Create(&models.Transaction{}, trans)
+	_, err := svc.transactionRepository.Create(trans)
 
 	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
+		return "", err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "id": idx})
-	return nil
+	return newGuidFixed, nil
 }
 
-func (svc *TransactionService) DeleteTransaction(ctx microservice.IServiceContext) error {
-	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
+func (svc *TransactionService) UpdateTransaction(guid string, merchantId string, username string, trans models.Transaction) error {
 
-	id := ctx.Param("id")
-
-	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	findDoc := &models.Transaction{}
-	err := pst.FindOne(&models.Transaction{}, bson.M{"merchantId": merchantId, "guidFixed": id, "deleted": false}, findDoc)
-
-	if err != nil && err.Error() != "mongo: no documents in result" {
-		svc.ms.Log("merchant service", err.Error())
-		ctx.ResponseError(400, "database error")
-		return err
-	}
-
-	if findDoc.CreatedBy != authUsername {
-		ctx.ResponseError(400, "username invalid")
-		return err
-	}
-
-	trans := &models.Transaction{}
-	err = pst.SoftDeleteByID(trans, id)
+	findTrans, err := svc.transactionRepository.FindByGuid(guid, merchantId)
 
 	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
-	return nil
-}
-
-func (svc *TransactionService) EditTransaction(ctx microservice.IServiceContext) error {
-	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
-
-	id := ctx.Param("id")
-	input := ctx.ReadInput()
-
-	transReq := &models.Transaction{}
-	err := json.Unmarshal([]byte(input), &transReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	findTrans := &models.Transaction{}
-	err = pst.FindOne(&models.Transaction{}, bson.M{"merchantId": merchantId, "guidFixed": id, "createdBy": authUsername, "deleted": false}, findTrans)
-
-	if err != nil {
-		ctx.ResponseError(400, "guid invalid")
-		return err
+		return errors.New("guid invalid")
 	}
 
 	sumAmount := 0.0
@@ -154,124 +67,45 @@ func (svc *TransactionService) EditTransaction(ctx microservice.IServiceContext)
 		sumAmount += transDetail.Price * transDetail.Qty
 	}
 
-	findTrans.Items = transReq.Items
+	findTrans.Items = trans.Items
 	findTrans.SumAmount = sumAmount
-	findTrans.UpdatedBy = authUsername
+	findTrans.UpdatedBy = username
 	findTrans.UpdatedAt = time.Now()
 
-	err = pst.UpdateOne(&models.Transaction{}, "guidFixed", id, findTrans)
+	err = svc.transactionRepository.Update(guid, findTrans)
 
 	if err != nil {
-		ctx.ResponseError(400, err.Error())
 		return err
 	}
-
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true})
 	return nil
 }
 
-func (svc *TransactionService) InfoTransaction(ctx microservice.IServiceContext) error {
+func (svc *TransactionService) InfoTransaction(guid string, merchantId string) (models.Transaction, error) {
+	trans, err := svc.transactionRepository.FindByGuid(guid, merchantId)
 
-	userInfo := ctx.UserInfo()
-	merchantId := userInfo.MerchantId
-
-	id := ctx.Param("id")
-
-	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	trans := &models.Transaction{}
-	err := pst.FindOne(&models.Transaction{}, bson.M{"merchantId": merchantId, "guidFixed": id, "deleted": false}, trans)
-
-	if err != nil && err.Error() != "mongo: no documents in result" {
-		ctx.ResponseError(400, err.Error())
-		return err
+	if err != nil {
+		return models.Transaction{}, err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "data": trans})
-	return nil
+	return trans, nil
 }
 
-func (svc *TransactionService) SearchTransaction(ctx microservice.IServiceContext) error {
-
-	userInfo := ctx.UserInfo()
-	merchantId := userInfo.MerchantId
-
-	q := ctx.QueryParam("q")
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
-
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
+func (svc *TransactionService) SearchTransaction(merchantId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error) {
+	transList, pagination, err := svc.transactionRepository.FindPage(merchantId, q, page, limit)
 
 	if err != nil {
-		limit = 20
+		return transList, pagination, err
 	}
 
-	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	inventories := []models.Inventory{}
-
-	pagination, err := pst.FindPage(&models.Inventory{}, limit, page, bson.M{
-		"merchantId": merchantId,
-		"deleted":    false,
-		"$or": []interface{}{
-			bson.M{"guidFixed": bson.M{"$regex": primitive.Regex{
-				Pattern: ".*" + q + ".*",
-				Options: "",
-			}}},
-		},
-	}, &inventories)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "pagination": pagination, "data": inventories})
-	return nil
+	return transList, pagination, nil
 }
 
-func (svc *TransactionService) SearchTransactionItems(ctx microservice.IServiceContext) error {
-
-	userInfo := ctx.UserInfo()
-	merchantId := userInfo.MerchantId
-
-	transId := ctx.Param("trans_id")
-
-	q := ctx.QueryParam("q")
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
-
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
+func (svc *TransactionService) SearchItemsTransaction(guid string, merchantId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error) {
+	transList, pagination, err := svc.transactionRepository.FindItemsByGuidPage(guid, merchantId, q, page, limit)
 
 	if err != nil {
-		limit = 20
+		return transList, pagination, err
 	}
 
-	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	inventories := []models.Inventory{}
-
-	pagination, err := pst.FindPage(&models.Inventory{}, limit, page, bson.M{
-		"merchantId": merchantId,
-		"guidFixed":  transId,
-		"deleted":    false,
-		"$or": []interface{}{
-			bson.M{"items.itemSku": bson.M{"$regex": primitive.Regex{
-				Pattern: ".*" + q + ".*",
-				Options: "",
-			}}},
-		},
-	}, &inventories)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "pagination": pagination, "data": inventories})
-	return nil
+	return transList, pagination, nil
 }

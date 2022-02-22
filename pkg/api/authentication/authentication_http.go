@@ -101,7 +101,7 @@ func (h *AuthenticationHttp) Register(ctx microservice.IServiceContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusOK, models.ApiResponse{
+	ctx.Response(http.StatusCreated, models.ApiResponse{
 		Success: true,
 		Id:      idx,
 	})

@@ -18,11 +18,9 @@ type AuthenticationRepository struct {
 }
 
 func NewAuthenticationRepository(pst microservice.IPersisterMongo) *AuthenticationRepository {
-
-	authenticationRepository := &AuthenticationRepository{
+	return &AuthenticationRepository{
 		pst: pst,
 	}
-	return authenticationRepository
 }
 
 func (r *AuthenticationRepository) FindUser(username string) (*models.User, error) {
