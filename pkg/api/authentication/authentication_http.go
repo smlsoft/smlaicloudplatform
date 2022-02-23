@@ -7,6 +7,12 @@ import (
 	"smlcloudplatform/pkg/models"
 )
 
+type IAuthenticationHttp interface {
+	Login(ctx microservice.IServiceContext) error
+	Register(ctx microservice.IServiceContext) error
+	Logout(ctx microservice.IServiceContext) error
+	Profile(ctx microservice.IServiceContext) error
+}
 type AuthenticationHttp struct {
 	ms                    *microservice.Microservice
 	cfg                   microservice.IConfig
