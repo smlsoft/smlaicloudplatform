@@ -11,7 +11,7 @@ import (
 type IOptionGroupService interface {
 	CreateOptionGroup(merchantId string, authUsername string, doc models.InventoryOptionGroup) (string, error)
 	UpdateOptionGroup(guid string, merchantId string, authUsername string, doc models.InventoryOptionGroup) error
-	DeleteOptionGroup(guid string) error
+	DeleteOptionGroup(guid string, merchantId string) error
 	InfoOptionGroup(guid string, merchantId string) (models.InventoryOptionGroup, error)
 	SearchOptionGroup(merchantId string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error)
 }
@@ -73,8 +73,8 @@ func (svc *OptionGroupService) UpdateOptionGroup(guid string, merchantId string,
 	return nil
 }
 
-func (svc *OptionGroupService) DeleteOptionGroup(guid string) error {
-	err := svc.repo.Delete(guid)
+func (svc *OptionGroupService) DeleteOptionGroup(guid string, merchantId string) error {
+	err := svc.repo.Delete(guid, merchantId)
 
 	if err != nil {
 		return err

@@ -13,7 +13,7 @@ type IOptionGroupRepository interface {
 	Count(merchantId string) (int, error)
 	Create(category models.InventoryOptionGroup) (string, error)
 	Update(guid string, category models.InventoryOptionGroup) error
-	Delete(guid string) error
+	Delete(guid string, merchantId string) error
 	FindByGuid(guid string, merchantId string) (models.InventoryOptionGroup, error)
 	FindPage(merchantId string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error)
 }
@@ -58,8 +58,8 @@ func (repo *OptionGroupRepository) Update(guid string, category models.Inventory
 	return nil
 }
 
-func (repo *OptionGroupRepository) Delete(guid string) error {
-	err := repo.pst.SoftDeleteByID(&models.InventoryOptionGroup{}, guid)
+func (repo *OptionGroupRepository) Delete(guid string, merchantId string) error {
+	err := repo.pst.SoftDelete(&models.InventoryOptionGroup{}, bson.M{"guidFixed": guid, "merchantId": merchantId})
 
 	if err != nil {
 		return err
