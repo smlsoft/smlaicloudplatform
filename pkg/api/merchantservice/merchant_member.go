@@ -1,5 +1,6 @@
 package merchantservice
 
+/*
 import (
 	"encoding/json"
 	"net/http"
@@ -311,3 +312,4 @@ func (svc *MerchantServiceOld) ChangePasswordMember(ctx microservice.IServiceCon
 	})
 	return nil
 }
+*/
