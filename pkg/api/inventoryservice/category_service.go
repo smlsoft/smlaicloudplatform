@@ -64,8 +64,8 @@ func (svc *CategoryService) UpdateCategory(guid string, merchantId string, authU
 	return nil
 }
 
-func (svc *CategoryService) DeleteCategory(guid string) error {
-	err := svc.repo.Delete(guid)
+func (svc *CategoryService) DeleteCategory(guid string, merchantId string) error {
+	err := svc.repo.Delete(guid, merchantId)
 
 	if err != nil {
 		return err

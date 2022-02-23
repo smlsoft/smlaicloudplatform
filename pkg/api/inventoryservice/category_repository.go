@@ -13,7 +13,7 @@ type ICategoryRepository interface {
 	Count(merchantId string) (int, error)
 	Create(category models.Category) (string, error)
 	Update(guid string, category models.Category) error
-	Delete(guid string) error
+	Delete(guid string, merchantId string) error
 	FindByGuid(guid string, merchantId string) (models.Category, error)
 	FindPage(merchantId string, q string, page int, limit int) ([]models.Category, paginate.PaginationData, error)
 }
@@ -58,8 +58,8 @@ func (repo *CategoryRepository) Update(guid string, category models.Category) er
 	return nil
 }
 
-func (repo *CategoryRepository) Delete(guid string) error {
-	err := repo.pst.SoftDeleteByID(&models.Category{}, guid)
+func (repo *CategoryRepository) Delete(guid string, merchantId string) error {
+	err := repo.pst.SoftDelete(&models.Category{}, bson.M{"guidFixed": guid, "merchantId": merchantId})
 
 	if err != nil {
 		return err
