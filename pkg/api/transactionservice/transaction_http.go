@@ -152,14 +152,21 @@ func (h *TransactionHttp) SearchTransaction(ctx microservice.IServiceContext) er
 		limit = 20
 	}
 
-	transList, pagination, err := h.service.SearchTransaction(merchantId, q, page, limit)
+	docList, pagination, err := h.service.SearchTransaction(merchantId, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "pagination": pagination, "data": transList})
+	ctx.Response(
+		http.StatusOK,
+		models.ApiResponse{
+			Success:    true,
+			Data:       docList,
+			Pagination: pagination,
+		})
+
 	return nil
 }
 
@@ -182,13 +189,19 @@ func (h *TransactionHttp) SearchTransactionItems(ctx microservice.IServiceContex
 		limit = 20
 	}
 
-	transList, pagination, err := h.service.SearchItemsTransaction(transId, merchantId, q, page, limit)
+	docList, pagination, err := h.service.SearchItemsTransaction(transId, merchantId, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "pagination": pagination, "data": transList})
+	ctx.Response(
+		http.StatusOK,
+		models.ApiResponse{
+			Success:    true,
+			Data:       docList,
+			Pagination: pagination,
+		})
 	return nil
 }
