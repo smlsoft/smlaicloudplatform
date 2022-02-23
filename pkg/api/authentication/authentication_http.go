@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/merchantservice"
+	"smlcloudplatform/pkg/api/merchant"
 	"smlcloudplatform/pkg/models"
 )
 
@@ -26,7 +26,7 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 
 	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
 	authRepo := NewAuthenticationRepository(pst)
-	merchantUserRepo := merchantservice.NewMerchantUserRepository(pst)
+	merchantUserRepo := merchant.NewMerchantUserRepository(pst)
 	authenticationService := NewAuthenticationService(authRepo, merchantUserRepo, authService)
 
 	return AuthenticationHttp{

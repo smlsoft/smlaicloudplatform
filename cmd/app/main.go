@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/authentication"
-	"smlcloudplatform/pkg/api/inventoryservice"
-	"smlcloudplatform/pkg/api/merchantservice"
-	"smlcloudplatform/pkg/api/toolsservice"
+	"smlcloudplatform/pkg/api/inventory"
+	"smlcloudplatform/pkg/api/merchant"
+	"smlcloudplatform/pkg/api/tools"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -39,13 +39,13 @@ func main() {
 	svcAuth := authentication.NewAuthenticationHttp(ms, cfg)
 	svcAuth.RouteSetup()
 
-	svcMerchant := merchantservice.NewMerchantHttp(ms, cfg)
+	svcMerchant := merchant.NewMerchantHttp(ms, cfg)
 	svcMerchant.RouteSetup()
 
-	inventoryapi := inventoryservice.NewInventoryHttp(ms, cfg)
+	inventoryapi := inventory.NewInventoryHttp(ms, cfg)
 	inventoryapi.RouteSetup()
 
-	toolSvc := toolsservice.NewToolsService(ms, cfg)
+	toolSvc := tools.NewToolsService(ms, cfg)
 
 	toolSvc.RouteSetup()
 

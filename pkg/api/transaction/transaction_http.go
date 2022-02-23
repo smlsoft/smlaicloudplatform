@@ -1,4 +1,4 @@
-package transactionservice
+package transaction
 
 import (
 	"encoding/json"

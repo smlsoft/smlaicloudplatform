@@ -1,4 +1,4 @@
-package merchantservice
+package merchant
 
 import (
 	"errors"

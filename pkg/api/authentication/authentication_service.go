@@ -3,7 +3,7 @@ package authentication
 import (
 	"errors"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/merchantservice"
+	"smlcloudplatform/pkg/api/merchant"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"time"
@@ -24,10 +24,10 @@ type IAuthenticationService interface {
 type AuthenticationService struct {
 	authService      *microservice.AuthService
 	authRepo         IAuthenticationRepository
-	merchantUserRepo merchantservice.IMerchantUserRepository
+	merchantUserRepo merchant.IMerchantUserRepository
 }
 
-func NewAuthenticationService(authRepo IAuthenticationRepository, merchantUserRepo merchantservice.IMerchantUserRepository, authService *microservice.AuthService) AuthenticationService {
+func NewAuthenticationService(authRepo IAuthenticationRepository, merchantUserRepo merchant.IMerchantUserRepository, authService *microservice.AuthService) AuthenticationService {
 	return AuthenticationService{
 		authRepo:    authRepo,
 		authService: authService,

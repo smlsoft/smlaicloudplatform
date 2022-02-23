@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/merchantservice"
+	"smlcloudplatform/pkg/api/merchant"
 
 	"github.com/joho/godotenv"
 )
@@ -17,7 +17,7 @@ func main() {
 	cfg := microservice.NewConfig()
 	ms := microservice.NewMicroservice(cfg)
 
-	svc := merchantservice.NewMerchantHttp(ms, cfg)
+	svc := merchant.NewMerchantHttp(ms, cfg)
 
 	svc.RouteSetup()
 

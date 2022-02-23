@@ -1,4 +1,4 @@
-package inventoryservice
+package inventory
 
 import (
 	"encoding/json"
@@ -8,20 +8,20 @@ import (
 	"strconv"
 )
 
-func (h *InventoryHttp) CreateOptionGroup(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) CreateCategory(ctx microservice.IServiceContext) error {
 	authUsername := ctx.UserInfo().Username
 	merchantId := ctx.UserInfo().MerchantId
 	input := ctx.ReadInput()
 
-	docReq := &models.InventoryOptionGroup{}
-	err := json.Unmarshal([]byte(input), &docReq)
+	categoryReq := &models.Category{}
+	err := json.Unmarshal([]byte(input), &categoryReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	idx, err := h.optGroupService.CreateOptionGroup(merchantId, authUsername, *docReq)
+	idx, err := h.cateService.CreateCategory(merchantId, authUsername, *categoryReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -35,7 +35,7 @@ func (h *InventoryHttp) CreateOptionGroup(ctx microservice.IServiceContext) erro
 	return nil
 }
 
-func (h *InventoryHttp) UpdateOptionGroup(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) UpdateCategory(ctx microservice.IServiceContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	merchantId := userInfo.MerchantId
@@ -43,15 +43,15 @@ func (h *InventoryHttp) UpdateOptionGroup(ctx microservice.IServiceContext) erro
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &models.InventoryOptionGroup{}
-	err := json.Unmarshal([]byte(input), &docReq)
+	categoryReq := &models.Category{}
+	err := json.Unmarshal([]byte(input), &categoryReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	err = h.optGroupService.UpdateOptionGroup(id, merchantId, authUsername, *docReq)
+	err = h.cateService.UpdateCategory(id, merchantId, authUsername, *categoryReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -66,13 +66,13 @@ func (h *InventoryHttp) UpdateOptionGroup(ctx microservice.IServiceContext) erro
 	return nil
 }
 
-func (h *InventoryHttp) DeleteOptionGroup(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) DeleteCategory(ctx microservice.IServiceContext) error {
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
 
 	id := ctx.Param("id")
 
-	err := h.optGroupService.DeleteOptionGroup(id, merchantId)
+	err := h.cateService.DeleteCategory(id, merchantId)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -87,13 +87,13 @@ func (h *InventoryHttp) DeleteOptionGroup(ctx microservice.IServiceContext) erro
 	return nil
 }
 
-func (h *InventoryHttp) InfoOptionGroup(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) InfoCategory(ctx microservice.IServiceContext) error {
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
 
 	id := ctx.Param("id")
 
-	doc, err := h.optGroupService.InfoOptionGroup(id, merchantId)
+	doc, err := h.cateService.InfoCategory(id, merchantId)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -107,7 +107,7 @@ func (h *InventoryHttp) InfoOptionGroup(ctx microservice.IServiceContext) error 
 	return nil
 }
 
-func (h *InventoryHttp) SearchOptionGroup(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) SearchCategory(ctx microservice.IServiceContext) error {
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
 
@@ -122,7 +122,7 @@ func (h *InventoryHttp) SearchOptionGroup(ctx microservice.IServiceContext) erro
 	if err != nil {
 		limit = 20
 	}
-	docList, pagination, err := h.optGroupService.SearchOptionGroup(merchantId, q, page, limit)
+	docList, pagination, err := h.cateService.SearchCategory(merchantId, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

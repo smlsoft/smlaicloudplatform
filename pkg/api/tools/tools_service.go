@@ -1,4 +1,4 @@
-package toolsservice
+package tools
 
 import (
 	"os"

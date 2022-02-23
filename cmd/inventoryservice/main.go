@@ -12,7 +12,7 @@ import (
 	// "smlcloudplatform/pkg/models"
 	"smlcloudplatform/api/swagger"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/inventoryservice"
+	"smlcloudplatform/pkg/api/inventory"
 )
 
 func main() {
@@ -25,7 +25,7 @@ func main() {
 	cfg := microservice.NewConfig()
 	ms := microservice.NewMicroservice(cfg)
 
-	inventoryapi := inventoryservice.NewInventoryHttp(ms, cfg)
+	inventoryapi := inventory.NewInventoryHttp(ms, cfg)
 	inventoryapi.RouteSetup()
 
 	//ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)

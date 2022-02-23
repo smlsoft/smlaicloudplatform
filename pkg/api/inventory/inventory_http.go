@@ -1,4 +1,4 @@
-package inventoryservice
+package inventory
 
 import (
 	"encoding/json"

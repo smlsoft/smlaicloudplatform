@@ -1,8 +1,8 @@
-package merchantservice_test
+package merchant_test
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/merchantservice"
+	"smlcloudplatform/pkg/api/merchant"
 	"smlcloudplatform/pkg/models"
 	"testing"
 )
@@ -17,12 +17,12 @@ func (TestPersisterMongoConfig) DB() string {
 	return "micro_test"
 }
 
-var merchantUserRepo merchantservice.IMerchantUserRepository
+var merchantUserRepo merchant.IMerchantUserRepository
 
 func setup() {
 	pst := microservice.NewPersisterMongo(&TestPersisterMongoConfig{})
 
-	merchantUserRepo = merchantservice.NewMerchantUserRepository(pst)
+	merchantUserRepo = merchant.NewMerchantUserRepository(pst)
 }
 
 func TestMerchantMemberSave(t *testing.T) {
@@ -38,7 +38,7 @@ func TestMerchantMemberSave(t *testing.T) {
 func TestMerchantMemberFindRole(t *testing.T) {
 	setup()
 
-	role, err := merchantUserRepo.FindRole("mx1", "ux1")
+	role, err := merchantUserRepo.FindRole("mx1", "ux3")
 
 	if err != nil {
 		t.Error(err)
