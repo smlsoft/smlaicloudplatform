@@ -88,17 +88,7 @@ func (svc *TransactionService) UpdateTransaction(guid string, merchantId string,
 
 func (svc *TransactionService) DeleteTransaction(guid string, merchantId string, username string) error {
 
-	findTrans, err := svc.transactionRepository.FindByGuid(guid, merchantId)
-
-	if err != nil {
-		return err
-	}
-
-	if findTrans.Id == primitive.NewObjectID() {
-		return nil
-	}
-
-	err = svc.transactionRepository.Delete(guid)
+	err := svc.transactionRepository.Delete(guid, merchantId)
 	if err != nil {
 		return err
 	}

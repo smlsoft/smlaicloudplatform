@@ -12,7 +12,7 @@ import (
 type ITransactionRepository interface {
 	Create(trans models.Transaction) (string, error)
 	Update(guid string, trans models.Transaction) error
-	Delete(guid string) error
+	Delete(guid string, merchantId string) error
 	FindByGuid(guid string, merchantId string) (models.Transaction, error)
 	FindPage(merchantId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error)
 	FindItemsByGuidPage(guid string, merchantId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error)
@@ -45,8 +45,8 @@ func (repo *TransactionRepository) Update(guid string, trans models.Transaction)
 	return nil
 }
 
-func (repo *TransactionRepository) Delete(guid string) error {
-	err := repo.pst.SoftDeleteByID(&models.Transaction{}, guid)
+func (repo *TransactionRepository) Delete(guid string, merchantId string) error {
+	err := repo.pst.SoftDelete(&models.Transaction{}, bson.M{"guidFixed": guid, "merchantId": merchantId})
 	if err != nil {
 		return err
 	}
