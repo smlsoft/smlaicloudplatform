@@ -18,10 +18,11 @@ type IInventoryHttp interface {
 }
 
 type InventoryHttp struct {
-	ms          *microservice.Microservice
-	cfg         microservice.IConfig
-	invService  IInventoryService
-	cateService ICategoryService
+	ms            *microservice.Microservice
+	cfg           microservice.IConfig
+	invService    IInventoryService
+	cateService   ICategoryService
+	invOptService IInventoryOptionService
 }
 
 func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) IInventoryHttp {
@@ -34,11 +35,15 @@ func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) I
 	cateRepo := NewCategoryRepository(pst)
 	cateService := NewCategoryService(cateRepo)
 
+	invOptRepo := NewInventoryOptionRepository(pst)
+	invOptService := NewInventoryOptionService(invOptRepo)
+
 	return &InventoryHttp{
-		ms:          ms,
-		cfg:         cfg,
-		invService:  invService,
-		cateService: cateService,
+		ms:            ms,
+		cfg:           cfg,
+		invService:    invService,
+		cateService:   cateService,
+		invOptService: invOptService,
 	}
 }
 
@@ -54,6 +59,12 @@ func (h *InventoryHttp) RouteSetup() {
 	h.ms.POST("/category", h.CreateCategory)
 	h.ms.PUT("/category/:id", h.UpdateCategory)
 	h.ms.DELETE("/category/:id", h.DeleteCategory)
+
+	h.ms.GET("/option/:id", h.InfoInventoryOption)
+	h.ms.GET("/option", h.SearchInventoryOption)
+	h.ms.POST("/option", h.CreateInventoryOption)
+	h.ms.PUT("/option/:id", h.UpdateInventoryOption)
+	h.ms.DELETE("/option/:id", h.DeleteInventoryOption)
 }
 
 func (h *InventoryHttp) CreateInventory(ctx microservice.IServiceContext) error {
