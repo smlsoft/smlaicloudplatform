@@ -9,6 +9,7 @@ import (
 )
 
 type IMerchantHttp interface {
+	RouteSetup()
 	CreateMerchant(ctx microservice.IServiceContext) error
 	UpdateMerchant(ctx microservice.IServiceContext) error
 	DeleteMerchant(ctx microservice.IServiceContext) error
@@ -33,6 +34,10 @@ func NewMerchantHttp(ms *microservice.Microservice, cfg microservice.IConfig) IM
 		cfg:     cfg,
 		service: service,
 	}
+}
+
+func (h *MerchantHttp) RouteSetup() {
+
 }
 
 func (h *MerchantHttp) CreateMerchant(ctx microservice.IServiceContext) error {

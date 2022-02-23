@@ -39,7 +39,7 @@ func main() {
 	svcAuth := api.NewAuthenticationService(ms, cfg)
 	svcAuth.RouteSetup()
 
-	svcMerchant := merchantservice.NewMerchantService(ms, cfg)
+	svcMerchant := merchantservice.NewMerchantHttp(ms, cfg)
 	svcMerchant.RouteSetup()
 
 	inventoryapi := inventoryservice.NewInventoryService(ms, cfg)
