@@ -27,19 +27,20 @@ func (svc *CategoryService) CreateCategory(merchantId string, authUsername strin
 		return "", err
 	}
 
+	newGuidFixed := utils.NewGUID()
 	category.MerchantId = merchantId
-	category.GuidFixed = utils.NewGUID()
+	category.GuidFixed = newGuidFixed
 	category.LineNumber = int(countCategory) + 1
 	category.CreatedBy = authUsername
 	category.CreatedAt = time.Now()
 	category.Deleted = false
 
-	idx, err := svc.repo.Create(category)
+	_, err = svc.repo.Create(category)
 
 	if err != nil {
 		return "", err
 	}
-	return idx, nil
+	return newGuidFixed, nil
 }
 
 func (svc *CategoryService) UpdateCategory(guid string, merchantId string, authUsername string, category models.Category) error {
