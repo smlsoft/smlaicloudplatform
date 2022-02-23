@@ -8,7 +8,13 @@ import (
 	paginate "github.com/gobeam/mongo-go-pagination"
 )
 
-type IOptionGroupService interface{}
+type IOptionGroupService interface {
+	CreateOptionGroup(merchantId string, authUsername string, doc models.InventoryOptionGroup) (string, error)
+	UpdateOptionGroup(guid string, merchantId string, authUsername string, doc models.InventoryOptionGroup) error
+	DeleteOptionGroup(guid string) error
+	InfoOptionGroup(guid string, merchantId string) (models.InventoryOptionGroup, error)
+	SearchOptionGroup(merchantId string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error)
+}
 
 type OptionGroupService struct {
 	repo IOptionGroupRepository
