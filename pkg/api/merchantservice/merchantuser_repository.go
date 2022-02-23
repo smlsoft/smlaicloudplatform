@@ -8,25 +8,26 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type IMemberService interface {
+type IMerchantUserRepository interface {
 	Save(merchantId string, username string, role models.UserRole) error
 	Delete(merchantId string, username string) error
+	FindByMerchantIdAndUsername(merchantId string, username string) (models.MerchantUser, error)
 	FindRole(merchantId string, username string) (models.UserRole, error)
 	FindByMerchantId(merchantId string) (*[]models.MerchantUser, error)
 	FindByUsername(username string) (*[]models.MerchantUser, error)
 }
 
-type MemberService struct {
+type MerchantUserRepository struct {
 	pst microservice.IPersisterMongo
 }
 
-func NewMemberService(pst microservice.IPersisterMongo) *MemberService {
-	return &MemberService{
+func NewMerchantUserRepository(pst microservice.IPersisterMongo) *MerchantUserRepository {
+	return &MerchantUserRepository{
 		pst: pst,
 	}
 }
 
-func (svc *MemberService) Save(merchantId string, username string, role models.UserRole) error {
+func (svc *MerchantUserRepository) Save(merchantId string, username string, role models.UserRole) error {
 
 	optUpdate := options.Update().SetUpsert(true)
 	err := svc.pst.Update(&models.MerchantUser{}, bson.M{"merchantId": merchantId, "username": username}, bson.M{"$set": bson.M{"role": role}}, optUpdate)
@@ -38,7 +39,7 @@ func (svc *MemberService) Save(merchantId string, username string, role models.U
 	return nil
 }
 
-func (svc *MemberService) Delete(merchantId string, username string) error {
+func (svc *MerchantUserRepository) Delete(merchantId string, username string) error {
 
 	err := svc.pst.Delete(&models.MerchantUser{}, bson.M{"merchantId": merchantId, "username": username})
 
@@ -49,7 +50,20 @@ func (svc *MemberService) Delete(merchantId string, username string) error {
 	return nil
 }
 
-func (svc *MemberService) FindRole(merchantId string, username string) (models.UserRole, error) {
+func (svc *MerchantUserRepository) FindByMerchantIdAndUsername(merchantId string, username string) (models.MerchantUser, error) {
+
+	merchantUser := &models.MerchantUser{}
+
+	err := svc.pst.FindOne(&models.MerchantUser{}, bson.M{"merchantId": merchantId, "username": username}, merchantUser)
+
+	if err != nil {
+		return models.MerchantUser{}, err
+	}
+
+	return *merchantUser, nil
+}
+
+func (svc *MerchantUserRepository) FindRole(merchantId string, username string) (models.UserRole, error) {
 
 	merchantUser := &models.MerchantUser{}
 
@@ -62,7 +76,7 @@ func (svc *MemberService) FindRole(merchantId string, username string) (models.U
 	return merchantUser.Role, nil
 }
 
-func (svc *MemberService) FindByMerchantId(merchantId string) (*[]models.MerchantUser, error) {
+func (svc *MerchantUserRepository) FindByMerchantId(merchantId string) (*[]models.MerchantUser, error) {
 	merchantUsers := &[]models.MerchantUser{}
 
 	err := svc.pst.Find(&models.MerchantUser{}, bson.M{"merchantId": merchantId}, merchantUsers)
@@ -75,7 +89,7 @@ func (svc *MemberService) FindByMerchantId(merchantId string) (*[]models.Merchan
 
 }
 
-func (svc *MemberService) FindByUsername(username string) (*[]models.MerchantUser, error) {
+func (svc *MerchantUserRepository) FindByUsername(username string) (*[]models.MerchantUser, error) {
 	merchantUsers := &[]models.MerchantUser{}
 
 	err := svc.pst.Find(&models.MerchantUser{}, bson.M{"username": username}, merchantUsers)

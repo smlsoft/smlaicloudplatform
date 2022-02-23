@@ -3,11 +3,14 @@ package authentication
 import (
 	"errors"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/api/merchantservice"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"time"
 
 	micromodel "smlcloudplatform/internal/microservice/models"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type IAuthenticationService interface {
@@ -15,26 +18,25 @@ type IAuthenticationService interface {
 	Register(userRequest models.UserRequest) (string, error)
 	Logout(authorizationHeader string) error
 	Profile(username string) (models.UserProfile, error)
-	AccessMerchant(authorizationHeader string, userInfo micromodel.UserInfo, merchantId string) error
+	AccessMerchant(authorizationHeader string, merchantId string, username string) error
 }
 
 type AuthenticationService struct {
-	authService    *microservice.AuthService
-	authRepository IAuthenticationRepository
+	authService      *microservice.AuthService
+	authRepo         IAuthenticationRepository
+	merchantUserRepo merchantservice.IMerchantUserRepository
 }
 
-func NewAuthenticationService(authRepository IAuthenticationRepository, authService *microservice.AuthService) AuthenticationService {
+func NewAuthenticationService(authRepo IAuthenticationRepository, merchantUserRepo merchantservice.IMerchantUserRepository, authService *microservice.AuthService) AuthenticationService {
 	return AuthenticationService{
-		authRepository: authRepository,
-		authService:    authService,
+		authRepo:    authRepo,
+		authService: authService,
 	}
 }
 
-/* imprement a service */
-
 func (svc AuthenticationService) Login(userReq *models.UserRequest) (string, error) {
 
-	findUser, err := svc.authRepository.FindUser(userReq.Username)
+	findUser, err := svc.authRepo.FindUser(userReq.Username)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		// svc.ms.Log("Authentication service", err.Error())
@@ -63,7 +65,7 @@ func (svc AuthenticationService) Login(userReq *models.UserRequest) (string, err
 
 func (svc AuthenticationService) Register(userRequest models.UserRequest) (string, error) {
 
-	findUser, err := svc.authRepository.FindUser(userRequest.Username)
+	findUser, err := svc.authRepo.FindUser(userRequest.Username)
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return "", err
 	}
@@ -85,7 +87,7 @@ func (svc AuthenticationService) Register(userRequest models.UserRequest) (strin
 		CreatedAt: time.Now(),
 	}
 
-	idx, err := svc.authRepository.CreateUser(user)
+	idx, err := svc.authRepo.CreateUser(user)
 
 	if err != nil {
 		return "", err
@@ -100,7 +102,7 @@ func (svc AuthenticationService) Logout(authorizationHeader string) error {
 
 func (svc AuthenticationService) Profile(username string) (models.UserProfile, error) {
 	userProfile := models.UserProfile{}
-	user, err := svc.authRepository.FindUser(username)
+	user, err := svc.authRepo.FindUser(username)
 	if err != nil {
 		return userProfile, err
 	}
@@ -109,34 +111,33 @@ func (svc AuthenticationService) Profile(username string) (models.UserProfile, e
 	return userProfile, nil
 }
 
-func (svc AuthenticationService) AccessMerchant(authorizationHeader string, userInfo micromodel.UserInfo, merchantId string) error {
+func (svc AuthenticationService) AccessMerchant(authorizationHeader string, merchantId string, username string) error {
 
-	// tokenStr, err := svc.authService.GetTokenFromAuthorizationHeader(authorizationHeader)
+	tokenStr, err := svc.authService.GetTokenFromAuthorizationHeader(authorizationHeader)
 
-	// if err != nil {
-	// 	return err
-	// }
+	if err != nil {
+		return err
+	}
 
-	// if len(tokenStr) < 1 {
-	// 	return errors.New("token invalid")
-	// }
+	if len(tokenStr) < 1 {
+		return errors.New("token invalid")
+	}
 
-	// merchantMember := &models.MerchantMember{}
-	// err = pst.FindOne(&models.MerchantMember{}, bson.M{"username": userInfo.Username, "merchantId": merchantId}, merchantMember)
+	merchantUser, err := svc.merchantUserRepo.FindByMerchantIdAndUsername(merchantId, username)
 
-	// if err != nil {
-	// 	return err
-	// }
+	if err != nil {
+		return err
+	}
 
-	// if merchantMember.Id == primitive.NilObjectID {
-	// 	return errors.New("merchant invalid")
-	// }
+	if merchantUser.Id == primitive.NilObjectID {
+		return errors.New("merchant invalid")
+	}
 
-	// err = svc.authService.SelectMerchant(tokenStr, merchantId)
+	err = svc.authService.SelectMerchant(tokenStr, merchantId)
 
-	// if err != nil {
-	// 	return errors.New("failed merchant select")
-	// }
+	if err != nil {
+		return errors.New("failed merchant select")
+	}
 
 	return nil
 }
