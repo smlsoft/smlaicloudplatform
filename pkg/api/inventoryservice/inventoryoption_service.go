@@ -22,19 +22,20 @@ func NewInventoryOptionService(inventoryOptionRepository IInventoryOptionReposit
 
 func (svc *InventoryOptionService) CreateInventoryOption(merchantId string, authUsername string, invOpt models.InventoryOption) (string, error) {
 
+	newGuidFixed := utils.NewGUID()
 	invOpt.MerchantId = merchantId
-	invOpt.GuidFixed = utils.NewGUID()
+	invOpt.GuidFixed = newGuidFixed
 	invOpt.Deleted = false
 	invOpt.CreatedBy = authUsername
 	invOpt.CreatedAt = time.Now()
 
-	idx, err := svc.repo.Create(invOpt)
+	_, err := svc.repo.Create(invOpt)
 
 	if err != nil {
 		return "", err
 	}
 
-	return idx, nil
+	return newGuidFixed, nil
 }
 
 func (svc *InventoryOptionService) UpdateInventoryOption(guid string, merchantId string, authUsername string, invOpt models.InventoryOption) error {
