@@ -26,15 +26,3 @@ type MerchantInfo struct {
 	GuidFixed string             `json:"guidFixed" bson:"guidFixed"`
 	Name1     string             `json:"name1" bson:"name1"`
 }
-
-//-->MerchantUser
-type MerchantUser struct {
-	Id         primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Username   string             `json:"username" bson:"username"`
-	MerchantId string             `json:"merchantId" bson:"merchantId"`
-	Role       UserRole           `json:"role" bson:"role"`
-}
-
-func (*MerchantUser) CollectionName() string {
-	return "merchantUsers"
-}
