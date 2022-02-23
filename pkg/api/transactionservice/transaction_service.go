@@ -57,24 +57,28 @@ func (svc *TransactionService) CreateTransaction(merchantId string, username str
 
 func (svc *TransactionService) UpdateTransaction(guid string, merchantId string, username string, trans models.Transaction) error {
 
-	findTrans, err := svc.transactionRepository.FindByGuid(guid, merchantId)
+	findDoc, err := svc.transactionRepository.FindByGuid(guid, merchantId)
 
 	if err != nil {
+		return err
+	}
+
+	if findDoc.Id == primitive.NilObjectID {
 		return errors.New("guid invalid")
 	}
 
 	sumAmount := 0.0
-	for i, transDetail := range findTrans.Items {
-		findTrans.Items[i].LineNumber = i + 1
+	for i, transDetail := range findDoc.Items {
+		findDoc.Items[i].LineNumber = i + 1
 		sumAmount += transDetail.Price * transDetail.Qty
 	}
 
-	findTrans.Items = trans.Items
-	findTrans.SumAmount = sumAmount
-	findTrans.UpdatedBy = username
-	findTrans.UpdatedAt = time.Now()
+	findDoc.Items = trans.Items
+	findDoc.SumAmount = sumAmount
+	findDoc.UpdatedBy = username
+	findDoc.UpdatedAt = time.Now()
 
-	err = svc.transactionRepository.Update(guid, findTrans)
+	err = svc.transactionRepository.Update(guid, findDoc)
 
 	if err != nil {
 		return err
