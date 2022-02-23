@@ -17,9 +17,14 @@ type InventoryHttp struct {
 	invService IInventoryService
 }
 
-func NewInventoryHttp(inventoryService IInventoryService) IInventoryHttp {
+func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) IInventoryHttp {
+
+	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+
+	invRepo := NewInventoryRepository(pst)
+	invService := NewInventoryService(invRepo)
 	return &InventoryHttp{
-		invService: inventoryService,
+		invService: invService,
 	}
 }
 
