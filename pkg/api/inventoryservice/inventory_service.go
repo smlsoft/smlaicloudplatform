@@ -94,17 +94,7 @@ func (svc *InventoryService) UpdateInventory(guid string, merchantId string, aut
 
 func (svc *InventoryService) DeleteInventory(guid string, merchantId string) error {
 
-	findDoc, err := svc.invRepo.FindByGuid(guid, merchantId)
-
-	if err != nil && err.Error() != "mongo: no documents in result" {
-		return err
-	}
-
-	if findDoc.Id == primitive.NilObjectID {
-		return errors.New("guid invalid")
-	}
-
-	err = svc.invRepo.Delete(guid)
+	err := svc.invRepo.Delete(guid, merchantId)
 
 	if err != nil {
 		return err

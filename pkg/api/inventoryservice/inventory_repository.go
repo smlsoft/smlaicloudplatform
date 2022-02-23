@@ -12,7 +12,7 @@ import (
 type IInventoryRepository interface {
 	Create(inventory models.Inventory) (string, error)
 	Update(guid string, inventory models.Inventory) error
-	Delete(guid string) error
+	Delete(guid string, merchantId string) error
 	FindByGuid(guid string, merchantId string) (models.Inventory, error)
 	FindPage(merchantId string, q string, page int, limit int) ([]models.Inventory, paginate.PaginationData, error)
 }
@@ -45,9 +45,9 @@ func (repo *InventoryRepository) Update(guid string, inventory models.Inventory)
 	return nil
 }
 
-func (repo *InventoryRepository) Delete(guid string) error {
+func (repo *InventoryRepository) Delete(guid string, merchantId string) error {
 
-	err := repo.pst.SoftDeleteByID(&models.Inventory{}, guid)
+	err := repo.pst.SoftDelete(&models.Inventory{}, bson.M{"guidFixed": guid, "merchantId": merchantId})
 
 	if err != nil {
 		return err
