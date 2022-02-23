@@ -175,10 +175,10 @@ func (svc *AuthenticationService) SelectMerchant(ctx microservice.IServiceContex
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
 
-	merchantMember := &models.MerchantMember{}
-	err = pst.FindOne(&models.MerchantMember{}, bson.M{"username": userInfo.Username, "merchantId": merchantSelectReq.MerchantId}, merchantMember)
+	merchantUser := &models.MerchantUser{}
+	err = pst.FindOne(&models.MerchantUser{}, bson.M{"username": userInfo.Username, "merchantId": merchantSelectReq.MerchantId}, merchantUser)
 
-	if merchantMember.Id == primitive.NilObjectID {
+	if merchantUser.Id == primitive.NilObjectID {
 		ctx.ResponseError(400, "merchant invalid.")
 		return err
 	}

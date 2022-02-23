@@ -28,13 +28,13 @@ type MerchantInfo struct {
 }
 
 //-->MerchantUser
-type MerchantMember struct {
+type MerchantUser struct {
 	Id         primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Username   string             `json:"username" bson:"username"`
 	MerchantId string             `json:"merchantId" bson:"merchantId"`
 	Role       UserRole           `json:"role" bson:"role"`
 }
 
-func (*MerchantMember) CollectionName() string {
-	return "merchantMembers"
+func (*MerchantUser) CollectionName() string {
+	return "merchantUsers"
 }
