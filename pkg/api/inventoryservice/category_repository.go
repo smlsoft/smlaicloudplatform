@@ -9,7 +9,14 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type ICategoryRepository interface{}
+type ICategoryRepository interface {
+	Count(merchantId string) (int, error)
+	Create(category models.Category) (string, error)
+	Update(guid string, category models.Category) error
+	Delete(guid string) error
+	FindByGuid(guid string, merchantId string) (models.Category, error)
+	FindPage(merchantId string, q string, page int, limit int) ([]models.Category, paginate.PaginationData, error)
+}
 
 type CategoryRepository struct {
 	pst microservice.IPersisterMongo
