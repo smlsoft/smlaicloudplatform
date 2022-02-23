@@ -37,7 +37,12 @@ func NewMerchantHttp(ms *microservice.Microservice, cfg microservice.IConfig) IM
 }
 
 func (h *MerchantHttp) RouteSetup() {
+	h.ms.GET("/merchant/:id", h.InfoMerchant)
+	h.ms.GET("/merchant", h.SearchMerchant)
 
+	h.ms.POST("/merchant", h.CreateMerchant)
+	h.ms.PUT("/merchant/:id", h.UpdateMerchant)
+	h.ms.DELETE("/merchant/:id", h.DeleteMerchant)
 }
 
 func (h *MerchantHttp) CreateMerchant(ctx microservice.IServiceContext) error {
