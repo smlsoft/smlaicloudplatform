@@ -37,7 +37,12 @@ func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) I
 }
 
 func (h *InventoryHttp) RouteSetup() {
+	h.ms.GET("/inventory/:id", h.InfoInventory)
+	h.ms.GET("/inventory", h.SearchInventory)
 
+	h.ms.POST("/inventory", h.CreateInventory)
+	h.ms.PUT("/inventory/:id", h.UpdateInventory)
+	h.ms.DELETE("/inventory/:id", h.DeleteInventory)
 }
 
 func (h *InventoryHttp) CreateInventory(ctx microservice.IServiceContext) error {
