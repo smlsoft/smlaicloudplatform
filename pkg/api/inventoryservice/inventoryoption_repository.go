@@ -12,7 +12,7 @@ import (
 type IInventoryOptionRepository interface {
 	Create(doc models.InventoryOption) (string, error)
 	Update(guid string, doc models.InventoryOption) error
-	Delete(guid string) error
+	Delete(guid string, merchantId string) error
 	FindByGuid(guid string, merchantId string) (models.InventoryOption, error)
 	FindPage(merchantId string, q string, page int, limit int) ([]models.InventoryOption, paginate.PaginationData, error)
 }
@@ -47,8 +47,8 @@ func (repo InventoryOptionRepository) Update(guid string, doc models.InventoryOp
 	return nil
 }
 
-func (repo InventoryOptionRepository) Delete(guid string) error {
-	err := repo.pst.SoftDeleteByID(&models.InventoryOption{}, guid)
+func (repo InventoryOptionRepository) Delete(guid string, merchantId string) error {
+	err := repo.pst.SoftDelete(&models.InventoryOption{}, bson.M{"guidFixed": guid, "merchantId": merchantId})
 
 	if err != nil {
 		return err

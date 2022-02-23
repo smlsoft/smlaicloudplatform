@@ -11,7 +11,7 @@ import (
 type IInventoryOptionService interface {
 	CreateInventoryOption(merchantId string, authUsername string, invOpt models.InventoryOption) (string, error)
 	UpdateInventoryOption(guid string, merchantId string, authUsername string, invOpt models.InventoryOption) error
-	DeleteInventoryOption(guid string) error
+	DeleteInventoryOption(guid string, merchantId string) error
 	InfoInventoryOption(guid string, merchantId string) (models.InventoryOption, error)
 	SearchInventoryOption(merchantId string, q string, page int, limit int) ([]models.InventoryOption, paginate.PaginationData, error)
 }
@@ -64,9 +64,9 @@ func (svc *InventoryOptionService) UpdateInventoryOption(guid string, merchantId
 	return nil
 }
 
-func (svc *InventoryOptionService) DeleteInventoryOption(guid string) error {
+func (svc *InventoryOptionService) DeleteInventoryOption(guid string, merchantId string) error {
 
-	err := svc.repo.Delete(guid)
+	err := svc.repo.Delete(guid, merchantId)
 
 	if err != nil {
 		return err
