@@ -1,263 +1,119 @@
 package merchantservice
 
 import (
-	"encoding/json"
-	"net/http"
-	"smlcloudplatform/internal/microservice"
+	"errors"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
-	"strconv"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	paginate "github.com/gobeam/mongo-go-pagination"
 )
 
+type IMerchantService interface {
+	CreateMerchant(username string, merchant models.Merchant) (string, error)
+	UpdateMerchant(guid string, username string, merchant models.Merchant) error
+	DeleteMerchant(guid string, username string) error
+	InfoMerchant(guid string, username string) (models.MerchantInfo, error)
+	SearchMerchant(username string, q string, page int, limit int) ([]models.MerchantInfo, paginate.PaginationData, error)
+}
+
 type MerchantService struct {
-	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	repo IMerchantRepository
 }
 
-func NewMerchantService(ms *microservice.Microservice, cfg microservice.IConfig) *MerchantService {
-	// signKey, verifyKey, err := utils.LoadKey(cfg.SignKeyPath(), cfg.VerifyKeyPath())
-
-	// if err != nil {
-	// 	fmt.Println("jwt key error :: " + err.Error())
-	// }
-
-	// jwtService := microservice.NewJwtService(signKey, verifyKey, 60*24*10)
-
-	// jwtService := microservice.NewJwtService(ms.Cacher(cfg.CacherConfig()), cfg.JwtSecretKey(), 60*24*10)
-
+func NewMerchantService(repo IMerchantRepository) IMerchantService {
 	return &MerchantService{
-		ms:  ms,
-		cfg: cfg,
+		repo: repo,
 	}
 }
 
-func (svc *MerchantService) RouteSetup() {
-
-	svc.ms.GET("/merchant", svc.SearchMerchant)
-	svc.ms.POST("/merchant", svc.CreateMerchant)
-	svc.ms.GET("/merchant/:id", svc.InfoMerchant)
-	svc.ms.PUT("/merchant/:id", svc.EditMerchant)
-	svc.ms.DELETE("/merchant/:id", svc.DeleteMerchant)
-
-	svc.ms.GET("/member", svc.SearchMember)
-	svc.ms.POST("/member", svc.CreateMember)
-	svc.ms.GET("/member/:id", svc.GetMemberInfo)
-	svc.ms.PUT("/member/:id", svc.EditMember)
-	svc.ms.PUT("/member/:id/password", svc.ChangePasswordMember)
-	svc.ms.DELETE("/member/:id", svc.DeleteMember)
-
-}
-
-func (svc *MerchantService) SearchMerchant(ctx microservice.IServiceContext) error {
-
-	username := ctx.UserInfo().Username
-
-	q := ctx.QueryParam("q")
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
-
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
-
-	if err != nil {
-		limit = 20
-	}
-
-	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	merchantList := []models.MerchantInfo{}
-	pagination, err := pst.FindPage(&models.Merchant{}, limit, page, bson.M{"createdBy": username, "deleted": false, "name1": bson.M{"$regex": primitive.Regex{
-		Pattern: ".*" + q + ".*",
-		Options: "",
-	}}}, &merchantList)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	for mid := range merchantList {
-		count, err := pst.Count(&models.Member{}, bson.M{"merchantId": merchantList[mid].Id})
-		if err != nil {
-			merchantList[mid].TotalMember = 0
-		}
-		merchantList[mid].TotalMember = count
-	}
-
-	ctx.Response(http.StatusOK, models.ApiResponse{
-		Success:    true,
-		Pagination: pagination,
-		Data:       merchantList,
-	})
-	return nil
-}
-
-func (svc *MerchantService) CreateMerchant(ctx microservice.IServiceContext) error {
-	authUsername := ctx.UserInfo().Username
-	if len(authUsername) < 1 {
-		ctx.ResponseError(400, "user authentication invalid")
-	}
-
-	input := ctx.ReadInput()
-
-	merchantReq := &models.Merchant{}
-	err := json.Unmarshal([]byte(input), &merchantReq)
-
-	if err != nil {
-		ctx.ResponseError(400, "merchant payload invalid")
-		return err
-	}
-
-	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
+func (svc *MerchantService) CreateMerchant(username string, merchant models.Merchant) (string, error) {
 
 	merchantId := utils.NewGUID()
-	merchantReq.GuidFixed = merchantId
-	merchantReq.CreatedBy = ctx.UserInfo().Username
-	merchantReq.CreatedAt = time.Now()
+	merchant.GuidFixed = merchantId
+	merchant.CreatedBy = username
+	merchant.CreatedAt = time.Now()
 
-	_, err = pst.Create(&models.Merchant{}, merchantReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	findUser := &models.User{}
-	err = pst.FindOne(&models.User{}, bson.M{"username": authUsername}, findUser)
+	_, err := svc.repo.Create(merchant)
 
 	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
+		return "", err
 	}
 
-	if findUser.ID == primitive.NilObjectID {
-		ctx.ResponseError(400, "user not found.")
-		return err
-	}
-
-	// userMerchant := models.UserMerchant{
-	// 	MerchantId: merchantId,
-	// 	Role:       models.ROLE_OWNER,
-	// }
-
-	// findUser.Merchants = append(findUser.Merchants, userMerchant)
-
-	pst.UpdateOne(&models.User{}, "username", authUsername, findUser)
-
-	ctx.Response(http.StatusOK, models.ApiResponse{
-		Success: true,
-		Id:      merchantReq.GuidFixed,
-	})
-	return nil
+	return merchantId, nil
 }
 
-func (svc *MerchantService) DeleteMerchant(ctx microservice.IServiceContext) error {
-	authUsername := ctx.UserInfo().Username
-	id := ctx.Param("id")
+func (svc *MerchantService) UpdateMerchant(guid string, username string, merchant models.Merchant) error {
 
-	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	findMerchant := &models.Merchant{}
-	err := pst.FindOne(&models.Merchant{}, bson.M{"guidFixed": id, "deleted": false}, findMerchant)
-
-	if err != nil && err.Error() != "mongo: no documents in result" {
-		svc.ms.Log("merchant service", err.Error())
-		ctx.ResponseError(400, "database error")
-		return err
-	}
-
-	if findMerchant.CreatedBy != authUsername {
-		ctx.ResponseError(400, "username invalid")
-		return err
-	}
-
-	err = pst.SoftDeleteByID(&models.Merchant{}, id)
+	findMerchant, err := svc.repo.FindByGuid(guid)
 
 	if err != nil {
-		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	err = pst.Update(&models.User{}, bson.M{"username": authUsername}, bson.M{
-		"$pull": bson.M{"merchants": bson.M{"merchantId": id}},
-	})
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, models.ApiResponse{
-		Success: true,
-	})
-	return nil
-}
-
-func (svc *MerchantService) EditMerchant(ctx microservice.IServiceContext) error {
-
-	username := ctx.UserInfo().Username
-	id := ctx.Param("id")
-	input := ctx.ReadInput()
-
-	merchantRequest := &models.Merchant{}
-	err := json.Unmarshal([]byte(input), &merchantRequest)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	findMerchant := &models.Merchant{}
-
-	err = pst.FindOne(&models.Merchant{}, bson.M{"guidFixed": id, "createdBy": username, "deleted": false}, findMerchant)
-
+	// *** warning feature change to check by role owner
 	if len(findMerchant.CreatedBy) < 1 {
-		ctx.ResponseError(400, "username invalid")
-		return err
+		return errors.New("username invalid")
 	}
 
-	findMerchant.Name1 = merchantRequest.Name1
+	findMerchant.Name1 = merchant.Name1
 	findMerchant.UpdatedBy = username
 	findMerchant.UpdatedAt = time.Now()
 
-	err = pst.UpdateOne(&models.Merchant{}, "guidFixed", id, findMerchant)
+	err = svc.repo.Update(guid, merchant)
 
 	if err != nil {
-		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	ctx.Response(http.StatusOK, models.ApiResponse{
-		Success: true,
-	})
 	return nil
 }
 
-func (svc *MerchantService) InfoMerchant(ctx microservice.IServiceContext) error {
-	username := ctx.UserInfo().Username
-	id := ctx.Param("id")
-
-	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	merchant := &models.Merchant{}
-
-	err := pst.FindOne(&models.Merchant{}, bson.M{"guidFixed": id, "createdBy": username, "deleted": false}, merchant)
+func (svc *MerchantService) DeleteMerchant(guid string, username string) error {
+	findMerchant, err := svc.repo.FindByGuid(guid)
 
 	if err != nil {
-		ctx.ResponseError(400, "not found")
 		return err
 	}
 
-	ctx.Response(http.StatusOK, models.ApiResponse{
-		Success: true,
-		Data:    merchant,
-	})
+	// *** warning feature change to check by role owner
+	if len(findMerchant.CreatedBy) < 1 {
+		return errors.New("username invalid")
+	}
+
+	err = svc.repo.Delete(guid)
+
+	if err != nil {
+		return err
+	}
 	return nil
+}
+
+func (svc *MerchantService) InfoMerchant(guid string, username string) (models.MerchantInfo, error) {
+	findMerchant, err := svc.repo.FindByGuid(guid)
+
+	if err != nil {
+		return models.MerchantInfo{}, err
+	}
+
+	// *** warning feature change to check by role owner
+	if len(findMerchant.CreatedBy) < 1 {
+		return models.MerchantInfo{}, errors.New("username invalid")
+	}
+
+	return models.MerchantInfo{
+		Id:        findMerchant.Id,
+		GuidFixed: findMerchant.GuidFixed,
+		Name1:     findMerchant.Name1,
+	}, nil
+}
+
+func (svc *MerchantService) SearchMerchant(username string, q string, page int, limit int) ([]models.MerchantInfo, paginate.PaginationData, error) {
+	merchantList, pagination, err := svc.repo.FindPage(username, q, page, limit)
+
+	if err != nil {
+		return merchantList, pagination, err
+	}
+
+	return merchantList, pagination, nil
 }

@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api"
+	"smlcloudplatform/pkg/api/authentication"
 	"smlcloudplatform/pkg/api/inventoryservice"
 	"smlcloudplatform/pkg/api/merchantservice"
 	"smlcloudplatform/pkg/api/toolsservice"
@@ -36,13 +36,13 @@ func main() {
 
 	ms.HttpMiddleware(jwtService.MWFuncWithRedis(cacher, publicPath...))
 
-	svcAuth := api.NewAuthenticationService(ms, cfg)
+	svcAuth := authentication.NewAuthenticationHttp(ms, cfg)
 	svcAuth.RouteSetup()
 
-	svcMerchant := merchantservice.NewMerchantService(ms, cfg)
+	svcMerchant := merchantservice.NewMerchantHttp(ms, cfg)
 	svcMerchant.RouteSetup()
 
-	inventoryapi := inventoryservice.NewInventoryService(ms, cfg)
+	inventoryapi := inventoryservice.NewInventoryHttp(ms, cfg)
 	inventoryapi.RouteSetup()
 
 	toolSvc := toolsservice.NewToolsService(ms, cfg)

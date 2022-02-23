@@ -8,23 +8,44 @@ import (
 	"strconv"
 )
 
+type ITransactionHttp interface {
+	RouteSetup()
+	CreateTransaction(ctx microservice.IServiceContext) error
+	UpdateTransaction(ctx microservice.IServiceContext) error
+	DeleteTransaction(ctx microservice.IServiceContext) error
+	InfoTransaction(ctx microservice.IServiceContext) error
+	SearchTransaction(ctx microservice.IServiceContext) error
+	SearchTransactionItems(ctx microservice.IServiceContext) error
+}
+
 type TransactionHttp struct {
 	ms      *microservice.Microservice
 	cfg     microservice.IConfig
 	service ITransactionService
 }
 
-func NewTransactionHttp(ms *microservice.Microservice, cfg microservice.IConfig) TransactionHttp {
+func NewTransactionHttp(ms *microservice.Microservice, cfg microservice.IConfig) ITransactionHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	transRepo := NewTransactionRepository(pst)
 	service := NewTransactionService(transRepo)
-	return TransactionHttp{
+	return &TransactionHttp{
 		ms:      ms,
 		cfg:     cfg,
 		service: service,
 	}
+}
+
+func (h *TransactionHttp) RouteSetup() {
+
+	h.ms.GET("/transaction/:id", h.InfoTransaction)
+	h.ms.GET("/transaction", h.SearchTransaction)
+	h.ms.GET("/transaction/:id/items", h.SearchTransactionItems)
+
+	h.ms.POST("/transaction", h.CreateTransaction)
+	h.ms.PUT("/transaction/:id", h.UpdateTransaction)
+	h.ms.DELETE("/transaction/:id", h.DeleteTransaction)
 }
 
 func (h *TransactionHttp) CreateTransaction(ctx microservice.IServiceContext) error {
@@ -85,6 +106,26 @@ func (h *TransactionHttp) UpdateTransaction(ctx microservice.IServiceContext) er
 	return nil
 }
 
+func (h *TransactionHttp) DeleteTransaction(ctx microservice.IServiceContext) error {
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	merchantId := userInfo.MerchantId
+
+	id := ctx.Param("id")
+
+	err := h.service.DeleteTransaction(id, merchantId, authUsername)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success: true,
+	})
+	return nil
+}
+
 func (h *TransactionHttp) InfoTransaction(ctx microservice.IServiceContext) error {
 
 	userInfo := ctx.UserInfo()
@@ -123,14 +164,21 @@ func (h *TransactionHttp) SearchTransaction(ctx microservice.IServiceContext) er
 		limit = 20
 	}
 
-	transList, pagination, err := h.service.SearchTransaction(merchantId, q, page, limit)
+	docList, pagination, err := h.service.SearchTransaction(merchantId, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "pagination": pagination, "data": transList})
+	ctx.Response(
+		http.StatusOK,
+		models.ApiResponse{
+			Success:    true,
+			Data:       docList,
+			Pagination: pagination,
+		})
+
 	return nil
 }
 
@@ -139,7 +187,7 @@ func (h *TransactionHttp) SearchTransactionItems(ctx microservice.IServiceContex
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
 
-	transId := ctx.Param("trans_id")
+	transId := ctx.Param("id")
 
 	q := ctx.QueryParam("q")
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
@@ -153,13 +201,19 @@ func (h *TransactionHttp) SearchTransactionItems(ctx microservice.IServiceContex
 		limit = 20
 	}
 
-	transList, pagination, err := h.service.SearchItemsTransaction(transId, merchantId, q, page, limit)
+	docList, pagination, err := h.service.SearchItemsTransaction(transId, merchantId, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "pagination": pagination, "data": transList})
+	ctx.Response(
+		http.StatusOK,
+		models.ApiResponse{
+			Success:    true,
+			Data:       docList,
+			Pagination: pagination,
+		})
 	return nil
 }

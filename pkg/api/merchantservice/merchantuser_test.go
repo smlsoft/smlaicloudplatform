@@ -17,18 +17,18 @@ func (TestPersisterMongoConfig) DB() string {
 	return "micro_test"
 }
 
-var memberService merchantservice.IMemberService
+var merchantUserRepo merchantservice.IMerchantUserRepository
 
 func setup() {
 	pst := microservice.NewPersisterMongo(&TestPersisterMongoConfig{})
 
-	memberService = merchantservice.NewMemberService(pst)
+	merchantUserRepo = merchantservice.NewMerchantUserRepository(pst)
 }
 
 func TestMerchantMemberSave(t *testing.T) {
 	setup()
 
-	err := memberService.Save("mx1", "ux3", models.ROLE_OWNER)
+	err := merchantUserRepo.Save("mx1", "ux3", models.ROLE_OWNER)
 
 	if err != nil {
 		t.Error(err)
@@ -38,7 +38,7 @@ func TestMerchantMemberSave(t *testing.T) {
 func TestMerchantMemberFindRole(t *testing.T) {
 	setup()
 
-	role, err := memberService.FindRole("mx1", "ux1")
+	role, err := merchantUserRepo.FindRole("mx1", "ux1")
 
 	if err != nil {
 		t.Error(err)
@@ -50,7 +50,7 @@ func TestMerchantMemberFindRole(t *testing.T) {
 func TestMerchantMemberFindByMerchant(t *testing.T) {
 	setup()
 
-	members, err := memberService.FindByMerchantId("mx1")
+	members, err := merchantUserRepo.FindByMerchantId("mx1")
 
 	if err != nil {
 		t.Error(err)
@@ -63,7 +63,7 @@ func TestMerchantMemberFindByMerchant(t *testing.T) {
 func TestMerchantMemberFindByUsername(t *testing.T) {
 	setup()
 
-	members, err := memberService.FindByUsername("ux1")
+	members, err := merchantUserRepo.FindByUsername("ux1")
 
 	if err != nil {
 		t.Error(err)

@@ -312,7 +312,7 @@ func TestMongodbSoftDelete(t *testing.T) {
 
 	pst := microservice.NewPersisterMongo(cfg)
 
-	err := pst.SoftDelete(&Product{}, []string{"6195af880e33cec3af136724", "6195af880e33cec3af136725"})
+	err := pst.SoftBatchDeleteByID(&Product{}, []string{"6195af880e33cec3af136724", "6195af880e33cec3af136725"})
 
 	if err != nil {
 		t.Error(err.Error())

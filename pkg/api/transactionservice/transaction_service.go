@@ -7,11 +7,13 @@ import (
 	"time"
 
 	paginate "github.com/gobeam/mongo-go-pagination"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ITransactionService interface {
 	CreateTransaction(merchantId string, username string, trans models.Transaction) (string, error)
 	UpdateTransaction(guid string, merchantId string, username string, trans models.Transaction) error
+	DeleteTransaction(guid string, merchantId string, username string) error
 	InfoTransaction(guid string, merchantId string) (models.Transaction, error)
 	SearchTransaction(merchantId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error)
 	SearchItemsTransaction(guid string, merchantId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error)
@@ -55,28 +57,42 @@ func (svc *TransactionService) CreateTransaction(merchantId string, username str
 
 func (svc *TransactionService) UpdateTransaction(guid string, merchantId string, username string, trans models.Transaction) error {
 
-	findTrans, err := svc.transactionRepository.FindByGuid(guid, merchantId)
-
-	if err != nil {
-		return errors.New("guid invalid")
-	}
-
-	sumAmount := 0.0
-	for i, transDetail := range findTrans.Items {
-		findTrans.Items[i].LineNumber = i + 1
-		sumAmount += transDetail.Price * transDetail.Qty
-	}
-
-	findTrans.Items = trans.Items
-	findTrans.SumAmount = sumAmount
-	findTrans.UpdatedBy = username
-	findTrans.UpdatedAt = time.Now()
-
-	err = svc.transactionRepository.Update(guid, findTrans)
+	findDoc, err := svc.transactionRepository.FindByGuid(guid, merchantId)
 
 	if err != nil {
 		return err
 	}
+
+	if findDoc.Id == primitive.NilObjectID {
+		return errors.New("guid invalid")
+	}
+
+	sumAmount := 0.0
+	for i, transDetail := range findDoc.Items {
+		findDoc.Items[i].LineNumber = i + 1
+		sumAmount += transDetail.Price * transDetail.Qty
+	}
+
+	findDoc.Items = trans.Items
+	findDoc.SumAmount = sumAmount
+	findDoc.UpdatedBy = username
+	findDoc.UpdatedAt = time.Now()
+
+	err = svc.transactionRepository.Update(guid, findDoc)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (svc *TransactionService) DeleteTransaction(guid string, merchantId string, username string) error {
+
+	err := svc.transactionRepository.Delete(guid, merchantId)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

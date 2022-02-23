@@ -4,9 +4,16 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/api/merchantservice"
 	"smlcloudplatform/pkg/models"
 )
 
+type IAuthenticationHttp interface {
+	Login(ctx microservice.IServiceContext) error
+	Register(ctx microservice.IServiceContext) error
+	Logout(ctx microservice.IServiceContext) error
+	Profile(ctx microservice.IServiceContext) error
+}
 type AuthenticationHttp struct {
 	ms                    *microservice.Microservice
 	cfg                   microservice.IConfig
@@ -18,8 +25,9 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
-	authRepository := NewAuthenticationRepository(pst)
-	authenticationService := NewAuthenticationService(authRepository, authService)
+	authRepo := NewAuthenticationRepository(pst)
+	merchantUserRepo := merchantservice.NewMerchantUserRepository(pst)
+	authenticationService := NewAuthenticationService(authRepo, merchantUserRepo, authService)
 
 	return AuthenticationHttp{
 		ms:                    ms,

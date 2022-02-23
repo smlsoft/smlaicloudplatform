@@ -25,7 +25,7 @@ func main() {
 	cfg := microservice.NewConfig()
 	ms := microservice.NewMicroservice(cfg)
 
-	inventoryapi := inventoryservice.NewInventoryService(ms, cfg)
+	inventoryapi := inventoryservice.NewInventoryHttp(ms, cfg)
 	inventoryapi.RouteSetup()
 
 	//ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)

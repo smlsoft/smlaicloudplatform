@@ -12,7 +12,7 @@ import (
 
 func TestFindUser(t *testing.T) {
 
-	os.Setenv("MONGODB_URI", "mongodb://localhost:27017/")
+	os.Setenv("MONGODB_URI", "mongodb://root:rootx@localhost:27017/")
 	defer os.Unsetenv("MONGODB_URI")
 
 	mongoPersisterConfig := microservice.NewMongoPersisterConfig()

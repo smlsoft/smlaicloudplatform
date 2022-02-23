@@ -17,7 +17,7 @@ func main() {
 	cfg := microservice.NewConfig()
 	ms := microservice.NewMicroservice(cfg)
 
-	svc := merchantservice.NewMerchantService(ms, cfg)
+	svc := merchantservice.NewMerchantHttp(ms, cfg)
 
 	svc.RouteSetup()
 

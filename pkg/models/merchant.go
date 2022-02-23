@@ -22,20 +22,7 @@ func (*Merchant) CollectionName() string {
 }
 
 type MerchantInfo struct {
-	Id          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	GuidFixed   string             `json:"guidFixed" bson:"guidFixed"`
-	Name1       string             `json:"name1" bson:"name1"`
-	TotalMember int                `json:"totalMember"`
-}
-
-//-->MerchantUser
-type MerchantMember struct {
-	Id         primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Username   string             `json:"username" bson:"username"`
-	MerchantId string             `json:"merchantId" bson:"merchantId"`
-	Role       UserRole           `json:"role" bson:"role"`
-}
-
-func (*MerchantMember) CollectionName() string {
-	return "merchantMembers"
+	Id        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	GuidFixed string             `json:"guidFixed" bson:"guidFixed"`
+	Name1     string             `json:"name1" bson:"name1"`
 }

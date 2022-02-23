@@ -28,7 +28,8 @@ type IPersisterMongo interface {
 	Exec(model interface{}) (*mongo.Collection, error)
 	Delete(model interface{}, args ...interface{}) error
 	DeleteByID(model interface{}, id string) error
-	SoftDelete(model interface{}, ids []string) error
+	SoftDelete(model interface{}, filter interface{}) error
+	SoftBatchDeleteByID(model interface{}, ids []string) error
 	SoftDeleteByID(model interface{}, id string) error
 	Cleanup() error
 	TestConnect() error
@@ -364,7 +365,30 @@ func (pst *PersisterMongo) SoftDeleteByID(model interface{}, id string) error {
 	return nil
 }
 
-func (pst *PersisterMongo) SoftDelete(model interface{}, ids []string) error {
+func (pst *PersisterMongo) SoftDelete(model interface{}, filter interface{}) error {
+
+	db, err := pst.getClient()
+	if err != nil {
+		return err
+	}
+
+	collectionName, err := pst.getCollectionName(model)
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Collection(collectionName).UpdateMany(pst.ctx, filter, bson.D{
+		{Key: "$set", Value: bson.M{"deleted": true}},
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (pst *PersisterMongo) SoftBatchDeleteByID(model interface{}, ids []string) error {
 	db, err := pst.getClient()
 	if err != nil {
 		return err
