@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/3dsinteractive/wrkgo v0.0.0-20210911134244-26f18db8d978
+	github.com/apex/log v1.9.0
 	github.com/confluentinc/confluent-kafka-go v1.7.0
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0

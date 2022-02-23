@@ -15,6 +15,7 @@ type IConfig interface {
 	// SignKeyPath() string
 	// VerifyKeyPath() string
 	JwtSecretKey() string
+	ApplicationName() string
 }
 
 func getEnv(key string, fallback string) string {
@@ -50,6 +51,10 @@ func (*Config) MQServer() string {
 
 func (*Config) TopicName() string {
 	return os.Getenv("TOPIC_NAME")
+}
+
+func (*Config) ApplicationName() string {
+	return getEnv("SERVICE_NAME", "microservice")
 }
 
 // func (*Config) SignKeyPath() string {
@@ -114,7 +119,7 @@ func NewMongoPersisterConfig() *MongoPersisterConfig {
 	return &MongoPersisterConfig{}
 }
 func (cfg *MongoPersisterConfig) MongodbURI() string {
-	return getEnv("MONGODB_URI", "mongodb://root:rootx@localhost:27017/")
+	return getEnv("MONGODB_URI", "") // mongodb://root:rootx@localhost:27017/
 }
 
 func (cfg *MongoPersisterConfig) DB() string {

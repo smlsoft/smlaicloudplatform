@@ -2,7 +2,6 @@ package microservice
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -57,12 +56,14 @@ func (ms *Microservice) startHTTP(exitChannel chan bool) error {
 		<-exitChannel
 		ms.stopHTTP()
 	}()
+
+	ms.Logger.Infof("Listening: %v Entrypoint: %v ", port, ms.pathPrefix)
+
 	err := ms.echo.Start("0.0.0.0:" + port)
 	if err == nil {
-		if ms.pathPrefix != "" {
-			fmt.Println("Start " + ms.pathPrefix)
-		}
+		ms.Logger.WithError(err).Error("Failed After Start")
 	}
+
 	return err
 }
 

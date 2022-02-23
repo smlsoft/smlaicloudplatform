@@ -2,7 +2,6 @@ package microservice
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"runtime"
@@ -12,6 +11,9 @@ import (
 
 	msValidator "smlcloudplatform/internal/validator"
 
+	_ "smlcloudplatform/logger"
+
+	"github.com/apex/log"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -44,13 +46,16 @@ type Microservice struct {
 	persistersMutex sync.Mutex
 	prod            IProducer
 	pathPrefix      string
-	logger          *log.Logger
+	config          IConfig
+	Logger          *log.Entry
 }
 
 type ServiceHandleFunc func(context IServiceContext) error
 
 func NewMicroservice(config IConfig) *Microservice {
 	e := echo.New()
+	e.HideBanner = true
+	e.HidePort = true
 	e.Validator = &msValidator.CustomValidator{Validator: validator.New()}
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
@@ -58,7 +63,9 @@ func NewMicroservice(config IConfig) *Microservice {
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 	}))
 
-	e.Use(middleware.Logger())
+	logctx := log.WithFields(log.Fields{
+		"name": config.ApplicationName(),
+	})
 
 	return &Microservice{
 		echo:            e,
@@ -66,7 +73,8 @@ func NewMicroservice(config IConfig) *Microservice {
 		persisters:      map[string]IPersister{},
 		mongoPersisters: map[string]IPersisterMongo{},
 		pathPrefix:      config.PathPrefix(),
-		logger:          log.New(os.Stdout, "", 0),
+		config:          config,
+		Logger:          logctx,
 	}
 }
 
@@ -79,6 +87,21 @@ func (ms *Microservice) getProducer(mqServers string) IProducer {
 
 // Start start all registered services
 func (ms *Microservice) Start() error {
+
+	// check resources availability
+	ms.Logger.Info("Starting Microservice.")
+	mongodbUri := ms.config.MongoPersisterConfig().MongodbURI()
+	if mongodbUri != "" {
+		ms.Logger.Debug("[mongodb]Test Connection")
+		pst := NewPersisterMongo(ms.config.MongoPersisterConfig())
+		err := pst.TestConnect()
+		if err != nil {
+			ms.Logger.WithError(err).Error("[mongodb]Connection Failed.")
+			return err
+		}
+		ms.mongoPersisters[mongodbUri] = pst
+		ms.Logger.Debug("[mongodb]Connection Success")
+	}
 
 	httpN := len(ms.echo.Routes())
 	var exitHTTP chan bool
@@ -131,7 +154,7 @@ func (ms *Microservice) Stop() {
 
 // Cleanup clean resources up from every registered services before exit
 func (ms *Microservice) Cleanup() error {
-	ms.Log("MS", "Start cleanup")
+	ms.Logger.Info("Start cleanup")
 	if ms.prod != nil {
 		ms.prod.Close()
 	}

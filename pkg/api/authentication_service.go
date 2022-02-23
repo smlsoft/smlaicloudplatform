@@ -60,6 +60,8 @@ func (svc *AuthenticationService) Login(ctx microservice.IServiceContext) error 
 		return err
 	}
 
+	svc.ms.Logger.Info("Do Login Event")
+
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
 
 	findUser := &models.User{}

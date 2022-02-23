@@ -31,6 +31,7 @@ type IPersisterMongo interface {
 	SoftDelete(model interface{}, ids []string) error
 	SoftDeleteByID(model interface{}, id string) error
 	Cleanup() error
+	TestConnect() error
 }
 
 // IPersisterConfig is interface for persister
@@ -70,6 +71,16 @@ func (pst *PersisterMongo) getConnectionString() (string, error) {
 	return cfg.MongodbURI(), nil
 }
 
+func (pst *PersisterMongo) TestConnect() error {
+	_, err := pst.getClient()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (pst *PersisterMongo) getClient() (*mongo.Database, error) {
 	if pst.db != nil {
 		return pst.db, nil
@@ -79,6 +90,7 @@ func (pst *PersisterMongo) getClient() (*mongo.Database, error) {
 	defer pst.dbMutex.Unlock()
 
 	connectionStr, err := pst.getConnectionString()
+
 	if err != nil {
 		return nil, err
 	}
@@ -95,6 +107,11 @@ func (pst *PersisterMongo) getClient() (*mongo.Database, error) {
 		return nil, err
 	}
 
+	// check connection
+	err = client.Ping(context.TODO(), nil)
+	if err != nil {
+		return nil, err
+	}
 	// defer client.Disconnect(ctx)
 
 	// databases, err := client.ListDatabaseNames(ctx, bson.M{})

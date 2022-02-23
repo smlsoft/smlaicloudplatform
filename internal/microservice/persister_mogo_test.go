@@ -1,6 +1,7 @@
 package microservice_test
 
 import (
+	"errors"
 	"fmt"
 	"smlcloudplatform/internal/microservice"
 	"testing"
@@ -370,4 +371,14 @@ func TestMongodbAggregatePage(t *testing.T) {
 		fmt.Println(err.Error())
 	}
 	t.Log("count :: ", products)
+}
+
+func TestConnectMongodbUrit(t *testing.T) {
+
+	mongoPersisterConfig := microservice.NewMongoPersisterConfig()
+	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
+	err := mongoPersister.TestConnect()
+	if err != nil {
+		t.Error(errors.New("Cannot connect Database"))
+	}
 }
