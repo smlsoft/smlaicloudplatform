@@ -18,6 +18,8 @@ type IInventoryHttp interface {
 }
 
 type InventoryHttp struct {
+	ms         *microservice.Microservice
+	cfg        microservice.IConfig
 	invService IInventoryService
 }
 
@@ -28,11 +30,14 @@ func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) I
 	invRepo := NewInventoryRepository(pst)
 	invService := NewInventoryService(invRepo)
 	return &InventoryHttp{
+		ms:         ms,
+		cfg:        cfg,
 		invService: invService,
 	}
 }
 
 func (h *InventoryHttp) RouteSetup() {
+
 }
 
 func (h *InventoryHttp) CreateInventory(ctx microservice.IServiceContext) error {
