@@ -42,7 +42,7 @@ func main() {
 	svcMerchant := merchantservice.NewMerchantHttp(ms, cfg)
 	svcMerchant.RouteSetup()
 
-	inventoryapi := inventoryservice.NewInventoryService(ms, cfg)
+	inventoryapi := inventoryservice.NewInventoryHttp(ms, cfg)
 	inventoryapi.RouteSetup()
 
 	toolSvc := toolsservice.NewToolsService(ms, cfg)
