@@ -1,206 +1,99 @@
 package inventoryservice
 
 import (
-	"encoding/json"
-	"net/http"
-	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
-	"strconv"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	paginate "github.com/gobeam/mongo-go-pagination"
 )
 
-func (svc *InventoryService) CreateOptionGroup(ctx microservice.IServiceContext) error {
-	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
+type IOptionGroupService interface{}
 
-	input := ctx.ReadInput()
-
-	inventoryOperationGroup := &models.InventoryOptionGroup{}
-	err := json.Unmarshal([]byte(input), &inventoryOperationGroup)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	inventoryOperationGroup.MerchantId = merchantId
-	inventoryOperationGroup.GuidFixed = utils.NewGUID()
-	inventoryOperationGroup.CreatedBy = authUsername
-	inventoryOperationGroup.CreatedAt = time.Now()
-	inventoryOperationGroup.Deleted = false
-
-	for i := range inventoryOperationGroup.Details {
-		inventoryOperationGroup.Details[i].GuidFixed = utils.NewGUID()
-	}
-
-	idx, err := pst.Create(&models.InventoryOptionGroup{}, inventoryOperationGroup)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, models.ApiResponse{
-		Success: true,
-		Id:      idx,
-	})
-	return nil
+type OptionGroupService struct {
+	repo IOptionGroupRepository
 }
 
-func (svc *InventoryService) EditOptionGroup(ctx microservice.IServiceContext) error {
-	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
+func NewOptionGroupService(optionGroupRepository IOptionGroupRepository) IOptionGroupService {
+	return &OptionGroupService{
+		repo: optionGroupRepository,
+	}
+}
 
-	input := ctx.ReadInput()
+func (svc *OptionGroupService) CreateOptionGroup(merchantId string, authUsername string, doc models.InventoryOptionGroup) (string, error) {
 
-	id := ctx.Param("id")
-	inventoryOperationGroupReq := &models.InventoryOptionGroup{}
-	err := json.Unmarshal([]byte(input), &inventoryOperationGroupReq)
+	newGuid := utils.NewGUID()
+	doc.MerchantId = merchantId
+	doc.GuidFixed = newGuid
+	doc.CreatedBy = authUsername
+	doc.CreatedAt = time.Now()
+	doc.Deleted = false
+
+	for i := range doc.Details {
+		doc.Details[i].GuidFixed = utils.NewGUID()
+	}
+
+	_, err := svc.repo.Create(doc)
 
 	if err != nil {
-		ctx.ResponseError(400, err.Error())
+		return "", err
+	}
+
+	return newGuid, nil
+}
+
+func (svc *OptionGroupService) UpdateOptionGroup(guid string, merchantId string, authUsername string, doc models.InventoryOptionGroup) error {
+
+	findDoc, err := svc.repo.FindByGuid(guid, merchantId)
+
+	if err != nil {
 		return err
 	}
 
-	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	findDoc := &models.InventoryOptionGroup{}
-	err = pst.FindOne(&models.InventoryOptionGroup{}, bson.M{"guidFixed": id, "merchantId": merchantId, "deleted": false}, findDoc)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	findDoc.OptionName1 = inventoryOperationGroupReq.OptionName1
-	findDoc.ProductSelectOption1 = inventoryOperationGroupReq.ProductSelectOption1
-	findDoc.ProductSelectOption2 = inventoryOperationGroupReq.ProductSelectOption2
-	findDoc.ProductSelectOptionMin = inventoryOperationGroupReq.ProductSelectOptionMin
-	findDoc.ProductSelectOptionMax = inventoryOperationGroupReq.ProductSelectOptionMax
-	findDoc.Details = inventoryOperationGroupReq.Details
+	findDoc.OptionName1 = doc.OptionName1
+	findDoc.ProductSelectOption1 = doc.ProductSelectOption1
+	findDoc.ProductSelectOption2 = doc.ProductSelectOption2
+	findDoc.ProductSelectOptionMin = doc.ProductSelectOptionMin
+	findDoc.ProductSelectOptionMax = doc.ProductSelectOptionMax
+	findDoc.Details = doc.Details
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = pst.UpdateOne(&models.InventoryOptionGroup{}, "guidFixed", id, findDoc)
+	err = svc.repo.Update(guid, findDoc)
 
 	if err != nil {
-		ctx.ResponseError(400, err.Error())
 		return err
 	}
-
-	ctx.Response(http.StatusOK, models.ApiResponse{
-		Success: true,
-	})
-
 	return nil
 }
 
-func (svc *InventoryService) InfoOptionGroup(ctx microservice.IServiceContext) error {
-	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
-
-	id := ctx.Param("id")
-
-	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	doc := &models.InventoryOptionGroup{}
-
-	err := pst.FindOne(&models.InventoryOptionGroup{}, bson.M{"guidFixed": id, "merchantId": merchantId, "createdBy": authUsername, "deleted": false}, doc)
+func (svc *OptionGroupService) DeleteOptionGroup(guid string) error {
+	err := svc.repo.Delete(guid)
 
 	if err != nil {
-		ctx.ResponseError(400, "not found")
 		return err
 	}
-
-	ctx.Response(http.StatusOK, models.ApiResponse{
-		Success: true,
-		Data:    doc,
-	})
 	return nil
 }
 
-func (svc *InventoryService) DeleteOptionGroup(ctx microservice.IServiceContext) error {
-	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
+func (svc *OptionGroupService) InfoOptionGroup(guid string, merchantId string) (models.InventoryOptionGroup, error) {
 
-	id := ctx.Param("id")
-
-	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	findCategory := &models.InventoryOptionGroup{}
-	err := pst.FindOne(&models.Category{}, bson.M{"guidFixed": id, "merchantId": merchantId}, findCategory)
-
-	if err != nil && err.Error() != "mongo: no documents in result" {
-		svc.ms.Log("merchant service", err.Error())
-		ctx.ResponseError(400, "database error")
-		return err
-	}
-
-	if findCategory.CreatedBy != authUsername {
-		ctx.ResponseError(400, "username invalid")
-		return err
-	}
-
-	category := &models.InventoryOptionGroup{}
-	err = pst.SoftDeleteByID(category, id)
+	findDoc, err := svc.repo.FindByGuid(guid, merchantId)
 
 	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
+		return models.InventoryOptionGroup{}, err
 	}
 
-	ctx.Response(http.StatusOK, models.ApiResponse{
-		Success: true,
-	})
+	return findDoc, nil
 
-	return nil
 }
 
-func (svc *InventoryService) SearchOptionGroup(ctx microservice.IServiceContext) error {
-	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
-
-	q := ctx.QueryParam("q")
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
-
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
+func (svc *OptionGroupService) SearchOptionGroup(merchantId string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindPage(merchantId, q, page, limit)
 
 	if err != nil {
-		limit = 20
+		return []models.InventoryOptionGroup{}, pagination, err
 	}
 
-	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
-
-	docList := []models.InventoryOptionGroup{}
-	pagination, err := pst.FindPage(&models.InventoryOptionGroup{}, limit, page, bson.M{"merchantId": merchantId, "createdBy": authUsername, "deleted": false, "optionName1": bson.M{"$regex": primitive.Regex{
-		Pattern: ".*" + q + ".*",
-		Options: "",
-	}}}, &docList)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, models.ApiResponse{
-		Success:    true,
-		Pagination: pagination,
-		Data:       docList,
-	})
-
-	return nil
+	return docList, pagination, nil
 }
