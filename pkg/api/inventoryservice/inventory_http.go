@@ -10,7 +10,11 @@ import (
 
 type IInventoryHttp interface {
 	RouteSetup()
-	Create(ctx microservice.IServiceContext) error
+	CreateInventory(ctx microservice.IServiceContext) error
+	UpdateInventory(ctx microservice.IServiceContext) error
+	DeleteInventory(ctx microservice.IServiceContext) error
+	InfoInventory(ctx microservice.IServiceContext) error
+	SearchInventory(ctx microservice.IServiceContext) error
 }
 
 type InventoryHttp struct {
@@ -31,7 +35,7 @@ func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) I
 func (h *InventoryHttp) RouteSetup() {
 }
 
-func (h *InventoryHttp) Create(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) CreateInventory(ctx microservice.IServiceContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	merchantId := userInfo.MerchantId
@@ -64,7 +68,7 @@ func (h *InventoryHttp) Create(ctx microservice.IServiceContext) error {
 
 }
 
-func (h *InventoryHttp) Update(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) UpdateInventory(ctx microservice.IServiceContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	merchantId := userInfo.MerchantId
@@ -97,7 +101,7 @@ func (h *InventoryHttp) Update(ctx microservice.IServiceContext) error {
 	return nil
 }
 
-func (h *InventoryHttp) Delete(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) DeleteInventory(ctx microservice.IServiceContext) error {
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
 
@@ -120,7 +124,7 @@ func (h *InventoryHttp) Delete(ctx microservice.IServiceContext) error {
 	return nil
 }
 
-func (h *InventoryHttp) Info(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) InfoInventory(ctx microservice.IServiceContext) error {
 
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
@@ -145,7 +149,7 @@ func (h *InventoryHttp) Info(ctx microservice.IServiceContext) error {
 	return nil
 }
 
-func (h *InventoryHttp) Search(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) SearchInventory(ctx microservice.IServiceContext) error {
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
 
