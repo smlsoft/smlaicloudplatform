@@ -9,6 +9,7 @@ import (
 )
 
 type ITransactionHttp interface {
+	RouteSetup()
 	CreateTransaction(ctx microservice.IServiceContext) error
 	UpdateTransaction(ctx microservice.IServiceContext) error
 	DeleteTransaction(ctx microservice.IServiceContext) error
@@ -34,6 +35,17 @@ func NewTransactionHttp(ms *microservice.Microservice, cfg microservice.IConfig)
 		cfg:     cfg,
 		service: service,
 	}
+}
+
+func (h *TransactionHttp) RouteSetup() {
+
+	h.ms.GET("/transaction/:id", h.InfoTransaction)
+	h.ms.GET("/transaction", h.SearchTransaction)
+	h.ms.GET("/transaction/:id/items", h.SearchTransactionItems)
+
+	h.ms.POST("/transaction", h.CreateTransaction)
+	h.ms.PUT("/transaction/:id", h.UpdateTransaction)
+	h.ms.DELETE("/transaction/:id", h.DeleteTransaction)
 }
 
 func (h *TransactionHttp) CreateTransaction(ctx microservice.IServiceContext) error {
@@ -175,7 +187,7 @@ func (h *TransactionHttp) SearchTransactionItems(ctx microservice.IServiceContex
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
 
-	transId := ctx.Param("trans_id")
+	transId := ctx.Param("id")
 
 	q := ctx.QueryParam("q")
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
