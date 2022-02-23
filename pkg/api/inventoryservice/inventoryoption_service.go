@@ -8,7 +8,13 @@ import (
 	paginate "github.com/gobeam/mongo-go-pagination"
 )
 
-type IInventoryOptionService interface{}
+type IInventoryOptionService interface {
+	CreateInventoryOption(merchantId string, authUsername string, invOpt models.InventoryOption) (string, error)
+	UpdateInventoryOption(guid string, merchantId string, authUsername string, invOpt models.InventoryOption) error
+	DeleteInventoryOption(guid string) error
+	InfoInventoryOption(guid string, merchantId string) (models.InventoryOption, error)
+	SearchInventoryOption(merchantId string, q string, page int, limit int) ([]models.InventoryOption, paginate.PaginationData, error)
+}
 
 type InventoryOptionService struct {
 	repo IInventoryOptionRepository
