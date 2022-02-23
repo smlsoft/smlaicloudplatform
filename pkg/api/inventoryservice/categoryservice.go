@@ -1,5 +1,6 @@
 package inventoryservice
 
+/*
 import (
 	"encoding/json"
 	"net/http"
@@ -203,3 +204,5 @@ func (svc *InventoryService) SearchCategory(ctx microservice.IServiceContext) er
 		})
 	return nil
 }
+
+*/

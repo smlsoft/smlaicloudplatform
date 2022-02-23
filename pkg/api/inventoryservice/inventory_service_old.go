@@ -46,22 +46,22 @@ func (svc *InventoryServiceOld) RouteSetup() {
 	svc.ms.GET("/inventorysync", svc.GetInventorySync)
 	svc.ms.DELETE("/inventory/:id", svc.DeleteInventory)
 
-	svc.ms.GET("/category", svc.SearchCategory)
-	svc.ms.POST("/category", svc.CreateCategory)
-	svc.ms.GET("/category/:id", svc.InfoCategory)
-	svc.ms.PUT("/category/:id", svc.EditCategory)
-	svc.ms.DELETE("/category/:id", svc.DeleteCategory)
+	// 	svc.ms.GET("/category", svc.SearchCategory)
+	// 	svc.ms.POST("/category", svc.CreateCategory)
+	// 	svc.ms.GET("/category/:id", svc.InfoCategory)
+	// 	svc.ms.PUT("/category/:id", svc.EditCategory)
+	// 	svc.ms.DELETE("/category/:id", svc.DeleteCategory)
 
-	svc.ms.GET("/optgroup", svc.SearchOptionGroup)
-	svc.ms.POST("/optgroup", svc.CreateOptionGroup)
-	svc.ms.GET("/optgroup/:id", svc.InfoOptionGroup)
-	svc.ms.PUT("/optgroup/:id", svc.EditOptionGroup)
-	svc.ms.DELETE("/optgroup/:id", svc.DeleteOptionGroup)
+	// 	svc.ms.GET("/optgroup", svc.SearchOptionGroup)
+	// 	svc.ms.POST("/optgroup", svc.CreateOptionGroup)
+	// 	svc.ms.GET("/optgroup/:id", svc.InfoOptionGroup)
+	// 	svc.ms.PUT("/optgroup/:id", svc.EditOptionGroup)
+	// 	svc.ms.DELETE("/optgroup/:id", svc.DeleteOptionGroup)
 
-	svc.ms.POST("/option", svc.CreateInventoryOption)
-	svc.ms.GET("/option/:id", svc.InfoInventoryOption)
-	svc.ms.PUT("/option/:id", svc.EditInventoryOption)
-	svc.ms.DELETE("/option/:id", svc.DeleteInventoryOption)
+	// 	svc.ms.POST("/option", svc.CreateInventoryOption)
+	// 	svc.ms.GET("/option/:id", svc.InfoInventoryOption)
+	// 	svc.ms.PUT("/option/:id", svc.EditInventoryOption)
+	// 	svc.ms.DELETE("/option/:id", svc.DeleteInventoryOption)
 }
 
 func (svc *InventoryServiceOld) CreateInventory(ctx microservice.IServiceContext) error {
