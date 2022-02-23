@@ -8,7 +8,13 @@ import (
 	paginate "github.com/gobeam/mongo-go-pagination"
 )
 
-type ICategoryService interface{}
+type ICategoryService interface {
+	CreateCategory(merchantId string, authUsername string, category models.Category) (string, error)
+	UpdateCategory(guid string, merchantId string, authUsername string, category models.Category) error
+	DeleteCategory(guid string, merchantId string) error
+	InfoCategory(guid string, merchantId string) (models.Category, error)
+	SearchCategory(merchantId string, q string, page int, limit int) ([]models.Category, paginate.PaginationData, error)
+}
 
 type CategoryService struct {
 	repo ICategoryRepository
