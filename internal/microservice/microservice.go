@@ -50,7 +50,7 @@ type Microservice struct {
 	Logger          *log.Entry
 }
 
-type ServiceHandleFunc func(context IServiceContext) error
+type ServiceHandleFunc func(context IContext) error
 
 func NewMicroservice(config IConfig) *Microservice {
 	e := echo.New()

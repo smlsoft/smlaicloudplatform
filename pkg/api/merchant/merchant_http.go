@@ -10,11 +10,11 @@ import (
 
 type IMerchantHttp interface {
 	RouteSetup()
-	CreateMerchant(ctx microservice.IServiceContext) error
-	UpdateMerchant(ctx microservice.IServiceContext) error
-	DeleteMerchant(ctx microservice.IServiceContext) error
-	InfoMerchant(ctx microservice.IServiceContext) error
-	SearchMerchant(ctx microservice.IServiceContext) error
+	CreateMerchant(ctx microservice.IContext) error
+	UpdateMerchant(ctx microservice.IContext) error
+	DeleteMerchant(ctx microservice.IContext) error
+	InfoMerchant(ctx microservice.IContext) error
+	SearchMerchant(ctx microservice.IContext) error
 }
 
 type MerchantHttp struct {
@@ -45,7 +45,7 @@ func (h *MerchantHttp) RouteSetup() {
 	h.ms.DELETE("/merchant/:id", h.DeleteMerchant)
 }
 
-func (h *MerchantHttp) CreateMerchant(ctx microservice.IServiceContext) error {
+func (h *MerchantHttp) CreateMerchant(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	if len(authUsername) < 1 {
 		ctx.ResponseError(400, "user authentication invalid")
@@ -79,7 +79,7 @@ func (h *MerchantHttp) CreateMerchant(ctx microservice.IServiceContext) error {
 	return nil
 }
 
-func (h *MerchantHttp) UpdateMerchant(ctx microservice.IServiceContext) error {
+func (h *MerchantHttp) UpdateMerchant(ctx microservice.IContext) error {
 
 	authUsername := ctx.UserInfo().Username
 	id := ctx.Param("id")
@@ -110,7 +110,7 @@ func (h *MerchantHttp) UpdateMerchant(ctx microservice.IServiceContext) error {
 	return nil
 }
 
-func (h *MerchantHttp) DeleteMerchant(ctx microservice.IServiceContext) error {
+func (h *MerchantHttp) DeleteMerchant(ctx microservice.IContext) error {
 
 	authUsername := ctx.UserInfo().Username
 	id := ctx.Param("id")
@@ -131,7 +131,7 @@ func (h *MerchantHttp) DeleteMerchant(ctx microservice.IServiceContext) error {
 	return nil
 }
 
-func (h *MerchantHttp) InfoMerchant(ctx microservice.IServiceContext) error {
+func (h *MerchantHttp) InfoMerchant(ctx microservice.IContext) error {
 
 	authUsername := ctx.UserInfo().Username
 	id := ctx.Param("id")
@@ -152,7 +152,7 @@ func (h *MerchantHttp) InfoMerchant(ctx microservice.IServiceContext) error {
 	return nil
 }
 
-func (h *MerchantHttp) SearchMerchant(ctx microservice.IServiceContext) error {
+func (h *MerchantHttp) SearchMerchant(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username

@@ -9,10 +9,10 @@ import (
 )
 
 type IAuthenticationHttp interface {
-	Login(ctx microservice.IServiceContext) error
-	Register(ctx microservice.IServiceContext) error
-	Logout(ctx microservice.IServiceContext) error
-	Profile(ctx microservice.IServiceContext) error
+	Login(ctx microservice.IContext) error
+	Register(ctx microservice.IContext) error
+	Logout(ctx microservice.IContext) error
+	Profile(ctx microservice.IContext) error
 }
 type AuthenticationHttp struct {
 	ms                    *microservice.Microservice
@@ -53,7 +53,7 @@ func (h *AuthenticationHttp) RouteSetup() {
 // @Success		200	{object}	models.ApiResponse
 // @Failure		401 {object}	models.ApiResponse
 // @Router /authentication/login [post]
-func (h *AuthenticationHttp) Login(ctx microservice.IServiceContext) error {
+func (h *AuthenticationHttp) Login(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
@@ -88,7 +88,7 @@ func (h *AuthenticationHttp) Login(ctx microservice.IServiceContext) error {
 // @Success		200	{object}	models.ApiResponse
 // @Accept 		json
 // @Router		/authentication/register [post]
-func (h *AuthenticationHttp) Register(ctx microservice.IServiceContext) error {
+func (h *AuthenticationHttp) Register(ctx microservice.IContext) error {
 	input := ctx.ReadInput()
 
 	userReq := models.UserRequest{}
@@ -116,7 +116,7 @@ func (h *AuthenticationHttp) Register(ctx microservice.IServiceContext) error {
 	return nil
 }
 
-func (h *AuthenticationHttp) Logout(ctx microservice.IServiceContext) error {
+func (h *AuthenticationHttp) Logout(ctx microservice.IContext) error {
 
 	authorizationHeader := ctx.Header("Authorization")
 
@@ -133,7 +133,7 @@ func (h *AuthenticationHttp) Logout(ctx microservice.IServiceContext) error {
 	return nil
 }
 
-func (h *AuthenticationHttp) Profile(ctx microservice.IServiceContext) error {
+func (h *AuthenticationHttp) Profile(ctx microservice.IContext) error {
 
 	userProfile, err := h.authenticationService.Profile(ctx.UserInfo().Username)
 
@@ -152,6 +152,6 @@ func (h *AuthenticationHttp) Profile(ctx microservice.IServiceContext) error {
 	return nil
 }
 
-func (h *AuthenticationHttp) SelectMerchant(ctx microservice.IServiceContext) error {
+func (h *AuthenticationHttp) SelectMerchant(ctx microservice.IContext) error {
 	return nil
 }

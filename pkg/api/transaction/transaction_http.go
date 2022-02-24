@@ -10,12 +10,12 @@ import (
 
 type ITransactionHttp interface {
 	RouteSetup()
-	CreateTransaction(ctx microservice.IServiceContext) error
-	UpdateTransaction(ctx microservice.IServiceContext) error
-	DeleteTransaction(ctx microservice.IServiceContext) error
-	InfoTransaction(ctx microservice.IServiceContext) error
-	SearchTransaction(ctx microservice.IServiceContext) error
-	SearchTransactionItems(ctx microservice.IServiceContext) error
+	CreateTransaction(ctx microservice.IContext) error
+	UpdateTransaction(ctx microservice.IContext) error
+	DeleteTransaction(ctx microservice.IContext) error
+	InfoTransaction(ctx microservice.IContext) error
+	SearchTransaction(ctx microservice.IContext) error
+	SearchTransactionItems(ctx microservice.IContext) error
 }
 
 type TransactionHttp struct {
@@ -48,7 +48,7 @@ func (h *TransactionHttp) RouteSetup() {
 	h.ms.DELETE("/transaction/:id", h.DeleteTransaction)
 }
 
-func (h *TransactionHttp) CreateTransaction(ctx microservice.IServiceContext) error {
+func (h *TransactionHttp) CreateTransaction(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	merchantId := userInfo.MerchantId
@@ -77,7 +77,7 @@ func (h *TransactionHttp) CreateTransaction(ctx microservice.IServiceContext) er
 	return nil
 }
 
-func (h *TransactionHttp) UpdateTransaction(ctx microservice.IServiceContext) error {
+func (h *TransactionHttp) UpdateTransaction(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	merchantId := userInfo.MerchantId
@@ -106,7 +106,7 @@ func (h *TransactionHttp) UpdateTransaction(ctx microservice.IServiceContext) er
 	return nil
 }
 
-func (h *TransactionHttp) DeleteTransaction(ctx microservice.IServiceContext) error {
+func (h *TransactionHttp) DeleteTransaction(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	merchantId := userInfo.MerchantId
@@ -126,7 +126,7 @@ func (h *TransactionHttp) DeleteTransaction(ctx microservice.IServiceContext) er
 	return nil
 }
 
-func (h *TransactionHttp) InfoTransaction(ctx microservice.IServiceContext) error {
+func (h *TransactionHttp) InfoTransaction(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
@@ -147,7 +147,7 @@ func (h *TransactionHttp) InfoTransaction(ctx microservice.IServiceContext) erro
 	return nil
 }
 
-func (h *TransactionHttp) SearchTransaction(ctx microservice.IServiceContext) error {
+func (h *TransactionHttp) SearchTransaction(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
@@ -182,7 +182,7 @@ func (h *TransactionHttp) SearchTransaction(ctx microservice.IServiceContext) er
 	return nil
 }
 
-func (h *TransactionHttp) SearchTransactionItems(ctx microservice.IServiceContext) error {
+func (h *TransactionHttp) SearchTransactionItems(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId

@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func (h *InventoryHttp) CreateCategory(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) CreateCategory(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	merchantId := ctx.UserInfo().MerchantId
 	input := ctx.ReadInput()
@@ -35,7 +35,7 @@ func (h *InventoryHttp) CreateCategory(ctx microservice.IServiceContext) error {
 	return nil
 }
 
-func (h *InventoryHttp) UpdateCategory(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) UpdateCategory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	merchantId := userInfo.MerchantId
@@ -66,7 +66,7 @@ func (h *InventoryHttp) UpdateCategory(ctx microservice.IServiceContext) error {
 	return nil
 }
 
-func (h *InventoryHttp) DeleteCategory(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) DeleteCategory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
 
@@ -87,7 +87,7 @@ func (h *InventoryHttp) DeleteCategory(ctx microservice.IServiceContext) error {
 	return nil
 }
 
-func (h *InventoryHttp) InfoCategory(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) InfoCategory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
 
@@ -107,7 +107,7 @@ func (h *InventoryHttp) InfoCategory(ctx microservice.IServiceContext) error {
 	return nil
 }
 
-func (h *InventoryHttp) SearchCategory(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) SearchCategory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
 

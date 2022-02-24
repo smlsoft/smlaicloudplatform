@@ -119,7 +119,7 @@ func NewMongoPersisterConfig() *MongoPersisterConfig {
 	return &MongoPersisterConfig{}
 }
 func (cfg *MongoPersisterConfig) MongodbURI() string {
-	return getEnv("MONGODB_URI", "") // mongodb://root:rootx@localhost:27017/
+	return getEnv("MONGODB_URI", "mongodb://root:rootx@localhost:27017/") // mongodb://root:rootx@localhost:27017/
 }
 
 func (cfg *MongoPersisterConfig) DB() string {

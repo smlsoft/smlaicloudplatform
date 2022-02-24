@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func (h *InventoryHttp) CreateOptionGroup(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) CreateOptionGroup(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	merchantId := ctx.UserInfo().MerchantId
 	input := ctx.ReadInput()
@@ -35,7 +35,7 @@ func (h *InventoryHttp) CreateOptionGroup(ctx microservice.IServiceContext) erro
 	return nil
 }
 
-func (h *InventoryHttp) UpdateOptionGroup(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) UpdateOptionGroup(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	merchantId := userInfo.MerchantId
@@ -66,7 +66,7 @@ func (h *InventoryHttp) UpdateOptionGroup(ctx microservice.IServiceContext) erro
 	return nil
 }
 
-func (h *InventoryHttp) DeleteOptionGroup(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) DeleteOptionGroup(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
 
@@ -87,7 +87,7 @@ func (h *InventoryHttp) DeleteOptionGroup(ctx microservice.IServiceContext) erro
 	return nil
 }
 
-func (h *InventoryHttp) InfoOptionGroup(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) InfoOptionGroup(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
 
@@ -107,7 +107,7 @@ func (h *InventoryHttp) InfoOptionGroup(ctx microservice.IServiceContext) error 
 	return nil
 }
 
-func (h *InventoryHttp) SearchOptionGroup(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) SearchOptionGroup(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
 

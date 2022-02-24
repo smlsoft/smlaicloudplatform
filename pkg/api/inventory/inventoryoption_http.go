@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func (h *InventoryHttp) CreateInventoryOption(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) CreateInventoryOption(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	merchantId := ctx.UserInfo().MerchantId
 	input := ctx.ReadInput()
@@ -35,7 +35,7 @@ func (h *InventoryHttp) CreateInventoryOption(ctx microservice.IServiceContext) 
 	return nil
 }
 
-func (h *InventoryHttp) UpdateInventoryOption(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) UpdateInventoryOption(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	merchantId := userInfo.MerchantId
@@ -66,7 +66,7 @@ func (h *InventoryHttp) UpdateInventoryOption(ctx microservice.IServiceContext) 
 	return nil
 }
 
-func (h *InventoryHttp) DeleteInventoryOption(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) DeleteInventoryOption(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
 
@@ -87,7 +87,7 @@ func (h *InventoryHttp) DeleteInventoryOption(ctx microservice.IServiceContext) 
 	return nil
 }
 
-func (h *InventoryHttp) InfoInventoryOption(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) InfoInventoryOption(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
 
@@ -107,7 +107,7 @@ func (h *InventoryHttp) InfoInventoryOption(ctx microservice.IServiceContext) er
 	return nil
 }
 
-func (h *InventoryHttp) SearchInventoryOption(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) SearchInventoryOption(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
 
