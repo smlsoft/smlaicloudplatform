@@ -83,8 +83,14 @@ func (ctx *HTTPContext) ResponseError(responseCode int, errorMessage string) {
 	})
 }
 
+// Persister return perister
 func (ctx *HTTPContext) Persister(cfg IPersisterConfig) IPersister {
 	return ctx.ms.Persister(cfg)
+}
+
+// Cacher return cacher
+func (ctx *HTTPContext) Cacher(cacheConfig ICacherConfig) ICacher {
+	return ctx.ms.Cacher(cacheConfig)
 }
 
 // Producer return producer

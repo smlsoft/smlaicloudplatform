@@ -15,6 +15,7 @@ type IContext interface {
 	Validate(model interface{}) error
 
 	Persister(cfg IPersisterConfig) IPersister
+	Cacher(cacherConfig ICacherConfig) ICacher
 	Producer(servers string) IProducer
 	MQ(servers string) IMQ
 }

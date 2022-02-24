@@ -46,7 +46,7 @@ func (cfg *Config) MongoPersisterConfig() IPersisterMongoConfig {
 
 //kafka server
 func (*Config) MQServer() string {
-	return os.Getenv("KAFKA_SERVER_URL")
+	return getEnv("KAFKA_SERVER_URL", "localhost:9094")
 }
 
 func (*Config) TopicName() string {
