@@ -59,15 +59,22 @@ func (ctx *AsyncTaskContext) Validate(model interface{}) error {
 
 // Response return response to client
 func (ctx *AsyncTaskContext) Response(responseCode int, responseData interface{}) {
-	return
+	cacher := ctx.Cacher(ctx.cacheConfig)
+
+	res := map[string]interface{}{
+		"status": "success",
+		"code":   responseCode,
+		"data":   responseData,
+	}
+	cacher.Set(ctx.ref, res, 30*time.Minute)
 }
 
 func (ctx *AsyncTaskContext) ResponseS(responseCode int, responseData string) {
-	return
+
 }
 
 func (ctx *AsyncTaskContext) ResponseError(responseCode int, errorMessage string) {
-	return
+
 }
 
 // Header return header value by key
