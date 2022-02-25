@@ -11,6 +11,7 @@ import (
 	"smlcloudplatform/pkg/api/inventory"
 	"smlcloudplatform/pkg/api/merchant"
 	"smlcloudplatform/pkg/api/tools"
+	"smlcloudplatform/pkg/api/transaction"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -44,6 +45,8 @@ func main() {
 
 	inventoryapi := inventory.NewInventoryHttp(ms, cfg)
 	inventoryapi.RouteSetup()
+
+	transaction.StartTransactionAPI(ms, cfg)
 
 	toolSvc := tools.NewToolsService(ms, cfg)
 
