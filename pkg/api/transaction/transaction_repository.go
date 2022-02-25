@@ -65,7 +65,7 @@ func (repo *TransactionRepository) FindByGuid(merchantId string, guid string) (m
 func (repo *TransactionRepository) FindPage(merchantId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error) {
 
 	transList := []models.Transaction{}
-	pagination, err := repo.pst.FindPage(&models.Inventory{}, limit, page, bson.M{
+	pagination, err := repo.pst.FindPage(&models.Transaction{}, limit, page, bson.M{
 		"merchantId": merchantId,
 		"deleted":    false,
 		"$or": []interface{}{
@@ -86,7 +86,7 @@ func (repo *TransactionRepository) FindPage(merchantId string, q string, page in
 func (repo *TransactionRepository) FindItemsByGuidPage(guid string, merchantId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error) {
 
 	transList := []models.Transaction{}
-	pagination, err := repo.pst.FindPage(&models.Inventory{}, limit, page, bson.M{
+	pagination, err := repo.pst.FindPage(&models.Transaction{}, limit, page, bson.M{
 		"merchantId": merchantId,
 		"guidFixed":  guid,
 		"deleted":    false,
