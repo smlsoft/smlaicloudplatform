@@ -25,3 +25,5 @@ runtest
 *.key
 .scannerwork/*
 server/*/*
+
+mock/*.env
