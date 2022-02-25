@@ -57,6 +57,7 @@ type ICacher interface {
 	Unsub(subID string) error
 
 	Close() error
+	Healthcheck() error
 
 	// Keys might return value that match the pattern, because it use HScan internally
 	Keys(pattern string) ([]string, error)
@@ -144,16 +145,13 @@ type Cacher struct {
 	config      ICacherConfig
 	clientMutex sync.Mutex
 	client      *redis.Client
-	oldClients  []*redis.Client
 	subsribers  *sync.Map
-	serviceID   int
 }
 
 // NewCacher return new Cacher
 func NewCacher(config ICacherConfig) *Cacher {
 	return &Cacher{
 		config:     config,
-		oldClients: nil,
 		subsribers: &sync.Map{},
 	}
 }
@@ -224,16 +222,6 @@ func (cache *Cacher) Close() error {
 			return err
 		}
 
-		// Close old clients
-		for _, client := range cache.oldClients {
-			err := client.Close()
-			if err != nil {
-				return err
-			}
-		}
-		if len(cache.oldClients) > 0 {
-			cache.oldClients = nil
-		}
 	}
 
 	return nil
@@ -1541,4 +1529,24 @@ func (cache *Cacher) Unsub(subID string) error {
 	cache.subsribers.Delete(subID)
 
 	return nil
+}
+
+// Healthcheck return error if health check fail
+func (cache *Cacher) Healthcheck() error {
+	retry := 5
+	// We will try to getClient 5 times
+	for {
+		if retry <= 0 {
+			return fmt.Errorf("Cacher healthcheck failed")
+		}
+		retry--
+
+		_, err := cache.getClient()
+		if err != nil {
+			// Healthcheck failed, wait 250ms then try again
+			time.Sleep(250 * time.Millisecond)
+			continue
+		}
+		return nil
+	}
 }
