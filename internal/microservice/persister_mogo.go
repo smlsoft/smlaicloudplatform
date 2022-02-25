@@ -229,7 +229,7 @@ func (pst *PersisterMongo) FindOne(model interface{}, filter interface{}, decode
 	}
 
 	err = db.Collection(collectionName).FindOne(context.TODO(), filter).Decode(decode)
-	if err != nil {
+	if err != nil && err.Error() != "mongo: no documents in result" {
 		return err
 	}
 
