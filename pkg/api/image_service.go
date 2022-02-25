@@ -19,7 +19,7 @@ func (svc *ImageService) RouteSetup() {
 
 }
 
-func (svc *ImageService) UploadImage(ctx microservice.IServiceContext) error {
+func (svc *ImageService) UploadImage(ctx microservice.IContext) error {
 
 	return nil
 }

@@ -23,7 +23,7 @@ func (svc *ToolsService) RouteSetup() {
 	svc.ms.GET("tool/env", svc.AllEnv)
 }
 
-func (svc *ToolsService) CheckMongodbConnect(ctx microservice.IServiceContext) error {
+func (svc *ToolsService) CheckMongodbConnect(ctx microservice.IContext) error {
 	mongoCfg := svc.cfg.MongoPersisterConfig()
 	repStr := mongoCfg.MongodbURI()
 
@@ -34,7 +34,7 @@ func (svc *ToolsService) CheckMongodbConnect(ctx microservice.IServiceContext) e
 	return nil
 }
 
-func (svc *ToolsService) AllEnv(ctx microservice.IServiceContext) error {
+func (svc *ToolsService) AllEnv(ctx microservice.IContext) error {
 
 	ctx.Response(200, os.Environ())
 

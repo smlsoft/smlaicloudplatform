@@ -14,7 +14,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (svc *MerchantServiceOld) SearchMember(ctx microservice.IServiceContext) error {
+func (svc *MerchantServiceOld) SearchMember(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -60,7 +60,7 @@ func (svc *MerchantServiceOld) SearchMember(ctx microservice.IServiceContext) er
 	return nil
 }
 
-func (svc *MerchantServiceOld) CreateMember(ctx microservice.IServiceContext) error {
+func (svc *MerchantServiceOld) CreateMember(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	merchantId := userInfo.MerchantId
@@ -135,7 +135,7 @@ func (svc *MerchantServiceOld) CreateMember(ctx microservice.IServiceContext) er
 	return nil
 }
 
-func (svc *MerchantServiceOld) EditMember(ctx microservice.IServiceContext) error {
+func (svc *MerchantServiceOld) EditMember(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 
@@ -194,7 +194,7 @@ func (svc *MerchantServiceOld) EditMember(ctx microservice.IServiceContext) erro
 	return nil
 }
 
-func (svc *MerchantServiceOld) DeleteMember(ctx microservice.IServiceContext) error {
+func (svc *MerchantServiceOld) DeleteMember(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 
@@ -230,7 +230,7 @@ func (svc *MerchantServiceOld) DeleteMember(ctx microservice.IServiceContext) er
 	return nil
 }
 
-func (svc *MerchantServiceOld) GetMemberInfo(ctx microservice.IServiceContext) error {
+func (svc *MerchantServiceOld) GetMemberInfo(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	merchantId := userInfo.MerchantId
@@ -255,7 +255,7 @@ func (svc *MerchantServiceOld) GetMemberInfo(ctx microservice.IServiceContext) e
 	return nil
 }
 
-func (svc *MerchantServiceOld) ChangePasswordMember(ctx microservice.IServiceContext) error {
+func (svc *MerchantServiceOld) ChangePasswordMember(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 

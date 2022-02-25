@@ -10,11 +10,11 @@ import (
 
 type IInventoryHttp interface {
 	RouteSetup()
-	CreateInventory(ctx microservice.IServiceContext) error
-	UpdateInventory(ctx microservice.IServiceContext) error
-	DeleteInventory(ctx microservice.IServiceContext) error
-	InfoInventory(ctx microservice.IServiceContext) error
-	SearchInventory(ctx microservice.IServiceContext) error
+	CreateInventory(ctx microservice.IContext) error
+	UpdateInventory(ctx microservice.IContext) error
+	DeleteInventory(ctx microservice.IContext) error
+	InfoInventory(ctx microservice.IContext) error
+	SearchInventory(ctx microservice.IContext) error
 }
 
 type InventoryHttp struct {
@@ -78,7 +78,7 @@ func (h *InventoryHttp) RouteSetup() {
 	h.ms.DELETE("/optgroup/:id", h.DeleteOptionGroup)
 }
 
-func (h *InventoryHttp) CreateInventory(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) CreateInventory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	merchantId := userInfo.MerchantId
@@ -111,7 +111,7 @@ func (h *InventoryHttp) CreateInventory(ctx microservice.IServiceContext) error 
 
 }
 
-func (h *InventoryHttp) UpdateInventory(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) UpdateInventory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	merchantId := userInfo.MerchantId
@@ -144,7 +144,7 @@ func (h *InventoryHttp) UpdateInventory(ctx microservice.IServiceContext) error 
 	return nil
 }
 
-func (h *InventoryHttp) DeleteInventory(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) DeleteInventory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
 
@@ -167,7 +167,7 @@ func (h *InventoryHttp) DeleteInventory(ctx microservice.IServiceContext) error 
 	return nil
 }
 
-func (h *InventoryHttp) InfoInventory(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) InfoInventory(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
@@ -192,7 +192,7 @@ func (h *InventoryHttp) InfoInventory(ctx microservice.IServiceContext) error {
 	return nil
 }
 
-func (h *InventoryHttp) SearchInventory(ctx microservice.IServiceContext) error {
+func (h *InventoryHttp) SearchInventory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId
 

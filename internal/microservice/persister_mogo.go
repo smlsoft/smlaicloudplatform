@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sync"
+	"time"
 
 	paginate "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
@@ -33,6 +34,7 @@ type IPersisterMongo interface {
 	SoftDeleteByID(model interface{}, id string) error
 	Cleanup() error
 	TestConnect() error
+	Healthcheck() error
 }
 
 // IPersisterConfig is interface for persister
@@ -573,5 +575,25 @@ func (pst *PersisterMongo) Cleanup() error {
 	// 	pst.ctxCancel()
 	// }
 
+	return nil
+}
+
+func (pst *PersisterMongo) Healthcheck() error {
+	retry := 5
+	// We will try to getClient 5 times
+	for {
+		if retry <= 0 {
+			return fmt.Errorf("mongodb healthcheck failed")
+		}
+		retry--
+
+		_, err := pst.getClient()
+		if err != nil {
+			// Healthcheck failed, wait 250ms then try again
+			time.Sleep(250 * time.Millisecond)
+			continue
+		}
+		return nil
+	}
 	return nil
 }

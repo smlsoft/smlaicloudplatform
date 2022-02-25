@@ -20,6 +20,10 @@ type Transaction struct {
 	Deleted   bool      `json:"-" bson:"deleted"`
 }
 
+func (*Transaction) CollectionName() string {
+	return "transactions"
+}
+
 type TransactionDetail struct {
 	InventoryId    string  `json:"inventoryId" bson:"inventoryId"`
 	ItemSku        string  `json:"itemSku,omitempty" bson:"itemSku,omitempty"`

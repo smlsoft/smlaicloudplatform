@@ -8,14 +8,14 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func HasPermissionMerchant(pst microservice.IPersisterMongo, ctx microservice.IServiceContext) (bool, error) {
+func HasPermissionMerchant(pst microservice.IPersisterMongo, ctx microservice.IContext) (bool, error) {
 
 	merchantId := ctx.Param("merchant_id")
 
 	return HasPermissionMerchantById(pst, ctx, merchantId)
 }
 
-func HasPermissionMerchantById(pst microservice.IPersisterMongo, ctx microservice.IServiceContext, merchantId string) (bool, error) {
+func HasPermissionMerchantById(pst microservice.IPersisterMongo, ctx microservice.IContext, merchantId string) (bool, error) {
 
 	authUsername := ctx.UserInfo().Username
 

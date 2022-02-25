@@ -46,7 +46,7 @@ func (cfg *Config) MongoPersisterConfig() IPersisterMongoConfig {
 
 //kafka server
 func (*Config) MQServer() string {
-	return os.Getenv("KAFKA_SERVER_URL")
+	return getEnv("KAFKA_SERVER_URL", "localhost:9094")
 }
 
 func (*Config) TopicName() string {
@@ -119,7 +119,7 @@ func NewMongoPersisterConfig() *MongoPersisterConfig {
 	return &MongoPersisterConfig{}
 }
 func (cfg *MongoPersisterConfig) MongodbURI() string {
-	return getEnv("MONGODB_URI", "") // mongodb://root:rootx@localhost:27017/
+	return getEnv("MONGODB_URI", "mongodb://root:rootx@localhost:27017/") // mongodb://root:rootx@localhost:27017/
 }
 
 func (cfg *MongoPersisterConfig) DB() string {
