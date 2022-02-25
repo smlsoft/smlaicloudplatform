@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"smlcloudplatform/internal/microservice/models"
 	"time"
 )
 
@@ -22,9 +23,19 @@ func (ms *Microservice) startAsyncTaskConsumer(path string, cacheConfig ICacherC
 		if err != nil {
 			return err
 		}
+
+		userInfoStr := message["userInfo"].(string)
 		ref, _ := message["ref"].(string)
 		input, _ := message["input"].(string)
-		return h(NewAsyncTaskContext(ms, cacheConfig, ref, input))
+
+		userInfo := models.UserInfo{}
+		err = json.Unmarshal([]byte(userInfoStr), &userInfo)
+
+		if err != nil {
+			return err
+		}
+
+		return h(NewAsyncTaskContext(ms, cacheConfig, userInfo, ref, input))
 	})
 }
 
@@ -46,11 +57,18 @@ func (ms *Microservice) handleAsyncTaskRequest(path string, cacheConfig ICacherC
 	expire := time.Minute * 30
 	cacher.Set(ref, status, expire)
 
+	userInfoStr, err := json.Marshal(ctx.UserInfo())
+
+	if err != nil {
+		return err
+	}
+
 	// 4. Send Message to MQ
 	prod := ctx.Producer(mqServers)
 	message := map[string]interface{}{
-		"ref":   ref,
-		"input": input,
+		"userInfo": string(userInfoStr),
+		"ref":      ref,
+		"input":    input,
 	}
 	prod.SendMessage(topic, "", message)
 
@@ -89,6 +107,7 @@ func (ms *Microservice) AsyncPOST(path string, cacheConfig ICacherConfig, mqServ
 	ms.GET(path, func(ctx IContext) error {
 		return ms.handleAsyncTaskResponse(path, cacheConfig, ctx)
 	})
+
 	ms.POST(path, func(ctx IContext) error {
 		return ms.handleAsyncTaskRequest(path, cacheConfig, mqServers, ctx)
 	})

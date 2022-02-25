@@ -12,15 +12,17 @@ import (
 type AsyncTaskContext struct {
 	ms          *Microservice
 	cacheConfig ICacherConfig
+	userInfo    models.UserInfo
 	ref         string
 	input       string
 }
 
 // NewAsyncTaskContext is the constructor function for AsyncTaskContext
-func NewAsyncTaskContext(ms *Microservice, cacheConfig ICacherConfig, ref string, input string) *AsyncTaskContext {
+func NewAsyncTaskContext(ms *Microservice, cacheConfig ICacherConfig, userInfo models.UserInfo, ref string, input string) *AsyncTaskContext {
 	return &AsyncTaskContext{
 		ms:          ms,
 		cacheConfig: cacheConfig,
+		userInfo:    userInfo,
 		ref:         ref,
 		input:       input,
 	}
@@ -74,7 +76,13 @@ func (ctx *AsyncTaskContext) ResponseS(responseCode int, responseData string) {
 }
 
 func (ctx *AsyncTaskContext) ResponseError(responseCode int, errorMessage string) {
+	cacher := ctx.Cacher(ctx.cacheConfig)
 
+	res := map[string]interface{}{
+		"status":  "error",
+		"message": errorMessage,
+	}
+	cacher.Set(ctx.ref, res, 30*time.Minute)
 }
 
 // Header return header value by key
@@ -83,7 +91,7 @@ func (ctx *AsyncTaskContext) Header(attribute string) string {
 }
 
 func (ctx *AsyncTaskContext) UserInfo() models.UserInfo {
-	return models.UserInfo{}
+	return ctx.userInfo
 
 }
 
