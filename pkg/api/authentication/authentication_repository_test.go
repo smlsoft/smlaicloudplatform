@@ -2,28 +2,41 @@ package authentication
 
 import (
 	"errors"
-	"os"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/mock"
 	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/utils"
 	"testing"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func TestFindUser(t *testing.T) {
 
-	os.Setenv("MONGODB_URI", "mongodb://root:rootx@localhost:27017/")
-	defer os.Unsetenv("MONGODB_URI")
+	// os.Setenv("MONGODB_URI", "mongodb://root:rootx@localhost:27017/")
+	// defer os.Unsetenv("MONGODB_URI")
 
-	mongoPersisterConfig := microservice.NewMongoPersisterConfig()
+	mongoPersisterConfig := mock.NewPersisterMongo()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repository := NewAuthenticationRepository(mongoPersister)
+
+	password, _ := utils.HashPassword("test")
+
+	createAt := time.Now()
 	give := &models.User{
-		Username: "test",
+		Username:  "test",
+		Name:      "test",
+		Password:  password,
+		CreatedAt: createAt,
 	}
 	want := &models.User{
-		Username: "test",
+		Username:  "test",
+		Name:      "test",
+		Password:  password,
+		CreatedAt: createAt,
 	}
+
 	get, err := repository.CreateUser(*give)
 	if err != nil {
 		t.Error(err.Error())
