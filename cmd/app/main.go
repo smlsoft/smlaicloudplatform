@@ -33,9 +33,12 @@ func main() {
 		"/login",
 		"/register",
 		"/select-merchant",
+		"/healthz",
 	}
 
 	ms.HttpMiddleware(jwtService.MWFuncWithRedis(cacher, publicPath...))
+
+	ms.RegisterLivenessProbeEndpoint("/healthz")
 
 	svcAuth := authentication.NewAuthenticationHttp(ms, cfg)
 	svcAuth.RouteSetup()
