@@ -18,12 +18,14 @@ type IMerchantService interface {
 }
 
 type MerchantService struct {
-	repo IMerchantRepository
+	repo             IMerchantRepository
+	merchantUserRepo IMerchantUserRepository
 }
 
-func NewMerchantService(repo IMerchantRepository) IMerchantService {
+func NewMerchantService(repo IMerchantRepository, merchantUserRepo IMerchantUserRepository) IMerchantService {
 	return &MerchantService{
-		repo: repo,
+		repo:             repo,
+		merchantUserRepo: merchantUserRepo,
 	}
 }
 
@@ -39,6 +41,8 @@ func (svc *MerchantService) CreateMerchant(username string, merchant models.Merc
 	if err != nil {
 		return "", err
 	}
+
+	svc.merchantUserRepo.Save(merchantId, username, models.ROLE_OWNER)
 
 	return merchantId, nil
 }

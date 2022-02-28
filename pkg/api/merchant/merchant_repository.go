@@ -53,7 +53,6 @@ func (repo *MerchantRepository) FindByGuid(guid string) (models.Merchant, error)
 		return models.Merchant{}, err
 	}
 	return *findMerchant, err
-
 }
 
 func (repo *MerchantRepository) FindPage(username string, q string, page int, limit int) ([]models.MerchantInfo, paginate.PaginationData, error) {

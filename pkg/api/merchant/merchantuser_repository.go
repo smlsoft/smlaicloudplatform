@@ -10,10 +10,10 @@ import (
 )
 
 type IMerchantUserRepository interface {
-	Save(merchantId string, username string, role models.UserRole) error
+	Save(merchantId string, username string, role string) error
 	Delete(merchantId string, username string) error
 	FindByMerchantIdAndUsername(merchantId string, username string) (models.MerchantUser, error)
-	FindRole(merchantId string, username string) (models.UserRole, error)
+	FindRole(merchantId string, username string) (string, error)
 	FindByMerchantId(merchantId string) (*[]models.MerchantUser, error)
 	FindByUsername(username string) (*[]models.MerchantUser, error)
 }
@@ -28,7 +28,7 @@ func NewMerchantUserRepository(pst microservice.IPersisterMongo) IMerchantUserRe
 	}
 }
 
-func (svc *MerchantUserRepository) Save(merchantId string, username string, role models.UserRole) error {
+func (svc *MerchantUserRepository) Save(merchantId string, username string, role string) error {
 
 	optUpdate := options.Update().SetUpsert(true)
 	err := svc.pst.Update(&models.MerchantUser{}, bson.M{"merchantId": merchantId, "username": username}, bson.M{"$set": bson.M{"role": role}}, optUpdate)
@@ -64,7 +64,7 @@ func (svc *MerchantUserRepository) FindByMerchantIdAndUsername(merchantId string
 	return *merchantUser, nil
 }
 
-func (svc *MerchantUserRepository) FindRole(merchantId string, username string) (models.UserRole, error) {
+func (svc *MerchantUserRepository) FindRole(merchantId string, username string) (string, error) {
 
 	merchantUser := &models.MerchantUser{}
 
@@ -87,7 +87,6 @@ func (svc *MerchantUserRepository) FindByMerchantId(merchantId string) (*[]model
 	}
 
 	return merchantUsers, nil
-
 }
 
 func (svc *MerchantUserRepository) FindByUsername(username string) (*[]models.MerchantUser, error) {
@@ -100,5 +99,4 @@ func (svc *MerchantUserRepository) FindByUsername(username string) (*[]models.Me
 	}
 
 	return merchantUsers, nil
-
 }

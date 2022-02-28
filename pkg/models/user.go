@@ -34,19 +34,17 @@ type MerchantSelectRequest struct {
 	MerchantId string `json:"merchantId"`
 }
 
-type UserRole string
-
 const (
-	ROLE_OWNER UserRole = "OWNER"
-	ROLE_ADMIN UserRole = "ADMIN"
-	ROLE_User  UserRole = "User"
+	ROLE_OWNER string = "OWNER"
+	ROLE_ADMIN string = "ADMIN"
+	ROLE_USER  string = "USER"
 )
 
 type MerchantUser struct {
 	Id         primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Username   string             `json:"username" bson:"username"`
 	MerchantId string             `json:"merchantId" bson:"merchantId"`
-	Role       UserRole           `json:"role" bson:"role"`
+	Role       string             `json:"role" bson:"role"`
 }
 
 func (*MerchantUser) CollectionName() string {

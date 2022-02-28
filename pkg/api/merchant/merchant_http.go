@@ -27,7 +27,8 @@ func NewMerchantHttp(ms *microservice.Microservice, cfg microservice.IConfig) IM
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	repo := NewMerchantRepository(pst)
-	service := NewMerchantService(repo)
+	merchantUserRepo := NewMerchantUserRepository(pst)
+	service := NewMerchantService(repo, merchantUserRepo)
 
 	return &MerchantHttp{
 		ms:      ms,

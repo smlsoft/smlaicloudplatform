@@ -47,7 +47,7 @@ func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...st
 			}
 
 			cacheKey := authService.prefixCacheKey + tokenStr
-			tempUserInfo, err := authService.cacher.HMGet(cacheKey, []string{"username", "name", "merchantId"})
+			tempUserInfo, err := authService.cacher.HMGet(cacheKey, []string{"username", "name", "merchantId", "role"})
 
 			if err != nil || tempUserInfo[0] == nil {
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
@@ -67,6 +67,7 @@ func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...st
 				Username:   fmt.Sprintf("%v", tempUserInfo[0]),
 				Name:       fmt.Sprintf("%v", tempUserInfo[1]),
 				MerchantId: fmt.Sprintf("%v", tempUserInfo[2]),
+				Role:       fmt.Sprintf("%v", tempUserInfo[3]),
 			}
 
 			cacher.Expire("auth-"+tokenStr, authService.expire)
@@ -154,10 +155,11 @@ func (authService *AuthService) GenerateTokenWithRedis(userInfo models.UserInfo)
 	return tokenStr, nil
 }
 
-func (authService *AuthService) SelectMerchant(tokenStr string, merchantId string) error {
+func (authService *AuthService) SelectMerchant(tokenStr string, merchantId string, role string) error {
 	cacheKey := authService.prefixCacheKey + tokenStr
 	err := authService.cacher.HMSet(cacheKey, map[string]interface{}{
 		"merchantId": merchantId,
+		"role":       role,
 	})
 
 	if err != nil {

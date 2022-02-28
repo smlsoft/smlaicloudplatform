@@ -210,11 +210,10 @@ func (svc AuthenticationService) AccessMerchant(authorizationHeader string, merc
 		return errors.New("merchant invalid")
 	}
 
-	err = svc.authService.SelectMerchant(tokenStr, merchantId)
+	err = svc.authService.SelectMerchant(tokenStr, merchantId, string(merchantUser.Role))
 
 	if err != nil {
 		return errors.New("failed merchant select")
 	}
-
 	return nil
 }
