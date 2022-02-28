@@ -39,6 +39,10 @@ func (svc *InventoryService) CreateInventory(merchantId string, authUsername str
 	inventory.CreatedBy = authUsername
 	inventory.CreatedAt = time.Now()
 
+	for unitIdx := range inventory.UnitList {
+		inventory.UnitList[unitIdx].UnitGuid = utils.NewGUID()
+	}
+
 	_, err := svc.invRepo.Create(inventory)
 
 	if err != nil {
