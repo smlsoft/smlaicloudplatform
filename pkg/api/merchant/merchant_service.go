@@ -55,11 +55,6 @@ func (svc *MerchantService) UpdateMerchant(guid string, username string, merchan
 		return err
 	}
 
-	// *** warning feature change to check by role owner
-	if len(findMerchant.CreatedBy) < 1 {
-		return errors.New("username invalid")
-	}
-
 	findMerchant.Name1 = merchant.Name1
 	findMerchant.UpdatedBy = username
 	findMerchant.UpdatedAt = time.Now()
@@ -74,15 +69,15 @@ func (svc *MerchantService) UpdateMerchant(guid string, username string, merchan
 }
 
 func (svc *MerchantService) DeleteMerchant(guid string, username string) error {
-	findMerchant, err := svc.repo.FindByGuid(guid)
+
+	role, err := svc.merchantUserRepo.FindRole(guid, username)
 
 	if err != nil {
 		return err
 	}
 
-	// *** warning feature change to check by role owner
-	if len(findMerchant.CreatedBy) < 1 {
-		return errors.New("username invalid")
+	if role != models.ROLE_OWNER {
+		return errors.New("role invalid")
 	}
 
 	err = svc.repo.Delete(guid)
@@ -98,11 +93,6 @@ func (svc *MerchantService) InfoMerchant(guid string, username string) (models.M
 
 	if err != nil {
 		return models.MerchantInfo{}, err
-	}
-
-	// *** warning feature change to check by role owner
-	if len(findMerchant.CreatedBy) < 1 {
-		return models.MerchantInfo{}, errors.New("username invalid")
 	}
 
 	return models.MerchantInfo{

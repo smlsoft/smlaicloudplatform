@@ -2,6 +2,7 @@ package merchant
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
@@ -81,8 +82,8 @@ func (h *MerchantHttp) CreateMerchant(ctx microservice.IContext) error {
 }
 
 func (h *MerchantHttp) UpdateMerchant(ctx microservice.IContext) error {
-
-	authUsername := ctx.UserInfo().Username
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
@@ -92,6 +93,15 @@ func (h *MerchantHttp) UpdateMerchant(ctx microservice.IContext) error {
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
+	}
+
+	if userInfo.Role == "" || userInfo.Role != models.ROLE_OWNER {
+		ctx.Response(http.StatusOK, &models.ApiResponse{
+			Success: false,
+			Message: "permission denied",
+		})
+
+		return errors.New("permission denied")
 	}
 
 	err = h.service.UpdateMerchant(id, authUsername, *merchantRequest)
@@ -113,8 +123,19 @@ func (h *MerchantHttp) UpdateMerchant(ctx microservice.IContext) error {
 
 func (h *MerchantHttp) DeleteMerchant(ctx microservice.IContext) error {
 
-	authUsername := ctx.UserInfo().Username
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+
 	id := ctx.Param("id")
+
+	if userInfo.Role == "" || userInfo.Role != models.ROLE_OWNER {
+		ctx.Response(http.StatusOK, &models.ApiResponse{
+			Success: false,
+			Message: "permission denied",
+		})
+
+		return errors.New("permission denied")
+	}
 
 	err := h.service.DeleteMerchant(id, authUsername)
 
@@ -133,9 +154,18 @@ func (h *MerchantHttp) DeleteMerchant(ctx microservice.IContext) error {
 }
 
 func (h *MerchantHttp) InfoMerchant(ctx microservice.IContext) error {
-
-	authUsername := ctx.UserInfo().Username
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
 	id := ctx.Param("id")
+
+	if userInfo.Role == "" || userInfo.Role != models.ROLE_OWNER {
+		ctx.Response(http.StatusOK, &models.ApiResponse{
+			Success: false,
+			Message: "permission denied",
+		})
+
+		return errors.New("permission denied")
+	}
 
 	merchantInfo, err := h.service.InfoMerchant(id, authUsername)
 
@@ -157,6 +187,15 @@ func (h *MerchantHttp) SearchMerchant(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
+
+	if userInfo.Role == "" || userInfo.Role != models.ROLE_OWNER {
+		ctx.Response(http.StatusOK, &models.ApiResponse{
+			Success: false,
+			Message: "permission denied",
+		})
+
+		return errors.New("permission denied")
+	}
 
 	q := ctx.QueryParam("q")
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
