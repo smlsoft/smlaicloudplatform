@@ -53,7 +53,7 @@ func (repo *TransactionRepository) Delete(guid string, merchantId string) error 
 	return nil
 }
 
-func (repo *TransactionRepository) FindByGuid(merchantId string, guid string) (models.Transaction, error) {
+func (repo *TransactionRepository) FindByGuid(guid string, merchantId string) (models.Transaction, error) {
 	trans := &models.Transaction{}
 	err := repo.pst.FindOne(&models.Transaction{}, bson.M{"merchantId": merchantId, "guidFixed": guid, "deleted": false}, trans)
 	if err != nil {
