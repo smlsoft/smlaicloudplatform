@@ -2,7 +2,6 @@ package authentication
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/merchant"
@@ -26,9 +25,6 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
-	fmt.Printf("DB URI --> %s\n", cfg.MongoPersisterConfig().MongodbURI())
-	fmt.Printf("DB --> %s\n,", cfg.MongoPersisterConfig().DB())
-
 	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
 
 	merchantUserRepo := merchant.NewMerchantUserRepository(pst)
@@ -46,9 +42,13 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 func (h *AuthenticationHttp) RouteSetup() {
 
 	h.ms.POST("/login", h.Login)
-	h.ms.POST("/register", h.Register)
 	h.ms.POST("/logout", h.Logout)
+
+	h.ms.POST("/register", h.Register)
 	h.ms.GET("/profile", h.Profile)
+	h.ms.PUT("/profile", h.Update)
+	h.ms.PUT("/profile/password", h.UpdatePassword)
+
 	h.ms.POST("/select-merchant", h.SelectMerchant, h.authService.MWFuncWithMerchant(h.ms.Cacher(h.cfg.CacherConfig())))
 }
 
@@ -120,6 +120,65 @@ func (h *AuthenticationHttp) Register(ctx microservice.IContext) error {
 		Success: true,
 		Id:      idx,
 	})
+
+	return nil
+}
+
+func (h *AuthenticationHttp) Update(ctx microservice.IContext) error {
+	authUsername := ctx.UserInfo().Username
+	input := ctx.ReadInput()
+
+	userReq := models.UserRequest{}
+	err := json.Unmarshal([]byte(input), &userReq)
+
+	if err != nil {
+		ctx.ResponseError(400, "user payload invalid")
+		return err
+	}
+
+	err = h.authenticationService.Update(authUsername, userReq)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, models.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, models.ApiResponse{
+		Success: true,
+	})
+
+	return nil
+}
+
+func (h *AuthenticationHttp) UpdatePassword(ctx microservice.IContext) error {
+	authUsername := ctx.UserInfo().Username
+	input := ctx.ReadInput()
+
+	userPwdReq := models.UserPasswordRequest{}
+	err := json.Unmarshal([]byte(input), &userPwdReq)
+
+	if err != nil {
+		ctx.ResponseError(400, "user payload invalid")
+		return err
+	}
+
+	err = h.authenticationService.UpdatePassword(authUsername, userPwdReq.CurrentPassword, userPwdReq.NewPassword)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, models.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, models.ApiResponse{
+		Success: true,
+	})
+
 	return nil
 }
 
@@ -136,6 +195,10 @@ func (h *AuthenticationHttp) Logout(ctx microservice.IContext) error {
 		})
 		return err
 	}
+
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success: true,
+	})
 
 	return nil
 }

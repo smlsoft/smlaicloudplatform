@@ -11,6 +11,7 @@ import (
 type IAuthenticationRepository interface {
 	FindUser(id string) (*models.User, error)
 	CreateUser(models.User) (primitive.ObjectID, error)
+	UpdateUser(username string, user models.User) error
 }
 
 type AuthenticationRepository struct {
@@ -43,4 +44,14 @@ func (r *AuthenticationRepository) CreateUser(user models.User) (primitive.Objec
 		return primitive.NilObjectID, err
 	}
 	return idx, nil
+}
+
+func (r *AuthenticationRepository) UpdateUser(username string, user models.User) error {
+
+	err := r.pst.UpdateOne(&models.User{}, "username", username, user)
+
+	if err != nil {
+		return err
+	}
+	return nil
 }

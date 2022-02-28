@@ -16,6 +16,8 @@ import (
 type IAuthenticationService interface {
 	Login(userReq *models.UserRequest) (string, error)
 	Register(userRequest models.UserRequest) (string, error)
+	Update(username string, userRequest models.UserRequest) error
+	UpdatePassword(username string, currentPassword string, newPassword string) error
 	Logout(authorizationHeader string) error
 	Profile(username string) (models.UserProfile, error)
 	AccessMerchant(authorizationHeader string, merchantId string, username string) error
@@ -27,7 +29,7 @@ type AuthenticationService struct {
 	merchantUserRepo merchant.IMerchantUserRepository
 }
 
-func NewAuthenticationService(authRepo IAuthenticationRepository, merchantUserRepo merchant.IMerchantUserRepository, authService *microservice.AuthService) AuthenticationService {
+func NewAuthenticationService(authRepo IAuthenticationRepository, merchantUserRepo merchant.IMerchantUserRepository, authService *microservice.AuthService) IAuthenticationService {
 	return AuthenticationService{
 		authRepo:         authRepo,
 		authService:      authService,
@@ -66,12 +68,12 @@ func (svc AuthenticationService) Login(userReq *models.UserRequest) (string, err
 
 func (svc AuthenticationService) Register(userRequest models.UserRequest) (string, error) {
 
-	findUser, err := svc.authRepo.FindUser(userRequest.Username)
+	userFind, err := svc.authRepo.FindUser(userRequest.Username)
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return "", err
 	}
 
-	if len(findUser.Username) > 0 {
+	if len(userFind.Username) > 0 {
 		return "", errors.New("username is exists")
 	}
 
@@ -95,6 +97,72 @@ func (svc AuthenticationService) Register(userRequest models.UserRequest) (strin
 	}
 
 	return idx.Hex(), nil
+}
+
+func (svc AuthenticationService) Update(username string, userRequest models.UserRequest) error {
+
+	if username == "" {
+		return errors.New("username invalid")
+	}
+
+	userFind, err := svc.authRepo.FindUser(username)
+	if err != nil && err.Error() != "mongo: no documents in result" {
+		return err
+	}
+
+	if len(userFind.Username) < 1 {
+		return errors.New("username is not exists")
+	}
+
+	userFind.Name = userRequest.Name
+	userFind.UpdatedAt = time.Now()
+
+	err = svc.authRepo.UpdateUser(username, *userFind)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc AuthenticationService) UpdatePassword(username string, currentPassword string, newPassword string) error {
+
+	if username == "" {
+		return errors.New("username invalid")
+	}
+
+	userFind, err := svc.authRepo.FindUser(username)
+	if err != nil && err.Error() != "mongo: no documents in result" {
+		return err
+	}
+
+	if len(userFind.Username) < 1 {
+		return errors.New("username is not exists")
+	}
+
+	passwordNotMatch := !utils.CheckPasswordHash(currentPassword, userFind.Password)
+
+	if passwordNotMatch {
+		return errors.New("current password invalid")
+	}
+
+	hashPassword, err := utils.HashPassword(newPassword)
+
+	if err != nil {
+		return err
+	}
+
+	userFind.Password = hashPassword
+	userFind.UpdatedAt = time.Now()
+
+	err = svc.authRepo.UpdateUser(username, *userFind)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (svc AuthenticationService) Logout(authorizationHeader string) error {

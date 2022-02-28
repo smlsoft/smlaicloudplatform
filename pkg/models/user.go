@@ -7,15 +7,12 @@ import (
 )
 
 type User struct {
-	ID primitive.ObjectID `json:"-" bson:"_id,omitempty"`
-
-	Username string `json:"username" bson:"username"`
-
-	Password string `json:"password" bson:"password"`
-
-	Name string `json:"name,omitempty" bson:"name"`
-
-	CreatedAt time.Time `json:"-" bson:"created_at,omitempty"`
+	ID        primitive.ObjectID `json:"-" bson:"_id,omitempty"`
+	Username  string             `json:"username" bson:"username"`
+	Password  string             `json:"password" bson:"password"`
+	Name      string             `json:"name,omitempty" bson:"name"`
+	CreatedAt time.Time          `json:"-" bson:"created_at,omitempty"`
+	UpdatedAt time.Time          `json:"-" bson:"updatedAt,omitempty"`
 }
 
 func (*User) CollectionName() string {
@@ -23,11 +20,14 @@ func (*User) CollectionName() string {
 }
 
 type UserProfile struct {
-	Username string `json:"username" bson:"username"`
-
-	Name string `json:"name,omitempty" bson:"name"`
-
+	Username  string    `json:"username" bson:"username"`
+	Name      string    `json:"name,omitempty" bson:"name"`
 	CreatedAt time.Time `json:"-" bson:"created_at,omitempty"`
+}
+
+type UserPasswordRequest struct {
+	CurrentPassword string `json:"currentPassword" bson:"currentPassword"`
+	NewPassword     string `json:"newPassword" bson:"newPassword"`
 }
 
 type MerchantSelectRequest struct {
