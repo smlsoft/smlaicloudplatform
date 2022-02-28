@@ -13,7 +13,7 @@ type IMerchantRepository interface {
 	Create(merchant models.Merchant) (string, error)
 	Update(guid string, merchant models.Merchant) error
 	FindByGuid(guid string) (models.Merchant, error)
-	FindPage(username string, q string, page int, limit int) ([]models.MerchantInfo, paginate.PaginationData, error)
+	FindPage(q string, page int, limit int) ([]models.MerchantInfo, paginate.PaginationData, error)
 	Delete(guid string) error
 }
 
@@ -55,13 +55,12 @@ func (repo *MerchantRepository) FindByGuid(guid string) (models.Merchant, error)
 	return *findMerchant, err
 }
 
-func (repo *MerchantRepository) FindPage(username string, q string, page int, limit int) ([]models.MerchantInfo, paginate.PaginationData, error) {
+func (repo *MerchantRepository) FindPage(q string, page int, limit int) ([]models.MerchantInfo, paginate.PaginationData, error) {
 
 	merchantList := []models.MerchantInfo{}
 
 	pagination, err := repo.pst.FindPage(&models.Merchant{}, limit, page, bson.M{
-		"createdBy": username,
-		"deleted":   false,
+		"deleted": false,
 		"name1": bson.M{"$regex": primitive.Regex{
 			Pattern: ".*" + q + ".*",
 			Options: "",

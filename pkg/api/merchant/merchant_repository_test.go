@@ -29,6 +29,7 @@ func TestFindMerchant(t *testing.T) {
 		CreatedBy: "test",
 		CreatedAt: createAt,
 	}
+
 	want := &models.Merchant{
 		GuidFixed: newGuidFixed,
 		Name1:     "merchant test",

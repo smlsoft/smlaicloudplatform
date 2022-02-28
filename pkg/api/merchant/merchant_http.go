@@ -155,7 +155,6 @@ func (h *MerchantHttp) DeleteMerchant(ctx microservice.IContext) error {
 
 func (h *MerchantHttp) InfoMerchant(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
 	id := ctx.Param("id")
 
 	if userInfo.Role == "" || userInfo.Role != models.ROLE_OWNER {
@@ -167,7 +166,7 @@ func (h *MerchantHttp) InfoMerchant(ctx microservice.IContext) error {
 		return errors.New("permission denied")
 	}
 
-	merchantInfo, err := h.service.InfoMerchant(id, authUsername)
+	merchantInfo, err := h.service.InfoMerchant(id)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, &models.ApiResponse{
@@ -176,6 +175,7 @@ func (h *MerchantHttp) InfoMerchant(ctx microservice.IContext) error {
 		})
 		return err
 	}
+
 	ctx.Response(http.StatusOK, &models.ApiResponse{
 		Success: true,
 		Data:    merchantInfo,
@@ -186,7 +186,6 @@ func (h *MerchantHttp) InfoMerchant(ctx microservice.IContext) error {
 func (h *MerchantHttp) SearchMerchant(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
 
 	if userInfo.Role == "" || userInfo.Role != models.ROLE_OWNER {
 		ctx.Response(http.StatusOK, &models.ApiResponse{
@@ -209,7 +208,7 @@ func (h *MerchantHttp) SearchMerchant(ctx microservice.IContext) error {
 		limit = 20
 	}
 
-	merchantList, pagination, err := h.service.SearchMerchant(authUsername, q, page, limit)
+	merchantList, pagination, err := h.service.SearchMerchant(q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

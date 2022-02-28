@@ -7,14 +7,15 @@ import (
 	"time"
 
 	paginate "github.com/gobeam/mongo-go-pagination"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type IMerchantService interface {
 	CreateMerchant(username string, merchant models.Merchant) (string, error)
 	UpdateMerchant(guid string, username string, merchant models.Merchant) error
 	DeleteMerchant(guid string, username string) error
-	InfoMerchant(guid string, username string) (models.MerchantInfo, error)
-	SearchMerchant(username string, q string, page int, limit int) ([]models.MerchantInfo, paginate.PaginationData, error)
+	InfoMerchant(guid string) (models.MerchantInfo, error)
+	SearchMerchant(q string, page int, limit int) ([]models.MerchantInfo, paginate.PaginationData, error)
 }
 
 type MerchantService struct {
@@ -55,11 +56,15 @@ func (svc *MerchantService) UpdateMerchant(guid string, username string, merchan
 		return err
 	}
 
+	if findMerchant.Id == primitive.NilObjectID {
+		return errors.New("merchant not found")
+	}
+
 	findMerchant.Name1 = merchant.Name1
 	findMerchant.UpdatedBy = username
 	findMerchant.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(guid, merchant)
+	err = svc.repo.Update(guid, findMerchant)
 
 	if err != nil {
 		return err
@@ -70,17 +75,7 @@ func (svc *MerchantService) UpdateMerchant(guid string, username string, merchan
 
 func (svc *MerchantService) DeleteMerchant(guid string, username string) error {
 
-	role, err := svc.merchantUserRepo.FindRole(guid, username)
-
-	if err != nil {
-		return err
-	}
-
-	if role != models.ROLE_OWNER {
-		return errors.New("role invalid")
-	}
-
-	err = svc.repo.Delete(guid)
+	err := svc.repo.Delete(guid)
 
 	if err != nil {
 		return err
@@ -88,7 +83,7 @@ func (svc *MerchantService) DeleteMerchant(guid string, username string) error {
 	return nil
 }
 
-func (svc *MerchantService) InfoMerchant(guid string, username string) (models.MerchantInfo, error) {
+func (svc *MerchantService) InfoMerchant(guid string) (models.MerchantInfo, error) {
 	findMerchant, err := svc.repo.FindByGuid(guid)
 
 	if err != nil {
@@ -102,8 +97,8 @@ func (svc *MerchantService) InfoMerchant(guid string, username string) (models.M
 	}, nil
 }
 
-func (svc *MerchantService) SearchMerchant(username string, q string, page int, limit int) ([]models.MerchantInfo, paginate.PaginationData, error) {
-	merchantList, pagination, err := svc.repo.FindPage(username, q, page, limit)
+func (svc *MerchantService) SearchMerchant(q string, page int, limit int) ([]models.MerchantInfo, paginate.PaginationData, error) {
+	merchantList, pagination, err := svc.repo.FindPage(q, page, limit)
 
 	if err != nil {
 		return merchantList, pagination, err
