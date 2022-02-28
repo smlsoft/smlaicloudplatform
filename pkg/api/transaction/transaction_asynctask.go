@@ -17,7 +17,6 @@ func StartTransactionAPI(ms *microservice.Microservice, cfg microservice.IConfig
 		authUsername := userInfo.Username
 		merchantId := userInfo.MerchantId
 		input := ctx.ReadInput()
-		ctx.Log("POST: /trans " + input)
 
 		prod := ctx.Producer(cfg.MQServer())
 
