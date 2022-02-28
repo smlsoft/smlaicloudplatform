@@ -29,8 +29,9 @@ type AuthenticationService struct {
 
 func NewAuthenticationService(authRepo IAuthenticationRepository, merchantUserRepo merchant.IMerchantUserRepository, authService *microservice.AuthService) AuthenticationService {
 	return AuthenticationService{
-		authRepo:    authRepo,
-		authService: authService,
+		authRepo:         authRepo,
+		authService:      authService,
+		merchantUserRepo: merchantUserRepo,
 	}
 }
 
@@ -112,6 +113,14 @@ func (svc AuthenticationService) Profile(username string) (models.UserProfile, e
 }
 
 func (svc AuthenticationService) AccessMerchant(authorizationHeader string, merchantId string, username string) error {
+
+	if merchantId == "" {
+		return errors.New("merchant invalid")
+	}
+
+	if username == "" {
+		return errors.New("username invalid")
+	}
 
 	tokenStr, err := svc.authService.GetTokenFromAuthorizationHeader(authorizationHeader)
 

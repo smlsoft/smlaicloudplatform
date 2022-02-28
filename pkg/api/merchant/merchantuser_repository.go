@@ -1,6 +1,7 @@
 package merchant
 
 import (
+	"fmt"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 
@@ -21,7 +22,7 @@ type MerchantUserRepository struct {
 	pst microservice.IPersisterMongo
 }
 
-func NewMerchantUserRepository(pst microservice.IPersisterMongo) *MerchantUserRepository {
+func NewMerchantUserRepository(pst microservice.IPersisterMongo) IMerchantUserRepository {
 	return &MerchantUserRepository{
 		pst: pst,
 	}
@@ -55,8 +56,8 @@ func (svc *MerchantUserRepository) FindByMerchantIdAndUsername(merchantId string
 	merchantUser := &models.MerchantUser{}
 
 	err := svc.pst.FindOne(&models.MerchantUser{}, bson.M{"merchantId": merchantId, "username": username}, merchantUser)
-
 	if err != nil {
+		fmt.Println("err -> ", err.Error())
 		return models.MerchantUser{}, err
 	}
 

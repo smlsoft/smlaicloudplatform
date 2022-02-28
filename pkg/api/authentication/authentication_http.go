@@ -2,6 +2,7 @@ package authentication
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/merchant"
@@ -17,6 +18,7 @@ type IAuthenticationHttp interface {
 type AuthenticationHttp struct {
 	ms                    *microservice.Microservice
 	cfg                   microservice.IConfig
+	authService           *microservice.AuthService
 	authenticationService IAuthenticationService
 }
 
@@ -24,14 +26,19 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
+	fmt.Printf("DB URI --> %s\n", cfg.MongoPersisterConfig().MongodbURI())
+	fmt.Printf("DB --> %s\n,", cfg.MongoPersisterConfig().DB())
+
 	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
-	authRepo := NewAuthenticationRepository(pst)
+
 	merchantUserRepo := merchant.NewMerchantUserRepository(pst)
+	authRepo := NewAuthenticationRepository(pst)
 	authenticationService := NewAuthenticationService(authRepo, merchantUserRepo, authService)
 
 	return AuthenticationHttp{
 		ms:                    ms,
 		cfg:                   cfg,
+		authService:           authService,
 		authenticationService: authenticationService,
 	}
 }
@@ -42,7 +49,7 @@ func (h *AuthenticationHttp) RouteSetup() {
 	h.ms.POST("/register", h.Register)
 	h.ms.POST("/logout", h.Logout)
 	h.ms.GET("/profile", h.Profile)
-	h.ms.POST("/select-merchant", h.SelectMerchant)
+	h.ms.POST("/select-merchant", h.SelectMerchant, h.authService.MWFuncWithMerchant(h.ms.Cacher(h.cfg.CacherConfig())))
 }
 
 // Login login
@@ -153,5 +160,35 @@ func (h *AuthenticationHttp) Profile(ctx microservice.IContext) error {
 }
 
 func (h *AuthenticationHttp) SelectMerchant(ctx microservice.IContext) error {
+	authUsername := ctx.UserInfo().Username
+	authorizationHeader := ctx.Header("Authorization")
+
+	input := ctx.ReadInput()
+
+	merchantSelectReq := &models.MerchantSelectRequest{}
+	err := json.Unmarshal([]byte(input), &merchantSelectReq)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, models.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	err = h.authenticationService.AccessMerchant(authorizationHeader, merchantSelectReq.MerchantId, authUsername)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, models.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success: true,
+	})
+
 	return nil
 }

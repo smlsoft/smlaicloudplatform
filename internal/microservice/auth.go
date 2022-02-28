@@ -49,9 +49,10 @@ func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...st
 			cacheKey := authService.prefixCacheKey + tokenStr
 			tempUserInfo, err := authService.cacher.HMGet(cacheKey, []string{"username", "name", "merchantId"})
 
-			if err != nil {
+			if err != nil || tempUserInfo[0] == nil {
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
 			}
+
 			tempMerchantId := ""
 
 			if tempUserInfo[2] != nil {
@@ -89,9 +90,14 @@ func (authService *AuthService) MWFuncWithMerchant(cacher ICacher) echo.Middlewa
 			}
 
 			cacheKey := authService.prefixCacheKey + tokenStr
+
 			tempUserInfo, err := authService.cacher.HMGet(cacheKey, []string{"username", "name"})
 
 			if err != nil {
+				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
+			}
+
+			if tempUserInfo[0] == nil {
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
 			}
 
