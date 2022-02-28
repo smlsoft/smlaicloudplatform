@@ -70,14 +70,6 @@ func (*Category) CollectionName() string {
 	return "category"
 }
 
-type InventoryOptonGroupDetail struct {
-	// Id          string  `json:"id" bson:"id,omitempty"`
-	// MerchantId  string  `json:"merchantId" bson:"merchantId"`
-	GuidFixed   string  `json:"guidFixed" bson:"guidFixed"`
-	DetailName1 string  `json:"detailName1" bson:"detailName1"`
-	Amount      float32 `json:"amount" bson:"amount"`
-}
-
 type InventoryOptionGroup struct {
 	Id                     string                      `json:"id" bson:"id,omitempty"`
 	MerchantId             string                      `json:"merchantId" bson:"merchantId"`
@@ -99,6 +91,11 @@ func (*InventoryOptionGroup) CollectionName() string {
 	return "inventoryOptionGroup"
 }
 
+type InventoryOptonGroupDetail struct {
+	GuidFixed   string  `json:"guidFixed" bson:"guidFixed"`
+	DetailName1 string  `json:"detailName1" bson:"detailName1"`
+	Amount      float32 `json:"amount" bson:"amount"`
+}
 type InventoryOption struct {
 	Id            string    `json:"id" bson:"id,omitempty"`
 	GuidFixed     string    `json:"guidFixed" bson:"guidFixed"`
@@ -110,4 +107,8 @@ type InventoryOption struct {
 	UpdatedBy     string    `json:"-" bson:"updatedBy,omitempty"`
 	UpdatedAt     time.Time `json:"-" bson:"updatedAt,omitempty"`
 	Deleted       bool      `json:"-" bson:"deleted"`
+}
+
+func (*InventoryOption) CollectionName() string {
+	return "inventoryOption"
 }
