@@ -68,7 +68,7 @@ func (svc *TransactionService) UpdateTransaction(guid string, merchantId string,
 	}
 
 	sumAmount := 0.0
-	for i, transDetail := range findDoc.Items {
+	for i, transDetail := range trans.Items {
 		findDoc.Items[i].LineNumber = i + 1
 		sumAmount += transDetail.Price * transDetail.Qty
 	}
