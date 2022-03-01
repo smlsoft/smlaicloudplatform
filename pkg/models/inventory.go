@@ -71,7 +71,7 @@ func (*Category) CollectionName() string {
 }
 
 type InventoryOptionGroup struct {
-	Id                     string                      `json:"id" bson:"id,omitempty"`
+	Id                     primitive.ObjectID          `json:"id" bson:"id,omitempty"`
 	MerchantId             string                      `json:"merchantId" bson:"merchantId"`
 	GuidFixed              string                      `json:"guidFixed" bson:"guidFixed"`
 	OptionName1            string                      `json:"optionName1" bson:"optionName1"`
@@ -97,16 +97,16 @@ type InventoryOptonGroupDetail struct {
 	Amount      float32 `json:"amount" bson:"amount"`
 }
 type InventoryOption struct {
-	Id            string    `json:"id" bson:"id,omitempty"`
-	GuidFixed     string    `json:"guidFixed" bson:"guidFixed"`
-	MerchantId    string    `json:"merchantId" bson:"merchantId"`
-	InventoryId   string    `json:"inventoryId" bson:"inventoryId"`
-	OptionGroupId string    `json:"optionGroupId" bson:"optionGroupId"`
-	CreatedBy     string    `json:"-" bson:"createdBy"`
-	CreatedAt     time.Time `json:"-" bson:"createdAt"`
-	UpdatedBy     string    `json:"-" bson:"updatedBy,omitempty"`
-	UpdatedAt     time.Time `json:"-" bson:"updatedAt,omitempty"`
-	Deleted       bool      `json:"-" bson:"deleted"`
+	Id            primitive.ObjectID `json:"id" bson:"id,omitempty"`
+	GuidFixed     string             `json:"guidFixed" bson:"guidFixed"`
+	MerchantId    string             `json:"merchantId" bson:"merchantId"`
+	InventoryId   string             `json:"inventoryId" bson:"inventoryId"`
+	OptionGroupId string             `json:"optionGroupId" bson:"optionGroupId"`
+	CreatedBy     string             `json:"-" bson:"createdBy"`
+	CreatedAt     time.Time          `json:"-" bson:"createdAt"`
+	UpdatedBy     string             `json:"-" bson:"updatedBy,omitempty"`
+	UpdatedAt     time.Time          `json:"-" bson:"updatedAt,omitempty"`
+	Deleted       bool               `json:"-" bson:"deleted"`
 }
 
 func (*InventoryOption) CollectionName() string {
