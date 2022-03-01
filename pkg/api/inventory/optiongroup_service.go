@@ -91,12 +91,12 @@ func (svc *OptionGroupService) InfoOptionGroup(guid string, merchantId string) (
 
 	findDoc, err := svc.repo.FindByGuid(guid, merchantId)
 
-	if findDoc.Id == "" {
-		return models.InventoryOptionGroup{}, errors.New("document not found")
-	}
-
 	if err != nil {
 		return models.InventoryOptionGroup{}, err
+	}
+
+	if findDoc.Id == "" {
+		return models.InventoryOptionGroup{}, errors.New("document not found")
 	}
 
 	return findDoc, nil
