@@ -1,6 +1,7 @@
 package inventory
 
 import (
+	"errors"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"time"
@@ -52,6 +53,10 @@ func (svc *InventoryOptionService) UpdateInventoryOption(guid string, merchantId
 		return err
 	}
 
+	if findDoc.Id == "" {
+		return errors.New("document not found")
+	}
+
 	findDoc.InventoryId = invOpt.InventoryId
 	findDoc.OptionGroupId = invOpt.OptionGroupId
 	findDoc.UpdatedBy = authUsername
@@ -81,6 +86,10 @@ func (svc *InventoryOptionService) InfoInventoryOption(guid string, merchantId s
 
 	if err != nil {
 		return models.InventoryOption{}, err
+	}
+
+	if findDoc.Id == "" {
+		return models.InventoryOption{}, errors.New("document not found")
 	}
 
 	return findDoc, nil
