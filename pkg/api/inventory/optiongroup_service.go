@@ -7,6 +7,7 @@ import (
 
 	paginate "github.com/gobeam/mongo-go-pagination"
 	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type IOptionGroupService interface {
@@ -57,7 +58,7 @@ func (svc *OptionGroupService) UpdateOptionGroup(guid string, merchantId string,
 		return err
 	}
 
-	if findDoc.Id == "" {
+	if findDoc.Id == primitive.NewObjectID() {
 		return errors.New("document not found")
 	}
 
@@ -95,7 +96,7 @@ func (svc *OptionGroupService) InfoOptionGroup(guid string, merchantId string) (
 		return models.InventoryOptionGroup{}, err
 	}
 
-	if findDoc.Id == "" {
+	if findDoc.Id == primitive.NilObjectID {
 		return models.InventoryOptionGroup{}, errors.New("document not found")
 	}
 

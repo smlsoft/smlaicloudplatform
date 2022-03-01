@@ -7,6 +7,7 @@ import (
 	"time"
 
 	paginate "github.com/gobeam/mongo-go-pagination"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type IInventoryOptionService interface {
@@ -53,7 +54,7 @@ func (svc *InventoryOptionService) UpdateInventoryOption(guid string, merchantId
 		return err
 	}
 
-	if findDoc.Id == "" {
+	if findDoc.Id == primitive.NilObjectID {
 		return errors.New("document not found")
 	}
 
@@ -88,7 +89,7 @@ func (svc *InventoryOptionService) InfoInventoryOption(guid string, merchantId s
 		return models.InventoryOption{}, err
 	}
 
-	if findDoc.Id == "" {
+	if findDoc.Id == primitive.NilObjectID {
 		return models.InventoryOption{}, errors.New("document not found")
 	}
 
