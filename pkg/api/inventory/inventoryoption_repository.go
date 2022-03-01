@@ -76,8 +76,15 @@ func (repo InventoryOptionRepository) FindPage(merchantId string, q string, page
 		"merchantId": merchantId,
 		"deleted":    false,
 		"$or": []interface{}{
-			bson.M{"guidFixed": q},
-			bson.M{"optionName1": bson.M{"$regex": primitive.Regex{
+			bson.M{"guidFixed": bson.M{"$regex": primitive.Regex{
+				Pattern: ".*" + q + ".*",
+				Options: "",
+			}}},
+			bson.M{"inventoryId": bson.M{"$regex": primitive.Regex{
+				Pattern: ".*" + q + ".*",
+				Options: "",
+			}}},
+			bson.M{"optionGroupId": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",
 				Options: "",
 			}}},
