@@ -1,11 +1,13 @@
 package inventory
 
 import (
+	"errors"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"time"
 
 	paginate "github.com/gobeam/mongo-go-pagination"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ICategoryService interface {
@@ -57,6 +59,10 @@ func (svc *CategoryService) UpdateCategory(guid string, merchantId string, authU
 		return err
 	}
 
+	if findDoc.Id == primitive.NilObjectID {
+		return errors.New("document not found")
+	}
+
 	findDoc.Name1 = category.Name1
 	findDoc.HaveImage = category.HaveImage
 	findDoc.UpdatedBy = authUsername
@@ -85,6 +91,10 @@ func (svc *CategoryService) InfoCategory(guid string, merchantId string) (models
 
 	if err != nil {
 		return models.Category{}, err
+	}
+
+	if findDoc.Id == primitive.NilObjectID {
+		return models.Category{}, errors.New("document not found")
 	}
 
 	return findDoc, nil
