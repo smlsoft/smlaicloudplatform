@@ -6,6 +6,7 @@ import (
 	"time"
 
 	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/pkg/errors"
 )
 
 type IOptionGroupService interface {
@@ -56,6 +57,10 @@ func (svc *OptionGroupService) UpdateOptionGroup(guid string, merchantId string,
 		return err
 	}
 
+	if findDoc.Id == "" {
+		return errors.New("document not found")
+	}
+
 	findDoc.OptionName1 = doc.OptionName1
 	findDoc.ProductSelectOption1 = doc.ProductSelectOption1
 	findDoc.ProductSelectOption2 = doc.ProductSelectOption2
@@ -85,6 +90,10 @@ func (svc *OptionGroupService) DeleteOptionGroup(guid string, merchantId string)
 func (svc *OptionGroupService) InfoOptionGroup(guid string, merchantId string) (models.InventoryOptionGroup, error) {
 
 	findDoc, err := svc.repo.FindByGuid(guid, merchantId)
+
+	if findDoc.Id == "" {
+		return models.InventoryOptionGroup{}, errors.New("document not found")
+	}
 
 	if err != nil {
 		return models.InventoryOptionGroup{}, err
