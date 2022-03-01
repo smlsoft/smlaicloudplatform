@@ -71,7 +71,7 @@ func (*Category) CollectionName() string {
 }
 
 type InventoryOptionGroup struct {
-	Id                     primitive.ObjectID          `json:"id" bson:"id,omitempty"`
+	Id                     primitive.ObjectID          `json:"id" bson:"_id,omitempty"`
 	MerchantId             string                      `json:"merchantId" bson:"merchantId"`
 	GuidFixed              string                      `json:"guidFixed" bson:"guidFixed"`
 	OptionName1            string                      `json:"optionName1" bson:"optionName1"`
@@ -96,10 +96,11 @@ type InventoryOptonGroupDetail struct {
 	DetailName1 string  `json:"detailName1" bson:"detailName1"`
 	Amount      float32 `json:"amount" bson:"amount"`
 }
+
 type InventoryOption struct {
-	Id            primitive.ObjectID `json:"id" bson:"id,omitempty"`
-	GuidFixed     string             `json:"guidFixed" bson:"guidFixed"`
+	Id            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	MerchantId    string             `json:"merchantId" bson:"merchantId"`
+	GuidFixed     string             `json:"guidFixed" bson:"guidFixed"`
 	InventoryId   string             `json:"inventoryId" bson:"inventoryId"`
 	OptionGroupId string             `json:"optionGroupId" bson:"optionGroupId"`
 	CreatedBy     string             `json:"-" bson:"createdBy"`
