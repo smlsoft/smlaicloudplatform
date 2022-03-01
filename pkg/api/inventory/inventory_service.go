@@ -61,7 +61,7 @@ func (svc *InventoryService) UpdateInventory(guid string, merchantId string, aut
 	}
 
 	if findDoc.Id == primitive.NilObjectID {
-		return errors.New("guid invalid")
+		return errors.New("document not found")
 	}
 
 	findDoc.ItemSku = inventory.ItemSku
@@ -114,7 +114,7 @@ func (svc *InventoryService) InfoInventory(guid string, merchantId string) (mode
 	}
 
 	if findDoc.Id == primitive.NilObjectID {
-		return models.Inventory{}, errors.New("guid invalid")
+		return models.Inventory{}, errors.New("document not found")
 	}
 
 	return findDoc, nil

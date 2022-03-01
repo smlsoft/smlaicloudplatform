@@ -37,11 +37,13 @@ func (repo *InventoryRepository) Create(inventory models.Inventory) (string, err
 }
 
 func (repo *InventoryRepository) Update(guid string, inventory models.Inventory) error {
+
 	err := repo.pst.UpdateOne(&models.Inventory{}, "guidFixed", guid, inventory)
 
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -57,13 +59,13 @@ func (repo *InventoryRepository) Delete(guid string, merchantId string) error {
 
 func (repo *InventoryRepository) FindByGuid(guid string, merchantId string) (models.Inventory, error) {
 
-	findInv := &models.Inventory{}
-	err := repo.pst.FindOne(&models.Inventory{}, bson.M{"merchantId": merchantId, "guidFixed": guid, "deleted": false}, findInv)
+	findDoc := &models.Inventory{}
+	err := repo.pst.FindOne(&models.Inventory{}, bson.M{"merchantId": merchantId, "guidFixed": guid, "deleted": false}, findDoc)
 
 	if err != nil {
 		return models.Inventory{}, err
 	}
-	return *findInv, nil
+	return *findDoc, nil
 }
 
 func (repo *InventoryRepository) FindPage(merchantId string, q string, page int, limit int) ([]models.Inventory, paginate.PaginationData, error) {
