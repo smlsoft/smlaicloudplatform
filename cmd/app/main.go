@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/authentication"
@@ -20,7 +19,7 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		fmt.Println("Error loading .env file")
 	}
 
 	cfg := microservice.NewConfig()
