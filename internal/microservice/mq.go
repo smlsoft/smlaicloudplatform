@@ -1,6 +1,5 @@
 package microservice
 
-
 import (
 	"context"
 	"fmt"
@@ -32,6 +31,7 @@ func NewMQ(servers string, ms *Microservice) *MQ {
 func (q *MQ) getAdminClient() (*kafka.AdminClient, error) {
 	admin, err := kafka.NewAdminClient(&kafka.ConfigMap{"bootstrap.servers": q.servers})
 	if err != nil {
+		q.ms.Logger.WithError(err).Error("Failed to Connect to Kafka")
 		return nil, err
 	}
 	return admin, nil
@@ -98,7 +98,7 @@ func (q *MQ) createTopic(topic string, partitions int, replications int, retenti
 	}
 
 	for _, result := range results {
-		q.ms.Log("MQ", result.String())
+		q.ms.Logger.Debugf("Create Topic \"%s\" Result: %s", topic, result.String())
 	}
 
 	return nil

@@ -57,7 +57,7 @@ type Microservice struct {
 
 type ServiceHandleFunc func(context IContext) error
 
-func NewMicroservice(config IConfig) *Microservice {
+func NewMicroservice(config IConfig) (*Microservice, error) {
 	e := echo.New()
 	e.HideBanner = true
 	e.HidePort = true
@@ -72,7 +72,7 @@ func NewMicroservice(config IConfig) *Microservice {
 		"name": config.ApplicationName(),
 	})
 
-	return &Microservice{
+	m := &Microservice{
 		echo:            e,
 		cachers:         map[string]ICacher{},
 		persisters:      map[string]IPersister{},
@@ -83,6 +83,14 @@ func NewMicroservice(config IConfig) *Microservice {
 		Logger:          logctx,
 		Mode:            os.Getenv("MODE"),
 	}
+
+	m.Logger.Info("Initial Microservice.")
+	err := m.CheckReadyToStart()
+	if err != nil {
+		return nil, err
+	}
+
+	return m, nil
 }
 
 func (ms *Microservice) getProducer(mqServers string) IProducer {
@@ -92,25 +100,42 @@ func (ms *Microservice) getProducer(mqServers string) IProducer {
 	return ms.prod
 }
 
-// Start start all registered services
-func (ms *Microservice) Start() error {
-
+func (ms *Microservice) CheckReadyToStart() error {
 	// check resources availability
-	ms.Logger.Info("Starting Microservice.")
+
+	// mongdb
 	mongodbUri := ms.config.MongoPersisterConfig().MongodbURI()
 	if mongodbUri != "" {
-		ms.Logger.Debug("[mongodb]Test Connection")
+		ms.Logger.Debug("[MONGODB]Test Connection.")
 		pst := NewPersisterMongo(ms.config.MongoPersisterConfig())
 		err := pst.TestConnect()
 		if err != nil {
-			ms.Logger.WithError(err).Error("[mongodb]Connection Failed.")
+			ms.Logger.WithError(err).Error("[MONGODB]Connection Failed.")
 			return err
 		}
 		ms.mongoPersisters[mongodbUri] = pst
-		ms.Logger.Debug("[mongodb]Connection Success")
+		ms.Logger.Debug("[MONGODB]Connection Success.")
 	}
 
-	fmt.Println("Start App: " + os.Getenv("APP_NAME") + " Mode: " + ms.Mode)
+	// kafka
+	kafka_cluster_uri := ms.config.MQServer()
+	if kafka_cluster_uri != "" {
+		ms.Logger.Debug("[KAFKA]Test Connection.")
+	}
+
+	// redis
+	redis_clsuter_uri := ms.config.CacherConfig().Endpoint()
+	if redis_clsuter_uri != "" {
+		ms.Logger.Debug("[REDIS]Test Connection.")
+	}
+
+	return nil
+}
+
+// Start start all registered services
+func (ms *Microservice) Start() error {
+
+	ms.Logger.Debugf("Start App: %s Mode: %s", ms.config.ApplicationName(), ms.Mode)
 
 	// if ms.Mode == "development" {
 	// 	// register swagger api spec
@@ -168,7 +193,7 @@ func (ms *Microservice) Stop() {
 
 // Cleanup clean resources up from every registered services before exit
 func (ms *Microservice) Cleanup() error {
-	ms.Logger.Info("Start cleanup")
+	ms.Logger.Info("Stop Service Cleanup System.")
 	if ms.prod != nil {
 		ms.prod.Close()
 	}

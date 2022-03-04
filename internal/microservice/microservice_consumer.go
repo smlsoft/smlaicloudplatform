@@ -7,6 +7,7 @@ import (
 )
 
 func (ms *Microservice) consumeSingle(servers string, topic string, groupID string, readTimeout time.Duration, h ServiceHandleFunc) {
+	ms.Logger.Debugf("Create comsumer Kafka on topic: %s ", topic)
 	c, err := ms.newKafkaConsumer(servers, groupID)
 	if err != nil {
 		return
