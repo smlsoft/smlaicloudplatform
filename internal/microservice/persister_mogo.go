@@ -595,5 +595,4 @@ func (pst *PersisterMongo) Healthcheck() error {
 		}
 		return nil
 	}
-	return nil
 }

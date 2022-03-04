@@ -350,11 +350,8 @@ func (cache *Cacher) isNoConnectionError(err error) bool {
 	}
 
 	errMsgLower := strings.ToLower(err.Error())
-	if strings.Contains(errMsgLower, "connect: connection refused") {
-		return true
-	}
 
-	return false
+	return strings.Contains(errMsgLower, "connect: connection refused")
 }
 
 // Exists check if key is exists

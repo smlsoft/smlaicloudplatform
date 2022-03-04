@@ -55,15 +55,15 @@ func (ctx *ConsumerContext) Validate(model interface{}) error {
 
 // Response return response to client
 func (ctx *ConsumerContext) Response(responseCode int, responseData interface{}) {
-	return
+
 }
 
 func (ctx *ConsumerContext) ResponseS(responseCode int, responseData string) {
-	return
+
 }
 
 func (ctx *ConsumerContext) ResponseError(responseCode int, errorMessage string) {
-	return
+
 }
 
 // Header return header value by key

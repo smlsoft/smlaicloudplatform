@@ -41,7 +41,7 @@ func escapeName(tokens ...string) string {
 
 	name := b.String()
 	// - Cannot start with -, _, +
-	for true {
+	for {
 		if len(name) == 0 || name[0] != '-' {
 			break
 		}

@@ -40,7 +40,7 @@ func NewConfig() IConfig {
 
 func (cfg *Config) LoadConfig() {
 	env := os.Getenv("MODE")
-	if "" == env {
+	if env == "" {
 		os.Setenv("MODE", "development")
 		env = "development"
 	}
@@ -48,7 +48,7 @@ func (cfg *Config) LoadConfig() {
 	cfg.Mode = env
 
 	godotenv.Load(".env." + env + ".local")
-	if "test" != env {
+	if env != "test" {
 		godotenv.Load(".env.local")
 	}
 	godotenv.Load(".env." + env)
