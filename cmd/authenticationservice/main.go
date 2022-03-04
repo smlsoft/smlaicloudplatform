@@ -3,19 +3,20 @@ package main
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/authentication"
-
-	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
 func main() {
 
 	cfg := microservice.NewConfig()
-	ms := microservice.NewMicroservice(cfg)
+	ms, err := microservice.NewMicroservice(cfg)
+	if err != nil {
+		panic(err)
+	}
 
 	svc := authentication.NewAuthenticationHttp(ms, cfg)
 	svc.RouteSetup()
 
-	ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)
+	// ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)
 
 	ms.Start()
 }

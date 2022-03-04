@@ -15,7 +15,10 @@ func main() {
 	}
 
 	cfg := microservice.NewConfig()
-	ms := microservice.NewMicroservice(cfg)
+	ms, err := microservice.NewMicroservice(cfg)
+	if err != nil {
+		panic(err)
+	}
 
 	svc := merchant.NewMerchantHttp(ms, cfg)
 
