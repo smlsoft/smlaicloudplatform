@@ -23,7 +23,10 @@ func main() {
 	}
 
 	cfg := microservice.NewConfig()
-	ms := microservice.NewMicroservice(cfg)
+	ms, err := microservice.NewMicroservice(cfg)
+	if err != nil {
+		panic(err)
+	}
 
 	inventoryapi := inventory.NewInventoryHttp(ms, cfg)
 	inventoryapi.RouteSetup()

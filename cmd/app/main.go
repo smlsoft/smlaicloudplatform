@@ -12,18 +12,16 @@ import (
 	"smlcloudplatform/pkg/api/tools"
 	"smlcloudplatform/pkg/api/transaction"
 
-	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		fmt.Println("Error loading .env file")
-	}
 
 	cfg := microservice.NewConfig()
-	ms := microservice.NewMicroservice(cfg)
+	ms, err := microservice.NewMicroservice(cfg)
+	if err != nil {
+		panic(err)
+	}
 
 	cacher := ms.Cacher(cfg.CacherConfig())
 	// jwtService := microservice.NewJwtService(cacher, cfg.JwtSecretKey(), 24*3)

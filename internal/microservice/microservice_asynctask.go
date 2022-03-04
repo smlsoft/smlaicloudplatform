@@ -9,14 +9,19 @@ import (
 )
 
 // startAsyncTaskConsumer read async task message from message queue and execute with handler
-func (ms *Microservice) startAsyncTaskConsumer(path string, cacheConfig ICacherConfig, mqServers string, h ServiceHandleFunc) {
+func (ms *Microservice) startAsyncTaskConsumer(path string, cacheConfig ICacherConfig, mqServers string, h ServiceHandleFunc) error {
+
+	ms.Logger.Debugf("Register startAsyncTaskConsumer %s", path)
 	topic := escapeName(path)
 	mq := NewMQ(mqServers, ms)
+	ms.Logger.Debugf("Create Topic \"%s\".", topic)
 	err := mq.CreateTopicR(topic, 5, 1, time.Hour*24*30) // retain message for 30 days
 	if err != nil {
-		ms.Log("ATASK", err.Error())
+		ms.Logger.WithError(err).Error("Failed on Create Topic.")
+		return err
 	}
 
+	ms.Logger.Debugf("Start Comsume on Topic %s", topic)
 	ms.Consume(mqServers, topic, "atask", -1, func(ctx IContext) error {
 		message := map[string]interface{}{}
 		err := json.Unmarshal([]byte(ctx.ReadInput()), &message)
@@ -37,6 +42,8 @@ func (ms *Microservice) startAsyncTaskConsumer(path string, cacheConfig ICacherC
 
 		return h(NewAsyncTaskContext(ms, cacheConfig, userInfo, ref, input))
 	})
+
+	return nil
 }
 
 // handleAsyncTaskRequest accept async task request and send it to message queue
@@ -102,8 +109,13 @@ func (ms *Microservice) handleAsyncTaskResponse(path string, cacheConfig ICacher
 }
 
 // AsyncPOST register async task service for HTTP POST
-func (ms *Microservice) AsyncPOST(path string, cacheConfig ICacherConfig, mqServers string, h ServiceHandleFunc) {
-	ms.startAsyncTaskConsumer(path, cacheConfig, mqServers, h)
+func (ms *Microservice) AsyncPOST(path string, cacheConfig ICacherConfig, mqServers string, h ServiceHandleFunc) error {
+	ms.Logger.Debugf("Register AsyncPOST %s", path)
+	err := ms.startAsyncTaskConsumer(path, cacheConfig, mqServers, h)
+	if err != nil {
+
+		return err
+	}
 	ms.GET(path, func(ctx IContext) error {
 		return ms.handleAsyncTaskResponse(path, cacheConfig, ctx)
 	})
@@ -111,6 +123,7 @@ func (ms *Microservice) AsyncPOST(path string, cacheConfig ICacherConfig, mqServ
 	ms.POST(path, func(ctx IContext) error {
 		return ms.handleAsyncTaskRequest(path, cacheConfig, mqServers, ctx)
 	})
+	return nil
 }
 
 // AsyncPUT register async task service for HTTP PUT
