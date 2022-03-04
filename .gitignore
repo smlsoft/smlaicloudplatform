@@ -28,4 +28,4 @@ server/*/*
 
 mock/*.env
 
-*.env.development
+*.development
