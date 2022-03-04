@@ -53,6 +53,10 @@ github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f h1:lO4WD4F/r
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f/go.mod h1:cuUVRXasLTGF7a8hSLbxyZXjz+1KgoB3wDUb6vlszIc=
 github.com/dustin/go-humanize v1.0.0 h1:VSnTsYCnlFHaM2/igO1h6X3HA71jcobQuxemgkq4zYo=
 github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
+github.com/elastic/elastic-transport-go/v8 v8.0.0-alpha h1:SW9xcMVxx4Nv9oRm5rQxzAMAatwiZV8xROP2a48y45Q=
+github.com/elastic/elastic-transport-go/v8 v8.0.0-alpha/go.mod h1:87Tcz8IVNe6rVSLdBux1o/PEItLtyabHU3naC7IoqKI=
+github.com/elastic/go-elasticsearch/v8 v8.0.0 h1:Hte+pgoEZI88j/sQx7u9vK9SqisvJYkYMmxDnQXiJyM=
+github.com/elastic/go-elasticsearch/v8 v8.0.0/go.mod h1:8NCWP26meGbncX+R9sxo2JD8IqBjRTuS7yXMstHpd40=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/fatih/color v1.12.0 h1:mRhaKNwANqRgUBGKmnI5ZxEk7QXmjQeCcuYFMX2bfcc=
 github.com/fatih/color v1.12.0/go.mod h1:ELkj/draVOlAH/xkhN6mQ50Qd0MPOk5AAr3maGEBuJM=

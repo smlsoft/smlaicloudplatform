@@ -10,7 +10,6 @@ require (
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.9.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
-	github.com/pkg/errors v0.9.1
 	github.com/swaggo/echo-swagger v1.3.0
 	github.com/swaggo/swag v1.7.9
 	gorm.io/driver/postgres v1.2.1
@@ -27,6 +26,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
+	github.com/elastic/elastic-transport-go/v8 v8.0.0-alpha // indirect
 	github.com/fatih/color v1.12.0 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.19.6 // indirect
@@ -39,6 +39,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/ttacon/chalk v0.0.0-20160626202418-22c06c80ed31 // indirect
 	github.com/valyala/fasthttp v1.30.0 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
@@ -52,6 +53,7 @@ require (
 )
 
 require (
+	github.com/elastic/go-elasticsearch/v8 v8.0.0
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/gobeam/mongo-go-pagination v0.0.8
 	github.com/golang-jwt/jwt/v4 v4.2.0

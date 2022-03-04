@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
+	"strconv"
 	"strings"
 	"sync"
 	"syscall"
@@ -45,6 +46,8 @@ type Microservice struct {
 	persistersMutex      sync.Mutex
 	mongoPersisters      map[string]IPersisterMongo
 	persistersMongoMutex sync.Mutex
+	elkPersisters        map[string]IPersisterElk
+	persistersElkMutex   sync.Mutex
 	prod                 IProducer
 	pathPrefix           string
 	config               IConfig
@@ -74,6 +77,7 @@ func NewMicroservice(config IConfig) *Microservice {
 		cachers:         map[string]ICacher{},
 		persisters:      map[string]IPersister{},
 		mongoPersisters: map[string]IPersisterMongo{},
+		elkPersisters:   map[string]IPersisterElk{},
 		pathPrefix:      config.PathPrefix(),
 		config:          config,
 		Logger:          logctx,
@@ -202,6 +206,23 @@ func (ms *Microservice) MongoPersister(cfg IPersisterMongoConfig) IPersisterMong
 		ms.persistersMongoMutex.Lock()
 		ms.mongoPersisters[cfg.MongodbURI()] = pst
 		ms.persistersMongoMutex.Unlock()
+	}
+	return pst
+}
+
+func (ms *Microservice) ElkPersister(cfg IPersisterElkConfig) IPersisterElk {
+	if len(cfg.ElkAddress()) < 1 {
+		return nil
+	}
+
+	idx := cfg.Username() + cfg.ElkAddress()[0] + strconv.Itoa(len(cfg.ElkAddress()))
+
+	pst, ok := ms.elkPersisters[idx]
+	if !ok {
+		pst = NewPersisterElk(cfg)
+		ms.persistersElkMutex.Lock()
+		ms.elkPersisters[idx] = pst
+		ms.persistersElkMutex.Unlock()
 	}
 	return pst
 }
