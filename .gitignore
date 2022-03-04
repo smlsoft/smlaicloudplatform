@@ -27,3 +27,5 @@ runtest
 server/*/*
 
 mock/*.env
+
+*.env.development
