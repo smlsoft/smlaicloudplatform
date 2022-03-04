@@ -2,6 +2,8 @@ package microservice
 
 import (
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type IConfig interface {
@@ -26,10 +28,31 @@ func getEnv(key string, fallback string) string {
 	return value
 }
 
-type Config struct{}
+type Config struct {
+	Mode string
+}
 
 func NewConfig() IConfig {
-	return &Config{}
+	config := &Config{}
+	config.LoadConfig()
+	return config
+}
+
+func (cfg *Config) LoadConfig() {
+	env := os.Getenv("MODE")
+	if "" == env {
+		os.Setenv("MODE", "development")
+		env = "development"
+	}
+
+	cfg.Mode = env
+
+	godotenv.Load(".env." + env + ".local")
+	if "test" != env {
+		godotenv.Load(".env.local")
+	}
+	godotenv.Load(".env." + env)
+	godotenv.Load() //
 }
 
 func (cfg *Config) PathPrefix() string {

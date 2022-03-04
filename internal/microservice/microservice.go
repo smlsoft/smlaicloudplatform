@@ -48,6 +48,7 @@ type Microservice struct {
 	pathPrefix      string
 	config          IConfig
 	Logger          *log.Entry
+	Mode            string
 }
 
 type ServiceHandleFunc func(context IContext) error
@@ -75,6 +76,7 @@ func NewMicroservice(config IConfig) *Microservice {
 		pathPrefix:      config.PathPrefix(),
 		config:          config,
 		Logger:          logctx,
+		Mode:            os.Getenv("MODE"),
 	}
 }
 
@@ -103,6 +105,12 @@ func (ms *Microservice) Start() error {
 		ms.Logger.Debug("[mongodb]Connection Success")
 	}
 
+	fmt.Println("Start App: " + os.Getenv("APP_NAME") + " Mode: " + ms.Mode)
+
+	// if ms.Mode == "development" {
+	// 	// register swagger api spec
+	// 	ms.echo.Static("/swagger/doc.json", "./../../api/swagger/swagger.json")
+	// }
 	httpN := len(ms.echo.Routes())
 	var exitHTTP chan bool
 	if httpN > 0 {
@@ -141,6 +149,7 @@ func (ms *Microservice) Start() error {
 	}
 
 	defer ms.Cleanup()
+
 	return nil
 }
 
