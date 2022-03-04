@@ -37,18 +37,19 @@ type IMicroservice interface {
 }
 
 type Microservice struct {
-	echo            *echo.Echo
-	exitChannel     chan bool
-	cachers         map[string]ICacher
-	cachersMutex    sync.Mutex
-	persisters      map[string]IPersister
-	mongoPersisters map[string]IPersisterMongo
-	persistersMutex sync.Mutex
-	prod            IProducer
-	pathPrefix      string
-	config          IConfig
-	Logger          *log.Entry
-	Mode            string
+	echo                 *echo.Echo
+	exitChannel          chan bool
+	cachers              map[string]ICacher
+	cachersMutex         sync.Mutex
+	persisters           map[string]IPersister
+	persistersMutex      sync.Mutex
+	mongoPersisters      map[string]IPersisterMongo
+	persistersMongoMutex sync.Mutex
+	prod                 IProducer
+	pathPrefix           string
+	config               IConfig
+	Logger               *log.Entry
+	Mode                 string
 }
 
 type ServiceHandleFunc func(context IContext) error
@@ -198,9 +199,9 @@ func (ms *Microservice) MongoPersister(cfg IPersisterMongoConfig) IPersisterMong
 	pst, ok := ms.mongoPersisters[cfg.MongodbURI()]
 	if !ok {
 		pst = NewPersisterMongo(cfg)
-		ms.persistersMutex.Lock()
+		ms.persistersMongoMutex.Lock()
 		ms.mongoPersisters[cfg.MongodbURI()] = pst
-		ms.persistersMutex.Unlock()
+		ms.persistersMongoMutex.Unlock()
 	}
 	return pst
 }
