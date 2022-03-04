@@ -6,6 +6,8 @@ import (
 	"smlcloudplatform/pkg/api/transaction"
 	"smlcloudplatform/pkg/models"
 	"testing"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func TestCreateTransaction(t *testing.T) {
@@ -25,7 +27,7 @@ func TestCreateTransaction(t *testing.T) {
 		},
 	}
 
-	notWant := ""
+	notWant := primitive.NilObjectID
 
 	idx, err := repo.Create(give)
 
@@ -75,7 +77,7 @@ func TestUpdateTransaction(t *testing.T) {
 		},
 	}
 
-	notWant := ""
+	notWant := primitive.NilObjectID
 
 	idx, err := repo.Create(trans)
 
@@ -126,7 +128,7 @@ func TestDeleteTransaction(t *testing.T) {
 		},
 	}
 
-	notWant := ""
+	notWant := primitive.NilObjectID
 
 	idx, err := repo.Create(give)
 

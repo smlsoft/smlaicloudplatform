@@ -63,7 +63,7 @@ func (h *TransactionHttp) CreateTransaction(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.service.CreateTransaction(merchantId, authUsername, *trans)
+	idx, err := h.service.CreateTransaction(merchantId, authUsername, trans)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

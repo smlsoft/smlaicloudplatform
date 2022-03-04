@@ -10,7 +10,7 @@ import (
 )
 
 type ITransactionRepository interface {
-	Create(trans models.Transaction) (string, error)
+	Create(trans models.Transaction) (primitive.ObjectID, error)
 	Update(guid string, trans models.Transaction) error
 	Delete(guid string, merchantId string) error
 	FindByGuid(guid string, merchantId string) (models.Transaction, error)
@@ -28,13 +28,13 @@ func NewTransactionRepository(pst microservice.IPersisterMongo) ITransactionRepo
 	}
 }
 
-func (repo *TransactionRepository) Create(trans models.Transaction) (string, error) {
+func (repo *TransactionRepository) Create(trans models.Transaction) (primitive.ObjectID, error) {
 	idx, err := repo.pst.Create(&models.Transaction{}, trans)
 	if err != nil {
-		return "", err
+		return primitive.NilObjectID, err
 	}
 
-	return idx.Hex(), nil
+	return idx, nil
 }
 
 func (repo *TransactionRepository) Update(guid string, trans models.Transaction) error {

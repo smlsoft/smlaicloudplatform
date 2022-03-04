@@ -20,8 +20,6 @@ func StartTransactionAPI(ms *microservice.Microservice, cfg microservice.IConfig
 
 		prod := ctx.Producer(cfg.MQServer())
 
-		fmt.Println(ctx.UserInfo())
-
 		trans := &models.Transaction{}
 		err := json.Unmarshal([]byte(input), &trans)
 
@@ -31,13 +29,19 @@ func StartTransactionAPI(ms *microservice.Microservice, cfg microservice.IConfig
 			return err
 		}
 
-		idx, err := service.CreateTransaction(merchantId, authUsername, *trans)
+		fmt.Printf("async before:: %v \n", trans)
+
+		idx, err := service.CreateTransaction(merchantId, authUsername, trans)
+		fmt.Printf("async after:: %v \n", trans)
 
 		if err != nil {
 			ctx.ResponseError(400, err.Error())
 		}
 
-		err = prod.SendMessage("when-transaction-created", "", trans)
+		// transReq := &models.TransactionRequest{}
+		// transReq.MapRequest(*trans)
+
+		err = prod.SendMessage("when-transaction-created", "", *trans)
 		if err != nil {
 			ctx.Log(err.Error())
 			return err

@@ -2,6 +2,7 @@ package transaction
 
 import (
 	"errors"
+	"fmt"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"time"
@@ -11,7 +12,7 @@ import (
 )
 
 type ITransactionService interface {
-	CreateTransaction(merchantId string, username string, trans models.Transaction) (string, error)
+	CreateTransaction(merchantId string, username string, trans *models.Transaction) (string, error)
 	UpdateTransaction(guid string, merchantId string, username string, trans models.Transaction) error
 	DeleteTransaction(guid string, merchantId string, username string) error
 	InfoTransaction(guid string, merchantId string) (models.Transaction, error)
@@ -30,7 +31,7 @@ func NewTransactionService(transactionRepository ITransactionRepository) ITransa
 	}
 }
 
-func (svc *TransactionService) CreateTransaction(merchantId string, username string, trans models.Transaction) (string, error) {
+func (svc *TransactionService) CreateTransaction(merchantId string, username string, trans *models.Transaction) (string, error) {
 
 	sumAmount := 0.0
 	for i, transDetail := range trans.Items {
@@ -46,11 +47,15 @@ func (svc *TransactionService) CreateTransaction(merchantId string, username str
 	trans.CreatedBy = username
 	trans.CreatedAt = time.Now()
 
-	_, err := svc.transactionRepository.Create(trans)
+	fmt.Printf("service :: %v \n", trans)
+
+	idx, err := svc.transactionRepository.Create(*trans)
 
 	if err != nil {
 		return "", err
 	}
+
+	trans.Id = idx
 
 	return newGuidFixed, nil
 }
