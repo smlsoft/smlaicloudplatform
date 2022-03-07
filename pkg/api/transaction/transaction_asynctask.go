@@ -38,10 +38,10 @@ func StartTransactionAPI(ms *microservice.Microservice, cfg microservice.IConfig
 			ctx.ResponseError(400, err.Error())
 		}
 
-		// transReq := &models.TransactionRequest{}
-		// transReq.MapRequest(*trans)
+		transReq := &models.TransactionRequest{}
+		transReq.MapRequest(*trans)
 
-		err = prod.SendMessage("when-transaction-created", "", *trans)
+		err = prod.SendMessage("when-transaction-created", "", *transReq)
 		if err != nil {
 			ctx.Log(err.Error())
 			return err

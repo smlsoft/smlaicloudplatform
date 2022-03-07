@@ -2,7 +2,6 @@ package transaction
 
 import (
 	"encoding/json"
-	"fmt"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"time"
@@ -10,7 +9,7 @@ import (
 
 func StartTransactionComsume(ms *microservice.Microservice, cfg microservice.IConfig) {
 	topic := "when-transaction-created"
-	groupID := "distribute-consumer"
+	groupID := "elk-transaction-consumer"
 	timeout := time.Duration(-1)
 
 	mqServer := cfg.MQServer()
@@ -19,25 +18,22 @@ func StartTransactionComsume(ms *microservice.Microservice, cfg microservice.ICo
 	mq.CreateTopicR(topic, 5, 1, time.Hour*24*7)
 
 	ms.Consume(mqServer, topic, groupID, timeout, func(ctx microservice.IContext) error {
-
-		// pst := ms.Persister(cfg.PersisterConfig())
+		elkPst := ms.ElkPersister(cfg.ElkPersisterConfig())
 
 		msg := ctx.ReadInput()
 
-		trans := models.Transaction{}
+		trans := models.TransactionRequest{}
 		err := json.Unmarshal([]byte(msg), &trans)
 
 		if err != nil {
 			ms.Log("transaction comsume", err.Error())
 		}
 
-		fmt.Printf("receive :: %v \n", trans)
+		err = elkPst.CreateWithId(trans.GuidFixed, &trans)
 
-		// err = pst.Create(trans)
-
-		// if err != nil {
-		// 	ms.Log("transaction comsume", err.Error())
-		// }
+		if err != nil {
+			ms.Log("transaction comsume", err.Error())
+		}
 		return nil
 	})
 }

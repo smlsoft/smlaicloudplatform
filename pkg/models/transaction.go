@@ -45,11 +45,15 @@ type TransactionRequest struct {
 	Items      []TransactionDetail `json:"items" `
 	SumAmount  float64             `json:"sumAmount" `
 
-	CreatedBy string    `json:"createdBy" bson:"createdBy"`
-	CreatedAt time.Time `json:"createdAt" bson:"createdAt"`
-	UpdatedBy string    `json:"updatedBy" bson:"updatedBy,omitempty"`
-	UpdatedAt time.Time `json:"updatedAt" bson:"updatedAt,omitempty"`
-	Deleted   bool      `json:"deleted" bson:"deleted"`
+	// CreatedBy string    `json:"createdBy" bson:"createdBy"`
+	// CreatedAt time.Time `json:"createdAt" bson:"createdAt"`
+	// UpdatedBy string    `json:"updatedBy" bson:"updatedBy,omitempty"`
+	// UpdatedAt time.Time `json:"updatedAt" bson:"updatedAt,omitempty"`
+	// Deleted   bool      `json:"deleted" bson:"deleted"`
+}
+
+func (*TransactionRequest) IndexName() string {
+	return "transaction"
 }
 
 func (transReq *TransactionRequest) MapRequest(trans Transaction) {

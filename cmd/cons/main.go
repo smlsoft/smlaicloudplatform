@@ -15,7 +15,7 @@ func main() {
 	}
 
 	cfg := microservice.NewConfig()
-	ms := microservice.NewMicroservice(cfg)
+	ms, _ := microservice.NewMicroservice(cfg)
 
 	transaction.StartTransactionComsume(ms, cfg)
 
