@@ -111,11 +111,11 @@ func (ctx *AsyncTaskContext) Cacher(cacherConfig ICacherConfig) ICacher {
 }
 
 // Producer return producer
-func (ctx *AsyncTaskContext) Producer(servers string) IProducer {
-	return ctx.ms.getProducer(servers)
+func (ctx *AsyncTaskContext) Producer(mqConfig IMQConfig) IProducer {
+	return ctx.ms.Producer(mqConfig)
 }
 
 // MQ return MQ
-func (ctx *AsyncTaskContext) MQ(servers string) IMQ {
-	return NewMQ(servers, ctx.ms)
+func (ctx *AsyncTaskContext) MQ(mqConfig IMQConfig) IMQ {
+	return NewMQ(mqConfig, ctx.ms)
 }

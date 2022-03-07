@@ -94,11 +94,11 @@ func (ctx *HTTPContext) Cacher(cacheConfig ICacherConfig) ICacher {
 }
 
 // Producer return producer
-func (ctx *HTTPContext) Producer(servers string) IProducer {
-	return ctx.ms.getProducer(servers)
+func (ctx *HTTPContext) Producer(mqConfig IMQConfig) IProducer {
+	return ctx.ms.Producer(mqConfig)
 }
 
 // MQ return MQ
-func (ctx *HTTPContext) MQ(servers string) IMQ {
-	return NewMQ(servers, ctx.ms)
+func (ctx *HTTPContext) MQ(mqConfig IMQConfig) IMQ {
+	return NewMQ(mqConfig, ctx.ms)
 }

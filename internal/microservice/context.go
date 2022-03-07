@@ -16,6 +16,6 @@ type IContext interface {
 
 	Persister(cfg IPersisterConfig) IPersister
 	Cacher(cacherConfig ICacherConfig) ICacher
-	Producer(servers string) IProducer
-	MQ(servers string) IMQ
+	Producer(servers IMQConfig) IProducer
+	MQ(servers IMQConfig) IMQ
 }

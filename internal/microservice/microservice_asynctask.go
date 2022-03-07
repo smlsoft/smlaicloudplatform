@@ -9,10 +9,10 @@ import (
 )
 
 // startAsyncTaskConsumer read async task message from message queue and execute with handler
-func (ms *Microservice) startAsyncTaskConsumer(path string, cacheConfig ICacherConfig, mqServers string, h ServiceHandleFunc) error {
+func (ms *Microservice) startAsyncTaskConsumer(path string, cacheConfig ICacherConfig, mqConfig IMQConfig, h ServiceHandleFunc) error {
 
 	topic := escapeName(path)
-	mq := NewMQ(mqServers, ms)
+	mq := NewMQ(mqConfig, ms)
 	ms.Logger.Debugf("Create Topic \"%s\".", topic)
 	err := mq.CreateTopicR(topic, 5, 1, time.Hour*24*30) // retain message for 30 days
 	if err != nil {
@@ -20,7 +20,7 @@ func (ms *Microservice) startAsyncTaskConsumer(path string, cacheConfig ICacherC
 		return err
 	}
 
-	ms.Consume(mqServers, topic, "atask", -1, func(ctx IContext) error {
+	ms.Consume(mqConfig.URI(), topic, "atask", -1, func(ctx IContext) error {
 		message := map[string]interface{}{}
 		err := json.Unmarshal([]byte(ctx.ReadInput()), &message)
 		if err != nil {
@@ -45,7 +45,7 @@ func (ms *Microservice) startAsyncTaskConsumer(path string, cacheConfig ICacherC
 }
 
 // handleAsyncTaskRequest accept async task request and send it to message queue
-func (ms *Microservice) handleAsyncTaskRequest(path string, cacheConfig ICacherConfig, mqServers string, ctx IContext) error {
+func (ms *Microservice) handleAsyncTaskRequest(path string, cacheConfig ICacherConfig, mqConfig IMQConfig, ctx IContext) error {
 	topic := escapeName(path)
 
 	// 1. Read Input
@@ -69,7 +69,7 @@ func (ms *Microservice) handleAsyncTaskRequest(path string, cacheConfig ICacherC
 	}
 
 	// 4. Send Message to MQ
-	prod := ctx.Producer(mqServers)
+	prod := ctx.Producer(mqConfig)
 	message := map[string]interface{}{
 		"userInfo": string(userInfoStr),
 		"ref":      ref,
@@ -107,9 +107,9 @@ func (ms *Microservice) handleAsyncTaskResponse(path string, cacheConfig ICacher
 }
 
 // AsyncPOST register async task service for HTTP POST
-func (ms *Microservice) AsyncPOST(path string, cacheConfig ICacherConfig, mqServers string, h ServiceHandleFunc) error {
+func (ms *Microservice) AsyncPOST(path string, cacheConfig ICacherConfig, mqConfig IMQConfig, h ServiceHandleFunc) error {
 	ms.Logger.Debugf("Register HTTP Handler Async POST %s", path)
-	err := ms.startAsyncTaskConsumer(path, cacheConfig, mqServers, h)
+	err := ms.startAsyncTaskConsumer(path, cacheConfig, mqConfig, h)
 	if err != nil {
 		return err
 	}
@@ -118,18 +118,18 @@ func (ms *Microservice) AsyncPOST(path string, cacheConfig ICacherConfig, mqServ
 	})
 
 	ms.POST(path, func(ctx IContext) error {
-		return ms.handleAsyncTaskRequest(path, cacheConfig, mqServers, ctx)
+		return ms.handleAsyncTaskRequest(path, cacheConfig, mqConfig, ctx)
 	})
 	return nil
 }
 
 // AsyncPUT register async task service for HTTP PUT
-func (ms *Microservice) AsyncPUT(path string, cacheConfig ICacherConfig, mqServers string, h ServiceHandleFunc) {
-	ms.startAsyncTaskConsumer(path, cacheConfig, mqServers, h)
+func (ms *Microservice) AsyncPUT(path string, cacheConfig ICacherConfig, mqConfig IMQConfig, h ServiceHandleFunc) {
+	ms.startAsyncTaskConsumer(path, cacheConfig, mqConfig, h)
 	ms.GET(path, func(ctx IContext) error {
 		return ms.handleAsyncTaskResponse(path, cacheConfig, ctx)
 	})
 	ms.PUT(path, func(ctx IContext) error {
-		return ms.handleAsyncTaskRequest(path, cacheConfig, mqServers, ctx)
+		return ms.handleAsyncTaskRequest(path, cacheConfig, mqConfig, ctx)
 	})
 }

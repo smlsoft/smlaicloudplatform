@@ -12,7 +12,7 @@ type IConfig interface {
 	MongoPersisterConfig() IPersisterMongoConfig
 	ElkPersisterConfig() IPersisterElkConfig
 	CacherConfig() ICacherConfig
-	MQServer() string
+	MQConfig() IMQConfig
 	TopicName() string
 
 	// SignKeyPath() string
@@ -66,11 +66,6 @@ func (*Config) PersisterConfig() IPersisterConfig {
 
 func (cfg *Config) MongoPersisterConfig() IPersisterMongoConfig {
 	return NewMongoPersisterConfig()
-}
-
-//kafka server
-func (*Config) MQServer() string {
-	return getEnv("KAFKA_SERVER_URL", "") // localhost:9094
 }
 
 func (*Config) TopicName() string {

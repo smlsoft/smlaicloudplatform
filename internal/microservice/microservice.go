@@ -33,6 +33,7 @@ type IMicroservice interface {
 	PUT(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc)
 	PATCH(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc)
 	DELETE(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc)
+
 	// CRUD(cfg IConfig, pathName string, modelx GenCrud)
 	ECHO() *echo.Echo
 }
@@ -48,7 +49,8 @@ type Microservice struct {
 	persistersMongoMutex sync.Mutex
 	elkPersisters        map[string]IPersisterElk
 	persistersElkMutex   sync.Mutex
-	prod                 IProducer
+	prods                map[string]IProducer
+	prodMutex            sync.Mutex
 	pathPrefix           string
 	config               IConfig
 	Logger               *log.Entry
@@ -93,13 +95,6 @@ func NewMicroservice(config IConfig) (*Microservice, error) {
 	return m, nil
 }
 
-func (ms *Microservice) getProducer(mqServers string) IProducer {
-	if ms.prod == nil {
-		ms.prod = NewProducer(mqServers, ms)
-	}
-	return ms.prod
-}
-
 func (ms *Microservice) CheckReadyToStart() error {
 	// check resources availability
 
@@ -118,7 +113,7 @@ func (ms *Microservice) CheckReadyToStart() error {
 	}
 
 	// kafka
-	kafka_cluster_uri := ms.config.MQServer()
+	kafka_cluster_uri := ms.config.MQConfig().URI()
 	if kafka_cluster_uri != "" {
 		ms.Logger.Debug("[KAFKA]Test Connection.")
 	}
@@ -194,12 +189,22 @@ func (ms *Microservice) Stop() {
 // Cleanup clean resources up from every registered services before exit
 func (ms *Microservice) Cleanup() error {
 	ms.Logger.Info("Stop Service Cleanup System.")
-	if ms.prod != nil {
-		ms.prod.Close()
+	if ms.prods != nil {
+		for idx := range ms.prods {
+			ms.prods[idx].Close()
+		}
 	}
 
-	for _, pst := range ms.mongoPersisters {
-		pst.Cleanup()
+	if ms.mongoPersisters != nil {
+		for _, pst := range ms.mongoPersisters {
+			pst.Cleanup()
+		}
+	}
+
+	if ms.cachers != nil {
+		for _, cache := range ms.cachers {
+			cache.Close()
+		}
 	}
 
 	return nil
@@ -261,6 +266,17 @@ func (ms *Microservice) Cacher(cfg ICacherConfig) ICacher {
 		ms.cachersMutex.Unlock()
 	}
 	return cacher
+}
+
+func (ms *Microservice) Producer(cfg IMQConfig) IProducer {
+	prod, ok := ms.prods[cfg.URI()]
+	if !ok {
+		prod = NewProducer(cfg.URI(), ms)
+		ms.prodMutex.Lock()
+		ms.prods[cfg.URI()] = prod
+		ms.prodMutex.Unlock()
+	}
+	return prod
 }
 
 func (ms *Microservice) HttpMiddleware(middleware ...echo.MiddlewareFunc) {

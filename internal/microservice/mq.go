@@ -14,6 +14,11 @@ type IMQ interface {
 	CreateTopicR(topic string, partitions int, replications int, retentionPeriod time.Duration) error
 }
 
+// IMQConfig is mq configuration interface
+type IMQConfig interface {
+	URI() string
+}
+
 // MQ is message queue
 type MQ struct {
 	ms      *Microservice
@@ -21,10 +26,10 @@ type MQ struct {
 }
 
 // NewMQ return new MQ
-func NewMQ(servers string, ms *Microservice) *MQ {
+func NewMQ(mqConfig IMQConfig, ms *Microservice) *MQ {
 	return &MQ{
 		ms:      ms,
-		servers: servers,
+		servers: mqConfig.URI(),
 	}
 }
 
