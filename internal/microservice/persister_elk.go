@@ -13,6 +13,7 @@ import (
 
 type IPersisterElk interface {
 	Create(model interface{}) error
+	CreateWithId(docId string, model interface{}) error
 	Update(docId string, model interface{}) error
 	Delete(docId string, model interface{}) error
 }
@@ -97,6 +98,39 @@ func (pst *PersisterElk) Create(model interface{}) error {
 	req := esapi.IndexRequest{
 		Index: indexName,
 		Body:  bytes.NewReader(txtByte),
+	}
+
+	_, err = req.Do(context.Background(), db)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (pst *PersisterElk) CreateWithId(docId string, model interface{}) error {
+	indexName, err := pst.getIndexName(model)
+	if err != nil {
+		return err
+	}
+
+	db, err := pst.getClient()
+
+	if err != nil {
+		return err
+	}
+
+	txtByte, err := json.Marshal(model)
+
+	if err != nil {
+		return err
+	}
+
+	req := esapi.IndexRequest{
+		Index:      indexName,
+		DocumentID: docId,
+		Body:       bytes.NewReader(txtByte),
 	}
 
 	_, err = req.Do(context.Background(), db)
