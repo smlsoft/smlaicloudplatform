@@ -11,14 +11,14 @@ import (
 func StartTransactionAPI(ms *microservice.Microservice, cfg microservice.IConfig) {
 
 	repo := NewTransactionRepository(ms.MongoPersister(cfg.MongoPersisterConfig()))
-	service := NewTransactionService(repo)
-	err := ms.AsyncPOST("/trans", cfg.CacherConfig(), cfg.MQServer(), func(ctx microservice.IContext) error {
+	prod := ms.Producer(cfg.MQConfig())
+
+	service := NewTransactionService(repo, prod)
+	err := ms.AsyncPOST("/trans", cfg.CacherConfig(), cfg.MQConfig(), func(ctx microservice.IContext) error {
 		userInfo := ctx.UserInfo()
 		authUsername := userInfo.Username
 		merchantId := userInfo.MerchantId
 		input := ctx.ReadInput()
-
-		prod := ctx.Producer(cfg.MQServer())
 
 		trans := &models.Transaction{}
 		err := json.Unmarshal([]byte(input), &trans)
@@ -29,22 +29,10 @@ func StartTransactionAPI(ms *microservice.Microservice, cfg microservice.IConfig
 			return err
 		}
 
-		fmt.Printf("async before:: %v \n", trans)
-
 		idx, err := service.CreateTransaction(merchantId, authUsername, trans)
-		fmt.Printf("async after:: %v \n", trans)
 
 		if err != nil {
 			ctx.ResponseError(400, err.Error())
-		}
-
-		transReq := &models.TransactionRequest{}
-		transReq.MapRequest(*trans)
-
-		err = prod.SendMessage("when-transaction-created", "", *transReq)
-		if err != nil {
-			ctx.Log(err.Error())
-			return err
 		}
 
 		ctx.Response(http.StatusOK, idx)

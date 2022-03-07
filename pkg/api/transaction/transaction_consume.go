@@ -7,17 +7,20 @@ import (
 	"time"
 )
 
-func StartTransactionComsume(ms *microservice.Microservice, cfg microservice.IConfig) {
+func StartTransactionComsumeCreated(ms *microservice.Microservice, cfg microservice.IConfig) {
 	topic := "when-transaction-created"
 	groupID := "elk-transaction-consumer"
 	timeout := time.Duration(-1)
 
-	mqServer := cfg.MQServer()
+	mqConfig := cfg.MQConfig()
 
-	mq := microservice.NewMQ(mqServer, ms)
+	mq := microservice.NewMQ(mqConfig, ms)
 	mq.CreateTopicR(topic, 5, 1, time.Hour*24*7)
 
-	ms.Consume(mqServer, topic, groupID, timeout, func(ctx microservice.IContext) error {
+	//Consume transaction Created
+	ms.Consume(mqConfig.URI(), topic, groupID, timeout, func(ctx microservice.IContext) error {
+		moduleName := "comsume transaction created"
+
 		elkPst := ms.ElkPersister(cfg.ElkPersisterConfig())
 
 		msg := ctx.ReadInput()
@@ -26,14 +29,15 @@ func StartTransactionComsume(ms *microservice.Microservice, cfg microservice.ICo
 		err := json.Unmarshal([]byte(msg), &trans)
 
 		if err != nil {
-			ms.Log("transaction comsume", err.Error())
+			ms.Log(moduleName, err.Error())
 		}
 
 		err = elkPst.CreateWithId(trans.GuidFixed, &trans)
 
 		if err != nil {
-			ms.Log("transaction comsume", err.Error())
+			ms.Log(moduleName, err.Error())
 		}
 		return nil
 	})
+
 }

@@ -27,9 +27,10 @@ type TransactionHttp struct {
 func NewTransactionHttp(ms *microservice.Microservice, cfg microservice.IConfig) ITransactionHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	prod := ms.Producer(cfg.MQConfig())
 
 	transRepo := NewTransactionRepository(pst)
-	service := NewTransactionService(transRepo)
+	service := NewTransactionService(transRepo, prod)
 	return &TransactionHttp{
 		ms:      ms,
 		cfg:     cfg,

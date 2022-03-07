@@ -2,7 +2,7 @@ package transaction
 
 import (
 	"errors"
-	"fmt"
+	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"time"
@@ -22,12 +22,14 @@ type ITransactionService interface {
 
 type TransactionService struct {
 	transactionRepository ITransactionRepository
+	prod                  microservice.IProducer
 }
 
-func NewTransactionService(transactionRepository ITransactionRepository) ITransactionService {
+func NewTransactionService(transactionRepository ITransactionRepository, prod microservice.IProducer) ITransactionService {
 
 	return &TransactionService{
 		transactionRepository: transactionRepository,
+		prod:                  prod,
 	}
 }
 
@@ -47,8 +49,6 @@ func (svc *TransactionService) CreateTransaction(merchantId string, username str
 	trans.CreatedBy = username
 	trans.CreatedAt = time.Now()
 
-	fmt.Printf("service :: %v \n", trans)
-
 	idx, err := svc.transactionRepository.Create(*trans)
 
 	if err != nil {
@@ -56,6 +56,14 @@ func (svc *TransactionService) CreateTransaction(merchantId string, username str
 	}
 
 	trans.Id = idx
+
+	transReq := &models.TransactionRequest{}
+	transReq.MapRequest(*trans)
+
+	err = svc.prod.SendMessage("when-transaction-created", "", *transReq)
+	if err != nil {
+		return "", err
+	}
 
 	return newGuidFixed, nil
 }
