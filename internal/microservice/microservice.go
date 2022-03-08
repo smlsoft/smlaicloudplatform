@@ -80,6 +80,7 @@ func NewMicroservice(config IConfig) (*Microservice, error) {
 		persisters:      map[string]IPersister{},
 		mongoPersisters: map[string]IPersisterMongo{},
 		elkPersisters:   map[string]IPersisterElk{},
+		prods:           map[string]IProducer{},
 		pathPrefix:      config.PathPrefix(),
 		config:          config,
 		Logger:          logctx,
