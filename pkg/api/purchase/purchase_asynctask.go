@@ -8,7 +8,7 @@ import (
 	"smlcloudplatform/pkg/models"
 )
 
-func StartPurchaseAPI(ms *microservice.Microservice, cfg microservice.IConfig) {
+func StartPurchaseAsync(ms *microservice.Microservice, cfg microservice.IConfig) {
 
 	prod := ms.Producer(cfg.MQConfig())
 	repo := NewPurchaseRepository(ms.MongoPersister(cfg.MongoPersisterConfig()))

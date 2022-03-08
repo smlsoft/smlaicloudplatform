@@ -8,7 +8,7 @@ import (
 	"smlcloudplatform/pkg/models"
 )
 
-func StartStockInOutAPI(ms *microservice.Microservice, cfg microservice.IConfig) {
+func StartStockInOutAsync(ms *microservice.Microservice, cfg microservice.IConfig) {
 
 	prod := ms.Producer(cfg.MQConfig())
 	repo := NewStockInOutRepository(ms.MongoPersister(cfg.MongoPersisterConfig()))
