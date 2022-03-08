@@ -2,7 +2,6 @@ package transaction
 
 import (
 	"errors"
-	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"time"
@@ -22,14 +21,14 @@ type ITransactionService interface {
 
 type TransactionService struct {
 	transactionRepository ITransactionRepository
-	prod                  microservice.IProducer
+	mqRepo                ITransactionMQRepository
 }
 
-func NewTransactionService(transactionRepository ITransactionRepository, prod microservice.IProducer) ITransactionService {
+func NewTransactionService(transactionRepository ITransactionRepository, mqRepo ITransactionMQRepository) ITransactionService {
 
 	return &TransactionService{
 		transactionRepository: transactionRepository,
-		prod:                  prod,
+		mqRepo:                mqRepo,
 	}
 }
 
@@ -60,7 +59,7 @@ func (svc *TransactionService) CreateTransaction(merchantId string, username str
 	transReq := &models.TransactionRequest{}
 	transReq.MapRequest(*trans)
 
-	err = svc.prod.SendMessage("when-transaction-created", "", *transReq)
+	err = svc.mqRepo.Create(*transReq)
 	if err != nil {
 		return "", err
 	}

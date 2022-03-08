@@ -30,7 +30,9 @@ func NewTransactionHttp(ms *microservice.Microservice, cfg microservice.IConfig)
 	prod := ms.Producer(cfg.MQConfig())
 
 	transRepo := NewTransactionRepository(pst)
-	service := NewTransactionService(transRepo, prod)
+	mqRepo := NewTransactionMQRepository(prod)
+
+	service := NewTransactionService(transRepo, mqRepo)
 	return &TransactionHttp{
 		ms:      ms,
 		cfg:     cfg,

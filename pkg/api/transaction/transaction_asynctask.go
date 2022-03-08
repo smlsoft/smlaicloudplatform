@@ -13,7 +13,8 @@ func StartTransactionAsync(ms *microservice.Microservice, cfg microservice.IConf
 	repo := NewTransactionRepository(ms.MongoPersister(cfg.MongoPersisterConfig()))
 	prod := ms.Producer(cfg.MQConfig())
 
-	service := NewTransactionService(repo, prod)
+	mqRepo := NewTransactionMQRepository(prod)
+	service := NewTransactionService(repo, mqRepo)
 	err := ms.AsyncPOST("/trans", cfg.CacherConfig(), cfg.MQConfig(), func(ctx microservice.IContext) error {
 		userInfo := ctx.UserInfo()
 		authUsername := userInfo.Username
