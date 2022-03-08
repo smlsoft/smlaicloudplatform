@@ -9,6 +9,7 @@ import (
 	"smlcloudplatform/pkg/api/authentication"
 	"smlcloudplatform/pkg/api/inventory"
 	"smlcloudplatform/pkg/api/merchant"
+	"smlcloudplatform/pkg/api/purchase"
 	"smlcloudplatform/pkg/api/tools"
 	"smlcloudplatform/pkg/api/transaction"
 
@@ -50,7 +51,12 @@ func main() {
 	transapi := transaction.NewTransactionHttp(ms, cfg)
 	transapi.RouteSetup()
 
-	transaction.StartTransactionAPI(ms, cfg)
+	transaction.StartTransactionAsync(ms, cfg)
+
+	purchaseapi := purchase.NewPurchaseHttp(ms, cfg)
+	purchaseapi.RouteSetup()
+
+	purchase.StartPurchaseAsync(ms, cfg)
 
 	toolSvc := tools.NewToolsService(ms, cfg)
 
