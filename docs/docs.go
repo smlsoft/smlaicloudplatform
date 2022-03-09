@@ -90,6 +90,40 @@ const docTemplate_swagger = `{
                     }
                 }
             }
+        },
+        "/inventory/{id}": {
+            "get": {
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Inventory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Inventory"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -104,6 +138,136 @@ const docTemplate_swagger = `{
                 "pagination": {},
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.Barcode": {
+            "type": "object",
+            "properties": {
+                "barcode": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "unit": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Inventory": {
+            "type": "object",
+            "properties": {
+                "activated": {
+                    "description": "เปิดใช้งานอยู่",
+                    "type": "boolean"
+                },
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Barcode"
+                    }
+                },
+                "categoryGuid": {
+                    "description": "Guid กลุ่มสินค้า",
+                    "type": "string"
+                },
+                "description1": {
+                    "description": "รายละเอียดภาษาไทย",
+                    "type": "string"
+                },
+                "description2": {
+                    "type": "string"
+                },
+                "description3": {
+                    "type": "string"
+                },
+                "description4": {
+                    "type": "string"
+                },
+                "description5": {
+                    "type": "string"
+                },
+                "guidFixed": {
+                    "description": "Guid สินค้า",
+                    "type": "string"
+                },
+                "haveImage": {
+                    "description": "มีรูปสินค้า",
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "itemSku": {
+                    "type": "string"
+                },
+                "lineNumber": {
+                    "description": "บรรทัดที่ (เอาไว้เรียงลำดับ)",
+                    "type": "integer"
+                },
+                "merchantId": {
+                    "description": "รหัสร้าน",
+                    "type": "string"
+                },
+                "name1": {
+                    "description": "ชื่อภาษาไทย",
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "recommended": {
+                    "description": "สินค้าแนะนำ",
+                    "type": "boolean"
+                },
+                "unitList": {
+                    "description": "กรณีหลายหน่วยนับ ตารางหน่วบนับ",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InventoryUnit"
+                    }
+                }
+            }
+        },
+        "models.InventoryUnit": {
+            "type": "object",
+            "properties": {
+                "activated": {
+                    "description": "เปิดใช้งานอยู่",
+                    "type": "boolean"
+                },
+                "divisor": {
+                    "description": "ตัวหาร",
+                    "type": "number"
+                },
+                "minuend": {
+                    "description": "ตัวตั้ง",
+                    "type": "number"
+                },
+                "unitGuid": {
+                    "description": "Guid หน่วยนับ",
+                    "type": "string"
+                },
+                "unitName": {
+                    "description": "ชื่อหน่วยนับ",
+                    "type": "string"
                 }
             }
         },

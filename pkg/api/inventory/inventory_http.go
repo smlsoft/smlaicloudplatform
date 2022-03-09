@@ -167,6 +167,14 @@ func (h *InventoryHttp) DeleteInventory(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Inventory godoc
+// @Description get struct array by ID
+// @Tags		Inventory
+// @Param		id  path      string  true  "Inventory ID"
+// @Accept 		json
+// @Success		200	{object}	models.Inventory
+// @Failure		401 {object}	models.ApiResponse
+// @Router /inventory/{id} [get]
 func (h *InventoryHttp) InfoInventory(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
