@@ -64,7 +64,7 @@ func (h *AuthenticationHttp) Login(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	userReq := &models.UserRequest{}
+	userReq := &models.UserLoginRequest{}
 	err := json.Unmarshal([]byte(input), &userReq)
 
 	if err != nil {
