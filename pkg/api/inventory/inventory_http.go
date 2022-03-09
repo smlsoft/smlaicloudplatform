@@ -78,7 +78,17 @@ func (h *InventoryHttp) RouteSetup() {
 	h.ms.DELETE("/optgroup/:id", h.DeleteOptionGroup)
 }
 
+// Create Inventory godoc
+// @Description Create Inventory
+// @Tags		Inventory
+// @Param		Inventory  body      models.Inventory  true  "Add Inventory"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /inventory [post]
 func (h *InventoryHttp) CreateInventory(ctx microservice.IContext) error {
+	h.ms.Logger.Debug("Creating Inventory")
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	merchantId := userInfo.MerchantId
@@ -174,6 +184,7 @@ func (h *InventoryHttp) DeleteInventory(ctx microservice.IContext) error {
 // @Accept 		json
 // @Success		200	{object}	models.Inventory
 // @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
 // @Router /inventory/{id} [get]
 func (h *InventoryHttp) InfoInventory(ctx microservice.IContext) error {
 
@@ -200,6 +211,14 @@ func (h *InventoryHttp) InfoInventory(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Inventory godoc
+// @Description get struct array by ID
+// @Tags		Inventory
+// @Accept 		json
+// @Success		200	{array}	models.Inventory
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /inventory [get]
 func (h *InventoryHttp) SearchInventory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	merchantId := userInfo.MerchantId

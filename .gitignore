@@ -31,3 +31,4 @@ mock/*.env
 /*.development
 *.development
 **.development
+*.local

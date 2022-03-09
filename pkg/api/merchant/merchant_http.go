@@ -47,6 +47,15 @@ func (h *MerchantHttp) RouteSetup() {
 	h.ms.DELETE("/merchant/:id", h.DeleteMerchant)
 }
 
+// Create Merchant godoc
+// @Description Create Merchant
+// @Tags		Merchant
+// @Accept 		json
+// @Param		Merchant  body      models.Merchant  true  "Add Merchant"
+// @Success		200	{array}	models.Merchant
+// @Failure		401 {object}	models.ResponseSuccessWithId
+// @Security     AccessToken
+// @Router /merchant [post]
 func (h *MerchantHttp) CreateMerchant(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	if len(authUsername) < 1 {
@@ -183,6 +192,14 @@ func (h *MerchantHttp) InfoMerchant(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Merchant godoc
+// @Description Access to Merchant
+// @Tags		Merchant
+// @Accept 		json
+// @Success		200	{array}	models.MerchantInfo
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /merchant [get]
 func (h *MerchantHttp) SearchMerchant(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()

@@ -24,23 +24,59 @@ const docTemplate_swagger = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/authentication/login": {
-            "post": {
+        "/inventory": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
                 "description": "get struct array by ID",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Authentication"
+                    "Inventory"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Inventory"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Inventory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
                 ],
                 "parameters": [
                     {
-                        "description": "Add account",
-                        "name": "User",
+                        "description": "Add Inventory",
+                        "name": "Inventory",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserRequest"
+                            "$ref": "#/definitions/models.Inventory"
                         }
                     }
                 ],
@@ -60,39 +96,13 @@ const docTemplate_swagger = `{
                 }
             }
         },
-        "/authentication/register": {
-            "post": {
-                "description": "For User Register Application",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Register An Account",
-                "parameters": [
-                    {
-                        "description": "Add account",
-                        "name": "User",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.UserRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/inventory/{id}": {
             "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
                 "description": "get struct array by ID",
                 "consumes": [
                     "application/json"
@@ -124,6 +134,195 @@ const docTemplate_swagger = `{
                     }
                 }
             }
+        },
+        "/login": {
+            "post": {
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "parameters": [
+                    {
+                        "description": "Add account",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/merchant": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Access to Merchant",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Merchant"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.MerchantInfo"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Merchant",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Merchant"
+                ],
+                "parameters": [
+                    {
+                        "description": "Add Merchant",
+                        "name": "Merchant",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Merchant"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Merchant"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithId"
+                        }
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "description": "For User Register Application",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register An Account",
+                "parameters": [
+                    {
+                        "description": "Add account",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithId"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/select-merchant": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Access to Merchant",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "parameters": [
+                    {
+                        "description": "Merchant",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MerchantSelectRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -136,6 +335,28 @@ const docTemplate_swagger = `{
                     "type": "string"
                 },
                 "pagination": {},
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.AuthResponse": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.AuthResponseFailed": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
                 "success": {
                     "type": "boolean"
                 }
@@ -271,6 +492,49 @@ const docTemplate_swagger = `{
                 }
             }
         },
+        "models.Merchant": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "default": "-"
+                },
+                "name1": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.MerchantInfo": {
+            "type": "object",
+            "properties": {
+                "guidFixed": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.MerchantSelectRequest": {
+            "type": "object",
+            "properties": {
+                "merchantId": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ResponseSuccessWithId": {
+            "type": "object",
+            "properties": {
+                "id": {},
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "models.UserRequest": {
             "type": "object",
             "properties": {
@@ -284,6 +548,13 @@ const docTemplate_swagger = `{
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "AccessToken": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

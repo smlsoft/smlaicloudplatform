@@ -57,9 +57,9 @@ func (h *AuthenticationHttp) RouteSetup() {
 // @Tags		Authentication
 // @Param		User  body      models.UserRequest  true  "Add account"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
-// @Router /authentication/login [post]
+// @Success		200	{object}	models.AuthResponse
+// @Failure		400 {object}	models.AuthResponseFailed
+// @Router /login [post]
 func (h *AuthenticationHttp) Login(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
@@ -92,10 +92,12 @@ func (h *AuthenticationHttp) Login(ctx microservice.IContext) error {
 // @Description	For User Register Application
 // @Tags		Authentication
 // @Param		User  body      models.UserRequest  true  "Add account"
-// @Success		200	{object}	models.ApiResponse
+// @Success		200	{object}	models.ResponseSuccessWithId
+// @Failure		400 {object}	models.AuthResponseFailed
 // @Accept 		json
-// @Router		/authentication/register [post]
+// @Router		/register [post]
 func (h *AuthenticationHttp) Register(ctx microservice.IContext) error {
+	h.ms.Logger.Debug("Receive Register Data")
 	input := ctx.ReadInput()
 
 	userReq := models.UserRequest{}
@@ -222,6 +224,15 @@ func (h *AuthenticationHttp) Profile(ctx microservice.IContext) error {
 	return nil
 }
 
+// Access Merchant godoc
+// @Description Access to Merchant
+// @Tags		Authentication
+// @Param		User  body      models.MerchantSelectRequest  true  "Merchant"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /select-merchant [post]
 func (h *AuthenticationHttp) SelectMerchant(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	authorizationHeader := ctx.Header("Authorization")

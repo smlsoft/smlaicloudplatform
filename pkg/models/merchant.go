@@ -7,7 +7,7 @@ import (
 )
 
 type Merchant struct {
-	Id        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Id        primitive.ObjectID `json:"id" bson:"_id,omitempty" default:"-"`
 	GuidFixed string             `json:"-" bson:"guidFixed"`
 	Name1     string             `json:"name1" bson:"name1"`
 	CreatedBy string             `json:"-" bson:"createdBy"`

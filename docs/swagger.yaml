@@ -9,6 +9,20 @@ definitions:
       success:
         type: boolean
     type: object
+  models.AuthResponse:
+    properties:
+      success:
+        type: boolean
+      token:
+        type: string
+    type: object
+  models.AuthResponseFailed:
+    properties:
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
   models.Barcode:
     properties:
       barcode:
@@ -100,6 +114,34 @@ definitions:
         description: ชื่อหน่วยนับ
         type: string
     type: object
+  models.Merchant:
+    properties:
+      id:
+        default: '-'
+        type: string
+      name1:
+        type: string
+    type: object
+  models.MerchantInfo:
+    properties:
+      guidFixed:
+        type: string
+      id:
+        type: string
+      name1:
+        type: string
+    type: object
+  models.MerchantSelectRequest:
+    properties:
+      merchantId:
+        type: string
+    type: object
+  models.ResponseSuccessWithId:
+    properties:
+      id: {}
+      success:
+        type: boolean
+    type: object
   models.UserRequest:
     properties:
       name:
@@ -121,18 +163,37 @@ info:
   title: SML Cloud Platform API
   version: "1.0"
 paths:
-  /authentication/login:
-    post:
+  /inventory:
+    get:
       consumes:
       - application/json
       description: get struct array by ID
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Inventory'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      security:
+      - AccessToken: []
+      tags:
+      - Inventory
+    post:
+      consumes:
+      - application/json
+      description: Create Inventory
       parameters:
-      - description: Add account
+      - description: Add Inventory
         in: body
-        name: User
+        name: Inventory
         required: true
         schema:
-          $ref: '#/definitions/models.UserRequest'
+          $ref: '#/definitions/models.Inventory'
       responses:
         "200":
           description: OK
@@ -142,28 +203,10 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/models.ApiResponse'
+      security:
+      - AccessToken: []
       tags:
-      - Authentication
-  /authentication/register:
-    post:
-      consumes:
-      - application/json
-      description: For User Register Application
-      parameters:
-      - description: Add account
-        in: body
-        name: User
-        required: true
-        schema:
-          $ref: '#/definitions/models.UserRequest'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-      summary: Register An Account
-      tags:
-      - Authentication
+      - Inventory
   /inventory/{id}:
     get:
       consumes:
@@ -184,6 +227,131 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/models.ApiResponse'
+      security:
+      - AccessToken: []
       tags:
       - Inventory
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Add account
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      tags:
+      - Authentication
+  /merchant:
+    get:
+      consumes:
+      - application/json
+      description: Access to Merchant
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.MerchantInfo'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      security:
+      - AccessToken: []
+      tags:
+      - Merchant
+    post:
+      consumes:
+      - application/json
+      description: Create Merchant
+      parameters:
+      - description: Add Merchant
+        in: body
+        name: Merchant
+        required: true
+        schema:
+          $ref: '#/definitions/models.Merchant'
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Merchant'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithId'
+      security:
+      - AccessToken: []
+      tags:
+      - Merchant
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: For User Register Application
+      parameters:
+      - description: Add account
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithId'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      summary: Register An Account
+      tags:
+      - Authentication
+  /select-merchant:
+    post:
+      consumes:
+      - application/json
+      description: Access to Merchant
+      parameters:
+      - description: Merchant
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.MerchantSelectRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      security:
+      - AccessToken: []
+      tags:
+      - Authentication
+securityDefinitions:
+  AccessToken:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
