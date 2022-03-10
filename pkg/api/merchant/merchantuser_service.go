@@ -3,9 +3,12 @@ package merchant
 import (
 	"errors"
 	"smlcloudplatform/pkg/models"
+
+	paginate "github.com/gobeam/mongo-go-pagination"
 )
 
 type IMerchantUserService interface {
+	ListMerchantByUser(authUsername string, page int, limit int) ([]models.MerchantUserInfo, paginate.PaginationData, error)
 	SaveUserPermissionMerchant(merchantId string, authUsername string, username string, role string) error
 	DeleteUserPermissionMerchant(merchantId string, authUsername string, username string, guid string) error
 }
@@ -18,6 +21,17 @@ func NewMerchantUserService(merchantUserRepo IMerchantUserRepository) IMerchantU
 	return &MerchantUserService{
 		repo: merchantUserRepo,
 	}
+}
+
+func (svc *MerchantUserService) ListMerchantByUser(authUsername string, page int, limit int) ([]models.MerchantUserInfo, paginate.PaginationData, error) {
+
+	docList, pagination, err := svc.repo.FindByUsernamePage(authUsername, page, limit)
+
+	if err != nil {
+		return docList, pagination, err
+	}
+
+	return docList, pagination, err
 }
 
 func (svc *MerchantUserService) SaveUserPermissionMerchant(merchantId string, authUsername string, username string, role string) error {

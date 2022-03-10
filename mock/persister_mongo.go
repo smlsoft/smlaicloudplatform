@@ -12,11 +12,11 @@ import (
 type PersisterMongoConfig struct{}
 
 func (*PersisterMongoConfig) MongodbURI() string {
-	return "mongodb://root:rootx@localhost:27017/"
+	return os.Getenv("MONGODB_URI")
 }
 
 func (*PersisterMongoConfig) DB() string {
-	return "micro_test"
+	return os.Getenv("MONGODB_DB")
 }
 
 const projectDirName = "smlcloudplatform"

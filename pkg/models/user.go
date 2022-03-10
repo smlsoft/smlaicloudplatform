@@ -68,3 +68,13 @@ type MerchantUser struct {
 func (*MerchantUser) CollectionName() string {
 	return "merchantUsers"
 }
+
+type MerchantUserInfo struct {
+	MerchantId string `json:"merchantId" bson:"merchantId"`
+	Name       string `json:"name" bson:"name"`
+	Role       string `json:"role" bson:"role"`
+}
+
+func (*MerchantUserInfo) CollectionName() string {
+	return "merchantUsers"
+}

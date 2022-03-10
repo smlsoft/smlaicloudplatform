@@ -5,6 +5,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 
+	paginate "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -16,6 +17,7 @@ type IMerchantUserRepository interface {
 	FindRole(merchantId string, username string) (string, error)
 	FindByMerchantId(merchantId string) (*[]models.MerchantUser, error)
 	FindByUsername(username string) (*[]models.MerchantUser, error)
+	FindByUsernamePage(username string, page int, limit int) ([]models.MerchantUserInfo, paginate.PaginationData, error)
 }
 
 type MerchantUserRepository struct {
@@ -99,4 +101,45 @@ func (svc *MerchantUserRepository) FindByUsername(username string) (*[]models.Me
 	}
 
 	return merchantUsers, nil
+}
+
+func (repo *MerchantUserRepository) FindByUsernamePage(username string, page int, limit int) ([]models.MerchantUserInfo, paginate.PaginationData, error) {
+
+	docList := []models.MerchantUserInfo{}
+
+	aggPaginatedData, err := repo.pst.AggregatePage(&models.MerchantUser{}, limit, page,
+		bson.M{"$match": bson.M{"username": username}},
+		bson.M{"$lookup": bson.M{
+			"from":         "merchant",
+			"localField":   "merchantId",
+			"foreignField": "guidFixed",
+			"as":           "merchantInfo",
+		}},
+		bson.M{
+			"$match": bson.M{"merchantInfo.deleted": false},
+		},
+		bson.M{
+			"$project": bson.M{
+				"_id":        1,
+				"role":       1,
+				"merchantId": 1,
+				"name":       bson.M{"$first": "$merchantInfo.name1"},
+			},
+		},
+	)
+
+	if err != nil {
+		return []models.MerchantUserInfo{}, paginate.PaginationData{}, err
+	}
+
+	for _, raw := range aggPaginatedData.Data {
+		var doc *models.MerchantUserInfo
+
+		if marshallErr := bson.Unmarshal(raw, &doc); marshallErr == nil {
+			docList = append(docList, *doc)
+		}
+
+	}
+
+	return docList, aggPaginatedData.Pagination, nil
 }

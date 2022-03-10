@@ -6,6 +6,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/merchant"
 	"smlcloudplatform/pkg/models"
+	"strconv"
 )
 
 type IAuthenticationHttp interface {
@@ -19,6 +20,7 @@ type AuthenticationHttp struct {
 	cfg                   microservice.IConfig
 	authService           *microservice.AuthService
 	authenticationService IAuthenticationService
+	merchantUserService   merchant.IMerchantUserService
 }
 
 func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConfig) AuthenticationHttp {
@@ -31,11 +33,13 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 	authRepo := NewAuthenticationRepository(pst)
 	authenticationService := NewAuthenticationService(authRepo, merchantUserRepo, authService)
 
+	merchantUserService := merchant.NewMerchantUserService(merchantUserRepo)
 	return AuthenticationHttp{
 		ms:                    ms,
 		cfg:                   cfg,
 		authService:           authService,
 		authenticationService: authenticationService,
+		merchantUserService:   merchantUserService,
 	}
 }
 
@@ -49,6 +53,7 @@ func (h *AuthenticationHttp) RouteSetup() {
 	h.ms.PUT("/profile", h.Update)
 	h.ms.PUT("/profile/password", h.UpdatePassword)
 
+	h.ms.POST("/list-merchant", h.ListMerchantCanAccess, h.authService.MWFuncWithMerchant(h.ms.Cacher(h.cfg.CacherConfig())))
 	h.ms.POST("/select-merchant", h.SelectMerchant, h.authService.MWFuncWithMerchant(h.ms.Cacher(h.cfg.CacherConfig())))
 }
 
@@ -222,6 +227,40 @@ func (h *AuthenticationHttp) Profile(ctx microservice.IContext) error {
 	return nil
 }
 
+func (h *AuthenticationHttp) ListMerchant(ctx microservice.IContext) error {
+	authUsername := ctx.UserInfo().Username
+	authorizationHeader := ctx.Header("Authorization")
+
+	input := ctx.ReadInput()
+
+	merchantSelectReq := &models.MerchantSelectRequest{}
+	err := json.Unmarshal([]byte(input), &merchantSelectReq)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, models.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	err = h.authenticationService.AccessMerchant(authorizationHeader, merchantSelectReq.MerchantId, authUsername)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, models.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	ctx.Response(http.StatusOK, models.ApiResponse{
+		Success: true,
+	})
+
+	return nil
+}
+
 func (h *AuthenticationHttp) SelectMerchant(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	authorizationHeader := ctx.Header("Authorization")
@@ -252,6 +291,37 @@ func (h *AuthenticationHttp) SelectMerchant(ctx microservice.IContext) error {
 	ctx.Response(http.StatusOK, models.ApiResponse{
 		Success: true,
 	})
+
+	return nil
+}
+
+func (h *AuthenticationHttp) ListMerchantCanAccess(ctx microservice.IContext) error {
+	authUsername := ctx.UserInfo().Username
+
+	page, err := strconv.Atoi(ctx.QueryParam("page"))
+	if err != nil {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
+
+	if err != nil {
+		limit = 20
+	}
+
+	docList, pagination, err := h.merchantUserService.ListMerchantByUser(authUsername, page, limit)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+	}
+
+	ctx.Response(http.StatusOK,
+		models.ApiResponse{
+			Success:    true,
+			Data:       docList,
+			Pagination: pagination,
+		},
+	)
 
 	return nil
 }

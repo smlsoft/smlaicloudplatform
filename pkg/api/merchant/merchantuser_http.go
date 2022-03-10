@@ -1,10 +1,13 @@
 package merchant
 
-import "smlcloudplatform/internal/microservice"
+import (
+	"smlcloudplatform/internal/microservice"
+)
 
 type IMerchantMemberHttp interface{}
 
 type MerchantMemberHttp struct {
+	ms  *microservice.Microservice
 	svc IMerchantUserService
 }
 
@@ -15,5 +18,10 @@ func NewMerchantMemberHttp(ms *microservice.Microservice, cfg microservice.IConf
 	svc := NewMerchantUserService(repo)
 	return &MerchantMemberHttp{
 		svc: svc,
+		ms:  ms,
 	}
+}
+
+func (h *MerchantMemberHttp) RouteSetup() {
+
 }

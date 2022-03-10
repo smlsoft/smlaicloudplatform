@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestCreateTransaction(t *testing.T) {
+func TestCreateMerchantUser(t *testing.T) {
 	mongoPersisterConfig := mock.NewPersisterMongo()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := merchant.NewMerchantUserRepository(mongoPersister)
@@ -32,5 +32,24 @@ func TestCreateTransaction(t *testing.T) {
 		t.Error("find error")
 		return
 	}
+
+}
+
+func TestFindByUsernamePage(t *testing.T) {
+	mongoPersisterConfig := mock.NewPersisterMongo()
+	t.Log(mongoPersisterConfig.DB())
+	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
+	repo := merchant.NewMerchantUserRepository(mongoPersister)
+
+	docList, paginated, err := repo.FindByUsernamePage("dev01", 1, 20)
+
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+	t.Log(paginated.TotalPage)
+	t.Log(paginated.Total)
+	t.Log(docList)
 
 }
