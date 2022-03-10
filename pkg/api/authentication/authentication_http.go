@@ -53,7 +53,7 @@ func (h *AuthenticationHttp) RouteSetup() {
 	h.ms.PUT("/profile", h.Update)
 	h.ms.PUT("/profile/password", h.UpdatePassword)
 
-	h.ms.POST("/list-merchant", h.ListMerchantCanAccess, h.authService.MWFuncWithMerchant(h.ms.Cacher(h.cfg.CacherConfig())))
+	h.ms.GET("/list-merchant", h.ListMerchantCanAccess, h.authService.MWFuncWithMerchant(h.ms.Cacher(h.cfg.CacherConfig())))
 	h.ms.POST("/select-merchant", h.SelectMerchant, h.authService.MWFuncWithMerchant(h.ms.Cacher(h.cfg.CacherConfig())))
 }
 

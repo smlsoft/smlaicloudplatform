@@ -31,6 +31,7 @@ func main() {
 	publicPath := []string{
 		"/login",
 		"/register",
+		"/list-merchant",
 		"/select-merchant",
 		"/healthz",
 	}
