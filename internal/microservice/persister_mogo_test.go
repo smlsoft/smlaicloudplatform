@@ -352,10 +352,9 @@ func TestMongodbAggregatePage(t *testing.T) {
 
 	pst := microservice.NewPersisterMongo(cfg)
 
+	aggPaginatedData, err := pst.AggregatePage(&Product{}, 2, 0, bson.M{"$match": bson.M{"product_code": "pdt-01"}})
+
 	products := []Product{}
-
-	aggPaginatedData, err := pst.AggregatePage(&Product{}, 2, 0, bson.M{"$match": bson.M{"product_code": "pdt-01"}}, &products)
-
 	// var aggProductList []Product
 	for _, raw := range aggPaginatedData.Data {
 		var product *Product

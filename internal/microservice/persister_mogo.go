@@ -17,6 +17,7 @@ import (
 // IPersister is interface for persister
 type IPersisterMongo interface {
 	Aggregate(model interface{}, pipeline []bson.D, decode interface{}, opts ...*options.AggregateOptions) error
+	AggregatePage(model interface{}, limit int, page int, filter ...interface{}) (*paginate.PaginatedData, error)
 	Find(model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOptions) error
 	FindPage(model interface{}, limit int, page int, filter interface{}, decode interface{}) (paginate.PaginationData, error)
 	FindOne(model interface{}, filter interface{}, decode interface{}) error
@@ -540,7 +541,7 @@ func (pst *PersisterMongo) Aggregate(model interface{}, pipeline []bson.D, decod
 	return nil
 }
 
-func (pst *PersisterMongo) AggregatePage(model interface{}, limit int, page int, filter interface{}, decode interface{}) (*paginate.PaginatedData, error) {
+func (pst *PersisterMongo) AggregatePage(model interface{}, limit int, page int, filter ...interface{}) (*paginate.PaginatedData, error) {
 	db, err := pst.getClient()
 
 	emptyPage := &paginate.PaginatedData{}
@@ -557,7 +558,7 @@ func (pst *PersisterMongo) AggregatePage(model interface{}, limit int, page int,
 	var limit64 int64 = int64(limit)
 	var page64 int64 = int64(page)
 
-	paginatedData, err := paginate.New(db.Collection(collectionName)).Context(pst.ctx).Limit(limit64).Page(page64).Aggregate(filter)
+	paginatedData, err := paginate.New(db.Collection(collectionName)).Context(pst.ctx).Limit(limit64).Page(page64).Aggregate(filter...)
 	if err != nil {
 		return emptyPage, err
 	}
