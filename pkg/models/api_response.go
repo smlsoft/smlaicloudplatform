@@ -12,3 +12,13 @@ type AuthResponse struct {
 	Success bool   `json:"success"`
 	Token   string `json:"token"`
 }
+
+type AuthResponseFailed struct {
+	Success bool   `json:"success"`
+	Message string `json:"message,omitempty"`
+}
+
+type ResponseSuccessWithId struct {
+	Success bool        `json:"success"`
+	Id      interface{} `json:"id,omitempty"`
+}
