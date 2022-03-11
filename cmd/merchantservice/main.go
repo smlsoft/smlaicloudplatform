@@ -1,18 +1,15 @@
 package main
 
 import (
-	"log"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/merchant"
-
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 
 	cfg := microservice.NewConfig()
 	ms, err := microservice.NewMicroservice(cfg)
@@ -20,8 +17,11 @@ func main() {
 		panic(err)
 	}
 
-	svc := merchant.NewMerchantHttp(ms, cfg)
+	cacher := ms.Cacher(cfg.CacherConfig())
+	authService := microservice.NewAuthService(cacher, 24*3)
 
+	ms.HttpMiddleware(authService.MWFuncWithMerchant(cacher))
+	svc := merchant.NewMerchantHttp(ms, cfg)
 	svc.RouteSetup()
 
 	//ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)
