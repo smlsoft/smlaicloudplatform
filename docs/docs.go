@@ -135,6 +135,39 @@ const docTemplate_swagger = `{
                 }
             }
         },
+        "/list-merchant": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "List Merchant In My Account",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.MerchantUserInfo"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "get struct array by ID",
@@ -522,6 +555,20 @@ const docTemplate_swagger = `{
             "type": "object",
             "properties": {
                 "merchantId": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.MerchantUserInfo": {
+            "type": "object",
+            "properties": {
+                "merchantId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "role": {
                     "type": "string"
                 }
             }

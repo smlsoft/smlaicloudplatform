@@ -136,6 +136,15 @@ definitions:
       merchantId:
         type: string
     type: object
+  models.MerchantUserInfo:
+    properties:
+      merchantId:
+        type: string
+      name:
+        type: string
+      role:
+        type: string
+    type: object
   models.ResponseSuccessWithId:
     properties:
       id: {}
@@ -231,6 +240,26 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
+  /list-merchant:
+    get:
+      consumes:
+      - application/json
+      description: List Merchant In My Account
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.MerchantUserInfo'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      security:
+      - AccessToken: []
+      tags:
+      - Authentication
   /login:
     post:
       consumes:

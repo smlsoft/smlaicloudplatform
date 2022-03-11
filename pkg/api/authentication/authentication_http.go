@@ -306,6 +306,14 @@ func (h *AuthenticationHttp) SelectMerchant(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Merchant godoc
+// @Description List Merchant In My Account
+// @Tags		Authentication
+// @Accept 		json
+// @Success		200	{array}	models.MerchantUserInfo
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /list-merchant [get]
 func (h *AuthenticationHttp) ListMerchantCanAccess(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 
