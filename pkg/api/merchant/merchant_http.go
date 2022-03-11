@@ -162,6 +162,14 @@ func (h *MerchantHttp) DeleteMerchant(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Merchant godoc
+// @Description Access to Merchant
+// @Tags		Merchant
+// @Accept 		json
+// @Success		200	{array}	models.MerchantInfo
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /merchant [get]
 func (h *MerchantHttp) InfoMerchant(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	id := ctx.Param("id")
@@ -202,16 +210,17 @@ func (h *MerchantHttp) InfoMerchant(ctx microservice.IContext) error {
 // @Router /merchant [get]
 func (h *MerchantHttp) SearchMerchant(ctx microservice.IContext) error {
 
-	userInfo := ctx.UserInfo()
+	h.ms.Logger.Debug("Search Merchant")
+	// userInfo := ctx.UserInfo()
 
-	if userInfo.Role == "" || userInfo.Role != models.ROLE_OWNER {
-		ctx.Response(http.StatusOK, &models.ApiResponse{
-			Success: false,
-			Message: "permission denied",
-		})
+	// if userInfo.Role == "" || userInfo.Role != models.ROLE_OWNER {
+	// 	ctx.Response(http.StatusOK, &models.ApiResponse{
+	// 		Success: false,
+	// 		Message: "permission denied",
+	// 	})
 
-		return errors.New("permission denied")
-	}
+	// 	return errors.New("permission denied")
+	// }
 
 	q := ctx.QueryParam("q")
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
