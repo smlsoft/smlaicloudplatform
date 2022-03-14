@@ -44,6 +44,7 @@ type Inventory struct {
 	UnitName3 string   `json:"unitName3" bson:"unitName3"`
 	UnitName4 string   `json:"unitName4" bson:"unitName4"`
 	UnitName5 string   `json:"unitName5" bson:"unitName5"`
+	Options   []Option `json:"options" bson:"options"`
 	Tags      []string `json:"tags" bson:"tags"`
 
 	CreatedBy string    `json:"-" bson:"createdBy"`
@@ -63,13 +64,41 @@ func (*Inventory) CollectionName() string {
 	return "inventory"
 }
 
+type Option struct {
+	Code       string   `json:"code" bson:"code"`
+	Required   bool     `json:"required" bson:"required"`
+	SelectMode string   `json:"selectMode" bson:"selectMode"`
+	MaxSelect  int      `json:"maxSelect" bson:"maxSelect"`
+	Name1      string   `json:"name1" bson:"name1"`
+	Name2      string   `json:"name2" bson:"name2"`
+	Name3      string   `json:"name3" bson:"name3"`
+	Name4      string   `json:"name4" bson:"name4"`
+	Name5      string   `json:"name5" bson:"name5"`
+	Choices    []Choice `json:"choices" bson:"choices"`
+}
+
+type Choice struct {
+	SuggestCode string  `json:"suggestCode" bson:"suggestCode"`
+	Barcode     string  `json:"barcode" bson:"barcode"`
+	Price       float64 `json:"price" bson:"price"`
+	Qty         int     `json:"qty" bson:"qty"`
+	Name1       string  `json:"name1" bson:"name1"`
+	Name2       string  `json:"name2" bson:"name2"`
+	Name3       string  `json:"name3" bson:"name3"`
+	Name4       string  `json:"name4" bson:"name4"`
+	Name5       string  `json:"name5" bson:"name5"`
+}
+
 type Category struct {
 	Id         primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	MerchantId string             `json:"merchantId" bson:"merchantId"`
 	GuidFixed  string             `json:"guidFixed" bson:"guidFixed"`
-	LineNumber int                `json:"lineNumber" bson:"lineNumber"`
 	Name1      string             `json:"name1" bson:"name1"`
-	HaveImage  bool               `json:"haveImage" bson:"haveImage"`
+	Name2      string             `json:"name2" bson:"name2"`
+	Name3      string             `json:"name3" bson:"name3"`
+	Name4      string             `json:"name4" bson:"name4"`
+	Name5      string             `json:"name5" bson:"name5"`
+	Image      string             `json:"image" bson:"image"`
 	CreatedBy  string             `json:"-" bson:"createdBy"`
 	CreatedAt  time.Time          `json:"-" bson:"createdAt"`
 	UpdatedBy  string             `json:"-" bson:"updatedBy,omitempty"`
