@@ -2,11 +2,11 @@ import http from 'k6/http';
 
 export default function (data) {
 
-  const url = 'http://localhost:8089/merchant/23xK48ZSaDPzoxZVXIbV8w6kFVw/inventory';
+  const url = 'http://localhost:8089/shop/23xK48ZSaDPzoxZVXIbV8w6kFVw/inventory';
   const payload = JSON.stringify(
     {
 			"itemSku":      "devx001",
-			"merchantId":   "23twO9nFtgsLGAuQ9JXPzi3C65N",
+			"shopId":   "23twO9nFtgsLGAuQ9JXPzi3C65N",
 			"categoryGuid": "cat1234",
 			"lineNumber":   1,
 			"price":        99.0,

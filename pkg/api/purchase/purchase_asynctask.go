@@ -19,7 +19,7 @@ func StartPurchaseAsync(ms *microservice.Microservice, cfg microservice.IConfig)
 	err := ms.AsyncPOST("/purchase/async", cfg.CacherConfig(), cfg.MQConfig(), func(ctx microservice.IContext) error {
 		userInfo := ctx.UserInfo()
 		authUsername := userInfo.Username
-		merchantId := userInfo.MerchantId
+		shopId := userInfo.ShopId
 		input := ctx.ReadInput()
 
 		purchase := &models.Purchase{}
@@ -31,7 +31,7 @@ func StartPurchaseAsync(ms *microservice.Microservice, cfg microservice.IConfig)
 			return err
 		}
 
-		idx, err := service.CreatePurchase(merchantId, authUsername, purchase)
+		idx, err := service.CreatePurchase(shopId, authUsername, purchase)
 
 		if err != nil {
 			ctx.ResponseError(400, err.Error())

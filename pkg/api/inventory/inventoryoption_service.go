@@ -11,11 +11,11 @@ import (
 )
 
 type IInventoryOptionService interface {
-	CreateInventoryOption(merchantId string, authUsername string, invOpt models.InventoryOption) (string, error)
-	UpdateInventoryOption(guid string, merchantId string, authUsername string, invOpt models.InventoryOption) error
-	DeleteInventoryOption(guid string, merchantId string) error
-	InfoInventoryOption(guid string, merchantId string) (models.InventoryOption, error)
-	SearchInventoryOption(merchantId string, q string, page int, limit int) ([]models.InventoryOption, paginate.PaginationData, error)
+	CreateInventoryOption(shopId string, authUsername string, invOpt models.InventoryOption) (string, error)
+	UpdateInventoryOption(guid string, shopId string, authUsername string, invOpt models.InventoryOption) error
+	DeleteInventoryOption(guid string, shopId string) error
+	InfoInventoryOption(guid string, shopId string) (models.InventoryOption, error)
+	SearchInventoryOption(shopId string, q string, page int, limit int) ([]models.InventoryOption, paginate.PaginationData, error)
 }
 
 type InventoryOptionService struct {
@@ -28,10 +28,10 @@ func NewInventoryOptionService(inventoryOptionRepository IInventoryOptionReposit
 	}
 }
 
-func (svc *InventoryOptionService) CreateInventoryOption(merchantId string, authUsername string, invOpt models.InventoryOption) (string, error) {
+func (svc *InventoryOptionService) CreateInventoryOption(shopId string, authUsername string, invOpt models.InventoryOption) (string, error) {
 
 	newGuidFixed := utils.NewGUID()
-	invOpt.MerchantId = merchantId
+	invOpt.ShopId = shopId
 	invOpt.GuidFixed = newGuidFixed
 	invOpt.Deleted = false
 	invOpt.CreatedBy = authUsername
@@ -46,9 +46,9 @@ func (svc *InventoryOptionService) CreateInventoryOption(merchantId string, auth
 	return newGuidFixed, nil
 }
 
-func (svc *InventoryOptionService) UpdateInventoryOption(guid string, merchantId string, authUsername string, invOpt models.InventoryOption) error {
+func (svc *InventoryOptionService) UpdateInventoryOption(guid string, shopId string, authUsername string, invOpt models.InventoryOption) error {
 
-	findDoc, err := svc.repo.FindByGuid(guid, merchantId)
+	findDoc, err := svc.repo.FindByGuid(guid, shopId)
 
 	if err != nil {
 		return err
@@ -70,9 +70,9 @@ func (svc *InventoryOptionService) UpdateInventoryOption(guid string, merchantId
 	return nil
 }
 
-func (svc *InventoryOptionService) DeleteInventoryOption(guid string, merchantId string) error {
+func (svc *InventoryOptionService) DeleteInventoryOption(guid string, shopId string) error {
 
-	err := svc.repo.Delete(guid, merchantId)
+	err := svc.repo.Delete(guid, shopId)
 
 	if err != nil {
 		return err
@@ -81,9 +81,9 @@ func (svc *InventoryOptionService) DeleteInventoryOption(guid string, merchantId
 	return nil
 }
 
-func (svc *InventoryOptionService) InfoInventoryOption(guid string, merchantId string) (models.InventoryOption, error) {
+func (svc *InventoryOptionService) InfoInventoryOption(guid string, shopId string) (models.InventoryOption, error) {
 
-	findDoc, err := svc.repo.FindByGuid(guid, merchantId)
+	findDoc, err := svc.repo.FindByGuid(guid, shopId)
 
 	if err != nil {
 		return models.InventoryOption{}, err
@@ -96,8 +96,8 @@ func (svc *InventoryOptionService) InfoInventoryOption(guid string, merchantId s
 	return findDoc, nil
 }
 
-func (svc *InventoryOptionService) SearchInventoryOption(merchantId string, q string, page int, limit int) ([]models.InventoryOption, paginate.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindPage(merchantId, q, page, limit)
+func (svc *InventoryOptionService) SearchInventoryOption(shopId string, q string, page int, limit int) ([]models.InventoryOption, paginate.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindPage(shopId, q, page, limit)
 
 	if err != nil {
 		return []models.InventoryOption{}, pagination, err

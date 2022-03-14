@@ -7,16 +7,16 @@ import (
 )
 
 type StockAdjustment struct {
-	Id         primitive.ObjectID      `json:"id" bson:"_id,omitempty"`
-	MerchantId string                  `json:"merchantId" bson:"merchantId"`
-	GuidFixed  string                  `json:"guidFixed,omitempty" bson:"guidFixed"`
-	Items      []StockAdjustmentDetail `json:"items" bson:"items" `
-	SumAmount  float64                 `json:"sumAmount" bson:"sumAmount" `
-	CreatedBy  string                  `json:"createdBy" bson:"createdBy"`
-	CreatedAt  time.Time               `json:"createdAt" bson:"createdAt"`
-	UpdatedBy  string                  `json:"updatedBy,omitempty" bson:"updatedBy,omitempty"`
-	UpdatedAt  time.Time               `json:"updatedAt,omitempty" bson:"updatedAt,omitempty"`
-	Deleted    bool                    `json:"-" bson:"deleted"`
+	Id        primitive.ObjectID      `json:"id" bson:"_id,omitempty"`
+	ShopId    string                  `json:"shopId" bson:"shopId"`
+	GuidFixed string                  `json:"guidFixed,omitempty" bson:"guidFixed"`
+	Items     []StockAdjustmentDetail `json:"items" bson:"items" `
+	SumAmount float64                 `json:"sumAmount" bson:"sumAmount" `
+	CreatedBy string                  `json:"createdBy" bson:"createdBy"`
+	CreatedAt time.Time               `json:"createdAt" bson:"createdAt"`
+	UpdatedBy string                  `json:"updatedBy,omitempty" bson:"updatedBy,omitempty"`
+	UpdatedAt time.Time               `json:"updatedAt,omitempty" bson:"updatedAt,omitempty"`
+	Deleted   bool                    `json:"-" bson:"deleted"`
 }
 
 func (*StockAdjustment) CollectionName() string {
@@ -35,10 +35,10 @@ type StockAdjustmentDetail struct {
 }
 
 type StockAdjustmentRequest struct {
-	MerchantId string                  `json:"merchantId" `
-	GuidFixed  string                  `json:"guidFixed,omitempty" `
-	Items      []StockAdjustmentDetail `json:"items" `
-	SumAmount  float64                 `json:"sumAmount" `
+	ShopId    string                  `json:"shopId" `
+	GuidFixed string                  `json:"guidFixed,omitempty" `
+	Items     []StockAdjustmentDetail `json:"items" `
+	SumAmount float64                 `json:"sumAmount" `
 }
 
 func (*StockAdjustmentRequest) IndexName() string {
@@ -46,7 +46,7 @@ func (*StockAdjustmentRequest) IndexName() string {
 }
 
 func (docReq *StockAdjustmentRequest) MapRequest(doc StockAdjustment) {
-	docReq.MerchantId = doc.MerchantId
+	docReq.ShopId = doc.ShopId
 	docReq.GuidFixed = doc.GuidFixed
 	docReq.Items = doc.Items
 	docReq.SumAmount = doc.SumAmount

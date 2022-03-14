@@ -15,7 +15,7 @@ func TestCreateInventoryOption(t *testing.T) {
 
 	give := models.InventoryOption{
 		GuidFixed:     "fx01",
-		MerchantId:    "mx01",
+		ShopId:        "mx01",
 		InventoryId:   "inv01",
 		OptionGroupId: "opts01",
 	}

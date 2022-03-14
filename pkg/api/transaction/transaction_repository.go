@@ -12,10 +12,10 @@ import (
 type ITransactionRepository interface {
 	Create(trans models.Transaction) (primitive.ObjectID, error)
 	Update(guid string, trans models.Transaction) error
-	Delete(guid string, merchantId string) error
-	FindByGuid(guid string, merchantId string) (models.Transaction, error)
-	FindPage(merchantId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error)
-	FindItemsByGuidPage(guid string, merchantId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error)
+	Delete(guid string, shopId string) error
+	FindByGuid(guid string, shopId string) (models.Transaction, error)
+	FindPage(shopId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error)
+	FindItemsByGuidPage(guid string, shopId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error)
 }
 
 type TransactionRepository struct {
@@ -45,29 +45,29 @@ func (repo *TransactionRepository) Update(guid string, trans models.Transaction)
 	return nil
 }
 
-func (repo *TransactionRepository) Delete(guid string, merchantId string) error {
-	err := repo.pst.SoftDelete(&models.Transaction{}, bson.M{"guidFixed": guid, "merchantId": merchantId})
+func (repo *TransactionRepository) Delete(guid string, shopId string) error {
+	err := repo.pst.SoftDelete(&models.Transaction{}, bson.M{"guidFixed": guid, "shopId": shopId})
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (repo *TransactionRepository) FindByGuid(guid string, merchantId string) (models.Transaction, error) {
+func (repo *TransactionRepository) FindByGuid(guid string, shopId string) (models.Transaction, error) {
 	trans := &models.Transaction{}
-	err := repo.pst.FindOne(&models.Transaction{}, bson.M{"merchantId": merchantId, "guidFixed": guid, "deleted": false}, trans)
+	err := repo.pst.FindOne(&models.Transaction{}, bson.M{"shopId": shopId, "guidFixed": guid, "deleted": false}, trans)
 	if err != nil {
 		return *trans, err
 	}
 	return *trans, nil
 }
 
-func (repo *TransactionRepository) FindPage(merchantId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error) {
+func (repo *TransactionRepository) FindPage(shopId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error) {
 
 	transList := []models.Transaction{}
 	pagination, err := repo.pst.FindPage(&models.Transaction{}, limit, page, bson.M{
-		"merchantId": merchantId,
-		"deleted":    false,
+		"shopId":  shopId,
+		"deleted": false,
 		"$or": []interface{}{
 			bson.M{"guidFixed": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",
@@ -83,13 +83,13 @@ func (repo *TransactionRepository) FindPage(merchantId string, q string, page in
 	return transList, pagination, nil
 }
 
-func (repo *TransactionRepository) FindItemsByGuidPage(guid string, merchantId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error) {
+func (repo *TransactionRepository) FindItemsByGuidPage(guid string, shopId string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error) {
 
 	transList := []models.Transaction{}
 	pagination, err := repo.pst.FindPage(&models.Transaction{}, limit, page, bson.M{
-		"merchantId": merchantId,
-		"guidFixed":  guid,
-		"deleted":    false,
+		"shopId":    shopId,
+		"guidFixed": guid,
+		"deleted":   false,
 		"$or": []interface{}{
 			bson.M{"items.itemSku": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",

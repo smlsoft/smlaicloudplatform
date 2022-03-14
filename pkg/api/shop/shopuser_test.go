@@ -1,8 +1,8 @@
-package merchant_test
+package shop_test
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/merchant"
+	"smlcloudplatform/pkg/api/shop"
 	"smlcloudplatform/pkg/models"
 	"testing"
 )
@@ -17,28 +17,28 @@ func (TestPersisterMongoConfig) DB() string {
 	return "micro_test"
 }
 
-var merchantUserRepo merchant.IMerchantUserRepository
+var shopUserRepo shop.IShopUserRepository
 
 func setup() {
 	pst := microservice.NewPersisterMongo(&TestPersisterMongoConfig{})
 
-	merchantUserRepo = merchant.NewMerchantUserRepository(pst)
+	shopUserRepo = shop.NewShopUserRepository(pst)
 }
 
-func TestMerchantMemberSave(t *testing.T) {
+func TestShopMemberSave(t *testing.T) {
 	setup()
 
-	err := merchantUserRepo.Save("mx1", "ux3", models.ROLE_OWNER)
+	err := shopUserRepo.Save("mx1", "ux3", models.ROLE_OWNER)
 
 	if err != nil {
 		t.Error(err)
 	}
 }
 
-func TestMerchantMemberFindRole(t *testing.T) {
+func TestShopMemberFindRole(t *testing.T) {
 	setup()
 
-	role, err := merchantUserRepo.FindRole("mx1", "ux3")
+	role, err := shopUserRepo.FindRole("mx1", "ux3")
 
 	if err != nil {
 		t.Error(err)
@@ -47,10 +47,10 @@ func TestMerchantMemberFindRole(t *testing.T) {
 	t.Log(role)
 }
 
-func TestMerchantMemberFindByMerchant(t *testing.T) {
+func TestShopMemberFindByShop(t *testing.T) {
 	setup()
 
-	members, err := merchantUserRepo.FindByMerchantId("mx1")
+	members, err := shopUserRepo.FindByShopId("mx1")
 
 	if err != nil {
 		t.Error(err)
@@ -60,10 +60,10 @@ func TestMerchantMemberFindByMerchant(t *testing.T) {
 	t.Log(members)
 }
 
-func TestMerchantMemberFindByUsername(t *testing.T) {
+func TestShopMemberFindByUsername(t *testing.T) {
 	setup()
 
-	members, err := merchantUserRepo.FindByUsername("ux1")
+	members, err := shopUserRepo.FindByUsername("ux1")
 
 	if err != nil {
 		t.Error(err)

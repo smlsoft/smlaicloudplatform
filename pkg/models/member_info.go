@@ -9,7 +9,7 @@ import (
 type MemberInfo struct {
 	ID primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 
-	MerchantID string `json:"merchant_id" bson:"merchant_id"`
+	ShopID string `json:"shop_id" bson:"shop_id"`
 
 	Name string `json:"name,omitempty" bson:"name"`
 

@@ -8,8 +8,8 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/authentication"
 	"smlcloudplatform/pkg/api/inventory"
-	"smlcloudplatform/pkg/api/merchant"
 	"smlcloudplatform/pkg/api/purchase"
+	"smlcloudplatform/pkg/api/shop"
 	"smlcloudplatform/pkg/api/tools"
 	"smlcloudplatform/pkg/api/transaction"
 
@@ -31,8 +31,8 @@ func main() {
 	publicPath := []string{
 		"/login",
 		"/register",
-		"/list-merchant",
-		"/select-merchant",
+		"/list-shop",
+		"/select-shop",
 		"/healthz",
 	}
 
@@ -43,8 +43,8 @@ func main() {
 	svcAuth := authentication.NewAuthenticationHttp(ms, cfg)
 	svcAuth.RouteSetup()
 
-	svcMerchant := merchant.NewMerchantHttp(ms, cfg)
-	svcMerchant.RouteSetup()
+	svcShop := shop.NewShopHttp(ms, cfg)
+	svcShop.RouteSetup()
 
 	inventoryapi := inventory.NewInventoryHttp(ms, cfg)
 	inventoryapi.RouteSetup()

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/merchant"
+	"smlcloudplatform/pkg/api/shop"
 	"smlcloudplatform/pkg/models"
 	"strconv"
 )
@@ -20,7 +20,7 @@ type AuthenticationHttp struct {
 	cfg                   microservice.IConfig
 	authService           *microservice.AuthService
 	authenticationService IAuthenticationService
-	merchantUserService   merchant.IMerchantUserService
+	shopUserService       shop.IShopUserService
 }
 
 func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConfig) AuthenticationHttp {
@@ -29,17 +29,17 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 
 	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
 
-	merchantUserRepo := merchant.NewMerchantUserRepository(pst)
+	shopUserRepo := shop.NewShopUserRepository(pst)
 	authRepo := NewAuthenticationRepository(pst)
-	authenticationService := NewAuthenticationService(authRepo, merchantUserRepo, authService)
+	authenticationService := NewAuthenticationService(authRepo, shopUserRepo, authService)
 
-	merchantUserService := merchant.NewMerchantUserService(merchantUserRepo)
+	shopUserService := shop.NewShopUserService(shopUserRepo)
 	return AuthenticationHttp{
 		ms:                    ms,
 		cfg:                   cfg,
 		authService:           authService,
 		authenticationService: authenticationService,
-		merchantUserService:   merchantUserService,
+		shopUserService:       shopUserService,
 	}
 }
 
@@ -53,8 +53,8 @@ func (h *AuthenticationHttp) RouteSetup() {
 	h.ms.PUT("/profile", h.Update)
 	h.ms.PUT("/profile/password", h.UpdatePassword)
 
-	h.ms.GET("/list-merchant", h.ListMerchantCanAccess, h.authService.MWFuncWithMerchant(h.ms.Cacher(h.cfg.CacherConfig())))
-	h.ms.POST("/select-merchant", h.SelectMerchant, h.authService.MWFuncWithMerchant(h.ms.Cacher(h.cfg.CacherConfig())))
+	h.ms.GET("/list-shop", h.ListShopCanAccess, h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig())))
+	h.ms.POST("/select-shop", h.SelectShop, h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig())))
 }
 
 // Login login
@@ -229,14 +229,14 @@ func (h *AuthenticationHttp) Profile(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *AuthenticationHttp) ListMerchant(ctx microservice.IContext) error {
+func (h *AuthenticationHttp) ListShop(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	authorizationHeader := ctx.Header("Authorization")
 
 	input := ctx.ReadInput()
 
-	merchantSelectReq := &models.MerchantSelectRequest{}
-	err := json.Unmarshal([]byte(input), &merchantSelectReq)
+	shopSelectReq := &models.ShopSelectRequest{}
+	err := json.Unmarshal([]byte(input), &shopSelectReq)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, models.ApiResponse{
@@ -246,7 +246,7 @@ func (h *AuthenticationHttp) ListMerchant(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.authenticationService.AccessMerchant(authorizationHeader, merchantSelectReq.MerchantId, authUsername)
+	err = h.authenticationService.AccessShop(authorizationHeader, shopSelectReq.ShopId, authUsername)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, models.ApiResponse{
@@ -263,23 +263,23 @@ func (h *AuthenticationHttp) ListMerchant(ctx microservice.IContext) error {
 	return nil
 }
 
-// Access Merchant godoc
-// @Description Access to Merchant
+// Access Shop godoc
+// @Description Access to Shop
 // @Tags		Authentication
-// @Param		User  body      models.MerchantSelectRequest  true  "Merchant"
+// @Param		User  body      models.ShopSelectRequest  true  "Shop"
 // @Accept 		json
 // @Success		200	{object}	models.ApiResponse
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
-// @Router /select-merchant [post]
-func (h *AuthenticationHttp) SelectMerchant(ctx microservice.IContext) error {
+// @Router /select-shop [post]
+func (h *AuthenticationHttp) SelectShop(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	authorizationHeader := ctx.Header("Authorization")
 
 	input := ctx.ReadInput()
 
-	merchantSelectReq := &models.MerchantSelectRequest{}
-	err := json.Unmarshal([]byte(input), &merchantSelectReq)
+	shopSelectReq := &models.ShopSelectRequest{}
+	err := json.Unmarshal([]byte(input), &shopSelectReq)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, models.ApiResponse{
@@ -289,7 +289,7 @@ func (h *AuthenticationHttp) SelectMerchant(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.authenticationService.AccessMerchant(authorizationHeader, merchantSelectReq.MerchantId, authUsername)
+	err = h.authenticationService.AccessShop(authorizationHeader, shopSelectReq.ShopId, authUsername)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, models.ApiResponse{
@@ -306,7 +306,7 @@ func (h *AuthenticationHttp) SelectMerchant(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *AuthenticationHttp) ListMerchantCanAccess(ctx microservice.IContext) error {
+func (h *AuthenticationHttp) ListShopCanAccess(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
@@ -320,7 +320,7 @@ func (h *AuthenticationHttp) ListMerchantCanAccess(ctx microservice.IContext) er
 		limit = 20
 	}
 
-	docList, pagination, err := h.merchantUserService.ListMerchantByUser(authUsername, page, limit)
+	docList, pagination, err := h.shopUserService.ListShopByUser(authUsername, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

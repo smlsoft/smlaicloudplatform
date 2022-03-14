@@ -1,4 +1,4 @@
-package merchant
+package shop
 
 import (
 	"encoding/json"
@@ -9,54 +9,54 @@ import (
 	"strconv"
 )
 
-type IMerchantHttp interface {
+type IShopHttp interface {
 	RouteSetup()
-	CreateMerchant(ctx microservice.IContext) error
-	UpdateMerchant(ctx microservice.IContext) error
-	DeleteMerchant(ctx microservice.IContext) error
-	InfoMerchant(ctx microservice.IContext) error
-	SearchMerchant(ctx microservice.IContext) error
+	CreateShop(ctx microservice.IContext) error
+	UpdateShop(ctx microservice.IContext) error
+	DeleteShop(ctx microservice.IContext) error
+	InfoShop(ctx microservice.IContext) error
+	SearchShop(ctx microservice.IContext) error
 }
 
-type MerchantHttp struct {
+type ShopHttp struct {
 	ms      *microservice.Microservice
 	cfg     microservice.IConfig
-	service IMerchantService
+	service IShopService
 }
 
-func NewMerchantHttp(ms *microservice.Microservice, cfg microservice.IConfig) IMerchantHttp {
+func NewShopHttp(ms *microservice.Microservice, cfg microservice.IConfig) IShopHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
-	repo := NewMerchantRepository(pst)
-	merchantUserRepo := NewMerchantUserRepository(pst)
-	service := NewMerchantService(repo, merchantUserRepo)
+	repo := NewShopRepository(pst)
+	shopUserRepo := NewShopUserRepository(pst)
+	service := NewShopService(repo, shopUserRepo)
 
-	return &MerchantHttp{
+	return &ShopHttp{
 		ms:      ms,
 		cfg:     cfg,
 		service: service,
 	}
 }
 
-func (h *MerchantHttp) RouteSetup() {
-	h.ms.GET("/merchant/:id", h.InfoMerchant)
-	h.ms.GET("/merchant", h.SearchMerchant)
+func (h *ShopHttp) RouteSetup() {
+	h.ms.GET("/shop/:id", h.InfoShop)
+	h.ms.GET("/shop", h.SearchShop)
 
-	h.ms.POST("/merchant", h.CreateMerchant)
-	h.ms.PUT("/merchant/:id", h.UpdateMerchant)
-	h.ms.DELETE("/merchant/:id", h.DeleteMerchant)
+	h.ms.POST("/shop", h.CreateShop)
+	h.ms.PUT("/shop/:id", h.UpdateShop)
+	h.ms.DELETE("/shop/:id", h.DeleteShop)
 }
 
-// Create Merchant godoc
-// @Description Create Merchant
-// @Tags		Merchant
+// Create Shop godoc
+// @Description Create Shop
+// @Tags		Shop
 // @Accept 		json
-// @Param		Merchant  body      models.Merchant  true  "Add Merchant"
-// @Success		200	{array}	models.Merchant
+// @Param		Shop  body      models.Shop  true  "Add Shop"
+// @Success		200	{array}	models.Shop
 // @Failure		401 {object}	models.ResponseSuccessWithId
 // @Security     AccessToken
-// @Router /merchant [post]
-func (h *MerchantHttp) CreateMerchant(ctx microservice.IContext) error {
+// @Router /shop [post]
+func (h *ShopHttp) CreateShop(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	if len(authUsername) < 1 {
 		ctx.ResponseError(400, "user authentication invalid")
@@ -64,15 +64,15 @@ func (h *MerchantHttp) CreateMerchant(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	merchantReq := &models.Merchant{}
-	err := json.Unmarshal([]byte(input), &merchantReq)
+	shopReq := &models.Shop{}
+	err := json.Unmarshal([]byte(input), &shopReq)
 
 	if err != nil {
-		ctx.ResponseError(400, "merchant payload invalid")
+		ctx.ResponseError(400, "shop payload invalid")
 		return err
 	}
 
-	idx, err := h.service.CreateMerchant(authUsername, *merchantReq)
+	idx, err := h.service.CreateShop(authUsername, *shopReq)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, &models.ApiResponse{
@@ -90,14 +90,14 @@ func (h *MerchantHttp) CreateMerchant(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *MerchantHttp) UpdateMerchant(ctx microservice.IContext) error {
+func (h *ShopHttp) UpdateShop(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	merchantRequest := &models.Merchant{}
-	err := json.Unmarshal([]byte(input), &merchantRequest)
+	shopRequest := &models.Shop{}
+	err := json.Unmarshal([]byte(input), &shopRequest)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -113,7 +113,7 @@ func (h *MerchantHttp) UpdateMerchant(ctx microservice.IContext) error {
 		return errors.New("permission denied")
 	}
 
-	err = h.service.UpdateMerchant(id, authUsername, *merchantRequest)
+	err = h.service.UpdateShop(id, authUsername, *shopRequest)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, &models.ApiResponse{
@@ -130,7 +130,7 @@ func (h *MerchantHttp) UpdateMerchant(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *MerchantHttp) DeleteMerchant(ctx microservice.IContext) error {
+func (h *ShopHttp) DeleteShop(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -146,7 +146,7 @@ func (h *MerchantHttp) DeleteMerchant(ctx microservice.IContext) error {
 		return errors.New("permission denied")
 	}
 
-	err := h.service.DeleteMerchant(id, authUsername)
+	err := h.service.DeleteShop(id, authUsername)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, &models.ApiResponse{
@@ -162,7 +162,7 @@ func (h *MerchantHttp) DeleteMerchant(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *MerchantHttp) InfoMerchant(ctx microservice.IContext) error {
+func (h *ShopHttp) InfoShop(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	id := ctx.Param("id")
 
@@ -175,7 +175,7 @@ func (h *MerchantHttp) InfoMerchant(ctx microservice.IContext) error {
 		return errors.New("permission denied")
 	}
 
-	merchantInfo, err := h.service.InfoMerchant(id)
+	shopInfo, err := h.service.InfoShop(id)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, &models.ApiResponse{
@@ -187,20 +187,20 @@ func (h *MerchantHttp) InfoMerchant(ctx microservice.IContext) error {
 
 	ctx.Response(http.StatusOK, &models.ApiResponse{
 		Success: true,
-		Data:    merchantInfo,
+		Data:    shopInfo,
 	})
 	return nil
 }
 
-// List Merchant godoc
-// @Description Access to Merchant
-// @Tags		Merchant
+// List Shop godoc
+// @Description Access to Shop
+// @Tags		Shop
 // @Accept 		json
-// @Success		200	{array}	models.MerchantInfo
+// @Success		200	{array}	models.ShopInfo
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
-// @Router /merchant [get]
-func (h *MerchantHttp) SearchMerchant(ctx microservice.IContext) error {
+// @Router /shop [get]
+func (h *ShopHttp) SearchShop(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 
@@ -225,13 +225,13 @@ func (h *MerchantHttp) SearchMerchant(ctx microservice.IContext) error {
 		limit = 20
 	}
 
-	merchantList, pagination, err := h.service.SearchMerchant(q, page, limit)
+	shopList, pagination, err := h.service.SearchShop(q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "pagination": pagination, "data": merchantList})
+	ctx.Response(http.StatusOK, map[string]interface{}{"success": true, "pagination": pagination, "data": shopList})
 	return nil
 }

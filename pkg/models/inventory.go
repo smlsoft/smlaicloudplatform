@@ -15,10 +15,10 @@ import (
 // }
 
 type Inventory struct {
-	Id         primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	ItemSku    string             `json:"itemSku,omitempty" bson:"itemSku,omitempty"`
-	MerchantId string             `json:"merchantId" bson:"merchantId"` // รหัสร้าน
-	GuidFixed  string             `json:"guidFixed" bson:"guidFixed"`   // Guid สินค้า
+	Id        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	ItemSku   string             `json:"itemSku,omitempty" bson:"itemSku,omitempty"`
+	ShopId    string             `json:"shopId" bson:"shopId"`       // รหัสร้าน
+	GuidFixed string             `json:"guidFixed" bson:"guidFixed"` // Guid สินค้า
 
 	Barcode      string  `json:"barcode" bson:"barcode"`
 	CategoryGuid string  `json:"categoryGuid" bson:"categoryGuid"` // Guid กลุ่มสินค้า
@@ -90,20 +90,20 @@ type Choice struct {
 }
 
 type Category struct {
-	Id         primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	MerchantId string             `json:"merchantId" bson:"merchantId"`
-	GuidFixed  string             `json:"guidFixed" bson:"guidFixed"`
-	Name1      string             `json:"name1" bson:"name1"`
-	Name2      string             `json:"name2" bson:"name2"`
-	Name3      string             `json:"name3" bson:"name3"`
-	Name4      string             `json:"name4" bson:"name4"`
-	Name5      string             `json:"name5" bson:"name5"`
-	Image      string             `json:"image" bson:"image"`
-	CreatedBy  string             `json:"-" bson:"createdBy"`
-	CreatedAt  time.Time          `json:"-" bson:"createdAt"`
-	UpdatedBy  string             `json:"-" bson:"updatedBy,omitempty"`
-	UpdatedAt  time.Time          `json:"-" bson:"updatedAt,omitempty"`
-	Deleted    bool               `json:"-" bson:"deleted"`
+	Id        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	ShopId    string             `json:"shopId" bson:"shopId"`
+	GuidFixed string             `json:"guidFixed" bson:"guidFixed"`
+	Name1     string             `json:"name1" bson:"name1"`
+	Name2     string             `json:"name2" bson:"name2"`
+	Name3     string             `json:"name3" bson:"name3"`
+	Name4     string             `json:"name4" bson:"name4"`
+	Name5     string             `json:"name5" bson:"name5"`
+	Image     string             `json:"image" bson:"image"`
+	CreatedBy string             `json:"-" bson:"createdBy"`
+	CreatedAt time.Time          `json:"-" bson:"createdAt"`
+	UpdatedBy string             `json:"-" bson:"updatedBy,omitempty"`
+	UpdatedAt time.Time          `json:"-" bson:"updatedAt,omitempty"`
+	Deleted   bool               `json:"-" bson:"deleted"`
 }
 
 func (*Category) CollectionName() string {
@@ -112,7 +112,7 @@ func (*Category) CollectionName() string {
 
 type InventoryOptionGroup struct {
 	Id                     primitive.ObjectID          `json:"id" bson:"_id,omitempty"`
-	MerchantId             string                      `json:"merchantId" bson:"merchantId"`
+	ShopId                 string                      `json:"shopId" bson:"shopId"`
 	GuidFixed              string                      `json:"guidFixed" bson:"guidFixed"`
 	OptionName1            string                      `json:"optionName1" bson:"optionName1"`
 	ProductSelectOption1   bool                        `json:"productSelectoPtion1" bson:"productSelectOption1"`
@@ -139,7 +139,7 @@ type InventoryOptonGroupDetail struct {
 
 type InventoryOption struct {
 	Id            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	MerchantId    string             `json:"merchantId" bson:"merchantId"`
+	ShopId        string             `json:"shopId" bson:"shopId"`
 	GuidFixed     string             `json:"guidFixed" bson:"guidFixed"`
 	InventoryId   string             `json:"inventoryId" bson:"inventoryId"`
 	OptionGroupId string             `json:"optionGroupId" bson:"optionGroupId"`

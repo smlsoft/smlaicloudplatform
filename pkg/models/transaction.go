@@ -7,16 +7,16 @@ import (
 )
 
 type Transaction struct {
-	Id         primitive.ObjectID  `json:"id" bson:"_id,omitempty"`
-	MerchantId string              `json:"merchantId" bson:"merchantId"`
-	GuidFixed  string              `json:"guidFixed,omitempty" bson:"guidFixed"`
-	Items      []TransactionDetail `json:"items" bson:"items" `
-	SumAmount  float64             `json:"sumAmount" bson:"sumAmount" `
-	CreatedBy  string              `json:"createdBy" bson:"createdBy"`
-	CreatedAt  time.Time           `json:"createdAt" bson:"createdAt"`
-	UpdatedBy  string              `json:"updatedBy,omitempty" bson:"updatedBy,omitempty"`
-	UpdatedAt  time.Time           `json:"updatedAt,omitempty" bson:"updatedAt,omitempty"`
-	Deleted    bool                `json:"-" bson:"deleted"`
+	Id        primitive.ObjectID  `json:"id" bson:"_id,omitempty"`
+	ShopId    string              `json:"shopId" bson:"shopId"`
+	GuidFixed string              `json:"guidFixed,omitempty" bson:"guidFixed"`
+	Items     []TransactionDetail `json:"items" bson:"items" `
+	SumAmount float64             `json:"sumAmount" bson:"sumAmount" `
+	CreatedBy string              `json:"createdBy" bson:"createdBy"`
+	CreatedAt time.Time           `json:"createdAt" bson:"createdAt"`
+	UpdatedBy string              `json:"updatedBy,omitempty" bson:"updatedBy,omitempty"`
+	UpdatedAt time.Time           `json:"updatedAt,omitempty" bson:"updatedAt,omitempty"`
+	Deleted   bool                `json:"-" bson:"deleted"`
 }
 
 // CreatedBy  string              `json:"-" bson:"createdBy"`
@@ -40,10 +40,10 @@ type TransactionDetail struct {
 }
 
 type TransactionRequest struct {
-	MerchantId string              `json:"merchantId" `
-	GuidFixed  string              `json:"guidFixed,omitempty" `
-	Items      []TransactionDetail `json:"items" `
-	SumAmount  float64             `json:"sumAmount" `
+	ShopId    string              `json:"shopId" `
+	GuidFixed string              `json:"guidFixed,omitempty" `
+	Items     []TransactionDetail `json:"items" `
+	SumAmount float64             `json:"sumAmount" `
 
 	// CreatedBy string    `json:"createdBy" bson:"createdBy"`
 	// CreatedAt time.Time `json:"createdAt" bson:"createdAt"`
@@ -57,7 +57,7 @@ func (*TransactionRequest) IndexName() string {
 }
 
 func (transReq *TransactionRequest) MapRequest(trans Transaction) {
-	transReq.MerchantId = trans.MerchantId
+	transReq.ShopId = trans.ShopId
 	transReq.GuidFixed = trans.GuidFixed
 	transReq.Items = trans.Items
 	transReq.SumAmount = trans.SumAmount

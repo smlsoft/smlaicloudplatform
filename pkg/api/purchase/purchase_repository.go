@@ -12,10 +12,10 @@ import (
 type IPurchaseRepository interface {
 	Create(doc models.Purchase) (primitive.ObjectID, error)
 	Update(guid string, doc models.Purchase) error
-	Delete(guid string, merchantId string) error
-	FindByGuid(guid string, merchantId string) (models.Purchase, error)
-	FindPage(merchantId string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error)
-	FindItemsByGuidPage(guid string, merchantId string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error)
+	Delete(guid string, shopId string) error
+	FindByGuid(guid string, shopId string) (models.Purchase, error)
+	FindPage(shopId string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error)
+	FindItemsByGuidPage(guid string, shopId string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error)
 }
 
 type PurchaseRepository struct {
@@ -45,29 +45,29 @@ func (repo *PurchaseRepository) Update(guid string, doc models.Purchase) error {
 	return nil
 }
 
-func (repo *PurchaseRepository) Delete(guid string, merchantId string) error {
-	err := repo.pst.SoftDelete(&models.Purchase{}, bson.M{"guidFixed": guid, "merchantId": merchantId})
+func (repo *PurchaseRepository) Delete(guid string, shopId string) error {
+	err := repo.pst.SoftDelete(&models.Purchase{}, bson.M{"guidFixed": guid, "shopId": shopId})
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (repo *PurchaseRepository) FindByGuid(guid string, merchantId string) (models.Purchase, error) {
+func (repo *PurchaseRepository) FindByGuid(guid string, shopId string) (models.Purchase, error) {
 	doc := &models.Purchase{}
-	err := repo.pst.FindOne(&models.Purchase{}, bson.M{"merchantId": merchantId, "guidFixed": guid, "deleted": false}, doc)
+	err := repo.pst.FindOne(&models.Purchase{}, bson.M{"shopId": shopId, "guidFixed": guid, "deleted": false}, doc)
 	if err != nil {
 		return *doc, err
 	}
 	return *doc, nil
 }
 
-func (repo *PurchaseRepository) FindPage(merchantId string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error) {
+func (repo *PurchaseRepository) FindPage(shopId string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error) {
 
 	docList := []models.Purchase{}
 	pagination, err := repo.pst.FindPage(&models.Purchase{}, limit, page, bson.M{
-		"merchantId": merchantId,
-		"deleted":    false,
+		"shopId":  shopId,
+		"deleted": false,
 		"$or": []interface{}{
 			bson.M{"guidFixed": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",
@@ -83,13 +83,13 @@ func (repo *PurchaseRepository) FindPage(merchantId string, q string, page int, 
 	return docList, pagination, nil
 }
 
-func (repo *PurchaseRepository) FindItemsByGuidPage(guid string, merchantId string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error) {
+func (repo *PurchaseRepository) FindItemsByGuidPage(guid string, shopId string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error) {
 
 	docList := []models.Purchase{}
 	pagination, err := repo.pst.FindPage(&models.Purchase{}, limit, page, bson.M{
-		"merchantId": merchantId,
-		"guidFixed":  guid,
-		"deleted":    false,
+		"shopId":    shopId,
+		"guidFixed": guid,
+		"deleted":   false,
 		"$or": []interface{}{
 			bson.M{"items.itemSku": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",

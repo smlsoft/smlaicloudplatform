@@ -109,25 +109,25 @@ func (jwtService *JwtService) MWFuncWithRedis(cacher ICacher, publicPath ...stri
 			}
 
 			cacheKey := jwtService.prefixCacheKey + tokenStr
-			tempUserInfo, err := jwtService.cacher.HMGet(cacheKey, []string{"username", "name", "merchantId"})
+			tempUserInfo, err := jwtService.cacher.HMGet(cacheKey, []string{"username", "name", "shopId"})
 
 			if err != nil {
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
 			}
-			tempMerchantId := ""
+			tempShopId := ""
 
 			if tempUserInfo[2] != nil {
-				tempMerchantId = fmt.Sprintf("%v", tempUserInfo[2])
+				tempShopId = fmt.Sprintf("%v", tempUserInfo[2])
 			}
 
-			if len(string(tempMerchantId)) < 1 {
-				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Merchant not selected."})
+			if len(string(tempShopId)) < 1 {
+				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Shop not selected."})
 			}
 
 			userInfo := models.UserInfo{
-				Username:   fmt.Sprintf("%v", tempUserInfo[0]),
-				Name:       fmt.Sprintf("%v", tempUserInfo[1]),
-				MerchantId: fmt.Sprintf("%v", tempUserInfo[2]),
+				Username: fmt.Sprintf("%v", tempUserInfo[0]),
+				Name:     fmt.Sprintf("%v", tempUserInfo[1]),
+				ShopId:   fmt.Sprintf("%v", tempUserInfo[2]),
 			}
 
 			cacher.Expire("auth-"+tokenStr, jwtService.expire)
@@ -139,7 +139,7 @@ func (jwtService *JwtService) MWFuncWithRedis(cacher ICacher, publicPath ...stri
 	}
 }
 
-func (jwtService *JwtService) MWFuncWithMerchant(cacher ICacher) echo.MiddlewareFunc {
+func (jwtService *JwtService) MWFuncWithShop(cacher ICacher) echo.MiddlewareFunc {
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -296,10 +296,10 @@ func (jwtService *JwtService) GenerateTokenWithRedis(userInfo models.UserInfo) (
 	return tokenStr, nil
 }
 
-func (jwtService *JwtService) SelectMerchant(tokenStr string, merchantId string) error {
+func (jwtService *JwtService) SelectShop(tokenStr string, shopId string) error {
 	cacheKey := jwtService.prefixCacheKey + tokenStr
 	err := jwtService.cacher.HMSet(cacheKey, map[string]interface{}{
-		"merchantId": merchantId,
+		"shopId": shopId,
 	})
 
 	if err != nil {

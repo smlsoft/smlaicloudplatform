@@ -11,12 +11,12 @@ import (
 )
 
 type IPurchaseService interface {
-	CreatePurchase(merchantId string, username string, doc *models.Purchase) (string, error)
-	UpdatePurchase(guid string, merchantId string, username string, doc models.Purchase) error
-	DeletePurchase(guid string, merchantId string, username string) error
-	InfoPurchase(guid string, merchantId string) (models.Purchase, error)
-	SearchPurchase(merchantId string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error)
-	SearchItemsPurchase(guid string, merchantId string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error)
+	CreatePurchase(shopId string, username string, doc *models.Purchase) (string, error)
+	UpdatePurchase(guid string, shopId string, username string, doc models.Purchase) error
+	DeletePurchase(guid string, shopId string, username string) error
+	InfoPurchase(guid string, shopId string) (models.Purchase, error)
+	SearchPurchase(shopId string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error)
+	SearchItemsPurchase(guid string, shopId string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error)
 }
 
 type PurchaseService struct {
@@ -32,7 +32,7 @@ func NewPurchaseService(repo IPurchaseRepository, mqRepo IPurchaseMQRepository) 
 	}
 }
 
-func (svc *PurchaseService) CreatePurchase(merchantId string, username string, doc *models.Purchase) (string, error) {
+func (svc *PurchaseService) CreatePurchase(shopId string, username string, doc *models.Purchase) (string, error) {
 
 	sumAmount := 0.0
 	for i, docDetail := range doc.Items {
@@ -41,7 +41,7 @@ func (svc *PurchaseService) CreatePurchase(merchantId string, username string, d
 	}
 
 	newGuidFixed := utils.NewGUID()
-	doc.MerchantId = merchantId
+	doc.ShopId = shopId
 	doc.GuidFixed = newGuidFixed
 	doc.SumAmount = sumAmount
 	doc.Deleted = false
@@ -67,9 +67,9 @@ func (svc *PurchaseService) CreatePurchase(merchantId string, username string, d
 	return newGuidFixed, nil
 }
 
-func (svc *PurchaseService) UpdatePurchase(guid string, merchantId string, username string, doc models.Purchase) error {
+func (svc *PurchaseService) UpdatePurchase(guid string, shopId string, username string, doc models.Purchase) error {
 
-	findDoc, err := svc.repo.FindByGuid(guid, merchantId)
+	findDoc, err := svc.repo.FindByGuid(guid, shopId)
 
 	if err != nil {
 		return err
@@ -98,9 +98,9 @@ func (svc *PurchaseService) UpdatePurchase(guid string, merchantId string, usern
 	return nil
 }
 
-func (svc *PurchaseService) DeletePurchase(guid string, merchantId string, username string) error {
+func (svc *PurchaseService) DeletePurchase(guid string, shopId string, username string) error {
 
-	err := svc.repo.Delete(guid, merchantId)
+	err := svc.repo.Delete(guid, shopId)
 	if err != nil {
 		return err
 	}
@@ -108,8 +108,8 @@ func (svc *PurchaseService) DeletePurchase(guid string, merchantId string, usern
 	return nil
 }
 
-func (svc *PurchaseService) InfoPurchase(guid string, merchantId string) (models.Purchase, error) {
-	doc, err := svc.repo.FindByGuid(guid, merchantId)
+func (svc *PurchaseService) InfoPurchase(guid string, shopId string) (models.Purchase, error) {
+	doc, err := svc.repo.FindByGuid(guid, shopId)
 
 	if err != nil {
 		return models.Purchase{}, err
@@ -118,8 +118,8 @@ func (svc *PurchaseService) InfoPurchase(guid string, merchantId string) (models
 	return doc, nil
 }
 
-func (svc *PurchaseService) SearchPurchase(merchantId string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindPage(merchantId, q, page, limit)
+func (svc *PurchaseService) SearchPurchase(shopId string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindPage(shopId, q, page, limit)
 
 	if err != nil {
 		return docList, pagination, err
@@ -128,8 +128,8 @@ func (svc *PurchaseService) SearchPurchase(merchantId string, q string, page int
 	return docList, pagination, nil
 }
 
-func (svc *PurchaseService) SearchItemsPurchase(guid string, merchantId string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindItemsByGuidPage(guid, merchantId, q, page, limit)
+func (svc *PurchaseService) SearchItemsPurchase(guid string, shopId string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindItemsByGuidPage(guid, shopId, q, page, limit)
 
 	if err != nil {
 		return docList, pagination, err

@@ -32,9 +32,9 @@ func (*UserRequest) CollectionName() string {
 }
 
 type UserLoginRequest struct {
-	Username   string `json:"username,omitempty" `
-	Password   string `json:"password,omitempty" `
-	MerchantId string `json:"merchantId,omitempty"`
+	Username string `json:"username,omitempty" `
+	Password string `json:"password,omitempty" `
+	ShopId   string `json:"shopId,omitempty"`
 }
 
 type UserProfile struct {
@@ -48,8 +48,8 @@ type UserPasswordRequest struct {
 	NewPassword     string `json:"newPassword" bson:"newPassword"`
 }
 
-type MerchantSelectRequest struct {
-	MerchantId string `json:"merchantId"`
+type ShopSelectRequest struct {
+	ShopId string `json:"shopId"`
 }
 
 const (
@@ -58,23 +58,23 @@ const (
 	ROLE_USER  string = "USER"
 )
 
-type MerchantUser struct {
-	Id         primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Username   string             `json:"username" bson:"username"`
-	MerchantId string             `json:"merchantId" bson:"merchantId"`
-	Role       string             `json:"role" bson:"role"`
+type ShopUser struct {
+	Id       primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Username string             `json:"username" bson:"username"`
+	ShopId   string             `json:"shopId" bson:"shopId"`
+	Role     string             `json:"role" bson:"role"`
 }
 
-func (*MerchantUser) CollectionName() string {
-	return "merchantUsers"
+func (*ShopUser) CollectionName() string {
+	return "shopUsers"
 }
 
-type MerchantUserInfo struct {
-	MerchantId string `json:"merchantId" bson:"merchantId"`
-	Name       string `json:"name" bson:"name"`
-	Role       string `json:"role" bson:"role"`
+type ShopUserInfo struct {
+	ShopId string `json:"shopId" bson:"shopId"`
+	Name   string `json:"name" bson:"name"`
+	Role   string `json:"role" bson:"role"`
 }
 
-func (*MerchantUserInfo) CollectionName() string {
-	return "merchantUsers"
+func (*ShopUserInfo) CollectionName() string {
+	return "shopUsers"
 }
