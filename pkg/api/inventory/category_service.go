@@ -29,21 +29,15 @@ func NewCategoryService(categoryRepository ICategoryRepository) ICategoryService
 }
 
 func (svc *CategoryService) CreateCategory(merchantId string, authUsername string, category models.Category) (string, error) {
-	countCategory, err := svc.repo.Count(merchantId)
-
-	if err != nil {
-		return "", err
-	}
 
 	newGuidFixed := utils.NewGUID()
 	category.MerchantId = merchantId
 	category.GuidFixed = newGuidFixed
-	category.LineNumber = int(countCategory) + 1
 	category.CreatedBy = authUsername
 	category.CreatedAt = time.Now()
 	category.Deleted = false
 
-	_, err = svc.repo.Create(category)
+	_, err := svc.repo.Create(category)
 
 	if err != nil {
 		return "", err
@@ -64,7 +58,11 @@ func (svc *CategoryService) UpdateCategory(guid string, merchantId string, authU
 	}
 
 	findDoc.Name1 = category.Name1
-	findDoc.HaveImage = category.HaveImage
+	findDoc.Name2 = category.Name2
+	findDoc.Name3 = category.Name3
+	findDoc.Name4 = category.Name4
+	findDoc.Name5 = category.Name5
+	findDoc.Image = category.Image
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
