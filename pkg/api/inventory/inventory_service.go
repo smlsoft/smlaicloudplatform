@@ -34,14 +34,9 @@ func (svc *InventoryService) CreateInventory(merchantId string, authUsername str
 
 	inventory.GuidFixed = newGuid
 	inventory.MerchantId = merchantId
-	inventory.WaitType = 0
 	inventory.Deleted = false
 	inventory.CreatedBy = authUsername
 	inventory.CreatedAt = time.Now()
-
-	for unitIdx := range inventory.UnitList {
-		inventory.UnitList[unitIdx].UnitGuid = utils.NewGUID()
-	}
 
 	_, err := svc.invRepo.Create(inventory)
 
@@ -66,10 +61,8 @@ func (svc *InventoryService) UpdateInventory(guid string, merchantId string, aut
 
 	findDoc.ItemSku = inventory.ItemSku
 	findDoc.CategoryGuid = inventory.CategoryGuid
-	findDoc.LineNumber = inventory.LineNumber
 	findDoc.Price = inventory.Price
 	findDoc.Recommended = inventory.Recommended
-	findDoc.HaveImage = inventory.HaveImage
 	findDoc.Activated = inventory.Activated
 
 	findDoc.Name1 = inventory.Name1
