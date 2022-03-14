@@ -17,35 +17,35 @@ import (
 type Inventory struct {
 	Id         primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	ItemSku    string             `json:"itemSku,omitempty" bson:"itemSku,omitempty"`
-	MerchantId string             `json:"merchantId" bson:"merchantId"`         // รหัสร้าน
-	GuidFixed  string             `json:"guidFixed,omitempty" bson:"guidFixed"` // Guid สินค้า
+	MerchantId string             `json:"merchantId" bson:"merchantId"` // รหัสร้าน
+	GuidFixed  string             `json:"guidFixed" bson:"guidFixed"`   // Guid สินค้า
 
-	Barcode      string  `json:"barcode,omitempty" bson:"barcode,omitempty"`
-	CategoryGuid string  `json:"categoryGuid,omitempty" bson:"categoryGuid"` // Guid กลุ่มสินค้า
-	MemberPrice  string  `json:"memberPrice,omitempty" bson:"memberPrice"`
-	Price        float32 `json:"price" bson:"price" `             // ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-	Recommended  bool    `json:"recommended" bson:"recommended" ` // สินค้าแนะนำ
-	Activated    bool    `json:"activated" bson:"activated"`      // เปิดใช้งานอยู่
+	Barcode      string  `json:"barcode" bson:"barcode"`
+	CategoryGuid string  `json:"categoryGuid" bson:"categoryGuid"` // Guid กลุ่มสินค้า
+	Price        float32 `json:"price" bson:"price" `              // ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+	MemberPrice  float32 `json:"memberPrice,omitempty" bson:"memberPrice,omitempty"`
+	Recommended  bool    `json:"recommended,omitempty" bson:"recommended,omitempty" ` // สินค้าแนะนำ
+	Activated    bool    `json:"activated,omitempty" bson:"activated,omitempty"`      // เปิดใช้งานอยู่
 
-	Name1        string `json:"name1" bson:"name1"`               // ชื่อภาษาไทย
-	Description1 string `json:"description1" bson:"description1"` // รายละเอียดภาษาไทย
+	Name1        string `json:"name1" bson:"name1"`                                   // ชื่อภาษาไทย
+	Description1 string `json:"description1,omitempty" bson:"description1,omitempty"` // รายละเอียดภาษาไทย
 	Name2        string `json:"name2,omitempty" bson:"name2,omitempty"`
-	Description2 string `json:"description2" bson:"description2,omitempty"`
+	Description2 string `json:"description2,omitempty" bson:"description2,omitempty"`
 	Name3        string `json:"name3,omitempty" bson:"name3,omitempty"`
-	Description3 string `json:"description3" bson:"description3,omitempty"`
+	Description3 string `json:"description3,omitempty" bson:"description3,omitempty"`
 	Name4        string `json:"name4,omitempty" bson:"name4,omitempty"`
-	Description4 string `json:"description4" bson:"description4,omitempty"`
+	Description4 string `json:"description4,omitempty" bson:"description4,omitempty"`
 	Name5        string `json:"name5,omitempty" bson:"name5,omitempty"`
-	Description5 string `json:"description5" bson:"description5,omitempty"`
+	Description5 string `json:"description5,omitempty" bson:"description5,omitempty"`
 
-	Images    []string `json:"images" bson:"images"`
+	Images    []string `json:"images,omitempty" bson:"images,omitempty"`
 	UnitName1 string   `json:"unitName1" bson:"unitName1"`
-	UnitName2 string   `json:"unitName2" bson:"unitName2"`
-	UnitName3 string   `json:"unitName3" bson:"unitName3"`
-	UnitName4 string   `json:"unitName4" bson:"unitName4"`
-	UnitName5 string   `json:"unitName5" bson:"unitName5"`
-	Options   []Option `json:"options" bson:"options"`
-	Tags      []string `json:"tags" bson:"tags"`
+	UnitName2 string   `json:"unitName2,omitempty" bson:"unitName2,omitempty"`
+	UnitName3 string   `json:"unitName3,omitempty" bson:"unitName3,omitempty"`
+	UnitName4 string   `json:"unitName4,omitempty" bson:"unitName4,omitempty"`
+	UnitName5 string   `json:"unitName5,omitempty" bson:"unitName5,omitempty"`
+	Options   []Option `json:"options,omitempty" bson:"options,omitempty"`
+	Tags      []string `json:"tags,omitempty" bson:"tags,omitempty"`
 
 	CreatedBy string    `json:"-" bson:"createdBy"`
 	CreatedAt time.Time `json:"-" bson:"createdAt"`
