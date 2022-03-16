@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	_ "smlcloudplatform/docs"
 
@@ -25,7 +26,6 @@ func init() {
 
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
-// @host      localhost:8080
 
 func main() {
 	fmt.Println("Start Swagger API")
@@ -33,5 +33,10 @@ func main() {
 	e := echo.New()
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
-	e.Logger.Fatal(e.Start(":1323"))
+
+	serverPort := os.Getenv("SERVER_PORT")
+	if serverPort == "" {
+		serverPort = "1323"
+	}
+	e.Logger.Fatal(e.Start(":" + serverPort))
 }

@@ -688,7 +688,7 @@ const docTemplate_swagger = `{
 // SwaggerInfo_swagger holds exported Swagger Info so clients can modify it
 var SwaggerInfo_swagger = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "SML Cloud Platform API",
