@@ -17,10 +17,6 @@ func main() {
 		panic(err)
 	}
 
-	cacher := ms.Cacher(cfg.CacherConfig())
-	authService := microservice.NewAuthService(cacher, 24*3)
-	ms.HttpMiddleware(authService.MWFuncWithShop(cacher))
-
 	svc := shop.NewShopHttp(ms, cfg)
 
 	svc.RouteSetup()

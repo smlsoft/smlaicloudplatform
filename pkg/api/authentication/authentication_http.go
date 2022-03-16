@@ -20,6 +20,7 @@ type AuthenticationHttp struct {
 	cfg                   microservice.IConfig
 	authService           *microservice.AuthService
 	authenticationService IAuthenticationService
+	shopService           shop.IShopService
 	shopUserService       shop.IShopUserService
 }
 
@@ -29,10 +30,12 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 
 	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
 
+	shopRepo := shop.NewShopRepository(pst)
 	shopUserRepo := shop.NewShopUserRepository(pst)
 	authRepo := NewAuthenticationRepository(pst)
 	authenticationService := NewAuthenticationService(authRepo, shopUserRepo, authService)
 
+	shopService := shop.NewShopService(shopRepo, shopUserRepo)
 	shopUserService := shop.NewShopUserService(shopUserRepo)
 	return AuthenticationHttp{
 		ms:                    ms,
@@ -40,6 +43,7 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 		authService:           authService,
 		authenticationService: authenticationService,
 		shopUserService:       shopUserService,
+		shopService:           shopService,
 	}
 }
 
@@ -55,6 +59,9 @@ func (h *AuthenticationHttp) RouteSetup() {
 
 	h.ms.GET("/list-shop", h.ListShopCanAccess, h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig())))
 	h.ms.POST("/select-shop", h.SelectShop, h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig())))
+
+	shopHttp := shop.NewShopHttp(h.ms, h.cfg)
+	h.ms.GET("/create-shop", shopHttp.CreateShop, h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig())))
 }
 
 // Login login
