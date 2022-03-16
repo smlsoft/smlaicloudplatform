@@ -1,17 +1,17 @@
-package merchant_test
+package shop_test
 
 import (
 	"fmt"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
-	"smlcloudplatform/pkg/api/merchant"
+	"smlcloudplatform/pkg/api/shop"
 	"testing"
 )
 
-func TestCreateMerchantUser(t *testing.T) {
+func TestCreateShopUser(t *testing.T) {
 	mongoPersisterConfig := mock.NewPersisterMongo()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
-	repo := merchant.NewMerchantUserRepository(mongoPersister)
+	repo := shop.NewShopUserRepository(mongoPersister)
 
 	err := repo.Save("25H2pZ8v2jRVGwjOLKBAzSaHgOA", "dev01", "owner")
 
@@ -20,7 +20,7 @@ func TestCreateMerchantUser(t *testing.T) {
 		return
 	}
 
-	memUser, err := repo.FindByMerchantIdAndUsername("25H2pZ8v2jRVGwjOLKBAzSaHgOA", "dev01")
+	memUser, err := repo.FindByShopIdAndUsername("25H2pZ8v2jRVGwjOLKBAzSaHgOA", "dev01")
 
 	if err != nil {
 		t.Error(err.Error())
@@ -39,7 +39,7 @@ func TestFindByUsernamePage(t *testing.T) {
 	mongoPersisterConfig := mock.NewPersisterMongo()
 	t.Log(mongoPersisterConfig.DB())
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
-	repo := merchant.NewMerchantUserRepository(mongoPersister)
+	repo := shop.NewShopUserRepository(mongoPersister)
 
 	docList, paginated, err := repo.FindByUsernamePage("dev01", 1, 20)
 

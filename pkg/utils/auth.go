@@ -8,29 +8,29 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func HasPermissionMerchant(pst microservice.IPersisterMongo, ctx microservice.IContext) (bool, error) {
+func HasPermissionShop(pst microservice.IPersisterMongo, ctx microservice.IContext) (bool, error) {
 
-	merchantId := ctx.Param("merchant_id")
+	shopId := ctx.Param("shop_id")
 
-	return HasPermissionMerchantById(pst, ctx, merchantId)
+	return HasPermissionShopById(pst, ctx, shopId)
 }
 
-func HasPermissionMerchantById(pst microservice.IPersisterMongo, ctx microservice.IContext, merchantId string) (bool, error) {
+func HasPermissionShopById(pst microservice.IPersisterMongo, ctx microservice.IContext, shopId string) (bool, error) {
 
 	authUsername := ctx.UserInfo().Username
 
-	if len(merchantId) < 1 {
-		return false, fmt.Errorf("merchant not found")
+	if len(shopId) < 1 {
+		return false, fmt.Errorf("shop not found")
 	}
 
-	merchant := &models.Merchant{}
-	pst.FindOne(&models.Merchant{}, bson.M{"guidFixed": merchantId, "deleted": false}, merchant)
+	shop := &models.Shop{}
+	pst.FindOne(&models.Shop{}, bson.M{"guidFixed": shopId, "deleted": false}, shop)
 
-	if len(merchant.GuidFixed) < 1 {
-		return false, fmt.Errorf("merchant invalid")
+	if len(shop.GuidFixed) < 1 {
+		return false, fmt.Errorf("shop invalid")
 	}
 
-	if merchant.CreatedBy != authUsername {
+	if shop.CreatedBy != authUsername {
 		return false, fmt.Errorf("username invalid")
 	}
 

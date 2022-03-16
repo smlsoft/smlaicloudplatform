@@ -54,7 +54,7 @@ func (h *PurchaseHttp) RouteSetup() {
 func (h *PurchaseHttp) CreatePurchase(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	input := ctx.ReadInput()
 
@@ -66,7 +66,7 @@ func (h *PurchaseHttp) CreatePurchase(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.service.CreatePurchase(merchantId, authUsername, doc)
+	idx, err := h.service.CreatePurchase(shopId, authUsername, doc)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -83,7 +83,7 @@ func (h *PurchaseHttp) CreatePurchase(ctx microservice.IContext) error {
 func (h *PurchaseHttp) UpdatePurchase(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
@@ -96,7 +96,7 @@ func (h *PurchaseHttp) UpdatePurchase(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.service.UpdatePurchase(id, merchantId, authUsername, *docReq)
+	err = h.service.UpdatePurchase(id, shopId, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -112,11 +112,11 @@ func (h *PurchaseHttp) UpdatePurchase(ctx microservice.IContext) error {
 func (h *PurchaseHttp) DeletePurchase(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	id := ctx.Param("id")
 
-	err := h.service.DeletePurchase(id, merchantId, authUsername)
+	err := h.service.DeletePurchase(id, shopId, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -132,11 +132,11 @@ func (h *PurchaseHttp) DeletePurchase(ctx microservice.IContext) error {
 func (h *PurchaseHttp) InfoPurchase(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	id := ctx.Param("id")
 
-	doc, err := h.service.InfoPurchase(id, merchantId)
+	doc, err := h.service.InfoPurchase(id, shopId)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		ctx.ResponseError(400, err.Error())
@@ -153,7 +153,7 @@ func (h *PurchaseHttp) InfoPurchase(ctx microservice.IContext) error {
 func (h *PurchaseHttp) SearchPurchase(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	q := ctx.QueryParam("q")
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
@@ -167,7 +167,7 @@ func (h *PurchaseHttp) SearchPurchase(ctx microservice.IContext) error {
 		limit = 20
 	}
 
-	docList, pagination, err := h.service.SearchPurchase(merchantId, q, page, limit)
+	docList, pagination, err := h.service.SearchPurchase(shopId, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -188,7 +188,7 @@ func (h *PurchaseHttp) SearchPurchase(ctx microservice.IContext) error {
 func (h *PurchaseHttp) SearchPurchaseItems(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	docId := ctx.Param("id")
 
@@ -204,7 +204,7 @@ func (h *PurchaseHttp) SearchPurchaseItems(ctx microservice.IContext) error {
 		limit = 20
 	}
 
-	docList, pagination, err := h.service.SearchItemsPurchase(docId, merchantId, q, page, limit)
+	docList, pagination, err := h.service.SearchItemsPurchase(docId, shopId, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

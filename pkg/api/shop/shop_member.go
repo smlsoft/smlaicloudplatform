@@ -1,4 +1,4 @@
-package merchant
+package shop
 
 /*
 import (
@@ -14,11 +14,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (svc *MerchantServiceOld) SearchMember(ctx microservice.IContext) error {
+func (svc *ShopServiceOld) SearchMember(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
 
@@ -34,18 +34,18 @@ func (svc *MerchantServiceOld) SearchMember(ctx microservice.IContext) error {
 		limit = 20
 	}
 
-	merchantList := []models.MemberInfo{}
+	shopList := []models.MemberInfo{}
 
 	searchText := bson.M{"$regex": primitive.Regex{
 		Pattern: ".*" + q + ".*",
 		Options: "",
 	}}
 
-	pagination, err := pst.FindPage(&models.MemberInfo{}, limit, page, bson.M{"createdby": authUsername, "merchantId": merchantId, "$or": []interface{}{
+	pagination, err := pst.FindPage(&models.MemberInfo{}, limit, page, bson.M{"createdby": authUsername, "shopId": shopId, "$or": []interface{}{
 		bson.M{"email": searchText},
 		bson.M{"username": searchText},
 		bson.M{"name": searchText},
-	}}, &merchantList)
+	}}, &shopList)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -55,15 +55,15 @@ func (svc *MerchantServiceOld) SearchMember(ctx microservice.IContext) error {
 	ctx.Response(http.StatusOK, models.ApiResponse{
 		Success:    true,
 		Pagination: pagination,
-		Data:       merchantList,
+		Data:       shopList,
 	})
 	return nil
 }
 
-func (svc *MerchantServiceOld) CreateMember(ctx microservice.IContext) error {
+func (svc *ShopServiceOld) CreateMember(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	input := ctx.ReadInput()
 
@@ -83,7 +83,7 @@ func (svc *MerchantServiceOld) CreateMember(ctx microservice.IContext) error {
 	pst := svc.ms.MongoPersister(svc.cfg.MongoPersisterConfig())
 
 	findMember := &models.Member{}
-	err = pst.FindOne(&models.Member{}, bson.M{"merchant_id": merchantId, "$or": []interface{}{
+	err = pst.FindOne(&models.Member{}, bson.M{"shop_id": shopId, "$or": []interface{}{
 		bson.M{"email": memberReq.Email},
 		bson.M{"username": memberReq.Username},
 	}}, findMember)
@@ -111,7 +111,7 @@ func (svc *MerchantServiceOld) CreateMember(ctx microservice.IContext) error {
 	}
 
 	member := &models.Member{
-		MerchantID: merchantId,
+		ShopID: shopId,
 		Email:      memberReq.Email,
 		Username:   memberReq.Username,
 		Password:   hashPassword,
@@ -135,7 +135,7 @@ func (svc *MerchantServiceOld) CreateMember(ctx microservice.IContext) error {
 	return nil
 }
 
-func (svc *MerchantServiceOld) EditMember(ctx microservice.IContext) error {
+func (svc *ShopServiceOld) EditMember(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 
@@ -167,7 +167,7 @@ func (svc *MerchantServiceOld) EditMember(ctx microservice.IContext) error {
 	}
 
 	if authUsername != findMember.CreatedBy {
-		ctx.ResponseError(400, "merchant invalid")
+		ctx.ResponseError(400, "shop invalid")
 		return err
 	}
 
@@ -194,7 +194,7 @@ func (svc *MerchantServiceOld) EditMember(ctx microservice.IContext) error {
 	return nil
 }
 
-func (svc *MerchantServiceOld) DeleteMember(ctx microservice.IContext) error {
+func (svc *ShopServiceOld) DeleteMember(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 
@@ -230,10 +230,10 @@ func (svc *MerchantServiceOld) DeleteMember(ctx microservice.IContext) error {
 	return nil
 }
 
-func (svc *MerchantServiceOld) GetMemberInfo(ctx microservice.IContext) error {
+func (svc *ShopServiceOld) GetMemberInfo(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	id := ctx.Param("id")
 
@@ -241,7 +241,7 @@ func (svc *MerchantServiceOld) GetMemberInfo(ctx microservice.IContext) error {
 
 	memberInfo := &models.MemberInfo{}
 
-	err := pst.FindOne(&models.MemberInfo{}, bson.M{"guidFixed": id, "createdby": authUsername, "merchant_id": merchantId}, memberInfo)
+	err := pst.FindOne(&models.MemberInfo{}, bson.M{"guidFixed": id, "createdby": authUsername, "shop_id": shopId}, memberInfo)
 
 	if err != nil {
 		ctx.ResponseError(400, "not found")
@@ -255,7 +255,7 @@ func (svc *MerchantServiceOld) GetMemberInfo(ctx microservice.IContext) error {
 	return nil
 }
 
-func (svc *MerchantServiceOld) ChangePasswordMember(ctx microservice.IContext) error {
+func (svc *ShopServiceOld) ChangePasswordMember(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 
@@ -286,7 +286,7 @@ func (svc *MerchantServiceOld) ChangePasswordMember(ctx microservice.IContext) e
 	}
 
 	if authUsername != findMember.CreatedBy {
-		ctx.ResponseError(400, "merchant invalid")
+		ctx.ResponseError(400, "shop invalid")
 		return err
 	}
 

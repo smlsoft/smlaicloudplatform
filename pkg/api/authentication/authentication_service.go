@@ -3,7 +3,7 @@ package authentication
 import (
 	"errors"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/merchant"
+	"smlcloudplatform/pkg/api/shop"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"strings"
@@ -21,27 +21,27 @@ type IAuthenticationService interface {
 	UpdatePassword(username string, currentPassword string, newPassword string) error
 	Logout(authorizationHeader string) error
 	Profile(username string) (models.UserProfile, error)
-	AccessMerchant(authorizationHeader string, merchantId string, username string) error
+	AccessShop(authorizationHeader string, shopId string, username string) error
 }
 
 type AuthenticationService struct {
-	authService      *microservice.AuthService
-	authRepo         IAuthenticationRepository
-	merchantUserRepo merchant.IMerchantUserRepository
+	authService  *microservice.AuthService
+	authRepo     IAuthenticationRepository
+	shopUserRepo shop.IShopUserRepository
 }
 
-func NewAuthenticationService(authRepo IAuthenticationRepository, merchantUserRepo merchant.IMerchantUserRepository, authService *microservice.AuthService) IAuthenticationService {
+func NewAuthenticationService(authRepo IAuthenticationRepository, shopUserRepo shop.IShopUserRepository, authService *microservice.AuthService) IAuthenticationService {
 	return AuthenticationService{
-		authRepo:         authRepo,
-		authService:      authService,
-		merchantUserRepo: merchantUserRepo,
+		authRepo:     authRepo,
+		authService:  authService,
+		shopUserRepo: shopUserRepo,
 	}
 }
 
 func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest) (string, error) {
 
 	userLoginReq.Username = strings.TrimSpace(userLoginReq.Username)
-	userLoginReq.MerchantId = strings.TrimSpace(userLoginReq.MerchantId)
+	userLoginReq.ShopId = strings.TrimSpace(userLoginReq.ShopId)
 
 	findUser, err := svc.authRepo.FindUser(userLoginReq.Username)
 
@@ -66,21 +66,21 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest) (s
 		return "", errors.New("generate token error")
 	}
 
-	if len(userLoginReq.MerchantId) > 0 {
-		merchantUser, err := svc.merchantUserRepo.FindByMerchantIdAndUsername(userLoginReq.MerchantId, userLoginReq.Username)
+	if len(userLoginReq.ShopId) > 0 {
+		shopUser, err := svc.shopUserRepo.FindByShopIdAndUsername(userLoginReq.ShopId, userLoginReq.Username)
 
 		if err != nil {
 			return "", err
 		}
 
-		if merchantUser.Id == primitive.NilObjectID {
-			return "", errors.New("merchant invalid")
+		if shopUser.Id == primitive.NilObjectID {
+			return "", errors.New("shop invalid")
 		}
 
-		err = svc.authService.SelectMerchant(tokenString, userLoginReq.MerchantId, string(merchantUser.Role))
+		err = svc.authService.SelectShop(tokenString, userLoginReq.ShopId, string(shopUser.Role))
 
 		if err != nil {
-			return "", errors.New("failed merchant select")
+			return "", errors.New("failed shop select")
 		}
 	}
 
@@ -201,10 +201,10 @@ func (svc AuthenticationService) Profile(username string) (models.UserProfile, e
 	return userProfile, nil
 }
 
-func (svc AuthenticationService) AccessMerchant(authorizationHeader string, merchantId string, username string) error {
+func (svc AuthenticationService) AccessShop(authorizationHeader string, shopId string, username string) error {
 
-	if merchantId == "" {
-		return errors.New("merchant invalid")
+	if shopId == "" {
+		return errors.New("shop invalid")
 	}
 
 	if username == "" {
@@ -221,20 +221,20 @@ func (svc AuthenticationService) AccessMerchant(authorizationHeader string, merc
 		return errors.New("token invalid")
 	}
 
-	merchantUser, err := svc.merchantUserRepo.FindByMerchantIdAndUsername(merchantId, username)
+	shopUser, err := svc.shopUserRepo.FindByShopIdAndUsername(shopId, username)
 
 	if err != nil {
 		return err
 	}
 
-	if merchantUser.Id == primitive.NilObjectID {
-		return errors.New("merchant invalid")
+	if shopUser.Id == primitive.NilObjectID {
+		return errors.New("shop invalid")
 	}
 
-	err = svc.authService.SelectMerchant(tokenStr, merchantId, string(merchantUser.Role))
+	err = svc.authService.SelectShop(tokenStr, shopId, string(shopUser.Role))
 
 	if err != nil {
-		return errors.New("failed merchant select")
+		return errors.New("failed shop select")
 	}
 	return nil
 }

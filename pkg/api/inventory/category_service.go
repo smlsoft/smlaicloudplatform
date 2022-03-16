@@ -11,11 +11,11 @@ import (
 )
 
 type ICategoryService interface {
-	CreateCategory(merchantId string, authUsername string, category models.Category) (string, error)
-	UpdateCategory(guid string, merchantId string, authUsername string, category models.Category) error
-	DeleteCategory(guid string, merchantId string) error
-	InfoCategory(guid string, merchantId string) (models.Category, error)
-	SearchCategory(merchantId string, q string, page int, limit int) ([]models.Category, paginate.PaginationData, error)
+	CreateCategory(shopId string, authUsername string, category models.Category) (string, error)
+	UpdateCategory(guid string, shopId string, authUsername string, category models.Category) error
+	DeleteCategory(guid string, shopId string) error
+	InfoCategory(guid string, shopId string) (models.Category, error)
+	SearchCategory(shopId string, q string, page int, limit int) ([]models.Category, paginate.PaginationData, error)
 }
 
 type CategoryService struct {
@@ -28,22 +28,16 @@ func NewCategoryService(categoryRepository ICategoryRepository) ICategoryService
 	}
 }
 
-func (svc *CategoryService) CreateCategory(merchantId string, authUsername string, category models.Category) (string, error) {
-	countCategory, err := svc.repo.Count(merchantId)
-
-	if err != nil {
-		return "", err
-	}
+func (svc *CategoryService) CreateCategory(shopId string, authUsername string, category models.Category) (string, error) {
 
 	newGuidFixed := utils.NewGUID()
-	category.MerchantId = merchantId
+	category.ShopId = shopId
 	category.GuidFixed = newGuidFixed
-	category.LineNumber = int(countCategory) + 1
 	category.CreatedBy = authUsername
 	category.CreatedAt = time.Now()
 	category.Deleted = false
 
-	_, err = svc.repo.Create(category)
+	_, err := svc.repo.Create(category)
 
 	if err != nil {
 		return "", err
@@ -51,9 +45,9 @@ func (svc *CategoryService) CreateCategory(merchantId string, authUsername strin
 	return newGuidFixed, nil
 }
 
-func (svc *CategoryService) UpdateCategory(guid string, merchantId string, authUsername string, category models.Category) error {
+func (svc *CategoryService) UpdateCategory(guid string, shopId string, authUsername string, category models.Category) error {
 
-	findDoc, err := svc.repo.FindByGuid(guid, merchantId)
+	findDoc, err := svc.repo.FindByGuid(guid, shopId)
 
 	if err != nil {
 		return err
@@ -64,7 +58,11 @@ func (svc *CategoryService) UpdateCategory(guid string, merchantId string, authU
 	}
 
 	findDoc.Name1 = category.Name1
-	findDoc.HaveImage = category.HaveImage
+	findDoc.Name2 = category.Name2
+	findDoc.Name3 = category.Name3
+	findDoc.Name4 = category.Name4
+	findDoc.Name5 = category.Name5
+	findDoc.Image = category.Image
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
@@ -76,8 +74,8 @@ func (svc *CategoryService) UpdateCategory(guid string, merchantId string, authU
 	return nil
 }
 
-func (svc *CategoryService) DeleteCategory(guid string, merchantId string) error {
-	err := svc.repo.Delete(guid, merchantId)
+func (svc *CategoryService) DeleteCategory(guid string, shopId string) error {
+	err := svc.repo.Delete(guid, shopId)
 
 	if err != nil {
 		return err
@@ -85,9 +83,9 @@ func (svc *CategoryService) DeleteCategory(guid string, merchantId string) error
 	return nil
 }
 
-func (svc *CategoryService) InfoCategory(guid string, merchantId string) (models.Category, error) {
+func (svc *CategoryService) InfoCategory(guid string, shopId string) (models.Category, error) {
 
-	findDoc, err := svc.repo.FindByGuid(guid, merchantId)
+	findDoc, err := svc.repo.FindByGuid(guid, shopId)
 
 	if err != nil {
 		return models.Category{}, err
@@ -101,8 +99,8 @@ func (svc *CategoryService) InfoCategory(guid string, merchantId string) (models
 
 }
 
-func (svc *CategoryService) SearchCategory(merchantId string, q string, page int, limit int) ([]models.Category, paginate.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindPage(merchantId, q, page, limit)
+func (svc *CategoryService) SearchCategory(shopId string, q string, page int, limit int) ([]models.Category, paginate.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindPage(shopId, q, page, limit)
 
 	if err != nil {
 		return []models.Category{}, pagination, err

@@ -47,27 +47,27 @@ func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...st
 			}
 
 			cacheKey := authService.prefixCacheKey + tokenStr
-			tempUserInfo, err := authService.cacher.HMGet(cacheKey, []string{"username", "name", "merchantId", "role"})
+			tempUserInfo, err := authService.cacher.HMGet(cacheKey, []string{"username", "name", "shopId", "role"})
 
 			if err != nil || tempUserInfo[0] == nil {
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
 			}
 
-			tempMerchantId := ""
+			tempShopId := ""
 
 			if tempUserInfo[2] != nil {
-				tempMerchantId = fmt.Sprintf("%v", tempUserInfo[2])
+				tempShopId = fmt.Sprintf("%v", tempUserInfo[2])
 			}
 
-			if len(string(tempMerchantId)) < 1 {
-				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Merchant not selected."})
+			if len(string(tempShopId)) < 1 {
+				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Shop not selected."})
 			}
 
 			userInfo := models.UserInfo{
-				Username:   fmt.Sprintf("%v", tempUserInfo[0]),
-				Name:       fmt.Sprintf("%v", tempUserInfo[1]),
-				MerchantId: fmt.Sprintf("%v", tempUserInfo[2]),
-				Role:       fmt.Sprintf("%v", tempUserInfo[3]),
+				Username: fmt.Sprintf("%v", tempUserInfo[0]),
+				Name:     fmt.Sprintf("%v", tempUserInfo[1]),
+				ShopId:   fmt.Sprintf("%v", tempUserInfo[2]),
+				Role:     fmt.Sprintf("%v", tempUserInfo[3]),
 			}
 
 			cacher.Expire("auth-"+tokenStr, authService.expire)
@@ -79,7 +79,7 @@ func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...st
 	}
 }
 
-func (authService *AuthService) MWFuncWithMerchant(cacher ICacher) echo.MiddlewareFunc {
+func (authService *AuthService) MWFuncWithShop(cacher ICacher) echo.MiddlewareFunc {
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -155,11 +155,11 @@ func (authService *AuthService) GenerateTokenWithRedis(userInfo models.UserInfo)
 	return tokenStr, nil
 }
 
-func (authService *AuthService) SelectMerchant(tokenStr string, merchantId string, role string) error {
+func (authService *AuthService) SelectShop(tokenStr string, shopId string, role string) error {
 	cacheKey := authService.prefixCacheKey + tokenStr
 	err := authService.cacher.HMSet(cacheKey, map[string]interface{}{
-		"merchantId": merchantId,
-		"role":       role,
+		"shopId": shopId,
+		"role":   role,
 	})
 
 	if err != nil {

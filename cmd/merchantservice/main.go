@@ -2,7 +2,7 @@ package main
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/merchant"
+	"smlcloudplatform/pkg/api/shop"
 )
 
 func main() {
@@ -17,11 +17,8 @@ func main() {
 		panic(err)
 	}
 
-	cacher := ms.Cacher(cfg.CacherConfig())
-	authService := microservice.NewAuthService(cacher, 24*3)
+	svc := shop.NewShopHttp(ms, cfg)
 
-	ms.HttpMiddleware(authService.MWFuncWithMerchant(cacher))
-	svc := merchant.NewMerchantHttp(ms, cfg)
 	svc.RouteSetup()
 
 	//ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)

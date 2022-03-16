@@ -1,38 +1,38 @@
-package merchant_test
+package shop_test
 
 import (
 	"errors"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
-	"smlcloudplatform/pkg/api/merchant"
+	"smlcloudplatform/pkg/api/shop"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"testing"
 	"time"
 )
 
-func TestFindMerchant(t *testing.T) {
+func TestFindShop(t *testing.T) {
 
 	// os.Setenv("MONGODB_URI", "mongodb://root:rootx@localhost:27017/")
 	// defer os.Unsetenv("MONGODB_URI")
 
 	mongoPersisterConfig := mock.NewPersisterMongo()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
-	repository := merchant.NewMerchantRepository(mongoPersister)
+	repository := shop.NewShopRepository(mongoPersister)
 
 	newGuidFixed := utils.NewGUID()
 	createAt := time.Now()
 
-	give := models.Merchant{
+	give := models.Shop{
 		GuidFixed: newGuidFixed,
-		Name1:     "merchant test",
+		Name1:     "shop test",
 		CreatedBy: "test",
 		CreatedAt: createAt,
 	}
 
-	want := &models.Merchant{
+	want := &models.Shop{
 		GuidFixed: newGuidFixed,
-		Name1:     "merchant test",
+		Name1:     "shop test",
 		CreatedBy: "test",
 		CreatedAt: createAt,
 	}
@@ -44,10 +44,10 @@ func TestFindMerchant(t *testing.T) {
 	}
 
 	if get == "" {
-		t.Error(errors.New("Create merchant Failed"))
+		t.Error(errors.New("Create shop Failed"))
 	}
 
-	t.Logf("Create merchant Success With ID %v", get)
+	t.Logf("Create shop Success With ID %v", get)
 
 	getUser, err := repository.FindByGuid(want.GuidFixed)
 	if err != nil {
@@ -56,7 +56,7 @@ func TestFindMerchant(t *testing.T) {
 	}
 
 	if getUser.GuidFixed != want.GuidFixed {
-		t.Error(errors.New("Create merchant And Find Not Match"))
+		t.Error(errors.New("Create shop And Find Not Match"))
 		return
 	}
 

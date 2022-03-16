@@ -54,7 +54,7 @@ func (h *TransactionHttp) RouteSetup() {
 func (h *TransactionHttp) CreateTransaction(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	input := ctx.ReadInput()
 
@@ -66,7 +66,7 @@ func (h *TransactionHttp) CreateTransaction(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.service.CreateTransaction(merchantId, authUsername, trans)
+	idx, err := h.service.CreateTransaction(shopId, authUsername, trans)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -83,7 +83,7 @@ func (h *TransactionHttp) CreateTransaction(ctx microservice.IContext) error {
 func (h *TransactionHttp) UpdateTransaction(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
@@ -96,7 +96,7 @@ func (h *TransactionHttp) UpdateTransaction(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.service.UpdateTransaction(id, merchantId, authUsername, *transReq)
+	err = h.service.UpdateTransaction(id, shopId, authUsername, *transReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -112,11 +112,11 @@ func (h *TransactionHttp) UpdateTransaction(ctx microservice.IContext) error {
 func (h *TransactionHttp) DeleteTransaction(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	id := ctx.Param("id")
 
-	err := h.service.DeleteTransaction(id, merchantId, authUsername)
+	err := h.service.DeleteTransaction(id, shopId, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -132,11 +132,11 @@ func (h *TransactionHttp) DeleteTransaction(ctx microservice.IContext) error {
 func (h *TransactionHttp) InfoTransaction(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	id := ctx.Param("id")
 
-	trans, err := h.service.InfoTransaction(id, merchantId)
+	trans, err := h.service.InfoTransaction(id, shopId)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		ctx.ResponseError(400, err.Error())
@@ -153,7 +153,7 @@ func (h *TransactionHttp) InfoTransaction(ctx microservice.IContext) error {
 func (h *TransactionHttp) SearchTransaction(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	q := ctx.QueryParam("q")
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
@@ -167,7 +167,7 @@ func (h *TransactionHttp) SearchTransaction(ctx microservice.IContext) error {
 		limit = 20
 	}
 
-	docList, pagination, err := h.service.SearchTransaction(merchantId, q, page, limit)
+	docList, pagination, err := h.service.SearchTransaction(shopId, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -188,7 +188,7 @@ func (h *TransactionHttp) SearchTransaction(ctx microservice.IContext) error {
 func (h *TransactionHttp) SearchTransactionItems(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	transId := ctx.Param("id")
 
@@ -204,7 +204,7 @@ func (h *TransactionHttp) SearchTransactionItems(ctx microservice.IContext) erro
 		limit = 20
 	}
 
-	docList, pagination, err := h.service.SearchItemsTransaction(transId, merchantId, q, page, limit)
+	docList, pagination, err := h.service.SearchItemsTransaction(transId, shopId, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

@@ -10,12 +10,12 @@ import (
 )
 
 type ICategoryRepository interface {
-	Count(merchantId string) (int, error)
+	Count(shopId string) (int, error)
 	Create(category models.Category) (string, error)
 	Update(guid string, category models.Category) error
-	Delete(guid string, merchantId string) error
-	FindByGuid(guid string, merchantId string) (models.Category, error)
-	FindPage(merchantId string, q string, page int, limit int) ([]models.Category, paginate.PaginationData, error)
+	Delete(guid string, shopId string) error
+	FindByGuid(guid string, shopId string) (models.Category, error)
+	FindPage(shopId string, q string, page int, limit int) ([]models.Category, paginate.PaginationData, error)
 }
 
 type CategoryRepository struct {
@@ -28,9 +28,9 @@ func NewCategoryRepository(pst microservice.IPersisterMongo) ICategoryRepository
 	}
 }
 
-func (repo *CategoryRepository) Count(merchantId string) (int, error) {
+func (repo *CategoryRepository) Count(shopId string) (int, error) {
 
-	count, err := repo.pst.Count(&models.Category{}, bson.M{"merchantId": merchantId})
+	count, err := repo.pst.Count(&models.Category{}, bson.M{"shopId": shopId})
 
 	if err != nil {
 		return 0, err
@@ -58,8 +58,8 @@ func (repo *CategoryRepository) Update(guid string, category models.Category) er
 	return nil
 }
 
-func (repo *CategoryRepository) Delete(guid string, merchantId string) error {
-	err := repo.pst.SoftDelete(&models.Category{}, bson.M{"guidFixed": guid, "merchantId": merchantId})
+func (repo *CategoryRepository) Delete(guid string, shopId string) error {
+	err := repo.pst.SoftDelete(&models.Category{}, bson.M{"guidFixed": guid, "shopId": shopId})
 
 	if err != nil {
 		return err
@@ -68,10 +68,10 @@ func (repo *CategoryRepository) Delete(guid string, merchantId string) error {
 	return nil
 }
 
-func (repo *CategoryRepository) FindByGuid(guid string, merchantId string) (models.Category, error) {
+func (repo *CategoryRepository) FindByGuid(guid string, shopId string) (models.Category, error) {
 
 	doc := &models.Category{}
-	err := repo.pst.FindOne(&models.Category{}, bson.M{"guidFixed": guid, "merchantId": merchantId, "deleted": false}, doc)
+	err := repo.pst.FindOne(&models.Category{}, bson.M{"guidFixed": guid, "shopId": shopId, "deleted": false}, doc)
 
 	if err != nil {
 		return models.Category{}, err
@@ -80,12 +80,12 @@ func (repo *CategoryRepository) FindByGuid(guid string, merchantId string) (mode
 	return *doc, nil
 }
 
-func (repo *CategoryRepository) FindPage(merchantId string, q string, page int, limit int) ([]models.Category, paginate.PaginationData, error) {
+func (repo *CategoryRepository) FindPage(shopId string, q string, page int, limit int) ([]models.Category, paginate.PaginationData, error) {
 
 	docList := []models.Category{}
 	pagination, err := repo.pst.FindPage(&models.Category{}, limit, page, bson.M{
-		"merchantId": merchantId,
-		"deleted":    false,
+		"shopId":  shopId,
+		"deleted": false,
 		"$or": []interface{}{
 			bson.M{"guidFixed": q},
 			bson.M{"name1": bson.M{"$regex": primitive.Regex{

@@ -18,7 +18,7 @@ func StartTransactionAsync(ms *microservice.Microservice, cfg microservice.IConf
 	err := ms.AsyncPOST("/trans", cfg.CacherConfig(), cfg.MQConfig(), func(ctx microservice.IContext) error {
 		userInfo := ctx.UserInfo()
 		authUsername := userInfo.Username
-		merchantId := userInfo.MerchantId
+		shopId := userInfo.ShopId
 		input := ctx.ReadInput()
 
 		trans := &models.Transaction{}
@@ -30,7 +30,7 @@ func StartTransactionAsync(ms *microservice.Microservice, cfg microservice.IConf
 			return err
 		}
 
-		idx, err := service.CreateTransaction(merchantId, authUsername, trans)
+		idx, err := service.CreateTransaction(shopId, authUsername, trans)
 
 		if err != nil {
 			ctx.ResponseError(400, err.Error())

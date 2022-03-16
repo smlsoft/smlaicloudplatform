@@ -70,7 +70,7 @@ definitions:
       lineNumber:
         description: บรรทัดที่ (เอาไว้เรียงลำดับ)
         type: integer
-      merchantId:
+      shopId:
         description: รหัสร้าน
         type: string
       name1:
@@ -114,7 +114,7 @@ definitions:
         description: ชื่อหน่วยนับ
         type: string
     type: object
-  models.Merchant:
+  models.Shop:
     properties:
       id:
         default: '-'
@@ -122,7 +122,7 @@ definitions:
       name1:
         type: string
     type: object
-  models.MerchantInfo:
+  models.ShopInfo:
     properties:
       guidFixed:
         type: string
@@ -131,9 +131,9 @@ definitions:
       name1:
         type: string
     type: object
-  models.MerchantSelectRequest:
+  models.ShopSelectRequest:
     properties:
-      merchantId:
+      shopId:
         type: string
     type: object
   models.MerchantUserInfo:
@@ -283,17 +283,17 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       tags:
       - Authentication
-  /merchant:
+  /shop:
     get:
       consumes:
       - application/json
-      description: Access to Merchant
+      description: Access to Shop
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.MerchantInfo'
+              $ref: '#/definitions/models.ShopInfo'
             type: array
         "401":
           description: Unauthorized
@@ -302,24 +302,24 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Merchant
+      - Shop
     post:
       consumes:
       - application/json
-      description: Create Merchant
+      description: Create Shop
       parameters:
-      - description: Add Merchant
+      - description: Add Shop
         in: body
-        name: Merchant
+        name: Shop
         required: true
         schema:
-          $ref: '#/definitions/models.Merchant'
+          $ref: '#/definitions/models.Shop'
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Merchant'
+              $ref: '#/definitions/models.Shop'
             type: array
         "401":
           description: Unauthorized
@@ -328,7 +328,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Merchant
+      - Shop
   /register:
     post:
       consumes:
@@ -353,18 +353,18 @@ paths:
       summary: Register An Account
       tags:
       - Authentication
-  /select-merchant:
+  /select-shop:
     post:
       consumes:
       - application/json
-      description: Access to Merchant
+      description: Access to Shop
       parameters:
-      - description: Merchant
+      - description: Shop
         in: body
         name: User
         required: true
         schema:
-          $ref: '#/definitions/models.MerchantSelectRequest'
+          $ref: '#/definitions/models.ShopSelectRequest'
       responses:
         "200":
           description: OK

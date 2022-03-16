@@ -54,7 +54,7 @@ func (h *StockAdjustmentHttp) RouteSetup() {
 func (h *StockAdjustmentHttp) CreateStockAdjustment(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	input := ctx.ReadInput()
 
@@ -66,7 +66,7 @@ func (h *StockAdjustmentHttp) CreateStockAdjustment(ctx microservice.IContext) e
 		return err
 	}
 
-	idx, err := h.service.CreateStockAdjustment(merchantId, authUsername, doc)
+	idx, err := h.service.CreateStockAdjustment(shopId, authUsername, doc)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -83,7 +83,7 @@ func (h *StockAdjustmentHttp) CreateStockAdjustment(ctx microservice.IContext) e
 func (h *StockAdjustmentHttp) UpdateStockAdjustment(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
@@ -96,7 +96,7 @@ func (h *StockAdjustmentHttp) UpdateStockAdjustment(ctx microservice.IContext) e
 		return err
 	}
 
-	err = h.service.UpdateStockAdjustment(id, merchantId, authUsername, *docReq)
+	err = h.service.UpdateStockAdjustment(id, shopId, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -112,11 +112,11 @@ func (h *StockAdjustmentHttp) UpdateStockAdjustment(ctx microservice.IContext) e
 func (h *StockAdjustmentHttp) DeleteStockAdjustment(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	id := ctx.Param("id")
 
-	err := h.service.DeleteStockAdjustment(id, merchantId, authUsername)
+	err := h.service.DeleteStockAdjustment(id, shopId, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -132,11 +132,11 @@ func (h *StockAdjustmentHttp) DeleteStockAdjustment(ctx microservice.IContext) e
 func (h *StockAdjustmentHttp) InfoStockAdjustment(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	id := ctx.Param("id")
 
-	doc, err := h.service.InfoStockAdjustment(id, merchantId)
+	doc, err := h.service.InfoStockAdjustment(id, shopId)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		ctx.ResponseError(400, err.Error())
@@ -153,7 +153,7 @@ func (h *StockAdjustmentHttp) InfoStockAdjustment(ctx microservice.IContext) err
 func (h *StockAdjustmentHttp) SearchStockAdjustment(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	q := ctx.QueryParam("q")
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
@@ -167,7 +167,7 @@ func (h *StockAdjustmentHttp) SearchStockAdjustment(ctx microservice.IContext) e
 		limit = 20
 	}
 
-	docList, pagination, err := h.service.SearchStockAdjustment(merchantId, q, page, limit)
+	docList, pagination, err := h.service.SearchStockAdjustment(shopId, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -188,7 +188,7 @@ func (h *StockAdjustmentHttp) SearchStockAdjustment(ctx microservice.IContext) e
 func (h *StockAdjustmentHttp) SearchStockAdjustmentItems(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
-	merchantId := userInfo.MerchantId
+	shopId := userInfo.ShopId
 
 	docId := ctx.Param("id")
 
@@ -204,7 +204,7 @@ func (h *StockAdjustmentHttp) SearchStockAdjustmentItems(ctx microservice.IConte
 		limit = 20
 	}
 
-	docList, pagination, err := h.service.SearchItemsStockAdjustment(docId, merchantId, q, page, limit)
+	docList, pagination, err := h.service.SearchItemsStockAdjustment(docId, shopId, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

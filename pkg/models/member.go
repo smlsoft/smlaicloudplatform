@@ -11,7 +11,7 @@ type Member struct {
 
 	GuidFixed string `json:"guidFixed" bson:"GuidFixed"`
 
-	MerchantID string `json:"merchantID" bson:"merchant_id"`
+	ShopID string `json:"shopID" bson:"shop_id"`
 
 	Name string `json:"name,omitempty" bson:"name"`
 

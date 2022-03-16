@@ -204,19 +204,19 @@ const docTemplate_swagger = `{
                 }
             }
         },
-        "/merchant": {
+        "/shop": {
             "get": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Access to Merchant",
+                "description": "Access to Shop",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Merchant"
+                    "Shop"
                 ],
                 "responses": {
                     "200": {
@@ -224,7 +224,7 @@ const docTemplate_swagger = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.MerchantInfo"
+                                "$ref": "#/definitions/models.ShopInfo"
                             }
                         }
                     },
@@ -242,21 +242,21 @@ const docTemplate_swagger = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Create Merchant",
+                "description": "Create Shop",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Merchant"
+                    "Shop"
                 ],
                 "parameters": [
                     {
-                        "description": "Add Merchant",
-                        "name": "Merchant",
+                        "description": "Add Shop",
+                        "name": "Shop",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Merchant"
+                            "$ref": "#/definitions/models.Shop"
                         }
                     }
                 ],
@@ -266,7 +266,7 @@ const docTemplate_swagger = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Merchant"
+                                "$ref": "#/definitions/models.Shop"
                             }
                         }
                     },
@@ -316,14 +316,14 @@ const docTemplate_swagger = `{
                 }
             }
         },
-        "/select-merchant": {
+        "/select-shop": {
             "post": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Access to Merchant",
+                "description": "Access to Shop",
                 "consumes": [
                     "application/json"
                 ],
@@ -332,12 +332,12 @@ const docTemplate_swagger = `{
                 ],
                 "parameters": [
                     {
-                        "description": "Merchant",
+                        "description": "Shop",
                         "name": "User",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.MerchantSelectRequest"
+                            "$ref": "#/definitions/models.ShopSelectRequest"
                         }
                     }
                 ],
@@ -463,7 +463,7 @@ const docTemplate_swagger = `{
                     "description": "บรรทัดที่ (เอาไว้เรียงลำดับ)",
                     "type": "integer"
                 },
-                "merchantId": {
+                "shopId": {
                     "description": "รหัสร้าน",
                     "type": "string"
                 },
@@ -525,7 +525,7 @@ const docTemplate_swagger = `{
                 }
             }
         },
-        "models.Merchant": {
+        "models.Shop": {
             "type": "object",
             "properties": {
                 "id": {
@@ -537,7 +537,7 @@ const docTemplate_swagger = `{
                 }
             }
         },
-        "models.MerchantInfo": {
+        "models.ShopInfo": {
             "type": "object",
             "properties": {
                 "guidFixed": {
@@ -551,10 +551,10 @@ const docTemplate_swagger = `{
                 }
             }
         },
-        "models.MerchantSelectRequest": {
+        "models.ShopSelectRequest": {
             "type": "object",
             "properties": {
-                "merchantId": {
+                "shopId": {
                     "type": "string"
                 }
             }

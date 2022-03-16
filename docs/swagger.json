@@ -195,19 +195,19 @@
                 }
             }
         },
-        "/merchant": {
+        "/shop": {
             "get": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Access to Merchant",
+                "description": "Access to Shop",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Merchant"
+                    "Shop"
                 ],
                 "responses": {
                     "200": {
@@ -215,7 +215,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.MerchantInfo"
+                                "$ref": "#/definitions/models.ShopInfo"
                             }
                         }
                     },
@@ -233,21 +233,21 @@
                         "AccessToken": []
                     }
                 ],
-                "description": "Create Merchant",
+                "description": "Create Shop",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Merchant"
+                    "Shop"
                 ],
                 "parameters": [
                     {
-                        "description": "Add Merchant",
-                        "name": "Merchant",
+                        "description": "Add Shop",
+                        "name": "Shop",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Merchant"
+                            "$ref": "#/definitions/models.Shop"
                         }
                     }
                 ],
@@ -257,7 +257,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Merchant"
+                                "$ref": "#/definitions/models.Shop"
                             }
                         }
                     },
@@ -307,14 +307,14 @@
                 }
             }
         },
-        "/select-merchant": {
+        "/select-shop": {
             "post": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Access to Merchant",
+                "description": "Access to Shop",
                 "consumes": [
                     "application/json"
                 ],
@@ -323,12 +323,12 @@
                 ],
                 "parameters": [
                     {
-                        "description": "Merchant",
+                        "description": "Shop",
                         "name": "User",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.MerchantSelectRequest"
+                            "$ref": "#/definitions/models.ShopSelectRequest"
                         }
                     }
                 ],
@@ -454,7 +454,7 @@
                     "description": "บรรทัดที่ (เอาไว้เรียงลำดับ)",
                     "type": "integer"
                 },
-                "merchantId": {
+                "shopId": {
                     "description": "รหัสร้าน",
                     "type": "string"
                 },
@@ -516,7 +516,7 @@
                 }
             }
         },
-        "models.Merchant": {
+        "models.Shop": {
             "type": "object",
             "properties": {
                 "id": {
@@ -528,7 +528,7 @@
                 }
             }
         },
-        "models.MerchantInfo": {
+        "models.ShopInfo": {
             "type": "object",
             "properties": {
                 "guidFixed": {
@@ -542,10 +542,10 @@
                 }
             }
         },
-        "models.MerchantSelectRequest": {
+        "models.ShopSelectRequest": {
             "type": "object",
             "properties": {
-                "merchantId": {
+                "shopId": {
                     "type": "string"
                 }
             }

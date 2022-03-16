@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type Merchant struct {
+type Shop struct {
 	Id        primitive.ObjectID `json:"id" bson:"_id,omitempty" default:"-"`
 	GuidFixed string             `json:"-" bson:"guidFixed"`
 	Name1     string             `json:"name1" bson:"name1"`
@@ -17,11 +17,11 @@ type Merchant struct {
 	Deleted   bool               `json:"-" bson:"deleted"`
 }
 
-func (*Merchant) CollectionName() string {
-	return "merchant"
+func (*Shop) CollectionName() string {
+	return "shop"
 }
 
-type MerchantInfo struct {
+type ShopInfo struct {
 	Id        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	GuidFixed string             `json:"guidFixed" bson:"guidFixed"`
 	Name1     string             `json:"name1" bson:"name1"`
