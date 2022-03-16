@@ -61,7 +61,7 @@ func (h *AuthenticationHttp) RouteSetup() {
 	h.ms.POST("/select-shop", h.SelectShop, h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig())))
 
 	shopHttp := shop.NewShopHttp(h.ms, h.cfg)
-	h.ms.GET("/create-shop", shopHttp.CreateShop, h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig())))
+	h.ms.POST("/create-shop", shopHttp.CreateShop, h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig())))
 }
 
 // Login login

@@ -33,6 +33,7 @@ func main() {
 		"/register",
 		"/list-shop",
 		"/select-shop",
+		"/create-shop",
 		"/healthz",
 	}
 
