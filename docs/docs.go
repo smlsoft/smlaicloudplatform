@@ -135,7 +135,7 @@ const docTemplate_swagger = `{
                 }
             }
         },
-        "/list-merchant": {
+        "/list-shop": {
             "get": {
                 "security": [
                     {
@@ -155,7 +155,7 @@ const docTemplate_swagger = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.MerchantUserInfo"
+                                "$ref": "#/definitions/models.ShopUserInfo"
                             }
                         }
                     },
@@ -204,19 +204,19 @@ const docTemplate_swagger = `{
                 }
             }
         },
-        "/shop": {
+        "/merchant": {
             "get": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Access to Shop",
+                "description": "Access to Merchant",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Shop"
+                    "Merchant"
                 ],
                 "responses": {
                     "200": {
@@ -232,48 +232,6 @@ const docTemplate_swagger = `{
                         "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Shop",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Shop"
-                ],
-                "parameters": [
-                    {
-                        "description": "Add Shop",
-                        "name": "Shop",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Shop"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Shop"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithId"
                         }
                     }
                 }
@@ -356,6 +314,81 @@ const docTemplate_swagger = `{
                     }
                 }
             }
+        },
+        "/shop": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Access to Shop",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shop"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ShopInfo"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Shop",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shop"
+                ],
+                "parameters": [
+                    {
+                        "description": "Add Shop",
+                        "name": "Shop",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Shop"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Shop"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithId"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -395,19 +428,34 @@ const docTemplate_swagger = `{
                 }
             }
         },
-        "models.Barcode": {
+        "models.Choice": {
             "type": "object",
             "properties": {
                 "barcode": {
                     "type": "string"
                 },
-                "id": {
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
                     "type": "string"
                 },
                 "price": {
                     "type": "number"
                 },
-                "unit": {
+                "qty": {
+                    "type": "integer"
+                },
+                "suggestCode": {
                     "type": "string"
                 }
             }
@@ -419,11 +467,8 @@ const docTemplate_swagger = `{
                     "description": "เปิดใช้งานอยู่",
                     "type": "boolean"
                 },
-                "barcodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Barcode"
-                    }
+                "barcode": {
+                    "type": "string"
                 },
                 "categoryGuid": {
                     "description": "Guid กลุ่มสินค้า",
@@ -449,23 +494,20 @@ const docTemplate_swagger = `{
                     "description": "Guid สินค้า",
                     "type": "string"
                 },
-                "haveImage": {
-                    "description": "มีรูปสินค้า",
-                    "type": "boolean"
-                },
                 "id": {
                     "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "itemSku": {
                     "type": "string"
                 },
-                "lineNumber": {
-                    "description": "บรรทัดที่ (เอาไว้เรียงลำดับ)",
-                    "type": "integer"
-                },
-                "shopId": {
-                    "description": "รหัสร้าน",
-                    "type": "string"
+                "memberPrice": {
+                    "type": "number"
                 },
                 "name1": {
                     "description": "ชื่อภาษาไทย",
@@ -483,6 +525,12 @@ const docTemplate_swagger = `{
                 "name5": {
                     "type": "string"
                 },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Option"
+                    }
+                },
                 "price": {
                     "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
                     "type": "number"
@@ -491,37 +539,77 @@ const docTemplate_swagger = `{
                     "description": "สินค้าแนะนำ",
                     "type": "boolean"
                 },
-                "unitList": {
-                    "description": "กรณีหลายหน่วยนับ ตารางหน่วบนับ",
+                "shopId": {
+                    "description": "รหัสร้าน",
+                    "type": "string"
+                },
+                "tags": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.InventoryUnit"
+                        "type": "string"
                     }
+                },
+                "unitName1": {
+                    "type": "string"
+                },
+                "unitName2": {
+                    "type": "string"
+                },
+                "unitName3": {
+                    "type": "string"
+                },
+                "unitName4": {
+                    "type": "string"
+                },
+                "unitName5": {
+                    "type": "string"
                 }
             }
         },
-        "models.InventoryUnit": {
+        "models.Option": {
             "type": "object",
             "properties": {
-                "activated": {
-                    "description": "เปิดใช้งานอยู่",
+                "choices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Choice"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "maxSelect": {
+                    "type": "integer"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "required": {
                     "type": "boolean"
                 },
-                "divisor": {
-                    "description": "ตัวหาร",
-                    "type": "number"
-                },
-                "minuend": {
-                    "description": "ตัวตั้ง",
-                    "type": "number"
-                },
-                "unitGuid": {
-                    "description": "Guid หน่วยนับ",
+                "selectMode": {
                     "type": "string"
-                },
-                "unitName": {
-                    "description": "ชื่อหน่วยนับ",
-                    "type": "string"
+                }
+            }
+        },
+        "models.ResponseSuccessWithId": {
+            "type": "object",
+            "properties": {
+                "id": {},
+                "success": {
+                    "type": "boolean"
                 }
             }
         },
@@ -559,26 +647,17 @@ const docTemplate_swagger = `{
                 }
             }
         },
-        "models.MerchantUserInfo": {
+        "models.ShopUserInfo": {
             "type": "object",
             "properties": {
-                "merchantId": {
-                    "type": "string"
-                },
                 "name": {
                     "type": "string"
                 },
                 "role": {
                     "type": "string"
-                }
-            }
-        },
-        "models.ResponseSuccessWithId": {
-            "type": "object",
-            "properties": {
-                "id": {},
-                "success": {
-                    "type": "boolean"
+                },
+                "shopId": {
+                    "type": "string"
                 }
             }
         },

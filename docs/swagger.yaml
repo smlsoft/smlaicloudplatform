@@ -23,15 +23,25 @@ definitions:
       success:
         type: boolean
     type: object
-  models.Barcode:
+  models.Choice:
     properties:
       barcode:
         type: string
-      id:
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
         type: string
       price:
         type: number
-      unit:
+      qty:
+        type: integer
+      suggestCode:
         type: string
     type: object
   models.Inventory:
@@ -39,10 +49,8 @@ definitions:
       activated:
         description: เปิดใช้งานอยู่
         type: boolean
-      barcodes:
-        items:
-          $ref: '#/definitions/models.Barcode'
-        type: array
+      barcode:
+        type: string
       categoryGuid:
         description: Guid กลุ่มสินค้า
         type: string
@@ -60,19 +68,16 @@ definitions:
       guidFixed:
         description: Guid สินค้า
         type: string
-      haveImage:
-        description: มีรูปสินค้า
-        type: boolean
       id:
         type: string
+      images:
+        items:
+          type: string
+        type: array
       itemSku:
         type: string
-      lineNumber:
-        description: บรรทัดที่ (เอาไว้เรียงลำดับ)
-        type: integer
-      shopId:
-        description: รหัสร้าน
-        type: string
+      memberPrice:
+        type: number
       name1:
         description: ชื่อภาษาไทย
         type: string
@@ -84,35 +89,64 @@ definitions:
         type: string
       name5:
         type: string
+      options:
+        items:
+          $ref: '#/definitions/models.Option'
+        type: array
       price:
         description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
         type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
-      unitList:
-        description: กรณีหลายหน่วยนับ ตารางหน่วบนับ
+      shopId:
+        description: รหัสร้าน
+        type: string
+      tags:
         items:
-          $ref: '#/definitions/models.InventoryUnit'
+          type: string
         type: array
+      unitName1:
+        type: string
+      unitName2:
+        type: string
+      unitName3:
+        type: string
+      unitName4:
+        type: string
+      unitName5:
+        type: string
     type: object
-  models.InventoryUnit:
+  models.Option:
     properties:
-      activated:
-        description: เปิดใช้งานอยู่
+      choices:
+        items:
+          $ref: '#/definitions/models.Choice'
+        type: array
+      code:
+        type: string
+      maxSelect:
+        type: integer
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      required:
         type: boolean
-      divisor:
-        description: ตัวหาร
-        type: number
-      minuend:
-        description: ตัวตั้ง
-        type: number
-      unitGuid:
-        description: Guid หน่วยนับ
+      selectMode:
         type: string
-      unitName:
-        description: ชื่อหน่วยนับ
-        type: string
+    type: object
+  models.ResponseSuccessWithId:
+    properties:
+      id: {}
+      success:
+        type: boolean
     type: object
   models.Shop:
     properties:
@@ -136,20 +170,14 @@ definitions:
       shopId:
         type: string
     type: object
-  models.MerchantUserInfo:
+  models.ShopUserInfo:
     properties:
-      merchantId:
-        type: string
       name:
         type: string
       role:
         type: string
-    type: object
-  models.ResponseSuccessWithId:
-    properties:
-      id: {}
-      success:
-        type: boolean
+      shopId:
+        type: string
     type: object
   models.UserRequest:
     properties:
@@ -240,7 +268,7 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
-  /list-merchant:
+  /list-shop:
     get:
       consumes:
       - application/json
@@ -250,7 +278,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.MerchantUserInfo'
+              $ref: '#/definitions/models.ShopUserInfo'
             type: array
         "401":
           description: Unauthorized
@@ -283,11 +311,11 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       tags:
       - Authentication
-  /shop:
+  /merchant:
     get:
       consumes:
       - application/json
-      description: Access to Shop
+      description: Access to Merchant
       responses:
         "200":
           description: OK
@@ -302,33 +330,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Shop
-    post:
-      consumes:
-      - application/json
-      description: Create Shop
-      parameters:
-      - description: Add Shop
-        in: body
-        name: Shop
-        required: true
-        schema:
-          $ref: '#/definitions/models.Shop'
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Shop'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithId'
-      security:
-      - AccessToken: []
-      tags:
-      - Shop
+      - Merchant
   /register:
     post:
       consumes:
@@ -378,6 +380,52 @@ paths:
       - AccessToken: []
       tags:
       - Authentication
+  /shop:
+    get:
+      consumes:
+      - application/json
+      description: Access to Shop
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ShopInfo'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      security:
+      - AccessToken: []
+      tags:
+      - Shop
+    post:
+      consumes:
+      - application/json
+      description: Create Shop
+      parameters:
+      - description: Add Shop
+        in: body
+        name: Shop
+        required: true
+        schema:
+          $ref: '#/definitions/models.Shop'
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Shop'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithId'
+      security:
+      - AccessToken: []
+      tags:
+      - Shop
 securityDefinitions:
   AccessToken:
     in: header

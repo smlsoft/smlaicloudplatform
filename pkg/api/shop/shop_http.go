@@ -60,6 +60,7 @@ func (h *ShopHttp) CreateShop(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	if len(authUsername) < 1 {
 		ctx.ResponseError(400, "user authentication invalid")
+		return nil
 	}
 
 	input := ctx.ReadInput()
@@ -166,7 +167,7 @@ func (h *ShopHttp) DeleteShop(ctx microservice.IContext) error {
 // @Description Access to Merchant
 // @Tags		Merchant
 // @Accept 		json
-// @Success		200	{array}	models.MerchantInfo
+// @Success		200	{array}	models.ShopInfo
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
 // @Router /merchant [get]

@@ -50,3 +50,8 @@ Get Mock Package
 ```
 go install github.com/vektra/mockery/v2@latest
 ```
+
+### Run Swagger With Make
+```
+make runswagger
+```

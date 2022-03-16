@@ -310,10 +310,10 @@ func (h *AuthenticationHttp) SelectShop(ctx microservice.IContext) error {
 // @Description List Merchant In My Account
 // @Tags		Authentication
 // @Accept 		json
-// @Success		200	{array}	models.MerchantUserInfo
+// @Success		200	{array}	models.ShopUserInfo
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
-// @Router /list-merchant [get]
+// @Router /list-shop [get]
 func (h *AuthenticationHttp) ListShopCanAccess(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 
