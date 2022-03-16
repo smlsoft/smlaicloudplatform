@@ -55,3 +55,12 @@ go install github.com/vektra/mockery/v2@latest
 ```
 make runswagger
 ```
+
+
+
+## Github Registry 
+## https://ghcr.io
+
+```
+
+```
