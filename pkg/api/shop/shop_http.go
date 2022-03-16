@@ -19,9 +19,10 @@ type IShopHttp interface {
 }
 
 type ShopHttp struct {
-	ms      *microservice.Microservice
-	cfg     microservice.IConfig
-	service IShopService
+	ms          *microservice.Microservice
+	cfg         microservice.IConfig
+	service     IShopService
+	authService *microservice.AuthService
 }
 
 func NewShopHttp(ms *microservice.Microservice, cfg microservice.IConfig) IShopHttp {
@@ -31,10 +32,13 @@ func NewShopHttp(ms *microservice.Microservice, cfg microservice.IConfig) IShopH
 	shopUserRepo := NewShopUserRepository(pst)
 	service := NewShopService(repo, shopUserRepo)
 
+	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
+
 	return &ShopHttp{
-		ms:      ms,
-		cfg:     cfg,
-		service: service,
+		ms:          ms,
+		cfg:         cfg,
+		service:     service,
+		authService: authService,
 	}
 }
 
@@ -42,7 +46,7 @@ func (h *ShopHttp) RouteSetup() {
 	h.ms.GET("/shop/:id", h.InfoShop)
 	h.ms.GET("/shop", h.SearchShop)
 
-	h.ms.POST("/shop", h.CreateShop)
+	h.ms.POST("/shop", h.CreateShop, h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig())))
 	h.ms.PUT("/shop/:id", h.UpdateShop)
 	h.ms.DELETE("/shop/:id", h.DeleteShop)
 }
