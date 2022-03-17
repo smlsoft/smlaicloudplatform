@@ -1,5 +1,5 @@
 
-## smlsoft/cloudauthentication
+## smlsoft/smlcloudplatform:authen
 ##
 ## Builder
 ##
@@ -24,6 +24,8 @@ RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build  -o go-app -tags musl ./cmd/a
 ##
 FROM alpine:latest 
 WORKDIR /root/
-ADD ./cmd/authenticationservice/.env .
+# ADD ./cmd/authenticationservice/.env .
+ENV SERVICE_NAME authenticaton-api
+
 COPY --from=builder /go/app/go-app .
 ENTRYPOINT  /root/go-app

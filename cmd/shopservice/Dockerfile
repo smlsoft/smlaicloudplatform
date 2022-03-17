@@ -1,5 +1,5 @@
-# syntax=docker/dockerfile:1
 
+## smlsoft/smlcloudplatform:shop
 ##
 ## Builder
 ##
@@ -17,13 +17,15 @@ RUN go mod download
 
 ADD . /go/app
 
-RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build  -o go-app -tags musl ./cmd/inventoryservice/main.go  
+RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build  -o go-app -tags musl ./cmd/shopservice/main.go  
 
 ##
 ## Deploy
 ##
 FROM alpine:latest 
 WORKDIR /root/
+# ADD ./cmd/authenticationservice/.env .
+ENV SERVICE_NAME shop-api
+
 COPY --from=builder /go/app/go-app .
-ENV SERVICE_NAME inventory-service
 ENTRYPOINT  /root/go-app
