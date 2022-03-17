@@ -16,3 +16,7 @@ docker_build_swagger_and_ship:
 docker_build_shop_and_ship:
 	docker build -t smlsoft/smlcloudplatform:shop -f ./cmd/shopservice/Dockerfile .
 	docker push smlsoft/smlcloudplatform:shop
+
+docker_build_inventory_and_ship:
+	docker build -t smlsoft/smlcloudplatform:inventory -f ./cmd/inventoryservice/Dockerfile .
+	docker push smlsoft/smlcloudplatform:inventory

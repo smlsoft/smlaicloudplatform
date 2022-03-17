@@ -25,4 +25,5 @@ RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build  -o go-app -tags musl ./cmd/i
 FROM alpine:latest 
 WORKDIR /root/
 COPY --from=builder /go/app/go-app .
+ENV SERVICE_NAME inventory-service
 ENTRYPOINT  /root/go-app
