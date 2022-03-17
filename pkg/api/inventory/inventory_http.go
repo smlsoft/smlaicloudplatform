@@ -29,9 +29,11 @@ type InventoryHttp struct {
 func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) IInventoryHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	prod := ms.Producer(cfg.MQConfig())
 
 	invRepo := NewInventoryRepository(pst)
-	invService := NewInventoryService(invRepo)
+	invMqRepo := NewInventoryMQRepository(prod)
+	invService := NewInventoryService(invRepo, invMqRepo)
 
 	cateRepo := NewCategoryRepository(pst)
 	cateService := NewCategoryService(cateRepo)

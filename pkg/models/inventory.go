@@ -89,6 +89,39 @@ type Choice struct {
 	Name5       string  `json:"name5,omitempty" bson:"name5,omitempty"`
 }
 
+type InventoryRequest struct {
+	ItemSku   string `json:"itemSku,omitempty" `
+	ShopId    string `json:"shopId" `
+	GuidFixed string `json:"guidFixed" `
+
+	Barcode      string  `json:"barcode" `
+	CategoryGuid string  `json:"categoryGuid" `
+	Price        float32 `json:"price"  `
+	MemberPrice  float32 `json:"memberPrice,omitempty" `
+	Recommended  bool    `json:"recommended,omitempty"  `
+	Activated    bool    `json:"activated,omitempty" `
+
+	Name1        string `json:"name1" `
+	Description1 string `json:"description1,omitempty" `
+	Name2        string `json:"name2,omitempty" `
+	Description2 string `json:"description2,omitempty" `
+	Name3        string `json:"name3,omitempty" `
+	Description3 string `json:"description3,omitempty" `
+	Name4        string `json:"name4,omitempty" `
+	Description4 string `json:"description4,omitempty" `
+	Name5        string `json:"name5,omitempty" `
+	Description5 string `json:"description5,omitempty" `
+
+	Images    []string `json:"images,omitempty" `
+	UnitName1 string   `json:"unitName1" `
+	UnitName2 string   `json:"unitName2,omitempty" `
+	UnitName3 string   `json:"unitName3,omitempty" `
+	UnitName4 string   `json:"unitName4,omitempty" `
+	UnitName5 string   `json:"unitName5,omitempty" `
+	Options   []Option `json:"options,omitempty" `
+	Tags      []string `json:"tags,omitempty" `
+}
+
 type Category struct {
 	Id        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	ShopId    string             `json:"shopId" bson:"shopId"`

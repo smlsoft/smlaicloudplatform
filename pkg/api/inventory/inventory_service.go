@@ -1,6 +1,7 @@
 package inventory
 
 import (
+	"encoding/json"
 	"errors"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
@@ -19,12 +20,14 @@ type IInventoryService interface {
 }
 
 type InventoryService struct {
-	invRepo IInventoryRepository
+	invRepo   IInventoryRepository
+	invMqRepo IInventoryMQRepository
 }
 
-func NewInventoryService(inventoryRepo IInventoryRepository) IInventoryService {
+func NewInventoryService(inventoryRepo IInventoryRepository, inventoryMqRepo IInventoryMQRepository) IInventoryService {
 	return &InventoryService{
-		invRepo: inventoryRepo,
+		invRepo:   inventoryRepo,
+		invMqRepo: inventoryMqRepo,
 	}
 }
 
@@ -39,6 +42,24 @@ func (svc *InventoryService) CreateInventory(shopId string, authUsername string,
 	inventory.CreatedAt = time.Now()
 
 	_, err := svc.invRepo.Create(inventory)
+
+	if err != nil {
+		return "", err
+	}
+
+	invStr, err := json.Marshal(inventory)
+	if err != nil {
+		return "", err
+	}
+
+	invRequest := &models.InventoryRequest{}
+	err = json.Unmarshal([]byte(invStr), invRequest)
+
+	if err != nil {
+		return "", err
+	}
+
+	err = svc.invMqRepo.Create(*invRequest)
 
 	if err != nil {
 		return "", err
