@@ -19,6 +19,10 @@ func main() {
 		panic(err)
 	}
 
+	cacher := ms.Cacher(cfg.CacherConfig())
+	authService := microservice.NewAuthService(cacher, 24*3)
+	ms.HttpMiddleware(authService.MWFuncWithRedis(cacher))
+
 	inventoryapi := inventory.NewInventoryHttp(ms, cfg)
 	inventoryapi.RouteSetup()
 	ms.Start()
