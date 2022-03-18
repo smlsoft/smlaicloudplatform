@@ -1,8 +1,6 @@
 package models
 
 import (
-	"time"
-
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -12,11 +10,7 @@ type StockInOut struct {
 	GuidFixed string             `json:"guidFixed,omitempty" bson:"guidFixed"`
 	Items     []StockInOutDetail `json:"items" bson:"items" `
 	SumAmount float64            `json:"sumAmount" bson:"sumAmount" `
-	CreatedBy string             `json:"createdBy" bson:"createdBy"`
-	CreatedAt time.Time          `json:"createdAt" bson:"createdAt"`
-	UpdatedBy string             `json:"updatedBy,omitempty" bson:"updatedBy,omitempty"`
-	UpdatedAt time.Time          `json:"updatedAt,omitempty" bson:"updatedAt,omitempty"`
-	Deleted   bool               `json:"-" bson:"deleted"`
+	Activity
 }
 
 func (*StockInOut) CollectionName() string {

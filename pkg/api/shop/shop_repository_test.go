@@ -26,15 +26,19 @@ func TestFindShop(t *testing.T) {
 	give := models.Shop{
 		GuidFixed: newGuidFixed,
 		Name1:     "shop test",
-		CreatedBy: "test",
-		CreatedAt: createAt,
+		Activity: models.Activity{
+			CreatedBy: "test",
+			CreatedAt: createAt,
+		},
 	}
 
 	want := &models.Shop{
 		GuidFixed: newGuidFixed,
 		Name1:     "shop test",
-		CreatedBy: "test",
-		CreatedAt: createAt,
+		Activity: models.Activity{
+			CreatedBy: "test",
+			CreatedAt: createAt,
+		},
 	}
 
 	get, err := repository.Create(give)

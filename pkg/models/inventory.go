@@ -1,8 +1,6 @@
 package models
 
 import (
-	"time"
-
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -47,11 +45,7 @@ type Inventory struct {
 	Options   []Option `json:"options,omitempty" bson:"options,omitempty"`
 	Tags      []string `json:"tags,omitempty" bson:"tags,omitempty"`
 
-	CreatedBy string    `json:"-" bson:"createdBy"`
-	CreatedAt time.Time `json:"-" bson:"createdAt"`
-	UpdatedBy string    `json:"-" bson:"updatedBy,omitempty"`
-	UpdatedAt time.Time `json:"-" bson:"updatedAt,omitempty"`
-	Deleted   bool      `json:"-" bson:"deleted"` // ลบแล้ว
+	Activity
 
 	// WaitType         int             `json:"-" bson:"waitType"`                // ประเภทการรอ (สินค้าหมด)
 	// WaitUntil        time.Time       `json:"-" bson:"waitUntil"`               // ระยะเวลาที่รอ
@@ -132,11 +126,7 @@ type Category struct {
 	Name4     string             `json:"name4" bson:"name4"`
 	Name5     string             `json:"name5" bson:"name5"`
 	Image     string             `json:"image" bson:"image"`
-	CreatedBy string             `json:"-" bson:"createdBy"`
-	CreatedAt time.Time          `json:"-" bson:"createdAt"`
-	UpdatedBy string             `json:"-" bson:"updatedBy,omitempty"`
-	UpdatedAt time.Time          `json:"-" bson:"updatedAt,omitempty"`
-	Deleted   bool               `json:"-" bson:"deleted"`
+	Activity
 }
 
 func (*Category) CollectionName() string {
@@ -153,11 +143,7 @@ type InventoryOptionGroup struct {
 	ProductSelectOptionMin int                         `json:"productSelectOptionMin" bson:"productSelectOptionMin"`
 	ProductSelectOptionMax int                         `json:"productSelectOptionMax" bson:"productSelectOptionMax"`
 	Details                []InventoryOptonGroupDetail `json:"details" bson:"details"`
-	CreatedBy              string                      `json:"-" bson:"createdBy"`
-	CreatedAt              time.Time                   `json:"-" bson:"createdAt"`
-	UpdatedBy              string                      `json:"-" bson:"updatedBy,omitempty"`
-	UpdatedAt              time.Time                   `json:"-" bson:"updatedAt,omitempty"`
-	Deleted                bool                        `json:"-" bson:"deleted"`
+	Activity
 }
 
 func (*InventoryOptionGroup) CollectionName() string {
@@ -176,11 +162,7 @@ type InventoryOption struct {
 	GuidFixed     string             `json:"guidFixed" bson:"guidFixed"`
 	InventoryId   string             `json:"inventoryId" bson:"inventoryId"`
 	OptionGroupId string             `json:"optionGroupId" bson:"optionGroupId"`
-	CreatedBy     string             `json:"-" bson:"createdBy"`
-	CreatedAt     time.Time          `json:"-" bson:"createdAt"`
-	UpdatedBy     string             `json:"-" bson:"updatedBy,omitempty"`
-	UpdatedAt     time.Time          `json:"-" bson:"updatedAt,omitempty"`
-	Deleted       bool               `json:"-" bson:"deleted"`
+	Activity
 }
 
 func (*InventoryOption) CollectionName() string {
