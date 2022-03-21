@@ -23,14 +23,10 @@ func TestFindShop(t *testing.T) {
 	newGuidFixed := utils.NewGUID()
 	createAt := time.Now()
 
-	iden := models.Identity{
-		GuidFixed: newGuidFixed,
-	}
-
 	give := models.ShopDoc{
-		Identity: iden,
 		Shop: models.Shop{
-			Name1: "shop test",
+			GuidFixed: newGuidFixed,
+			Name1:     "shop test",
 		},
 		Activity: models.Activity{
 			CreatedBy: "test",
@@ -39,9 +35,9 @@ func TestFindShop(t *testing.T) {
 	}
 
 	want := &models.ShopDoc{
-		Identity: iden,
 		Shop: models.Shop{
-			Name1: "shop test",
+			GuidFixed: newGuidFixed,
+			Name1:     "shop test",
 		},
 		Activity: models.Activity{
 			CreatedBy: "test",
