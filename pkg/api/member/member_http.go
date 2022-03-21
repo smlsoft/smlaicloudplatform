@@ -23,7 +23,7 @@ type MemberHttp struct {
 	service IMemberService
 }
 
-func NewMemberHttp(ms *microservice.Microservice, cfg microservice.IConfig) IMemberHttp {
+func NewMemberHttp(ms *microservice.Microservice, cfg microservice.IConfig) MemberHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
@@ -31,14 +31,14 @@ func NewMemberHttp(ms *microservice.Microservice, cfg microservice.IConfig) IMem
 
 	service := NewMemberService(memberRepo)
 
-	return &MemberHttp{
+	return MemberHttp{
 		ms:      ms,
 		cfg:     cfg,
 		service: service,
 	}
 }
 
-func (h *MemberHttp) RouteSetup() {
+func (h MemberHttp) RouteSetup() {
 
 	h.ms.GET("/member/:id", h.InfoMember)
 	h.ms.GET("/member", h.SearchMember)
@@ -48,7 +48,7 @@ func (h *MemberHttp) RouteSetup() {
 	h.ms.DELETE("/member/:id", h.DeleteMember)
 }
 
-func (h *MemberHttp) CreateMember(ctx microservice.IContext) error {
+func (h MemberHttp) CreateMember(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -77,7 +77,7 @@ func (h *MemberHttp) CreateMember(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *MemberHttp) UpdateMember(ctx microservice.IContext) error {
+func (h MemberHttp) UpdateMember(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -106,7 +106,7 @@ func (h *MemberHttp) UpdateMember(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *MemberHttp) DeleteMember(ctx microservice.IContext) error {
+func (h MemberHttp) DeleteMember(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -126,7 +126,7 @@ func (h *MemberHttp) DeleteMember(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *MemberHttp) InfoMember(ctx microservice.IContext) error {
+func (h MemberHttp) InfoMember(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -147,7 +147,7 @@ func (h *MemberHttp) InfoMember(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *MemberHttp) SearchMember(ctx microservice.IContext) error {
+func (h MemberHttp) SearchMember(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID

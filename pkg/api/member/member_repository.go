@@ -21,13 +21,13 @@ type MemberRepository struct {
 	pst microservice.IPersisterMongo
 }
 
-func NewMemberRepository(pst microservice.IPersisterMongo) IMemberRepository {
-	return &MemberRepository{
+func NewMemberRepository(pst microservice.IPersisterMongo) MemberRepository {
+	return MemberRepository{
 		pst: pst,
 	}
 }
 
-func (repo *MemberRepository) Create(doc models.MemberDoc) (primitive.ObjectID, error) {
+func (repo MemberRepository) Create(doc models.MemberDoc) (primitive.ObjectID, error) {
 	idx, err := repo.pst.Create(&models.MemberDoc{}, doc)
 	if err != nil {
 		return primitive.NilObjectID, err
@@ -35,7 +35,7 @@ func (repo *MemberRepository) Create(doc models.MemberDoc) (primitive.ObjectID, 
 	return idx, nil
 }
 
-func (repo *MemberRepository) Update(guid string, doc models.MemberDoc) error {
+func (repo MemberRepository) Update(guid string, doc models.MemberDoc) error {
 	err := repo.pst.UpdateOne(&models.MemberDoc{}, "guidFixed", guid, doc)
 	if err != nil {
 		return err
@@ -43,7 +43,7 @@ func (repo *MemberRepository) Update(guid string, doc models.MemberDoc) error {
 	return nil
 }
 
-func (repo *MemberRepository) Delete(guid string, shopId string) error {
+func (repo MemberRepository) Delete(guid string, shopId string) error {
 	err := repo.pst.SoftDelete(&models.MemberDoc{}, bson.M{"guidFixed": guid, "shopId": shopId})
 	if err != nil {
 		return err
@@ -51,7 +51,7 @@ func (repo *MemberRepository) Delete(guid string, shopId string) error {
 	return nil
 }
 
-func (repo *MemberRepository) FindByGuid(guid string, shopId string) (models.MemberDoc, error) {
+func (repo MemberRepository) FindByGuid(guid string, shopId string) (models.MemberDoc, error) {
 	doc := &models.MemberDoc{}
 	err := repo.pst.FindOne(&models.MemberDoc{}, bson.M{"shopId": shopId, "guidFixed": guid, "deleted": false}, doc)
 	if err != nil {
@@ -60,7 +60,7 @@ func (repo *MemberRepository) FindByGuid(guid string, shopId string) (models.Mem
 	return *doc, nil
 }
 
-func (repo *MemberRepository) FindPage(shopId string, q string, page int, limit int) ([]models.MemberDoc, paginate.PaginationData, error) {
+func (repo MemberRepository) FindPage(shopId string, q string, page int, limit int) ([]models.MemberDoc, paginate.PaginationData, error) {
 
 	docList := []models.MemberDoc{}
 	pagination, err := repo.pst.FindPage(&models.MemberDoc{}, limit, page, bson.M{
