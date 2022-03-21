@@ -1,7 +1,6 @@
 package inventory
 
 import (
-	"encoding/json"
 	"errors"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
@@ -15,8 +14,8 @@ type IInventoryService interface {
 	CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, error)
 	UpdateInventory(guid string, shopID string, authUsername string, inventory models.Inventory) error
 	DeleteInventory(guid string, shopID string) error
-	InfoInventory(guid string, shopID string) (models.Inventory, error)
-	SearchInventory(shopID string, q string, page int, limit int) ([]models.Inventory, paginate.PaginationData, error)
+	InfoInventory(guid string, shopID string) (models.InventoryInfo, error)
+	SearchInventory(shopID string, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
 }
 
 type InventoryService struct {
@@ -35,31 +34,22 @@ func (svc InventoryService) CreateInventory(shopID string, authUsername string, 
 
 	newGuid := utils.NewGUID()
 
-	inventory.GuidFixed = newGuid
-	inventory.ShopID = shopID
-	inventory.Deleted = false
-	inventory.CreatedBy = authUsername
-	inventory.CreatedAt = time.Now()
+	invDoc := models.InventoryDoc{}
 
-	_, err := svc.invRepo.Create(inventory)
+	invDoc.GuidFixed = newGuid
+	invDoc.ShopID = shopID
+	invDoc.Inventory = inventory
 
-	if err != nil {
-		return "", err
-	}
+	invDoc.CreatedBy = authUsername
+	invDoc.CreatedAt = time.Now()
 
-	invStr, err := json.Marshal(inventory)
-	if err != nil {
-		return "", err
-	}
-
-	invRequest := &models.InventoryRequest{}
-	err = json.Unmarshal([]byte(invStr), invRequest)
+	_, err := svc.invRepo.Create(invDoc)
 
 	if err != nil {
 		return "", err
 	}
 
-	err = svc.invMqRepo.Create(*invRequest)
+	err = svc.invMqRepo.Create(invDoc.InventoryInfo)
 
 	if err != nil {
 		return "", err
@@ -80,26 +70,10 @@ func (svc InventoryService) UpdateInventory(guid string, shopID string, authUser
 		return errors.New("document not found")
 	}
 
-	findDoc.ItemSku = inventory.ItemSku
-	findDoc.CategoryGuid = inventory.CategoryGuid
-	findDoc.Price = inventory.Price
-	findDoc.Recommended = inventory.Recommended
-	findDoc.Activated = inventory.Activated
+	findDoc.Inventory = inventory
 
-	findDoc.Name1 = inventory.Name1
-	findDoc.Name2 = inventory.Name2
-	findDoc.Name3 = inventory.Name3
-	findDoc.Name4 = inventory.Name4
-	findDoc.Name5 = inventory.Name5
-
-	findDoc.Description1 = inventory.Description1
-	findDoc.Description2 = inventory.Description2
-	findDoc.Description3 = inventory.Description3
-	findDoc.Description4 = inventory.Description4
-	findDoc.Description5 = inventory.Description5
-
-	inventory.UpdatedBy = authUsername
-	inventory.UpdatedAt = time.Now()
+	findDoc.UpdatedBy = authUsername
+	findDoc.UpdatedAt = time.Now()
 
 	err = svc.invRepo.Update(guid, findDoc)
 
@@ -120,25 +94,25 @@ func (svc InventoryService) DeleteInventory(guid string, shopID string) error {
 	return nil
 }
 
-func (svc InventoryService) InfoInventory(guid string, shopID string) (models.Inventory, error) {
+func (svc InventoryService) InfoInventory(guid string, shopID string) (models.InventoryInfo, error) {
 	findDoc, err := svc.invRepo.FindByGuid(guid, shopID)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
-		return models.Inventory{}, err
+		return models.InventoryInfo{}, err
 	}
 
 	if findDoc.ID == primitive.NilObjectID {
-		return models.Inventory{}, errors.New("document not found")
+		return models.InventoryInfo{}, errors.New("document not found")
 	}
 
-	return findDoc, nil
+	return findDoc.InventoryInfo, nil
 }
 
-func (svc InventoryService) SearchInventory(shopID string, q string, page int, limit int) ([]models.Inventory, paginate.PaginationData, error) {
+func (svc InventoryService) SearchInventory(shopID string, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error) {
 	docList, pagination, err := svc.invRepo.FindPage(shopID, q, page, limit)
 
 	if err != nil {
-		return []models.Inventory{}, pagination, err
+		return []models.InventoryInfo{}, pagination, err
 	}
 
 	return docList, pagination, nil
