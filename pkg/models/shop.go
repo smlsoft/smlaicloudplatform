@@ -2,6 +2,8 @@ package models
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
+const shopCollectionName = "shops"
+
 type ShopDoc struct {
 	ID primitive.ObjectID `json:"-" bson:"_id,omitempty"`
 	ShopInfo
@@ -9,7 +11,7 @@ type ShopDoc struct {
 }
 
 func (ShopDoc) CollectionName() string {
-	return "shops"
+	return shopCollectionName
 }
 
 type ShopInfo struct {
@@ -18,13 +20,9 @@ type ShopInfo struct {
 }
 
 func (ShopInfo) CollectionName() string {
-	return "shops"
+	return shopCollectionName
 }
 
 type Shop struct {
 	Name1 string `json:"name1" bson:"name1"`
-}
-
-func (Shop) CollectionName() string {
-	return "shops"
 }
