@@ -24,7 +24,7 @@ type StockInOutHttp struct {
 	service IStockInOutService
 }
 
-func NewStockInOutHttp(ms *microservice.Microservice, cfg microservice.IConfig) IStockInOutHttp {
+func NewStockInOutHttp(ms *microservice.Microservice, cfg microservice.IConfig) StockInOutHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
@@ -33,14 +33,14 @@ func NewStockInOutHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	stockinoutMQRepo := NewStockInOutMQRepository(prod)
 
 	service := NewStockInOutService(stockinoutRepo, stockinoutMQRepo)
-	return &StockInOutHttp{
+	return StockInOutHttp{
 		ms:      ms,
 		cfg:     cfg,
 		service: service,
 	}
 }
 
-func (h *StockInOutHttp) RouteSetup() {
+func (h StockInOutHttp) RouteSetup() {
 
 	h.ms.GET("/stockinout/:id", h.InfoStockInOut)
 	h.ms.GET("/stockinout", h.SearchStockInOut)
@@ -51,7 +51,7 @@ func (h *StockInOutHttp) RouteSetup() {
 	h.ms.DELETE("/stockinout/:id", h.DeleteStockInOut)
 }
 
-func (h *StockInOutHttp) CreateStockInOut(ctx microservice.IContext) error {
+func (h StockInOutHttp) CreateStockInOut(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -80,7 +80,7 @@ func (h *StockInOutHttp) CreateStockInOut(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *StockInOutHttp) UpdateStockInOut(ctx microservice.IContext) error {
+func (h StockInOutHttp) UpdateStockInOut(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -109,7 +109,7 @@ func (h *StockInOutHttp) UpdateStockInOut(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *StockInOutHttp) DeleteStockInOut(ctx microservice.IContext) error {
+func (h StockInOutHttp) DeleteStockInOut(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -129,7 +129,7 @@ func (h *StockInOutHttp) DeleteStockInOut(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *StockInOutHttp) InfoStockInOut(ctx microservice.IContext) error {
+func (h StockInOutHttp) InfoStockInOut(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -150,7 +150,7 @@ func (h *StockInOutHttp) InfoStockInOut(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *StockInOutHttp) SearchStockInOut(ctx microservice.IContext) error {
+func (h StockInOutHttp) SearchStockInOut(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -185,7 +185,7 @@ func (h *StockInOutHttp) SearchStockInOut(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *StockInOutHttp) SearchStockInOutItems(ctx microservice.IContext) error {
+func (h StockInOutHttp) SearchStockInOutItems(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID

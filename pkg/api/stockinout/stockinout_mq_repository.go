@@ -14,10 +14,10 @@ type StockInOutMQRepository struct {
 	mqKey string
 }
 
-func NewStockInOutMQRepository(prod microservice.IProducer) IStockInOutMQRepository {
+func NewStockInOutMQRepository(prod microservice.IProducer) StockInOutMQRepository {
 	mqKey := ""
 
-	return &StockInOutMQRepository{
+	return StockInOutMQRepository{
 		prod:  prod,
 		mqKey: mqKey,
 	}
