@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: bitnami/zookeeper:3.7
+    container_name: zookeeper
+    restart: always
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ZOOKEEPER_CLIENT_PORT=2181
+    networks:
+      - backend
+  kafka: 
+    image: bitnami/kafka:3.1.0
+    container_name: kafka
+    restart: always
+#    ports:
+#      - 9092:9092
+    environment:
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+    networks:
+      - backend
+    depends_on:
+      - zookeeper
+
+networks:
+  backend:
+    external:
+      name: sml_service_backend
