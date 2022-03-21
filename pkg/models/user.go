@@ -20,8 +20,8 @@ func (*User) CollectionName() string {
 }
 
 type UserRequest struct {
-	Username string `json:"username,omitempty" `
-	Password string `json:"password,omitempty" `
+	Username string `json:"username,omitempty" validate:"required,gte=3"`
+	Password string `json:"password,omitempty" validate:"required,gte=6"`
 	Name     string `json:"name,omitempty" `
 }
 
@@ -32,7 +32,7 @@ func (*UserRequest) CollectionName() string {
 type UserLoginRequest struct {
 	Username string `json:"username,omitempty" `
 	Password string `json:"password,omitempty" `
-	ShopId   string `json:"shopId,omitempty"`
+	ShopID   string `json:"shopID,omitempty"`
 }
 
 type UserProfile struct {
@@ -47,7 +47,7 @@ type UserPasswordRequest struct {
 }
 
 type ShopSelectRequest struct {
-	ShopId string `json:"shopId"`
+	ShopID string `json:"shopID"`
 }
 
 const (
@@ -57,9 +57,9 @@ const (
 )
 
 type ShopUser struct {
-	Id       primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	ID       primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Username string             `json:"username" bson:"username"`
-	ShopId   string             `json:"shopId" bson:"shopId"`
+	ShopID   string             `json:"shopID" bson:"shopID"`
 	Role     string             `json:"role" bson:"role"`
 }
 
@@ -68,7 +68,7 @@ func (*ShopUser) CollectionName() string {
 }
 
 type ShopUserInfo struct {
-	ShopId string `json:"shopId" bson:"shopId"`
+	ShopID string `json:"shopID" bson:"shopID"`
 	Name   string `json:"name" bson:"name"`
 	Role   string `json:"role" bson:"role"`
 }
