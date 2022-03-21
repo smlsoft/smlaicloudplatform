@@ -24,15 +24,15 @@ type StockAdjustmentService struct {
 	mqRepo IStockAdjustmentMQRepository
 }
 
-func NewStockAdjustmentService(repo IStockAdjustmentRepository, mqRepo IStockAdjustmentMQRepository) IStockAdjustmentService {
+func NewStockAdjustmentService(repo IStockAdjustmentRepository, mqRepo IStockAdjustmentMQRepository) StockAdjustmentService {
 
-	return &StockAdjustmentService{
+	return StockAdjustmentService{
 		repo:   repo,
 		mqRepo: mqRepo,
 	}
 }
 
-func (svc *StockAdjustmentService) CreateStockAdjustment(shopID string, username string, doc *models.StockAdjustment) (string, error) {
+func (svc StockAdjustmentService) CreateStockAdjustment(shopID string, username string, doc *models.StockAdjustment) (string, error) {
 
 	sumAmount := 0.0
 	for i, docDetail := range doc.Items {
@@ -67,7 +67,7 @@ func (svc *StockAdjustmentService) CreateStockAdjustment(shopID string, username
 	return newGuidFixed, nil
 }
 
-func (svc *StockAdjustmentService) UpdateStockAdjustment(guid string, shopID string, username string, doc models.StockAdjustment) error {
+func (svc StockAdjustmentService) UpdateStockAdjustment(guid string, shopID string, username string, doc models.StockAdjustment) error {
 
 	findDoc, err := svc.repo.FindByGuid(guid, shopID)
 
@@ -98,7 +98,7 @@ func (svc *StockAdjustmentService) UpdateStockAdjustment(guid string, shopID str
 	return nil
 }
 
-func (svc *StockAdjustmentService) DeleteStockAdjustment(guid string, shopID string, username string) error {
+func (svc StockAdjustmentService) DeleteStockAdjustment(guid string, shopID string, username string) error {
 
 	err := svc.repo.Delete(guid, shopID)
 	if err != nil {
@@ -108,7 +108,7 @@ func (svc *StockAdjustmentService) DeleteStockAdjustment(guid string, shopID str
 	return nil
 }
 
-func (svc *StockAdjustmentService) InfoStockAdjustment(guid string, shopID string) (models.StockAdjustment, error) {
+func (svc StockAdjustmentService) InfoStockAdjustment(guid string, shopID string) (models.StockAdjustment, error) {
 	doc, err := svc.repo.FindByGuid(guid, shopID)
 
 	if err != nil {
@@ -118,7 +118,7 @@ func (svc *StockAdjustmentService) InfoStockAdjustment(guid string, shopID strin
 	return doc, nil
 }
 
-func (svc *StockAdjustmentService) SearchStockAdjustment(shopID string, q string, page int, limit int) ([]models.StockAdjustment, paginate.PaginationData, error) {
+func (svc StockAdjustmentService) SearchStockAdjustment(shopID string, q string, page int, limit int) ([]models.StockAdjustment, paginate.PaginationData, error) {
 	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
 
 	if err != nil {
@@ -128,7 +128,7 @@ func (svc *StockAdjustmentService) SearchStockAdjustment(shopID string, q string
 	return docList, pagination, nil
 }
 
-func (svc *StockAdjustmentService) SearchItemsStockAdjustment(guid string, shopID string, q string, page int, limit int) ([]models.StockAdjustment, paginate.PaginationData, error) {
+func (svc StockAdjustmentService) SearchItemsStockAdjustment(guid string, shopID string, q string, page int, limit int) ([]models.StockAdjustment, paginate.PaginationData, error) {
 	docList, pagination, err := svc.repo.FindItemsByGuidPage(guid, shopID, q, page, limit)
 
 	if err != nil {

@@ -24,7 +24,7 @@ type StockAdjustmentHttp struct {
 	service IStockAdjustmentService
 }
 
-func NewStockAdjustmentHttp(ms *microservice.Microservice, cfg microservice.IConfig) IStockAdjustmentHttp {
+func NewStockAdjustmentHttp(ms *microservice.Microservice, cfg microservice.IConfig) StockAdjustmentHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
@@ -33,14 +33,14 @@ func NewStockAdjustmentHttp(ms *microservice.Microservice, cfg microservice.ICon
 	stockadjustmentMQRepo := NewStockAdjustmentMQRepository(prod)
 
 	service := NewStockAdjustmentService(stockadjustmentRepo, stockadjustmentMQRepo)
-	return &StockAdjustmentHttp{
+	return StockAdjustmentHttp{
 		ms:      ms,
 		cfg:     cfg,
 		service: service,
 	}
 }
 
-func (h *StockAdjustmentHttp) RouteSetup() {
+func (h StockAdjustmentHttp) RouteSetup() {
 
 	h.ms.GET("/stockadjustment/:id", h.InfoStockAdjustment)
 	h.ms.GET("/stockadjustment", h.SearchStockAdjustment)
@@ -51,7 +51,7 @@ func (h *StockAdjustmentHttp) RouteSetup() {
 	h.ms.DELETE("/stockadjustment/:id", h.DeleteStockAdjustment)
 }
 
-func (h *StockAdjustmentHttp) CreateStockAdjustment(ctx microservice.IContext) error {
+func (h StockAdjustmentHttp) CreateStockAdjustment(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -80,7 +80,7 @@ func (h *StockAdjustmentHttp) CreateStockAdjustment(ctx microservice.IContext) e
 	return nil
 }
 
-func (h *StockAdjustmentHttp) UpdateStockAdjustment(ctx microservice.IContext) error {
+func (h StockAdjustmentHttp) UpdateStockAdjustment(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -109,7 +109,7 @@ func (h *StockAdjustmentHttp) UpdateStockAdjustment(ctx microservice.IContext) e
 	return nil
 }
 
-func (h *StockAdjustmentHttp) DeleteStockAdjustment(ctx microservice.IContext) error {
+func (h StockAdjustmentHttp) DeleteStockAdjustment(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -129,7 +129,7 @@ func (h *StockAdjustmentHttp) DeleteStockAdjustment(ctx microservice.IContext) e
 	return nil
 }
 
-func (h *StockAdjustmentHttp) InfoStockAdjustment(ctx microservice.IContext) error {
+func (h StockAdjustmentHttp) InfoStockAdjustment(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -150,7 +150,7 @@ func (h *StockAdjustmentHttp) InfoStockAdjustment(ctx microservice.IContext) err
 	return nil
 }
 
-func (h *StockAdjustmentHttp) SearchStockAdjustment(ctx microservice.IContext) error {
+func (h StockAdjustmentHttp) SearchStockAdjustment(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -185,7 +185,7 @@ func (h *StockAdjustmentHttp) SearchStockAdjustment(ctx microservice.IContext) e
 	return nil
 }
 
-func (h *StockAdjustmentHttp) SearchStockAdjustmentItems(ctx microservice.IContext) error {
+func (h StockAdjustmentHttp) SearchStockAdjustmentItems(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID

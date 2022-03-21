@@ -22,13 +22,13 @@ type StockAdjustmentRepository struct {
 	pst microservice.IPersisterMongo
 }
 
-func NewStockAdjustmentRepository(pst microservice.IPersisterMongo) IStockAdjustmentRepository {
-	return &StockAdjustmentRepository{
+func NewStockAdjustmentRepository(pst microservice.IPersisterMongo) StockAdjustmentRepository {
+	return StockAdjustmentRepository{
 		pst: pst,
 	}
 }
 
-func (repo *StockAdjustmentRepository) Create(doc models.StockAdjustment) (primitive.ObjectID, error) {
+func (repo StockAdjustmentRepository) Create(doc models.StockAdjustment) (primitive.ObjectID, error) {
 	idx, err := repo.pst.Create(&models.StockAdjustment{}, doc)
 	if err != nil {
 		return primitive.NilObjectID, err
@@ -37,7 +37,7 @@ func (repo *StockAdjustmentRepository) Create(doc models.StockAdjustment) (primi
 	return idx, nil
 }
 
-func (repo *StockAdjustmentRepository) Update(guid string, doc models.StockAdjustment) error {
+func (repo StockAdjustmentRepository) Update(guid string, doc models.StockAdjustment) error {
 	err := repo.pst.UpdateOne(&models.StockAdjustment{}, "guidFixed", guid, doc)
 	if err != nil {
 		return err
@@ -45,7 +45,7 @@ func (repo *StockAdjustmentRepository) Update(guid string, doc models.StockAdjus
 	return nil
 }
 
-func (repo *StockAdjustmentRepository) Delete(guid string, shopID string) error {
+func (repo StockAdjustmentRepository) Delete(guid string, shopID string) error {
 	err := repo.pst.SoftDelete(&models.StockAdjustment{}, bson.M{"guidFixed": guid, "shopID": shopID})
 	if err != nil {
 		return err
@@ -53,7 +53,7 @@ func (repo *StockAdjustmentRepository) Delete(guid string, shopID string) error 
 	return nil
 }
 
-func (repo *StockAdjustmentRepository) FindByGuid(guid string, shopID string) (models.StockAdjustment, error) {
+func (repo StockAdjustmentRepository) FindByGuid(guid string, shopID string) (models.StockAdjustment, error) {
 	doc := &models.StockAdjustment{}
 	err := repo.pst.FindOne(&models.StockAdjustment{}, bson.M{"shopID": shopID, "guidFixed": guid, "deleted": false}, doc)
 	if err != nil {
@@ -62,7 +62,7 @@ func (repo *StockAdjustmentRepository) FindByGuid(guid string, shopID string) (m
 	return *doc, nil
 }
 
-func (repo *StockAdjustmentRepository) FindPage(shopID string, q string, page int, limit int) ([]models.StockAdjustment, paginate.PaginationData, error) {
+func (repo StockAdjustmentRepository) FindPage(shopID string, q string, page int, limit int) ([]models.StockAdjustment, paginate.PaginationData, error) {
 
 	docList := []models.StockAdjustment{}
 	pagination, err := repo.pst.FindPage(&models.StockAdjustment{}, limit, page, bson.M{
@@ -83,7 +83,7 @@ func (repo *StockAdjustmentRepository) FindPage(shopID string, q string, page in
 	return docList, pagination, nil
 }
 
-func (repo *StockAdjustmentRepository) FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.StockAdjustment, paginate.PaginationData, error) {
+func (repo StockAdjustmentRepository) FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.StockAdjustment, paginate.PaginationData, error) {
 
 	docList := []models.StockAdjustment{}
 	pagination, err := repo.pst.FindPage(&models.StockAdjustment{}, limit, page, bson.M{

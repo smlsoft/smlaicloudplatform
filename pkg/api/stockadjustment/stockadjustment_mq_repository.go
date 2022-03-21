@@ -14,10 +14,10 @@ type StockAdjustmentMQRepository struct {
 	mqKey string
 }
 
-func NewStockAdjustmentMQRepository(prod microservice.IProducer) IStockAdjustmentMQRepository {
+func NewStockAdjustmentMQRepository(prod microservice.IProducer) StockAdjustmentMQRepository {
 	mqKey := ""
 
-	return &StockAdjustmentMQRepository{
+	return StockAdjustmentMQRepository{
 		prod:  prod,
 		mqKey: mqKey,
 	}
