@@ -8,8 +8,8 @@ type ShopDoc struct {
 	Activity
 }
 
-func (*ShopDoc) CollectionName() string {
-	return "shop"
+func (ShopDoc) CollectionName() string {
+	return "shops"
 }
 
 type ShopInfo struct {
@@ -17,10 +17,14 @@ type ShopInfo struct {
 	Shop
 }
 
+func (ShopInfo) CollectionName() string {
+	return "shops"
+}
+
 type Shop struct {
 	Name1 string `json:"name1" bson:"name1"`
 }
 
-func (*Shop) CollectionName() string {
-	return "shop"
+func (Shop) CollectionName() string {
+	return "shops"
 }
