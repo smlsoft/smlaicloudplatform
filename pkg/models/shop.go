@@ -4,7 +4,7 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type ShopDoc struct {
 	ID primitive.ObjectID `json:"-" bson:"_id,omitempty"`
-	Shop
+	ShopInfo
 	Activity
 }
 
@@ -12,9 +12,13 @@ func (*ShopDoc) CollectionName() string {
 	return "shop"
 }
 
+type ShopInfo struct {
+	DocIdentity
+	Shop
+}
+
 type Shop struct {
-	GuidFixed string `json:"guidFixed" bson:"GuidFixed"`
-	Name1     string `json:"name1" bson:"name1"`
+	Name1 string `json:"name1" bson:"name1"`
 }
 
 func (*Shop) CollectionName() string {

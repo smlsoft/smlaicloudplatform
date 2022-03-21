@@ -14,8 +14,8 @@ type IShopService interface {
 	CreateShop(username string, shop models.Shop) (string, error)
 	UpdateShop(guid string, username string, shop models.Shop) error
 	DeleteShop(guid string, username string) error
-	InfoShop(guid string) (models.Shop, error)
-	SearchShop(q string, page int, limit int) ([]models.Shop, paginate.PaginationData, error)
+	InfoShop(guid string) (models.ShopInfo, error)
+	SearchShop(q string, page int, limit int) ([]models.ShopInfo, paginate.PaginationData, error)
 }
 
 type ShopService struct {
@@ -62,9 +62,14 @@ func (svc ShopService) UpdateShop(guid string, username string, shop models.Shop
 		return errors.New("shop not found")
 	}
 
-	findShop.Name1 = shop.Name1
+	guidx := findShop.GuidFixed
+
 	findShop.UpdatedBy = username
 	findShop.UpdatedAt = time.Now()
+
+	findShop.Name1 = shop.Name1
+
+	findShop.GuidFixed = guidx
 
 	err = svc.shopRepo.Update(guid, findShop)
 
@@ -85,17 +90,17 @@ func (svc ShopService) DeleteShop(guid string, username string) error {
 	return nil
 }
 
-func (svc ShopService) InfoShop(guid string) (models.Shop, error) {
+func (svc ShopService) InfoShop(guid string) (models.ShopInfo, error) {
 	findShop, err := svc.shopRepo.FindByGuid(guid)
 
 	if err != nil {
-		return models.Shop{}, err
+		return models.ShopInfo{}, err
 	}
 
-	return findShop.Shop, nil
+	return findShop.ShopInfo, nil
 }
 
-func (svc ShopService) SearchShop(q string, page int, limit int) ([]models.Shop, paginate.PaginationData, error) {
+func (svc ShopService) SearchShop(q string, page int, limit int) ([]models.ShopInfo, paginate.PaginationData, error) {
 	shopList, pagination, err := svc.shopRepo.FindPage(q, page, limit)
 
 	if err != nil {
