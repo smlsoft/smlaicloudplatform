@@ -22,13 +22,13 @@ type CategoryService struct {
 	repo ICategoryRepository
 }
 
-func NewCategoryService(categoryRepository ICategoryRepository) ICategoryService {
-	return &CategoryService{
+func NewCategoryService(categoryRepository ICategoryRepository) CategoryService {
+	return CategoryService{
 		repo: categoryRepository,
 	}
 }
 
-func (svc *CategoryService) CreateCategory(shopID string, authUsername string, category models.Category) (string, error) {
+func (svc CategoryService) CreateCategory(shopID string, authUsername string, category models.Category) (string, error) {
 
 	newGuidFixed := utils.NewGUID()
 	category.ShopID = shopID
@@ -45,7 +45,7 @@ func (svc *CategoryService) CreateCategory(shopID string, authUsername string, c
 	return newGuidFixed, nil
 }
 
-func (svc *CategoryService) UpdateCategory(guid string, shopID string, authUsername string, category models.Category) error {
+func (svc CategoryService) UpdateCategory(guid string, shopID string, authUsername string, category models.Category) error {
 
 	findDoc, err := svc.repo.FindByGuid(guid, shopID)
 
@@ -74,7 +74,7 @@ func (svc *CategoryService) UpdateCategory(guid string, shopID string, authUsern
 	return nil
 }
 
-func (svc *CategoryService) DeleteCategory(guid string, shopID string) error {
+func (svc CategoryService) DeleteCategory(guid string, shopID string) error {
 	err := svc.repo.Delete(guid, shopID)
 
 	if err != nil {
@@ -83,7 +83,7 @@ func (svc *CategoryService) DeleteCategory(guid string, shopID string) error {
 	return nil
 }
 
-func (svc *CategoryService) InfoCategory(guid string, shopID string) (models.Category, error) {
+func (svc CategoryService) InfoCategory(guid string, shopID string) (models.Category, error) {
 
 	findDoc, err := svc.repo.FindByGuid(guid, shopID)
 
@@ -99,7 +99,7 @@ func (svc *CategoryService) InfoCategory(guid string, shopID string) (models.Cat
 
 }
 
-func (svc *CategoryService) SearchCategory(shopID string, q string, page int, limit int) ([]models.Category, paginate.PaginationData, error) {
+func (svc CategoryService) SearchCategory(shopID string, q string, page int, limit int) ([]models.Category, paginate.PaginationData, error) {
 	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
 
 	if err != nil {
