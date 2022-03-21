@@ -24,13 +24,13 @@ type ShopUserRepository struct {
 	pst microservice.IPersisterMongo
 }
 
-func NewShopUserRepository(pst microservice.IPersisterMongo) IShopUserRepository {
-	return &ShopUserRepository{
+func NewShopUserRepository(pst microservice.IPersisterMongo) ShopUserRepository {
+	return ShopUserRepository{
 		pst: pst,
 	}
 }
 
-func (svc *ShopUserRepository) Save(shopID string, username string, role string) error {
+func (svc ShopUserRepository) Save(shopID string, username string, role string) error {
 
 	optUpdate := options.Update().SetUpsert(true)
 	err := svc.pst.Update(&models.ShopUser{}, bson.M{"shopID": shopID, "username": username}, bson.M{"$set": bson.M{"role": role}}, optUpdate)
@@ -42,7 +42,7 @@ func (svc *ShopUserRepository) Save(shopID string, username string, role string)
 	return nil
 }
 
-func (svc *ShopUserRepository) Delete(shopID string, username string) error {
+func (svc ShopUserRepository) Delete(shopID string, username string) error {
 
 	err := svc.pst.Delete(&models.ShopUser{}, bson.M{"shopID": shopID, "username": username})
 
@@ -53,7 +53,7 @@ func (svc *ShopUserRepository) Delete(shopID string, username string) error {
 	return nil
 }
 
-func (svc *ShopUserRepository) FindByShopIDAndUsername(shopID string, username string) (models.ShopUser, error) {
+func (svc ShopUserRepository) FindByShopIDAndUsername(shopID string, username string) (models.ShopUser, error) {
 
 	shopUser := &models.ShopUser{}
 
@@ -66,7 +66,7 @@ func (svc *ShopUserRepository) FindByShopIDAndUsername(shopID string, username s
 	return *shopUser, nil
 }
 
-func (svc *ShopUserRepository) FindRole(shopID string, username string) (string, error) {
+func (svc ShopUserRepository) FindRole(shopID string, username string) (string, error) {
 
 	shopUser := &models.ShopUser{}
 
@@ -79,7 +79,7 @@ func (svc *ShopUserRepository) FindRole(shopID string, username string) (string,
 	return shopUser.Role, nil
 }
 
-func (svc *ShopUserRepository) FindByShopID(shopID string) (*[]models.ShopUser, error) {
+func (svc ShopUserRepository) FindByShopID(shopID string) (*[]models.ShopUser, error) {
 	shopUsers := &[]models.ShopUser{}
 
 	err := svc.pst.Find(&models.ShopUser{}, bson.M{"shopID": shopID}, shopUsers)
@@ -91,7 +91,7 @@ func (svc *ShopUserRepository) FindByShopID(shopID string) (*[]models.ShopUser, 
 	return shopUsers, nil
 }
 
-func (svc *ShopUserRepository) FindByUsername(username string) (*[]models.ShopUser, error) {
+func (svc ShopUserRepository) FindByUsername(username string) (*[]models.ShopUser, error) {
 	shopUsers := &[]models.ShopUser{}
 
 	err := svc.pst.Find(&models.ShopUser{}, bson.M{"username": username}, shopUsers)
@@ -103,7 +103,7 @@ func (svc *ShopUserRepository) FindByUsername(username string) (*[]models.ShopUs
 	return shopUsers, nil
 }
 
-func (repo *ShopUserRepository) FindByUsernamePage(username string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error) {
+func (repo ShopUserRepository) FindByUsernamePage(username string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error) {
 
 	docList := []models.ShopUserInfo{}
 

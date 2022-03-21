@@ -25,7 +25,7 @@ type ShopHttp struct {
 	authService *microservice.AuthService
 }
 
-func NewShopHttp(ms *microservice.Microservice, cfg microservice.IConfig) IShopHttp {
+func NewShopHttp(ms *microservice.Microservice, cfg microservice.IConfig) ShopHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	repo := NewShopRepository(pst)
@@ -34,7 +34,7 @@ func NewShopHttp(ms *microservice.Microservice, cfg microservice.IConfig) IShopH
 
 	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
 
-	return &ShopHttp{
+	return ShopHttp{
 		ms:          ms,
 		cfg:         cfg,
 		service:     service,
@@ -42,7 +42,7 @@ func NewShopHttp(ms *microservice.Microservice, cfg microservice.IConfig) IShopH
 	}
 }
 
-func (h *ShopHttp) RouteSetup() {
+func (h ShopHttp) RouteSetup() {
 	h.ms.GET("/shop/:id", h.InfoShop)
 	h.ms.GET("/shop", h.SearchShop)
 
@@ -60,7 +60,7 @@ func (h *ShopHttp) RouteSetup() {
 // @Failure		401 {object}	models.ResponseSuccessWithID
 // @Security     AccessToken
 // @Router /shop [post]
-func (h *ShopHttp) CreateShop(ctx microservice.IContext) error {
+func (h ShopHttp) CreateShop(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	if len(authUsername) < 1 {
 		ctx.ResponseError(400, "user authentication invalid")
@@ -95,7 +95,7 @@ func (h *ShopHttp) CreateShop(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *ShopHttp) UpdateShop(ctx microservice.IContext) error {
+func (h ShopHttp) UpdateShop(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	id := ctx.Param("id")
@@ -135,7 +135,7 @@ func (h *ShopHttp) UpdateShop(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *ShopHttp) DeleteShop(ctx microservice.IContext) error {
+func (h ShopHttp) DeleteShop(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -175,7 +175,7 @@ func (h *ShopHttp) DeleteShop(ctx microservice.IContext) error {
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
 // @Router /merchant [get]
-func (h *ShopHttp) InfoShop(ctx microservice.IContext) error {
+func (h ShopHttp) InfoShop(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	id := ctx.Param("id")
 
@@ -213,7 +213,7 @@ func (h *ShopHttp) InfoShop(ctx microservice.IContext) error {
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
 // @Router /shop [get]
-func (h *ShopHttp) SearchShop(ctx microservice.IContext) error {
+func (h ShopHttp) SearchShop(ctx microservice.IContext) error {
 
 	h.ms.Logger.Debug("Search Merchant")
 	// userInfo := ctx.UserInfo()

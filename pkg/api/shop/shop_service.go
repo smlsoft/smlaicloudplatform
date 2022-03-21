@@ -23,14 +23,14 @@ type ShopService struct {
 	shopUserRepo IShopUserRepository
 }
 
-func NewShopService(shopRepo IShopRepository, shopUserRepo IShopUserRepository) IShopService {
-	return &ShopService{
+func NewShopService(shopRepo IShopRepository, shopUserRepo IShopUserRepository) ShopService {
+	return ShopService{
 		shopRepo:     shopRepo,
 		shopUserRepo: shopUserRepo,
 	}
 }
 
-func (svc *ShopService) CreateShop(username string, shop models.Shop) (string, error) {
+func (svc ShopService) CreateShop(username string, shop models.Shop) (string, error) {
 
 	shopID := utils.NewGUID()
 	shop.GuidFixed = shopID
@@ -48,7 +48,7 @@ func (svc *ShopService) CreateShop(username string, shop models.Shop) (string, e
 	return shopID, nil
 }
 
-func (svc *ShopService) UpdateShop(guid string, username string, shop models.Shop) error {
+func (svc ShopService) UpdateShop(guid string, username string, shop models.Shop) error {
 
 	findShop, err := svc.shopRepo.FindByGuid(guid)
 
@@ -73,7 +73,7 @@ func (svc *ShopService) UpdateShop(guid string, username string, shop models.Sho
 	return nil
 }
 
-func (svc *ShopService) DeleteShop(guid string, username string) error {
+func (svc ShopService) DeleteShop(guid string, username string) error {
 
 	err := svc.shopRepo.Delete(guid)
 
@@ -83,7 +83,7 @@ func (svc *ShopService) DeleteShop(guid string, username string) error {
 	return nil
 }
 
-func (svc *ShopService) InfoShop(guid string) (models.ShopInfo, error) {
+func (svc ShopService) InfoShop(guid string) (models.ShopInfo, error) {
 	findShop, err := svc.shopRepo.FindByGuid(guid)
 
 	if err != nil {
@@ -97,7 +97,7 @@ func (svc *ShopService) InfoShop(guid string) (models.ShopInfo, error) {
 	}, nil
 }
 
-func (svc *ShopService) SearchShop(q string, page int, limit int) ([]models.ShopInfo, paginate.PaginationData, error) {
+func (svc ShopService) SearchShop(q string, page int, limit int) ([]models.ShopInfo, paginate.PaginationData, error) {
 	shopList, pagination, err := svc.shopRepo.FindPage(q, page, limit)
 
 	if err != nil {

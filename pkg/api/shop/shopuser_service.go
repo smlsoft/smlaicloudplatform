@@ -17,13 +17,13 @@ type ShopUserService struct {
 	repo IShopUserRepository
 }
 
-func NewShopUserService(shopUserRepo IShopUserRepository) IShopUserService {
-	return &ShopUserService{
+func NewShopUserService(shopUserRepo IShopUserRepository) ShopUserService {
+	return ShopUserService{
 		repo: shopUserRepo,
 	}
 }
 
-func (svc *ShopUserService) ListShopByUser(authUsername string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error) {
+func (svc ShopUserService) ListShopByUser(authUsername string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error) {
 
 	docList, pagination, err := svc.repo.FindByUsernamePage(authUsername, page, limit)
 
@@ -34,7 +34,7 @@ func (svc *ShopUserService) ListShopByUser(authUsername string, page int, limit 
 	return docList, pagination, err
 }
 
-func (svc *ShopUserService) SaveUserPermissionShop(shopID string, authUsername string, username string, role string) error {
+func (svc ShopUserService) SaveUserPermissionShop(shopID string, authUsername string, username string, role string) error {
 
 	authUser, err := svc.repo.FindByShopIDAndUsername(shopID, authUsername)
 
@@ -54,7 +54,7 @@ func (svc *ShopUserService) SaveUserPermissionShop(shopID string, authUsername s
 	return nil
 }
 
-func (svc *ShopUserService) DeleteUserPermissionShop(shopID string, authUsername string, username string, guid string) error {
+func (svc ShopUserService) DeleteUserPermissionShop(shopID string, authUsername string, username string, guid string) error {
 
 	authUser, err := svc.repo.FindByShopIDAndUsername(shopID, authUsername)
 

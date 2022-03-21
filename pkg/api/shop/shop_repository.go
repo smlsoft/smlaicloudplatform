@@ -21,13 +21,13 @@ type ShopRepository struct {
 	pst microservice.IPersisterMongo
 }
 
-func NewShopRepository(pst microservice.IPersisterMongo) IShopRepository {
-	return &ShopRepository{
+func NewShopRepository(pst microservice.IPersisterMongo) ShopRepository {
+	return ShopRepository{
 		pst: pst,
 	}
 }
 
-func (repo *ShopRepository) Create(shop models.Shop) (string, error) {
+func (repo ShopRepository) Create(shop models.Shop) (string, error) {
 	idx, err := repo.pst.Create(&models.Shop{}, shop)
 	if err != nil {
 		return "", err
@@ -35,7 +35,7 @@ func (repo *ShopRepository) Create(shop models.Shop) (string, error) {
 	return idx.Hex(), nil
 }
 
-func (repo *ShopRepository) Update(guid string, shop models.Shop) error {
+func (repo ShopRepository) Update(guid string, shop models.Shop) error {
 	err := repo.pst.UpdateOne(&models.Shop{}, "guidFixed", guid, shop)
 
 	if err != nil {
@@ -45,7 +45,7 @@ func (repo *ShopRepository) Update(guid string, shop models.Shop) error {
 	return nil
 }
 
-func (repo *ShopRepository) FindByGuid(guid string) (models.Shop, error) {
+func (repo ShopRepository) FindByGuid(guid string) (models.Shop, error) {
 	findShop := &models.Shop{}
 	err := repo.pst.FindOne(&models.Shop{}, bson.M{"guidFixed": guid, "deleted": false}, findShop)
 
@@ -55,7 +55,7 @@ func (repo *ShopRepository) FindByGuid(guid string) (models.Shop, error) {
 	return *findShop, err
 }
 
-func (repo *ShopRepository) FindPage(q string, page int, limit int) ([]models.ShopInfo, paginate.PaginationData, error) {
+func (repo ShopRepository) FindPage(q string, page int, limit int) ([]models.ShopInfo, paginate.PaginationData, error) {
 
 	shopList := []models.ShopInfo{}
 
@@ -73,7 +73,7 @@ func (repo *ShopRepository) FindPage(q string, page int, limit int) ([]models.Sh
 	return shopList, pagination, nil
 }
 
-func (repo *ShopRepository) Delete(guid string) error {
+func (repo ShopRepository) Delete(guid string) error {
 	err := repo.pst.SoftDeleteByID(&models.Shop{}, guid)
 	if err != nil {
 		return err

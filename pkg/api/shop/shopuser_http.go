@@ -11,12 +11,12 @@ type ShopMemberHttp struct {
 	svc IShopUserService
 }
 
-func NewShopMemberHttp(ms *microservice.Microservice, cfg microservice.IConfig) IShopMemberHttp {
+func NewShopMemberHttp(ms *microservice.Microservice, cfg microservice.IConfig) ShopMemberHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	repo := NewShopUserRepository(pst)
 	svc := NewShopUserService(repo)
-	return &ShopMemberHttp{
+	return ShopMemberHttp{
 		svc: svc,
 		ms:  ms,
 	}
