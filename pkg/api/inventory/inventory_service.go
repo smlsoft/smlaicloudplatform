@@ -24,14 +24,14 @@ type InventoryService struct {
 	invMqRepo IInventoryMQRepository
 }
 
-func NewInventoryService(inventoryRepo IInventoryRepository, inventoryMqRepo IInventoryMQRepository) IInventoryService {
-	return &InventoryService{
+func NewInventoryService(inventoryRepo IInventoryRepository, inventoryMqRepo IInventoryMQRepository) InventoryService {
+	return InventoryService{
 		invRepo:   inventoryRepo,
 		invMqRepo: inventoryMqRepo,
 	}
 }
 
-func (svc *InventoryService) CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, error) {
+func (svc InventoryService) CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, error) {
 
 	newGuid := utils.NewGUID()
 
@@ -68,7 +68,7 @@ func (svc *InventoryService) CreateInventory(shopID string, authUsername string,
 	return newGuid, nil
 }
 
-func (svc *InventoryService) UpdateInventory(guid string, shopID string, authUsername string, inventory models.Inventory) error {
+func (svc InventoryService) UpdateInventory(guid string, shopID string, authUsername string, inventory models.Inventory) error {
 
 	findDoc, err := svc.invRepo.FindByGuid(guid, shopID)
 
@@ -110,7 +110,7 @@ func (svc *InventoryService) UpdateInventory(guid string, shopID string, authUse
 	return nil
 }
 
-func (svc *InventoryService) DeleteInventory(guid string, shopID string) error {
+func (svc InventoryService) DeleteInventory(guid string, shopID string) error {
 
 	err := svc.invRepo.Delete(guid, shopID)
 
@@ -120,7 +120,7 @@ func (svc *InventoryService) DeleteInventory(guid string, shopID string) error {
 	return nil
 }
 
-func (svc *InventoryService) InfoInventory(guid string, shopID string) (models.Inventory, error) {
+func (svc InventoryService) InfoInventory(guid string, shopID string) (models.Inventory, error) {
 	findDoc, err := svc.invRepo.FindByGuid(guid, shopID)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
@@ -134,7 +134,7 @@ func (svc *InventoryService) InfoInventory(guid string, shopID string) (models.I
 	return findDoc, nil
 }
 
-func (svc *InventoryService) SearchInventory(shopID string, q string, page int, limit int) ([]models.Inventory, paginate.PaginationData, error) {
+func (svc InventoryService) SearchInventory(shopID string, q string, page int, limit int) ([]models.Inventory, paginate.PaginationData, error) {
 	docList, pagination, err := svc.invRepo.FindPage(shopID, q, page, limit)
 
 	if err != nil {

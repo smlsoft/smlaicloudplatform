@@ -21,8 +21,8 @@ type InventoryOptionRepository struct {
 	pst microservice.IPersisterMongo
 }
 
-func NewInventoryOptionRepository(pst microservice.IPersisterMongo) IInventoryOptionRepository {
-	return &InventoryOptionRepository{
+func NewInventoryOptionRepository(pst microservice.IPersisterMongo) InventoryOptionRepository {
+	return InventoryOptionRepository{
 		pst: pst,
 	}
 }

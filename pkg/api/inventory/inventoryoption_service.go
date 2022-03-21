@@ -22,13 +22,13 @@ type InventoryOptionService struct {
 	repo IInventoryOptionRepository
 }
 
-func NewInventoryOptionService(inventoryOptionRepository IInventoryOptionRepository) IInventoryOptionService {
-	return &InventoryOptionService{
+func NewInventoryOptionService(inventoryOptionRepository IInventoryOptionRepository) InventoryOptionService {
+	return InventoryOptionService{
 		repo: inventoryOptionRepository,
 	}
 }
 
-func (svc *InventoryOptionService) CreateInventoryOption(shopID string, authUsername string, invOpt models.InventoryOption) (string, error) {
+func (svc InventoryOptionService) CreateInventoryOption(shopID string, authUsername string, invOpt models.InventoryOption) (string, error) {
 
 	newGuidFixed := utils.NewGUID()
 	invOpt.ShopID = shopID
@@ -46,7 +46,7 @@ func (svc *InventoryOptionService) CreateInventoryOption(shopID string, authUser
 	return newGuidFixed, nil
 }
 
-func (svc *InventoryOptionService) UpdateInventoryOption(guid string, shopID string, authUsername string, invOpt models.InventoryOption) error {
+func (svc InventoryOptionService) UpdateInventoryOption(guid string, shopID string, authUsername string, invOpt models.InventoryOption) error {
 
 	findDoc, err := svc.repo.FindByGuid(guid, shopID)
 
@@ -70,7 +70,7 @@ func (svc *InventoryOptionService) UpdateInventoryOption(guid string, shopID str
 	return nil
 }
 
-func (svc *InventoryOptionService) DeleteInventoryOption(guid string, shopID string) error {
+func (svc InventoryOptionService) DeleteInventoryOption(guid string, shopID string) error {
 
 	err := svc.repo.Delete(guid, shopID)
 
@@ -81,7 +81,7 @@ func (svc *InventoryOptionService) DeleteInventoryOption(guid string, shopID str
 	return nil
 }
 
-func (svc *InventoryOptionService) InfoInventoryOption(guid string, shopID string) (models.InventoryOption, error) {
+func (svc InventoryOptionService) InfoInventoryOption(guid string, shopID string) (models.InventoryOption, error) {
 
 	findDoc, err := svc.repo.FindByGuid(guid, shopID)
 
@@ -96,7 +96,7 @@ func (svc *InventoryOptionService) InfoInventoryOption(guid string, shopID strin
 	return findDoc, nil
 }
 
-func (svc *InventoryOptionService) SearchInventoryOption(shopID string, q string, page int, limit int) ([]models.InventoryOption, paginate.PaginationData, error) {
+func (svc InventoryOptionService) SearchInventoryOption(shopID string, q string, page int, limit int) ([]models.InventoryOption, paginate.PaginationData, error) {
 	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
 
 	if err != nil {

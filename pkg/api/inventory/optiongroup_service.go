@@ -22,13 +22,13 @@ type OptionGroupService struct {
 	repo IOptionGroupRepository
 }
 
-func NewOptionGroupService(optionGroupRepository IOptionGroupRepository) IOptionGroupService {
-	return &OptionGroupService{
+func NewOptionGroupService(optionGroupRepository IOptionGroupRepository) OptionGroupService {
+	return OptionGroupService{
 		repo: optionGroupRepository,
 	}
 }
 
-func (svc *OptionGroupService) CreateOptionGroup(shopID string, authUsername string, doc models.InventoryOptionGroup) (string, error) {
+func (svc OptionGroupService) CreateOptionGroup(shopID string, authUsername string, doc models.InventoryOptionGroup) (string, error) {
 
 	newGuid := utils.NewGUID()
 	doc.ShopID = shopID
@@ -50,7 +50,7 @@ func (svc *OptionGroupService) CreateOptionGroup(shopID string, authUsername str
 	return newGuid, nil
 }
 
-func (svc *OptionGroupService) UpdateOptionGroup(guid string, shopID string, authUsername string, doc models.InventoryOptionGroup) error {
+func (svc OptionGroupService) UpdateOptionGroup(guid string, shopID string, authUsername string, doc models.InventoryOptionGroup) error {
 
 	findDoc, err := svc.repo.FindByGuid(guid, shopID)
 
@@ -79,7 +79,7 @@ func (svc *OptionGroupService) UpdateOptionGroup(guid string, shopID string, aut
 	return nil
 }
 
-func (svc *OptionGroupService) DeleteOptionGroup(guid string, shopID string) error {
+func (svc OptionGroupService) DeleteOptionGroup(guid string, shopID string) error {
 	err := svc.repo.Delete(guid, shopID)
 
 	if err != nil {
@@ -88,7 +88,7 @@ func (svc *OptionGroupService) DeleteOptionGroup(guid string, shopID string) err
 	return nil
 }
 
-func (svc *OptionGroupService) InfoOptionGroup(guid string, shopID string) (models.InventoryOptionGroup, error) {
+func (svc OptionGroupService) InfoOptionGroup(guid string, shopID string) (models.InventoryOptionGroup, error) {
 
 	findDoc, err := svc.repo.FindByGuid(guid, shopID)
 
@@ -104,7 +104,7 @@ func (svc *OptionGroupService) InfoOptionGroup(guid string, shopID string) (mode
 
 }
 
-func (svc *OptionGroupService) SearchOptionGroup(shopID string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error) {
+func (svc OptionGroupService) SearchOptionGroup(shopID string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error) {
 	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
 
 	if err != nil {

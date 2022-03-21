@@ -22,13 +22,13 @@ type OptionGroupRepository struct {
 	pst microservice.IPersisterMongo
 }
 
-func NewOptionGroupRepository(pst microservice.IPersisterMongo) IOptionGroupRepository {
-	return &OptionGroupRepository{
+func NewOptionGroupRepository(pst microservice.IPersisterMongo) OptionGroupRepository {
+	return OptionGroupRepository{
 		pst: pst,
 	}
 }
 
-func (repo *OptionGroupRepository) Count(shopID string) (int, error) {
+func (repo OptionGroupRepository) Count(shopID string) (int, error) {
 
 	count, err := repo.pst.Count(&models.InventoryOptionGroup{}, bson.M{"shopID": shopID})
 
@@ -38,7 +38,7 @@ func (repo *OptionGroupRepository) Count(shopID string) (int, error) {
 	return count, nil
 }
 
-func (repo *OptionGroupRepository) Create(category models.InventoryOptionGroup) (string, error) {
+func (repo OptionGroupRepository) Create(category models.InventoryOptionGroup) (string, error) {
 	idx, err := repo.pst.Create(&models.InventoryOptionGroup{}, category)
 
 	if err != nil {
@@ -48,7 +48,7 @@ func (repo *OptionGroupRepository) Create(category models.InventoryOptionGroup) 
 	return idx.Hex(), nil
 }
 
-func (repo *OptionGroupRepository) Update(guid string, category models.InventoryOptionGroup) error {
+func (repo OptionGroupRepository) Update(guid string, category models.InventoryOptionGroup) error {
 	err := repo.pst.UpdateOne(&models.InventoryOptionGroup{}, "guidFixed", guid, category)
 
 	if err != nil {
@@ -58,7 +58,7 @@ func (repo *OptionGroupRepository) Update(guid string, category models.Inventory
 	return nil
 }
 
-func (repo *OptionGroupRepository) Delete(guid string, shopID string) error {
+func (repo OptionGroupRepository) Delete(guid string, shopID string) error {
 	err := repo.pst.SoftDelete(&models.InventoryOptionGroup{}, bson.M{"guidFixed": guid, "shopID": shopID})
 
 	if err != nil {
@@ -68,7 +68,7 @@ func (repo *OptionGroupRepository) Delete(guid string, shopID string) error {
 	return nil
 }
 
-func (repo *OptionGroupRepository) FindByGuid(guid string, shopID string) (models.InventoryOptionGroup, error) {
+func (repo OptionGroupRepository) FindByGuid(guid string, shopID string) (models.InventoryOptionGroup, error) {
 
 	doc := &models.InventoryOptionGroup{}
 	err := repo.pst.FindOne(&models.InventoryOptionGroup{}, bson.M{"guidFixed": guid, "shopID": shopID, "deleted": false}, doc)
@@ -80,7 +80,7 @@ func (repo *OptionGroupRepository) FindByGuid(guid string, shopID string) (model
 	return *doc, nil
 }
 
-func (repo *OptionGroupRepository) FindPage(shopID string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error) {
+func (repo OptionGroupRepository) FindPage(shopID string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error) {
 
 	docList := []models.InventoryOptionGroup{}
 	pagination, err := repo.pst.FindPage(&models.InventoryOptionGroup{}, limit, page, bson.M{
