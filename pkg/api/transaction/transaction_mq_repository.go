@@ -14,10 +14,10 @@ type TransactionMQRepository struct {
 	mqKey string
 }
 
-func NewTransactionMQRepository(prod microservice.IProducer) ITransactionMQRepository {
+func NewTransactionMQRepository(prod microservice.IProducer) TransactionMQRepository {
 	mqKey := ""
 
-	return &TransactionMQRepository{
+	return TransactionMQRepository{
 		prod:  prod,
 		mqKey: mqKey,
 	}

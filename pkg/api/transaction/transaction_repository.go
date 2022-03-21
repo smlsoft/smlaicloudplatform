@@ -22,13 +22,13 @@ type TransactionRepository struct {
 	pst microservice.IPersisterMongo
 }
 
-func NewTransactionRepository(pst microservice.IPersisterMongo) ITransactionRepository {
-	return &TransactionRepository{
+func NewTransactionRepository(pst microservice.IPersisterMongo) TransactionRepository {
+	return TransactionRepository{
 		pst: pst,
 	}
 }
 
-func (repo *TransactionRepository) Create(trans models.Transaction) (primitive.ObjectID, error) {
+func (repo TransactionRepository) Create(trans models.Transaction) (primitive.ObjectID, error) {
 	idx, err := repo.pst.Create(&models.Transaction{}, trans)
 	if err != nil {
 		return primitive.NilObjectID, err
@@ -37,7 +37,7 @@ func (repo *TransactionRepository) Create(trans models.Transaction) (primitive.O
 	return idx, nil
 }
 
-func (repo *TransactionRepository) Update(guid string, trans models.Transaction) error {
+func (repo TransactionRepository) Update(guid string, trans models.Transaction) error {
 	err := repo.pst.UpdateOne(&models.Transaction{}, "guidFixed", guid, trans)
 	if err != nil {
 		return err
@@ -45,7 +45,7 @@ func (repo *TransactionRepository) Update(guid string, trans models.Transaction)
 	return nil
 }
 
-func (repo *TransactionRepository) Delete(guid string, shopID string) error {
+func (repo TransactionRepository) Delete(guid string, shopID string) error {
 	err := repo.pst.SoftDelete(&models.Transaction{}, bson.M{"guidFixed": guid, "shopID": shopID})
 	if err != nil {
 		return err
@@ -53,7 +53,7 @@ func (repo *TransactionRepository) Delete(guid string, shopID string) error {
 	return nil
 }
 
-func (repo *TransactionRepository) FindByGuid(guid string, shopID string) (models.Transaction, error) {
+func (repo TransactionRepository) FindByGuid(guid string, shopID string) (models.Transaction, error) {
 	trans := &models.Transaction{}
 	err := repo.pst.FindOne(&models.Transaction{}, bson.M{"shopID": shopID, "guidFixed": guid, "deleted": false}, trans)
 	if err != nil {
@@ -62,7 +62,7 @@ func (repo *TransactionRepository) FindByGuid(guid string, shopID string) (model
 	return *trans, nil
 }
 
-func (repo *TransactionRepository) FindPage(shopID string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error) {
+func (repo TransactionRepository) FindPage(shopID string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error) {
 
 	transList := []models.Transaction{}
 	pagination, err := repo.pst.FindPage(&models.Transaction{}, limit, page, bson.M{
@@ -83,7 +83,7 @@ func (repo *TransactionRepository) FindPage(shopID string, q string, page int, l
 	return transList, pagination, nil
 }
 
-func (repo *TransactionRepository) FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error) {
+func (repo TransactionRepository) FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error) {
 
 	transList := []models.Transaction{}
 	pagination, err := repo.pst.FindPage(&models.Transaction{}, limit, page, bson.M{
