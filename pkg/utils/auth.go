@@ -23,7 +23,7 @@ func HasPermissionShopByID(pst microservice.IPersisterMongo, ctx microservice.IC
 		return false, fmt.Errorf("shop not found")
 	}
 
-	shop := &models.Shop{}
+	shop := &models.ShopDoc{}
 	pst.FindOne(&models.Shop{}, bson.M{"guidFixed": shopID, "deleted": false}, shop)
 
 	if len(shop.GuidFixed) < 1 {

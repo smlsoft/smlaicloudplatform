@@ -10,9 +10,9 @@ import (
 )
 
 type IShopRepository interface {
-	Create(shop models.Shop) (string, error)
-	Update(guid string, shop models.Shop) error
-	FindByGuid(guid string) (models.Shop, error)
+	Create(shop models.ShopDoc) (string, error)
+	Update(guid string, shop models.ShopDoc) error
+	FindByGuid(guid string) (models.ShopDoc, error)
 	FindPage(q string, page int, limit int) ([]models.ShopInfo, paginate.PaginationData, error)
 	Delete(guid string) error
 }
@@ -27,16 +27,16 @@ func NewShopRepository(pst microservice.IPersisterMongo) ShopRepository {
 	}
 }
 
-func (repo ShopRepository) Create(shop models.Shop) (string, error) {
-	idx, err := repo.pst.Create(&models.Shop{}, shop)
+func (repo ShopRepository) Create(shop models.ShopDoc) (string, error) {
+	idx, err := repo.pst.Create(&models.ShopDoc{}, shop)
 	if err != nil {
 		return "", err
 	}
 	return idx.Hex(), nil
 }
 
-func (repo ShopRepository) Update(guid string, shop models.Shop) error {
-	err := repo.pst.UpdateOne(&models.Shop{}, "guidFixed", guid, shop)
+func (repo ShopRepository) Update(guid string, shop models.ShopDoc) error {
+	err := repo.pst.UpdateOne(&models.ShopDoc{}, "guidFixed", guid, shop)
 
 	if err != nil {
 		return err
@@ -45,12 +45,12 @@ func (repo ShopRepository) Update(guid string, shop models.Shop) error {
 	return nil
 }
 
-func (repo ShopRepository) FindByGuid(guid string) (models.Shop, error) {
-	findShop := &models.Shop{}
-	err := repo.pst.FindOne(&models.Shop{}, bson.M{"guidFixed": guid, "deleted": false}, findShop)
+func (repo ShopRepository) FindByGuid(guid string) (models.ShopDoc, error) {
+	findShop := &models.ShopDoc{}
+	err := repo.pst.FindOne(&models.ShopDoc{}, bson.M{"guidFixed": guid, "deleted": false}, findShop)
 
 	if err != nil {
-		return models.Shop{}, err
+		return models.ShopDoc{}, err
 	}
 	return *findShop, err
 }
@@ -59,7 +59,7 @@ func (repo ShopRepository) FindPage(q string, page int, limit int) ([]models.Sho
 
 	shopList := []models.ShopInfo{}
 
-	pagination, err := repo.pst.FindPage(&models.Shop{}, limit, page, bson.M{
+	pagination, err := repo.pst.FindPage(&models.ShopDoc{}, limit, page, bson.M{
 		"deleted": false,
 		"name1": bson.M{"$regex": primitive.Regex{
 			Pattern: ".*" + q + ".*",
@@ -74,7 +74,7 @@ func (repo ShopRepository) FindPage(q string, page int, limit int) ([]models.Sho
 }
 
 func (repo ShopRepository) Delete(guid string) error {
-	err := repo.pst.SoftDeleteByID(&models.Shop{}, guid)
+	err := repo.pst.SoftDeleteByID(&models.ShopDoc{}, guid)
 	if err != nil {
 		return err
 	}

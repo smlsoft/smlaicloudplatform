@@ -1,14 +1,20 @@
 package models
 
-import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
-)
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
+type ShopDoc struct {
+	ID primitive.ObjectID `json:"-" bson:"_id,omitempty"`
+	Identity
+	Shop
+	Activity
+}
+
+func (*ShopDoc) CollectionName() string {
+	return "shop"
+}
 
 type Shop struct {
-	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty" default:"-"`
-	GuidFixed string             `json:"-" bson:"guidFixed"`
-	Name1     string             `json:"name1" bson:"name1"`
-	Activity
+	Name1 string `json:"name1" bson:"name1"`
 }
 
 func (*Shop) CollectionName() string {
@@ -16,7 +22,6 @@ func (*Shop) CollectionName() string {
 }
 
 type ShopInfo struct {
-	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	GuidFixed string             `json:"guidFixed" bson:"guidFixed"`
-	Name1     string             `json:"name1" bson:"name1"`
+	GuidFixed string `json:"guidFixed" bson:"guidFixed"`
+	Shop
 }

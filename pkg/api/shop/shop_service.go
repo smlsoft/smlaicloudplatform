@@ -30,14 +30,16 @@ func NewShopService(shopRepo IShopRepository, shopUserRepo IShopUserRepository) 
 	}
 }
 
-func (svc ShopService) CreateShop(username string, shop models.Shop) (string, error) {
+func (svc ShopService) CreateShop(username string, doc models.Shop) (string, error) {
 
+	dataDoc := models.ShopDoc{}
 	shopID := utils.NewGUID()
-	shop.GuidFixed = shopID
-	shop.CreatedBy = username
-	shop.CreatedAt = time.Now()
+	dataDoc.GuidFixed = shopID
+	dataDoc.CreatedBy = username
+	dataDoc.CreatedAt = time.Now()
+	dataDoc.Shop = doc
 
-	_, err := svc.shopRepo.Create(shop)
+	_, err := svc.shopRepo.Create(dataDoc)
 
 	if err != nil {
 		return "", err
@@ -91,9 +93,8 @@ func (svc ShopService) InfoShop(guid string) (models.ShopInfo, error) {
 	}
 
 	return models.ShopInfo{
-		ID:        findShop.ID,
 		GuidFixed: findShop.GuidFixed,
-		Name1:     findShop.Name1,
+		Shop:      findShop.Shop,
 	}, nil
 }
 
