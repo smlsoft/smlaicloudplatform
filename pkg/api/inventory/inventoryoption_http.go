@@ -8,6 +8,15 @@ import (
 	"strconv"
 )
 
+// Create Inventory Option godoc
+// @Description Create Inventory Option
+// @Tags		Inventory
+// @Param		Option  body      models.InventoryOption  true  "Option"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /category [post]
 func (h *InventoryHttp) CreateInventoryOption(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
@@ -35,6 +44,16 @@ func (h *InventoryHttp) CreateInventoryOption(ctx microservice.IContext) error {
 	return nil
 }
 
+// Update Option godoc
+// @Description Update Option
+// @Tags		Inventory
+// @Param		id  path      string  true  "Option ID"
+// @Param		Option  body      models.InventoryOption  true  "Option"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /option/{id} [put]
 func (h *InventoryHttp) UpdateInventoryOption(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -66,6 +85,15 @@ func (h *InventoryHttp) UpdateInventoryOption(ctx microservice.IContext) error {
 	return nil
 }
 
+// Delete Option godoc
+// @Description Delete Option
+// @Tags		Inventory
+// @Param		id  path      string  true  "Option ID"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /option/{id} [delete]
 func (h *InventoryHttp) DeleteInventoryOption(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -87,6 +115,15 @@ func (h *InventoryHttp) DeleteInventoryOption(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Inventory Option Infomation godoc
+// @Description Get Inventory Option
+// @Tags		Inventory
+// @Param		id  path      string  true  "Option Id"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /option/{id} [get]
 func (h *InventoryHttp) InfoInventoryOption(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -107,6 +144,17 @@ func (h *InventoryHttp) InfoInventoryOption(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Inventory Option godoc
+// @Description List Inventory Option
+// @Tags		Inventory
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Add Category"
+// @Param		limit	query	integer		false  "Add Category"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /option [get]
 func (h *InventoryHttp) SearchInventoryOption(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID

@@ -48,6 +48,15 @@ func (h MemberHttp) RouteSetup() {
 	h.ms.DELETE("/member/:id", h.DeleteMember)
 }
 
+// Create Member godoc
+// @Description Create Member
+// @Tags		Member
+// @Param		Member  body      models.Member  true  "Member"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /member [post]
 func (h MemberHttp) CreateMember(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -77,6 +86,16 @@ func (h MemberHttp) CreateMember(ctx microservice.IContext) error {
 	return nil
 }
 
+// Update Member godoc
+// @Description Update Member
+// @Tags		Member
+// @Param		id  path      string  true  "Member ID"
+// @Param		Member  body      models.Member  true  "Member"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /member/{id} [put]
 func (h MemberHttp) UpdateMember(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -106,6 +125,15 @@ func (h MemberHttp) UpdateMember(ctx microservice.IContext) error {
 	return nil
 }
 
+// Delete Member godoc
+// @Description Delete Member
+// @Tags		Member
+// @Param		id  path      string  true  "Member ID"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /member/{id} [delete]
 func (h MemberHttp) DeleteMember(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -126,6 +154,15 @@ func (h MemberHttp) DeleteMember(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Member Infomation godoc
+// @Description Get Member Category
+// @Tags		Member
+// @Param		id  path      string  true  "Member Id"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /member/{id} [get]
 func (h MemberHttp) InfoMember(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
@@ -147,6 +184,17 @@ func (h MemberHttp) InfoMember(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Member godoc
+// @Description List Member Category
+// @Tags		Member
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Size"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /member [get]
 func (h MemberHttp) SearchMember(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()

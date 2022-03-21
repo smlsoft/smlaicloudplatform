@@ -24,6 +24,217 @@ const docTemplate_swagger = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/category": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "List Inventory Category",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Inventory Option",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "description": "Option",
+                        "name": "Option",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.InventoryOption"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/category/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Inventory Category",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Category Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Inventory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Category",
+                        "name": "Category",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Category"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Category",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/inventory": {
             "get": {
                 "security": [
@@ -71,7 +282,7 @@ const docTemplate_swagger = `{
                 ],
                 "parameters": [
                     {
-                        "description": "Add Inventory",
+                        "description": "Inventory",
                         "name": "Inventory",
                         "in": "body",
                         "required": true,
@@ -133,6 +344,89 @@ const docTemplate_swagger = `{
                         }
                     }
                 }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Inventory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Inventory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Inventory",
+                        "name": "Inventory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Inventory"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Inventory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Inventory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
             }
         },
         "/list-shop": {
@@ -179,7 +473,7 @@ const docTemplate_swagger = `{
                 ],
                 "parameters": [
                     {
-                        "description": "Add account",
+                        "description": "User Account",
                         "name": "User",
                         "in": "body",
                         "required": true,
@@ -199,6 +493,217 @@ const docTemplate_swagger = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/member": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "List Member Category",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Member",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member"
+                ],
+                "parameters": [
+                    {
+                        "description": "Member",
+                        "name": "Member",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Member"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/member/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Member Category",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Member Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Member",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Member ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Member",
+                        "name": "Member",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Member"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Member",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Member ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     }
                 }
@@ -237,6 +742,389 @@ const docTemplate_swagger = `{
                 }
             }
         },
+        "/optgroup": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "List Inventory Option Group",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Inventory Option Group",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "description": "Option Group",
+                        "name": "Option",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.InventoryOptionGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/optgroup/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Option Group Information",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "OptionGroup Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Option Group",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Option ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Option Group",
+                        "name": "OptionGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.InventoryOptionGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete OptionGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "OptionGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/option": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "List Inventory Option",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/option/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Inventory Option",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Option Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Option",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Option ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Option",
+                        "name": "Option",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.InventoryOption"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Option",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Option ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "description": "For User Register Application",
@@ -249,7 +1137,7 @@ const docTemplate_swagger = `{
                 "summary": "Register An Account",
                 "parameters": [
                     {
-                        "description": "Add account",
+                        "description": "Register account",
                         "name": "User",
                         "in": "body",
                         "required": true,
@@ -262,7 +1150,7 @@ const docTemplate_swagger = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithId"
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "400": {
@@ -384,7 +1272,7 @@ const docTemplate_swagger = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithId"
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     }
                 }
@@ -425,6 +1313,38 @@ const docTemplate_swagger = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.Category": {
+            "type": "object",
+            "properties": {
+                "guidFixed": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "shopID": {
+                    "type": "string"
                 }
             }
         },
@@ -539,7 +1459,7 @@ const docTemplate_swagger = `{
                     "description": "สินค้าแนะนำ",
                     "type": "boolean"
                 },
-                "shopId": {
+                "shopID": {
                     "description": "รหัสร้าน",
                     "type": "string"
                 },
@@ -562,6 +1482,110 @@ const docTemplate_swagger = `{
                     "type": "string"
                 },
                 "unitName5": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.InventoryOption": {
+            "type": "object",
+            "properties": {
+                "guidFixed": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "inventoryID": {
+                    "type": "string"
+                },
+                "optionGroupID": {
+                    "type": "string"
+                },
+                "shopID": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.InventoryOptionGroup": {
+            "type": "object",
+            "properties": {
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InventoryOptonGroupDetail"
+                    }
+                },
+                "guidFixed": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "optionName1": {
+                    "type": "string"
+                },
+                "productSelectOptionMax": {
+                    "type": "integer"
+                },
+                "productSelectOptionMin": {
+                    "type": "integer"
+                },
+                "productSelectoPtion1": {
+                    "type": "boolean"
+                },
+                "productSelectoPtion2": {
+                    "type": "boolean"
+                },
+                "shopID": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.InventoryOptonGroupDetail": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "detailName1": {
+                    "type": "string"
+                },
+                "guidFixed": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Member": {
+            "type": "object",
+            "properties": {
+                "TaxID": {
+                    "type": "string"
+                },
+                "address": {
+                    "type": "string"
+                },
+                "branchCode": {
+                    "type": "string"
+                },
+                "branchType": {
+                    "type": "integer"
+                },
+                "contactType": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "personalType": {
+                    "type": "integer"
+                },
+                "surname": {
+                    "type": "string"
+                },
+                "telephone": {
+                    "type": "string"
+                },
+                "zipCode": {
                     "type": "string"
                 }
             }
@@ -604,7 +1628,7 @@ const docTemplate_swagger = `{
                 }
             }
         },
-        "models.ResponseSuccessWithId": {
+        "models.ResponseSuccessWithID": {
             "type": "object",
             "properties": {
                 "id": {},
@@ -642,7 +1666,7 @@ const docTemplate_swagger = `{
         "models.ShopSelectRequest": {
             "type": "object",
             "properties": {
-                "shopId": {
+                "shopID": {
                     "type": "string"
                 }
             }
@@ -656,22 +1680,28 @@ const docTemplate_swagger = `{
                 "role": {
                     "type": "string"
                 },
-                "shopId": {
+                "shopID": {
                     "type": "string"
                 }
             }
         },
         "models.UserRequest": {
             "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
             "properties": {
                 "name": {
                     "type": "string"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 6
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 3
                 }
             }
         }
@@ -688,7 +1718,7 @@ const docTemplate_swagger = `{
 // SwaggerInfo_swagger holds exported Swagger Info so clients can modify it
 var SwaggerInfo_swagger = &swag.Spec{
 	Version:          "1.0",
-	Host:             "",
+	Host:             "localhost:8080",
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "SML Cloud Platform API",
