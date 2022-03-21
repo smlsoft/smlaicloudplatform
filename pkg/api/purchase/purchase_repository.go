@@ -22,13 +22,13 @@ type PurchaseRepository struct {
 	pst microservice.IPersisterMongo
 }
 
-func NewPurchaseRepository(pst microservice.IPersisterMongo) IPurchaseRepository {
-	return &PurchaseRepository{
+func NewPurchaseRepository(pst microservice.IPersisterMongo) PurchaseRepository {
+	return PurchaseRepository{
 		pst: pst,
 	}
 }
 
-func (repo *PurchaseRepository) Create(doc models.Purchase) (primitive.ObjectID, error) {
+func (repo PurchaseRepository) Create(doc models.Purchase) (primitive.ObjectID, error) {
 	idx, err := repo.pst.Create(&models.Purchase{}, doc)
 	if err != nil {
 		return primitive.NilObjectID, err
@@ -37,7 +37,7 @@ func (repo *PurchaseRepository) Create(doc models.Purchase) (primitive.ObjectID,
 	return idx, nil
 }
 
-func (repo *PurchaseRepository) Update(guid string, doc models.Purchase) error {
+func (repo PurchaseRepository) Update(guid string, doc models.Purchase) error {
 	err := repo.pst.UpdateOne(&models.Purchase{}, "guidFixed", guid, doc)
 	if err != nil {
 		return err
@@ -45,7 +45,7 @@ func (repo *PurchaseRepository) Update(guid string, doc models.Purchase) error {
 	return nil
 }
 
-func (repo *PurchaseRepository) Delete(guid string, shopID string) error {
+func (repo PurchaseRepository) Delete(guid string, shopID string) error {
 	err := repo.pst.SoftDelete(&models.Purchase{}, bson.M{"guidFixed": guid, "shopID": shopID})
 	if err != nil {
 		return err
@@ -53,7 +53,7 @@ func (repo *PurchaseRepository) Delete(guid string, shopID string) error {
 	return nil
 }
 
-func (repo *PurchaseRepository) FindByGuid(guid string, shopID string) (models.Purchase, error) {
+func (repo PurchaseRepository) FindByGuid(guid string, shopID string) (models.Purchase, error) {
 	doc := &models.Purchase{}
 	err := repo.pst.FindOne(&models.Purchase{}, bson.M{"shopID": shopID, "guidFixed": guid, "deleted": false}, doc)
 	if err != nil {
@@ -62,7 +62,7 @@ func (repo *PurchaseRepository) FindByGuid(guid string, shopID string) (models.P
 	return *doc, nil
 }
 
-func (repo *PurchaseRepository) FindPage(shopID string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error) {
+func (repo PurchaseRepository) FindPage(shopID string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error) {
 
 	docList := []models.Purchase{}
 	pagination, err := repo.pst.FindPage(&models.Purchase{}, limit, page, bson.M{
@@ -83,7 +83,7 @@ func (repo *PurchaseRepository) FindPage(shopID string, q string, page int, limi
 	return docList, pagination, nil
 }
 
-func (repo *PurchaseRepository) FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error) {
+func (repo PurchaseRepository) FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.Purchase, paginate.PaginationData, error) {
 
 	docList := []models.Purchase{}
 	pagination, err := repo.pst.FindPage(&models.Purchase{}, limit, page, bson.M{

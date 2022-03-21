@@ -24,7 +24,7 @@ type PurchaseHttp struct {
 	service IPurchaseService
 }
 
-func NewPurchaseHttp(ms *microservice.Microservice, cfg microservice.IConfig) IPurchaseHttp {
+func NewPurchaseHttp(ms *microservice.Microservice, cfg microservice.IConfig) PurchaseHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
@@ -33,14 +33,14 @@ func NewPurchaseHttp(ms *microservice.Microservice, cfg microservice.IConfig) IP
 	purchaseMQRepo := NewPurchaseMQRepository(prod)
 
 	service := NewPurchaseService(purchaseRepo, purchaseMQRepo)
-	return &PurchaseHttp{
+	return PurchaseHttp{
 		ms:      ms,
 		cfg:     cfg,
 		service: service,
 	}
 }
 
-func (h *PurchaseHttp) RouteSetup() {
+func (h PurchaseHttp) RouteSetup() {
 
 	h.ms.GET("/purchase/:id", h.InfoPurchase)
 	h.ms.GET("/purchase", h.SearchPurchase)
@@ -51,7 +51,7 @@ func (h *PurchaseHttp) RouteSetup() {
 	h.ms.DELETE("/purchase/:id", h.DeletePurchase)
 }
 
-func (h *PurchaseHttp) CreatePurchase(ctx microservice.IContext) error {
+func (h PurchaseHttp) CreatePurchase(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -80,7 +80,7 @@ func (h *PurchaseHttp) CreatePurchase(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *PurchaseHttp) UpdatePurchase(ctx microservice.IContext) error {
+func (h PurchaseHttp) UpdatePurchase(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -109,7 +109,7 @@ func (h *PurchaseHttp) UpdatePurchase(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *PurchaseHttp) DeletePurchase(ctx microservice.IContext) error {
+func (h PurchaseHttp) DeletePurchase(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -129,7 +129,7 @@ func (h *PurchaseHttp) DeletePurchase(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *PurchaseHttp) InfoPurchase(ctx microservice.IContext) error {
+func (h PurchaseHttp) InfoPurchase(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -150,7 +150,7 @@ func (h *PurchaseHttp) InfoPurchase(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *PurchaseHttp) SearchPurchase(ctx microservice.IContext) error {
+func (h PurchaseHttp) SearchPurchase(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -185,7 +185,7 @@ func (h *PurchaseHttp) SearchPurchase(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *PurchaseHttp) SearchPurchaseItems(ctx microservice.IContext) error {
+func (h PurchaseHttp) SearchPurchaseItems(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
