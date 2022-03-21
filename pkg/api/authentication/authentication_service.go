@@ -30,7 +30,7 @@ type AuthenticationService struct {
 	shopUserRepo shop.IShopUserRepository
 }
 
-func NewAuthenticationService(authRepo IAuthenticationRepository, shopUserRepo shop.IShopUserRepository, authService *microservice.AuthService) IAuthenticationService {
+func NewAuthenticationService(authRepo IAuthenticationRepository, shopUserRepo shop.IShopUserRepository, authService *microservice.AuthService) AuthenticationService {
 	return AuthenticationService{
 		authRepo:     authRepo,
 		authService:  authService,

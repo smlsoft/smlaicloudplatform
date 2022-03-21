@@ -18,13 +18,13 @@ type AuthenticationRepository struct {
 	pst microservice.IPersisterMongo
 }
 
-func NewAuthenticationRepository(pst microservice.IPersisterMongo) *AuthenticationRepository {
-	return &AuthenticationRepository{
+func NewAuthenticationRepository(pst microservice.IPersisterMongo) AuthenticationRepository {
+	return AuthenticationRepository{
 		pst: pst,
 	}
 }
 
-func (r *AuthenticationRepository) FindUser(username string) (*models.User, error) {
+func (r AuthenticationRepository) FindUser(username string) (*models.User, error) {
 
 	findUser := &models.User{}
 	err := r.pst.FindOne(&models.User{}, bson.M{"username": username}, findUser)
@@ -36,7 +36,7 @@ func (r *AuthenticationRepository) FindUser(username string) (*models.User, erro
 	return findUser, nil
 }
 
-func (r *AuthenticationRepository) CreateUser(user models.User) (primitive.ObjectID, error) {
+func (r AuthenticationRepository) CreateUser(user models.User) (primitive.ObjectID, error) {
 
 	idx, err := r.pst.Create(&models.User{}, user)
 
@@ -46,7 +46,7 @@ func (r *AuthenticationRepository) CreateUser(user models.User) (primitive.Objec
 	return idx, nil
 }
 
-func (r *AuthenticationRepository) UpdateUser(username string, user models.User) error {
+func (r AuthenticationRepository) UpdateUser(username string, user models.User) error {
 
 	err := r.pst.UpdateOne(&models.User{}, "username", username, user)
 
