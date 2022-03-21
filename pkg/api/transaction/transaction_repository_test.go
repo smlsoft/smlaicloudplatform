@@ -16,11 +16,11 @@ func TestCreateTransaction(t *testing.T) {
 	repo := transaction.NewTransactionRepository(mongoPersister)
 
 	give := models.Transaction{
-		ShopId:    "mx01",
+		ShopID:    "mx01",
 		GuidFixed: "fx01",
 		Items: []models.TransactionDetail{
 			{
-				InventoryId:  "inv01",
+				InventoryID:  "inv01",
 				ItemSku:      "sku01",
 				CategoryGuid: "xxx",
 			},
@@ -49,11 +49,11 @@ func TestUpdateTransaction(t *testing.T) {
 	repo := transaction.NewTransactionRepository(mongoPersister)
 
 	trans := models.Transaction{
-		ShopId:    "mx01",
+		ShopID:    "mx01",
 		GuidFixed: "fx02",
 		Items: []models.TransactionDetail{
 			{
-				InventoryId:  "inv01",
+				InventoryID:  "inv01",
 				ItemSku:      "sku01",
 				CategoryGuid: "xxx",
 			},
@@ -61,16 +61,16 @@ func TestUpdateTransaction(t *testing.T) {
 	}
 
 	give := models.Transaction{
-		ShopId:    "mx01",
+		ShopID:    "mx01",
 		GuidFixed: "fx02",
 		Items: []models.TransactionDetail{
 			{
-				InventoryId:  "inv01",
+				InventoryID:  "inv01",
 				ItemSku:      "sku01",
 				CategoryGuid: "xxx",
 			},
 			{
-				InventoryId:  "inv02",
+				InventoryID:  "inv02",
 				ItemSku:      "sku02",
 				CategoryGuid: "xxx2",
 			},
@@ -98,7 +98,7 @@ func TestUpdateTransaction(t *testing.T) {
 		return
 	}
 
-	transFind, err := repo.FindByGuid(give.GuidFixed, give.ShopId)
+	transFind, err := repo.FindByGuid(give.GuidFixed, give.ShopID)
 
 	if err != nil {
 		t.Error(err)
@@ -117,11 +117,11 @@ func TestDeleteTransaction(t *testing.T) {
 	repo := transaction.NewTransactionRepository(mongoPersister)
 
 	give := models.Transaction{
-		ShopId:    "mx01",
+		ShopID:    "mx01",
 		GuidFixed: "fx03",
 		Items: []models.TransactionDetail{
 			{
-				InventoryId:  "inv01",
+				InventoryID:  "inv01",
 				ItemSku:      "sku01",
 				CategoryGuid: "xxx",
 			},
@@ -142,14 +142,14 @@ func TestDeleteTransaction(t *testing.T) {
 		return
 	}
 
-	err = repo.Delete(give.GuidFixed, give.ShopId)
+	err = repo.Delete(give.GuidFixed, give.ShopID)
 
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	transFind, err := repo.FindByGuid(give.GuidFixed, give.ShopId)
+	transFind, err := repo.FindByGuid(give.GuidFixed, give.ShopID)
 
 	if err != nil {
 		t.Error(err)
@@ -167,11 +167,11 @@ func TestFindTransaction(t *testing.T) {
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := transaction.NewTransactionRepository(mongoPersister)
 
-	shopId := "mx01"
+	shopID := "mx01"
 	give := "fx01"
 
 	want := "fx01"
-	trans, err := repo.FindByGuid(give, shopId)
+	trans, err := repo.FindByGuid(give, shopID)
 
 	if err != nil {
 		t.Error(err)
@@ -189,11 +189,11 @@ func TestFindPageTransaction(t *testing.T) {
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := transaction.NewTransactionRepository(mongoPersister)
 
-	shopId := "mx01"
+	shopID := "mx01"
 	// give := "fx01"
 
 	want := 1
-	trans, _, err := repo.FindPage(shopId, "", 1, 20)
+	trans, _, err := repo.FindPage(shopID, "", 1, 20)
 
 	if err != nil {
 		t.Error(err)

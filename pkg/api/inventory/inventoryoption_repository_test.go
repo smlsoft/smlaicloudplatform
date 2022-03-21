@@ -15,9 +15,9 @@ func TestCreateInventoryOption(t *testing.T) {
 
 	give := models.InventoryOption{
 		GuidFixed:     "fx01",
-		ShopId:        "mx01",
-		InventoryId:   "inv01",
-		OptionGroupId: "opts01",
+		ShopID:        "mx01",
+		InventoryID:   "inv01",
+		OptionGroupID: "opts01",
 	}
 
 	_, err := repo.Create(give)

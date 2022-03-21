@@ -11,11 +11,11 @@ import (
 )
 
 type ICategoryService interface {
-	CreateCategory(shopId string, authUsername string, category models.Category) (string, error)
-	UpdateCategory(guid string, shopId string, authUsername string, category models.Category) error
-	DeleteCategory(guid string, shopId string) error
-	InfoCategory(guid string, shopId string) (models.Category, error)
-	SearchCategory(shopId string, q string, page int, limit int) ([]models.Category, paginate.PaginationData, error)
+	CreateCategory(shopID string, authUsername string, category models.Category) (string, error)
+	UpdateCategory(guid string, shopID string, authUsername string, category models.Category) error
+	DeleteCategory(guid string, shopID string) error
+	InfoCategory(guid string, shopID string) (models.Category, error)
+	SearchCategory(shopID string, q string, page int, limit int) ([]models.Category, paginate.PaginationData, error)
 }
 
 type CategoryService struct {
@@ -28,10 +28,10 @@ func NewCategoryService(categoryRepository ICategoryRepository) ICategoryService
 	}
 }
 
-func (svc *CategoryService) CreateCategory(shopId string, authUsername string, category models.Category) (string, error) {
+func (svc *CategoryService) CreateCategory(shopID string, authUsername string, category models.Category) (string, error) {
 
 	newGuidFixed := utils.NewGUID()
-	category.ShopId = shopId
+	category.ShopID = shopID
 	category.GuidFixed = newGuidFixed
 	category.CreatedBy = authUsername
 	category.CreatedAt = time.Now()
@@ -45,15 +45,15 @@ func (svc *CategoryService) CreateCategory(shopId string, authUsername string, c
 	return newGuidFixed, nil
 }
 
-func (svc *CategoryService) UpdateCategory(guid string, shopId string, authUsername string, category models.Category) error {
+func (svc *CategoryService) UpdateCategory(guid string, shopID string, authUsername string, category models.Category) error {
 
-	findDoc, err := svc.repo.FindByGuid(guid, shopId)
+	findDoc, err := svc.repo.FindByGuid(guid, shopID)
 
 	if err != nil {
 		return err
 	}
 
-	if findDoc.Id == primitive.NilObjectID {
+	if findDoc.ID == primitive.NilObjectID {
 		return errors.New("document not found")
 	}
 
@@ -74,8 +74,8 @@ func (svc *CategoryService) UpdateCategory(guid string, shopId string, authUsern
 	return nil
 }
 
-func (svc *CategoryService) DeleteCategory(guid string, shopId string) error {
-	err := svc.repo.Delete(guid, shopId)
+func (svc *CategoryService) DeleteCategory(guid string, shopID string) error {
+	err := svc.repo.Delete(guid, shopID)
 
 	if err != nil {
 		return err
@@ -83,15 +83,15 @@ func (svc *CategoryService) DeleteCategory(guid string, shopId string) error {
 	return nil
 }
 
-func (svc *CategoryService) InfoCategory(guid string, shopId string) (models.Category, error) {
+func (svc *CategoryService) InfoCategory(guid string, shopID string) (models.Category, error) {
 
-	findDoc, err := svc.repo.FindByGuid(guid, shopId)
+	findDoc, err := svc.repo.FindByGuid(guid, shopID)
 
 	if err != nil {
 		return models.Category{}, err
 	}
 
-	if findDoc.Id == primitive.NilObjectID {
+	if findDoc.ID == primitive.NilObjectID {
 		return models.Category{}, errors.New("document not found")
 	}
 
@@ -99,8 +99,8 @@ func (svc *CategoryService) InfoCategory(guid string, shopId string) (models.Cat
 
 }
 
-func (svc *CategoryService) SearchCategory(shopId string, q string, page int, limit int) ([]models.Category, paginate.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindPage(shopId, q, page, limit)
+func (svc *CategoryService) SearchCategory(shopID string, q string, page int, limit int) ([]models.Category, paginate.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
 
 	if err != nil {
 		return []models.Category{}, pagination, err

@@ -104,7 +104,7 @@ func (h *AuthenticationHttp) Login(ctx microservice.IContext) error {
 // @Description	For User Register Application
 // @Tags		Authentication
 // @Param		User  body      models.UserRequest  true  "Add account"
-// @Success		200	{object}	models.ResponseSuccessWithId
+// @Success		200	{object}	models.ResponseSuccessWithID
 // @Failure		400 {object}	models.AuthResponseFailed
 // @Accept 		json
 // @Router		/register [post]
@@ -132,7 +132,7 @@ func (h *AuthenticationHttp) Register(ctx microservice.IContext) error {
 
 	ctx.Response(http.StatusCreated, models.ApiResponse{
 		Success: true,
-		Id:      idx,
+		ID:      idx,
 	})
 
 	return nil
@@ -253,7 +253,7 @@ func (h *AuthenticationHttp) ListShop(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.authenticationService.AccessShop(authorizationHeader, shopSelectReq.ShopId, authUsername)
+	err = h.authenticationService.AccessShop(authorizationHeader, shopSelectReq.ShopID, authUsername)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, models.ApiResponse{
@@ -296,7 +296,7 @@ func (h *AuthenticationHttp) SelectShop(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.authenticationService.AccessShop(authorizationHeader, shopSelectReq.ShopId, authUsername)
+	err = h.authenticationService.AccessShop(authorizationHeader, shopSelectReq.ShopID, authUsername)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, models.ApiResponse{

@@ -11,11 +11,11 @@ import (
 )
 
 type IOptionGroupService interface {
-	CreateOptionGroup(shopId string, authUsername string, doc models.InventoryOptionGroup) (string, error)
-	UpdateOptionGroup(guid string, shopId string, authUsername string, doc models.InventoryOptionGroup) error
-	DeleteOptionGroup(guid string, shopId string) error
-	InfoOptionGroup(guid string, shopId string) (models.InventoryOptionGroup, error)
-	SearchOptionGroup(shopId string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error)
+	CreateOptionGroup(shopID string, authUsername string, doc models.InventoryOptionGroup) (string, error)
+	UpdateOptionGroup(guid string, shopID string, authUsername string, doc models.InventoryOptionGroup) error
+	DeleteOptionGroup(guid string, shopID string) error
+	InfoOptionGroup(guid string, shopID string) (models.InventoryOptionGroup, error)
+	SearchOptionGroup(shopID string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error)
 }
 
 type OptionGroupService struct {
@@ -28,10 +28,10 @@ func NewOptionGroupService(optionGroupRepository IOptionGroupRepository) IOption
 	}
 }
 
-func (svc *OptionGroupService) CreateOptionGroup(shopId string, authUsername string, doc models.InventoryOptionGroup) (string, error) {
+func (svc *OptionGroupService) CreateOptionGroup(shopID string, authUsername string, doc models.InventoryOptionGroup) (string, error) {
 
 	newGuid := utils.NewGUID()
-	doc.ShopId = shopId
+	doc.ShopID = shopID
 	doc.GuidFixed = newGuid
 	doc.CreatedBy = authUsername
 	doc.CreatedAt = time.Now()
@@ -50,15 +50,15 @@ func (svc *OptionGroupService) CreateOptionGroup(shopId string, authUsername str
 	return newGuid, nil
 }
 
-func (svc *OptionGroupService) UpdateOptionGroup(guid string, shopId string, authUsername string, doc models.InventoryOptionGroup) error {
+func (svc *OptionGroupService) UpdateOptionGroup(guid string, shopID string, authUsername string, doc models.InventoryOptionGroup) error {
 
-	findDoc, err := svc.repo.FindByGuid(guid, shopId)
+	findDoc, err := svc.repo.FindByGuid(guid, shopID)
 
 	if err != nil {
 		return err
 	}
 
-	if findDoc.Id == primitive.NewObjectID() {
+	if findDoc.ID == primitive.NewObjectID() {
 		return errors.New("document not found")
 	}
 
@@ -79,8 +79,8 @@ func (svc *OptionGroupService) UpdateOptionGroup(guid string, shopId string, aut
 	return nil
 }
 
-func (svc *OptionGroupService) DeleteOptionGroup(guid string, shopId string) error {
-	err := svc.repo.Delete(guid, shopId)
+func (svc *OptionGroupService) DeleteOptionGroup(guid string, shopID string) error {
+	err := svc.repo.Delete(guid, shopID)
 
 	if err != nil {
 		return err
@@ -88,15 +88,15 @@ func (svc *OptionGroupService) DeleteOptionGroup(guid string, shopId string) err
 	return nil
 }
 
-func (svc *OptionGroupService) InfoOptionGroup(guid string, shopId string) (models.InventoryOptionGroup, error) {
+func (svc *OptionGroupService) InfoOptionGroup(guid string, shopID string) (models.InventoryOptionGroup, error) {
 
-	findDoc, err := svc.repo.FindByGuid(guid, shopId)
+	findDoc, err := svc.repo.FindByGuid(guid, shopID)
 
 	if err != nil {
 		return models.InventoryOptionGroup{}, err
 	}
 
-	if findDoc.Id == primitive.NilObjectID {
+	if findDoc.ID == primitive.NilObjectID {
 		return models.InventoryOptionGroup{}, errors.New("document not found")
 	}
 
@@ -104,8 +104,8 @@ func (svc *OptionGroupService) InfoOptionGroup(guid string, shopId string) (mode
 
 }
 
-func (svc *OptionGroupService) SearchOptionGroup(shopId string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindPage(shopId, q, page, limit)
+func (svc *OptionGroupService) SearchOptionGroup(shopID string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
 
 	if err != nil {
 		return []models.InventoryOptionGroup{}, pagination, err

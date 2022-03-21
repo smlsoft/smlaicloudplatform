@@ -50,7 +50,7 @@ func TestShopMemberFindRole(t *testing.T) {
 func TestShopMemberFindByShop(t *testing.T) {
 	setup()
 
-	members, err := shopUserRepo.FindByShopId("mx1")
+	members, err := shopUserRepo.FindByShopID("mx1")
 
 	if err != nil {
 		t.Error(err)

@@ -12,11 +12,11 @@ import (
 )
 
 type IInventoryService interface {
-	CreateInventory(shopId string, authUsername string, inventory models.Inventory) (string, error)
-	UpdateInventory(guid string, shopId string, authUsername string, inventory models.Inventory) error
-	DeleteInventory(guid string, shopId string) error
-	InfoInventory(guid string, shopId string) (models.Inventory, error)
-	SearchInventory(shopId string, q string, page int, limit int) ([]models.Inventory, paginate.PaginationData, error)
+	CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, error)
+	UpdateInventory(guid string, shopID string, authUsername string, inventory models.Inventory) error
+	DeleteInventory(guid string, shopID string) error
+	InfoInventory(guid string, shopID string) (models.Inventory, error)
+	SearchInventory(shopID string, q string, page int, limit int) ([]models.Inventory, paginate.PaginationData, error)
 }
 
 type InventoryService struct {
@@ -31,12 +31,12 @@ func NewInventoryService(inventoryRepo IInventoryRepository, inventoryMqRepo IIn
 	}
 }
 
-func (svc *InventoryService) CreateInventory(shopId string, authUsername string, inventory models.Inventory) (string, error) {
+func (svc *InventoryService) CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, error) {
 
 	newGuid := utils.NewGUID()
 
 	inventory.GuidFixed = newGuid
-	inventory.ShopId = shopId
+	inventory.ShopID = shopID
 	inventory.Deleted = false
 	inventory.CreatedBy = authUsername
 	inventory.CreatedAt = time.Now()
@@ -68,15 +68,15 @@ func (svc *InventoryService) CreateInventory(shopId string, authUsername string,
 	return newGuid, nil
 }
 
-func (svc *InventoryService) UpdateInventory(guid string, shopId string, authUsername string, inventory models.Inventory) error {
+func (svc *InventoryService) UpdateInventory(guid string, shopID string, authUsername string, inventory models.Inventory) error {
 
-	findDoc, err := svc.invRepo.FindByGuid(guid, shopId)
+	findDoc, err := svc.invRepo.FindByGuid(guid, shopID)
 
 	if err != nil {
 		return err
 	}
 
-	if findDoc.Id == primitive.NilObjectID {
+	if findDoc.ID == primitive.NilObjectID {
 		return errors.New("document not found")
 	}
 
@@ -110,9 +110,9 @@ func (svc *InventoryService) UpdateInventory(guid string, shopId string, authUse
 	return nil
 }
 
-func (svc *InventoryService) DeleteInventory(guid string, shopId string) error {
+func (svc *InventoryService) DeleteInventory(guid string, shopID string) error {
 
-	err := svc.invRepo.Delete(guid, shopId)
+	err := svc.invRepo.Delete(guid, shopID)
 
 	if err != nil {
 		return err
@@ -120,22 +120,22 @@ func (svc *InventoryService) DeleteInventory(guid string, shopId string) error {
 	return nil
 }
 
-func (svc *InventoryService) InfoInventory(guid string, shopId string) (models.Inventory, error) {
-	findDoc, err := svc.invRepo.FindByGuid(guid, shopId)
+func (svc *InventoryService) InfoInventory(guid string, shopID string) (models.Inventory, error) {
+	findDoc, err := svc.invRepo.FindByGuid(guid, shopID)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return models.Inventory{}, err
 	}
 
-	if findDoc.Id == primitive.NilObjectID {
+	if findDoc.ID == primitive.NilObjectID {
 		return models.Inventory{}, errors.New("document not found")
 	}
 
 	return findDoc, nil
 }
 
-func (svc *InventoryService) SearchInventory(shopId string, q string, page int, limit int) ([]models.Inventory, paginate.PaginationData, error) {
-	docList, pagination, err := svc.invRepo.FindPage(shopId, q, page, limit)
+func (svc *InventoryService) SearchInventory(shopID string, q string, page int, limit int) ([]models.Inventory, paginate.PaginationData, error) {
+	docList, pagination, err := svc.invRepo.FindPage(shopID, q, page, limit)
 
 	if err != nil {
 		return []models.Inventory{}, pagination, err

@@ -19,7 +19,7 @@ func StartStockAdjustmentAsync(ms *microservice.Microservice, cfg microservice.I
 	err := ms.AsyncPOST("/stockadjustment/async", cfg.CacherConfig(), cfg.MQConfig(), func(ctx microservice.IContext) error {
 		userInfo := ctx.UserInfo()
 		authUsername := userInfo.Username
-		shopId := userInfo.ShopId
+		shopID := userInfo.ShopID
 		input := ctx.ReadInput()
 
 		stockadjustment := &models.StockAdjustment{}
@@ -31,7 +31,7 @@ func StartStockAdjustmentAsync(ms *microservice.Microservice, cfg microservice.I
 			return err
 		}
 
-		idx, err := service.CreateStockAdjustment(shopId, authUsername, stockadjustment)
+		idx, err := service.CreateStockAdjustment(shopID, authUsername, stockadjustment)
 
 		if err != nil {
 			ctx.ResponseError(400, err.Error())

@@ -30,7 +30,7 @@ func StartStockAdjustmentComsume(ms *microservice.Microservice, cfg microservice
 			ms.Log(moduleName, err.Error())
 		}
 
-		err = elkPst.CreateWithId(doc.GuidFixed, &doc)
+		err = elkPst.CreateWithID(doc.GuidFixed, &doc)
 
 		if err != nil {
 			ms.Log(moduleName, err.Error())

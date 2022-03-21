@@ -54,7 +54,7 @@ func (h *StockAdjustmentHttp) RouteSetup() {
 func (h *StockAdjustmentHttp) CreateStockAdjustment(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	input := ctx.ReadInput()
 
@@ -66,7 +66,7 @@ func (h *StockAdjustmentHttp) CreateStockAdjustment(ctx microservice.IContext) e
 		return err
 	}
 
-	idx, err := h.service.CreateStockAdjustment(shopId, authUsername, doc)
+	idx, err := h.service.CreateStockAdjustment(shopID, authUsername, doc)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -74,7 +74,7 @@ func (h *StockAdjustmentHttp) CreateStockAdjustment(ctx microservice.IContext) e
 
 	ctx.Response(http.StatusCreated, models.ApiResponse{
 		Success: true,
-		Id:      idx,
+		ID:      idx,
 	})
 
 	return nil
@@ -83,7 +83,7 @@ func (h *StockAdjustmentHttp) CreateStockAdjustment(ctx microservice.IContext) e
 func (h *StockAdjustmentHttp) UpdateStockAdjustment(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
@@ -96,7 +96,7 @@ func (h *StockAdjustmentHttp) UpdateStockAdjustment(ctx microservice.IContext) e
 		return err
 	}
 
-	err = h.service.UpdateStockAdjustment(id, shopId, authUsername, *docReq)
+	err = h.service.UpdateStockAdjustment(id, shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -112,11 +112,11 @@ func (h *StockAdjustmentHttp) UpdateStockAdjustment(ctx microservice.IContext) e
 func (h *StockAdjustmentHttp) DeleteStockAdjustment(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	err := h.service.DeleteStockAdjustment(id, shopId, authUsername)
+	err := h.service.DeleteStockAdjustment(id, shopID, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -132,11 +132,11 @@ func (h *StockAdjustmentHttp) DeleteStockAdjustment(ctx microservice.IContext) e
 func (h *StockAdjustmentHttp) InfoStockAdjustment(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	doc, err := h.service.InfoStockAdjustment(id, shopId)
+	doc, err := h.service.InfoStockAdjustment(id, shopID)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		ctx.ResponseError(400, err.Error())
@@ -153,7 +153,7 @@ func (h *StockAdjustmentHttp) InfoStockAdjustment(ctx microservice.IContext) err
 func (h *StockAdjustmentHttp) SearchStockAdjustment(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	q := ctx.QueryParam("q")
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
@@ -167,7 +167,7 @@ func (h *StockAdjustmentHttp) SearchStockAdjustment(ctx microservice.IContext) e
 		limit = 20
 	}
 
-	docList, pagination, err := h.service.SearchStockAdjustment(shopId, q, page, limit)
+	docList, pagination, err := h.service.SearchStockAdjustment(shopID, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -188,9 +188,9 @@ func (h *StockAdjustmentHttp) SearchStockAdjustment(ctx microservice.IContext) e
 func (h *StockAdjustmentHttp) SearchStockAdjustmentItems(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
-	docId := ctx.Param("id")
+	docID := ctx.Param("id")
 
 	q := ctx.QueryParam("q")
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
@@ -204,7 +204,7 @@ func (h *StockAdjustmentHttp) SearchStockAdjustmentItems(ctx microservice.IConte
 		limit = 20
 	}
 
-	docList, pagination, err := h.service.SearchItemsStockAdjustment(docId, shopId, q, page, limit)
+	docList, pagination, err := h.service.SearchItemsStockAdjustment(docID, shopID, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

@@ -12,10 +12,10 @@ import (
 type IStockInOutRepository interface {
 	Create(doc models.StockInOut) (primitive.ObjectID, error)
 	Update(guid string, doc models.StockInOut) error
-	Delete(guid string, shopId string) error
-	FindByGuid(guid string, shopId string) (models.StockInOut, error)
-	FindPage(shopId string, q string, page int, limit int) ([]models.StockInOut, paginate.PaginationData, error)
-	FindItemsByGuidPage(guid string, shopId string, q string, page int, limit int) ([]models.StockInOut, paginate.PaginationData, error)
+	Delete(guid string, shopID string) error
+	FindByGuid(guid string, shopID string) (models.StockInOut, error)
+	FindPage(shopID string, q string, page int, limit int) ([]models.StockInOut, paginate.PaginationData, error)
+	FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.StockInOut, paginate.PaginationData, error)
 }
 
 type StockInOutRepository struct {
@@ -45,28 +45,28 @@ func (repo *StockInOutRepository) Update(guid string, doc models.StockInOut) err
 	return nil
 }
 
-func (repo *StockInOutRepository) Delete(guid string, shopId string) error {
-	err := repo.pst.SoftDelete(&models.StockInOut{}, bson.M{"guidFixed": guid, "shopId": shopId})
+func (repo *StockInOutRepository) Delete(guid string, shopID string) error {
+	err := repo.pst.SoftDelete(&models.StockInOut{}, bson.M{"guidFixed": guid, "shopID": shopID})
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (repo *StockInOutRepository) FindByGuid(guid string, shopId string) (models.StockInOut, error) {
+func (repo *StockInOutRepository) FindByGuid(guid string, shopID string) (models.StockInOut, error) {
 	doc := &models.StockInOut{}
-	err := repo.pst.FindOne(&models.StockInOut{}, bson.M{"shopId": shopId, "guidFixed": guid, "deleted": false}, doc)
+	err := repo.pst.FindOne(&models.StockInOut{}, bson.M{"shopID": shopID, "guidFixed": guid, "deleted": false}, doc)
 	if err != nil {
 		return *doc, err
 	}
 	return *doc, nil
 }
 
-func (repo *StockInOutRepository) FindPage(shopId string, q string, page int, limit int) ([]models.StockInOut, paginate.PaginationData, error) {
+func (repo *StockInOutRepository) FindPage(shopID string, q string, page int, limit int) ([]models.StockInOut, paginate.PaginationData, error) {
 
 	docList := []models.StockInOut{}
 	pagination, err := repo.pst.FindPage(&models.StockInOut{}, limit, page, bson.M{
-		"shopId":  shopId,
+		"shopID":  shopID,
 		"deleted": false,
 		"$or": []interface{}{
 			bson.M{"guidFixed": bson.M{"$regex": primitive.Regex{
@@ -83,11 +83,11 @@ func (repo *StockInOutRepository) FindPage(shopId string, q string, page int, li
 	return docList, pagination, nil
 }
 
-func (repo *StockInOutRepository) FindItemsByGuidPage(guid string, shopId string, q string, page int, limit int) ([]models.StockInOut, paginate.PaginationData, error) {
+func (repo *StockInOutRepository) FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.StockInOut, paginate.PaginationData, error) {
 
 	docList := []models.StockInOut{}
 	pagination, err := repo.pst.FindPage(&models.StockInOut{}, limit, page, bson.M{
-		"shopId":    shopId,
+		"shopID":    shopID,
 		"guidFixed": guid,
 		"deleted":   false,
 		"$or": []interface{}{

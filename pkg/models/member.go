@@ -19,7 +19,7 @@ type Member struct {
 	Telephone    string `json:"telephone" bson:"Telephone"`
 	Name         string `json:"name,omitempty" bson:"name,omitempty"`
 	Surname      string `json:"surname,omitempty" bson:"surname,omitempty"`
-	TaxId        string `json:"TaxId,omitempty" bson:"TaxId,omitempty"`
+	TaxID        string `json:"TaxID,omitempty" bson:"TaxID,omitempty"`
 	ContactType  int    `json:"contactType,omitempty" bson:"ContactType,omitempty"`
 	PersonalType int    `json:"personalType,omitempty" bson:"PersonalType,omitempty"`
 	BranchType   int    `json:"branchType,omitempty" bson:"BranchType,omitempty"`

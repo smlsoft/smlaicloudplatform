@@ -5,7 +5,7 @@ import (
 )
 
 type Shop struct {
-	Id        primitive.ObjectID `json:"id" bson:"_id,omitempty" default:"-"`
+	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty" default:"-"`
 	GuidFixed string             `json:"-" bson:"guidFixed"`
 	Name1     string             `json:"name1" bson:"name1"`
 	Activity
@@ -16,7 +16,7 @@ func (*Shop) CollectionName() string {
 }
 
 type ShopInfo struct {
-	Id        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	GuidFixed string             `json:"guidFixed" bson:"guidFixed"`
 	Name1     string             `json:"name1" bson:"name1"`
 }

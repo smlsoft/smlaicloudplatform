@@ -5,8 +5,8 @@ import (
 )
 
 type StockAdjustment struct {
-	Id        primitive.ObjectID      `json:"id" bson:"_id,omitempty"`
-	ShopId    string                  `json:"shopId" bson:"shopId"`
+	ID        primitive.ObjectID      `json:"id" bson:"_id,omitempty"`
+	ShopID    string                  `json:"shopID" bson:"shopID"`
 	GuidFixed string                  `json:"guidFixed,omitempty" bson:"guidFixed"`
 	Items     []StockAdjustmentDetail `json:"items" bson:"items" `
 	SumAmount float64                 `json:"sumAmount" bson:"sumAmount" `
@@ -18,7 +18,7 @@ func (*StockAdjustment) CollectionName() string {
 }
 
 type StockAdjustmentDetail struct {
-	InventoryId    string  `json:"inventoryId" bson:"inventoryId"`
+	InventoryID    string  `json:"inventoryID" bson:"inventoryID"`
 	ItemSku        string  `json:"itemSku,omitempty" bson:"itemSku,omitempty"`
 	CategoryGuid   string  `json:"categoryGuid" bson:"categoryGuid"`
 	LineNumber     int     `json:"lineNumber" bson:"lineNumber"`
@@ -29,7 +29,7 @@ type StockAdjustmentDetail struct {
 }
 
 type StockAdjustmentRequest struct {
-	ShopId    string                  `json:"shopId" `
+	ShopID    string                  `json:"shopID" `
 	GuidFixed string                  `json:"guidFixed,omitempty" `
 	Items     []StockAdjustmentDetail `json:"items" `
 	SumAmount float64                 `json:"sumAmount" `
@@ -40,7 +40,7 @@ func (*StockAdjustmentRequest) IndexName() string {
 }
 
 func (docReq *StockAdjustmentRequest) MapRequest(doc StockAdjustment) {
-	docReq.ShopId = doc.ShopId
+	docReq.ShopID = doc.ShopID
 	docReq.GuidFixed = doc.GuidFixed
 	docReq.Items = doc.Items
 	docReq.SumAmount = doc.SumAmount

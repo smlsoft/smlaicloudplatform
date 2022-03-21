@@ -32,8 +32,8 @@ func NewShopService(shopRepo IShopRepository, shopUserRepo IShopUserRepository) 
 
 func (svc *ShopService) CreateShop(username string, shop models.Shop) (string, error) {
 
-	shopId := utils.NewGUID()
-	shop.GuidFixed = shopId
+	shopID := utils.NewGUID()
+	shop.GuidFixed = shopID
 	shop.CreatedBy = username
 	shop.CreatedAt = time.Now()
 
@@ -43,9 +43,9 @@ func (svc *ShopService) CreateShop(username string, shop models.Shop) (string, e
 		return "", err
 	}
 
-	svc.shopUserRepo.Save(shopId, username, models.ROLE_OWNER)
+	svc.shopUserRepo.Save(shopID, username, models.ROLE_OWNER)
 
-	return shopId, nil
+	return shopID, nil
 }
 
 func (svc *ShopService) UpdateShop(guid string, username string, shop models.Shop) error {
@@ -56,7 +56,7 @@ func (svc *ShopService) UpdateShop(guid string, username string, shop models.Sho
 		return err
 	}
 
-	if findShop.Id == primitive.NilObjectID {
+	if findShop.ID == primitive.NilObjectID {
 		return errors.New("shop not found")
 	}
 
@@ -91,7 +91,7 @@ func (svc *ShopService) InfoShop(guid string) (models.ShopInfo, error) {
 	}
 
 	return models.ShopInfo{
-		Id:        findShop.Id,
+		ID:        findShop.ID,
 		GuidFixed: findShop.GuidFixed,
 		Name1:     findShop.Name1,
 	}, nil

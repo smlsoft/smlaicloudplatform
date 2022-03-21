@@ -19,7 +19,7 @@ func StartStockInOutAsync(ms *microservice.Microservice, cfg microservice.IConfi
 	err := ms.AsyncPOST("/stockinout/async", cfg.CacherConfig(), cfg.MQConfig(), func(ctx microservice.IContext) error {
 		userInfo := ctx.UserInfo()
 		authUsername := userInfo.Username
-		shopId := userInfo.ShopId
+		shopID := userInfo.ShopID
 		input := ctx.ReadInput()
 
 		stockinout := &models.StockInOut{}
@@ -31,7 +31,7 @@ func StartStockInOutAsync(ms *microservice.Microservice, cfg microservice.IConfi
 			return err
 		}
 
-		idx, err := service.CreateStockInOut(shopId, authUsername, stockinout)
+		idx, err := service.CreateStockInOut(shopID, authUsername, stockinout)
 
 		if err != nil {
 			ctx.ResponseError(400, err.Error())

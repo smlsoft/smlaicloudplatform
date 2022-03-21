@@ -51,7 +51,7 @@ func (h *MemberHttp) RouteSetup() {
 func (h *MemberHttp) CreateMember(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	input := ctx.ReadInput()
 
@@ -63,7 +63,7 @@ func (h *MemberHttp) CreateMember(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.service.CreateMember(shopId, authUsername, *doc)
+	idx, err := h.service.CreateMember(shopID, authUsername, *doc)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -71,7 +71,7 @@ func (h *MemberHttp) CreateMember(ctx microservice.IContext) error {
 
 	ctx.Response(http.StatusCreated, models.ApiResponse{
 		Success: true,
-		Id:      idx,
+		ID:      idx,
 	})
 
 	return nil
@@ -80,7 +80,7 @@ func (h *MemberHttp) CreateMember(ctx microservice.IContext) error {
 func (h *MemberHttp) UpdateMember(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
@@ -93,7 +93,7 @@ func (h *MemberHttp) UpdateMember(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.service.UpdateMember(id, shopId, authUsername, *docReq)
+	err = h.service.UpdateMember(id, shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -109,11 +109,11 @@ func (h *MemberHttp) UpdateMember(ctx microservice.IContext) error {
 func (h *MemberHttp) DeleteMember(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	err := h.service.DeleteMember(id, shopId, authUsername)
+	err := h.service.DeleteMember(id, shopID, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -129,11 +129,11 @@ func (h *MemberHttp) DeleteMember(ctx microservice.IContext) error {
 func (h *MemberHttp) InfoMember(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	doc, err := h.service.InfoMember(id, shopId)
+	doc, err := h.service.InfoMember(id, shopID)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		ctx.ResponseError(400, err.Error())
@@ -150,7 +150,7 @@ func (h *MemberHttp) InfoMember(ctx microservice.IContext) error {
 func (h *MemberHttp) SearchMember(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	q := ctx.QueryParam("q")
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
@@ -164,7 +164,7 @@ func (h *MemberHttp) SearchMember(ctx microservice.IContext) error {
 		limit = 20
 	}
 
-	docList, pagination, err := h.service.SearchMember(shopId, q, page, limit)
+	docList, pagination, err := h.service.SearchMember(shopID, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

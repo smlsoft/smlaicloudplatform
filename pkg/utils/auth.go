@@ -10,21 +10,21 @@ import (
 
 func HasPermissionShop(pst microservice.IPersisterMongo, ctx microservice.IContext) (bool, error) {
 
-	shopId := ctx.Param("shop_id")
+	shopID := ctx.Param("shop_id")
 
-	return HasPermissionShopById(pst, ctx, shopId)
+	return HasPermissionShopByID(pst, ctx, shopID)
 }
 
-func HasPermissionShopById(pst microservice.IPersisterMongo, ctx microservice.IContext, shopId string) (bool, error) {
+func HasPermissionShopByID(pst microservice.IPersisterMongo, ctx microservice.IContext, shopID string) (bool, error) {
 
 	authUsername := ctx.UserInfo().Username
 
-	if len(shopId) < 1 {
+	if len(shopID) < 1 {
 		return false, fmt.Errorf("shop not found")
 	}
 
 	shop := &models.Shop{}
-	pst.FindOne(&models.Shop{}, bson.M{"guidFixed": shopId, "deleted": false}, shop)
+	pst.FindOne(&models.Shop{}, bson.M{"guidFixed": shopID, "deleted": false}, shop)
 
 	if len(shop.GuidFixed) < 1 {
 		return false, fmt.Errorf("shop invalid")

@@ -12,10 +12,15 @@ import (
 // 	Activated bool    `bson:"activated" json:"activated"` // เปิดใช้งานอยู่
 // }
 
+/*
+Inventory
+InventoryDoc
+*/
+
 type Inventory struct {
-	Id        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	ItemSku   string             `json:"itemSku,omitempty" bson:"itemSku,omitempty"`
-	ShopId    string             `json:"shopId" bson:"shopId"`       // รหัสร้าน
+	ShopID    string             `json:"shopID" bson:"shopID"`       // รหัสร้าน
 	GuidFixed string             `json:"guidFixed" bson:"guidFixed"` // Guid สินค้า
 
 	Barcode      string  `json:"barcode" bson:"barcode"`
@@ -85,7 +90,7 @@ type Choice struct {
 
 type InventoryRequest struct {
 	ItemSku   string `json:"itemSku,omitempty" `
-	ShopId    string `json:"shopId" `
+	ShopID    string `json:"shopID" `
 	GuidFixed string `json:"guidFixed" `
 
 	Barcode      string  `json:"barcode" `
@@ -117,8 +122,8 @@ type InventoryRequest struct {
 }
 
 type Category struct {
-	Id        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	ShopId    string             `json:"shopId" bson:"shopId"`
+	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	ShopID    string             `json:"shopID" bson:"shopID"`
 	GuidFixed string             `json:"guidFixed" bson:"guidFixed"`
 	Name1     string             `json:"name1" bson:"name1"`
 	Name2     string             `json:"name2" bson:"name2"`
@@ -134,8 +139,8 @@ func (*Category) CollectionName() string {
 }
 
 type InventoryOptionGroup struct {
-	Id                     primitive.ObjectID          `json:"id" bson:"_id,omitempty"`
-	ShopId                 string                      `json:"shopId" bson:"shopId"`
+	ID                     primitive.ObjectID          `json:"id" bson:"_id,omitempty"`
+	ShopID                 string                      `json:"shopID" bson:"shopID"`
 	GuidFixed              string                      `json:"guidFixed" bson:"guidFixed"`
 	OptionName1            string                      `json:"optionName1" bson:"optionName1"`
 	ProductSelectOption1   bool                        `json:"productSelectoPtion1" bson:"productSelectOption1"`
@@ -157,11 +162,11 @@ type InventoryOptonGroupDetail struct {
 }
 
 type InventoryOption struct {
-	Id            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	ShopId        string             `json:"shopId" bson:"shopId"`
+	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	ShopID        string             `json:"shopID" bson:"shopID"`
 	GuidFixed     string             `json:"guidFixed" bson:"guidFixed"`
-	InventoryId   string             `json:"inventoryId" bson:"inventoryId"`
-	OptionGroupId string             `json:"optionGroupId" bson:"optionGroupId"`
+	InventoryID   string             `json:"inventoryID" bson:"inventoryID"`
+	OptionGroupID string             `json:"optionGroupID" bson:"optionGroupID"`
 	Activity
 }
 

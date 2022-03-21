@@ -3,7 +3,7 @@ package models
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type Barcode struct {
-	Id primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	ID primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 
 	Barcode string `json:"barcode,omitempty" bson:"barcode,omitempty"`
 

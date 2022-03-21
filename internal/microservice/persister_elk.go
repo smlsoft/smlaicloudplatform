@@ -13,9 +13,9 @@ import (
 
 type IPersisterElk interface {
 	Create(model interface{}) error
-	CreateWithId(docId string, model interface{}) error
-	Update(docId string, model interface{}) error
-	Delete(docId string, model interface{}) error
+	CreateWithID(docID string, model interface{}) error
+	Update(docID string, model interface{}) error
+	Delete(docID string, model interface{}) error
 }
 
 type IPersisterElkConfig interface {
@@ -109,7 +109,7 @@ func (pst *PersisterElk) Create(model interface{}) error {
 	return nil
 }
 
-func (pst *PersisterElk) CreateWithId(docId string, model interface{}) error {
+func (pst *PersisterElk) CreateWithID(docID string, model interface{}) error {
 	indexName, err := pst.getIndexName(model)
 	if err != nil {
 		return err
@@ -129,7 +129,7 @@ func (pst *PersisterElk) CreateWithId(docId string, model interface{}) error {
 
 	req := esapi.IndexRequest{
 		Index:      indexName,
-		DocumentID: docId,
+		DocumentID: docID,
 		Body:       bytes.NewReader(txtByte),
 	}
 
@@ -142,7 +142,7 @@ func (pst *PersisterElk) CreateWithId(docId string, model interface{}) error {
 	return nil
 }
 
-func (pst *PersisterElk) Update(docId string, model interface{}) error {
+func (pst *PersisterElk) Update(docID string, model interface{}) error {
 	indexName, err := pst.getIndexName(model)
 	if err != nil {
 		return err
@@ -162,7 +162,7 @@ func (pst *PersisterElk) Update(docId string, model interface{}) error {
 
 	req := esapi.IndexRequest{
 		Index:      indexName,
-		DocumentID: docId,
+		DocumentID: docID,
 		Body:       bytes.NewReader(txtByte),
 	}
 
@@ -175,7 +175,7 @@ func (pst *PersisterElk) Update(docId string, model interface{}) error {
 	return nil
 }
 
-func (pst *PersisterElk) Delete(docId string, model interface{}) error {
+func (pst *PersisterElk) Delete(docID string, model interface{}) error {
 	indexName, err := pst.getIndexName(model)
 	if err != nil {
 		return err
@@ -188,7 +188,7 @@ func (pst *PersisterElk) Delete(docId string, model interface{}) error {
 	}
 	req := esapi.DeleteRequest{
 		Index:      indexName,
-		DocumentID: docId,
+		DocumentID: docID,
 	}
 
 	_, err = req.Do(context.Background(), db)

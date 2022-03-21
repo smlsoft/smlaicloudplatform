@@ -3,6 +3,6 @@ package models
 type UserInfo struct {
 	Username string `json:"username" `
 	Name     string `json:"name"`
-	ShopId   string `json:"shopId" `
+	ShopID   string `json:"shopID" `
 	Role     string `json:"role"`
 }

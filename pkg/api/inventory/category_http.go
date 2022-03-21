@@ -10,7 +10,7 @@ import (
 
 func (h *InventoryHttp) CreateCategory(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
-	shopId := ctx.UserInfo().ShopId
+	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
 	categoryReq := &models.Category{}
@@ -21,7 +21,7 @@ func (h *InventoryHttp) CreateCategory(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.cateService.CreateCategory(shopId, authUsername, *categoryReq)
+	idx, err := h.cateService.CreateCategory(shopID, authUsername, *categoryReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -30,7 +30,7 @@ func (h *InventoryHttp) CreateCategory(ctx microservice.IContext) error {
 
 	ctx.Response(http.StatusCreated, models.ApiResponse{
 		Success: true,
-		Id:      idx,
+		ID:      idx,
 	})
 	return nil
 }
@@ -38,7 +38,7 @@ func (h *InventoryHttp) CreateCategory(ctx microservice.IContext) error {
 func (h *InventoryHttp) UpdateCategory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
@@ -51,7 +51,7 @@ func (h *InventoryHttp) UpdateCategory(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.cateService.UpdateCategory(id, shopId, authUsername, *categoryReq)
+	err = h.cateService.UpdateCategory(id, shopID, authUsername, *categoryReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -60,7 +60,7 @@ func (h *InventoryHttp) UpdateCategory(ctx microservice.IContext) error {
 
 	ctx.Response(http.StatusCreated, models.ApiResponse{
 		Success: true,
-		Id:      id,
+		ID:      id,
 	})
 
 	return nil
@@ -68,11 +68,11 @@ func (h *InventoryHttp) UpdateCategory(ctx microservice.IContext) error {
 
 func (h *InventoryHttp) DeleteCategory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	err := h.cateService.DeleteCategory(id, shopId)
+	err := h.cateService.DeleteCategory(id, shopID)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -81,7 +81,7 @@ func (h *InventoryHttp) DeleteCategory(ctx microservice.IContext) error {
 
 	ctx.Response(http.StatusCreated, models.ApiResponse{
 		Success: true,
-		Id:      id,
+		ID:      id,
 	})
 
 	return nil
@@ -89,11 +89,11 @@ func (h *InventoryHttp) DeleteCategory(ctx microservice.IContext) error {
 
 func (h *InventoryHttp) InfoCategory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	doc, err := h.cateService.InfoCategory(id, shopId)
+	doc, err := h.cateService.InfoCategory(id, shopID)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -109,7 +109,7 @@ func (h *InventoryHttp) InfoCategory(ctx microservice.IContext) error {
 
 func (h *InventoryHttp) SearchCategory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	q := ctx.QueryParam("q")
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
@@ -122,7 +122,7 @@ func (h *InventoryHttp) SearchCategory(ctx microservice.IContext) error {
 	if err != nil {
 		limit = 20
 	}
-	docList, pagination, err := h.cateService.SearchCategory(shopId, q, page, limit)
+	docList, pagination, err := h.cateService.SearchCategory(shopID, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

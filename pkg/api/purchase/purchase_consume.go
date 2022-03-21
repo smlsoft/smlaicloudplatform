@@ -30,7 +30,7 @@ func StartPurchaseComsume(ms *microservice.Microservice, cfg microservice.IConfi
 			ms.Log(moduleName, err.Error())
 		}
 
-		err = elkPst.CreateWithId(doc.GuidFixed, &doc)
+		err = elkPst.CreateWithID(doc.GuidFixed, &doc)
 
 		if err != nil {
 			ms.Log(moduleName, err.Error())

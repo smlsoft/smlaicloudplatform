@@ -11,11 +11,11 @@ import (
 )
 
 type IShopUserRepository interface {
-	Save(shopId string, username string, role string) error
-	Delete(shopId string, username string) error
-	FindByShopIdAndUsername(shopId string, username string) (models.ShopUser, error)
-	FindRole(shopId string, username string) (string, error)
-	FindByShopId(shopId string) (*[]models.ShopUser, error)
+	Save(shopID string, username string, role string) error
+	Delete(shopID string, username string) error
+	FindByShopIDAndUsername(shopID string, username string) (models.ShopUser, error)
+	FindRole(shopID string, username string) (string, error)
+	FindByShopID(shopID string) (*[]models.ShopUser, error)
 	FindByUsername(username string) (*[]models.ShopUser, error)
 	FindByUsernamePage(username string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error)
 }
@@ -30,10 +30,10 @@ func NewShopUserRepository(pst microservice.IPersisterMongo) IShopUserRepository
 	}
 }
 
-func (svc *ShopUserRepository) Save(shopId string, username string, role string) error {
+func (svc *ShopUserRepository) Save(shopID string, username string, role string) error {
 
 	optUpdate := options.Update().SetUpsert(true)
-	err := svc.pst.Update(&models.ShopUser{}, bson.M{"shopId": shopId, "username": username}, bson.M{"$set": bson.M{"role": role}}, optUpdate)
+	err := svc.pst.Update(&models.ShopUser{}, bson.M{"shopID": shopID, "username": username}, bson.M{"$set": bson.M{"role": role}}, optUpdate)
 
 	if err != nil {
 		return err
@@ -42,9 +42,9 @@ func (svc *ShopUserRepository) Save(shopId string, username string, role string)
 	return nil
 }
 
-func (svc *ShopUserRepository) Delete(shopId string, username string) error {
+func (svc *ShopUserRepository) Delete(shopID string, username string) error {
 
-	err := svc.pst.Delete(&models.ShopUser{}, bson.M{"shopId": shopId, "username": username})
+	err := svc.pst.Delete(&models.ShopUser{}, bson.M{"shopID": shopID, "username": username})
 
 	if err != nil {
 		return err
@@ -53,11 +53,11 @@ func (svc *ShopUserRepository) Delete(shopId string, username string) error {
 	return nil
 }
 
-func (svc *ShopUserRepository) FindByShopIdAndUsername(shopId string, username string) (models.ShopUser, error) {
+func (svc *ShopUserRepository) FindByShopIDAndUsername(shopID string, username string) (models.ShopUser, error) {
 
 	shopUser := &models.ShopUser{}
 
-	err := svc.pst.FindOne(&models.ShopUser{}, bson.M{"shopId": shopId, "username": username}, shopUser)
+	err := svc.pst.FindOne(&models.ShopUser{}, bson.M{"shopID": shopID, "username": username}, shopUser)
 	if err != nil {
 		fmt.Println("err -> ", err.Error())
 		return models.ShopUser{}, err
@@ -66,11 +66,11 @@ func (svc *ShopUserRepository) FindByShopIdAndUsername(shopId string, username s
 	return *shopUser, nil
 }
 
-func (svc *ShopUserRepository) FindRole(shopId string, username string) (string, error) {
+func (svc *ShopUserRepository) FindRole(shopID string, username string) (string, error) {
 
 	shopUser := &models.ShopUser{}
 
-	err := svc.pst.FindOne(&models.ShopUser{}, bson.M{"shopId": shopId, "username": username}, shopUser)
+	err := svc.pst.FindOne(&models.ShopUser{}, bson.M{"shopID": shopID, "username": username}, shopUser)
 
 	if err != nil {
 		return "", err
@@ -79,10 +79,10 @@ func (svc *ShopUserRepository) FindRole(shopId string, username string) (string,
 	return shopUser.Role, nil
 }
 
-func (svc *ShopUserRepository) FindByShopId(shopId string) (*[]models.ShopUser, error) {
+func (svc *ShopUserRepository) FindByShopID(shopID string) (*[]models.ShopUser, error) {
 	shopUsers := &[]models.ShopUser{}
 
-	err := svc.pst.Find(&models.ShopUser{}, bson.M{"shopId": shopId}, shopUsers)
+	err := svc.pst.Find(&models.ShopUser{}, bson.M{"shopID": shopID}, shopUsers)
 
 	if err != nil {
 		return nil, err
@@ -111,7 +111,7 @@ func (repo *ShopUserRepository) FindByUsernamePage(username string, page int, li
 		bson.M{"$match": bson.M{"username": username}},
 		bson.M{"$lookup": bson.M{
 			"from":         "shop",
-			"localField":   "shopId",
+			"localField":   "shopID",
 			"foreignField": "guidFixed",
 			"as":           "shopInfo",
 		}},
@@ -122,7 +122,7 @@ func (repo *ShopUserRepository) FindByUsernamePage(username string, page int, li
 			"$project": bson.M{
 				"_id":    1,
 				"role":   1,
-				"shopId": 1,
+				"shopID": 1,
 				"name":   bson.M{"$first": "$shopInfo.name1"},
 			},
 		},

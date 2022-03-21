@@ -57,7 +57,7 @@ func (h *ShopHttp) RouteSetup() {
 // @Accept 		json
 // @Param		Shop  body      models.Shop  true  "Add Shop"
 // @Success		200	{array}	models.Shop
-// @Failure		401 {object}	models.ResponseSuccessWithId
+// @Failure		401 {object}	models.ResponseSuccessWithID
 // @Security     AccessToken
 // @Router /shop [post]
 func (h *ShopHttp) CreateShop(ctx microservice.IContext) error {
@@ -89,7 +89,7 @@ func (h *ShopHttp) CreateShop(ctx microservice.IContext) error {
 
 	ctx.Response(http.StatusOK, &models.ApiResponse{
 		Success: true,
-		Id:      idx,
+		ID:      idx,
 	})
 
 	return nil
@@ -130,7 +130,7 @@ func (h *ShopHttp) UpdateShop(ctx microservice.IContext) error {
 
 	ctx.Response(http.StatusOK, &models.ApiResponse{
 		Success: true,
-		Id:      id,
+		ID:      id,
 	})
 	return nil
 }
@@ -162,7 +162,7 @@ func (h *ShopHttp) DeleteShop(ctx microservice.IContext) error {
 	}
 	ctx.Response(http.StatusOK, &models.ApiResponse{
 		Success: true,
-		Id:      id,
+		ID:      id,
 	})
 	return nil
 }

@@ -47,26 +47,26 @@ func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...st
 			}
 
 			cacheKey := authService.prefixCacheKey + tokenStr
-			tempUserInfo, err := authService.cacher.HMGet(cacheKey, []string{"username", "name", "shopId", "role"})
+			tempUserInfo, err := authService.cacher.HMGet(cacheKey, []string{"username", "name", "shopID", "role"})
 
 			if err != nil || tempUserInfo[0] == nil {
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
 			}
 
-			tempShopId := ""
+			tempShopID := ""
 
 			if tempUserInfo[2] != nil {
-				tempShopId = fmt.Sprintf("%v", tempUserInfo[2])
+				tempShopID = fmt.Sprintf("%v", tempUserInfo[2])
 			}
 
-			if len(string(tempShopId)) < 1 {
+			if len(string(tempShopID)) < 1 {
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Shop not selected."})
 			}
 
 			userInfo := models.UserInfo{
 				Username: fmt.Sprintf("%v", tempUserInfo[0]),
 				Name:     fmt.Sprintf("%v", tempUserInfo[1]),
-				ShopId:   fmt.Sprintf("%v", tempUserInfo[2]),
+				ShopID:   fmt.Sprintf("%v", tempUserInfo[2]),
 				Role:     fmt.Sprintf("%v", tempUserInfo[3]),
 			}
 
@@ -155,10 +155,10 @@ func (authService *AuthService) GenerateTokenWithRedis(userInfo models.UserInfo)
 	return tokenStr, nil
 }
 
-func (authService *AuthService) SelectShop(tokenStr string, shopId string, role string) error {
+func (authService *AuthService) SelectShop(tokenStr string, shopID string, role string) error {
 	cacheKey := authService.prefixCacheKey + tokenStr
 	err := authService.cacher.HMSet(cacheKey, map[string]interface{}{
-		"shopId": shopId,
+		"shopID": shopID,
 		"role":   role,
 	})
 

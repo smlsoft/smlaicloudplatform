@@ -9,8 +9,8 @@ import (
 
 type IShopUserService interface {
 	ListShopByUser(authUsername string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error)
-	SaveUserPermissionShop(shopId string, authUsername string, username string, role string) error
-	DeleteUserPermissionShop(shopId string, authUsername string, username string, guid string) error
+	SaveUserPermissionShop(shopID string, authUsername string, username string, role string) error
+	DeleteUserPermissionShop(shopID string, authUsername string, username string, guid string) error
 }
 
 type ShopUserService struct {
@@ -34,9 +34,9 @@ func (svc *ShopUserService) ListShopByUser(authUsername string, page int, limit 
 	return docList, pagination, err
 }
 
-func (svc *ShopUserService) SaveUserPermissionShop(shopId string, authUsername string, username string, role string) error {
+func (svc *ShopUserService) SaveUserPermissionShop(shopID string, authUsername string, username string, role string) error {
 
-	authUser, err := svc.repo.FindByShopIdAndUsername(shopId, authUsername)
+	authUser, err := svc.repo.FindByShopIDAndUsername(shopID, authUsername)
 
 	if err != nil {
 		return err
@@ -46,7 +46,7 @@ func (svc *ShopUserService) SaveUserPermissionShop(shopId string, authUsername s
 		return errors.New("permission denied")
 	}
 
-	err = svc.repo.Save(shopId, username, role)
+	err = svc.repo.Save(shopID, username, role)
 
 	if err != nil {
 		return err
@@ -54,9 +54,9 @@ func (svc *ShopUserService) SaveUserPermissionShop(shopId string, authUsername s
 	return nil
 }
 
-func (svc *ShopUserService) DeleteUserPermissionShop(shopId string, authUsername string, username string, guid string) error {
+func (svc *ShopUserService) DeleteUserPermissionShop(shopID string, authUsername string, username string, guid string) error {
 
-	authUser, err := svc.repo.FindByShopIdAndUsername(shopId, authUsername)
+	authUser, err := svc.repo.FindByShopIDAndUsername(shopID, authUsername)
 
 	if err != nil {
 		return err
@@ -66,7 +66,7 @@ func (svc *ShopUserService) DeleteUserPermissionShop(shopId string, authUsername
 		return errors.New("permission denied")
 	}
 
-	err = svc.repo.Delete(shopId, username)
+	err = svc.repo.Delete(shopID, username)
 
 	if err != nil {
 		return err

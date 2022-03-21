@@ -30,7 +30,7 @@ func StartStockInOutComsume(ms *microservice.Microservice, cfg microservice.ICon
 			ms.Log(moduleName, err.Error())
 		}
 
-		err = elkPst.CreateWithId(doc.GuidFixed, &doc)
+		err = elkPst.CreateWithID(doc.GuidFixed, &doc)
 
 		if err != nil {
 			ms.Log(moduleName, err.Error())

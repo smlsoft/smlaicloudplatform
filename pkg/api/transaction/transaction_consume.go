@@ -32,7 +32,7 @@ func StartTransactionComsumeCreated(ms *microservice.Microservice, cfg microserv
 			ms.Log(moduleName, err.Error())
 		}
 
-		err = elkPst.CreateWithId(trans.GuidFixed, &trans)
+		err = elkPst.CreateWithID(trans.GuidFixed, &trans)
 
 		if err != nil {
 			ms.Log(moduleName, err.Error())

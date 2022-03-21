@@ -12,9 +12,9 @@ import (
 type IInventoryRepository interface {
 	Create(inventory models.Inventory) (string, error)
 	Update(guid string, inventory models.Inventory) error
-	Delete(guid string, shopId string) error
-	FindByGuid(guid string, shopId string) (models.Inventory, error)
-	FindPage(shopId string, q string, page int, limit int) ([]models.Inventory, paginate.PaginationData, error)
+	Delete(guid string, shopID string) error
+	FindByGuid(guid string, shopID string) (models.Inventory, error)
+	FindPage(shopID string, q string, page int, limit int) ([]models.Inventory, paginate.PaginationData, error)
 }
 
 type InventoryRepository struct {
@@ -47,9 +47,9 @@ func (repo *InventoryRepository) Update(guid string, inventory models.Inventory)
 	return nil
 }
 
-func (repo *InventoryRepository) Delete(guid string, shopId string) error {
+func (repo *InventoryRepository) Delete(guid string, shopID string) error {
 
-	err := repo.pst.SoftDelete(&models.Inventory{}, bson.M{"guidFixed": guid, "shopId": shopId})
+	err := repo.pst.SoftDelete(&models.Inventory{}, bson.M{"guidFixed": guid, "shopID": shopID})
 
 	if err != nil {
 		return err
@@ -57,10 +57,10 @@ func (repo *InventoryRepository) Delete(guid string, shopId string) error {
 	return nil
 }
 
-func (repo *InventoryRepository) FindByGuid(guid string, shopId string) (models.Inventory, error) {
+func (repo *InventoryRepository) FindByGuid(guid string, shopID string) (models.Inventory, error) {
 
 	findDoc := &models.Inventory{}
-	err := repo.pst.FindOne(&models.Inventory{}, bson.M{"shopId": shopId, "guidFixed": guid, "deleted": false}, findDoc)
+	err := repo.pst.FindOne(&models.Inventory{}, bson.M{"shopID": shopID, "guidFixed": guid, "deleted": false}, findDoc)
 
 	if err != nil {
 		return models.Inventory{}, err
@@ -68,11 +68,11 @@ func (repo *InventoryRepository) FindByGuid(guid string, shopId string) (models.
 	return *findDoc, nil
 }
 
-func (repo *InventoryRepository) FindPage(shopId string, q string, page int, limit int) ([]models.Inventory, paginate.PaginationData, error) {
+func (repo *InventoryRepository) FindPage(shopID string, q string, page int, limit int) ([]models.Inventory, paginate.PaginationData, error) {
 
 	docList := []models.Inventory{}
 	pagination, err := repo.pst.FindPage(&models.Inventory{}, limit, page, bson.M{
-		"shopId":  shopId,
+		"shopID":  shopID,
 		"deleted": false,
 		"$or": []interface{}{
 			bson.M{"guidFixed": q},

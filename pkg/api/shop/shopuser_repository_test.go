@@ -20,7 +20,7 @@ func TestCreateShopUser(t *testing.T) {
 		return
 	}
 
-	memUser, err := repo.FindByShopIdAndUsername("25H2pZ8v2jRVGwjOLKBAzSaHgOA", "dev01")
+	memUser, err := repo.FindByShopIDAndUsername("25H2pZ8v2jRVGwjOLKBAzSaHgOA", "dev01")
 
 	if err != nil {
 		t.Error(err.Error())

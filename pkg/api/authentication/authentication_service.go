@@ -21,7 +21,7 @@ type IAuthenticationService interface {
 	UpdatePassword(username string, currentPassword string, newPassword string) error
 	Logout(authorizationHeader string) error
 	Profile(username string) (models.UserProfile, error)
-	AccessShop(authorizationHeader string, shopId string, username string) error
+	AccessShop(authorizationHeader string, shopID string, username string) error
 }
 
 type AuthenticationService struct {
@@ -41,7 +41,7 @@ func NewAuthenticationService(authRepo IAuthenticationRepository, shopUserRepo s
 func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest) (string, error) {
 
 	userLoginReq.Username = strings.TrimSpace(userLoginReq.Username)
-	userLoginReq.ShopId = strings.TrimSpace(userLoginReq.ShopId)
+	userLoginReq.ShopID = strings.TrimSpace(userLoginReq.ShopID)
 
 	findUser, err := svc.authRepo.FindUser(userLoginReq.Username)
 
@@ -66,18 +66,18 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest) (s
 		return "", errors.New("generate token error")
 	}
 
-	if len(userLoginReq.ShopId) > 0 {
-		shopUser, err := svc.shopUserRepo.FindByShopIdAndUsername(userLoginReq.ShopId, userLoginReq.Username)
+	if len(userLoginReq.ShopID) > 0 {
+		shopUser, err := svc.shopUserRepo.FindByShopIDAndUsername(userLoginReq.ShopID, userLoginReq.Username)
 
 		if err != nil {
 			return "", err
 		}
 
-		if shopUser.Id == primitive.NilObjectID {
+		if shopUser.ID == primitive.NilObjectID {
 			return "", errors.New("shop invalid")
 		}
 
-		err = svc.authService.SelectShop(tokenString, userLoginReq.ShopId, string(shopUser.Role))
+		err = svc.authService.SelectShop(tokenString, userLoginReq.ShopID, string(shopUser.Role))
 
 		if err != nil {
 			return "", errors.New("failed shop select")
@@ -201,9 +201,9 @@ func (svc AuthenticationService) Profile(username string) (models.UserProfile, e
 	return userProfile, nil
 }
 
-func (svc AuthenticationService) AccessShop(authorizationHeader string, shopId string, username string) error {
+func (svc AuthenticationService) AccessShop(authorizationHeader string, shopID string, username string) error {
 
-	if shopId == "" {
+	if shopID == "" {
 		return errors.New("shop invalid")
 	}
 
@@ -221,17 +221,17 @@ func (svc AuthenticationService) AccessShop(authorizationHeader string, shopId s
 		return errors.New("token invalid")
 	}
 
-	shopUser, err := svc.shopUserRepo.FindByShopIdAndUsername(shopId, username)
+	shopUser, err := svc.shopUserRepo.FindByShopIDAndUsername(shopID, username)
 
 	if err != nil {
 		return err
 	}
 
-	if shopUser.Id == primitive.NilObjectID {
+	if shopUser.ID == primitive.NilObjectID {
 		return errors.New("shop invalid")
 	}
 
-	err = svc.authService.SelectShop(tokenStr, shopId, string(shopUser.Role))
+	err = svc.authService.SelectShop(tokenStr, shopID, string(shopUser.Role))
 
 	if err != nil {
 		return errors.New("failed shop select")

@@ -93,7 +93,7 @@ func (h *InventoryHttp) CreateInventory(ctx microservice.IContext) error {
 	h.ms.Logger.Debug("Creating Inventory")
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	input := ctx.ReadInput()
 
@@ -105,7 +105,7 @@ func (h *InventoryHttp) CreateInventory(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.invService.CreateInventory(shopId, authUsername, *inventoryReq)
+	idx, err := h.invService.CreateInventory(shopID, authUsername, *inventoryReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -116,7 +116,7 @@ func (h *InventoryHttp) CreateInventory(ctx microservice.IContext) error {
 		http.StatusCreated,
 		models.ApiResponse{
 			Success: true,
-			Id:      idx,
+			ID:      idx,
 		})
 
 	return nil
@@ -126,7 +126,7 @@ func (h *InventoryHttp) CreateInventory(ctx microservice.IContext) error {
 func (h *InventoryHttp) UpdateInventory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
@@ -139,7 +139,7 @@ func (h *InventoryHttp) UpdateInventory(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.invService.UpdateInventory(id, shopId, authUsername, *inventoryReq)
+	err = h.invService.UpdateInventory(id, shopID, authUsername, *inventoryReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -150,7 +150,7 @@ func (h *InventoryHttp) UpdateInventory(ctx microservice.IContext) error {
 		http.StatusOK,
 		models.ApiResponse{
 			Success: true,
-			Id:      id,
+			ID:      id,
 		})
 
 	return nil
@@ -158,11 +158,11 @@ func (h *InventoryHttp) UpdateInventory(ctx microservice.IContext) error {
 
 func (h *InventoryHttp) DeleteInventory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	err := h.invService.DeleteInventory(id, shopId)
+	err := h.invService.DeleteInventory(id, shopID)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -173,7 +173,7 @@ func (h *InventoryHttp) DeleteInventory(ctx microservice.IContext) error {
 		http.StatusOK,
 		models.ApiResponse{
 			Success: true,
-			Id:      id,
+			ID:      id,
 		},
 	)
 	return nil
@@ -191,11 +191,11 @@ func (h *InventoryHttp) DeleteInventory(ctx microservice.IContext) error {
 func (h *InventoryHttp) InfoInventory(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	doc, err := h.invService.InfoInventory(id, shopId)
+	doc, err := h.invService.InfoInventory(id, shopID)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -223,7 +223,7 @@ func (h *InventoryHttp) InfoInventory(ctx microservice.IContext) error {
 // @Router /inventory [get]
 func (h *InventoryHttp) SearchInventory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
-	shopId := userInfo.ShopId
+	shopID := userInfo.ShopID
 
 	q := ctx.QueryParam("q")
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
@@ -237,7 +237,7 @@ func (h *InventoryHttp) SearchInventory(ctx microservice.IContext) error {
 		limit = 20
 	}
 
-	docList, pagination, err := h.invService.SearchInventory(shopId, q, page, limit)
+	docList, pagination, err := h.invService.SearchInventory(shopID, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
