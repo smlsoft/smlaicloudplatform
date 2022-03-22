@@ -14,26 +14,6 @@ import (
 
 const inventoryCollectionName string = "inventories"
 
-type InventoryDoc struct {
-	ID primitive.ObjectID `json:"id" bson:"_id"`
-	ShopIdentity
-	InventoryInfo
-	Activity
-}
-
-func (InventoryDoc) CollectionName() string {
-	return inventoryCollectionName
-}
-
-type InventoryInfo struct {
-	DocIdentity
-	Inventory
-}
-
-func (InventoryInfo) CollectionName() string {
-	return inventoryCollectionName
-}
-
 type Inventory struct {
 	ItemSku      string  `json:"itemSku,omitempty" bson:"itemSku,omitempty"`
 	Barcode      string  `json:"barcode" bson:"barcode"`
@@ -93,6 +73,30 @@ type Choice struct {
 	Name3       string  `json:"name3,omitempty" bson:"name3,omitempty"`
 	Name4       string  `json:"name4,omitempty" bson:"name4,omitempty"`
 	Name5       string  `json:"name5,omitempty" bson:"name5,omitempty"`
+}
+
+type InventoryInfo struct {
+	DocIdentity
+	Inventory
+}
+
+func (InventoryInfo) CollectionName() string {
+	return inventoryCollectionName
+}
+
+type InventoryData struct {
+	ShopIdentity
+	InventoryInfo
+}
+
+type InventoryDoc struct {
+	ID primitive.ObjectID `json:"id" bson:"_id"`
+	InventoryData
+	Activity
+}
+
+func (InventoryDoc) CollectionName() string {
+	return inventoryCollectionName
 }
 
 /* */
