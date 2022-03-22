@@ -242,7 +242,8 @@ func (h ShopHttp) SearchShop(ctx microservice.IContext) error {
 	shopList, pagination, err := h.service.SearchShop(q, page, limit)
 
 	if err != nil {
-		ctx.ResponseError(400, err.Error())
+		ctx.ResponseError(400, "database error")
+		h.ms.Logger.Error("HTTP:: SearchShop " + err.Error())
 		return err
 	}
 
