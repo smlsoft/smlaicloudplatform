@@ -1,4 +1,4 @@
-package inventory
+package category
 
 import (
 	"smlcloudplatform/internal/microservice"

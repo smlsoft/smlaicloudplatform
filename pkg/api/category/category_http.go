@@ -1,4 +1,4 @@
-package inventory
+package category
 
 import (
 	"encoding/json"
@@ -8,7 +8,36 @@ import (
 	"strconv"
 )
 
-func (h *InventoryHttp) CreateCategory(ctx microservice.IContext) error {
+type ICategoryHttp interface{}
+
+type CategoryHttp struct {
+	ms          *microservice.Microservice
+	cfg         microservice.IConfig
+	cateService ICategoryService
+}
+
+func NewCategoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) CategoryHttp {
+	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+
+	cateRepo := NewCategoryRepository(pst)
+	cateService := NewCategoryService(cateRepo)
+
+	return CategoryHttp{
+		cateService: cateService,
+	}
+}
+
+func (h *CategoryHttp) RouteSetup() {
+
+	h.ms.GET("/category/:id", h.InfoCategory)
+	h.ms.GET("/category", h.SearchCategory)
+	h.ms.POST("/category", h.CreateCategory)
+	h.ms.PUT("/category/:id", h.UpdateCategory)
+	h.ms.DELETE("/category/:id", h.DeleteCategory)
+
+}
+
+func (h *CategoryHttp) CreateCategory(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
@@ -35,7 +64,7 @@ func (h *InventoryHttp) CreateCategory(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *InventoryHttp) UpdateCategory(ctx microservice.IContext) error {
+func (h *CategoryHttp) UpdateCategory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -66,7 +95,7 @@ func (h *InventoryHttp) UpdateCategory(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *InventoryHttp) DeleteCategory(ctx microservice.IContext) error {
+func (h *CategoryHttp) DeleteCategory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -87,7 +116,7 @@ func (h *InventoryHttp) DeleteCategory(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *InventoryHttp) InfoCategory(ctx microservice.IContext) error {
+func (h *CategoryHttp) InfoCategory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -107,7 +136,7 @@ func (h *InventoryHttp) InfoCategory(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *InventoryHttp) SearchCategory(ctx microservice.IContext) error {
+func (h *CategoryHttp) SearchCategory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
