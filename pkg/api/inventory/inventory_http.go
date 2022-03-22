@@ -49,7 +49,7 @@ func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) I
 	}
 }
 
-func (h *InventoryHttp) RouteSetup() {
+func (h InventoryHttp) RouteSetup() {
 	h.ms.GET("/inventory/:id", h.InfoInventory)
 	h.ms.GET("/inventory", h.SearchInventory)
 	h.ms.POST("/inventory", h.CreateInventory)
@@ -78,7 +78,7 @@ func (h *InventoryHttp) RouteSetup() {
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
 // @Router /inventory [post]
-func (h *InventoryHttp) CreateInventory(ctx microservice.IContext) error {
+func (h InventoryHttp) CreateInventory(ctx microservice.IContext) error {
 	h.ms.Logger.Debug("Creating Inventory")
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -112,7 +112,7 @@ func (h *InventoryHttp) CreateInventory(ctx microservice.IContext) error {
 
 }
 
-func (h *InventoryHttp) UpdateInventory(ctx microservice.IContext) error {
+func (h InventoryHttp) UpdateInventory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -145,7 +145,7 @@ func (h *InventoryHttp) UpdateInventory(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *InventoryHttp) DeleteInventory(ctx microservice.IContext) error {
+func (h InventoryHttp) DeleteInventory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -177,7 +177,7 @@ func (h *InventoryHttp) DeleteInventory(ctx microservice.IContext) error {
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
 // @Router /inventory/{id} [get]
-func (h *InventoryHttp) InfoInventory(ctx microservice.IContext) error {
+func (h InventoryHttp) InfoInventory(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -210,7 +210,7 @@ func (h *InventoryHttp) InfoInventory(ctx microservice.IContext) error {
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
 // @Router /inventory [get]
-func (h *InventoryHttp) SearchInventory(ctx microservice.IContext) error {
+func (h InventoryHttp) SearchInventory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 

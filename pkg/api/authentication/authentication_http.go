@@ -47,7 +47,7 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 	}
 }
 
-func (h *AuthenticationHttp) RouteSetup() {
+func (h AuthenticationHttp) RouteSetup() {
 
 	h.ms.POST("/login", h.Login)
 	h.ms.POST("/logout", h.Logout)
@@ -72,7 +72,7 @@ func (h *AuthenticationHttp) RouteSetup() {
 // @Success		200	{object}	models.AuthResponse
 // @Failure		400 {object}	models.AuthResponseFailed
 // @Router /login [post]
-func (h *AuthenticationHttp) Login(ctx microservice.IContext) error {
+func (h AuthenticationHttp) Login(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
@@ -108,7 +108,7 @@ func (h *AuthenticationHttp) Login(ctx microservice.IContext) error {
 // @Failure		400 {object}	models.AuthResponseFailed
 // @Accept 		json
 // @Router		/register [post]
-func (h *AuthenticationHttp) Register(ctx microservice.IContext) error {
+func (h AuthenticationHttp) Register(ctx microservice.IContext) error {
 	h.ms.Logger.Debug("Receive Register Data")
 	input := ctx.ReadInput()
 
@@ -138,7 +138,7 @@ func (h *AuthenticationHttp) Register(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *AuthenticationHttp) Update(ctx microservice.IContext) error {
+func (h AuthenticationHttp) Update(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	input := ctx.ReadInput()
 
@@ -167,7 +167,7 @@ func (h *AuthenticationHttp) Update(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *AuthenticationHttp) UpdatePassword(ctx microservice.IContext) error {
+func (h AuthenticationHttp) UpdatePassword(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	input := ctx.ReadInput()
 
@@ -196,7 +196,7 @@ func (h *AuthenticationHttp) UpdatePassword(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *AuthenticationHttp) Logout(ctx microservice.IContext) error {
+func (h AuthenticationHttp) Logout(ctx microservice.IContext) error {
 
 	authorizationHeader := ctx.Header("Authorization")
 
@@ -217,7 +217,7 @@ func (h *AuthenticationHttp) Logout(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *AuthenticationHttp) Profile(ctx microservice.IContext) error {
+func (h AuthenticationHttp) Profile(ctx microservice.IContext) error {
 
 	userProfile, err := h.authenticationService.Profile(ctx.UserInfo().Username)
 
@@ -236,7 +236,7 @@ func (h *AuthenticationHttp) Profile(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h *AuthenticationHttp) ListShop(ctx microservice.IContext) error {
+func (h AuthenticationHttp) ListShop(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	authorizationHeader := ctx.Header("Authorization")
 
@@ -279,7 +279,7 @@ func (h *AuthenticationHttp) ListShop(ctx microservice.IContext) error {
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
 // @Router /select-shop [post]
-func (h *AuthenticationHttp) SelectShop(ctx microservice.IContext) error {
+func (h AuthenticationHttp) SelectShop(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	authorizationHeader := ctx.Header("Authorization")
 
@@ -321,7 +321,7 @@ func (h *AuthenticationHttp) SelectShop(ctx microservice.IContext) error {
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
 // @Router /list-shop [get]
-func (h *AuthenticationHttp) ListShopCanAccess(ctx microservice.IContext) error {
+func (h AuthenticationHttp) ListShopCanAccess(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
