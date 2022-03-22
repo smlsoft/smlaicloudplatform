@@ -110,7 +110,7 @@ func (repo ShopUserRepository) FindByUsernamePage(username string, page int, lim
 	aggPaginatedData, err := repo.pst.AggregatePage(&models.ShopUser{}, limit, page,
 		bson.M{"$match": bson.M{"username": username}},
 		bson.M{"$lookup": bson.M{
-			"from":         "shop",
+			"from":         "shops",
 			"localField":   "shopID",
 			"foreignField": "guidFixed",
 			"as":           "shopInfo",
