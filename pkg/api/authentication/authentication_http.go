@@ -339,6 +339,7 @@ func (h *AuthenticationHttp) ListShopCanAccess(ctx microservice.IContext) error 
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return nil
 	}
 
 	ctx.Response(http.StatusOK,
