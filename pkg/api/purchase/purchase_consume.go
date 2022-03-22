@@ -23,7 +23,7 @@ func StartPurchaseComsume(ms *microservice.Microservice, cfg microservice.IConfi
 
 		msg := ctx.ReadInput()
 
-		doc := models.PurchaseRequest{}
+		doc := models.PurchaseData{}
 		err := json.Unmarshal([]byte(msg), &doc)
 
 		if err != nil {
