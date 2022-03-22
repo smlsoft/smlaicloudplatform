@@ -22,8 +22,8 @@ type TransactionDetail struct {
 }
 
 type TransactionInfo struct {
-	DocIdentity
-	Transaction
+	DocIdentity `bson:"inline"`
+	Transaction `bson:"inline"`
 }
 
 func (TransactionInfo) CollectionName() string {
@@ -31,8 +31,8 @@ func (TransactionInfo) CollectionName() string {
 }
 
 type TransactionData struct {
-	ShopIdentity
-	TransactionInfo
+	ShopIdentity    `bson:"inline"`
+	TransactionInfo `bson:"inline"`
 }
 
 func (TransactionData) IndexName() string {
@@ -40,9 +40,9 @@ func (TransactionData) IndexName() string {
 }
 
 type TransactionDoc struct {
-	ID primitive.ObjectID `json:"id" bson:"_id"`
-	TransactionData
-	Activity
+	ID              primitive.ObjectID `json:"id" bson:"_id"`
+	TransactionData `bson:"inline"`
+	Activity        `bson:"inline"`
 }
 
 func (TransactionDoc) CollectionName() string {

@@ -76,8 +76,8 @@ type Choice struct {
 }
 
 type InventoryInfo struct {
-	DocIdentity
-	Inventory
+	DocIdentity `bson:"inline"`
+	Inventory   `bson:"inline"`
 }
 
 func (InventoryInfo) CollectionName() string {
@@ -85,14 +85,14 @@ func (InventoryInfo) CollectionName() string {
 }
 
 type InventoryData struct {
-	ShopIdentity
-	InventoryInfo
+	ShopIdentity  `bson:"inline"`
+	InventoryInfo `bson:"inline"`
 }
 
 type InventoryDoc struct {
-	ID primitive.ObjectID `json:"id" bson:"_id"`
-	InventoryData
-	Activity
+	ID            primitive.ObjectID `json:"id" bson:"_id"`
+	InventoryData `bson:"inline"`
+	Activity      `bson:"inline"`
 }
 
 func (InventoryDoc) CollectionName() string {

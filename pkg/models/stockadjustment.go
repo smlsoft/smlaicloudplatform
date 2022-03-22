@@ -24,8 +24,8 @@ type StockAdjustmentDetail struct {
 }
 
 type StockAdjustmentInfo struct {
-	DocIdentity
-	StockAdjustment
+	DocIdentity     `bson:"inline"`
+	StockAdjustment `bson:"inline"`
 }
 
 func (StockAdjustmentInfo) CollectionName() string {
@@ -33,8 +33,8 @@ func (StockAdjustmentInfo) CollectionName() string {
 }
 
 type StockAdjustmentData struct {
-	ShopIdentity
-	StockAdjustmentInfo
+	ShopIdentity        `bson:"inline"`
+	StockAdjustmentInfo `bson:"inline"`
 }
 
 func (StockAdjustmentData) IndexName() string {
@@ -42,9 +42,9 @@ func (StockAdjustmentData) IndexName() string {
 }
 
 type StockAdjustmentDoc struct {
-	ID primitive.ObjectID `json:"id" bson:"_id"`
-	StockAdjustmentData
-	Activity
+	ID                  primitive.ObjectID `json:"id" bson:"_id"`
+	StockAdjustmentData `bson:"inline"`
+	Activity            `bson:"inline"`
 }
 
 func (StockAdjustmentDoc) CollectionName() string {

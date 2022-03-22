@@ -14,8 +14,8 @@ type Category struct {
 }
 
 type CategoryInfo struct {
-	DocIdentity
-	Category
+	DocIdentity `bson:"inline"`
+	Category    `bson:"inline"`
 }
 
 func (CategoryInfo) CollectionName() string {
@@ -23,14 +23,14 @@ func (CategoryInfo) CollectionName() string {
 }
 
 type CategoryData struct {
-	ShopIdentity
-	CategoryInfo
+	ShopIdentity `bson:"inline"`
+	CategoryInfo `bson:"inline"`
 }
 
 type CategoryDoc struct {
-	ID primitive.ObjectID `json:"id" bson:"_id"`
-	CategoryData
-	Activity
+	ID           primitive.ObjectID `json:"id" bson:"_id"`
+	CategoryData `bson:"inline"`
+	Activity     `bson:"inline"`
 }
 
 func (CategoryData) CollectionName() string {

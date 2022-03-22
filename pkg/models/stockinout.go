@@ -24,8 +24,8 @@ type StockInOutDetail struct {
 }
 
 type StockInOutInfo struct {
-	DocIdentity
-	StockInOut
+	DocIdentity `bson:"inline"`
+	StockInOut  `bson:"inline"`
 }
 
 func (StockInOutInfo) CollectionName() string {
@@ -33,8 +33,8 @@ func (StockInOutInfo) CollectionName() string {
 }
 
 type StockInOutData struct {
-	ShopIdentity
-	StockInOutInfo
+	ShopIdentity   `bson:"inline"`
+	StockInOutInfo `bson:"inline"`
 }
 
 func (StockInOutData) IndexName() string {
@@ -42,9 +42,9 @@ func (StockInOutData) IndexName() string {
 }
 
 type StockInOutDoc struct {
-	ID primitive.ObjectID `json:"id" bson:"_id"`
-	StockInOutData
-	Activity
+	ID             primitive.ObjectID `json:"id" bson:"_id"`
+	StockInOutData `bson:"inline"`
+	Activity       `bson:"inline"`
 }
 
 func (StockInOutDoc) CollectionName() string {
