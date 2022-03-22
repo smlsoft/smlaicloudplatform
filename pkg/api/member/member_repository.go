@@ -53,7 +53,7 @@ func (repo MemberRepository) Delete(guid string, shopId string, uername string) 
 
 func (repo MemberRepository) FindByGuid(guid string, shopId string) (models.MemberDoc, error) {
 	doc := &models.MemberDoc{}
-	err := repo.pst.FindOne(&models.MemberDoc{}, bson.M{"shopId": shopId, "guidFixed": guid, "deleted": false}, doc)
+	err := repo.pst.FindOne(&models.MemberDoc{}, bson.M{"shopId": shopId, "guidFixed": guid, "deletedAt": bson.M{"$exists": false}}, doc)
 	if err != nil {
 		return *doc, err
 	}
@@ -64,8 +64,8 @@ func (repo MemberRepository) FindPage(shopId string, q string, page int, limit i
 
 	docList := []models.MemberDoc{}
 	pagination, err := repo.pst.FindPage(&models.MemberDoc{}, limit, page, bson.M{
-		"shopId":  shopId,
-		"deleted": false,
+		"shopId":    shopId,
+		"deletedAt": bson.M{"$exists": false},
 		"$or": []interface{}{
 			bson.M{"name": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",

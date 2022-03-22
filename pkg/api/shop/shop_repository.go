@@ -47,7 +47,7 @@ func (repo ShopRepository) Update(guid string, shop models.ShopDoc) error {
 
 func (repo ShopRepository) FindByGuid(guid string) (models.ShopDoc, error) {
 	findShop := &models.ShopDoc{}
-	err := repo.pst.FindOne(&models.ShopDoc{}, bson.M{"guidFixed": guid, "deleted": false}, findShop)
+	err := repo.pst.FindOne(&models.ShopDoc{}, bson.M{"guidFixed": guid, "deletedAt": bson.M{"$exists": false}}, findShop)
 
 	if err != nil {
 		return models.ShopDoc{}, err
@@ -60,7 +60,7 @@ func (repo ShopRepository) FindPage(q string, page int, limit int) ([]models.Sho
 	shopList := []models.ShopInfo{}
 
 	pagination, err := repo.pst.FindPage(&models.ShopInfo{}, limit, page, bson.M{
-		"deleted": false,
+		"deletedAt": bson.M{"$exists": false},
 		"name1": bson.M{"$regex": primitive.Regex{
 			Pattern: ".*" + q + ".*",
 			Options: "",
