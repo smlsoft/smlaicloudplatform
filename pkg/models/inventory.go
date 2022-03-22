@@ -94,23 +94,8 @@ type Choice struct {
 	Name4       string  `json:"name4,omitempty" bson:"name4,omitempty"`
 	Name5       string  `json:"name5,omitempty" bson:"name5,omitempty"`
 }
-type Category struct {
-	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	ShopID    string             `json:"shopID" bson:"shopID"`
-	GuidFixed string             `json:"guidFixed" bson:"guidFixed"`
-	Name1     string             `json:"name1" bson:"name1"`
-	Name2     string             `json:"name2" bson:"name2"`
-	Name3     string             `json:"name3" bson:"name3"`
-	Name4     string             `json:"name4" bson:"name4"`
-	Name5     string             `json:"name5" bson:"name5"`
-	Image     string             `json:"image" bson:"image"`
-	Activity
-}
 
-func (*Category) CollectionName() string {
-	return "category"
-}
-
+/* */
 type InventoryOptionGroup struct {
 	ID                     primitive.ObjectID          `json:"id" bson:"_id,omitempty"`
 	ShopID                 string                      `json:"shopID" bson:"shopID"`
