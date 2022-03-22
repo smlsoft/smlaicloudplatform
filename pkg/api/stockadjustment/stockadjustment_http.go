@@ -58,7 +58,7 @@ func (h StockAdjustmentHttp) CreateStockAdjustment(ctx microservice.IContext) er
 
 	input := ctx.ReadInput()
 
-	doc := &models.StockAdjustment{}
+	doc := models.StockAdjustment{}
 	err := json.Unmarshal([]byte(input), &doc)
 
 	if err != nil {
