@@ -6,6 +6,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+const userCollectionName = "users"
+
 type User struct {
 	ID        primitive.ObjectID `json:"-" bson:"_id,omitempty"`
 	Username  string             `json:"username" bson:"username"`
@@ -16,7 +18,7 @@ type User struct {
 }
 
 func (*User) CollectionName() string {
-	return "user"
+	return userCollectionName
 }
 
 type UserRequest struct {
@@ -26,7 +28,7 @@ type UserRequest struct {
 }
 
 func (*UserRequest) CollectionName() string {
-	return "user"
+	return userCollectionName
 }
 
 type UserLoginRequest struct {
