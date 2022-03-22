@@ -6,7 +6,7 @@ import (
 )
 
 type IPurchaseMQRepository interface {
-	Create(doc models.PurchaseRequest) error
+	Create(doc models.PurchaseData) error
 }
 
 type PurchaseMQRepository struct {
@@ -23,7 +23,7 @@ func NewPurchaseMQRepository(prod microservice.IProducer) PurchaseMQRepository {
 	}
 }
 
-func (repo PurchaseMQRepository) Create(doc models.PurchaseRequest) error {
+func (repo PurchaseMQRepository) Create(doc models.PurchaseData) error {
 	err := repo.prod.SendMessage(MQ_TOPIC_PURCHASE_CREATED, repo.mqKey, doc)
 
 	if err != nil {
