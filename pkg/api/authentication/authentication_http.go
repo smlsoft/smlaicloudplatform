@@ -67,7 +67,7 @@ func (h *AuthenticationHttp) RouteSetup() {
 // Login login
 // @Description get struct array by ID
 // @Tags		Authentication
-// @Param		User  body      models.UserRequest  true  "Add account"
+// @Param		User  body      models.UserRequest  true  "User Account"
 // @Accept 		json
 // @Success		200	{object}	models.AuthResponse
 // @Failure		400 {object}	models.AuthResponseFailed
@@ -103,7 +103,7 @@ func (h *AuthenticationHttp) Login(ctx microservice.IContext) error {
 // @Summary		Register An Account
 // @Description	For User Register Application
 // @Tags		Authentication
-// @Param		User  body      models.UserRequest  true  "Add account"
+// @Param		User  body      models.UserRequest  true  "Register account"
 // @Success		200	{object}	models.ResponseSuccessWithID
 // @Failure		400 {object}	models.AuthResponseFailed
 // @Accept 		json

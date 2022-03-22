@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  redis:
+    image: bitnami/redis:5.0
+    container_name: redis
+    restart: always
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+#    ports:
+#      - 6379:6379
+    networks:
+       - backend
+  mongodb:
+    image: bitnami/mongodb:4
+    container_name: mongodb
+    volumes:
+      - ./mongodb_data:/bitnami/mongodb
+#    ports:
+#      - 27017:27017
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MONGODB_SYSTEM_LOG_VERBOSITY=3
+    networks:
+      - backend
+
+networks:
+  backend:
+    external:
+      name: sml_service_backend

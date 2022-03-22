@@ -83,7 +83,7 @@ func (h *InventoryHttp) RouteSetup() {
 // Create Inventory godoc
 // @Description Create Inventory
 // @Tags		Inventory
-// @Param		Inventory  body      models.Inventory  true  "Add Inventory"
+// @Param		Inventory  body      models.Inventory  true  "Inventory"
 // @Accept 		json
 // @Success		200	{object}	models.ApiResponse
 // @Failure		401 {object}	models.ApiResponse
@@ -123,6 +123,16 @@ func (h *InventoryHttp) CreateInventory(ctx microservice.IContext) error {
 
 }
 
+// Update Inventory godoc
+// @Description Update Inventory
+// @Tags		Inventory
+// @Param		id  path      string  true  "Inventory ID"
+// @Param		Inventory  body      models.Inventory  true  "Inventory"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /inventory/{id} [put]
 func (h *InventoryHttp) UpdateInventory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -156,6 +166,15 @@ func (h *InventoryHttp) UpdateInventory(ctx microservice.IContext) error {
 	return nil
 }
 
+// Delete Inventory godoc
+// @Description Delete Inventory
+// @Tags		Inventory
+// @Param		id  path      string  true  "Inventory ID"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /inventory/{id} [delete]
 func (h *InventoryHttp) DeleteInventory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID

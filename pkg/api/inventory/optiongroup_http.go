@@ -8,6 +8,15 @@ import (
 	"strconv"
 )
 
+// Create Inventory Option Group godoc
+// @Description Create Inventory Option Group
+// @Tags		Inventory
+// @Param		Option  body      models.InventoryOptionGroup  true  "Option Group"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /optgroup [post]
 func (h *InventoryHttp) CreateOptionGroup(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
@@ -35,6 +44,16 @@ func (h *InventoryHttp) CreateOptionGroup(ctx microservice.IContext) error {
 	return nil
 }
 
+// Update Option Group godoc
+// @Description Update Option Group
+// @Tags		Inventory
+// @Param		id  path      string  true  "Option ID"
+// @Param		OptionGroup  body      models.InventoryOptionGroup  true  "Option Group"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /optgroup/{id} [put]
 func (h *InventoryHttp) UpdateOptionGroup(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -66,6 +85,15 @@ func (h *InventoryHttp) UpdateOptionGroup(ctx microservice.IContext) error {
 	return nil
 }
 
+// Delete OptionGroup godoc
+// @Description Delete OptionGroup
+// @Tags		Inventory
+// @Param		id  path      string  true  "OptionGroup ID"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /optgroup/{id} [delete]
 func (h *InventoryHttp) DeleteOptionGroup(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -87,6 +115,15 @@ func (h *InventoryHttp) DeleteOptionGroup(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Option Group Infomation godoc
+// @Description Get Option Group Information
+// @Tags		Inventory
+// @Param		id  path      string  true  "OptionGroup Id"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /optgroup/{id} [get]
 func (h *InventoryHttp) InfoOptionGroup(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -107,6 +144,17 @@ func (h *InventoryHttp) InfoOptionGroup(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Option Group godoc
+// @Description List Inventory Option Group
+// @Tags		Inventory
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Size"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	models.ApiResponse
+// @Security     AccessToken
+// @Router /optgroup [get]
 func (h *InventoryHttp) SearchOptionGroup(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
