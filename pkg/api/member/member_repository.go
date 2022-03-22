@@ -14,7 +14,7 @@ type IMemberRepository interface {
 	Update(guid string, doc models.MemberDoc) error
 	Delete(guid string, shopId string, username string) error
 	FindByGuid(guid string, shopId string) (models.MemberDoc, error)
-	FindPage(shopId string, q string, page int, limit int) ([]models.MemberDoc, paginate.PaginationData, error)
+	FindPage(shopId string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error)
 }
 
 type MemberRepository struct {
@@ -60,10 +60,10 @@ func (repo MemberRepository) FindByGuid(guid string, shopId string) (models.Memb
 	return *doc, nil
 }
 
-func (repo MemberRepository) FindPage(shopId string, q string, page int, limit int) ([]models.MemberDoc, paginate.PaginationData, error) {
+func (repo MemberRepository) FindPage(shopId string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error) {
 
-	docList := []models.MemberDoc{}
-	pagination, err := repo.pst.FindPage(&models.MemberDoc{}, limit, page, bson.M{
+	docList := []models.MemberInfo{}
+	pagination, err := repo.pst.FindPage(&models.MemberInfo{}, limit, page, bson.M{
 		"shopId":    shopId,
 		"deletedAt": bson.M{"$exists": false},
 		"$or": []interface{}{
@@ -75,7 +75,7 @@ func (repo MemberRepository) FindPage(shopId string, q string, page int, limit i
 	}, &docList)
 
 	if err != nil {
-		return []models.MemberDoc{}, paginate.PaginationData{}, err
+		return []models.MemberInfo{}, paginate.PaginationData{}, err
 	}
 
 	return docList, pagination, nil

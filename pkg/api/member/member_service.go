@@ -14,8 +14,8 @@ type IMemberService interface {
 	CreateMember(shopId string, username string, doc models.Member) (string, error)
 	UpdateMember(guid string, shopId string, username string, doc models.Member) error
 	DeleteMember(guid string, shopId string, username string) error
-	InfoMember(guid string, shopId string) (models.MemberDoc, error)
-	SearchMember(shopId string, q string, page int, limit int) ([]models.MemberDoc, paginate.PaginationData, error)
+	InfoMember(guid string, shopId string) (models.MemberInfo, error)
+	SearchMember(shopId string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error)
 }
 
 type MemberService struct {
@@ -83,17 +83,17 @@ func (svc MemberService) DeleteMember(guid string, shopId string, username strin
 	return nil
 }
 
-func (svc MemberService) InfoMember(guid string, shopId string) (models.MemberDoc, error) {
+func (svc MemberService) InfoMember(guid string, shopId string) (models.MemberInfo, error) {
 	doc, err := svc.memberRepo.FindByGuid(guid, shopId)
 
 	if err != nil {
-		return models.MemberDoc{}, err
+		return models.MemberInfo{}, err
 	}
 
-	return doc, nil
+	return doc.MemberInfo, nil
 }
 
-func (svc MemberService) SearchMember(shopId string, q string, page int, limit int) ([]models.MemberDoc, paginate.PaginationData, error) {
+func (svc MemberService) SearchMember(shopId string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error) {
 	docList, pagination, err := svc.memberRepo.FindPage(shopId, q, page, limit)
 
 	if err != nil {

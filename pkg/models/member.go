@@ -4,16 +4,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type MemberDoc struct {
-	ID primitive.ObjectID `json:"id" bson:"_id"`
-	Identity
-	Member
-	Activity
-}
-
-func (*MemberDoc) CollectionName() string {
-	return "member"
-}
+const memberCollectionName = "members"
 
 type Member struct {
 	Telephone    string `json:"telephone" bson:"Telephone"`
@@ -28,32 +19,27 @@ type Member struct {
 	ZipCode      string `json:"zipCode,omitempty" bson:"zipCode,omitempty"`
 }
 
-func (*Member) CollectionName() string {
-	return "member"
-}
-
 type MemberInfo struct {
-	ID       primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	ShopID   string             `json:"shop_id" bson:"shop_id"`
-	Name     string             `json:"name,omitempty" bson:"name"`
-	Email    string             `json:"email" bson:"email"`
-	Username string             `json:"username" bson:"username"`
-	Activity
+	DocIdentity `bson:"inline"`
+	Member      `bson:"inline"`
 }
 
-func (*MemberInfo) CollectionName() string {
-	return "member"
+func (MemberInfo) CollectionName() string {
+	return memberCollectionName
 }
 
-type MemberRequest struct {
-	Name     string `json:"name" validate:"required"`
-	Email    string `json:"email" validate:"required,email"`
-	Username string `json:"username" validate:"required"`
-	Password string `json:"password" validate:"required,gte=6"`
+type MemberData struct {
+	ShopIdentity `bson:"inline"`
+	MemberInfo   `bson:"inline"`
+}
+type MemberDoc struct {
+	ID         primitive.ObjectID `json:"id" bson:"_id"`
+	MemberData `bson:"inline"`
+	Activity   `bson:"inline"`
 }
 
-func (*MemberRequest) CollectionName() string {
-	return "member"
+func (MemberDoc) CollectionName() string {
+	return memberCollectionName
 }
 
 type MemberRequestEdit struct {
@@ -62,14 +48,14 @@ type MemberRequestEdit struct {
 	Username string `json:"username" validate:"required"`
 }
 
-func (*MemberRequestEdit) CollectionName() string {
-	return "member"
+func (MemberRequestEdit) CollectionName() string {
+	return memberCollectionName
 }
 
 type MemberRequestPassword struct {
 	Password string `json:"password" validate:"required,gte=6"`
 }
 
-func (*MemberRequestPassword) CollectionName() string {
-	return "member"
+func (MemberRequestPassword) CollectionName() string {
+	return memberCollectionName
 }
