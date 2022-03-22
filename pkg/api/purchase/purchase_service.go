@@ -83,8 +83,9 @@ func (svc PurchaseService) UpdatePurchase(guid string, shopID string, username s
 		sumAmount += docDetail.Price * docDetail.Qty
 	}
 
-	findDoc.Items = doc.Items
+	findDoc.Purchase = doc
 	findDoc.SumAmount = sumAmount
+
 	findDoc.UpdatedBy = username
 	findDoc.UpdatedAt = time.Now()
 
