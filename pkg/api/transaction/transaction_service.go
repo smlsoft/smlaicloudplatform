@@ -104,7 +104,7 @@ func (svc TransactionService) UpdateTransaction(guid string, shopID string, user
 
 func (svc TransactionService) DeleteTransaction(guid string, shopID string, username string) error {
 
-	err := svc.transactionRepository.Delete(guid, shopID)
+	err := svc.transactionRepository.Delete(guid, shopID, username)
 	if err != nil {
 		return err
 	}

@@ -55,7 +55,7 @@ func (repo StockInOutRepository) Delete(guid string, shopID string, username str
 
 func (repo StockInOutRepository) FindByGuid(guid string, shopID string) (models.StockInOutDoc, error) {
 	doc := &models.StockInOutDoc{}
-	err := repo.pst.FindOne(&models.StockInOutDoc{}, bson.M{"shopID": shopID, "guidFixed": guid, "deleted": false}, doc)
+	err := repo.pst.FindOne(&models.StockInOutDoc{}, bson.M{"shopID": shopID, "guidFixed": guid, "deletedAt": bson.M{"$exists": false}}, doc)
 	if err != nil {
 		return *doc, err
 	}
