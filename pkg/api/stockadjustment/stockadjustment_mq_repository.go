@@ -6,7 +6,7 @@ import (
 )
 
 type IStockAdjustmentMQRepository interface {
-	Create(doc models.StockAdjustmentRequest) error
+	Create(doc models.StockAdjustmentData) error
 }
 
 type StockAdjustmentMQRepository struct {
@@ -23,7 +23,7 @@ func NewStockAdjustmentMQRepository(prod microservice.IProducer) StockAdjustment
 	}
 }
 
-func (repo StockAdjustmentMQRepository) Create(doc models.StockAdjustmentRequest) error {
+func (repo StockAdjustmentMQRepository) Create(doc models.StockAdjustmentData) error {
 	err := repo.prod.SendMessage(MQ_TOPIC_STOCK_ADJUSTMENT_CREATED, repo.mqKey, doc)
 
 	if err != nil {

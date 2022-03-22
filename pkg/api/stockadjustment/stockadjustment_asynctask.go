@@ -22,7 +22,7 @@ func StartStockAdjustmentAsync(ms *microservice.Microservice, cfg microservice.I
 		shopID := userInfo.ShopID
 		input := ctx.ReadInput()
 
-		stockadjustment := &models.StockAdjustment{}
+		stockadjustment := models.StockAdjustment{}
 		err := json.Unmarshal([]byte(input), &stockadjustment)
 
 		if err != nil {

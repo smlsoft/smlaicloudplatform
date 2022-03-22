@@ -11,12 +11,12 @@ import (
 )
 
 type IStockAdjustmentService interface {
-	CreateStockAdjustment(shopID string, username string, doc *models.StockAdjustment) (string, error)
+	CreateStockAdjustment(shopID string, username string, doc models.StockAdjustment) (string, error)
 	UpdateStockAdjustment(guid string, shopID string, username string, doc models.StockAdjustment) error
 	DeleteStockAdjustment(guid string, shopID string, username string) error
-	InfoStockAdjustment(guid string, shopID string) (models.StockAdjustment, error)
-	SearchStockAdjustment(shopID string, q string, page int, limit int) ([]models.StockAdjustment, paginate.PaginationData, error)
-	SearchItemsStockAdjustment(guid string, shopID string, q string, page int, limit int) ([]models.StockAdjustment, paginate.PaginationData, error)
+	InfoStockAdjustment(guid string, shopID string) (models.StockAdjustmentInfo, error)
+	SearchStockAdjustment(shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, paginate.PaginationData, error)
+	SearchItemsStockAdjustment(guid string, shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, paginate.PaginationData, error)
 }
 
 type StockAdjustmentService struct {
@@ -32,7 +32,7 @@ func NewStockAdjustmentService(repo IStockAdjustmentRepository, mqRepo IStockAdj
 	}
 }
 
-func (svc StockAdjustmentService) CreateStockAdjustment(shopID string, username string, doc *models.StockAdjustment) (string, error) {
+func (svc StockAdjustmentService) CreateStockAdjustment(shopID string, username string, doc models.StockAdjustment) (string, error) {
 
 	sumAmount := 0.0
 	for i, docDetail := range doc.Items {
@@ -41,25 +41,24 @@ func (svc StockAdjustmentService) CreateStockAdjustment(shopID string, username 
 	}
 
 	newGuidFixed := utils.NewGUID()
-	doc.ShopID = shopID
-	doc.GuidFixed = newGuidFixed
-	doc.SumAmount = sumAmount
-	doc.Deleted = false
-	doc.CreatedBy = username
-	doc.CreatedAt = time.Now()
 
-	idx, err := svc.repo.Create(*doc)
+	docData := models.StockAdjustmentDoc{}
+
+	docData.ShopID = shopID
+	docData.GuidFixed = newGuidFixed
+	docData.SumAmount = sumAmount
+	docData.StockAdjustment = doc
+
+	docData.CreatedBy = username
+	docData.CreatedAt = time.Now()
+
+	_, err := svc.repo.Create(docData)
 
 	if err != nil {
 		return "", err
 	}
 
-	doc.ID = idx
-
-	docReq := &models.StockAdjustmentRequest{}
-	docReq.MapRequest(*doc)
-
-	err = svc.mqRepo.Create(*docReq)
+	err = svc.mqRepo.Create(docData.StockAdjustmentData)
 	if err != nil {
 		return "", err
 	}
@@ -85,8 +84,9 @@ func (svc StockAdjustmentService) UpdateStockAdjustment(guid string, shopID stri
 		sumAmount += docDetail.Price * docDetail.Qty
 	}
 
-	findDoc.Items = doc.Items
+	findDoc.StockAdjustment = doc
 	findDoc.SumAmount = sumAmount
+
 	findDoc.UpdatedBy = username
 	findDoc.UpdatedAt = time.Now()
 
@@ -108,17 +108,17 @@ func (svc StockAdjustmentService) DeleteStockAdjustment(guid string, shopID stri
 	return nil
 }
 
-func (svc StockAdjustmentService) InfoStockAdjustment(guid string, shopID string) (models.StockAdjustment, error) {
+func (svc StockAdjustmentService) InfoStockAdjustment(guid string, shopID string) (models.StockAdjustmentInfo, error) {
 	doc, err := svc.repo.FindByGuid(guid, shopID)
 
 	if err != nil {
-		return models.StockAdjustment{}, err
+		return models.StockAdjustmentInfo{}, err
 	}
 
-	return doc, nil
+	return doc.StockAdjustmentInfo, nil
 }
 
-func (svc StockAdjustmentService) SearchStockAdjustment(shopID string, q string, page int, limit int) ([]models.StockAdjustment, paginate.PaginationData, error) {
+func (svc StockAdjustmentService) SearchStockAdjustment(shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, paginate.PaginationData, error) {
 	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
 
 	if err != nil {
@@ -128,7 +128,7 @@ func (svc StockAdjustmentService) SearchStockAdjustment(shopID string, q string,
 	return docList, pagination, nil
 }
 
-func (svc StockAdjustmentService) SearchItemsStockAdjustment(guid string, shopID string, q string, page int, limit int) ([]models.StockAdjustment, paginate.PaginationData, error) {
+func (svc StockAdjustmentService) SearchItemsStockAdjustment(guid string, shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, paginate.PaginationData, error) {
 	docList, pagination, err := svc.repo.FindItemsByGuidPage(guid, shopID, q, page, limit)
 
 	if err != nil {
