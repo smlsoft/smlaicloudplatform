@@ -23,7 +23,7 @@ func StartStockInOutComsume(ms *microservice.Microservice, cfg microservice.ICon
 
 		msg := ctx.ReadInput()
 
-		doc := models.StockInOutRequest{}
+		doc := models.StockInOutData{}
 		err := json.Unmarshal([]byte(msg), &doc)
 
 		if err != nil {

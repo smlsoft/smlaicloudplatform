@@ -6,7 +6,7 @@ import (
 )
 
 type IStockInOutMQRepository interface {
-	Create(doc models.StockInOutRequest) error
+	Create(doc models.StockInOutData) error
 }
 
 type StockInOutMQRepository struct {
@@ -23,7 +23,7 @@ func NewStockInOutMQRepository(prod microservice.IProducer) StockInOutMQReposito
 	}
 }
 
-func (repo StockInOutMQRepository) Create(doc models.StockInOutRequest) error {
+func (repo StockInOutMQRepository) Create(doc models.StockInOutData) error {
 	err := repo.prod.SendMessage(MQ_TOPIC_STOCK_IN_OUT_CREATED, repo.mqKey, doc)
 
 	if err != nil {

@@ -58,7 +58,7 @@ func (h StockInOutHttp) CreateStockInOut(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	doc := &models.StockInOut{}
+	doc := models.StockInOut{}
 	err := json.Unmarshal([]byte(input), &doc)
 
 	if err != nil {
