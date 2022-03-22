@@ -88,8 +88,9 @@ func (svc TransactionService) UpdateTransaction(guid string, shopID string, user
 		sumAmount += transDetail.Price * transDetail.Qty
 	}
 
-	findDoc.Items = trans.Items
+	findDoc.Transaction = trans
 	findDoc.SumAmount = sumAmount
+
 	findDoc.UpdatedBy = username
 	findDoc.UpdatedAt = time.Now()
 
