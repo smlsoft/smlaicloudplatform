@@ -21,7 +21,6 @@ type InventoryHttp struct {
 	ms              *microservice.Microservice
 	cfg             microservice.IConfig
 	invService      IInventoryService
-	cateService     ICategoryService
 	invOptService   IInventoryOptionService
 	optGroupService IOptionGroupService
 }
@@ -35,9 +34,6 @@ func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) I
 	invMqRepo := NewInventoryMQRepository(prod)
 	invService := NewInventoryService(invRepo, invMqRepo)
 
-	cateRepo := NewCategoryRepository(pst)
-	cateService := NewCategoryService(cateRepo)
-
 	invOptRepo := NewInventoryOptionRepository(pst)
 	invOptService := NewInventoryOptionService(invOptRepo)
 
@@ -48,7 +44,6 @@ func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) I
 		ms:              ms,
 		cfg:             cfg,
 		invService:      invService,
-		cateService:     cateService,
 		invOptService:   invOptService,
 		optGroupService: optGroupService,
 	}
@@ -60,12 +55,6 @@ func (h *InventoryHttp) RouteSetup() {
 	h.ms.POST("/inventory", h.CreateInventory)
 	h.ms.PUT("/inventory/:id", h.UpdateInventory)
 	h.ms.DELETE("/inventory/:id", h.DeleteInventory)
-
-	h.ms.GET("/category/:id", h.InfoCategory)
-	h.ms.GET("/category", h.SearchCategory)
-	h.ms.POST("/category", h.CreateCategory)
-	h.ms.PUT("/category/:id", h.UpdateCategory)
-	h.ms.DELETE("/category/:id", h.DeleteCategory)
 
 	h.ms.GET("/option/:id", h.InfoInventoryOption)
 	h.ms.GET("/option", h.SearchInventoryOption)

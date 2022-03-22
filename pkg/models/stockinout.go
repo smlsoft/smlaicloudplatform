@@ -4,17 +4,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+const stockInOutCollectionName = "stockInOuts"
+const stockInOutIndexName = "stockInOuts"
+
 type StockInOut struct {
-	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	ShopID    string             `json:"shopID" bson:"shopID"`
-	GuidFixed string             `json:"guidFixed,omitempty" bson:"guidFixed"`
 	Items     []StockInOutDetail `json:"items" bson:"items" `
 	SumAmount float64            `json:"sumAmount" bson:"sumAmount" `
-	Activity
-}
-
-func (*StockInOut) CollectionName() string {
-	return "stockInOut"
 }
 
 type StockInOutDetail struct {
@@ -28,20 +23,30 @@ type StockInOutDetail struct {
 	DiscountText   string  `json:"discountText" bson:"discountText"`
 }
 
-type StockInOutRequest struct {
-	ShopID    string             `json:"shopID" `
-	GuidFixed string             `json:"guidFixed,omitempty" `
-	Items     []StockInOutDetail `json:"items" `
-	SumAmount float64            `json:"sumAmount" `
+type StockInOutInfo struct {
+	DocIdentity
+	StockInOut
 }
 
-func (*StockInOutRequest) IndexName() string {
-	return "stockInOut"
+func (StockInOutInfo) CollectionName() string {
+	return stockInOutCollectionName
 }
 
-func (docReq *StockInOutRequest) MapRequest(doc StockInOut) {
-	docReq.ShopID = doc.ShopID
-	docReq.GuidFixed = doc.GuidFixed
-	docReq.Items = doc.Items
-	docReq.SumAmount = doc.SumAmount
+type StockInOutData struct {
+	ShopIdentity
+	StockInOutInfo
+}
+
+func (StockInOutData) IndexName() string {
+	return stockInOutIndexName
+}
+
+type StockInOutDoc struct {
+	ID primitive.ObjectID `json:"id" bson:"_id"`
+	StockInOutData
+	Activity
+}
+
+func (StockInOutDoc) CollectionName() string {
+	return stockInOutCollectionName
 }

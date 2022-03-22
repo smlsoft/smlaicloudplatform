@@ -22,7 +22,7 @@ func StartStockInOutAsync(ms *microservice.Microservice, cfg microservice.IConfi
 		shopID := userInfo.ShopID
 		input := ctx.ReadInput()
 
-		stockinout := &models.StockInOut{}
+		stockinout := models.StockInOut{}
 		err := json.Unmarshal([]byte(input), &stockinout)
 
 		if err != nil {

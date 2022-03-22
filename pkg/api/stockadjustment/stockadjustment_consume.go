@@ -23,7 +23,7 @@ func StartStockAdjustmentComsume(ms *microservice.Microservice, cfg microservice
 
 		msg := ctx.ReadInput()
 
-		doc := models.StockAdjustmentRequest{}
+		doc := models.StockAdjustmentData{}
 		err := json.Unmarshal([]byte(msg), &doc)
 
 		if err != nil {

@@ -21,7 +21,7 @@ func StartTransactionAsync(ms *microservice.Microservice, cfg microservice.IConf
 		shopID := userInfo.ShopID
 		input := ctx.ReadInput()
 
-		trans := &models.Transaction{}
+		trans := models.Transaction{}
 		err := json.Unmarshal([]byte(input), &trans)
 
 		if err != nil {

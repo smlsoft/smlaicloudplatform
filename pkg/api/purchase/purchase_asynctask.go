@@ -22,7 +22,7 @@ func StartPurchaseAsync(ms *microservice.Microservice, cfg microservice.IConfig)
 		shopID := userInfo.ShopID
 		input := ctx.ReadInput()
 
-		purchase := &models.Purchase{}
+		purchase := models.Purchase{}
 		err := json.Unmarshal([]byte(input), &purchase)
 
 		if err != nil {

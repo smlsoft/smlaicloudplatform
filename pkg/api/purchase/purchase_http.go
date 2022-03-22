@@ -58,7 +58,7 @@ func (h PurchaseHttp) CreatePurchase(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	doc := &models.Purchase{}
+	doc := models.Purchase{}
 	err := json.Unmarshal([]byte(input), &doc)
 
 	if err != nil {

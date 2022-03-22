@@ -30,14 +30,16 @@ func NewShopService(shopRepo IShopRepository, shopUserRepo IShopUserRepository) 
 	}
 }
 
-func (svc ShopService) CreateShop(username string, shop models.Shop) (string, error) {
+func (svc ShopService) CreateShop(username string, doc models.Shop) (string, error) {
 
+	dataDoc := models.ShopDoc{}
 	shopID := utils.NewGUID()
-	shop.GuidFixed = shopID
-	shop.CreatedBy = username
-	shop.CreatedAt = time.Now()
+	dataDoc.GuidFixed = shopID
+	dataDoc.CreatedBy = username
+	dataDoc.CreatedAt = time.Now()
+	dataDoc.Shop = doc
 
-	_, err := svc.shopRepo.Create(shop)
+	_, err := svc.shopRepo.Create(dataDoc)
 
 	if err != nil {
 		return "", err
@@ -60,9 +62,14 @@ func (svc ShopService) UpdateShop(guid string, username string, shop models.Shop
 		return errors.New("shop not found")
 	}
 
-	findShop.Name1 = shop.Name1
+	guidx := findShop.GuidFixed
+
 	findShop.UpdatedBy = username
 	findShop.UpdatedAt = time.Now()
+
+	findShop.Name1 = shop.Name1
+
+	findShop.GuidFixed = guidx
 
 	err = svc.shopRepo.Update(guid, findShop)
 
@@ -90,11 +97,7 @@ func (svc ShopService) InfoShop(guid string) (models.ShopInfo, error) {
 		return models.ShopInfo{}, err
 	}
 
-	return models.ShopInfo{
-		ID:        findShop.ID,
-		GuidFixed: findShop.GuidFixed,
-		Name1:     findShop.Name1,
-	}, nil
+	return findShop.ShopInfo, nil
 }
 
 func (svc ShopService) SearchShop(q string, page int, limit int) ([]models.ShopInfo, paginate.PaginationData, error) {

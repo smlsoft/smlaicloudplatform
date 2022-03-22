@@ -15,15 +15,14 @@ func TestCreateTransaction(t *testing.T) {
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := transaction.NewTransactionRepository(mongoPersister)
 
-	give := models.Transaction{
-		ShopID:    "mx01",
-		GuidFixed: "fx01",
-		Items: []models.TransactionDetail{
-			{
-				InventoryID:  "inv01",
-				ItemSku:      "sku01",
-				CategoryGuid: "xxx",
-			},
+	give := models.TransactionDoc{}
+
+	give.ShopID = "mx01"
+	give.GuidFixed = "fx01"
+	give.Items = []models.TransactionDetail{
+		{
+			ItemSku:      "sku01",
+			CategoryGuid: "xxx",
 		},
 	}
 
@@ -48,32 +47,32 @@ func TestUpdateTransaction(t *testing.T) {
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := transaction.NewTransactionRepository(mongoPersister)
 
-	trans := models.Transaction{
-		ShopID:    "mx01",
-		GuidFixed: "fx02",
-		Items: []models.TransactionDetail{
-			{
-				InventoryID:  "inv01",
-				ItemSku:      "sku01",
-				CategoryGuid: "xxx",
-			},
+	trans := models.TransactionDoc{}
+
+	trans.ShopID = "mx01"
+	trans.GuidFixed = "fx02"
+	trans.Items = []models.TransactionDetail{
+		{
+			InventoryID:  "inv01",
+			ItemSku:      "sku01",
+			CategoryGuid: "xxx",
 		},
 	}
 
-	give := models.Transaction{
-		ShopID:    "mx01",
-		GuidFixed: "fx02",
-		Items: []models.TransactionDetail{
-			{
-				InventoryID:  "inv01",
-				ItemSku:      "sku01",
-				CategoryGuid: "xxx",
-			},
-			{
-				InventoryID:  "inv02",
-				ItemSku:      "sku02",
-				CategoryGuid: "xxx2",
-			},
+	give := models.TransactionDoc{}
+
+	give.ShopID = "mx01"
+	give.GuidFixed = "fx02"
+	give.Items = []models.TransactionDetail{
+		{
+			InventoryID:  "inv01",
+			ItemSku:      "sku01",
+			CategoryGuid: "xxx",
+		},
+		{
+			InventoryID:  "inv02",
+			ItemSku:      "sku02",
+			CategoryGuid: "xxx2",
 		},
 	}
 
@@ -116,15 +115,15 @@ func TestDeleteTransaction(t *testing.T) {
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := transaction.NewTransactionRepository(mongoPersister)
 
-	give := models.Transaction{
-		ShopID:    "mx01",
-		GuidFixed: "fx03",
-		Items: []models.TransactionDetail{
-			{
-				InventoryID:  "inv01",
-				ItemSku:      "sku01",
-				CategoryGuid: "xxx",
-			},
+	give := models.TransactionDoc{}
+
+	give.ShopID = "mx01"
+	give.GuidFixed = "fx03"
+	give.Items = []models.TransactionDetail{
+		{
+			InventoryID:  "inv01",
+			ItemSku:      "sku01",
+			CategoryGuid: "xxx",
 		},
 	}
 

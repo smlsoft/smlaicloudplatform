@@ -30,8 +30,8 @@ func (*UserRequest) CollectionName() string {
 }
 
 type UserLoginRequest struct {
-	Username string `json:"username,omitempty" `
-	Password string `json:"password,omitempty" `
+	Username string `json:"username" validate:"required,gte=3"`
+	Password string `json:"password" validate:"required,gte=6"`
 	ShopID   string `json:"shopID,omitempty"`
 }
 

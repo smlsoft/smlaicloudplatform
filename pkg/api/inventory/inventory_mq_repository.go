@@ -6,7 +6,7 @@ import (
 )
 
 type IInventoryMQRepository interface {
-	Create(doc models.InventoryRequest) error
+	Create(doc models.InventoryInfo) error
 }
 
 type InventoryMQRepository struct {
@@ -23,7 +23,7 @@ func NewInventoryMQRepository(prod microservice.IProducer) InventoryMQRepository
 	}
 }
 
-func (repo InventoryMQRepository) Create(doc models.InventoryRequest) error {
+func (repo InventoryMQRepository) Create(doc models.InventoryInfo) error {
 	err := repo.prod.SendMessage(MQ_TOPIC_INVENTORY_CREATED, repo.mqKey, doc)
 
 	if err != nil {

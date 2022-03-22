@@ -4,17 +4,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+const stockAdjustmentCollectionName = "stockAdjustments"
+const stockAdjustmentIndexName = "stockAdjustments"
+
 type StockAdjustment struct {
-	ID        primitive.ObjectID      `json:"id" bson:"_id,omitempty"`
-	ShopID    string                  `json:"shopID" bson:"shopID"`
-	GuidFixed string                  `json:"guidFixed,omitempty" bson:"guidFixed"`
 	Items     []StockAdjustmentDetail `json:"items" bson:"items" `
 	SumAmount float64                 `json:"sumAmount" bson:"sumAmount" `
-	Activity
-}
-
-func (*StockAdjustment) CollectionName() string {
-	return "stockAdjustment"
 }
 
 type StockAdjustmentDetail struct {
@@ -28,20 +23,30 @@ type StockAdjustmentDetail struct {
 	DiscountText   string  `json:"discountText" bson:"discountText"`
 }
 
-type StockAdjustmentRequest struct {
-	ShopID    string                  `json:"shopID" `
-	GuidFixed string                  `json:"guidFixed,omitempty" `
-	Items     []StockAdjustmentDetail `json:"items" `
-	SumAmount float64                 `json:"sumAmount" `
+type StockAdjustmentInfo struct {
+	DocIdentity
+	StockAdjustment
 }
 
-func (*StockAdjustmentRequest) IndexName() string {
-	return "stockAdjustment"
+func (StockAdjustmentInfo) CollectionName() string {
+	return stockAdjustmentCollectionName
 }
 
-func (docReq *StockAdjustmentRequest) MapRequest(doc StockAdjustment) {
-	docReq.ShopID = doc.ShopID
-	docReq.GuidFixed = doc.GuidFixed
-	docReq.Items = doc.Items
-	docReq.SumAmount = doc.SumAmount
+type StockAdjustmentData struct {
+	ShopIdentity
+	StockAdjustmentInfo
+}
+
+func (StockAdjustmentData) IndexName() string {
+	return stockAdjustmentIndexName
+}
+
+type StockAdjustmentDoc struct {
+	ID primitive.ObjectID `json:"id" bson:"_id"`
+	StockAdjustmentData
+	Activity
+}
+
+func (StockAdjustmentDoc) CollectionName() string {
+	return stockAdjustmentCollectionName
 }
