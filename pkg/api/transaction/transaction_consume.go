@@ -25,7 +25,7 @@ func StartTransactionComsumeCreated(ms *microservice.Microservice, cfg microserv
 
 		msg := ctx.ReadInput()
 
-		trans := models.TransactionRequest{}
+		trans := models.TransactionData{}
 		err := json.Unmarshal([]byte(msg), &trans)
 
 		if err != nil {

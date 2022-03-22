@@ -1,25 +1,13 @@
 package models
 
-import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
-)
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
+const transactionCollectionName = "transactions"
+const transactionIndexName = "transactions"
 
 type Transaction struct {
-	ID        primitive.ObjectID  `json:"id" bson:"_id,omitempty"`
-	ShopID    string              `json:"shopID" bson:"shopID"`
-	GuidFixed string              `json:"guidFixed,omitempty" bson:"guidFixed"`
 	Items     []TransactionDetail `json:"items" bson:"items" `
 	SumAmount float64             `json:"sumAmount" bson:"sumAmount" `
-	Activity
-}
-
-// CreatedBy  string              `json:"-" bson:"createdBy"`
-// CreatedAt  time.Time           `json:"-" bson:"createdAt"`
-// UpdatedBy  string              `json:"-" bson:"updatedBy,omitempty"`
-// UpdatedAt  time.Time           `json:"-" bson:"updatedAt,omitempty"`
-
-func (*Transaction) CollectionName() string {
-	return "transactions"
 }
 
 type TransactionDetail struct {
@@ -33,30 +21,30 @@ type TransactionDetail struct {
 	DiscountText   string  `json:"discountText" bson:"discountText"`
 }
 
-type TransactionRequest struct {
-	ShopID    string              `json:"shopID" `
-	GuidFixed string              `json:"guidFixed,omitempty" `
-	Items     []TransactionDetail `json:"items" `
-	SumAmount float64             `json:"sumAmount" `
-
-	// CreatedBy string    `json:"createdBy" bson:"createdBy"`
-	// CreatedAt time.Time `json:"createdAt" bson:"createdAt"`
-	// UpdatedBy string    `json:"updatedBy" bson:"updatedBy,omitempty"`
-	// UpdatedAt time.Time `json:"updatedAt" bson:"updatedAt,omitempty"`
-	// Deleted   bool      `json:"deleted" bson:"deleted"`
+type TransactionInfo struct {
+	DocIdentity
+	Transaction
 }
 
-func (*TransactionRequest) IndexName() string {
-	return "transaction"
+func (TransactionInfo) CollectionName() string {
+	return transactionCollectionName
 }
 
-func (transReq *TransactionRequest) MapRequest(trans Transaction) {
-	transReq.ShopID = trans.ShopID
-	transReq.GuidFixed = trans.GuidFixed
-	transReq.Items = trans.Items
-	transReq.SumAmount = trans.SumAmount
-	// transReq.CreatedBy = trans.CreatedBy
-	// transReq.CreatedAt = trans.CreatedAt
-	// transReq.UpdatedBy = trans.UpdatedBy
-	// transReq.UpdatedAt = trans.UpdatedAt
+type TransactionData struct {
+	ShopIdentity
+	TransactionInfo
+}
+
+func (TransactionData) IndexName() string {
+	return transactionIndexName
+}
+
+type TransactionDoc struct {
+	ID primitive.ObjectID `json:"id" bson:"_id"`
+	TransactionData
+	Activity
+}
+
+func (TransactionDoc) CollectionName() string {
+	return transactionCollectionName
 }

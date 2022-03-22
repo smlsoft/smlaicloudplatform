@@ -6,7 +6,7 @@ import (
 )
 
 type ITransactionMQRepository interface {
-	Create(doc models.TransactionRequest) error
+	Create(doc models.TransactionData) error
 }
 
 type TransactionMQRepository struct {
@@ -23,7 +23,7 @@ func NewTransactionMQRepository(prod microservice.IProducer) TransactionMQReposi
 	}
 }
 
-func (repo TransactionMQRepository) Create(doc models.TransactionRequest) error {
+func (repo TransactionMQRepository) Create(doc models.TransactionData) error {
 	err := repo.prod.SendMessage(MQ_TOPIC_TRANSACTION_CREATED, repo.mqKey, doc)
 
 	if err != nil {

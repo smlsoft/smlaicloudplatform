@@ -14,9 +14,9 @@ type ITransactionService interface {
 	CreateTransaction(shopID string, username string, trans *models.Transaction) (string, error)
 	UpdateTransaction(guid string, shopID string, username string, trans models.Transaction) error
 	DeleteTransaction(guid string, shopID string, username string) error
-	InfoTransaction(guid string, shopID string) (models.Transaction, error)
-	SearchTransaction(shopID string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error)
-	SearchItemsTransaction(guid string, shopID string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error)
+	InfoTransaction(guid string, shopID string) (models.TransactionInfo, error)
+	SearchTransaction(shopID string, q string, page int, limit int) ([]models.TransactionInfo, paginate.PaginationData, error)
+	SearchItemsTransaction(guid string, shopID string, q string, page int, limit int) ([]models.TransactionInfo, paginate.PaginationData, error)
 }
 
 type TransactionService struct {
@@ -41,25 +41,27 @@ func (svc TransactionService) CreateTransaction(shopID string, username string, 
 	}
 
 	newGuidFixed := utils.NewGUID()
-	trans.ShopID = shopID
-	trans.GuidFixed = newGuidFixed
-	trans.SumAmount = sumAmount
-	trans.Deleted = false
-	trans.CreatedBy = username
-	trans.CreatedAt = time.Now()
 
-	idx, err := svc.transactionRepository.Create(*trans)
+	transDoc := models.TransactionDoc{}
+	transDoc.ShopID = shopID
+	transDoc.GuidFixed = newGuidFixed
+	transDoc.SumAmount = sumAmount
+
+	transDoc.CreatedBy = username
+	transDoc.CreatedAt = time.Now()
+
+	_, err := svc.transactionRepository.Create(transDoc)
 
 	if err != nil {
 		return "", err
 	}
 
-	trans.ID = idx
+	transData := models.TransactionData{
+		ShopIdentity:    transDoc.ShopIdentity,
+		TransactionInfo: transDoc.TransactionInfo,
+	}
 
-	transReq := &models.TransactionRequest{}
-	transReq.MapRequest(*trans)
-
-	err = svc.mqRepo.Create(*transReq)
+	err = svc.mqRepo.Create(transData)
 	if err != nil {
 		return "", err
 	}
@@ -108,17 +110,17 @@ func (svc TransactionService) DeleteTransaction(guid string, shopID string, user
 	return nil
 }
 
-func (svc TransactionService) InfoTransaction(guid string, shopID string) (models.Transaction, error) {
+func (svc TransactionService) InfoTransaction(guid string, shopID string) (models.TransactionInfo, error) {
 	trans, err := svc.transactionRepository.FindByGuid(guid, shopID)
 
 	if err != nil {
-		return models.Transaction{}, err
+		return models.TransactionInfo{}, err
 	}
 
-	return trans, nil
+	return trans.TransactionInfo, nil
 }
 
-func (svc TransactionService) SearchTransaction(shopID string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error) {
+func (svc TransactionService) SearchTransaction(shopID string, q string, page int, limit int) ([]models.TransactionInfo, paginate.PaginationData, error) {
 	transList, pagination, err := svc.transactionRepository.FindPage(shopID, q, page, limit)
 
 	if err != nil {
@@ -128,7 +130,7 @@ func (svc TransactionService) SearchTransaction(shopID string, q string, page in
 	return transList, pagination, nil
 }
 
-func (svc TransactionService) SearchItemsTransaction(guid string, shopID string, q string, page int, limit int) ([]models.Transaction, paginate.PaginationData, error) {
+func (svc TransactionService) SearchItemsTransaction(guid string, shopID string, q string, page int, limit int) ([]models.TransactionInfo, paginate.PaginationData, error) {
 	transList, pagination, err := svc.transactionRepository.FindItemsByGuidPage(guid, shopID, q, page, limit)
 
 	if err != nil {
