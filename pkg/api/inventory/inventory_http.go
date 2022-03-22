@@ -167,10 +167,11 @@ func (h InventoryHttp) UpdateInventory(ctx microservice.IContext) error {
 func (h InventoryHttp) DeleteInventory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
 
 	id := ctx.Param("id")
 
-	err := h.invService.DeleteInventory(id, shopID)
+	err := h.invService.DeleteInventory(id, shopID, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

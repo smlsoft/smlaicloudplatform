@@ -97,10 +97,11 @@ func (h *InventoryHttp) UpdateInventoryOption(ctx microservice.IContext) error {
 func (h *InventoryHttp) DeleteInventoryOption(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
 
 	id := ctx.Param("id")
 
-	err := h.invOptService.DeleteInventoryOption(id, shopID)
+	err := h.invOptService.DeleteInventoryOption(id, shopID, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

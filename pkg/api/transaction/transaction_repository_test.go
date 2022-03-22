@@ -141,7 +141,7 @@ func TestDeleteTransaction(t *testing.T) {
 		return
 	}
 
-	err = repo.Delete(give.GuidFixed, give.ShopID)
+	err = repo.Delete(give.GuidFixed, give.ShopID, "test")
 
 	if err != nil {
 		t.Error(err)

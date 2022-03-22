@@ -13,7 +13,7 @@ import (
 type ICategoryService interface {
 	CreateCategory(shopID string, authUsername string, category models.Category) (string, error)
 	UpdateCategory(guid string, shopID string, authUsername string, category models.Category) error
-	DeleteCategory(guid string, shopID string) error
+	DeleteCategory(guid string, shopID string, authUsername string) error
 	InfoCategory(guid string, shopID string) (models.CategoryInfo, error)
 	SearchCategory(shopID string, q string, page int, limit int) ([]models.CategoryInfo, paginate.PaginationData, error)
 }
@@ -73,8 +73,8 @@ func (svc CategoryService) UpdateCategory(guid string, shopID string, authUserna
 	return nil
 }
 
-func (svc CategoryService) DeleteCategory(guid string, shopID string) error {
-	err := svc.repo.Delete(guid, shopID)
+func (svc CategoryService) DeleteCategory(guid string, shopID string, authUsername string) error {
+	err := svc.repo.Delete(guid, shopID, authUsername)
 
 	if err != nil {
 		return err

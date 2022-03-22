@@ -126,10 +126,11 @@ func (h *CategoryHttp) UpdateCategory(ctx microservice.IContext) error {
 func (h CategoryHttp) DeleteCategory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
 
 	id := ctx.Param("id")
 
-	err := h.cateService.DeleteCategory(id, shopID)
+	err := h.cateService.DeleteCategory(id, shopID, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

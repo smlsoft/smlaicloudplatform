@@ -13,7 +13,7 @@ import (
 type IInventoryService interface {
 	CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, error)
 	UpdateInventory(guid string, shopID string, authUsername string, inventory models.Inventory) error
-	DeleteInventory(guid string, shopID string) error
+	DeleteInventory(guid string, shopID string, username string) error
 	InfoInventory(guid string, shopID string) (models.InventoryInfo, error)
 	SearchInventory(shopID string, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
 }
@@ -84,9 +84,9 @@ func (svc InventoryService) UpdateInventory(guid string, shopID string, authUser
 	return nil
 }
 
-func (svc InventoryService) DeleteInventory(guid string, shopID string) error {
+func (svc InventoryService) DeleteInventory(guid string, shopID string, username string) error {
 
-	err := svc.invRepo.Delete(guid, shopID)
+	err := svc.invRepo.Delete(guid, shopID, username)
 
 	if err != nil {
 		return err

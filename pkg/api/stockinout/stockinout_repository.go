@@ -12,7 +12,7 @@ import (
 type IStockInOutRepository interface {
 	Create(doc models.StockInOutDoc) (primitive.ObjectID, error)
 	Update(guid string, doc models.StockInOutDoc) error
-	Delete(guid string, shopID string) error
+	Delete(guid string, shopID string, username string) error
 	FindByGuid(guid string, shopID string) (models.StockInOutDoc, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error)
 	FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error)
@@ -45,8 +45,8 @@ func (repo StockInOutRepository) Update(guid string, doc models.StockInOutDoc) e
 	return nil
 }
 
-func (repo StockInOutRepository) Delete(guid string, shopID string) error {
-	err := repo.pst.SoftDelete(&models.StockInOutDoc{}, bson.M{"guidFixed": guid, "shopID": shopID})
+func (repo StockInOutRepository) Delete(guid string, shopID string, username string) error {
+	err := repo.pst.SoftDelete(&models.StockInOutDoc{}, username, bson.M{"guidFixed": guid, "shopID": shopID})
 	if err != nil {
 		return err
 	}
@@ -66,8 +66,8 @@ func (repo StockInOutRepository) FindPage(shopID string, q string, page int, lim
 
 	docList := []models.StockInOutInfo{}
 	pagination, err := repo.pst.FindPage(&models.StockInOutInfo{}, limit, page, bson.M{
-		"shopID":  shopID,
-		"deleted": false,
+		"shopID":    shopID,
+		"deletedAt": bson.M{"$exists": false},
 		"$or": []interface{}{
 			bson.M{"guidFixed": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",
@@ -89,7 +89,7 @@ func (repo StockInOutRepository) FindItemsByGuidPage(guid string, shopID string,
 	pagination, err := repo.pst.FindPage(&models.StockInOutInfo{}, limit, page, bson.M{
 		"shopID":    shopID,
 		"guidFixed": guid,
-		"deleted":   false,
+		"deletedAt": bson.M{"$exists": false},
 		"$or": []interface{}{
 			bson.M{"items.itemSku": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",

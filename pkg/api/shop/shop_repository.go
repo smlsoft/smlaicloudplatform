@@ -14,7 +14,7 @@ type IShopRepository interface {
 	Update(guid string, shop models.ShopDoc) error
 	FindByGuid(guid string) (models.ShopDoc, error)
 	FindPage(q string, page int, limit int) ([]models.ShopInfo, paginate.PaginationData, error)
-	Delete(guid string) error
+	Delete(guid string, username string) error
 }
 
 type ShopRepository struct {
@@ -73,8 +73,8 @@ func (repo ShopRepository) FindPage(q string, page int, limit int) ([]models.Sho
 	return shopList, pagination, nil
 }
 
-func (repo ShopRepository) Delete(guid string) error {
-	err := repo.pst.SoftDeleteByID(&models.ShopInfo{}, guid)
+func (repo ShopRepository) Delete(guid string, username string) error {
+	err := repo.pst.SoftDeleteByID(&models.ShopInfo{}, guid, username)
 	if err != nil {
 		return err
 	}

@@ -12,7 +12,7 @@ import (
 type IMemberRepository interface {
 	Create(doc models.MemberDoc) (primitive.ObjectID, error)
 	Update(guid string, doc models.MemberDoc) error
-	Delete(guid string, shopId string) error
+	Delete(guid string, shopId string, username string) error
 	FindByGuid(guid string, shopId string) (models.MemberDoc, error)
 	FindPage(shopId string, q string, page int, limit int) ([]models.MemberDoc, paginate.PaginationData, error)
 }
@@ -43,8 +43,8 @@ func (repo MemberRepository) Update(guid string, doc models.MemberDoc) error {
 	return nil
 }
 
-func (repo MemberRepository) Delete(guid string, shopId string) error {
-	err := repo.pst.SoftDelete(&models.MemberDoc{}, bson.M{"guidFixed": guid, "shopId": shopId})
+func (repo MemberRepository) Delete(guid string, shopId string, uername string) error {
+	err := repo.pst.SoftDelete(&models.MemberDoc{}, uername, bson.M{"guidFixed": guid, "shopId": shopId})
 	if err != nil {
 		return err
 	}

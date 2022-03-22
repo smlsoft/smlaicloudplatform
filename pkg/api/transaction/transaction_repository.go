@@ -12,7 +12,7 @@ import (
 type ITransactionRepository interface {
 	Create(trans models.TransactionDoc) (primitive.ObjectID, error)
 	Update(guid string, trans models.TransactionDoc) error
-	Delete(guid string, shopID string) error
+	Delete(guid string, shopID string, username string) error
 	FindByGuid(guid string, shopID string) (models.TransactionDoc, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.TransactionInfo, paginate.PaginationData, error)
 	FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.TransactionInfo, paginate.PaginationData, error)
@@ -45,8 +45,8 @@ func (repo TransactionRepository) Update(guid string, trans models.TransactionDo
 	return nil
 }
 
-func (repo TransactionRepository) Delete(guid string, shopID string) error {
-	err := repo.pst.SoftDelete(&models.TransactionDoc{}, bson.M{"guidFixed": guid, "shopID": shopID})
+func (repo TransactionRepository) Delete(guid string, shopID string, username string) error {
+	err := repo.pst.SoftDelete(&models.TransactionDoc{}, username, bson.M{"guidFixed": guid, "shopID": shopID})
 	if err != nil {
 		return err
 	}
@@ -55,7 +55,11 @@ func (repo TransactionRepository) Delete(guid string, shopID string) error {
 
 func (repo TransactionRepository) FindByGuid(guid string, shopID string) (models.TransactionDoc, error) {
 	trans := &models.TransactionDoc{}
-	err := repo.pst.FindOne(&models.TransactionDoc{}, bson.M{"shopID": shopID, "guidFixed": guid, "deleted": false}, trans)
+	err := repo.pst.FindOne(
+		&models.TransactionDoc{},
+		bson.M{"shopID": shopID, "guidFixed": guid, "deletedAt": bson.M{"$exists": false}},
+		trans,
+	)
 	if err != nil {
 		return *trans, err
 	}
@@ -66,8 +70,8 @@ func (repo TransactionRepository) FindPage(shopID string, q string, page int, li
 
 	transList := []models.TransactionInfo{}
 	pagination, err := repo.pst.FindPage(&models.TransactionInfo{}, limit, page, bson.M{
-		"shopID":  shopID,
-		"deleted": false,
+		"shopID":    shopID,
+		"deletedAt": bson.M{"$exists": false},
 		"$or": []interface{}{
 			bson.M{"guidFixed": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",
@@ -89,7 +93,7 @@ func (repo TransactionRepository) FindItemsByGuidPage(guid string, shopID string
 	pagination, err := repo.pst.FindPage(&models.Transaction{}, limit, page, bson.M{
 		"shopID":    shopID,
 		"guidFixed": guid,
-		"deleted":   false,
+		"deletedAt": bson.M{"$exists": false},
 		"$or": []interface{}{
 			bson.M{"items.itemSku": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",

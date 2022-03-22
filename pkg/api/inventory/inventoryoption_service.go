@@ -13,7 +13,7 @@ import (
 type IInventoryOptionService interface {
 	CreateInventoryOption(shopID string, authUsername string, invOpt models.InventoryOption) (string, error)
 	UpdateInventoryOption(guid string, shopID string, authUsername string, invOpt models.InventoryOption) error
-	DeleteInventoryOption(guid string, shopID string) error
+	DeleteInventoryOption(guid string, shopID string, username string) error
 	InfoInventoryOption(guid string, shopID string) (models.InventoryOption, error)
 	SearchInventoryOption(shopID string, q string, page int, limit int) ([]models.InventoryOption, paginate.PaginationData, error)
 }
@@ -33,7 +33,6 @@ func (svc InventoryOptionService) CreateInventoryOption(shopID string, authUsern
 	newGuidFixed := utils.NewGUID()
 	invOpt.ShopID = shopID
 	invOpt.GuidFixed = newGuidFixed
-	invOpt.Deleted = false
 	invOpt.CreatedBy = authUsername
 	invOpt.CreatedAt = time.Now()
 
@@ -70,9 +69,9 @@ func (svc InventoryOptionService) UpdateInventoryOption(guid string, shopID stri
 	return nil
 }
 
-func (svc InventoryOptionService) DeleteInventoryOption(guid string, shopID string) error {
+func (svc InventoryOptionService) DeleteInventoryOption(guid string, shopID string, username string) error {
 
-	err := svc.repo.Delete(guid, shopID)
+	err := svc.repo.Delete(guid, shopID, username)
 
 	if err != nil {
 		return err

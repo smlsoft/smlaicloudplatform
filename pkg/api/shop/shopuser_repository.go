@@ -116,7 +116,7 @@ func (repo ShopUserRepository) FindByUsernamePage(username string, page int, lim
 			"as":           "shopInfo",
 		}},
 		bson.M{
-			"$match": bson.M{"shopInfo.deleted": false},
+			"$match": bson.M{"shopInfo.deletedAt": bson.M{"$exists": false}},
 		},
 		bson.M{
 			"$project": bson.M{

@@ -82,7 +82,7 @@ func (svc ShopService) UpdateShop(guid string, username string, shop models.Shop
 
 func (svc ShopService) DeleteShop(guid string, username string) error {
 
-	err := svc.shopRepo.Delete(guid)
+	err := svc.shopRepo.Delete(guid, username)
 
 	if err != nil {
 		return err

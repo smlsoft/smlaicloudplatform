@@ -75,7 +75,7 @@ func (svc MemberService) UpdateMember(guid string, shopId string, username strin
 
 func (svc MemberService) DeleteMember(guid string, shopId string, username string) error {
 
-	err := svc.memberRepo.Delete(guid, shopId)
+	err := svc.memberRepo.Delete(guid, shopId, username)
 	if err != nil {
 		return err
 	}

@@ -98,7 +98,7 @@ func (svc StockInOutService) UpdateStockInOut(guid string, shopID string, userna
 }
 
 func (svc StockInOutService) DeleteStockInOut(guid string, shopID string, username string) error {
-	err := svc.repo.Delete(guid, shopID)
+	err := svc.repo.Delete(guid, shopID, username)
 	if err != nil {
 		return err
 	}

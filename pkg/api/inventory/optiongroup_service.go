@@ -13,7 +13,7 @@ import (
 type IOptionGroupService interface {
 	CreateOptionGroup(shopID string, authUsername string, doc models.InventoryOptionGroup) (string, error)
 	UpdateOptionGroup(guid string, shopID string, authUsername string, doc models.InventoryOptionGroup) error
-	DeleteOptionGroup(guid string, shopID string) error
+	DeleteOptionGroup(guid string, shopID string, username string) error
 	InfoOptionGroup(guid string, shopID string) (models.InventoryOptionGroup, error)
 	SearchOptionGroup(shopID string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error)
 }
@@ -35,7 +35,6 @@ func (svc OptionGroupService) CreateOptionGroup(shopID string, authUsername stri
 	doc.GuidFixed = newGuid
 	doc.CreatedBy = authUsername
 	doc.CreatedAt = time.Now()
-	doc.Deleted = false
 
 	for i := range doc.Details {
 		doc.Details[i].GuidFixed = utils.NewGUID()
@@ -79,8 +78,8 @@ func (svc OptionGroupService) UpdateOptionGroup(guid string, shopID string, auth
 	return nil
 }
 
-func (svc OptionGroupService) DeleteOptionGroup(guid string, shopID string) error {
-	err := svc.repo.Delete(guid, shopID)
+func (svc OptionGroupService) DeleteOptionGroup(guid string, shopID string, username string) error {
+	err := svc.repo.Delete(guid, shopID, username)
 
 	if err != nil {
 		return err

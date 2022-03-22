@@ -13,7 +13,7 @@ type IOptionGroupRepository interface {
 	Count(shopID string) (int, error)
 	Create(category models.InventoryOptionGroup) (string, error)
 	Update(guid string, category models.InventoryOptionGroup) error
-	Delete(guid string, shopID string) error
+	Delete(guid string, shopID string, username string) error
 	FindByGuid(guid string, shopID string) (models.InventoryOptionGroup, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error)
 }
@@ -58,8 +58,8 @@ func (repo OptionGroupRepository) Update(guid string, category models.InventoryO
 	return nil
 }
 
-func (repo OptionGroupRepository) Delete(guid string, shopID string) error {
-	err := repo.pst.SoftDelete(&models.InventoryOptionGroup{}, bson.M{"guidFixed": guid, "shopID": shopID})
+func (repo OptionGroupRepository) Delete(guid string, shopID string, username string) error {
+	err := repo.pst.SoftDelete(&models.InventoryOptionGroup{}, username, bson.M{"guidFixed": guid, "shopID": shopID})
 
 	if err != nil {
 		return err
@@ -71,7 +71,7 @@ func (repo OptionGroupRepository) Delete(guid string, shopID string) error {
 func (repo OptionGroupRepository) FindByGuid(guid string, shopID string) (models.InventoryOptionGroup, error) {
 
 	doc := &models.InventoryOptionGroup{}
-	err := repo.pst.FindOne(&models.InventoryOptionGroup{}, bson.M{"guidFixed": guid, "shopID": shopID, "deleted": false}, doc)
+	err := repo.pst.FindOne(&models.InventoryOptionGroup{}, bson.M{"guidFixed": guid, "shopID": shopID, "deletedAt": bson.M{"$exists": false}}, doc)
 
 	if err != nil {
 		return models.InventoryOptionGroup{}, err
@@ -84,8 +84,8 @@ func (repo OptionGroupRepository) FindPage(shopID string, q string, page int, li
 
 	docList := []models.InventoryOptionGroup{}
 	pagination, err := repo.pst.FindPage(&models.InventoryOptionGroup{}, limit, page, bson.M{
-		"shopID":  shopID,
-		"deleted": false,
+		"shopID":    shopID,
+		"deletedAt": bson.M{"$exists": false},
 		"$or": []interface{}{
 			bson.M{"guidFixed": q},
 			bson.M{"optionName1": bson.M{"$regex": primitive.Regex{

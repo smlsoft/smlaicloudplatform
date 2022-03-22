@@ -12,7 +12,7 @@ import (
 type IStockAdjustmentRepository interface {
 	Create(doc models.StockAdjustmentDoc) (primitive.ObjectID, error)
 	Update(guid string, doc models.StockAdjustmentDoc) error
-	Delete(guid string, shopID string) error
+	Delete(guid string, shopID string, username string) error
 	FindByGuid(guid string, shopID string) (models.StockAdjustmentDoc, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, paginate.PaginationData, error)
 	FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, paginate.PaginationData, error)
@@ -45,8 +45,8 @@ func (repo StockAdjustmentRepository) Update(guid string, doc models.StockAdjust
 	return nil
 }
 
-func (repo StockAdjustmentRepository) Delete(guid string, shopID string) error {
-	err := repo.pst.SoftDelete(&models.StockAdjustmentDoc{}, bson.M{"guidFixed": guid, "shopID": shopID})
+func (repo StockAdjustmentRepository) Delete(guid string, shopID string, username string) error {
+	err := repo.pst.SoftDelete(&models.StockAdjustmentDoc{}, username, bson.M{"guidFixed": guid, "shopID": shopID})
 	if err != nil {
 		return err
 	}

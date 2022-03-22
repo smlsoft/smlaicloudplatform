@@ -12,7 +12,7 @@ import (
 type IInventoryOptionRepository interface {
 	Create(doc models.InventoryOption) (string, error)
 	Update(guid string, doc models.InventoryOption) error
-	Delete(guid string, shopID string) error
+	Delete(guid string, shopID string, username string) error
 	FindByGuid(guid string, shopID string) (models.InventoryOption, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.InventoryOption, paginate.PaginationData, error)
 }
@@ -47,8 +47,8 @@ func (repo InventoryOptionRepository) Update(guid string, doc models.InventoryOp
 	return nil
 }
 
-func (repo InventoryOptionRepository) Delete(guid string, shopID string) error {
-	err := repo.pst.SoftDelete(&models.InventoryOption{}, bson.M{"guidFixed": guid, "shopID": shopID})
+func (repo InventoryOptionRepository) Delete(guid string, shopID string, username string) error {
+	err := repo.pst.SoftDelete(&models.InventoryOption{}, username, bson.M{"guidFixed": guid, "shopID": shopID})
 
 	if err != nil {
 		return err
@@ -60,7 +60,7 @@ func (repo InventoryOptionRepository) Delete(guid string, shopID string) error {
 func (repo InventoryOptionRepository) FindByGuid(guid string, shopID string) (models.InventoryOption, error) {
 
 	doc := &models.InventoryOption{}
-	err := repo.pst.FindOne(&models.InventoryOption{}, bson.M{"guidFixed": guid, "shopID": shopID, "deleted": false}, doc)
+	err := repo.pst.FindOne(&models.InventoryOption{}, bson.M{"guidFixed": guid, "shopID": shopID, "deletedAt": bson.M{"$exists": false}}, doc)
 
 	if err != nil {
 		return models.InventoryOption{}, err
@@ -73,8 +73,8 @@ func (repo InventoryOptionRepository) FindPage(shopID string, q string, page int
 
 	docList := []models.InventoryOption{}
 	pagination, err := repo.pst.FindPage(&models.InventoryOption{}, limit, page, bson.M{
-		"shopID":  shopID,
-		"deleted": false,
+		"shopID":    shopID,
+		"deletedAt": bson.M{"$exists": false},
 		"$or": []interface{}{
 			bson.M{"guidFixed": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",

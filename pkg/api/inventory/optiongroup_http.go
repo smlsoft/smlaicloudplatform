@@ -97,10 +97,11 @@ func (h *InventoryHttp) UpdateOptionGroup(ctx microservice.IContext) error {
 func (h *InventoryHttp) DeleteOptionGroup(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
 
 	id := ctx.Param("id")
 
-	err := h.optGroupService.DeleteOptionGroup(id, shopID)
+	err := h.optGroupService.DeleteOptionGroup(id, shopID, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

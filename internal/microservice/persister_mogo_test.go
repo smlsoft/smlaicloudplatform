@@ -38,7 +38,6 @@ var (
 func TestMongodbCount(t *testing.T) {
 
 	cfg := &ConfigDBTest{}
-
 	pst := microservice.NewPersisterMongo(cfg)
 
 	count, err := pst.Count(&Product{}, bson.M{"product_code": "pdt-02"})
@@ -307,12 +306,26 @@ func TestMongodbSoftDeleteByID(t *testing.T) {
 
 }
 
+func TestMongodbSoftBatchDelete(t *testing.T) {
+	cfg := &ConfigDBTest{}
+
+	pst := microservice.NewPersisterMongo(cfg)
+
+	err := pst.SoftBatchDeleteByID(&Product{}, "", []string{"6195af880e33cec3af136724", "6195af880e33cec3af136725"})
+
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+}
+
 func TestMongodbSoftDelete(t *testing.T) {
 	cfg := &ConfigDBTest{}
 
 	pst := microservice.NewPersisterMongo(cfg)
 
-	err := pst.SoftBatchDeleteByID(&Product{}, []string{"6195af880e33cec3af136724", "6195af880e33cec3af136725"})
+	err := pst.SoftDeleteByID(&Product{}, "x123x", "dev")
 
 	if err != nil {
 		t.Error(err.Error())

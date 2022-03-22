@@ -100,7 +100,7 @@ func (svc StockAdjustmentService) UpdateStockAdjustment(guid string, shopID stri
 
 func (svc StockAdjustmentService) DeleteStockAdjustment(guid string, shopID string, username string) error {
 
-	err := svc.repo.Delete(guid, shopID)
+	err := svc.repo.Delete(guid, shopID, username)
 	if err != nil {
 		return err
 	}

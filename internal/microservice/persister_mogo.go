@@ -30,9 +30,9 @@ type IPersisterMongo interface {
 	Exec(model interface{}) (*mongo.Collection, error)
 	Delete(model interface{}, args ...interface{}) error
 	DeleteByID(model interface{}, id string) error
-	SoftDelete(model interface{}, filter interface{}) error
-	SoftBatchDeleteByID(model interface{}, ids []string) error
-	SoftDeleteByID(model interface{}, id string) error
+	SoftDelete(model interface{}, username string, filter interface{}) error
+	SoftBatchDeleteByID(model interface{}, username string, ids []string) error
+	SoftDeleteByID(model interface{}, id string, username string) error
 	Cleanup() error
 	TestConnect() error
 	Healthcheck() error
@@ -332,8 +332,6 @@ func (pst *PersisterMongo) UpdateOne(model interface{}, keyName string, id inter
 		return err
 	}
 
-	// idx, _ := primitive.ObjectIDFromHex(id)
-
 	updateDoc, err := pst.toDoc(data)
 	if err != nil {
 		return err
@@ -357,10 +355,35 @@ func (pst *PersisterMongo) UpdateOne(model interface{}, keyName string, id inter
 	return nil
 }
 
-func (pst *PersisterMongo) SoftDeleteByID(model interface{}, id string) error {
+func (pst *PersisterMongo) SoftDeleteByID(model interface{}, id string, username string) error {
+	db, err := pst.getClient()
+	if err != nil {
+		return err
+	}
 
-	err := pst.UpdateOne(model, "guidFixed", id, map[string]bool{"deleted": true})
+	collectionName, err := pst.getCollectionName(model)
+	if err != nil {
+		return err
+	}
 
+	deletedAt := time.Now()
+	// _, err := pst.UpdateOne(model, "guidFixed", id, map[string]interface{}{"deletedAt": deletedAt})
+
+	_, err = db.Collection(collectionName).UpdateOne(
+		pst.ctx,
+		bson.D{{
+			Key:   "guidFixed",
+			Value: id,
+		}},
+		bson.D{
+			{Key: "$set",
+				Value: bson.D{
+					{Key: "deletedBy", Value: username},
+					{Key: "deletedAt", Value: deletedAt},
+				},
+			},
+		},
+	)
 	if err != nil {
 		return err
 	}
@@ -368,7 +391,7 @@ func (pst *PersisterMongo) SoftDeleteByID(model interface{}, id string) error {
 	return nil
 }
 
-func (pst *PersisterMongo) SoftDelete(model interface{}, filter interface{}) error {
+func (pst *PersisterMongo) SoftDelete(model interface{}, username string, filter interface{}) error {
 
 	db, err := pst.getClient()
 	if err != nil {
@@ -380,8 +403,10 @@ func (pst *PersisterMongo) SoftDelete(model interface{}, filter interface{}) err
 		return err
 	}
 
+	deletedAt := time.Now()
+
 	_, err = db.Collection(collectionName).UpdateMany(pst.ctx, filter, bson.D{
-		{Key: "$set", Value: bson.M{"deleted": true}},
+		{Key: "$set", Value: bson.M{"deletedAt": deletedAt, "deletedBy": username}},
 	})
 
 	if err != nil {
@@ -391,7 +416,7 @@ func (pst *PersisterMongo) SoftDelete(model interface{}, filter interface{}) err
 	return nil
 }
 
-func (pst *PersisterMongo) SoftBatchDeleteByID(model interface{}, ids []string) error {
+func (pst *PersisterMongo) SoftBatchDeleteByID(model interface{}, username string, ids []string) error {
 	db, err := pst.getClient()
 	if err != nil {
 		return err
@@ -412,9 +437,13 @@ func (pst *PersisterMongo) SoftBatchDeleteByID(model interface{}, ids []string) 
 		objIDs = append(objIDs, idx)
 	}
 
-	_, err = db.Collection(collectionName).UpdateMany(pst.ctx, bson.M{"_id": bson.M{"$in": objIDs}}, bson.D{
-		{Key: "$set", Value: bson.M{"deleted": true}},
-	})
+	deletedAt := time.Now()
+
+	_, err = db.Collection(collectionName).UpdateMany(pst.ctx,
+		bson.M{"_id": bson.M{"$in": objIDs}},
+		bson.D{
+			{Key: "$set", Value: bson.M{"deletedAt": deletedAt, "deletedBy": username}},
+		})
 
 	if err != nil {
 		return err
