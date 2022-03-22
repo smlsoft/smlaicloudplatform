@@ -58,7 +58,7 @@ func (h TransactionHttp) CreateTransaction(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	trans := &models.Transaction{}
+	trans := models.Transaction{}
 	err := json.Unmarshal([]byte(input), &trans)
 
 	if err != nil {

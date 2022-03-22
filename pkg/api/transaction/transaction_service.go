@@ -11,7 +11,7 @@ import (
 )
 
 type ITransactionService interface {
-	CreateTransaction(shopID string, username string, trans *models.Transaction) (string, error)
+	CreateTransaction(shopID string, username string, trans models.Transaction) (string, error)
 	UpdateTransaction(guid string, shopID string, username string, trans models.Transaction) error
 	DeleteTransaction(guid string, shopID string, username string) error
 	InfoTransaction(guid string, shopID string) (models.TransactionInfo, error)
@@ -32,7 +32,7 @@ func NewTransactionService(transactionRepository ITransactionRepository, mqRepo 
 	}
 }
 
-func (svc TransactionService) CreateTransaction(shopID string, username string, trans *models.Transaction) (string, error) {
+func (svc TransactionService) CreateTransaction(shopID string, username string, trans models.Transaction) (string, error) {
 
 	sumAmount := 0.0
 	for i, transDetail := range trans.Items {
@@ -46,6 +46,7 @@ func (svc TransactionService) CreateTransaction(shopID string, username string, 
 	transDoc.ShopID = shopID
 	transDoc.GuidFixed = newGuidFixed
 	transDoc.SumAmount = sumAmount
+	transDoc.Transaction = trans
 
 	transDoc.CreatedBy = username
 	transDoc.CreatedAt = time.Now()
