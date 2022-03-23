@@ -23,18 +23,19 @@ func NewCategoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) Ca
 	cateService := NewCategoryService(cateRepo)
 
 	return CategoryHttp{
+		ms:          ms,
+		cfg:         cfg,
 		cateService: cateService,
 	}
 }
 
-func (h *CategoryHttp) RouteSetup() {
+func (h CategoryHttp) RouteSetup() {
 
 	h.ms.GET("/category/:id", h.InfoCategory)
 	h.ms.GET("/category", h.SearchCategory)
 	h.ms.POST("/category", h.CreateCategory)
 	h.ms.PUT("/category/:id", h.UpdateCategory)
 	h.ms.DELETE("/category/:id", h.DeleteCategory)
-
 }
 
 // Create Category godoc
@@ -46,7 +47,7 @@ func (h *CategoryHttp) RouteSetup() {
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
 // @Router /category [post]
-func (h *CategoryHttp) CreateCategory(ctx microservice.IContext) error {
+func (h CategoryHttp) CreateCategory(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
@@ -83,7 +84,7 @@ func (h *CategoryHttp) CreateCategory(ctx microservice.IContext) error {
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
 // @Router /category/{id} [put]
-func (h *CategoryHttp) UpdateCategory(ctx microservice.IContext) error {
+func (h CategoryHttp) UpdateCategory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
