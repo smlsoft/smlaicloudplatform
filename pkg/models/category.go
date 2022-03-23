@@ -36,3 +36,14 @@ type CategoryDoc struct {
 func (CategoryDoc) CollectionName() string {
 	return categoryCollectionName
 }
+
+type CategoryPageResponse struct {
+	Success    bool                   `json:"success"`
+	Data       []CategoryInfo         `json:"data,omitempty"`
+	Pagination PaginationDataResponse `json:"pagination,omitempty"`
+}
+
+type CategoryInfoResponse struct {
+	Success bool         `json:"success"`
+	Data    CategoryInfo `json:"data,omitempty"`
+}
