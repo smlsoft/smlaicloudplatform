@@ -33,6 +33,6 @@ type CategoryDoc struct {
 	Activity     `bson:"inline"`
 }
 
-func (CategoryData) CollectionName() string {
+func (CategoryDoc) CollectionName() string {
 	return categoryCollectionName
 }
