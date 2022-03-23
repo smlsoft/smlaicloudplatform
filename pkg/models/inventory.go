@@ -135,3 +135,14 @@ type InventoryOption struct {
 func (*InventoryOption) CollectionName() string {
 	return "inventoryOption"
 }
+
+type InventoryPageResponse struct {
+	Success    bool                   `json:"success"`
+	Data       []InventoryInfo        `json:"data,omitempty"`
+	Pagination PaginationDataResponse `json:"pagination,omitempty"`
+}
+
+type InventoryInfoResponse struct {
+	Success bool          `json:"success"`
+	Data    InventoryInfo `json:"data,omitempty"`
+}

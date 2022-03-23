@@ -43,7 +43,7 @@ func (h CategoryHttp) RouteSetup() {
 // @Tags		Inventory
 // @Param		Category  body      models.Category  true  "Add Category"
 // @Accept 		json
-// @Success		200	{object}	models.ResponseSuccessWithID
+// @Success		201	{object}	models.ResponseSuccessWithID
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /category [post]

@@ -74,8 +74,8 @@ func (h InventoryHttp) RouteSetup() {
 // @Tags		Inventory
 // @Param		Inventory  body      models.Inventory  true  "Inventory"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		201	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /inventory [post]
 func (h InventoryHttp) CreateInventory(ctx microservice.IContext) error {
@@ -118,8 +118,8 @@ func (h InventoryHttp) CreateInventory(ctx microservice.IContext) error {
 // @Param		id  path      string  true  "Inventory ID"
 // @Param		Inventory  body      models.Inventory  true  "Inventory"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		201	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /inventory/{id} [put]
 func (h InventoryHttp) UpdateInventory(ctx microservice.IContext) error {
@@ -146,7 +146,7 @@ func (h InventoryHttp) UpdateInventory(ctx microservice.IContext) error {
 	}
 
 	ctx.Response(
-		http.StatusOK,
+		http.StatusCreated,
 		models.ApiResponse{
 			Success: true,
 			ID:      id,
@@ -160,8 +160,8 @@ func (h InventoryHttp) UpdateInventory(ctx microservice.IContext) error {
 // @Tags		Inventory
 // @Param		id  path      string  true  "Inventory ID"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /inventory/{id} [delete]
 func (h InventoryHttp) DeleteInventory(ctx microservice.IContext) error {
@@ -193,8 +193,8 @@ func (h InventoryHttp) DeleteInventory(ctx microservice.IContext) error {
 // @Tags		Inventory
 // @Param		id  path      string  true  "Inventory ID"
 // @Accept 		json
-// @Success		200	{object}	models.Inventory
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.InventoryInfoResponse
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /inventory/{id} [get]
 func (h InventoryHttp) InfoInventory(ctx microservice.IContext) error {
@@ -225,9 +225,12 @@ func (h InventoryHttp) InfoInventory(ctx microservice.IContext) error {
 // List Inventory godoc
 // @Description get struct array by ID
 // @Tags		Inventory
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Add Category"
+// @Param		limit	query	integer		false  "Add Category"
 // @Accept 		json
-// @Success		200	{array}	models.Inventory
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{array}	models.InventoryPageResponse
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /inventory [get]
 func (h InventoryHttp) SearchInventory(ctx microservice.IContext) error {
