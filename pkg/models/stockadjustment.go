@@ -42,7 +42,7 @@ func (StockAdjustmentData) IndexName() string {
 }
 
 type StockAdjustmentDoc struct {
-	ID                  primitive.ObjectID `json:"id" bson:"_id"`
+	ID                  primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	StockAdjustmentData `bson:"inline"`
 	Activity            `bson:"inline"`
 }

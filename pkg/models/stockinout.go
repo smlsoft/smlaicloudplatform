@@ -42,7 +42,7 @@ func (StockInOutData) IndexName() string {
 }
 
 type StockInOutDoc struct {
-	ID             primitive.ObjectID `json:"id" bson:"_id"`
+	ID             primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	StockInOutData `bson:"inline"`
 	Activity       `bson:"inline"`
 }

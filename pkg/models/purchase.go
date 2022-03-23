@@ -8,8 +8,8 @@ const purchaseCollectionName = "purchases"
 const purchaseIndexName = "purchases"
 
 type Purchase struct {
-	Items     []PurchaseDetail `json:"items" bson:"items" `
-	SumAmount float64          `json:"sumAmount" bson:"sumAmount" `
+	Items     *[]PurchaseDetail `json:"items" bson:"items" `
+	SumAmount float64           `json:"sumAmount" bson:"sumAmount" `
 }
 
 type PurchaseDetail struct {
@@ -42,7 +42,7 @@ func (PurchaseData) IndexName() string {
 }
 
 type PurchaseDoc struct {
-	ID           primitive.ObjectID `json:"id" bson:"_id"`
+	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	PurchaseData `bson:"inline"`
 	Activity     `bson:"inline"`
 }

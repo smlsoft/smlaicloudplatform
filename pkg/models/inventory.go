@@ -34,14 +34,14 @@ type Inventory struct {
 	Name5        string `json:"name5,omitempty" bson:"name5,omitempty"`
 	Description5 string `json:"description5,omitempty" bson:"description5,omitempty"`
 
-	Images    []string `json:"images,omitempty" bson:"images,omitempty"`
-	UnitName1 string   `json:"unitName1" bson:"unitName1"`
-	UnitName2 string   `json:"unitName2,omitempty" bson:"unitName2,omitempty"`
-	UnitName3 string   `json:"unitName3,omitempty" bson:"unitName3,omitempty"`
-	UnitName4 string   `json:"unitName4,omitempty" bson:"unitName4,omitempty"`
-	UnitName5 string   `json:"unitName5,omitempty" bson:"unitName5,omitempty"`
-	Options   []Option `json:"options,omitempty" bson:"options,omitempty"`
-	Tags      []string `json:"tags,omitempty" bson:"tags,omitempty"`
+	Images    *[]string `json:"images,omitempty" bson:"images,omitempty"`
+	UnitName1 string    `json:"unitName1" bson:"unitName1"`
+	UnitName2 string    `json:"unitName2,omitempty" bson:"unitName2,omitempty"`
+	UnitName3 string    `json:"unitName3,omitempty" bson:"unitName3,omitempty"`
+	UnitName4 string    `json:"unitName4,omitempty" bson:"unitName4,omitempty"`
+	UnitName5 string    `json:"unitName5,omitempty" bson:"unitName5,omitempty"`
+	Options   *[]Option `json:"options,omitempty" bson:"options,omitempty"`
+	Tags      *[]string `json:"tags,omitempty" bson:"tags"`
 
 	// WaitType         int             `json:"-" bson:"waitType"`                // ประเภทการรอ (สินค้าหมด)
 	// WaitUntil        time.Time       `json:"-" bson:"waitUntil"`               // ระยะเวลาที่รอ
@@ -51,16 +51,16 @@ type Inventory struct {
 }
 
 type Option struct {
-	Code       string   `json:"code" bson:"code"`
-	Required   bool     `json:"required" bson:"required"`
-	SelectMode string   `json:"selectMode" bson:"selectMode"`
-	MaxSelect  int      `json:"maxSelect" bson:"maxSelect"`
-	Name1      string   `json:"name1" bson:"name1"`
-	Name2      string   `json:"name2,omitempty" bson:"name2,omitempty"`
-	Name3      string   `json:"name3,omitempty" bson:"name3,omitempty"`
-	Name4      string   `json:"name4,omitempty" bson:"name4,omitempty"`
-	Name5      string   `json:"name5,omitempty" bson:"name5,omitempty"`
-	Choices    []Choice `json:"choices" bson:"choices"`
+	Code       string    `json:"code" bson:"code"`
+	Required   bool      `json:"required" bson:"required"`
+	SelectMode string    `json:"selectMode" bson:"selectMode"`
+	MaxSelect  int       `json:"maxSelect" bson:"maxSelect"`
+	Name1      string    `json:"name1" bson:"name1"`
+	Name2      string    `json:"name2,omitempty" bson:"name2,omitempty"`
+	Name3      string    `json:"name3,omitempty" bson:"name3,omitempty"`
+	Name4      string    `json:"name4,omitempty" bson:"name4,omitempty"`
+	Name5      string    `json:"name5,omitempty" bson:"name5,omitempty"`
+	Choices    *[]Choice `json:"choices" bson:"choices"`
 }
 
 type Choice struct {
@@ -90,7 +90,7 @@ type InventoryData struct {
 }
 
 type InventoryDoc struct {
-	ID            primitive.ObjectID `json:"id" bson:"_id"`
+	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	InventoryData `bson:"inline"`
 	Activity      `bson:"inline"`
 }

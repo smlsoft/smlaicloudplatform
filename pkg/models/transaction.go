@@ -40,7 +40,7 @@ func (TransactionData) IndexName() string {
 }
 
 type TransactionDoc struct {
-	ID              primitive.ObjectID `json:"id" bson:"_id"`
+	ID              primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	TransactionData `bson:"inline"`
 	Activity        `bson:"inline"`
 }
