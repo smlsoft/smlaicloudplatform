@@ -6,8 +6,8 @@ const transactionCollectionName = "transactions"
 const transactionIndexName = "transactions"
 
 type Transaction struct {
-	Items     []TransactionDetail `json:"items" bson:"items" `
-	SumAmount float64             `json:"sumAmount" bson:"sumAmount" `
+	Items     *[]TransactionDetail `json:"items" bson:"items" `
+	SumAmount float64              `json:"sumAmount" bson:"sumAmount" `
 }
 
 type TransactionDetail struct {

@@ -8,8 +8,8 @@ const stockAdjustmentCollectionName = "stockAdjustments"
 const stockAdjustmentIndexName = "stockAdjustments"
 
 type StockAdjustment struct {
-	Items     []StockAdjustmentDetail `json:"items" bson:"items" `
-	SumAmount float64                 `json:"sumAmount" bson:"sumAmount" `
+	Items     *[]StockAdjustmentDetail `json:"items" bson:"items" `
+	SumAmount float64                  `json:"sumAmount" bson:"sumAmount" `
 }
 
 type StockAdjustmentDetail struct {

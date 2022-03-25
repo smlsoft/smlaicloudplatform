@@ -35,8 +35,8 @@ func NewStockAdjustmentService(repo IStockAdjustmentRepository, mqRepo IStockAdj
 func (svc StockAdjustmentService) CreateStockAdjustment(shopID string, username string, doc models.StockAdjustment) (string, error) {
 
 	sumAmount := 0.0
-	for i, docDetail := range doc.Items {
-		doc.Items[i].LineNumber = i + 1
+	for i, docDetail := range *doc.Items {
+		docDetail.LineNumber = i + 1
 		sumAmount += docDetail.Price * docDetail.Qty
 	}
 
@@ -79,8 +79,8 @@ func (svc StockAdjustmentService) UpdateStockAdjustment(guid string, shopID stri
 	}
 
 	sumAmount := 0.0
-	for i, docDetail := range doc.Items {
-		findDoc.Items[i].LineNumber = i + 1
+	for i, docDetail := range *doc.Items {
+		docDetail.LineNumber = i + 1
 		sumAmount += docDetail.Price * docDetail.Qty
 	}
 

@@ -34,8 +34,8 @@ func NewStockInOutService(repo IStockInOutRepository, mqRepo IStockInOutMQReposi
 func (svc StockInOutService) CreateStockInOut(shopID string, username string, doc models.StockInOut) (string, error) {
 
 	sumAmount := 0.0
-	for i, docDetail := range doc.Items {
-		doc.Items[i].LineNumber = i + 1
+	for i, docDetail := range *doc.Items {
+		docDetail.LineNumber = i + 1
 		sumAmount += docDetail.Price * docDetail.Qty
 	}
 
@@ -78,8 +78,8 @@ func (svc StockInOutService) UpdateStockInOut(guid string, shopID string, userna
 	}
 
 	sumAmount := 0.0
-	for i, docDetail := range doc.Items {
-		findDoc.Items[i].LineNumber = i + 1
+	for i, docDetail := range *doc.Items {
+		docDetail.LineNumber = i + 1
 		sumAmount += docDetail.Price * docDetail.Qty
 	}
 

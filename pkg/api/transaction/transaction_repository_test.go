@@ -19,7 +19,7 @@ func TestCreateTransaction(t *testing.T) {
 
 	give.ShopID = "mx01"
 	give.GuidFixed = "fx01"
-	give.Items = []models.TransactionDetail{
+	give.Items = &[]models.TransactionDetail{
 		{
 			ItemSku:      "sku01",
 			CategoryGuid: "xxx",
@@ -51,7 +51,7 @@ func TestUpdateTransaction(t *testing.T) {
 
 	trans.ShopID = "mx01"
 	trans.GuidFixed = "fx02"
-	trans.Items = []models.TransactionDetail{
+	trans.Items = &[]models.TransactionDetail{
 		{
 			InventoryID:  "inv01",
 			ItemSku:      "sku01",
@@ -63,7 +63,7 @@ func TestUpdateTransaction(t *testing.T) {
 
 	give.ShopID = "mx01"
 	give.GuidFixed = "fx02"
-	give.Items = []models.TransactionDetail{
+	give.Items = &[]models.TransactionDetail{
 		{
 			InventoryID:  "inv01",
 			ItemSku:      "sku01",
@@ -104,7 +104,7 @@ func TestUpdateTransaction(t *testing.T) {
 		return
 	}
 
-	if len(transFind.Items) < 2 {
+	if len(*transFind.Items) < 2 {
 		t.Error("Update failed")
 	}
 
@@ -119,7 +119,7 @@ func TestDeleteTransaction(t *testing.T) {
 
 	give.ShopID = "mx01"
 	give.GuidFixed = "fx03"
-	give.Items = []models.TransactionDetail{
+	give.Items = &[]models.TransactionDetail{
 		{
 			InventoryID:  "inv01",
 			ItemSku:      "sku01",

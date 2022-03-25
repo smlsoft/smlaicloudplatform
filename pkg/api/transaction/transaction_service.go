@@ -35,8 +35,8 @@ func NewTransactionService(transactionRepository ITransactionRepository, mqRepo 
 func (svc TransactionService) CreateTransaction(shopID string, username string, trans models.Transaction) (string, error) {
 
 	sumAmount := 0.0
-	for i, transDetail := range trans.Items {
-		trans.Items[i].LineNumber = i + 1
+	for i, transDetail := range *trans.Items {
+		transDetail.LineNumber = i + 1
 		sumAmount += transDetail.Price * transDetail.Qty
 	}
 
@@ -83,8 +83,8 @@ func (svc TransactionService) UpdateTransaction(guid string, shopID string, user
 	}
 
 	sumAmount := 0.0
-	for i, transDetail := range trans.Items {
-		findDoc.Items[i].LineNumber = i + 1
+	for i, transDetail := range *trans.Items {
+		transDetail.LineNumber = i + 1
 		sumAmount += transDetail.Price * transDetail.Qty
 	}
 

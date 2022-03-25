@@ -8,8 +8,8 @@ const stockInOutCollectionName = "stockInOuts"
 const stockInOutIndexName = "stockInOuts"
 
 type StockInOut struct {
-	Items     []StockInOutDetail `json:"items" bson:"items" `
-	SumAmount float64            `json:"sumAmount" bson:"sumAmount" `
+	Items     *[]StockInOutDetail `json:"items" bson:"items" `
+	SumAmount float64             `json:"sumAmount" bson:"sumAmount" `
 }
 
 type StockInOutDetail struct {
