@@ -10,6 +10,7 @@ import (
 	"smlcloudplatform/pkg/api/inventory"
 	"smlcloudplatform/pkg/api/purchase"
 	"smlcloudplatform/pkg/api/shop"
+	"smlcloudplatform/pkg/api/syncdata"
 	"smlcloudplatform/pkg/api/tools"
 	"smlcloudplatform/pkg/api/transaction"
 
@@ -59,6 +60,9 @@ func main() {
 	purchaseapi.RouteSetup()
 
 	purchase.StartPurchaseAsync(ms, cfg)
+
+	syncapi := syncdata.NewSyncDataHttp(ms, cfg)
+	syncapi.RouteSetup()
 
 	toolSvc := tools.NewToolsService(ms, cfg)
 

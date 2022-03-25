@@ -11,6 +11,7 @@ import (
 )
 
 type IInventoryService interface {
+	CreateWithGuid(shopID string, authUsername string, guidFixed string, inventory models.Inventory) (string, error)
 	CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, error)
 	UpdateInventory(guid string, shopID string, authUsername string, inventory models.Inventory) error
 	DeleteInventory(guid string, shopID string, username string) error
@@ -28,6 +29,34 @@ func NewInventoryService(inventoryRepo IInventoryRepository, inventoryMqRepo IIn
 		invRepo:   inventoryRepo,
 		invMqRepo: inventoryMqRepo,
 	}
+}
+
+func (svc InventoryService) CreateWithGuid(shopID string, authUsername string, guidFixed string, inventory models.Inventory) (string, error) {
+
+	newGuid := guidFixed
+
+	invDoc := models.InventoryDoc{}
+
+	invDoc.GuidFixed = newGuid
+	invDoc.ShopID = shopID
+	invDoc.Inventory = inventory
+
+	invDoc.CreatedBy = authUsername
+	invDoc.CreatedAt = time.Now()
+
+	_, err := svc.invRepo.Create(invDoc)
+
+	if err != nil {
+		return "", err
+	}
+
+	err = svc.invMqRepo.Create(invDoc.InventoryInfo)
+
+	if err != nil {
+		return "", err
+	}
+
+	return newGuid, nil
 }
 
 func (svc InventoryService) CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, error) {
@@ -101,9 +130,9 @@ func (svc InventoryService) InfoInventory(guid string, shopID string) (models.In
 		return models.InventoryInfo{}, err
 	}
 
-	if findDoc.ID == primitive.NilObjectID {
-		return models.InventoryInfo{}, errors.New("document not found")
-	}
+	// if findDoc.ID == primitive.NilObjectID {
+	// 	return models.InventoryInfo{}, nil
+	// }
 
 	return findDoc.InventoryInfo, nil
 }

@@ -11,6 +11,7 @@ import (
 )
 
 type IMemberService interface {
+	CreateWithGuid(shopId string, username string, guid string, doc models.Member) (string, error)
 	CreateMember(shopId string, username string, doc models.Member) (string, error)
 	UpdateMember(guid string, shopId string, username string, doc models.Member) error
 	DeleteMember(guid string, shopId string, username string) error
@@ -26,6 +27,26 @@ func NewMemberService(memberRepo IMemberRepository) MemberService {
 	return MemberService{
 		memberRepo: memberRepo,
 	}
+}
+
+func (svc MemberService) CreateWithGuid(shopId string, username string, guid string, doc models.Member) (string, error) {
+	dataDoc := models.MemberDoc{}
+
+	newGuid := guid
+	dataDoc.GuidFixed = newGuid
+	dataDoc.ShopID = shopId
+	dataDoc.CreatedBy = username
+	dataDoc.CreatedAt = time.Now()
+
+	dataDoc.Member = doc
+
+	_, err := svc.memberRepo.Create(dataDoc)
+
+	if err != nil {
+		return "", err
+	}
+
+	return newGuid, nil
 }
 
 func (svc MemberService) CreateMember(shopId string, username string, doc models.Member) (string, error) {
