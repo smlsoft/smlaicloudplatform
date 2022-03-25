@@ -16,7 +16,7 @@ import (
 // @Success		200	{object}	models.ApiResponse
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
-// @Router /category [post]
+// @Router /option [post]
 func (h *InventoryHttp) CreateInventoryOption(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID

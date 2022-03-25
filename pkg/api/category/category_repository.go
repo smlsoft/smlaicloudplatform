@@ -71,7 +71,8 @@ func (repo CategoryRepository) Delete(guid string, shopID string, username strin
 func (repo CategoryRepository) FindByGuid(guid string, shopID string) (models.CategoryDoc, error) {
 
 	doc := &models.CategoryDoc{}
-	err := repo.pst.FindOne(&models.Category{}, bson.M{"guidFixed": guid, "shopID": shopID, "deletedAt": bson.M{"$exists": false}}, doc)
+
+	err := repo.pst.FindOne(&models.CategoryInfo{}, bson.M{"guidFixed": guid, "shopID": shopID, "deletedAt": bson.M{"$exists": false}}, doc)
 
 	if err != nil {
 		return models.CategoryDoc{}, err

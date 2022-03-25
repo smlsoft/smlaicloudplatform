@@ -43,8 +43,8 @@ func (h CategoryHttp) RouteSetup() {
 // @Tags		Inventory
 // @Param		Category  body      models.Category  true  "Add Category"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		201	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /category [post]
 func (h CategoryHttp) CreateCategory(ctx microservice.IContext) error {
@@ -80,8 +80,8 @@ func (h CategoryHttp) CreateCategory(ctx microservice.IContext) error {
 // @Param		id  path      string  true  "Category ID"
 // @Param		Category  body      models.Category  true  "Category"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		201	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /category/{id} [put]
 func (h CategoryHttp) UpdateCategory(ctx microservice.IContext) error {
@@ -120,8 +120,8 @@ func (h CategoryHttp) UpdateCategory(ctx microservice.IContext) error {
 // @Tags		Inventory
 // @Param		id  path      string  true  "Category ID"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /category/{id} [delete]
 func (h CategoryHttp) DeleteCategory(ctx microservice.IContext) error {
@@ -138,7 +138,7 @@ func (h CategoryHttp) DeleteCategory(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusOK, models.ApiResponse{
 		Success: true,
 		ID:      id,
 	})
@@ -151,8 +151,8 @@ func (h CategoryHttp) DeleteCategory(ctx microservice.IContext) error {
 // @Tags		Inventory
 // @Param		id  path      string  true  "Category Id"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.CategoryInfoResponse
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /category/{id} [get]
 func (h CategoryHttp) InfoCategory(ctx microservice.IContext) error {
@@ -161,14 +161,16 @@ func (h CategoryHttp) InfoCategory(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
+	h.ms.Logger.Debugf("Get Category %v", id)
 	doc, err := h.cateService.InfoCategory(id, shopID)
 
 	if err != nil {
+		h.ms.Logger.Errorf("Error getting category %v: %v", id, err)
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusOK, models.ApiResponse{
 		Success: true,
 		Data:    doc,
 	})
@@ -182,8 +184,10 @@ func (h CategoryHttp) InfoCategory(ctx microservice.IContext) error {
 // @Param		page	query	integer		false  "Add Category"
 // @Param		limit	query	integer		false  "Add Category"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.CategoryPageResponse
+// @Failure		400 {object}	models.AuthResponseFailed
+// @Failure		500 {object}	models.AuthResponseFailed
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /category [get]
 func (h CategoryHttp) SearchCategory(ctx microservice.IContext) error {
@@ -208,7 +212,7 @@ func (h CategoryHttp) SearchCategory(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusOK, models.ApiResponse{
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
