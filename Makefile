@@ -21,3 +21,7 @@ docker_build_shop_and_ship:
 docker_build_inventory_and_ship:
 	docker build -t smlsoft/smlcloudplatform:inventory -f ./cmd/inventoryservice/Dockerfile .
 	docker push smlsoft/smlcloudplatform:inventory
+
+docker_build_masterservice_and_ship:
+	docker build -t smlsoft/smlcloudplatform:masterdata -f ./cmd/masterdataservice/Dockerfile .
+	docker push smlsoft/smlcloudplatform:masterdata
