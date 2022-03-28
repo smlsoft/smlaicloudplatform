@@ -50,7 +50,7 @@ func (svc InventoryService) CreateWithGuid(shopID string, authUsername string, g
 		return "", err
 	}
 
-	err = svc.invMqRepo.Create(invDoc.InventoryInfo)
+	err = svc.invMqRepo.Create(invDoc.InventoryData)
 
 	if err != nil {
 		return "", err
@@ -78,7 +78,7 @@ func (svc InventoryService) CreateInventory(shopID string, authUsername string, 
 		return "", err
 	}
 
-	err = svc.invMqRepo.Create(invDoc.InventoryInfo)
+	err = svc.invMqRepo.Create(invDoc.InventoryData)
 
 	if err != nil {
 		return "", err
@@ -110,6 +110,12 @@ func (svc InventoryService) UpdateInventory(guid string, shopID string, authUser
 		return err
 	}
 
+	err = svc.invMqRepo.Update(findDoc.InventoryData)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -120,6 +126,18 @@ func (svc InventoryService) DeleteInventory(guid string, shopID string, username
 	if err != nil {
 		return err
 	}
+
+	docIndentity := models.Identity{
+		ShopID:    shopID,
+		GuidFixed: guid,
+	}
+
+	err = svc.invMqRepo.Delete(docIndentity)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

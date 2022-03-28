@@ -57,12 +57,7 @@ func (svc TransactionService) CreateTransaction(shopID string, username string, 
 		return "", err
 	}
 
-	transData := models.TransactionData{
-		ShopIdentity:    transDoc.ShopIdentity,
-		TransactionInfo: transDoc.TransactionInfo,
-	}
-
-	err = svc.mqRepo.Create(transData)
+	err = svc.mqRepo.Create(transDoc.TransactionData)
 	if err != nil {
 		return "", err
 	}
@@ -99,12 +94,28 @@ func (svc TransactionService) UpdateTransaction(guid string, shopID string, user
 	if err != nil {
 		return err
 	}
+
+	err = svc.mqRepo.Create(findDoc.TransactionData)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (svc TransactionService) DeleteTransaction(guid string, shopID string, username string) error {
 
 	err := svc.transactionRepository.Delete(guid, shopID, username)
+	if err != nil {
+		return err
+	}
+
+	docIndentity := models.Identity{
+		ShopID:    shopID,
+		GuidFixed: guid,
+	}
+
+	err = svc.mqRepo.Delete(docIndentity)
 	if err != nil {
 		return err
 	}
