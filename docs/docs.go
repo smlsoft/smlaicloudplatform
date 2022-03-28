@@ -4,7 +4,7 @@ package docs
 
 import "github.com/swaggo/swag"
 
-const docTemplate_swagger = `{
+const docTemplate = `{
     "schemes": {{ marshal .Schemes }},
     "swagger": "2.0",
     "info": {
@@ -62,13 +62,25 @@ const docTemplate_swagger = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.CategoryPageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -79,7 +91,7 @@ const docTemplate_swagger = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Create Inventory Option",
+                "description": "Create Inventory Category",
                 "consumes": [
                     "application/json"
                 ],
@@ -88,26 +100,26 @@ const docTemplate_swagger = `{
                 ],
                 "parameters": [
                     {
-                        "description": "Option",
-                        "name": "Option",
+                        "description": "Add Category",
+                        "name": "Category",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.InventoryOption"
+                            "$ref": "#/definitions/models.Category"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -140,13 +152,13 @@ const docTemplate_swagger = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.CategoryInfoResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -183,16 +195,16 @@ const docTemplate_swagger = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -223,13 +235,13 @@ const docTemplate_swagger = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -249,20 +261,40 @@ const docTemplate_swagger = `{
                 "tags": [
                     "Inventory"
                 ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Inventory"
+                                "$ref": "#/definitions/models.InventoryPageResponse"
                             }
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -292,16 +324,16 @@ const docTemplate_swagger = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -334,13 +366,13 @@ const docTemplate_swagger = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Inventory"
+                            "$ref": "#/definitions/models.InventoryInfoResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -377,16 +409,16 @@ const docTemplate_swagger = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -417,13 +449,13 @@ const docTemplate_swagger = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -542,7 +574,7 @@ const docTemplate_swagger = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -575,13 +607,13 @@ const docTemplate_swagger = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -620,7 +652,7 @@ const docTemplate_swagger = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -660,13 +692,13 @@ const docTemplate_swagger = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -697,13 +729,13 @@ const docTemplate_swagger = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -786,7 +818,7 @@ const docTemplate_swagger = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -819,13 +851,13 @@ const docTemplate_swagger = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -864,7 +896,7 @@ const docTemplate_swagger = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -904,13 +936,13 @@ const docTemplate_swagger = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -941,13 +973,13 @@ const docTemplate_swagger = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -985,6 +1017,45 @@ const docTemplate_swagger = `{
                         "description": "Add Category",
                         "name": "limit",
                         "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Inventory Option",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "description": "Option",
+                        "name": "Option",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.InventoryOption"
+                        }
                     }
                 ],
                 "responses": {
@@ -1319,10 +1390,30 @@ const docTemplate_swagger = `{
         "models.Category": {
             "type": "object",
             "properties": {
-                "guidFixed": {
+                "image": {
                     "type": "string"
                 },
-                "id": {
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CategoryInfo": {
+            "type": "object",
+            "properties": {
+                "guidFixed": {
                     "type": "string"
                 },
                 "image": {
@@ -1342,9 +1433,34 @@ const docTemplate_swagger = `{
                 },
                 "name5": {
                     "type": "string"
+                }
+            }
+        },
+        "models.CategoryInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.CategoryInfo"
                 },
-                "shopID": {
-                    "type": "string"
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.CategoryPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CategoryInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },
@@ -1410,11 +1526,102 @@ const docTemplate_swagger = `{
                 "description5": {
                     "type": "string"
                 },
-                "guidFixed": {
-                    "description": "Guid สินค้า",
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "itemSku": {
                     "type": "string"
                 },
-                "id": {
+                "memberPrice": {
+                    "type": "number"
+                },
+                "name1": {
+                    "description": "ชื่อภาษาไทย",
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Option"
+                    }
+                },
+                "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "recommended": {
+                    "description": "สินค้าแนะนำ",
+                    "type": "boolean"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "unitName1": {
+                    "type": "string"
+                },
+                "unitName2": {
+                    "type": "string"
+                },
+                "unitName3": {
+                    "type": "string"
+                },
+                "unitName4": {
+                    "type": "string"
+                },
+                "unitName5": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.InventoryInfo": {
+            "type": "object",
+            "properties": {
+                "activated": {
+                    "description": "เปิดใช้งานอยู่",
+                    "type": "boolean"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "categoryGuid": {
+                    "description": "Guid กลุ่มสินค้า",
+                    "type": "string"
+                },
+                "description1": {
+                    "description": "รายละเอียดภาษาไทย",
+                    "type": "string"
+                },
+                "description2": {
+                    "type": "string"
+                },
+                "description3": {
+                    "type": "string"
+                },
+                "description4": {
+                    "type": "string"
+                },
+                "description5": {
+                    "type": "string"
+                },
+                "guidFixed": {
                     "type": "string"
                 },
                 "images": {
@@ -1459,10 +1666,6 @@ const docTemplate_swagger = `{
                     "description": "สินค้าแนะนำ",
                     "type": "boolean"
                 },
-                "shopID": {
-                    "description": "รหัสร้าน",
-                    "type": "string"
-                },
                 "tags": {
                     "type": "array",
                     "items": {
@@ -1483,6 +1686,17 @@ const docTemplate_swagger = `{
                 },
                 "unitName5": {
                     "type": "string"
+                }
+            }
+        },
+        "models.InventoryInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.InventoryInfo"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },
@@ -1552,6 +1766,23 @@ const docTemplate_swagger = `{
                 },
                 "guidFixed": {
                     "type": "string"
+                }
+            }
+        },
+        "models.InventoryPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InventoryInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },
@@ -1628,6 +1859,29 @@ const docTemplate_swagger = `{
                 }
             }
         },
+        "models.PaginationDataResponse": {
+            "type": "object",
+            "properties": {
+                "next": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "perPage": {
+                    "type": "integer"
+                },
+                "prev": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "totalPage": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.ResponseSuccessWithID": {
             "type": "object",
             "properties": {
@@ -1640,10 +1894,6 @@ const docTemplate_swagger = `{
         "models.Shop": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "string",
-                    "default": "-"
-                },
                 "name1": {
                     "type": "string"
                 }
@@ -1653,9 +1903,6 @@ const docTemplate_swagger = `{
             "type": "object",
             "properties": {
                 "guidFixed": {
-                    "type": "string"
-                },
-                "id": {
                     "type": "string"
                 },
                 "name1": {
@@ -1715,18 +1962,18 @@ const docTemplate_swagger = `{
     }
 }`
 
-// SwaggerInfo_swagger holds exported Swagger Info so clients can modify it
-var SwaggerInfo_swagger = &swag.Spec{
+// SwaggerInfo holds exported Swagger Info so clients can modify it
+var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "SML Cloud Platform API",
 	Description:      "",
 	InfoInstanceName: "swagger",
-	SwaggerTemplate:  docTemplate_swagger,
+	SwaggerTemplate:  docTemplate,
 }
 
 func init() {
-	swag.Register(SwaggerInfo_swagger.InstanceName(), SwaggerInfo_swagger)
+	swag.Register(SwaggerInfo.InstanceName(), SwaggerInfo)
 }

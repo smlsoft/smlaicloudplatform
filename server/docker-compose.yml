@@ -21,7 +21,6 @@ services:
       - zookeeper
   redis:
     image: bitnami/redis:5.0
-    restart: always
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:

@@ -10,6 +10,7 @@ docker_build_authen_and_ship:
 	docker push smlsoft/smlcloudplatform:authen
 
 docker_build_swagger_and_ship:
+	swag init
 	docker build -t smlsoft/smlcloudplatform:swagger .
 	docker push smlsoft/smlcloudplatform:swagger
 
