@@ -1,6 +1,6 @@
 module smlcloudplatform
 
-go 1.17
+go 1.18
 
 require (
 	github.com/3dsinteractive/wrkgo v0.0.0-20210911134244-26f18db8d978
