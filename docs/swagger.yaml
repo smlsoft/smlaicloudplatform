@@ -25,9 +25,22 @@ definitions:
     type: object
   models.Category:
     properties:
-      guidFixed:
+      image:
         type: string
-      id:
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+    type: object
+  models.CategoryInfo:
+    properties:
+      guidFixed:
         type: string
       image:
         type: string
@@ -41,8 +54,24 @@ definitions:
         type: string
       name5:
         type: string
-      shopID:
-        type: string
+    type: object
+  models.CategoryInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.CategoryInfo'
+      success:
+        type: boolean
+    type: object
+  models.CategoryPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.CategoryInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
     type: object
   models.Choice:
     properties:
@@ -86,10 +115,72 @@ definitions:
         type: string
       description5:
         type: string
-      guidFixed:
-        description: Guid สินค้า
+      images:
+        items:
+          type: string
+        type: array
+      itemSku:
         type: string
-      id:
+      memberPrice:
+        type: number
+      name1:
+        description: ชื่อภาษาไทย
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      options:
+        items:
+          $ref: '#/definitions/models.Option'
+        type: array
+      price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      recommended:
+        description: สินค้าแนะนำ
+        type: boolean
+      tags:
+        items:
+          type: string
+        type: array
+      unitName1:
+        type: string
+      unitName2:
+        type: string
+      unitName3:
+        type: string
+      unitName4:
+        type: string
+      unitName5:
+        type: string
+    type: object
+  models.InventoryInfo:
+    properties:
+      activated:
+        description: เปิดใช้งานอยู่
+        type: boolean
+      barcode:
+        type: string
+      categoryGuid:
+        description: Guid กลุ่มสินค้า
+        type: string
+      description1:
+        description: รายละเอียดภาษาไทย
+        type: string
+      description2:
+        type: string
+      description3:
+        type: string
+      description4:
+        type: string
+      description5:
+        type: string
+      guidFixed:
         type: string
       images:
         items:
@@ -120,9 +211,6 @@ definitions:
       recommended:
         description: สินค้าแนะนำ
         type: boolean
-      shopID:
-        description: รหัสร้าน
-        type: string
       tags:
         items:
           type: string
@@ -137,6 +225,13 @@ definitions:
         type: string
       unitName5:
         type: string
+    type: object
+  models.InventoryInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.InventoryInfo'
+      success:
+        type: boolean
     type: object
   models.InventoryOption:
     properties:
@@ -182,6 +277,17 @@ definitions:
         type: string
       guidFixed:
         type: string
+    type: object
+  models.InventoryPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.InventoryInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
     type: object
   models.Member:
     properties:
@@ -231,6 +337,21 @@ definitions:
       selectMode:
         type: string
     type: object
+  models.PaginationDataResponse:
+    properties:
+      next:
+        type: integer
+      page:
+        type: integer
+      perPage:
+        type: integer
+      prev:
+        type: integer
+      total:
+        type: integer
+      totalPage:
+        type: integer
+    type: object
   models.ResponseSuccessWithID:
     properties:
       id: {}
@@ -239,17 +360,12 @@ definitions:
     type: object
   models.Shop:
     properties:
-      id:
-        default: '-'
-        type: string
       name1:
         type: string
     type: object
   models.ShopInfo:
     properties:
       guidFixed:
-        type: string
-      id:
         type: string
       name1:
         type: string
@@ -282,7 +398,6 @@ definitions:
     - password
     - username
     type: object
-host: localhost:8080
 info:
   contact:
     email: support@swagger.io
@@ -316,11 +431,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.CategoryPageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -328,23 +451,23 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create Inventory Option
+      description: Create Inventory Category
       parameters:
-      - description: Option
+      - description: Add Category
         in: body
-        name: Option
+        name: Category
         required: true
         schema:
-          $ref: '#/definitions/models.InventoryOption'
+          $ref: '#/definitions/models.Category'
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -364,11 +487,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -387,11 +510,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.CategoryInfoResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -413,14 +536,14 @@ paths:
         schema:
           $ref: '#/definitions/models.Category'
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -430,17 +553,30 @@ paths:
       consumes:
       - application/json
       description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Inventory'
+              $ref: '#/definitions/models.InventoryPageResponse'
             type: array
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -457,14 +593,14 @@ paths:
         schema:
           $ref: '#/definitions/models.Inventory'
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -484,11 +620,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -507,11 +643,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Inventory'
+            $ref: '#/definitions/models.InventoryInfoResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -533,14 +669,14 @@ paths:
         schema:
           $ref: '#/definitions/models.Inventory'
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -614,7 +750,7 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -634,11 +770,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -658,11 +794,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -685,7 +821,7 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -710,11 +846,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -765,7 +901,7 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -785,11 +921,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -809,11 +945,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -836,7 +972,7 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -861,11 +997,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -888,6 +1024,30 @@ paths:
         in: query
         name: limit
         type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      security:
+      - AccessToken: []
+      tags:
+      - Inventory
+    post:
+      consumes:
+      - application/json
+      description: Create Inventory Option
+      parameters:
+      - description: Option
+        in: body
+        name: Option
+        required: true
+        schema:
+          $ref: '#/definitions/models.InventoryOption'
       responses:
         "200":
           description: OK

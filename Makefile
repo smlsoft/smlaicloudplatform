@@ -10,6 +10,7 @@ docker_build_authen_and_ship:
 	docker push smlsoft/smlcloudplatform:authen
 
 docker_build_swagger_and_ship:
+	swag init
 	docker build -t smlsoft/smlcloudplatform:swagger .
 	docker push smlsoft/smlcloudplatform:swagger
 
@@ -20,3 +21,7 @@ docker_build_shop_and_ship:
 docker_build_inventory_and_ship:
 	docker build -t smlsoft/smlcloudplatform:inventory -f ./cmd/inventoryservice/Dockerfile .
 	docker push smlsoft/smlcloudplatform:inventory
+
+docker_build_masterservice_and_ship:
+	docker build -t smlsoft/smlcloudplatform:masterdata -f ./cmd/masterdataservice/Dockerfile .
+	docker push smlsoft/smlcloudplatform:masterdata

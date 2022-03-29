@@ -155,3 +155,14 @@ type InventoryInfoResponse struct {
 	Success bool          `json:"success"`
 	Data    InventoryInfo `json:"data,omitempty"`
 }
+
+type InventoryOptionGroupResponse struct {
+	Success    bool                   `json:"success"`
+	Data       []InventoryInfo        `json:"data,omitempty"`
+	Pagination PaginationDataResponse `json:"pagination,omitempty"`
+}
+
+type InventoryOptionGroupInfoResponse struct {
+	Success bool          `json:"success"`
+	Data    InventoryInfo `json:"data,omitempty"`
+}

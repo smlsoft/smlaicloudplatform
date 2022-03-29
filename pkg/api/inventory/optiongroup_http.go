@@ -13,8 +13,8 @@ import (
 // @Tags		Inventory
 // @Param		Option  body      models.InventoryOptionGroup  true  "Option Group"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /optgroup [post]
 func (h *InventoryHttp) CreateOptionGroup(ctx microservice.IContext) error {
@@ -50,8 +50,8 @@ func (h *InventoryHttp) CreateOptionGroup(ctx microservice.IContext) error {
 // @Param		id  path      string  true  "Option ID"
 // @Param		OptionGroup  body      models.InventoryOptionGroup  true  "Option Group"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /optgroup/{id} [put]
 func (h *InventoryHttp) UpdateOptionGroup(ctx microservice.IContext) error {
@@ -90,8 +90,8 @@ func (h *InventoryHttp) UpdateOptionGroup(ctx microservice.IContext) error {
 // @Tags		Inventory
 // @Param		id  path      string  true  "OptionGroup ID"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /optgroup/{id} [delete]
 func (h *InventoryHttp) DeleteOptionGroup(ctx microservice.IContext) error {
@@ -122,7 +122,7 @@ func (h *InventoryHttp) DeleteOptionGroup(ctx microservice.IContext) error {
 // @Param		id  path      string  true  "OptionGroup Id"
 // @Accept 		json
 // @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /optgroup/{id} [get]
 func (h *InventoryHttp) InfoOptionGroup(ctx microservice.IContext) error {
@@ -153,7 +153,7 @@ func (h *InventoryHttp) InfoOptionGroup(ctx microservice.IContext) error {
 // @Param		limit	query	integer		false  "Size"
 // @Accept 		json
 // @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /optgroup [get]
 func (h *InventoryHttp) SearchOptionGroup(ctx microservice.IContext) error {
@@ -178,7 +178,7 @@ func (h *InventoryHttp) SearchOptionGroup(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusOK, models.ApiResponse{
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,

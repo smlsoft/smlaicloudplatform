@@ -55,8 +55,8 @@ func (h MemberHttp) RouteSetup() {
 // @Tags		Member
 // @Param		Member  body      models.Member  true  "Member"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /member [post]
 func (h MemberHttp) CreateMember(ctx microservice.IContext) error {
@@ -94,8 +94,8 @@ func (h MemberHttp) CreateMember(ctx microservice.IContext) error {
 // @Param		id  path      string  true  "Member ID"
 // @Param		Member  body      models.Member  true  "Member"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /member/{id} [put]
 func (h MemberHttp) UpdateMember(ctx microservice.IContext) error {
@@ -132,8 +132,8 @@ func (h MemberHttp) UpdateMember(ctx microservice.IContext) error {
 // @Tags		Member
 // @Param		id  path      string  true  "Member ID"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /member/{id} [delete]
 func (h MemberHttp) DeleteMember(ctx microservice.IContext) error {
@@ -162,7 +162,7 @@ func (h MemberHttp) DeleteMember(ctx microservice.IContext) error {
 // @Param		id  path      string  true  "Member Id"
 // @Accept 		json
 // @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /member/{id} [get]
 func (h MemberHttp) InfoMember(ctx microservice.IContext) error {
@@ -194,7 +194,7 @@ func (h MemberHttp) InfoMember(ctx microservice.IContext) error {
 // @Param		limit	query	integer		false  "Size"
 // @Accept 		json
 // @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /member [get]
 func (h MemberHttp) SearchMember(ctx microservice.IContext) error {
