@@ -223,7 +223,7 @@ func (h SyncDataHttp) syncData(
 
 		return err
 	case 1:
-		isExistsGuid, err := h.inventoryService.IsExistsGuid(userInfo.ShopID, syncData.MyGuid)
+		isExistsGuid, err := fnIsExists()
 
 		if err != nil {
 			return err
