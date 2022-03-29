@@ -19,8 +19,6 @@ func (*PersisterMongoConfig) DB() string {
 	return os.Getenv("MONGODB_DB")
 }
 
-const projectDirName = "smlcloudplatform"
-
 func NewPersisterMongo() microservice.IPersisterMongoConfig {
 	re := regexp.MustCompile(`^(.*` + projectDirName + `)`)
 	cwd, _ := os.Getwd()

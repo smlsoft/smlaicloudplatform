@@ -1,0 +1,63 @@
+package inventory_test
+
+import (
+	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/mock"
+	"smlcloudplatform/pkg/api/inventory"
+	"smlcloudplatform/pkg/models"
+	"testing"
+)
+
+func newPgRepo() inventory.InventoryPGRepository {
+	persisterConfig := mock.NewPersister()
+	pst := microservice.NewPersister(persisterConfig)
+	repo := inventory.NewInventoryPGRepository(pst)
+	return repo
+}
+
+func TestCreate(t *testing.T) {
+	repo := newPgRepo()
+
+	idx := models.InventoryIndex{}
+	idx.ID = "134567"
+	idx.ShopID = "shopidx001"
+	idx.GuidFixed = "fixguid"
+	err := repo.Create(idx)
+
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestCount(t *testing.T) {
+	repo := newPgRepo()
+
+	count, err := repo.Count("shopidx001", "fixguid")
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log(count)
+}
+
+func TestFindByGuid(t *testing.T) {
+	repo := newPgRepo()
+	inv, err := repo.FindByGuid("shopidx001", "fixguid")
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log(inv)
+}
+
+func TestDelete(t *testing.T) {
+	repo := newPgRepo()
+
+	err := repo.Delete("shopidx001", "fixguid")
+
+	if err != nil {
+		t.Error(err)
+	}
+}

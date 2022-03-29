@@ -26,10 +26,12 @@ type MemberHttp struct {
 func NewMemberHttp(ms *microservice.Microservice, cfg microservice.IConfig) MemberHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	pstPg := ms.Persister(cfg.PersisterConfig())
 
 	memberRepo := NewMemberRepository(pst)
+	memberPgRepo := NewMemberPGRepository(pstPg)
 
-	service := NewMemberService(memberRepo)
+	service := NewMemberService(memberRepo, memberPgRepo)
 
 	return MemberHttp{
 		ms:      ms,

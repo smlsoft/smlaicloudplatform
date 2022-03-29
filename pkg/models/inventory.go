@@ -13,6 +13,7 @@ import (
 // }
 
 const inventoryCollectionName string = "inventories"
+const inventoryIndexName string = "inventories_index"
 
 type Inventory struct {
 	ItemSku      string  `json:"itemSku,omitempty" bson:"itemSku,omitempty"`
@@ -97,6 +98,14 @@ type InventoryDoc struct {
 
 func (InventoryDoc) CollectionName() string {
 	return inventoryCollectionName
+}
+
+type InventoryIndex struct {
+	Index `bson:"inline"`
+}
+
+func (InventoryIndex) TableName() string {
+	return inventoryIndexName
 }
 
 /* */

@@ -5,12 +5,13 @@ import (
 )
 
 const memberCollectionName = "members"
+const memberIndexName string = "members_index"
 
 type Member struct {
 	Telephone    string `json:"telephone" bson:"Telephone"`
 	Name         string `json:"name,omitempty" bson:"name,omitempty"`
 	Surname      string `json:"surname,omitempty" bson:"surname,omitempty"`
-	TaxID        string `json:"TaxID,omitempty" bson:"TaxID,omitempty"`
+	TaxID        string `json:"taxID,omitempty" bson:"TaxID,omitempty"`
 	ContactType  int    `json:"contactType,omitempty" bson:"ContactType,omitempty"`
 	PersonalType int    `json:"personalType,omitempty" bson:"PersonalType,omitempty"`
 	BranchType   int    `json:"branchType,omitempty" bson:"BranchType,omitempty"`
@@ -40,6 +41,14 @@ type MemberDoc struct {
 
 func (MemberDoc) CollectionName() string {
 	return memberCollectionName
+}
+
+type MemberIndex struct {
+	Index `bson:"inline"`
+}
+
+func (MemberIndex) TableName() string {
+	return memberIndexName
 }
 
 type MemberRequestEdit struct {

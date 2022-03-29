@@ -11,6 +11,8 @@ import (
 )
 
 type IInventoryService interface {
+	IsExistsGuid(shopID string, guidFixed string) (bool, error)
+	CreateIndex(doc models.InventoryIndex) error
 	CreateWithGuid(shopID string, authUsername string, guidFixed string, inventory models.Inventory) (string, error)
 	CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, error)
 	UpdateInventory(guid string, shopID string, authUsername string, inventory models.Inventory) error
@@ -21,14 +23,43 @@ type IInventoryService interface {
 
 type InventoryService struct {
 	invRepo   IInventoryRepository
+	invPgRepo IInventoryPGRepository
 	invMqRepo IInventoryMQRepository
 }
 
-func NewInventoryService(inventoryRepo IInventoryRepository, inventoryMqRepo IInventoryMQRepository) InventoryService {
+func NewInventoryService(inventoryRepo IInventoryRepository, inventoryPgRepo IInventoryPGRepository, inventoryMqRepo IInventoryMQRepository) InventoryService {
 	return InventoryService{
 		invRepo:   inventoryRepo,
+		invPgRepo: inventoryPgRepo,
 		invMqRepo: inventoryMqRepo,
 	}
+}
+
+// Find guid in postgresql index
+func (svc InventoryService) IsExistsGuid(shopID string, guidFixed string) (bool, error) {
+
+	count, err := svc.invPgRepo.Count(shopID, guidFixed)
+
+	if err != nil {
+		return false, err
+	}
+
+	if count == 0 {
+		return false, nil
+	}
+
+	return true, nil
+}
+
+func (svc InventoryService) CreateIndex(doc models.InventoryIndex) error {
+
+	err := svc.invPgRepo.Create(doc)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
 }
 
 func (svc InventoryService) CreateWithGuid(shopID string, authUsername string, guidFixed string, inventory models.Inventory) (string, error) {
@@ -44,7 +75,7 @@ func (svc InventoryService) CreateWithGuid(shopID string, authUsername string, g
 	invDoc.CreatedBy = authUsername
 	invDoc.CreatedAt = time.Now()
 
-	_, err := svc.invRepo.Create(invDoc)
+	mongoIdx, err := svc.invRepo.Create(invDoc)
 
 	if err != nil {
 		return "", err
@@ -56,7 +87,7 @@ func (svc InventoryService) CreateWithGuid(shopID string, authUsername string, g
 		return "", err
 	}
 
-	return newGuid, nil
+	return mongoIdx, nil
 }
 
 func (svc InventoryService) CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, error) {

@@ -123,13 +123,7 @@ func (cfg *PersisterConfig) SSLMode() string {
 }
 
 func (cfg *PersisterConfig) TimeZone() string {
-
-	timezoneEnvironment := os.Getenv("timezone")
-	if timezoneEnvironment != "" {
-		timezoneEnvironment = "Asia/Bangkok"
-	}
-
-	return timezoneEnvironment
+	return getEnv("POSTGRES_TIMEZONE", "Asia/Bangkok")
 }
 
 type MongoPersisterConfig struct{}

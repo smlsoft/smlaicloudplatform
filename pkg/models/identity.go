@@ -1,8 +1,8 @@
 package models
 
 type Identity struct {
-	ShopID    string `json:"shopID" bson:"shopID"`
-	GuidFixed string `json:"guidFixed" bson:"guidFixed"`
+	ShopID    string `json:"shopID" bson:"shopID" gorm:"shop_id"`
+	GuidFixed string `json:"guidFixed" bson:"guidFixed" gorm:"guid_fixed"`
 }
 
 type ShopIdentity struct {

@@ -22,14 +22,17 @@ type SyncDataHttp struct {
 func NewSyncDataHttp(ms *microservice.Microservice, cfg microservice.IConfig) SyncDataHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	pstPg := ms.Persister(cfg.PersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
 
 	invRepo := inventory.NewInventoryRepository(pst)
+	invPgRepo := inventory.NewInventoryPGRepository(pstPg)
 	invMqRepo := inventory.NewInventoryMQRepository(prod)
-	invService := inventory.NewInventoryService(invRepo, invMqRepo)
+	invService := inventory.NewInventoryService(invRepo, invPgRepo, invMqRepo)
 
 	memberRepo := member.NewMemberRepository(pst)
-	memberService := member.NewMemberService(memberRepo)
+	memberPgRepo := member.NewMemberPGRepository(pstPg)
+	memberService := member.NewMemberService(memberRepo, memberPgRepo)
 
 	return SyncDataHttp{
 		ms:               ms,
@@ -60,13 +63,102 @@ func (h SyncDataHttp) Save(ctx microservice.IContext) error {
 
 	switch syncData.TableCode {
 	case "inventory":
-		err := h.inventorySync(userInfo, syncData)
+		payload, err := h.getPayload(syncData.Data)
+
+		if err != nil {
+			return errors.New("data payload invalid")
+		}
+
+		inv := models.Inventory{}
+		err = json.Unmarshal(payload, &inv)
+		if err != nil {
+			return err
+		}
+
+		err = h.syncData(
+			models.Member{},
+			userInfo,
+			syncData,
+			func() (bool, error) {
+				return h.inventoryService.IsExistsGuid(userInfo.ShopID, syncData.MyGuid)
+			},
+			func() (string, error) {
+				idx, err := h.inventoryService.CreateWithGuid(userInfo.ShopID, userInfo.Username, syncData.MyGuid, inv)
+				if err != nil {
+					return "", err
+				}
+				return idx, nil
+			},
+			func(idx string) error {
+
+				docIdx := models.InventoryIndex{}
+				docIdx.ID = idx
+				docIdx.ShopID = userInfo.ShopID
+				docIdx.GuidFixed = syncData.MyGuid
+
+				err := h.inventoryService.CreateIndex(docIdx)
+
+				if err != nil {
+					return err
+				}
+
+				return nil
+			},
+			func() error {
+				return h.inventoryService.UpdateInventory(syncData.MyGuid, userInfo.ShopID, userInfo.Username, inv)
+			},
+		)
+
 		if err != nil {
 			ctx.ResponseError(400, err.Error())
 			return err
 		}
 	case "member":
-		h.memberSync(userInfo, syncData)
+		payload, err := h.getPayload(syncData.Data)
+
+		if err != nil {
+			return errors.New("data payload invalid")
+		}
+
+		member := models.Member{}
+		err = json.Unmarshal(payload, &member)
+		if err != nil {
+			return err
+		}
+
+		err = h.syncData(
+			models.Member{},
+			userInfo,
+			syncData,
+			func() (bool, error) {
+				return h.memberService.IsExistsGuid(userInfo.ShopID, syncData.MyGuid)
+			},
+			func() (string, error) {
+				idx, err := h.memberService.CreateWithGuid(userInfo.ShopID, userInfo.Username, syncData.MyGuid, member)
+				if err != nil {
+					return "", err
+				}
+				return idx, nil
+			},
+			func(idx string) error {
+
+				docIdx := models.MemberIndex{}
+				docIdx.ID = idx
+				docIdx.ShopID = userInfo.ShopID
+				docIdx.GuidFixed = syncData.MyGuid
+
+				err := h.memberService.CreateIndex(docIdx)
+				if err != nil {
+					return err
+				}
+
+				return nil
+			},
+			func() error {
+				return h.memberService.UpdateMember(syncData.MyGuid, userInfo.ShopID, userInfo.Username, member)
+			},
+		)
+
 		if err != nil {
 			ctx.ResponseError(400, err.Error())
 			return err
@@ -89,73 +181,66 @@ func (h SyncDataHttp) getPayload(data interface{}) ([]byte, error) {
 	return payload, nil
 }
 
-func (h SyncDataHttp) inventorySync(userInfo micro.UserInfo, syncData models.SyncData) error {
+func (h SyncDataHttp) syncData(
+	model interface{},
+	userInfo micro.UserInfo,
+	syncData models.SyncData,
+	fnIsExists func() (bool, error),
+	fnCreate func() (string, error),
+	fnCreateIndex func(string) error,
+	fnUpdate func() error,
+) error {
 	payload, err := h.getPayload(syncData.Data)
 
 	if err != nil {
 		return errors.New("data payload invalid")
 	}
 
-	inv := models.Inventory{}
-	err = json.Unmarshal(payload, &inv)
+	err = json.Unmarshal(payload, &model)
 	if err != nil {
 		return err
 	}
 
 	switch syncData.Mode {
 	case 0:
-		_, err = h.inventoryService.CreateWithGuid(userInfo.ShopID, userInfo.Username, syncData.MyGuid, inv)
-		return err
-	case 1:
-		return h.inventoryService.UpdateInventory(syncData.MyGuid, userInfo.ShopID, userInfo.Username, inv)
-	case 3:
-		invInfo, err := h.inventoryService.InfoInventory(syncData.MyGuid, userInfo.ShopID)
+		isExistsGuid, err := fnIsExists()
+
 		if err != nil {
 			return err
 		}
 
-		if len(invInfo.GuidFixed) < 1 {
-			_, err = h.inventoryService.CreateWithGuid(userInfo.ShopID, userInfo.Username, syncData.MyGuid, inv)
-			return err
-		} else {
-			return h.inventoryService.UpdateInventory(syncData.MyGuid, userInfo.ShopID, userInfo.Username, inv)
+		if isExistsGuid {
+			return errors.New("guid '" + syncData.MyGuid + "' is exists")
 		}
 
-	default:
-		return errors.New("mode invalid")
-	}
-}
+		idx, err := fnCreate()
 
-func (h SyncDataHttp) memberSync(userInfo micro.UserInfo, syncData models.SyncData) error {
-	payload, err := h.getPayload(syncData.Data)
-
-	if err != nil {
-		return err
-	}
-
-	member := models.Member{}
-	err = json.Unmarshal(payload, &member)
-	if err != nil {
-		return err
-	}
-
-	switch syncData.Mode {
-	case 0:
-		_, err = h.memberService.CreateWithGuid(userInfo.ShopID, userInfo.Username, syncData.MyGuid, member)
-		return err
-	case 1:
-		return h.memberService.UpdateMember(syncData.MyGuid, userInfo.ShopID, userInfo.Username, member)
-	case 3:
-		invInfo, err := h.memberService.InfoMember(syncData.MyGuid, userInfo.ShopID)
 		if err != nil {
 			return err
 		}
 
-		if len(invInfo.GuidFixed) < 1 {
-			_, err = h.memberService.CreateWithGuid(userInfo.ShopID, userInfo.Username, syncData.MyGuid, member)
+		fnCreateIndex(idx)
+
+		return err
+	case 1:
+		isExistsGuid, err := h.inventoryService.IsExistsGuid(userInfo.ShopID, syncData.MyGuid)
+
+		if err != nil {
+			return err
+		}
+
+		if isExistsGuid {
+			idx, err := fnCreate()
+
+			if err != nil {
+				return err
+			}
+
+			fnCreateIndex(idx)
+
 			return err
 		} else {
-			return h.memberService.UpdateMember(syncData.MyGuid, userInfo.ShopID, userInfo.Username, member)
+			return fnUpdate()
 		}
 
 	default:

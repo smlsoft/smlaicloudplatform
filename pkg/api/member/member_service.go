@@ -11,6 +11,8 @@ import (
 )
 
 type IMemberService interface {
+	IsExistsGuid(shopID string, guidFixed string) (bool, error)
+	CreateIndex(doc models.MemberIndex) error
 	CreateWithGuid(shopId string, username string, guid string, doc models.Member) (string, error)
 	CreateMember(shopId string, username string, doc models.Member) (string, error)
 	UpdateMember(guid string, shopId string, username string, doc models.Member) error
@@ -20,13 +22,42 @@ type IMemberService interface {
 }
 
 type MemberService struct {
-	memberRepo IMemberRepository
+	memberRepo   IMemberRepository
+	memberPgRepo IMemberPGRepository
 }
 
-func NewMemberService(memberRepo IMemberRepository) MemberService {
+func NewMemberService(memberRepo IMemberRepository, memberPgRepo IMemberPGRepository) MemberService {
 	return MemberService{
-		memberRepo: memberRepo,
+		memberRepo:   memberRepo,
+		memberPgRepo: memberPgRepo,
 	}
+}
+
+// Find guid in postgresql index
+func (svc MemberService) IsExistsGuid(shopID string, guidFixed string) (bool, error) {
+
+	count, err := svc.memberPgRepo.Count(shopID, guidFixed)
+	if err != nil {
+		return false, err
+	}
+
+	if count == 0 {
+		return false, nil
+	}
+
+	return true, nil
+
+}
+
+func (svc MemberService) CreateIndex(doc models.MemberIndex) error {
+
+	err := svc.memberPgRepo.Create(doc)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
 }
 
 func (svc MemberService) CreateWithGuid(shopId string, username string, guid string, doc models.Member) (string, error) {
