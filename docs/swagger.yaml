@@ -384,6 +384,20 @@ definitions:
       shopID:
         type: string
     type: object
+  models.UserProfile:
+    properties:
+      name:
+        type: string
+      username:
+        type: string
+    type: object
+  models.UserProfileReponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.UserProfile'
+      success:
+        type: boolean
+    type: object
   models.UserRequest:
     properties:
       name:
@@ -1137,6 +1151,26 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
+  /profile:
+    get:
+      consumes:
+      - application/json
+      description: Get Current Profile
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.UserProfileReponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Authentication
   /register:
     post:
       consumes:
@@ -1232,6 +1266,9 @@ paths:
       - AccessToken: []
       tags:
       - Shop
+schemes:
+- http
+- https
 securityDefinitions:
   AccessToken:
     in: header

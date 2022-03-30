@@ -217,6 +217,14 @@ func (h AuthenticationHttp) Logout(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Current Profile
+// @Description Get Current Profile
+// @Tags		Authentication
+// @Accept 		json
+// @Success		200	{array}	models.UserProfileReponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /profile [get]
 func (h AuthenticationHttp) Profile(ctx microservice.IContext) error {
 
 	userProfile, err := h.authenticationService.Profile(ctx.UserInfo().Username)

@@ -79,10 +79,18 @@ func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...st
 	}
 }
 
-func (authService *AuthService) MWFuncWithShop(cacher ICacher) echo.MiddlewareFunc {
+func (authService *AuthService) MWFuncWithShop(cacher ICacher, publicPath ...string) echo.MiddlewareFunc {
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
+
+			currentPath := c.Path()
+
+			for _, publicPath := range publicPath {
+				if currentPath == publicPath {
+					return next(c)
+				}
+			}
 
 			tokenStr, err := authService.GetTokenFromContext(c)
 
