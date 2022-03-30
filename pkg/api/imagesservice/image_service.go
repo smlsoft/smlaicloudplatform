@@ -1,4 +1,4 @@
-package api
+package imageservice
 
 import "smlcloudplatform/internal/microservice"
 
@@ -17,6 +17,8 @@ func NewImageService(ms *microservice.Microservice, cfg microservice.IConfig) *I
 
 func (svc *ImageService) RouteSetup() {
 
+	svc.ms.GET("/image/:id", svc.getImageHTTP)
+	svc.ms.POST("/image/upload", svc.UploadImageHTTP)
 }
 
 func (svc *ImageService) UploadImage(ctx microservice.IContext) error {
