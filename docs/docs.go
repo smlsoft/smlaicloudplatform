@@ -1196,6 +1196,39 @@ const docTemplate = `{
                 }
             }
         },
+        "/profile": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Current Profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.UserProfileReponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "description": "For User Register Application",
@@ -1932,6 +1965,28 @@ const docTemplate = `{
                 }
             }
         },
+        "models.UserProfile": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserProfileReponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.UserProfile"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "models.UserRequest": {
             "type": "object",
             "required": [
@@ -1967,7 +2022,7 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "",
 	BasePath:         "",
-	Schemes:          []string{},
+	Schemes:          []string{"http", "https"},
 	Title:            "SML Cloud Platform API",
 	Description:      "",
 	InfoInstanceName: "swagger",

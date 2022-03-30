@@ -31,3 +31,8 @@ type PaginationDataResponse struct {
 	Next      int64 `json:"next"`
 	TotalPage int64 `json:"totalPage"`
 }
+
+type UserProfileReponse struct {
+	Success bool        `json:"success"`
+	Data    UserProfile `json:"data"`
+}

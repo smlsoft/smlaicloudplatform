@@ -11,6 +11,7 @@ services:
       - MONGODB_URI=mongodb://mongodb:27017/
       - MONGODB_DB=smldev
       - REDIS_CACHE_URI=redis:6379
+      - KAFKA_SERVER_URL=kafka:9092
     labels:
       - "traefik.http.routers.masterdata.rule=(PathPrefix(`/inventory`) || PathPrefix(`/option`) || PathPrefix(`/optgroup`) || PathPrefix(`/category`) || PathPrefix(`/member`))"
     networks:
