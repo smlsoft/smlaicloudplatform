@@ -296,8 +296,6 @@ definitions:
     type: object
   models.Member:
     properties:
-      TaxID:
-        type: string
       address:
         type: string
       branchCode:
@@ -311,6 +309,8 @@ definitions:
       personalType:
         type: integer
       surname:
+        type: string
+      taxID:
         type: string
       telephone:
         type: string
@@ -1302,11 +1302,10 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Shop
+      - Common
 schemes:
 - http
 - https
-      - Common
 securityDefinitions:
   AccessToken:
     in: header

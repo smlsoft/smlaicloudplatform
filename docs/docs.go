@@ -1881,9 +1881,6 @@ const docTemplate = `{
         "models.Member": {
             "type": "object",
             "properties": {
-                "TaxID": {
-                    "type": "string"
-                },
                 "address": {
                     "type": "string"
                 },
@@ -1903,6 +1900,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "surname": {
+                    "type": "string"
+                },
+                "taxID": {
                     "type": "string"
                 },
                 "telephone": {
