@@ -138,7 +138,7 @@ func NewMongoPersisterConfig() *MongoPersisterConfig {
 	return &MongoPersisterConfig{}
 }
 func (cfg *MongoPersisterConfig) MongodbURI() string {
-	return getEnv("MONGODB_URI", "mongodb://root:rootx@localhost:27017/") // mongodb://root:rootx@localhost:27017/
+	return getEnv("MONGODB_URI", "") // mongodb://root:rootx@localhost:27017/
 }
 
 func (cfg *MongoPersisterConfig) DB() string {
@@ -194,4 +194,18 @@ func (cfg *CacherConfig) DB() int {
 
 func (cfg *CacherConfig) ConnectionSettings() ICacherConnectionSettings {
 	return NewDefaultCacherConnectionSettings()
+}
+
+type StorageFileConfig struct{}
+
+func NewStorageFileConfig() *StorageFileConfig {
+	return &StorageFileConfig{}
+}
+
+func (cfg *StorageFileConfig) StorageDataPath() string {
+	return getEnv("STORAGE_DATA_PATH", "")
+}
+
+func (cfg *StorageFileConfig) StorageUriAtlas() string {
+	return getEnv("STORAGE_DATA_URI", "")
 }

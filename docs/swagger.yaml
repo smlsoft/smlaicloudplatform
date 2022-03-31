@@ -94,6 +94,11 @@ definitions:
       suggestCode:
         type: string
     type: object
+  models.Image:
+    properties:
+      uri:
+        type: string
+    type: object
   models.Inventory:
     properties:
       activated:
@@ -1221,17 +1226,49 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/models.Shop'
-            type: array
+            $ref: '#/definitions/models.Shop'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
       - Shop
+  /upload/images:
+    post:
+      consumes:
+      - application/json
+      description: Update Image
+      parameters:
+      - description: Image
+        in: formData
+        name: file
+        required: true
+        type: file
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Image'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Common
 securityDefinitions:
   AccessToken:
     in: header

@@ -3,6 +3,7 @@ package microservice
 import (
 	"fmt"
 	"io/ioutil"
+	"mime/multipart"
 	"smlcloudplatform/internal/microservice/models"
 
 	"github.com/labstack/echo/v4"
@@ -50,6 +51,10 @@ func (ctx *HTTPContext) ReadInput() string {
 // Header return header value by key
 func (ctx *HTTPContext) Header(attribute string) string {
 	return ctx.c.Request().Header.Get(attribute)
+}
+
+func (ctx *HTTPContext) FormFile(attribute string) (*multipart.FileHeader, error) {
+	return ctx.c.FormFile(attribute)
 }
 
 func (ctx *HTTPContext) UserInfo() models.UserInfo {
