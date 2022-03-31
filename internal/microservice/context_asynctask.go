@@ -2,6 +2,7 @@ package microservice
 
 import (
 	"fmt"
+	"mime/multipart"
 	"runtime"
 	"smlcloudplatform/internal/microservice/models"
 	"strings"
@@ -88,6 +89,10 @@ func (ctx *AsyncTaskContext) ResponseError(responseCode int, errorMessage string
 // Header return header value by key
 func (ctx *AsyncTaskContext) Header(attribute string) string {
 	return ""
+}
+
+func (ctx *AsyncTaskContext) FormFile(attribute string) (*multipart.FileHeader, error) {
+	return nil, nil
 }
 
 func (ctx *AsyncTaskContext) UserInfo() models.UserInfo {

@@ -56,8 +56,8 @@ func (h ShopHttp) RouteSetup() {
 // @Tags		Shop
 // @Accept 		json
 // @Param		Shop  body      models.Shop  true  "Add Shop"
-// @Success		200	{array}	models.Shop
-// @Failure		401 {object}	models.ResponseSuccessWithID
+// @Success		200	{object}		models.Shop
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /shop [post]
 func (h ShopHttp) CreateShop(ctx microservice.IContext) error {
