@@ -10,6 +10,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.9.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/google/uuid v1.3.0
 	github.com/pkg/errors v0.9.1
 	github.com/swaggo/echo-swagger v1.3.0
 	github.com/swaggo/swag v1.7.9
@@ -35,7 +36,6 @@ require (
 	github.com/go-openapi/swag v0.19.15 // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
@@ -72,7 +72,6 @@ require (
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
-	github.com/mackerelio/go-osstat v0.2.2
 	github.com/mattn/go-colorable v0.1.11 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/rs/xid v1.3.0

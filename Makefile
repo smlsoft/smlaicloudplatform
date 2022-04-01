@@ -29,3 +29,7 @@ docker_build_masterservice_and_ship:
 docker_build_imageservice_and_ship:
 	docker build -t smlsoft/smlcloudplatform:imageuploadservice -f ./cmd/imageuploadservice/Dockerfile .
 	docker push smlsoft/smlcloudplatform:imageuploadservice
+
+docker_build_memberservice_and_ship:
+	docker build -t smlsoft/smlcloudplatform:member -f ./cmd/memberservice/Dockerfile .
+	docker push smlsoft/smlcloudplatform:member
