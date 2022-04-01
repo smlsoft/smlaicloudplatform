@@ -12,7 +12,7 @@ import (
 func (ms *Microservice) startAsyncTaskConsumer(path string, cacheConfig ICacherConfig, mqConfig IMQConfig, h ServiceHandleFunc) error {
 
 	topic := escapeName(path)
-	mq := NewMQ(mqConfig, ms)
+	mq := NewMQ(mqConfig, ms.Logger)
 	ms.Logger.Debugf("Create Topic \"%s\".", topic)
 	err := mq.CreateTopicR(topic, 5, 1, time.Hour*24*30) // retain message for 30 days
 	if err != nil {

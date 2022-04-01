@@ -14,7 +14,7 @@ func StartTransactionComsumeCreated(ms *microservice.Microservice, cfg microserv
 
 	mqConfig := cfg.MQConfig()
 
-	mq := microservice.NewMQ(mqConfig, ms)
+	mq := microservice.NewMQ(mqConfig, ms.Logger)
 	mq.CreateTopicR(topic, 5, 1, time.Hour*24*7)
 
 	//Consume transaction Created

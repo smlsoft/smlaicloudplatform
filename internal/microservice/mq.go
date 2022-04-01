@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/apex/log"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
@@ -21,22 +22,23 @@ type IMQConfig interface {
 
 // MQ is message queue
 type MQ struct {
-	ms      *Microservice
+	logger  *log.Entry
 	servers string
 }
 
 // NewMQ return new MQ
-func NewMQ(mqConfig IMQConfig, ms *Microservice) *MQ {
+func NewMQ(mqConfig IMQConfig, logger *log.Entry) *MQ {
+
 	return &MQ{
-		ms:      ms,
 		servers: mqConfig.URI(),
+		logger:  logger,
 	}
 }
 
 func (q *MQ) getAdminClient() (*kafka.AdminClient, error) {
 	admin, err := kafka.NewAdminClient(&kafka.ConfigMap{"bootstrap.servers": q.servers})
 	if err != nil {
-		q.ms.Logger.WithError(err).Error("Failed to Connect to Kafka")
+		q.logger.WithError(err).Error("Failed to Connect to Kafka")
 		return nil, err
 	}
 	return admin, nil
@@ -103,7 +105,7 @@ func (q *MQ) createTopic(topic string, partitions int, replications int, retenti
 	}
 
 	for _, result := range results {
-		q.ms.Logger.Debugf("Create Topic \"%s\" Result: %s", topic, result.String())
+		q.logger.Debugf("Create Topic \"%s\" Result: %s", topic, result.String())
 	}
 
 	return nil

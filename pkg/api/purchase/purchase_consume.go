@@ -14,7 +14,7 @@ func StartPurchaseComsume(ms *microservice.Microservice, cfg microservice.IConfi
 
 	mqConfig := cfg.MQConfig()
 
-	mq := microservice.NewMQ(mqConfig, ms)
+	mq := microservice.NewMQ(mqConfig, ms.Logger)
 	mq.CreateTopicR(topic, 5, 1, time.Hour*24*7)
 
 	ms.Consume(mqConfig.URI(), topic, groupID, timeout, func(ctx microservice.IContext) error {

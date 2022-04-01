@@ -1,9 +1,9 @@
 package microservice
 
-
 import (
 	"encoding/json"
 
+	"github.com/apex/log"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
@@ -17,15 +17,15 @@ type IProducer interface {
 
 // Producer implement IProducer, is the service to send message to Kafka
 type Producer struct {
-	ms      *Microservice
+	logger  *log.Entry
 	servers string
 	prod    *kafka.Producer
 }
 
 // NewProducer return new instance of Producer
-func NewProducer(servers string, ms *Microservice) *Producer {
+func NewProducer(servers string, logger *log.Entry) *Producer {
 	return &Producer{
-		ms:      ms,
+		logger:  logger,
 		servers: servers,
 	}
 }
@@ -80,7 +80,7 @@ func (p *Producer) Close() error {
 	prod.Flush(5000) // 5s for flush message in queue
 	prod.Close()
 
-	p.ms.Log("PROD", "Close successfully")
+	p.logger.Debugf("PROD", "Close successfully")
 
 	return nil
 }

@@ -272,7 +272,7 @@ func (ms *Microservice) Cacher(cfg ICacherConfig) ICacher {
 func (ms *Microservice) Producer(cfg IMQConfig) IProducer {
 	prod, ok := ms.prods[cfg.URI()]
 	if !ok {
-		prod = NewProducer(cfg.URI(), ms)
+		prod = NewProducer(cfg.URI(), ms.Logger)
 		ms.prodMutex.Lock()
 		ms.prods[cfg.URI()] = prod
 		ms.prodMutex.Unlock()

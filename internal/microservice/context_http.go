@@ -100,5 +100,5 @@ func (ctx *HTTPContext) Producer(mqConfig IMQConfig) IProducer {
 
 // MQ return MQ
 func (ctx *HTTPContext) MQ(mqConfig IMQConfig) IMQ {
-	return NewMQ(mqConfig, ctx.ms)
+	return NewMQ(mqConfig, ctx.ms.Logger)
 }
