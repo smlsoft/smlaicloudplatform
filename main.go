@@ -38,6 +38,7 @@ func init() {
 
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+// @schemes http https
 func main() {
 	fmt.Println("Start Swagger API")
 

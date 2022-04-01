@@ -106,7 +106,7 @@ func (ms *Microservice) CheckReadyToStart() error {
 		pst := NewPersisterMongo(ms.config.MongoPersisterConfig())
 		err := pst.TestConnect()
 		if err != nil {
-			ms.Logger.WithError(err).Error("[MONGODB]Connection Failed.")
+			ms.Logger.WithError(err).Errorf("[MONGODB]Connection Failed(%v).", mongodbUri)
 			return err
 		}
 		ms.mongoPersisters[mongodbUri] = pst
@@ -117,6 +117,13 @@ func (ms *Microservice) CheckReadyToStart() error {
 	kafka_cluster_uri := ms.config.MQConfig().URI()
 	if kafka_cluster_uri != "" {
 		ms.Logger.Debug("[KAFKA]Test Connection.")
+		producer := ms.Producer(ms.config.MQConfig())
+		err := producer.TestConnect()
+		if err != nil {
+			ms.Logger.WithError(err).Error("[KAFKA]Connection Failed.")
+			return err
+		}
+		ms.Logger.Debug("[KAFKA]Connection Success.")
 	}
 
 	// redis

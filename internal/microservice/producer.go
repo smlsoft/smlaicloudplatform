@@ -13,6 +13,7 @@ type IProducer interface {
 	SendMessage(topic string, key string, message interface{}) error
 	// Close the producer
 	Close() error
+	TestConnect() error
 }
 
 // Producer implement IProducer, is the service to send message to Kafka
@@ -36,6 +37,17 @@ func (p *Producer) getProducer() *kafka.Producer {
 		p.prod = prod
 	}
 	return p.prod
+}
+
+func (p *Producer) TestConnect() error {
+	if p.prod == nil {
+		prod, err := p.newKafkaProducer(p.servers)
+		if err != nil {
+			return err
+		}
+		p.prod = prod
+	}
+	return nil
 }
 
 // SendMessage send message to topic synchronously

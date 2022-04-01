@@ -1196,6 +1196,39 @@ const docTemplate = `{
                 }
             }
         },
+        "/profile": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Current Profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.UserProfileReponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "description": "For User Register Application",
@@ -1334,16 +1367,67 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Shop"
-                            }
+                            "$ref": "#/definitions/models.Shop"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/upload/images": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Image",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Common"
+                ],
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Image",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Image"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -1492,6 +1576,14 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "suggestCode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Image": {
+            "type": "object",
+            "properties": {
+                "uri": {
                     "type": "string"
                 }
             }
@@ -1789,9 +1881,6 @@ const docTemplate = `{
         "models.Member": {
             "type": "object",
             "properties": {
-                "TaxID": {
-                    "type": "string"
-                },
                 "address": {
                     "type": "string"
                 },
@@ -1811,6 +1900,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "surname": {
+                    "type": "string"
+                },
+                "taxID": {
                     "type": "string"
                 },
                 "telephone": {
@@ -1932,6 +2024,28 @@ const docTemplate = `{
                 }
             }
         },
+        "models.UserProfile": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserProfileReponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.UserProfile"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "models.UserRequest": {
             "type": "object",
             "required": [
@@ -1967,7 +2081,7 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "",
 	BasePath:         "",
-	Schemes:          []string{},
+	Schemes:          []string{"http", "https"},
 	Title:            "SML Cloud Platform API",
 	Description:      "",
 	InfoInstanceName: "swagger",
