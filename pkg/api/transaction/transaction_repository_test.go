@@ -11,7 +11,7 @@ import (
 )
 
 func TestCreateTransaction(t *testing.T) {
-	mongoPersisterConfig := mock.NewPersisterMongo()
+	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := transaction.NewTransactionRepository(mongoPersister)
 
@@ -43,7 +43,7 @@ func TestCreateTransaction(t *testing.T) {
 }
 
 func TestUpdateTransaction(t *testing.T) {
-	mongoPersisterConfig := mock.NewPersisterMongo()
+	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := transaction.NewTransactionRepository(mongoPersister)
 
@@ -111,7 +111,7 @@ func TestUpdateTransaction(t *testing.T) {
 }
 
 func TestDeleteTransaction(t *testing.T) {
-	mongoPersisterConfig := mock.NewPersisterMongo()
+	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := transaction.NewTransactionRepository(mongoPersister)
 
@@ -162,7 +162,7 @@ func TestDeleteTransaction(t *testing.T) {
 }
 
 func TestFindTransaction(t *testing.T) {
-	mongoPersisterConfig := mock.NewPersisterMongo()
+	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := transaction.NewTransactionRepository(mongoPersister)
 
@@ -184,7 +184,7 @@ func TestFindTransaction(t *testing.T) {
 }
 
 func TestFindPageTransaction(t *testing.T) {
-	mongoPersisterConfig := mock.NewPersisterMongo()
+	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := transaction.NewTransactionRepository(mongoPersister)
 

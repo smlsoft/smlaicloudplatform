@@ -8,15 +8,15 @@ import (
 	"testing"
 )
 
-func newPgRepo() inventory.InventoryPGRepository {
-	persisterConfig := mock.NewPersister()
+func newInventoryPgRepo() inventory.InventoryPGRepository {
+	persisterConfig := mock.NewPersisterPostgresqlConfig()
 	pst := microservice.NewPersister(persisterConfig)
 	repo := inventory.NewInventoryPGRepository(pst)
 	return repo
 }
 
 func TestCreate(t *testing.T) {
-	repo := newPgRepo()
+	repo := newInventoryPgRepo()
 
 	idx := models.InventoryIndex{}
 	idx.ID = "134567"
@@ -30,7 +30,7 @@ func TestCreate(t *testing.T) {
 }
 
 func TestCount(t *testing.T) {
-	repo := newPgRepo()
+	repo := newInventoryPgRepo()
 
 	count, err := repo.Count("shopidx001", "fixguid")
 
@@ -42,7 +42,7 @@ func TestCount(t *testing.T) {
 }
 
 func TestFindByGuid(t *testing.T) {
-	repo := newPgRepo()
+	repo := newInventoryPgRepo()
 	inv, err := repo.FindByGuid("shopidx001", "fixguid")
 
 	if err != nil {
@@ -53,7 +53,7 @@ func TestFindByGuid(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	repo := newPgRepo()
+	repo := newInventoryPgRepo()
 
 	err := repo.Delete("shopidx001", "fixguid")
 

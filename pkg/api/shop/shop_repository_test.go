@@ -16,7 +16,7 @@ func TestFindShop(t *testing.T) {
 	// os.Setenv("MONGODB_URI", "mongodb://root:rootx@localhost:27017/")
 	// defer os.Unsetenv("MONGODB_URI")
 
-	mongoPersisterConfig := mock.NewPersisterMongo()
+	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repository := shop.NewShopRepository(mongoPersister)
 

@@ -9,7 +9,7 @@ import (
 )
 
 func newPgRepo() member.MemberPGRepository {
-	persisterConfig := mock.NewPersister()
+	persisterConfig := mock.NewPersisterPostgresqlConfig()
 	pst := microservice.NewPersister(persisterConfig)
 	repo := member.NewMemberPGRepository(pst)
 	return repo

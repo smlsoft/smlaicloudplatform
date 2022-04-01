@@ -9,9 +9,9 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type PersisterConfig struct{}
+type PersisterPostgresqlConfig struct{}
 
-func NewPersister() microservice.IPersisterConfig {
+func NewPersisterPostgresqlConfig() microservice.IPersisterConfig {
 	re := regexp.MustCompile(`^(.*` + projectDirName + `)`)
 	cwd, _ := os.Getwd()
 	rootPath := re.Find([]byte(cwd))
@@ -22,34 +22,30 @@ func NewPersister() microservice.IPersisterConfig {
 		fmt.Println("Load Env Failed ")
 	}
 
-	return &PersisterConfig{}
+	return &PersisterPostgresqlConfig{}
 }
 
-func NewPersisterConfig() *PersisterConfig {
-	return &PersisterConfig{}
-}
-
-func (cfg *PersisterConfig) Host() string {
+func (cfg *PersisterPostgresqlConfig) Host() string {
 	return os.Getenv("POSTGRES_HOST")
 }
 
-func (cfg *PersisterConfig) Port() string {
+func (cfg *PersisterPostgresqlConfig) Port() string {
 	return os.Getenv("POSTGRES_PORT")
 }
 
-func (cfg *PersisterConfig) DB() string {
+func (cfg *PersisterPostgresqlConfig) DB() string {
 	return os.Getenv("POSTGRES_DB_NAME")
 }
 
-func (cfg *PersisterConfig) Username() string {
+func (cfg *PersisterPostgresqlConfig) Username() string {
 	return os.Getenv("POSTGRES_USERNAME")
 }
 
-func (cfg *PersisterConfig) Password() string {
+func (cfg *PersisterPostgresqlConfig) Password() string {
 	return os.Getenv("POSTGRES_PASSWORD")
 }
 
-func (cfg *PersisterConfig) SSLMode() string {
+func (cfg *PersisterPostgresqlConfig) SSLMode() string {
 	sslMode := os.Getenv("POSTGRES_SSL_MODE")
 	if sslMode != "" {
 		sslMode = "disable"
@@ -57,6 +53,6 @@ func (cfg *PersisterConfig) SSLMode() string {
 	return sslMode
 }
 
-func (cfg *PersisterConfig) TimeZone() string {
+func (cfg *PersisterPostgresqlConfig) TimeZone() string {
 	return "Asia/Bangkok"
 }

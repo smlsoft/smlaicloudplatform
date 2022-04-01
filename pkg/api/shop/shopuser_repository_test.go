@@ -9,7 +9,7 @@ import (
 )
 
 func TestCreateShopUser(t *testing.T) {
-	mongoPersisterConfig := mock.NewPersisterMongo()
+	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := shop.NewShopUserRepository(mongoPersister)
 
@@ -36,7 +36,7 @@ func TestCreateShopUser(t *testing.T) {
 }
 
 func TestFindByUsernamePage(t *testing.T) {
-	mongoPersisterConfig := mock.NewPersisterMongo()
+	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	t.Log(mongoPersisterConfig.DB())
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := shop.NewShopUserRepository(mongoPersister)

@@ -12,14 +12,19 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+func getRepo() AuthenticationRepository {
+	mongoPersisterConfig := mock.NewPersisterMongoConfig()
+	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
+	repository := NewAuthenticationRepository(mongoPersister)
+	return repository
+}
+
 func TestFindUser(t *testing.T) {
 
 	// os.Setenv("MONGODB_URI", "mongodb://root:rootx@localhost:27017/")
 	// defer os.Unsetenv("MONGODB_URI")
 
-	mongoPersisterConfig := mock.NewPersisterMongo()
-	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
-	repository := NewAuthenticationRepository(mongoPersister)
+	repository := getRepo()
 
 	password, _ := utils.HashPassword("test")
 

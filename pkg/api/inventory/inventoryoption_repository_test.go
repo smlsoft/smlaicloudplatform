@@ -8,10 +8,15 @@ import (
 	"testing"
 )
 
-func TestCreateInventoryOption(t *testing.T) {
-	mongoPersisterConfig := mock.NewPersisterMongo()
+func getInventoryOptionRepo() inventory.InventoryOptionRepository {
+	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := inventory.NewInventoryOptionRepository(mongoPersister)
+	return repo
+}
+
+func TestCreateInventoryOption(t *testing.T) {
+	repo := getInventoryOptionRepo()
 
 	give := models.InventoryOption{
 		GuidFixed:     "fx01",

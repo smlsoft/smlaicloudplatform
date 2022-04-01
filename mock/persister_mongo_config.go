@@ -19,7 +19,7 @@ func (*PersisterMongoConfig) DB() string {
 	return os.Getenv("MONGODB_DB")
 }
 
-func NewPersisterMongo() microservice.IPersisterMongoConfig {
+func NewPersisterMongoConfig() microservice.IPersisterMongoConfig {
 	re := regexp.MustCompile(`^(.*` + projectDirName + `)`)
 	cwd, _ := os.Getwd()
 	rootPath := re.Find([]byte(cwd))
