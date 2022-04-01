@@ -1,6 +1,7 @@
 package inventory
 
 import (
+	"errors"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 
@@ -13,6 +14,7 @@ type IInventoryRepository interface {
 	Create(inventory models.InventoryDoc) (string, error)
 	Update(guid string, inventory models.InventoryDoc) error
 	Delete(guid string, shopID string, username string) error
+	FindByID(id primitive.ObjectID) (models.InventoryDoc, error)
 	FindByGuid(guid string, shopID string) (models.InventoryDoc, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
 }
@@ -55,6 +57,22 @@ func (repo InventoryRepository) Delete(guid string, shopID string, username stri
 		return err
 	}
 	return nil
+}
+
+func (repo InventoryRepository) FindByID(id primitive.ObjectID) (models.InventoryDoc, error) {
+
+	findDoc := &models.InventoryDoc{}
+	err := repo.pst.FindOne(&models.InventoryDoc{}, bson.M{"_id": id}, findDoc)
+
+	if err != nil {
+		return models.InventoryDoc{}, err
+	}
+
+	if !findDoc.DeletedAt.IsZero() {
+		return models.InventoryDoc{}, errors.New("document not found")
+	}
+
+	return *findDoc, nil
 }
 
 func (repo InventoryRepository) FindByGuid(guid string, shopID string) (models.InventoryDoc, error) {

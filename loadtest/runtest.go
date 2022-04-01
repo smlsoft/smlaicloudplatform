@@ -13,8 +13,8 @@ func main() {
 
 	config := &wrkgo.LoadTestConfig{
 		BaseURL:         "http://localhost:8088",
-		ConcurrentUsers: 1000,
-		RunDuration:     time.Second * 1,
+		ConcurrentUsers: 700,
+		RunDuration:     time.Second * 60 * 10,
 		DebugError:      true,
 		DebugRequest:    false,
 		DebugResponse:   false,
@@ -28,19 +28,18 @@ func main() {
 			Method:  "POST",
 			Headers: map[string]string{
 				"Content-Type":  "application/json; charset=UTF-8",
-				"Authorization": "Bearer 265izJ0ObUpbO18iv5rZpQpW0Yv",
+				"Authorization": "Bearer 26j5fKC8fQ0dFNza2pq9degmhTS",
 			},
 		},
 	}
 
 	runNumber := 1
 	reqSetupHandler := func(tmpl *wrkgo.LoadTestTemplate, req *wrkgo.LoadTestRequest, prevResp *wrkgo.LoadTestResponse) error {
-
 		runNumberTxt := strconv.Itoa(runNumber)
 		input := map[string]interface{}{
 			"items": []interface{}{
 				map[string]interface{}{
-					"inventoryId":  "inv" + runNumberTxt,
+					"inventoryId":  "inv",
 					"itemSku":      "sku" + runNumberTxt,
 					"categoryGuid": fmt.Sprintf("cat-%d", rand.Int()),
 					"lineNumber":   1,

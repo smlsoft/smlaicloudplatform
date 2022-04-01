@@ -2,6 +2,7 @@ package inventory
 
 import (
 	"errors"
+	"fmt"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"time"
@@ -14,10 +15,12 @@ type IInventoryService interface {
 	IsExistsGuid(shopID string, guidFixed string) (bool, error)
 	CreateIndex(doc models.InventoryIndex) error
 	CreateWithGuid(shopID string, authUsername string, guidFixed string, inventory models.Inventory) (string, error)
-	CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, error)
-	UpdateInventory(guid string, shopID string, authUsername string, inventory models.Inventory) error
-	DeleteInventory(guid string, shopID string, username string) error
-	InfoInventory(guid string, shopID string) (models.InventoryInfo, error)
+	CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, string, error)
+	UpdateInventory(shopID string, guid string, authUsername string, inventory models.Inventory) error
+	DeleteInventory(shopID string, guid string, username string) error
+	InfoInventory(shopID string, guid string) (models.InventoryInfo, error)
+	InfoMongoInventory(id string) (models.InventoryInfo, error)
+	InfoIndexInventory(shopID string, guid string) (models.InventoryInfo, error)
 	SearchInventory(shopID string, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
 }
 
@@ -81,44 +84,25 @@ func (svc InventoryService) CreateWithGuid(shopID string, authUsername string, g
 		return "", err
 	}
 
-	err = svc.invMqRepo.Create(invDoc.InventoryData)
+	if svc.invMqRepo != nil {
+		err = svc.invMqRepo.Create(invDoc.InventoryData)
 
-	if err != nil {
-		return "", err
+		if err != nil {
+			return "", err
+		}
 	}
 
 	return mongoIdx, nil
 }
 
-func (svc InventoryService) CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, error) {
+func (svc InventoryService) CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, string, error) {
 
 	newGuid := utils.NewGUID()
-
-	invDoc := models.InventoryDoc{}
-
-	invDoc.GuidFixed = newGuid
-	invDoc.ShopID = shopID
-	invDoc.Inventory = inventory
-
-	invDoc.CreatedBy = authUsername
-	invDoc.CreatedAt = time.Now()
-
-	_, err := svc.invRepo.Create(invDoc)
-
-	if err != nil {
-		return "", err
-	}
-
-	err = svc.invMqRepo.Create(invDoc.InventoryData)
-
-	if err != nil {
-		return "", err
-	}
-
-	return newGuid, nil
+	mongoIdx, err := svc.CreateWithGuid(shopID, authUsername, newGuid, inventory)
+	return mongoIdx, newGuid, err
 }
 
-func (svc InventoryService) UpdateInventory(guid string, shopID string, authUsername string, inventory models.Inventory) error {
+func (svc InventoryService) UpdateInventory(shopID string, guid string, authUsername string, inventory models.Inventory) error {
 
 	findDoc, err := svc.invRepo.FindByGuid(guid, shopID)
 
@@ -150,7 +134,7 @@ func (svc InventoryService) UpdateInventory(guid string, shopID string, authUser
 	return nil
 }
 
-func (svc InventoryService) DeleteInventory(guid string, shopID string, username string) error {
+func (svc InventoryService) DeleteInventory(shopID string, guid string, username string) error {
 
 	err := svc.invRepo.Delete(guid, shopID, username)
 
@@ -172,7 +156,24 @@ func (svc InventoryService) DeleteInventory(guid string, shopID string, username
 	return nil
 }
 
-func (svc InventoryService) InfoInventory(guid string, shopID string) (models.InventoryInfo, error) {
+func (svc InventoryService) InfoMongoInventory(id string) (models.InventoryInfo, error) {
+	start := time.Now()
+
+	idx, err := primitive.ObjectIDFromHex(id)
+	findDoc, err := svc.invRepo.FindByID(idx)
+
+	if err != nil && err.Error() != "mongo: no documents in result" {
+		return models.InventoryInfo{}, err
+	}
+
+	elapsed := time.Since(start)
+	fmt.Printf("mongo :: pure id :: %s\n", elapsed)
+
+	return findDoc.InventoryInfo, nil
+}
+
+func (svc InventoryService) InfoInventory(shopID string, guid string) (models.InventoryInfo, error) {
+	start := time.Now()
 	findDoc, err := svc.invRepo.FindByGuid(guid, shopID)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
@@ -183,6 +184,25 @@ func (svc InventoryService) InfoInventory(guid string, shopID string) (models.In
 	// 	return models.InventoryInfo{}, nil
 	// }
 
+	elapsed := time.Since(start)
+	fmt.Printf("mongo :: shopID,guidFixed :: %s\n", elapsed)
+
+	return findDoc.InventoryInfo, nil
+}
+
+func (svc InventoryService) InfoIndexInventory(shopID string, guid string) (models.InventoryInfo, error) {
+	start := time.Now()
+	invIndex, err := svc.invPgRepo.FindByGuid(shopID, guid)
+
+	idx, err := primitive.ObjectIDFromHex(invIndex.ID)
+
+	findDoc, err := svc.invRepo.FindByID(idx)
+
+	if err != nil && err.Error() != "mongo: no documents in result" {
+		return models.InventoryInfo{}, err
+	}
+	elapsed := time.Since(start)
+	fmt.Printf("mongo,pg :: shopID,guidFixed :: %s\n", elapsed)
 	return findDoc.InventoryInfo, nil
 }
 

@@ -105,7 +105,7 @@ func (h SyncDataHttp) Save(ctx microservice.IContext) error {
 				return nil
 			},
 			func() error {
-				return h.inventoryService.UpdateInventory(syncData.MyGuid, userInfo.ShopID, userInfo.Username, inv)
+				return h.inventoryService.UpdateInventory(userInfo.ShopID, syncData.MyGuid, userInfo.Username, inv)
 			},
 		)
 
