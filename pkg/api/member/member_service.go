@@ -13,12 +13,12 @@ import (
 type IMemberService interface {
 	IsExistsGuid(shopID string, guidFixed string) (bool, error)
 	CreateIndex(doc models.MemberIndex) error
-	CreateWithGuid(shopId string, username string, guid string, doc models.Member) (string, error)
-	CreateMember(shopId string, username string, doc models.Member) (string, error)
-	UpdateMember(guid string, shopId string, username string, doc models.Member) error
-	DeleteMember(guid string, shopId string, username string) error
-	InfoMember(guid string, shopId string) (models.MemberInfo, error)
-	SearchMember(shopId string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error)
+	CreateWithGuid(shopID string, username string, guid string, doc models.Member) (string, error)
+	Create(shopID string, username string, doc models.Member) (string, error)
+	Update(shopID string, guid string, username string, doc models.Member) error
+	Delete(shopID string, guid string, username string) error
+	Info(shopID string, guid string) (models.MemberInfo, error)
+	Search(shopID string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error)
 }
 
 type MemberService struct {
@@ -60,12 +60,12 @@ func (svc MemberService) CreateIndex(doc models.MemberIndex) error {
 
 }
 
-func (svc MemberService) CreateWithGuid(shopId string, username string, guid string, doc models.Member) (string, error) {
+func (svc MemberService) CreateWithGuid(shopID string, username string, guid string, doc models.Member) (string, error) {
 	dataDoc := models.MemberDoc{}
 
 	newGuid := guid
 	dataDoc.GuidFixed = newGuid
-	dataDoc.ShopID = shopId
+	dataDoc.ShopID = shopID
 	dataDoc.CreatedBy = username
 	dataDoc.CreatedAt = time.Now()
 
@@ -80,12 +80,12 @@ func (svc MemberService) CreateWithGuid(shopId string, username string, guid str
 	return newGuid, nil
 }
 
-func (svc MemberService) CreateMember(shopId string, username string, doc models.Member) (string, error) {
+func (svc MemberService) Create(shopID string, username string, doc models.Member) (string, error) {
 	dataDoc := models.MemberDoc{}
 
 	newGuid := utils.NewGUID()
 	dataDoc.GuidFixed = newGuid
-	dataDoc.ShopID = shopId
+	dataDoc.ShopID = shopID
 	dataDoc.CreatedBy = username
 	dataDoc.CreatedAt = time.Now()
 
@@ -100,9 +100,9 @@ func (svc MemberService) CreateMember(shopId string, username string, doc models
 	return newGuid, nil
 }
 
-func (svc MemberService) UpdateMember(guid string, shopId string, username string, doc models.Member) error {
+func (svc MemberService) Update(shopID string, guid string, username string, doc models.Member) error {
 
-	findDoc, err := svc.memberRepo.FindByGuid(guid, shopId)
+	findDoc, err := svc.memberRepo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return err
@@ -125,9 +125,9 @@ func (svc MemberService) UpdateMember(guid string, shopId string, username strin
 	return nil
 }
 
-func (svc MemberService) DeleteMember(guid string, shopId string, username string) error {
+func (svc MemberService) Delete(shopID string, guid string, username string) error {
 
-	err := svc.memberRepo.Delete(guid, shopId, username)
+	err := svc.memberRepo.Delete(shopID, guid, username)
 	if err != nil {
 		return err
 	}
@@ -135,8 +135,8 @@ func (svc MemberService) DeleteMember(guid string, shopId string, username strin
 	return nil
 }
 
-func (svc MemberService) InfoMember(guid string, shopId string) (models.MemberInfo, error) {
-	doc, err := svc.memberRepo.FindByGuid(guid, shopId)
+func (svc MemberService) Info(shopID string, guid string) (models.MemberInfo, error) {
+	doc, err := svc.memberRepo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return models.MemberInfo{}, err
@@ -145,8 +145,8 @@ func (svc MemberService) InfoMember(guid string, shopId string) (models.MemberIn
 	return doc.MemberInfo, nil
 }
 
-func (svc MemberService) SearchMember(shopId string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error) {
-	docList, pagination, err := svc.memberRepo.FindPage(shopId, q, page, limit)
+func (svc MemberService) Search(shopID string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error) {
+	docList, pagination, err := svc.memberRepo.FindPage(shopID, q, page, limit)
 
 	if err != nil {
 		return docList, pagination, err

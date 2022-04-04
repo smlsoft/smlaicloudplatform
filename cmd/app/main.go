@@ -4,15 +4,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/authentication"
 	"smlcloudplatform/pkg/api/inventory"
+	"smlcloudplatform/pkg/api/member"
 	"smlcloudplatform/pkg/api/purchase"
 	"smlcloudplatform/pkg/api/shop"
 	"smlcloudplatform/pkg/api/syncdata"
 	"smlcloudplatform/pkg/api/tools"
 	"smlcloudplatform/pkg/api/transaction"
+
+	_ "net/http/pprof"
 
 	"github.com/labstack/echo/v4"
 )
@@ -24,6 +28,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	go func() {
+		log.Println(http.ListenAndServe(":6060", nil))
+	}()
 
 	cacher := ms.Cacher(cfg.CacherConfig())
 	// jwtService := microservice.NewJwtService(cacher, cfg.JwtSecretKey(), 24*3)
@@ -63,6 +71,9 @@ func main() {
 
 	syncapi := syncdata.NewSyncDataHttp(ms, cfg)
 	syncapi.RouteSetup()
+
+	memberhttp := member.NewMemberHttp(ms, cfg)
+	memberhttp.RouteSetup()
 
 	toolSvc := tools.NewToolsService(ms, cfg)
 

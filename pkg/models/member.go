@@ -8,16 +8,16 @@ const memberCollectionName = "members"
 const memberIndexName string = "members_index"
 
 type Member struct {
-	Telephone    string `json:"telephone" bson:"Telephone"`
-	Name         string `json:"name,omitempty" bson:"name,omitempty"`
-	Surname      string `json:"surname,omitempty" bson:"surname,omitempty"`
-	TaxID        string `json:"taxID,omitempty" bson:"TaxID,omitempty"`
-	ContactType  int    `json:"contactType,omitempty" bson:"ContactType,omitempty"`
-	PersonalType int    `json:"personalType,omitempty" bson:"PersonalType,omitempty"`
-	BranchType   int    `json:"branchType,omitempty" bson:"BranchType,omitempty"`
-	BranchCode   string `json:"branchCode,omitempty" bson:"branchCode,omitempty"`
-	Address      string `json:"address,omitempty" bson:"address,omitempty"`
-	ZipCode      string `json:"zipCode,omitempty" bson:"zipCode,omitempty"`
+	Telephone    string `json:"telephone" bson:"telephone"`
+	Name         string `json:"name" bson:"name"`
+	Surname      string `json:"surname" bson:"surname"`
+	TaxID        string `json:"taxID" bson:"taxID"`
+	ContactType  int    `json:"contactType" bson:"contactType"`
+	PersonalType int    `json:"personalType" bson:"personalType"`
+	BranchType   int    `json:"branchType" bson:"branchType"`
+	BranchCode   string `json:"branchCode" bson:"branchCode"`
+	Address      string `json:"address" bson:"address"`
+	ZipCode      string `json:"zipCode" bson:"zipCode"`
 }
 
 type MemberInfo struct {

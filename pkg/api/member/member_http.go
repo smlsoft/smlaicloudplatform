@@ -74,7 +74,7 @@ func (h MemberHttp) CreateMember(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.service.CreateMember(shopID, authUsername, *doc)
+	idx, err := h.service.Create(shopID, authUsername, *doc)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -114,7 +114,7 @@ func (h MemberHttp) UpdateMember(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.service.UpdateMember(id, shopID, authUsername, *docReq)
+	err = h.service.Update(shopID, id, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -143,7 +143,7 @@ func (h MemberHttp) DeleteMember(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	err := h.service.DeleteMember(id, shopID, authUsername)
+	err := h.service.Delete(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -172,11 +172,19 @@ func (h MemberHttp) InfoMember(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	doc, err := h.service.InfoMember(id, shopID)
+	doc, err := h.service.Info(shopID, id)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		ctx.ResponseError(400, err.Error())
 		return err
+	}
+
+	if len(doc.GuidFixed) == 0 {
+		ctx.Response(http.StatusNotFound, models.ApiResponse{
+			Success: false,
+			Message: "document not found",
+		})
+		return nil
 	}
 
 	ctx.Response(http.StatusOK, models.ApiResponse{
@@ -214,7 +222,7 @@ func (h MemberHttp) SearchMember(ctx microservice.IContext) error {
 		limit = 20
 	}
 
-	docList, pagination, err := h.service.SearchMember(shopID, q, page, limit)
+	docList, pagination, err := h.service.Search(shopID, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

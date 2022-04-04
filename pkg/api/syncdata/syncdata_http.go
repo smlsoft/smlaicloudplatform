@@ -155,7 +155,7 @@ func (h SyncDataHttp) Save(ctx microservice.IContext) error {
 				return nil
 			},
 			func() error {
-				return h.memberService.UpdateMember(syncData.MyGuid, userInfo.ShopID, userInfo.Username, member)
+				return h.memberService.Update(userInfo.ShopID, syncData.MyGuid, userInfo.Username, member)
 			},
 		)
 

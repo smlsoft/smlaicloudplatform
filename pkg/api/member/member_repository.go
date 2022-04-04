@@ -12,9 +12,9 @@ import (
 type IMemberRepository interface {
 	Create(doc models.MemberDoc) (primitive.ObjectID, error)
 	Update(guid string, doc models.MemberDoc) error
-	Delete(guid string, shopId string, username string) error
-	FindByGuid(guid string, shopId string) (models.MemberDoc, error)
-	FindPage(shopId string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error)
+	Delete(shopID string, guid string, username string) error
+	FindByGuid(shopID string, guid string) (models.MemberDoc, error)
+	FindPage(shopID string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error)
 }
 
 type MemberRepository struct {
@@ -43,28 +43,28 @@ func (repo MemberRepository) Update(guid string, doc models.MemberDoc) error {
 	return nil
 }
 
-func (repo MemberRepository) Delete(guid string, shopId string, uername string) error {
-	err := repo.pst.SoftDelete(&models.MemberDoc{}, uername, bson.M{"guidFixed": guid, "shopID": shopId})
+func (repo MemberRepository) Delete(shopID string, guid string, uername string) error {
+	err := repo.pst.SoftDelete(&models.MemberDoc{}, uername, bson.M{"guidFixed": guid, "shopID": shopID})
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (repo MemberRepository) FindByGuid(guid string, shopId string) (models.MemberDoc, error) {
+func (repo MemberRepository) FindByGuid(shopID string, guid string) (models.MemberDoc, error) {
 	doc := &models.MemberDoc{}
-	err := repo.pst.FindOne(&models.MemberDoc{}, bson.M{"shopID": shopId, "guidFixed": guid, "deletedAt": bson.M{"$exists": false}}, doc)
+	err := repo.pst.FindOne(&models.MemberDoc{}, bson.M{"shopID": shopID, "guidFixed": guid, "deletedAt": bson.M{"$exists": false}}, doc)
 	if err != nil {
 		return *doc, err
 	}
 	return *doc, nil
 }
 
-func (repo MemberRepository) FindPage(shopId string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error) {
+func (repo MemberRepository) FindPage(shopID string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error) {
 
 	docList := []models.MemberInfo{}
 	pagination, err := repo.pst.FindPage(&models.MemberInfo{}, limit, page, bson.M{
-		"shopID":    shopId,
+		"shopID":    shopID,
 		"deletedAt": bson.M{"$exists": false},
 		"$or": []interface{}{
 			bson.M{"name": bson.M{"$regex": primitive.Regex{
