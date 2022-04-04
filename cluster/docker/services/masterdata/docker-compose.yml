@@ -15,13 +15,9 @@ services:
     labels:
       - "traefik.http.routers.masterdata.rule=(PathPrefix(`/inventory`) || PathPrefix(`/option`) || PathPrefix(`/optgroup`) || PathPrefix(`/category`) || PathPrefix(`/member`))"
     networks:
-#      - frontend
       - backend
 
 networks:
-#  frontend:
-#    external:
-#      name: sml_service_frontend
   backend:
     external:
       name: sml_service_backend
