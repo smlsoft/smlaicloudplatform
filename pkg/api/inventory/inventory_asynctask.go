@@ -15,7 +15,7 @@ func StartInventoryAsync(ms *microservice.Microservice, cfg microservice.IConfig
 	prod := ms.Producer(cfg.MQConfig())
 
 	invRepo := NewInventoryRepository(pst)
-	invPgRepo := NewInventoryPGRepository(pstPg)
+	invPgRepo := NewInventoryIndexPGRepository(pstPg)
 	invMqRepo := NewInventoryMQRepository(prod)
 	invService := NewInventoryService(invRepo, invPgRepo, invMqRepo)
 

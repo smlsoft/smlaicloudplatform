@@ -8,10 +8,10 @@ import (
 	"testing"
 )
 
-func newInventoryPgRepo() inventory.InventoryPGRepository {
+func newInventoryPgRepo() inventory.InventoryIndexPGRepository {
 	persisterConfig := mock.NewPersisterPostgresqlConfig()
 	pst := microservice.NewPersister(persisterConfig)
-	repo := inventory.NewInventoryPGRepository(pst)
+	repo := inventory.NewInventoryIndexPGRepository(pst)
 	return repo
 }
 

@@ -26,7 +26,7 @@ func NewSyncDataHttp(ms *microservice.Microservice, cfg microservice.IConfig) Sy
 	prod := ms.Producer(cfg.MQConfig())
 
 	invRepo := inventory.NewInventoryRepository(pst)
-	invPgRepo := inventory.NewInventoryPGRepository(pstPg)
+	invPgRepo := inventory.NewInventoryIndexPGRepository(pstPg)
 	invMqRepo := inventory.NewInventoryMQRepository(prod)
 	invService := inventory.NewInventoryService(invRepo, invPgRepo, invMqRepo)
 
@@ -45,6 +45,11 @@ func NewSyncDataHttp(ms *microservice.Microservice, cfg microservice.IConfig) Sy
 func (h SyncDataHttp) RouteSetup() {
 
 	h.ms.POST("/sync", h.Save)
+}
+
+func (h SyncDataHttp) SyncInventory(ctx microservice.IContext) error {
+
+	return nil
 }
 
 func (h SyncDataHttp) Save(ctx microservice.IContext) error {

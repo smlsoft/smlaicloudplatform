@@ -26,11 +26,11 @@ type IInventoryService interface {
 
 type InventoryService struct {
 	invRepo   IInventoryRepository
-	invPgRepo IInventoryPGRepository
+	invPgRepo IInventoryIndexPGRepository
 	invMqRepo IInventoryMQRepository
 }
 
-func NewInventoryService(inventoryRepo IInventoryRepository, inventoryPgRepo IInventoryPGRepository, inventoryMqRepo IInventoryMQRepository) InventoryService {
+func NewInventoryService(inventoryRepo IInventoryRepository, inventoryPgRepo IInventoryIndexPGRepository, inventoryMqRepo IInventoryMQRepository) InventoryService {
 	return InventoryService{
 		invRepo:   inventoryRepo,
 		invPgRepo: inventoryPgRepo,

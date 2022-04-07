@@ -5,24 +5,24 @@ import (
 	"smlcloudplatform/pkg/models"
 )
 
-type IInventoryPGRepository interface {
+type IInventoryIndexPGRepository interface {
 	Count(shopID string, guid string) (int, error)
 	Create(inventory models.InventoryIndex) error
 	Delete(shopID string, guid string) error
 	FindByGuid(shopID string, guid string) (models.InventoryIndex, error)
 }
 
-type InventoryPGRepository struct {
+type InventoryIndexPGRepository struct {
 	pst microservice.IPersister
 }
 
-func NewInventoryPGRepository(pst microservice.IPersister) InventoryPGRepository {
-	return InventoryPGRepository{
+func NewInventoryIndexPGRepository(pst microservice.IPersister) InventoryIndexPGRepository {
+	return InventoryIndexPGRepository{
 		pst: pst,
 	}
 }
 
-func (repo InventoryPGRepository) Count(shopID string, guid string) (int, error) {
+func (repo InventoryIndexPGRepository) Count(shopID string, guid string) (int, error) {
 	count, err := repo.pst.Count(models.InventoryIndex{}, " shop_id = ? AND guid_fixed = ?", shopID, guid)
 	if err != nil {
 		return 0, err
@@ -30,7 +30,7 @@ func (repo InventoryPGRepository) Count(shopID string, guid string) (int, error)
 	return int(count), nil
 }
 
-func (repo InventoryPGRepository) Create(inventory models.InventoryIndex) error {
+func (repo InventoryIndexPGRepository) Create(inventory models.InventoryIndex) error {
 	err := repo.pst.Create(inventory)
 	if err != nil {
 		return err
@@ -38,7 +38,7 @@ func (repo InventoryPGRepository) Create(inventory models.InventoryIndex) error 
 	return nil
 }
 
-func (repo InventoryPGRepository) Delete(shopID string, guid string) error {
+func (repo InventoryIndexPGRepository) Delete(shopID string, guid string) error {
 	tableName := models.InventoryIndex{}.TableName()
 	err := repo.pst.Exec("DELETE FROM "+tableName+" WHERE shop_id = ? AND guid_fixed = ?", shopID, guid)
 	if err != nil {
@@ -47,7 +47,7 @@ func (repo InventoryPGRepository) Delete(shopID string, guid string) error {
 	return nil
 }
 
-func (repo InventoryPGRepository) FindByGuid(shopID string, guid string) (models.InventoryIndex, error) {
+func (repo InventoryIndexPGRepository) FindByGuid(shopID string, guid string) (models.InventoryIndex, error) {
 	inv := models.InventoryIndex{}
 	_, err := repo.pst.Where(&inv, "  shop_id = ? AND guid_fixed = ?", shopID, guid)
 	if err != nil {
