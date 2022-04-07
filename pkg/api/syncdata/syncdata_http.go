@@ -45,6 +45,7 @@ func NewSyncDataHttp(ms *microservice.Microservice, cfg microservice.IConfig) Sy
 func (h SyncDataHttp) RouteSetup() {
 
 	h.ms.POST("/sync", h.Save)
+	h.ms.POST("/syncproduct", h.SyncInventory)
 }
 
 func (h SyncDataHttp) Save(ctx microservice.IContext) error {
@@ -246,4 +247,17 @@ func (h SyncDataHttp) syncData(
 	default:
 		return errors.New("mode invalid")
 	}
+}
+
+// Sync syncinventory
+// @Description get struct array by ID
+// @Tags		Synchronize
+// @Param		Data  body      models.SyncInventoryData  true  "Data Payload"
+// @Accept 		json
+// @Success		200	{object}	models.AuthResponse
+// @Failure		400 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /syncproduct [post]
+func (h SyncDataHttp) SyncInventory(ctx microservice.IContext) error {
+	return h.Save(ctx)
 }

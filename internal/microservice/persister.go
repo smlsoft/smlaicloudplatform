@@ -25,6 +25,7 @@ type IPersister interface {
 	DropTable(table ...interface{}) error
 	SetupJoinTable(model interface{}, field string, joinTable interface{}) error
 	AutoMigrate(dst ...interface{}) error
+	TestConnect() error
 }
 
 // IPersisterConfig is interface for persister
@@ -36,6 +37,7 @@ type IPersisterConfig interface {
 	Password() string
 	SSLMode() string
 	TimeZone() string
+	LoggerLevel() string
 }
 
 // Persister is persister
@@ -66,6 +68,21 @@ func (pst *Persister) getConnectionString() (string, error) {
 	), nil
 }
 
+func (pst *Persister) GetLeggerLevel() logger.LogLevel {
+
+	logLevel := pst.config.LoggerLevel()
+	if logLevel == "debug" || logLevel == "DEBUG" {
+		return logger.Info
+	}
+	if logLevel == "error" || logLevel == "ERROR" {
+		return logger.Error
+	}
+	if logLevel == "warn" || logLevel == "WARN" {
+		return logger.Warn
+	}
+	return logger.Silent
+}
+
 func (pst *Persister) getClient() (*gorm.DB, error) {
 	if pst.db != nil {
 		return pst.db, nil
@@ -78,9 +95,11 @@ func (pst *Persister) getClient() (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+	//fmt.Println("Test Connectd To : " + connection)
+	loggerLevel := pst.GetLeggerLevel()
 	db, err := gorm.Open(postgres.Open(connection), &gorm.Config{
 		SkipDefaultTransaction: true,
-		Logger:                 logger.Default.LogMode(logger.Info),
+		Logger:                 logger.Default.LogMode(loggerLevel),
 		PrepareStmt:            true,
 	})
 	if err != nil {
@@ -276,4 +295,15 @@ func (pst *Persister) AutoMigrate(dst ...interface{}) error {
 		return err
 	}
 	return db.AutoMigrate(dst...)
+}
+
+func (pst *Persister) TestConnect() error {
+	db, err := pst.getClient()
+	if err != nil {
+		return err
+	}
+
+	var success int
+	err = db.Raw("SELECT 1").Scan(&success).Error
+	return err
 }

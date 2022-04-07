@@ -1054,7 +1054,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.InventoryOption"
+                            "$ref": "#/definitions/models.InventoryOptionMain"
                         }
                     }
                 ],
@@ -1139,7 +1139,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.InventoryOption"
+                            "$ref": "#/definitions/models.InventoryOptionMain"
                         }
                     }
                 ],
@@ -1379,6 +1379,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/syncproduct": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Synchronize"
+                ],
+                "parameters": [
+                    {
+                        "description": "Data Payload",
+                        "name": "Data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SyncInventoryData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/upload/images": {
             "post": {
                 "security": [
@@ -1569,6 +1610,9 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
+                "optCode": {
+                    "type": "string"
+                },
                 "price": {
                     "type": "number"
                 },
@@ -1621,7 +1665,7 @@ const docTemplate = `{
                 "images": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/models.InventoryImage"
                     }
                 },
                 "itemSku": {
@@ -1663,7 +1707,7 @@ const docTemplate = `{
                 "tags": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/models.InventoryTag"
                     }
                 },
                 "unitName1": {
@@ -1679,6 +1723,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "unitName5": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.InventoryImage": {
+            "type": "object",
+            "properties": {
+                "docID": {
+                    "type": "string"
+                },
+                "url": {
                     "type": "string"
                 }
             }
@@ -1719,7 +1774,7 @@ const docTemplate = `{
                 "images": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/models.InventoryImage"
                     }
                 },
                 "itemSku": {
@@ -1761,7 +1816,7 @@ const docTemplate = `{
                 "tags": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/models.InventoryTag"
                     }
                 },
                 "unitName1": {
@@ -1789,26 +1844,6 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
-                }
-            }
-        },
-        "models.InventoryOption": {
-            "type": "object",
-            "properties": {
-                "guidFixed": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "inventoryID": {
-                    "type": "string"
-                },
-                "optionGroupID": {
-                    "type": "string"
-                },
-                "shopID": {
-                    "type": "string"
                 }
             }
         },
@@ -1847,6 +1882,26 @@ const docTemplate = `{
                 }
             }
         },
+        "models.InventoryOptionMain": {
+            "type": "object",
+            "properties": {
+                "guidFixed": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "inventoryID": {
+                    "type": "string"
+                },
+                "optionGroupID": {
+                    "type": "string"
+                },
+                "shopID": {
+                    "type": "string"
+                }
+            }
+        },
         "models.InventoryOptonGroupDetail": {
             "type": "object",
             "properties": {
@@ -1875,6 +1930,17 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.InventoryTag": {
+            "type": "object",
+            "properties": {
+                "docID": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },
@@ -2020,6 +2086,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "shopID": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SyncInventoryData": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.Inventory"
+                },
+                "mode": {
+                    "type": "integer"
+                },
+                "myGuid": {
+                    "type": "string"
+                },
+                "tableCode": {
                     "type": "string"
                 }
             }

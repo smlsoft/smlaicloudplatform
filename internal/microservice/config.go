@@ -126,6 +126,11 @@ func (cfg *PersisterConfig) TimeZone() string {
 	return getEnv("POSTGRES_TIMEZONE", "Asia/Bangkok")
 }
 
+func (cfg *PersisterConfig) LoggerLevel() string {
+	loggerLevel := getEnv("POSTGRES_LOGGER_LEVEL", "")
+	return loggerLevel
+}
+
 type MongoPersisterConfig struct{}
 
 func NewMongoPersisterConfig() *MongoPersisterConfig {
