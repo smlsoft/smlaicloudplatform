@@ -27,7 +27,7 @@ func main() {
 	prod := microservice.NewProducer(mqConfig.URI(), logctx)
 
 	invRepo := inventory.NewInventoryRepository(pst)
-	invPgRepo := inventory.NewInventoryPGRepository(pstPg)
+	invPgRepo := inventory.NewInventoryIndexPGRepository(pstPg)
 	invMqRepo := inventory.NewInventoryMQRepository(prod)
 	invService := inventory.NewInventoryService(invRepo, invPgRepo, invMqRepo)
 
