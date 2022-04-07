@@ -48,11 +48,6 @@ func (h SyncDataHttp) RouteSetup() {
 	h.ms.POST("/syncproduct", h.SyncInventory)
 }
 
-func (h SyncDataHttp) SyncInventory(ctx microservice.IContext) error {
-
-	return nil
-}
-
 func (h SyncDataHttp) Save(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 
