@@ -11,18 +11,18 @@ import (
 // Create Inventory Option godoc
 // @Description Create Inventory Option
 // @Tags		Inventory
-// @Param		Option  body      models.InventoryOption  true  "Option"
+// @Param		Option  body      models.InventoryOptionMain  true  "Option"
 // @Accept 		json
 // @Success		200	{object}	models.ApiResponse
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
 // @Router /option [post]
-func (h *InventoryHttp) CreateInventoryOption(ctx microservice.IContext) error {
+func (h *InventoryHttp) CreateInventoryOptionMain(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &models.InventoryOption{}
+	docReq := &models.InventoryOptionMain{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -30,7 +30,7 @@ func (h *InventoryHttp) CreateInventoryOption(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.invOptService.CreateInventoryOption(shopID, authUsername, *docReq)
+	idx, err := h.invOptService.CreateInventoryOptionMain(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -48,13 +48,13 @@ func (h *InventoryHttp) CreateInventoryOption(ctx microservice.IContext) error {
 // @Description Update Option
 // @Tags		Inventory
 // @Param		id  path      string  true  "Option ID"
-// @Param		Option  body      models.InventoryOption  true  "Option"
+// @Param		Option  body      models.InventoryOptionMain  true  "Option"
 // @Accept 		json
 // @Success		200	{object}	models.ApiResponse
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
 // @Router /option/{id} [put]
-func (h *InventoryHttp) UpdateInventoryOption(ctx microservice.IContext) error {
+func (h *InventoryHttp) UpdateInventoryOptionMain(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -62,7 +62,7 @@ func (h *InventoryHttp) UpdateInventoryOption(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &models.InventoryOption{}
+	docReq := &models.InventoryOptionMain{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -70,7 +70,7 @@ func (h *InventoryHttp) UpdateInventoryOption(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.invOptService.UpdateInventoryOption(id, shopID, authUsername, *docReq)
+	err = h.invOptService.UpdateInventoryOptionMain(id, shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -94,14 +94,14 @@ func (h *InventoryHttp) UpdateInventoryOption(ctx microservice.IContext) error {
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
 // @Router /option/{id} [delete]
-func (h *InventoryHttp) DeleteInventoryOption(ctx microservice.IContext) error {
+func (h *InventoryHttp) DeleteInventoryOptionMain(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
 
 	id := ctx.Param("id")
 
-	err := h.invOptService.DeleteInventoryOption(id, shopID, authUsername)
+	err := h.invOptService.DeleteInventoryOptionMain(id, shopID, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -125,13 +125,13 @@ func (h *InventoryHttp) DeleteInventoryOption(ctx microservice.IContext) error {
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
 // @Router /option/{id} [get]
-func (h *InventoryHttp) InfoInventoryOption(ctx microservice.IContext) error {
+func (h *InventoryHttp) InfoInventoryOptionMain(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	doc, err := h.invOptService.InfoInventoryOption(id, shopID)
+	doc, err := h.invOptService.InfoInventoryOptionMain(id, shopID)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -156,7 +156,7 @@ func (h *InventoryHttp) InfoInventoryOption(ctx microservice.IContext) error {
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
 // @Router /option [get]
-func (h *InventoryHttp) SearchInventoryOption(ctx microservice.IContext) error {
+func (h *InventoryHttp) SearchInventoryOptionMain(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -171,7 +171,7 @@ func (h *InventoryHttp) SearchInventoryOption(ctx microservice.IContext) error {
 	if err != nil {
 		limit = 20
 	}
-	docList, pagination, err := h.invOptService.SearchInventoryOption(shopID, q, page, limit)
+	docList, pagination, err := h.invOptService.SearchInventoryOptionMain(shopID, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

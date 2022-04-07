@@ -13,6 +13,7 @@ import (
 // }
 
 const inventoryCollectionName string = "inventories"
+const inventoryTableName string = "inventories"
 const inventoryIndexName string = "inventories_index"
 
 type Inventory struct {
@@ -35,14 +36,14 @@ type Inventory struct {
 	Name5        string `json:"name5,omitempty" bson:"name5,omitempty"`
 	Description5 string `json:"description5,omitempty" bson:"description5,omitempty"`
 
-	Images    *[]string `json:"images,omitempty" bson:"images,omitempty"`
-	UnitName1 string    `json:"unitName1" bson:"unitName1"`
-	UnitName2 string    `json:"unitName2,omitempty" bson:"unitName2,omitempty"`
-	UnitName3 string    `json:"unitName3,omitempty" bson:"unitName3,omitempty"`
-	UnitName4 string    `json:"unitName4,omitempty" bson:"unitName4,omitempty"`
-	UnitName5 string    `json:"unitName5,omitempty" bson:"unitName5,omitempty"`
-	Options   *[]Option `json:"options,omitempty" bson:"options,omitempty"`
-	Tags      *[]string `json:"tags,omitempty" bson:"tags"`
+	UnitName1 string            `json:"unitName1" bson:"unitName1" gorm:"unit_name1"`
+	UnitName2 string            `json:"unitName2,omitempty" bson:"unitName2,omitempty" gorm:"unit_name1"`
+	UnitName3 string            `json:"unitName3,omitempty" bson:"unitName3,omitempty" gorm:"unit_name2"`
+	UnitName4 string            `json:"unitName4,omitempty" bson:"unitName4,omitempty" gorm:"unit_name3"`
+	UnitName5 string            `json:"unitName5,omitempty" bson:"unitName5,omitempty" gorm:"unit_name4"`
+	Options   *[]Option         `json:"options,omitempty" bson:"options,omitempty" gorm:"many2many:inventory_options;foreignKey:GuidFixed;joinForeignKey:DocID;References:Code;joinReferences:OptID"`
+	Images    *[]InventoryImage `json:"images,omitempty" bson:"images,omitempty" gorm:"images;foreignKey:DocID"`
+	Tags      *[]InventoryTag   `json:"tags,omitempty" bson:"tags" gorm:"tags;foreignKey:DocID"`
 
 	// WaitType         int             `json:"-" bson:"waitType"`                // ประเภทการรอ (สินค้าหมด)
 	// WaitUntil        time.Time       `json:"-" bson:"waitUntil"`               // ระยะเวลาที่รอ
@@ -51,8 +52,27 @@ type Inventory struct {
 	// UnitList         []InventoryUnit `json:"unitList" bson:"unitList" `        // กรณีหลายหน่วยนับ ตารางหน่วบนับ
 }
 
+type InventoryOption struct {
+	DocID string `bson:"-" gorm:"doc_id;primaryKey"`
+	OptID string `bson:"-" gorm:"opt_id;primaryKey"`
+}
+
+func (InventoryOption) TableName() string {
+	return "inventory_options"
+}
+
+type InventoryImage struct {
+	DocID string `bson:"-" gorm:"doc_id;primaryKey"`
+	Url   string `bson:"url" gorm:"url;primaryKey"`
+}
+
+type InventoryTag struct {
+	DocID string `bson:"-" gorm:"doc_id;primaryKey"`
+	Name  string `bson:"name" gorm:"name;primaryKey"`
+}
+
 type Option struct {
-	Code       string    `json:"code" bson:"code"`
+	Code       string    `json:"code" bson:"code" gorm:"primaryKey"`
 	Required   bool      `json:"required" bson:"required"`
 	SelectMode string    `json:"selectMode" bson:"selectMode"`
 	MaxSelect  int       `json:"maxSelect" bson:"maxSelect"`
@@ -61,12 +81,13 @@ type Option struct {
 	Name3      string    `json:"name3,omitempty" bson:"name3,omitempty"`
 	Name4      string    `json:"name4,omitempty" bson:"name4,omitempty"`
 	Name5      string    `json:"name5,omitempty" bson:"name5,omitempty"`
-	Choices    *[]Choice `json:"choices" bson:"choices"`
+	Choices    *[]Choice `json:"choices" bson:"choices" gorm:"choices;foreignKey:OptCode"`
 }
 
 type Choice struct {
+	OptCode     string  `bson:"-" gorm:"opt_code;primaryKey" `
+	Barcode     string  `json:"barcode" bson:"barcode" gorm:"barcode;primaryKey"`
 	SuggestCode string  `json:"suggestCode" bson:"suggestCode"`
-	Barcode     string  `json:"barcode" bson:"barcode"`
 	Price       float64 `json:"price" bson:"price"`
 	Qty         int     `json:"qty" bson:"qty"`
 	Name1       string  `json:"name1" bson:"name1"`
@@ -77,8 +98,8 @@ type Choice struct {
 }
 
 type InventoryInfo struct {
-	DocIdentity `bson:"inline"`
-	Inventory   `bson:"inline"`
+	DocIdentity `bson:"inline" gorm:"embedded;"`
+	Inventory   `bson:"inline" gorm:"embedded;"`
 }
 
 func (InventoryInfo) CollectionName() string {
@@ -86,8 +107,12 @@ func (InventoryInfo) CollectionName() string {
 }
 
 type InventoryData struct {
-	ShopIdentity  `bson:"inline"`
-	InventoryInfo `bson:"inline"`
+	ShopIdentity  `bson:"inline" gorm:"embedded;"`
+	InventoryInfo `bson:"inline" gorm:"embedded;"`
+}
+
+func (InventoryData) TableName() string {
+	return inventoryTableName
 }
 
 type InventoryDoc struct {
@@ -132,7 +157,7 @@ type InventoryOptonGroupDetail struct {
 	Amount      float32 `json:"amount" bson:"amount"`
 }
 
-type InventoryOption struct {
+type InventoryOptionMain struct {
 	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	ShopID        string             `json:"shopID" bson:"shopID"`
 	GuidFixed     string             `json:"guidFixed" bson:"guidFixed"`
@@ -141,7 +166,7 @@ type InventoryOption struct {
 	Activity
 }
 
-func (*InventoryOption) CollectionName() string {
+func (*InventoryOptionMain) CollectionName() string {
 	return "inventoryOption"
 }
 

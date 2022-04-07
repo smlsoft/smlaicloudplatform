@@ -9,26 +9,26 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type IInventoryOptionRepository interface {
-	Create(doc models.InventoryOption) (string, error)
-	Update(guid string, doc models.InventoryOption) error
+type IInventoryOptionMainRepository interface {
+	Create(doc models.InventoryOptionMain) (string, error)
+	Update(guid string, doc models.InventoryOptionMain) error
 	Delete(guid string, shopID string, username string) error
-	FindByGuid(guid string, shopID string) (models.InventoryOption, error)
-	FindPage(shopID string, q string, page int, limit int) ([]models.InventoryOption, paginate.PaginationData, error)
+	FindByGuid(guid string, shopID string) (models.InventoryOptionMain, error)
+	FindPage(shopID string, q string, page int, limit int) ([]models.InventoryOptionMain, paginate.PaginationData, error)
 }
 
-type InventoryOptionRepository struct {
+type InventoryOptionMainRepository struct {
 	pst microservice.IPersisterMongo
 }
 
-func NewInventoryOptionRepository(pst microservice.IPersisterMongo) InventoryOptionRepository {
-	return InventoryOptionRepository{
+func NewInventoryOptionMainRepository(pst microservice.IPersisterMongo) InventoryOptionMainRepository {
+	return InventoryOptionMainRepository{
 		pst: pst,
 	}
 }
 
-func (repo InventoryOptionRepository) Create(doc models.InventoryOption) (string, error) {
-	idx, err := repo.pst.Create(&models.InventoryOption{}, doc)
+func (repo InventoryOptionMainRepository) Create(doc models.InventoryOptionMain) (string, error) {
+	idx, err := repo.pst.Create(&models.InventoryOptionMain{}, doc)
 
 	if err != nil {
 		return "", err
@@ -37,8 +37,8 @@ func (repo InventoryOptionRepository) Create(doc models.InventoryOption) (string
 	return idx.Hex(), nil
 }
 
-func (repo InventoryOptionRepository) Update(guid string, doc models.InventoryOption) error {
-	err := repo.pst.UpdateOne(&models.InventoryOption{}, "guidFixed", guid, doc)
+func (repo InventoryOptionMainRepository) Update(guid string, doc models.InventoryOptionMain) error {
+	err := repo.pst.UpdateOne(&models.InventoryOptionMain{}, "guidFixed", guid, doc)
 
 	if err != nil {
 		return err
@@ -47,8 +47,8 @@ func (repo InventoryOptionRepository) Update(guid string, doc models.InventoryOp
 	return nil
 }
 
-func (repo InventoryOptionRepository) Delete(guid string, shopID string, username string) error {
-	err := repo.pst.SoftDelete(&models.InventoryOption{}, username, bson.M{"guidFixed": guid, "shopID": shopID})
+func (repo InventoryOptionMainRepository) Delete(guid string, shopID string, username string) error {
+	err := repo.pst.SoftDelete(&models.InventoryOptionMain{}, username, bson.M{"guidFixed": guid, "shopID": shopID})
 
 	if err != nil {
 		return err
@@ -57,22 +57,22 @@ func (repo InventoryOptionRepository) Delete(guid string, shopID string, usernam
 	return nil
 }
 
-func (repo InventoryOptionRepository) FindByGuid(guid string, shopID string) (models.InventoryOption, error) {
+func (repo InventoryOptionMainRepository) FindByGuid(guid string, shopID string) (models.InventoryOptionMain, error) {
 
-	doc := &models.InventoryOption{}
-	err := repo.pst.FindOne(&models.InventoryOption{}, bson.M{"guidFixed": guid, "shopID": shopID, "deletedAt": bson.M{"$exists": false}}, doc)
+	doc := &models.InventoryOptionMain{}
+	err := repo.pst.FindOne(&models.InventoryOptionMain{}, bson.M{"guidFixed": guid, "shopID": shopID, "deletedAt": bson.M{"$exists": false}}, doc)
 
 	if err != nil {
-		return models.InventoryOption{}, err
+		return models.InventoryOptionMain{}, err
 	}
 
 	return *doc, nil
 }
 
-func (repo InventoryOptionRepository) FindPage(shopID string, q string, page int, limit int) ([]models.InventoryOption, paginate.PaginationData, error) {
+func (repo InventoryOptionMainRepository) FindPage(shopID string, q string, page int, limit int) ([]models.InventoryOptionMain, paginate.PaginationData, error) {
 
-	docList := []models.InventoryOption{}
-	pagination, err := repo.pst.FindPage(&models.InventoryOption{}, limit, page, bson.M{
+	docList := []models.InventoryOptionMain{}
+	pagination, err := repo.pst.FindPage(&models.InventoryOptionMain{}, limit, page, bson.M{
 		"shopID":    shopID,
 		"deletedAt": bson.M{"$exists": false},
 		"$or": []interface{}{
@@ -92,7 +92,7 @@ func (repo InventoryOptionRepository) FindPage(shopID string, q string, page int
 	}, &docList)
 
 	if err != nil {
-		return []models.InventoryOption{}, paginate.PaginationData{}, err
+		return []models.InventoryOptionMain{}, paginate.PaginationData{}, err
 	}
 
 	return docList, pagination, nil
