@@ -59,6 +59,9 @@ func main() {
 	inventoryapi := inventory.NewInventoryHttp(ms, cfg)
 	inventoryapi.RouteSetup()
 
+	inventory.StartInventoryAsync(ms, cfg)
+	inventory.StartInventoryComsumeCreated(ms, cfg)
+
 	transapi := transaction.NewTransactionHttp(ms, cfg)
 	transapi.RouteSetup()
 
