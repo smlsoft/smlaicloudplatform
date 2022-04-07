@@ -14,8 +14,8 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/swaggo/echo-swagger v1.3.0
 	github.com/swaggo/swag v1.7.9
-	gorm.io/driver/postgres v1.2.1
-	gorm.io/gorm v1.22.2
+	gorm.io/driver/postgres v1.3.3
+	gorm.io/gorm v1.23.4
 )
 
 require (
@@ -41,6 +41,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
+	github.com/pkg/profile v1.6.0 // indirect
 	github.com/ttacon/chalk v0.0.0-20160626202418-22c06c80ed31 // indirect
 	github.com/valyala/fasthttp v1.30.0 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
@@ -59,15 +60,15 @@ require (
 	github.com/gobeam/mongo-go-pagination v0.0.8
 	github.com/golang-jwt/jwt/v4 v4.2.0
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
-	github.com/jackc/pgconn v1.10.0 // indirect
+	github.com/jackc/pgconn v1.11.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
-	github.com/jackc/pgproto3/v2 v2.1.1 // indirect
+	github.com/jackc/pgproto3/v2 v2.2.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
-	github.com/jackc/pgtype v1.8.1 // indirect
-	github.com/jackc/pgx/v4 v4.13.0 // indirect
+	github.com/jackc/pgtype v1.10.0 // indirect
+	github.com/jackc/pgx/v4 v4.15.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/jinzhu/now v1.1.2 // indirect
+	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/joho/godotenv v1.4.0
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/labstack/gommon v0.3.1 // indirect

@@ -22,6 +22,9 @@ type IPersister interface {
 	Exec(sql string, args ...interface{}) error
 	TableExists(model interface{}) (bool, error)
 	Count(model interface{}, expr string, args ...interface{}) (int64, error)
+	DropTable(table ...interface{}) error
+	SetupJoinTable(model interface{}, field string, joinTable interface{}) error
+	AutoMigrate(dst ...interface{}) error
 }
 
 // IPersisterConfig is interface for persister
@@ -76,7 +79,9 @@ func (pst *Persister) getClient() (*gorm.DB, error) {
 		return nil, err
 	}
 	db, err := gorm.Open(postgres.Open(connection), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		SkipDefaultTransaction: true,
+		Logger:                 logger.Default.LogMode(logger.Info),
+		PrepareStmt:            true,
 	})
 	if err != nil {
 		return nil, err
@@ -245,4 +250,30 @@ func (pst *Persister) CreateInBatch(models interface{}, bulkSize int) error {
 	db.CreateInBatches(models, bulkSize)
 
 	return nil
+}
+
+func (pst *Persister) DropTable(table ...interface{}) error {
+	db, err := pst.getClient()
+	if err != nil {
+		return err
+	}
+
+	return db.Migrator().DropTable(table...)
+}
+
+func (pst *Persister) SetupJoinTable(model interface{}, field string, joinTable interface{}) error {
+	db, err := pst.getClient()
+	if err != nil {
+		return err
+	}
+
+	return db.SetupJoinTable(model, field, joinTable)
+}
+
+func (pst *Persister) AutoMigrate(dst ...interface{}) error {
+	db, err := pst.getClient()
+	if err != nil {
+		return err
+	}
+	return db.AutoMigrate(dst...)
 }
