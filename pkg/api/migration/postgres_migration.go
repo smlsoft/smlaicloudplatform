@@ -16,7 +16,15 @@ func StartMigrateModel(ms *microservice.Microservice, cfg microservice.IConfig) 
 		return err
 	}
 
-	pst.AutoMigrate(&models.InventoryData{}, &models.InventoryOption{}, &models.Option{}, &models.InventoryImage{}, &models.InventoryTag{}, &models.Choice{})
+	pst.AutoMigrate(
+		&models.InventoryData{},
+		&models.InventoryOption{},
+		&models.Option{},
+		&models.InventoryImage{},
+		&models.InventoryTag{},
+		&models.Choice{},
+		&models.InventoryIndex{},
+	)
 
 	return nil
 }
