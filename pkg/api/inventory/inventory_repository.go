@@ -40,7 +40,7 @@ func (repo InventoryRepository) Create(inventory models.InventoryDoc) (string, e
 
 func (repo InventoryRepository) Update(guid string, inventory models.InventoryDoc) error {
 
-	err := repo.pst.UpdateOne(&models.InventoryDoc{}, "guidFixed", guid, inventory)
+	err := repo.pst.UpdateOne(&models.InventoryDoc{}, "guidfixed", guid, inventory)
 
 	if err != nil {
 		return err
@@ -51,7 +51,7 @@ func (repo InventoryRepository) Update(guid string, inventory models.InventoryDo
 
 func (repo InventoryRepository) Delete(shopID string, guid string, username string) error {
 
-	err := repo.pst.SoftDelete(&models.InventoryDoc{}, username, bson.M{"guidFixed": guid, "shopID": shopID})
+	err := repo.pst.SoftDelete(&models.InventoryDoc{}, username, bson.M{"guidfixed": guid, "shopid": shopID})
 
 	if err != nil {
 		return err
@@ -78,7 +78,7 @@ func (repo InventoryRepository) FindByID(id primitive.ObjectID) (models.Inventor
 func (repo InventoryRepository) FindByGuid(shopID string, guid string) (models.InventoryDoc, error) {
 
 	findDoc := &models.InventoryDoc{}
-	err := repo.pst.FindOne(&models.InventoryDoc{}, bson.M{"shopID": shopID, "guidFixed": guid, "deletedAt": bson.M{"$exists": false}}, findDoc)
+	err := repo.pst.FindOne(&models.InventoryDoc{}, bson.M{"shopid": shopID, "guidfixed": guid, "deletedat": bson.M{"$exists": false}}, findDoc)
 
 	if err != nil {
 		return models.InventoryDoc{}, err
@@ -90,10 +90,10 @@ func (repo InventoryRepository) FindPage(shopID string, q string, page int, limi
 
 	docList := []models.InventoryInfo{}
 	pagination, err := repo.pst.FindPage(&models.InventoryInfo{}, limit, page, bson.M{
-		"shopID":    shopID,
-		"deletedAt": bson.M{"$exists": false},
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
 		"$or": []interface{}{
-			bson.M{"guidFixed": q},
+			bson.M{"guidfixed": q},
 			bson.M{"name1": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",
 				Options: "",

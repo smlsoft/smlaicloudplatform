@@ -47,7 +47,7 @@ func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...st
 			}
 
 			cacheKey := authService.prefixCacheKey + tokenStr
-			tempUserInfo, err := authService.cacher.HMGet(cacheKey, []string{"username", "name", "shopID", "role"})
+			tempUserInfo, err := authService.cacher.HMGet(cacheKey, []string{"username", "name", "shopid", "role"})
 
 			if err != nil || tempUserInfo[0] == nil {
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
@@ -166,7 +166,7 @@ func (authService *AuthService) GenerateTokenWithRedis(userInfo models.UserInfo)
 func (authService *AuthService) SelectShop(tokenStr string, shopID string, role string) error {
 	cacheKey := authService.prefixCacheKey + tokenStr
 	err := authService.cacher.HMSet(cacheKey, map[string]interface{}{
-		"shopID": shopID,
+		"shopid": shopID,
 		"role":   role,
 	})
 

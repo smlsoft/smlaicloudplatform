@@ -33,7 +33,7 @@ func NewShopUserRepository(pst microservice.IPersisterMongo) ShopUserRepository 
 func (svc ShopUserRepository) Save(shopID string, username string, role string) error {
 
 	optUpdate := options.Update().SetUpsert(true)
-	err := svc.pst.Update(&models.ShopUser{}, bson.M{"shopID": shopID, "username": username}, bson.M{"$set": bson.M{"role": role}}, optUpdate)
+	err := svc.pst.Update(&models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, bson.M{"$set": bson.M{"role": role}}, optUpdate)
 
 	if err != nil {
 		return err
@@ -44,7 +44,7 @@ func (svc ShopUserRepository) Save(shopID string, username string, role string) 
 
 func (svc ShopUserRepository) Delete(shopID string, username string) error {
 
-	err := svc.pst.Delete(&models.ShopUser{}, bson.M{"shopID": shopID, "username": username})
+	err := svc.pst.Delete(&models.ShopUser{}, bson.M{"shopid": shopID, "username": username})
 
 	if err != nil {
 		return err
@@ -57,7 +57,7 @@ func (svc ShopUserRepository) FindByShopIDAndUsername(shopID string, username st
 
 	shopUser := &models.ShopUser{}
 
-	err := svc.pst.FindOne(&models.ShopUser{}, bson.M{"shopID": shopID, "username": username}, shopUser)
+	err := svc.pst.FindOne(&models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, shopUser)
 	if err != nil {
 		fmt.Println("err -> ", err.Error())
 		return models.ShopUser{}, err
@@ -70,7 +70,7 @@ func (svc ShopUserRepository) FindRole(shopID string, username string) (string, 
 
 	shopUser := &models.ShopUser{}
 
-	err := svc.pst.FindOne(&models.ShopUser{}, bson.M{"shopID": shopID, "username": username}, shopUser)
+	err := svc.pst.FindOne(&models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, shopUser)
 
 	if err != nil {
 		return "", err
@@ -82,7 +82,7 @@ func (svc ShopUserRepository) FindRole(shopID string, username string) (string, 
 func (svc ShopUserRepository) FindByShopID(shopID string) (*[]models.ShopUser, error) {
 	shopUsers := &[]models.ShopUser{}
 
-	err := svc.pst.Find(&models.ShopUser{}, bson.M{"shopID": shopID}, shopUsers)
+	err := svc.pst.Find(&models.ShopUser{}, bson.M{"shopid": shopID}, shopUsers)
 
 	if err != nil {
 		return nil, err
@@ -111,8 +111,8 @@ func (repo ShopUserRepository) FindByUsernamePage(username string, page int, lim
 		bson.M{"$match": bson.M{"username": username}},
 		bson.M{"$lookup": bson.M{
 			"from":         "shops",
-			"localField":   "shopID",
-			"foreignField": "guidFixed",
+			"localField":   "shopid",
+			"foreignField": "guidfixed",
 			"as":           "shopInfo",
 		}},
 		bson.M{
@@ -122,7 +122,7 @@ func (repo ShopUserRepository) FindByUsernamePage(username string, page int, lim
 			"$project": bson.M{
 				"_id":    1,
 				"role":   1,
-				"shopID": 1,
+				"shopid": 1,
 				"name":   bson.M{"$first": "$shopInfo.name1"},
 			},
 		},

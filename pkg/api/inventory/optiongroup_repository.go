@@ -30,7 +30,7 @@ func NewOptionGroupRepository(pst microservice.IPersisterMongo) OptionGroupRepos
 
 func (repo OptionGroupRepository) Count(shopID string) (int, error) {
 
-	count, err := repo.pst.Count(&models.InventoryOptionGroup{}, bson.M{"shopID": shopID})
+	count, err := repo.pst.Count(&models.InventoryOptionGroup{}, bson.M{"shopid": shopID})
 
 	if err != nil {
 		return 0, err
@@ -49,7 +49,7 @@ func (repo OptionGroupRepository) Create(category models.InventoryOptionGroup) (
 }
 
 func (repo OptionGroupRepository) Update(guid string, category models.InventoryOptionGroup) error {
-	err := repo.pst.UpdateOne(&models.InventoryOptionGroup{}, "guidFixed", guid, category)
+	err := repo.pst.UpdateOne(&models.InventoryOptionGroup{}, "guidfixed", guid, category)
 
 	if err != nil {
 		return err
@@ -59,7 +59,7 @@ func (repo OptionGroupRepository) Update(guid string, category models.InventoryO
 }
 
 func (repo OptionGroupRepository) Delete(guid string, shopID string, username string) error {
-	err := repo.pst.SoftDelete(&models.InventoryOptionGroup{}, username, bson.M{"guidFixed": guid, "shopID": shopID})
+	err := repo.pst.SoftDelete(&models.InventoryOptionGroup{}, username, bson.M{"guidfixed": guid, "shopid": shopID})
 
 	if err != nil {
 		return err
@@ -71,7 +71,7 @@ func (repo OptionGroupRepository) Delete(guid string, shopID string, username st
 func (repo OptionGroupRepository) FindByGuid(guid string, shopID string) (models.InventoryOptionGroup, error) {
 
 	doc := &models.InventoryOptionGroup{}
-	err := repo.pst.FindOne(&models.InventoryOptionGroup{}, bson.M{"guidFixed": guid, "shopID": shopID, "deletedAt": bson.M{"$exists": false}}, doc)
+	err := repo.pst.FindOne(&models.InventoryOptionGroup{}, bson.M{"guidfixed": guid, "shopid": shopID, "deletedat": bson.M{"$exists": false}}, doc)
 
 	if err != nil {
 		return models.InventoryOptionGroup{}, err
@@ -84,10 +84,10 @@ func (repo OptionGroupRepository) FindPage(shopID string, q string, page int, li
 
 	docList := []models.InventoryOptionGroup{}
 	pagination, err := repo.pst.FindPage(&models.InventoryOptionGroup{}, limit, page, bson.M{
-		"shopID":    shopID,
-		"deletedAt": bson.M{"$exists": false},
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
 		"$or": []interface{}{
-			bson.M{"guidFixed": q},
+			bson.M{"guidfixed": q},
 			bson.M{"optionName1": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",
 				Options: "",

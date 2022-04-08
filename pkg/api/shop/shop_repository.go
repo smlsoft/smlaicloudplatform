@@ -36,7 +36,7 @@ func (repo ShopRepository) Create(shop models.ShopDoc) (string, error) {
 }
 
 func (repo ShopRepository) Update(guid string, shop models.ShopDoc) error {
-	err := repo.pst.UpdateOne(&models.ShopDoc{}, "guidFixed", guid, shop)
+	err := repo.pst.UpdateOne(&models.ShopDoc{}, "guidfixed", guid, shop)
 
 	if err != nil {
 		return err
@@ -47,7 +47,7 @@ func (repo ShopRepository) Update(guid string, shop models.ShopDoc) error {
 
 func (repo ShopRepository) FindByGuid(guid string) (models.ShopDoc, error) {
 	findShop := &models.ShopDoc{}
-	err := repo.pst.FindOne(&models.ShopDoc{}, bson.M{"guidFixed": guid, "deletedAt": bson.M{"$exists": false}}, findShop)
+	err := repo.pst.FindOne(&models.ShopDoc{}, bson.M{"guidfixed": guid, "deletedat": bson.M{"$exists": false}}, findShop)
 
 	if err != nil {
 		return models.ShopDoc{}, err
@@ -60,7 +60,7 @@ func (repo ShopRepository) FindPage(q string, page int, limit int) ([]models.Sho
 	shopList := []models.ShopInfo{}
 
 	pagination, err := repo.pst.FindPage(&models.ShopInfo{}, limit, page, bson.M{
-		"deletedAt": bson.M{"$exists": false},
+		"deletedat": bson.M{"$exists": false},
 		"name1": bson.M{"$regex": primitive.Regex{
 			Pattern: ".*" + q + ".*",
 			Options: "",

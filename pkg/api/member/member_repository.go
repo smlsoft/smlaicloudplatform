@@ -36,7 +36,7 @@ func (repo MemberRepository) Create(doc models.MemberDoc) (primitive.ObjectID, e
 }
 
 func (repo MemberRepository) Update(guid string, doc models.MemberDoc) error {
-	err := repo.pst.UpdateOne(&models.MemberDoc{}, "guidFixed", guid, doc)
+	err := repo.pst.UpdateOne(&models.MemberDoc{}, "guidfixed", guid, doc)
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func (repo MemberRepository) Update(guid string, doc models.MemberDoc) error {
 }
 
 func (repo MemberRepository) Delete(shopID string, guid string, uername string) error {
-	err := repo.pst.SoftDelete(&models.MemberDoc{}, uername, bson.M{"guidFixed": guid, "shopID": shopID})
+	err := repo.pst.SoftDelete(&models.MemberDoc{}, uername, bson.M{"guidfixed": guid, "shopid": shopID})
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func (repo MemberRepository) Delete(shopID string, guid string, uername string) 
 
 func (repo MemberRepository) FindByGuid(shopID string, guid string) (models.MemberDoc, error) {
 	doc := &models.MemberDoc{}
-	err := repo.pst.FindOne(&models.MemberDoc{}, bson.M{"shopID": shopID, "guidFixed": guid, "deletedAt": bson.M{"$exists": false}}, doc)
+	err := repo.pst.FindOne(&models.MemberDoc{}, bson.M{"shopid": shopID, "guidfixed": guid, "deletedat": bson.M{"$exists": false}}, doc)
 	if err != nil {
 		return *doc, err
 	}
@@ -64,8 +64,8 @@ func (repo MemberRepository) FindPage(shopID string, q string, page int, limit i
 
 	docList := []models.MemberInfo{}
 	pagination, err := repo.pst.FindPage(&models.MemberInfo{}, limit, page, bson.M{
-		"shopID":    shopID,
-		"deletedAt": bson.M{"$exists": false},
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
 		"$or": []interface{}{
 			bson.M{"name": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",

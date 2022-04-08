@@ -367,19 +367,19 @@ func (pst *PersisterMongo) SoftDeleteByID(model interface{}, id string, username
 	}
 
 	deletedAt := time.Now()
-	// _, err := pst.UpdateOne(model, "guidFixed", id, map[string]interface{}{"deletedAt": deletedAt})
+	// _, err := pst.UpdateOne(model, "guidfixed", id, map[string]interface{}{"deletedat": deletedAt})
 
 	_, err = db.Collection(collectionName).UpdateOne(
 		pst.ctx,
 		bson.D{{
-			Key:   "guidFixed",
+			Key:   "guidfixed",
 			Value: id,
 		}},
 		bson.D{
 			{Key: "$set",
 				Value: bson.D{
 					{Key: "deletedBy", Value: username},
-					{Key: "deletedAt", Value: deletedAt},
+					{Key: "deletedat", Value: deletedAt},
 				},
 			},
 		},
@@ -406,7 +406,7 @@ func (pst *PersisterMongo) SoftDelete(model interface{}, username string, filter
 	deletedAt := time.Now()
 
 	_, err = db.Collection(collectionName).UpdateMany(pst.ctx, filter, bson.D{
-		{Key: "$set", Value: bson.M{"deletedAt": deletedAt, "deletedBy": username}},
+		{Key: "$set", Value: bson.M{"deletedat": deletedAt, "deletedBy": username}},
 	})
 
 	if err != nil {
@@ -442,7 +442,7 @@ func (pst *PersisterMongo) SoftBatchDeleteByID(model interface{}, username strin
 	_, err = db.Collection(collectionName).UpdateMany(pst.ctx,
 		bson.M{"_id": bson.M{"$in": objIDs}},
 		bson.D{
-			{Key: "$set", Value: bson.M{"deletedAt": deletedAt, "deletedBy": username}},
+			{Key: "$set", Value: bson.M{"deletedat": deletedAt, "deletedBy": username}},
 		})
 
 	if err != nil {

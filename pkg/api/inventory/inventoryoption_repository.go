@@ -38,7 +38,7 @@ func (repo InventoryOptionMainRepository) Create(doc models.InventoryOptionMain)
 }
 
 func (repo InventoryOptionMainRepository) Update(guid string, doc models.InventoryOptionMain) error {
-	err := repo.pst.UpdateOne(&models.InventoryOptionMain{}, "guidFixed", guid, doc)
+	err := repo.pst.UpdateOne(&models.InventoryOptionMain{}, "guidfixed", guid, doc)
 
 	if err != nil {
 		return err
@@ -48,7 +48,7 @@ func (repo InventoryOptionMainRepository) Update(guid string, doc models.Invento
 }
 
 func (repo InventoryOptionMainRepository) Delete(guid string, shopID string, username string) error {
-	err := repo.pst.SoftDelete(&models.InventoryOptionMain{}, username, bson.M{"guidFixed": guid, "shopID": shopID})
+	err := repo.pst.SoftDelete(&models.InventoryOptionMain{}, username, bson.M{"guidfixed": guid, "shopid": shopID})
 
 	if err != nil {
 		return err
@@ -60,7 +60,7 @@ func (repo InventoryOptionMainRepository) Delete(guid string, shopID string, use
 func (repo InventoryOptionMainRepository) FindByGuid(guid string, shopID string) (models.InventoryOptionMain, error) {
 
 	doc := &models.InventoryOptionMain{}
-	err := repo.pst.FindOne(&models.InventoryOptionMain{}, bson.M{"guidFixed": guid, "shopID": shopID, "deletedAt": bson.M{"$exists": false}}, doc)
+	err := repo.pst.FindOne(&models.InventoryOptionMain{}, bson.M{"guidfixed": guid, "shopid": shopID, "deletedat": bson.M{"$exists": false}}, doc)
 
 	if err != nil {
 		return models.InventoryOptionMain{}, err
@@ -73,10 +73,10 @@ func (repo InventoryOptionMainRepository) FindPage(shopID string, q string, page
 
 	docList := []models.InventoryOptionMain{}
 	pagination, err := repo.pst.FindPage(&models.InventoryOptionMain{}, limit, page, bson.M{
-		"shopID":    shopID,
-		"deletedAt": bson.M{"$exists": false},
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
 		"$or": []interface{}{
-			bson.M{"guidFixed": bson.M{"$regex": primitive.Regex{
+			bson.M{"guidfixed": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",
 				Options: "",
 			}}},

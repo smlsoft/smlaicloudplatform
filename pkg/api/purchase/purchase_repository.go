@@ -38,7 +38,7 @@ func (repo PurchaseRepository) Create(doc models.PurchaseDoc) (primitive.ObjectI
 }
 
 func (repo PurchaseRepository) Update(guid string, doc models.PurchaseDoc) error {
-	err := repo.pst.UpdateOne(&models.PurchaseDoc{}, "guidFixed", guid, doc)
+	err := repo.pst.UpdateOne(&models.PurchaseDoc{}, "guidfixed", guid, doc)
 	if err != nil {
 		return err
 	}
@@ -46,7 +46,7 @@ func (repo PurchaseRepository) Update(guid string, doc models.PurchaseDoc) error
 }
 
 func (repo PurchaseRepository) Delete(guid string, shopID string, username string) error {
-	err := repo.pst.SoftDelete(&models.PurchaseDoc{}, username, bson.M{"guidFixed": guid, "shopID": shopID})
+	err := repo.pst.SoftDelete(&models.PurchaseDoc{}, username, bson.M{"guidfixed": guid, "shopid": shopID})
 	if err != nil {
 		return err
 	}
@@ -55,7 +55,7 @@ func (repo PurchaseRepository) Delete(guid string, shopID string, username strin
 
 func (repo PurchaseRepository) FindByGuid(guid string, shopID string) (models.PurchaseDoc, error) {
 	doc := &models.PurchaseDoc{}
-	err := repo.pst.FindOne(&models.PurchaseDoc{}, bson.M{"shopID": shopID, "guidFixed": guid, "deletedAt": bson.M{"$exists": false}}, doc)
+	err := repo.pst.FindOne(&models.PurchaseDoc{}, bson.M{"shopid": shopID, "guidfixed": guid, "deletedat": bson.M{"$exists": false}}, doc)
 	if err != nil {
 		return *doc, err
 	}
@@ -66,10 +66,10 @@ func (repo PurchaseRepository) FindPage(shopID string, q string, page int, limit
 
 	docList := []models.PurchaseInfo{}
 	pagination, err := repo.pst.FindPage(&models.PurchaseInfo{}, limit, page, bson.M{
-		"shopID":    shopID,
-		"deletedAt": bson.M{"$exists": false},
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
 		"$or": []interface{}{
-			bson.M{"guidFixed": bson.M{"$regex": primitive.Regex{
+			bson.M{"guidfixed": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",
 				Options: "",
 			}}},
@@ -87,9 +87,9 @@ func (repo PurchaseRepository) FindItemsByGuidPage(guid string, shopID string, q
 
 	docList := []models.PurchaseInfo{}
 	pagination, err := repo.pst.FindPage(&models.PurchaseInfo{}, limit, page, bson.M{
-		"shopID":    shopID,
-		"guidFixed": guid,
-		"deletedAt": bson.M{"$exists": false},
+		"shopid":    shopID,
+		"guidfixed": guid,
+		"deletedat": bson.M{"$exists": false},
 		"$or": []interface{}{
 			bson.M{"items.itemSku": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",

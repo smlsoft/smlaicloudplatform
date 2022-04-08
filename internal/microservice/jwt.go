@@ -109,7 +109,7 @@ func (jwtService *JwtService) MWFuncWithRedis(cacher ICacher, publicPath ...stri
 			}
 
 			cacheKey := jwtService.prefixCacheKey + tokenStr
-			tempUserInfo, err := jwtService.cacher.HMGet(cacheKey, []string{"username", "name", "shopID"})
+			tempUserInfo, err := jwtService.cacher.HMGet(cacheKey, []string{"username", "name", "shopid"})
 
 			if err != nil {
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
@@ -299,7 +299,7 @@ func (jwtService *JwtService) GenerateTokenWithRedis(userInfo models.UserInfo) (
 func (jwtService *JwtService) SelectShop(tokenStr string, shopID string) error {
 	cacheKey := jwtService.prefixCacheKey + tokenStr
 	err := jwtService.cacher.HMSet(cacheKey, map[string]interface{}{
-		"shopID": shopID,
+		"shopid": shopID,
 	})
 
 	if err != nil {

@@ -38,7 +38,7 @@ func (repo TransactionRepository) Create(trans models.TransactionDoc) (primitive
 }
 
 func (repo TransactionRepository) Update(guid string, trans models.TransactionDoc) error {
-	err := repo.pst.UpdateOne(&models.TransactionDoc{}, "guidFixed", guid, trans)
+	err := repo.pst.UpdateOne(&models.TransactionDoc{}, "guidfixed", guid, trans)
 	if err != nil {
 		return err
 	}
@@ -46,7 +46,7 @@ func (repo TransactionRepository) Update(guid string, trans models.TransactionDo
 }
 
 func (repo TransactionRepository) Delete(guid string, shopID string, username string) error {
-	err := repo.pst.SoftDelete(&models.TransactionDoc{}, username, bson.M{"guidFixed": guid, "shopID": shopID})
+	err := repo.pst.SoftDelete(&models.TransactionDoc{}, username, bson.M{"guidfixed": guid, "shopid": shopID})
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func (repo TransactionRepository) FindByGuid(guid string, shopID string) (models
 	trans := &models.TransactionDoc{}
 	err := repo.pst.FindOne(
 		&models.TransactionDoc{},
-		bson.M{"shopID": shopID, "guidFixed": guid, "deletedAt": bson.M{"$exists": false}},
+		bson.M{"shopid": shopID, "guidfixed": guid, "deletedat": bson.M{"$exists": false}},
 		trans,
 	)
 	if err != nil {
@@ -70,10 +70,10 @@ func (repo TransactionRepository) FindPage(shopID string, q string, page int, li
 
 	transList := []models.TransactionInfo{}
 	pagination, err := repo.pst.FindPage(&models.TransactionInfo{}, limit, page, bson.M{
-		"shopID":    shopID,
-		"deletedAt": bson.M{"$exists": false},
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
 		"$or": []interface{}{
-			bson.M{"guidFixed": bson.M{"$regex": primitive.Regex{
+			bson.M{"guidfixed": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",
 				Options: "",
 			}}},
@@ -91,9 +91,9 @@ func (repo TransactionRepository) FindItemsByGuidPage(guid string, shopID string
 
 	transList := []models.TransactionInfo{}
 	pagination, err := repo.pst.FindPage(&models.Transaction{}, limit, page, bson.M{
-		"shopID":    shopID,
-		"guidFixed": guid,
-		"deletedAt": bson.M{"$exists": false},
+		"shopid":    shopID,
+		"guidfixed": guid,
+		"deletedat": bson.M{"$exists": false},
 		"$or": []interface{}{
 			bson.M{"items.itemSku": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",

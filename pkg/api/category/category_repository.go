@@ -30,7 +30,7 @@ func NewCategoryRepository(pst microservice.IPersisterMongo) CategoryRepository 
 
 func (repo CategoryRepository) Count(shopID string) (int, error) {
 
-	count, err := repo.pst.Count(&models.CategoryDoc{}, bson.M{"shopID": shopID})
+	count, err := repo.pst.Count(&models.CategoryDoc{}, bson.M{"shopid": shopID})
 
 	if err != nil {
 		return 0, err
@@ -49,7 +49,7 @@ func (repo CategoryRepository) Create(category models.CategoryDoc) (string, erro
 }
 
 func (repo CategoryRepository) Update(guid string, category models.CategoryDoc) error {
-	err := repo.pst.UpdateOne(&models.CategoryDoc{}, "guidFixed", guid, category)
+	err := repo.pst.UpdateOne(&models.CategoryDoc{}, "guidfixed", guid, category)
 
 	if err != nil {
 		return err
@@ -59,7 +59,7 @@ func (repo CategoryRepository) Update(guid string, category models.CategoryDoc) 
 }
 
 func (repo CategoryRepository) Delete(guid string, shopID string, username string) error {
-	err := repo.pst.SoftDelete(&models.CategoryDoc{}, username, bson.M{"guidFixed": guid, "shopID": shopID})
+	err := repo.pst.SoftDelete(&models.CategoryDoc{}, username, bson.M{"guidfixed": guid, "shopid": shopID})
 
 	if err != nil {
 		return err
@@ -72,7 +72,7 @@ func (repo CategoryRepository) FindByGuid(guid string, shopID string) (models.Ca
 
 	doc := &models.CategoryDoc{}
 
-	err := repo.pst.FindOne(&models.CategoryInfo{}, bson.M{"guidFixed": guid, "shopID": shopID, "deletedAt": bson.M{"$exists": false}}, doc)
+	err := repo.pst.FindOne(&models.CategoryInfo{}, bson.M{"guidfixed": guid, "shopid": shopID, "deletedat": bson.M{"$exists": false}}, doc)
 
 	if err != nil {
 		return models.CategoryDoc{}, err
@@ -85,10 +85,10 @@ func (repo CategoryRepository) FindPage(shopID string, q string, page int, limit
 
 	docList := []models.CategoryInfo{}
 	pagination, err := repo.pst.FindPage(&models.CategoryInfo{}, limit, page, bson.M{
-		"shopID":    shopID,
-		"deletedAt": bson.M{"$exists": false},
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
 		"$or": []interface{}{
-			bson.M{"guidFixed": q},
+			bson.M{"guidfixed": q},
 			bson.M{"name1": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",
 				Options: "",
