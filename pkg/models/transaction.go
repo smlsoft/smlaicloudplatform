@@ -7,18 +7,18 @@ const transactionIndexName = "transactions"
 
 type Transaction struct {
 	Items     *[]TransactionDetail `json:"items" bson:"items" `
-	SumAmount float64              `json:"sumAmount" bson:"sumAmount" `
+	SumAmount float64              `json:"sumamount" bson:"sumamount" `
 }
 
 type TransactionDetail struct {
-	InventoryID    string  `json:"inventoryID" bson:"inventoryID"`
-	ItemSku        string  `json:"itemSku,omitempty" bson:"itemSku,omitempty"`
-	CategoryGuid   string  `json:"categoryGuid" bson:"categoryGuid"`
-	LineNumber     int     `json:"lineNumber" bson:"lineNumber"`
+	InventoryID    string  `json:"inventoryid" bson:"inventoryid"`
+	ItemSku        string  `json:"itemsku,omitempty" bson:"itemsku,omitempty"`
+	CategoryGuid   string  `json:"categoryguid" bson:"categoryguid"`
+	LineNumber     int     `json:"linenumber" bson:"linenumber"`
 	Price          float64 `json:"price" bson:"price" `
 	Qty            float64 `json:"qty" bson:"qty" `
-	DiscountAmount float64 `json:"discountAmount" bson:"discountAmount"`
-	DiscountText   string  `json:"discountText" bson:"discountText"`
+	DiscountAmount float64 `json:"discountamount" bson:"discountamount"`
+	DiscountText   string  `json:"discounttext" bson:"discounttext"`
 }
 
 type TransactionInfo struct {

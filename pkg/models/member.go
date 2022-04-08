@@ -11,13 +11,13 @@ type Member struct {
 	Telephone    string `json:"telephone" bson:"telephone"`
 	Name         string `json:"name" bson:"name"`
 	Surname      string `json:"surname" bson:"surname"`
-	TaxID        string `json:"taxID" bson:"taxID"`
-	ContactType  int    `json:"contactType" bson:"contactType"`
-	PersonalType int    `json:"personalType" bson:"personalType"`
-	BranchType   int    `json:"branchType" bson:"branchType"`
-	BranchCode   string `json:"branchCode" bson:"branchCode"`
+	TaxID        string `json:"taxid" bson:"taxid"`
+	ContactType  int    `json:"contacttype" bson:"contacttype"`
+	PersonalType int    `json:"personaltype" bson:"personaltype"`
+	BranchType   int    `json:"branchtype" bson:"branchtype"`
+	BranchCode   string `json:"branchcode" bson:"branchcode"`
 	Address      string `json:"address" bson:"address"`
-	ZipCode      string `json:"zipCode" bson:"zipCode"`
+	ZipCode      string `json:"zipcode" bson:"zipcode"`
 }
 
 type MemberInfo struct {

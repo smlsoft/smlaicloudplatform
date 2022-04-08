@@ -1,8 +1,8 @@
 package models
 
 type SyncData struct {
-	MyGuid    string      `json:"myGuid"`
-	TableCode string      `json:"tableCode"`
+	MyGuid    string      `json:"myguid"`
+	TableCode string      `json:"tablecode"`
 	Mode      int         `json:"mode"`
 	Data      interface{} `json:"data"`
 }
@@ -17,8 +17,8 @@ type Detail struct {
 }
 
 type SyncInventoryData struct {
-	MyGuid    string    `json:"myGuid"`
-	TableCode string    `json:"tableCode"`
+	MyGuid    string    `json:"myguid"`
+	TableCode string    `json:"tablecode"`
 	Mode      int       `json:"mode"`
 	Data      Inventory `json:"data"`
 }

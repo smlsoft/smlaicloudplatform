@@ -1,14 +1,14 @@
 package models
 
 type Identity struct {
-	ShopID    string `json:"shopID" bson:"shopID" gorm:"shop_id"`
-	GuidFixed string `json:"guidFixed" bson:"guidFixed" gorm:"guid_fixed;primaryKey"`
+	ShopID    string `json:"shopid" bson:"shopid" gorm:"shopid"`
+	GuidFixed string `json:"guidfixed" bson:"guidfixed" gorm:"guidfixed;primaryKey"`
 }
 
 type ShopIdentity struct {
-	ShopID string `json:"shopID" bson:"shopID" gorm:"shop_id"`
+	ShopID string `json:"shopid" bson:"shopid" gorm:"shopid"`
 }
 
 type DocIdentity struct {
-	GuidFixed string `json:"guidFixed" bson:"guidFixed" gorm:"guid_fixed;primaryKey"`
+	GuidFixed string `json:"guidfixed" bson:"guidfixed" gorm:"guidfixed;primaryKey"`
 }
