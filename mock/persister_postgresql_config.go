@@ -56,3 +56,7 @@ func (cfg *PersisterPostgresqlConfig) SSLMode() string {
 func (cfg *PersisterPostgresqlConfig) TimeZone() string {
 	return "Asia/Bangkok"
 }
+
+func (cfg *PersisterPostgresqlConfig) LoggerLevel() string {
+	return "debug"
+}

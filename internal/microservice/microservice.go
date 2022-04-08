@@ -132,6 +132,19 @@ func (ms *Microservice) CheckReadyToStart() error {
 		ms.Logger.Debug("[REDIS]Test Connection.")
 	}
 
+	// postgresql
+	persisterConfig := ms.config.PersisterConfig()
+	if persisterConfig.Host() != "" {
+		// TEST Connetion PostgreSQL
+		ms.Logger.Debug("[PostgreSQL]Test Connection.")
+		postgresqlPst := ms.Persister(persisterConfig)
+		err := postgresqlPst.TestConnect()
+		if err != nil {
+			ms.Logger.WithError(err).Error("[PostgreSQL]Connection Failed.")
+			return err
+		}
+	}
+
 	return nil
 }
 

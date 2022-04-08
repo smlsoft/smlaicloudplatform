@@ -41,7 +41,6 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
-	github.com/pkg/profile v1.6.0 // indirect
 	github.com/ttacon/chalk v0.0.0-20160626202418-22c06c80ed31 // indirect
 	github.com/valyala/fasthttp v1.30.0 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
