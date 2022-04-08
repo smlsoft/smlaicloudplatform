@@ -33,15 +33,15 @@ func NewMemberService(memberRepo IMemberRepository, memberPgRepo IMemberPGReposi
 	}
 }
 
-// Find guid in postgresql index
 func (svc MemberService) IsExistsGuid(shopID string, guidFixed string) (bool, error) {
 
-	count, err := svc.memberPgRepo.Count(shopID, guidFixed)
+	findDoc, err := svc.memberRepo.FindByGuid(shopID, guidFixed)
+
 	if err != nil {
 		return false, err
 	}
 
-	if count == 0 {
+	if findDoc.ID == primitive.NilObjectID {
 		return false, nil
 	}
 

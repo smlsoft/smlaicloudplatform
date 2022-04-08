@@ -94,21 +94,6 @@ func (h SyncDataHttp) Save(ctx microservice.IContext) error {
 				}
 				return idx, nil
 			},
-			func(idx string) error {
-
-				docIdx := models.InventoryIndex{}
-				docIdx.ID = idx
-				docIdx.ShopID = userInfo.ShopID
-				docIdx.GuidFixed = syncData.MyGuid
-
-				err := h.inventoryService.CreateIndex(docIdx)
-
-				if err != nil {
-					return err
-				}
-
-				return nil
-			},
 			func() error {
 				return h.inventoryService.UpdateInventory(userInfo.ShopID, syncData.MyGuid, userInfo.Username, inv)
 			},
@@ -145,20 +130,6 @@ func (h SyncDataHttp) Save(ctx microservice.IContext) error {
 				}
 				return idx, nil
 			},
-			func(idx string) error {
-
-				docIdx := models.MemberIndex{}
-				docIdx.ID = idx
-				docIdx.ShopID = userInfo.ShopID
-				docIdx.GuidFixed = syncData.MyGuid
-
-				err := h.memberService.CreateIndex(docIdx)
-				if err != nil {
-					return err
-				}
-
-				return nil
-			},
 			func() error {
 				return h.memberService.Update(userInfo.ShopID, syncData.MyGuid, userInfo.Username, member)
 			},
@@ -192,7 +163,6 @@ func (h SyncDataHttp) syncData(
 	syncData models.SyncData,
 	fnIsExists func() (bool, error),
 	fnCreate func() (string, error),
-	fnCreateIndex func(string) error,
 	fnUpdate func() error,
 ) error {
 	payload, err := h.getPayload(syncData.Data)
@@ -218,13 +188,11 @@ func (h SyncDataHttp) syncData(
 			return errors.New("guid '" + syncData.MyGuid + "' is exists")
 		}
 
-		idx, err := fnCreate()
+		_, err = fnCreate()
 
 		if err != nil {
 			return err
 		}
-
-		fnCreateIndex(idx)
 
 		return err
 	case 1:
@@ -235,13 +203,11 @@ func (h SyncDataHttp) syncData(
 		}
 
 		if isExistsGuid {
-			idx, err := fnCreate()
+			_, err := fnCreate()
 
 			if err != nil {
 				return err
 			}
-
-			fnCreateIndex(idx)
 
 			return err
 		} else {

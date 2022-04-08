@@ -13,9 +13,9 @@ import (
 type IInventoryRepository interface {
 	Create(inventory models.InventoryDoc) (string, error)
 	Update(guid string, inventory models.InventoryDoc) error
-	Delete(guid string, shopID string, username string) error
+	Delete(shopID string, guid string, username string) error
 	FindByID(id primitive.ObjectID) (models.InventoryDoc, error)
-	FindByGuid(guid string, shopID string) (models.InventoryDoc, error)
+	FindByGuid(shopID string, guid string) (models.InventoryDoc, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
 }
 
@@ -49,7 +49,7 @@ func (repo InventoryRepository) Update(guid string, inventory models.InventoryDo
 	return nil
 }
 
-func (repo InventoryRepository) Delete(guid string, shopID string, username string) error {
+func (repo InventoryRepository) Delete(shopID string, guid string, username string) error {
 
 	err := repo.pst.SoftDelete(&models.InventoryDoc{}, username, bson.M{"guidFixed": guid, "shopID": shopID})
 
@@ -75,7 +75,7 @@ func (repo InventoryRepository) FindByID(id primitive.ObjectID) (models.Inventor
 	return *findDoc, nil
 }
 
-func (repo InventoryRepository) FindByGuid(guid string, shopID string) (models.InventoryDoc, error) {
+func (repo InventoryRepository) FindByGuid(shopID string, guid string) (models.InventoryDoc, error) {
 
 	findDoc := &models.InventoryDoc{}
 	err := repo.pst.FindOne(&models.InventoryDoc{}, bson.M{"shopID": shopID, "guidFixed": guid, "deletedAt": bson.M{"$exists": false}}, findDoc)

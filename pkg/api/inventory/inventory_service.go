@@ -38,16 +38,15 @@ func NewInventoryService(inventoryRepo IInventoryRepository, inventoryPgRepo IIn
 	}
 }
 
-// Find guid in postgresql index
 func (svc InventoryService) IsExistsGuid(shopID string, guidFixed string) (bool, error) {
 
-	count, err := svc.invPgRepo.Count(shopID, guidFixed)
+	findDoc, err := svc.invRepo.FindByGuid(shopID, guidFixed)
 
 	if err != nil {
 		return false, err
 	}
 
-	if count == 0 {
+	if findDoc.ID == primitive.NilObjectID {
 		return false, nil
 	}
 
@@ -104,7 +103,7 @@ func (svc InventoryService) CreateInventory(shopID string, authUsername string, 
 
 func (svc InventoryService) UpdateInventory(shopID string, guid string, authUsername string, inventory models.Inventory) error {
 
-	findDoc, err := svc.invRepo.FindByGuid(guid, shopID)
+	findDoc, err := svc.invRepo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return err
@@ -136,7 +135,7 @@ func (svc InventoryService) UpdateInventory(shopID string, guid string, authUser
 
 func (svc InventoryService) DeleteInventory(shopID string, guid string, username string) error {
 
-	err := svc.invRepo.Delete(guid, shopID, username)
+	err := svc.invRepo.Delete(shopID, guid, username)
 
 	if err != nil {
 		return err
@@ -174,7 +173,7 @@ func (svc InventoryService) InfoMongoInventory(id string) (models.InventoryInfo,
 
 func (svc InventoryService) InfoInventory(shopID string, guid string) (models.InventoryInfo, error) {
 	start := time.Now()
-	findDoc, err := svc.invRepo.FindByGuid(guid, shopID)
+	findDoc, err := svc.invRepo.FindByGuid(shopID, guid)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return models.InventoryInfo{}, err
