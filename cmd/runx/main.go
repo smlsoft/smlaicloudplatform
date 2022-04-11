@@ -45,7 +45,7 @@ func main() {
 	opt := models.Option{}
 	opt.Code = "opt1"
 	opt.Required = true
-	opt.SelectMode = "SIGLE"
+	opt.ChoiceType = 1
 	opt.MaxSelect = 1
 	opt.Name1 = "opt name"
 

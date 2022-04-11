@@ -17,33 +17,43 @@ const inventoryTableName string = "inventories"
 const inventoryIndexName string = "inventories_index"
 
 type Inventory struct {
-	ItemSku      string  `json:"itemsku,omitempty" bson:"itemsku,omitempty"`
-	Barcode      string  `json:"barcode" bson:"barcode"`
-	CategoryGuid string  `json:"categoryguid" bson:"categoryguid"` // Guid กลุ่มสินค้า
-	Price        float32 `json:"price" bson:"price" `              // ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-	MemberPrice  float32 `json:"memberprice,omitempty" bson:"memberprice,omitempty"`
-	Recommended  bool    `json:"recommended,omitempty" bson:"recommended,omitempty" ` // สินค้าแนะนำ
-	Activated    bool    `json:"activated,omitempty" bson:"activated,omitempty"`      // เปิดใช้งานอยู่
+	ParID        string  `json:"parid" bson:"parid" gorm:"parid"`
+	ItemSku      string  `json:"itemsku,omitempty" bson:"itemsku,omitempty" gorm:"itemsku,omitempty"`
+	Barcode      string  `json:"barcode" bson:"barcode" gorm:"barcode"`
+	CategoryGuid string  `json:"categoryguid" bson:"categoryguid" gorm:"categoryguid"` // Guid กลุ่มสินค้า
+	Price        float32 `json:"price" bson:"price" gorm:"price"`                      // ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+	MemberPrice  float32 `json:"memberprice,omitempty" bson:"memberprice,omitempty" gorm:"memberprice,omitempty"`
+	Recommended  bool    `json:"recommended,omitempty" bson:"recommended,omitempty" gorm:"recommended,omitempty"` // สินค้าแนะนำ
+	Activated    bool    `json:"activated,omitempty" bson:"activated,omitempty" gorm:"activated,omitempty"`       // เปิดใช้งานอยู่
 
-	Name1        string `json:"name1" bson:"name1"`                                   // ชื่อภาษาไทย
-	Description1 string `json:"description1,omitempty" bson:"description1,omitempty"` // รายละเอียดภาษาไทย
-	Name2        string `json:"name2,omitempty" bson:"name2,omitempty"`
-	Description2 string `json:"description2,omitempty" bson:"description2,omitempty"`
-	Name3        string `json:"name3,omitempty" bson:"name3,omitempty"`
-	Description3 string `json:"description3,omitempty" bson:"description3,omitempty"`
-	Name4        string `json:"name4,omitempty" bson:"name4,omitempty"`
-	Description4 string `json:"description4,omitempty" bson:"description4,omitempty"`
-	Name5        string `json:"name5,omitempty" bson:"name5,omitempty"`
-	Description5 string `json:"description5,omitempty" bson:"description5,omitempty"`
+	Name1        string `json:"name1" bson:"name1" gorm:"name1"` // ชื่อภาษาไทย
+	Name2        string `json:"name2,omitempty" bson:"name2,omitempty" gorm:"name2,omitempty"`
+	Name3        string `json:"name3,omitempty" bson:"name3,omitempty" gorm:"name3,omitempty"`
+	Name4        string `json:"name4,omitempty" bson:"name4,omitempty" gorm:"name4,omitempty"`
+	Name5        string `json:"name5,omitempty" bson:"name5,omitempty" gorm:"name5,omitempty"`
+	Description1 string `json:"description1,omitempty" bson:"description1,omitempty" gorm:"description1,omitempty"` // รายละเอียดภาษาไทย
+	Description2 string `json:"description2,omitempty" bson:"description2,omitempty" gorm:"description2,omitempty"`
+	Description3 string `json:"description3,omitempty" bson:"description3,omitempty" gorm:"description3,omitempty"`
+	Description4 string `json:"description4,omitempty" bson:"description4,omitempty" gorm:"description4,omitempty"`
+	Description5 string `json:"description5,omitempty" bson:"description5,omitempty" gorm:"description5,omitempty"`
 
-	UnitName1 string            `json:"unitname1" bson:"unitname1" gorm:"unitname1"`
-	UnitName2 string            `json:"unitname2,omitempty" bson:"unitname2,omitempty" gorm:"unitname2"`
-	UnitName3 string            `json:"unitname3,omitempty" bson:"unitname3,omitempty" gorm:"unitname3"`
-	UnitName4 string            `json:"unitname4,omitempty" bson:"unitname4,omitempty" gorm:"unitname4"`
-	UnitName5 string            `json:"unitname5,omitempty" bson:"unitname5,omitempty" gorm:"unitname5"`
-	Options   *[]Option         `json:"options,omitempty" bson:"options,omitempty" gorm:"many2many:inventoryoptions;foreignKey:GuidFixed;joinForeignKey:DocID;References:Code;joinReferences:OptID"`
-	Images    *[]InventoryImage `json:"images,omitempty" bson:"images,omitempty" gorm:"images;foreignKey:DocID"`
-	Tags      *[]InventoryTag   `json:"tags,omitempty" bson:"tags" gorm:"tags;foreignKey:DocID"`
+	UnitName1 string `json:"unitname1" bson:"unitname1" gorm:"unitname1" gorm:"unitname1"`
+	UnitName2 string `json:"unitname2,omitempty" bson:"unitname2,omitempty" gorm:"unitname2,omitempty"`
+	UnitName3 string `json:"unitname3,omitempty" bson:"unitname3,omitempty" gorm:"unitname3,omitempty"`
+	UnitName4 string `json:"unitname4,omitempty" bson:"unitname4,omitempty" gorm:"unitname4,omitempty"`
+	UnitName5 string `json:"unitname5,omitempty" bson:"unitname5,omitempty" gorm:"unitname5,omitempty"`
+
+	ItemGuid        string  `json:"itemguid,omitempty" bson:"itemguid,omitempty" gorm:"itemguid,omitempty"`
+	ItemCode        string  `json:"itemcode,omitempty" bson:"itemcode,omitempty" gorm:"itemcode,omitempty"`
+	ItemUnitCode    string  `json:"itemunitcode,omitempty" bson:"itemunitcode,omitempty" gorm:"itemunitcode,omitempty"`
+	ItemUnitStd     float64 `json:"itemunitstd,omitempty" bson:"itemunitstd,omitempty" gorm:"itemunitstd,omitempty"`
+	ItemUnitDiv     float64 `json:"itemunitdiv,omitempty" bson:"itemunitdiv,omitempty" gorm:"itemunitdiv,omitempty"`
+	ItemOptionCode  string  `json:"itemoptioncode,omitempty" bson:"itemoptioncode,omitempty" gorm:"itemoptioncode,omitempty"`
+	ItemOptionOrder int8    `json:"itemoptionorder,omitempty" bson:"itemoptionorder,omitempty" gorm:"itemoptionorder,omitempty"`
+
+	Options *[]Option         `json:"options,omitempty" bson:"options,omitempty" gorm:"many2many:inventoryoptions;foreignKey:GuidFixed;joinForeignKey:DocID;References:Code;joinReferences:OptID"`
+	Images  *[]InventoryImage `json:"images,omitempty" bson:"images,omitempty" gorm:"images;foreignKey:DocID"`
+	Tags    *[]InventoryTag   `json:"tags,omitempty" bson:"tags" gorm:"tags;foreignKey:DocID"`
 
 	// WaitType         int             `json:"-" bson:"waitType"`                // ประเภทการรอ (สินค้าหมด)
 	// WaitUntil        time.Time       `json:"-" bson:"waitUntil"`               // ระยะเวลาที่รอ
@@ -72,29 +82,33 @@ type InventoryTag struct {
 }
 
 type Option struct {
-	Code       string    `json:"code" bson:"code" gorm:"primaryKey"`
-	Required   bool      `json:"required" bson:"required"`
-	SelectMode string    `json:"selectmode" bson:"selectmde"`
-	MaxSelect  int       `json:"maxselect" bson:"maxselect"`
-	Name1      string    `json:"name1" bson:"name1"`
-	Name2      string    `json:"name2,omitempty" bson:"name2,omitempty"`
-	Name3      string    `json:"name3,omitempty" bson:"name3,omitempty"`
-	Name4      string    `json:"name4,omitempty" bson:"name4,omitempty"`
-	Name5      string    `json:"name5,omitempty" bson:"name5,omitempty"`
+	Code       string    `json:"code" bson:"code" gorm:"code;primaryKey"`
+	Required   bool      `json:"required,omitempty" bson:"required,omitempty" gorm:"required,omitempty"`
+	ChoiceType int8      `json:"choicetype,omitempty" bson:"choicetype,omitempty" gorm:"choicetype,omitempty"`
+	MaxSelect  int8      `json:"maxselect,omitempty" bson:"maxselect,omitempty" gorm:"maxselect,omitempty"`
+	Name1      string    `json:"name1" bson:"name1" gorm:"name1"`
+	Name2      string    `json:"name2,omitempty" bson:"name2,omitempty" gorm:"name2,omitempty"`
+	Name3      string    `json:"name3,omitempty" bson:"name3,omitempty" gorm:"name3,omitempty"`
+	Name4      string    `json:"name4,omitempty" bson:"name4,omitempty" gorm:"name4,omitempty"`
+	Name5      string    `json:"name5,omitempty" bson:"name5,omitempty" gorm:"name5,omitempty"`
 	Choices    *[]Choice `json:"choices" bson:"choices" gorm:"choices;foreignKey:OptCode"`
 }
 
 type Choice struct {
 	OptCode     string  `bson:"-" gorm:"optcode;primaryKey" `
 	Barcode     string  `json:"barcode" bson:"barcode" gorm:"barcode;primaryKey"`
-	SuggestCode string  `json:"suggestcode" bson:"suggestcode"`
-	Price       float64 `json:"price" bson:"price"`
-	Qty         int     `json:"qty" bson:"qty"`
-	Name1       string  `json:"name1" bson:"name1"`
-	Name2       string  `json:"name2,omitempty" bson:"name2,omitempty"`
-	Name3       string  `json:"name3,omitempty" bson:"name3,omitempty"`
-	Name4       string  `json:"name4,omitempty" bson:"name4,omitempty"`
-	Name5       string  `json:"name5,omitempty" bson:"name5,omitempty"`
+	SuggestCode string  `json:"suggestcode,omitempty" bson:"suggestcode,omitempty" gorm:"suggestcode,omitempty"`
+	Price       float64 `json:"price" bson:"price" gorm:"price"`
+	Qty         float64 `json:"qty" bson:"qty" gorm:"qty"`
+	QtyMax      float64 `json:"qtymax" bson:"qtymax" gorm:"qtymax"`
+	Name1       string  `json:"name1" bson:"name1" gorm:"name1"`
+	Name2       string  `json:"name2,omitempty" bson:"name2,omitempty" gorm:"name2,omitempty"`
+	Name3       string  `json:"name3,omitempty" bson:"name3,omitempty" gorm:"name3,omitempty"`
+	Name4       string  `json:"name4,omitempty" bson:"name4,omitempty" gorm:"name4,omitempty"`
+	Name5       string  `json:"name5,omitempty" bson:"name5,omitempty" gorm:"name5,omitempty"`
+	ItemUnit    string  `json:"itemunit,omitempty" bson:"itemunit" gorm:"itemunit,omitempty"`
+	Selected    bool    `json:"selected,omitempty" bson:"selected,omitempty" gorm:"selected,omitempty"`
+	Default     bool    `json:"default,omitempty" bson:"default,omitempty" gorm:"default,omitempty"`
 }
 
 type InventoryInfo struct {
