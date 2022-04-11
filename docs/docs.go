@@ -1595,6 +1595,12 @@ const docTemplate = `{
                 "barcode": {
                     "type": "string"
                 },
+                "default": {
+                    "type": "boolean"
+                },
+                "itemunit": {
+                    "type": "string"
+                },
                 "name1": {
                     "type": "string"
                 },
@@ -1617,7 +1623,13 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "qty": {
-                    "type": "integer"
+                    "type": "number"
+                },
+                "qtymax": {
+                    "type": "number"
+                },
+                "selected": {
+                    "type": "boolean"
                 },
                 "suggestcode": {
                     "type": "string"
@@ -1668,8 +1680,29 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryImage"
                     }
                 },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemguid": {
+                    "type": "string"
+                },
+                "itemoptioncode": {
+                    "type": "string"
+                },
+                "itemoptionorder": {
+                    "type": "integer"
+                },
                 "itemsku": {
                     "type": "string"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitdiv": {
+                    "type": "number"
+                },
+                "itemunitstd": {
+                    "type": "number"
                 },
                 "memberprice": {
                     "type": "number"
@@ -1695,6 +1728,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Option"
                     }
+                },
+                "parid": {
+                    "type": "string"
                 },
                 "price": {
                     "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
@@ -1730,9 +1766,6 @@ const docTemplate = `{
         "models.InventoryImage": {
             "type": "object",
             "properties": {
-                "docID": {
-                    "type": "string"
-                },
                 "url": {
                     "type": "string"
                 }
@@ -1777,8 +1810,29 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryImage"
                     }
                 },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemguid": {
+                    "type": "string"
+                },
+                "itemoptioncode": {
+                    "type": "string"
+                },
+                "itemoptionorder": {
+                    "type": "integer"
+                },
                 "itemsku": {
                     "type": "string"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitdiv": {
+                    "type": "number"
+                },
+                "itemunitstd": {
+                    "type": "number"
                 },
                 "memberprice": {
                     "type": "number"
@@ -1804,6 +1858,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Option"
                     }
+                },
+                "parid": {
+                    "type": "string"
                 },
                 "price": {
                     "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
@@ -1936,9 +1993,6 @@ const docTemplate = `{
         "models.InventoryTag": {
             "type": "object",
             "properties": {
-                "docID": {
-                    "type": "string"
-                },
                 "name": {
                     "type": "string"
                 }
@@ -1988,6 +2042,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.Choice"
                     }
                 },
+                "choicetype": {
+                    "type": "integer"
+                },
                 "code": {
                     "type": "string"
                 },
@@ -2011,9 +2068,6 @@ const docTemplate = `{
                 },
                 "required": {
                     "type": "boolean"
-                },
-                "selectmode": {
-                    "type": "string"
                 }
             }
         },

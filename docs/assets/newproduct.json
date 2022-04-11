@@ -38,26 +38,26 @@
             "name1-5": "เส้น",
             "choices": [
                 {
-                    "suggest_code": "xxxxxxxxx",
+                    "suggestcode": "xxxxxxxxx",
                     "name1-5": "ปรกติ",
                     "price": 0,
                     "barcode": "",
                     "qty": ""
                 },
                 {
-                    "suggest_code": "xxxxxxxxxxxxx",
+                    "suggestcode": "xxxxxxxxxxxxx",
                     "name1-5": "ปรกติ",
                     "price": 0
                 },
                 {
-                    "suggest_code": "xxxxxxxxx",
+                    "suggestcode": "xxxxxxxxx",
                     "name1-5": "ปรกติ",
                     "price": 0
                 }
             ],
             "required": true,
             "select_mode": "MULTISELECT,SINGLESELECT",
-            "max_selected": 1
+            "maxselected": 1
         },
         {
             "code": "topping",

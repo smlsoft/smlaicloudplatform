@@ -77,6 +77,10 @@ definitions:
     properties:
       barcode:
         type: string
+      default:
+        type: boolean
+      itemunit:
+        type: string
       name1:
         type: string
       name2:
@@ -92,7 +96,11 @@ definitions:
       price:
         type: number
       qty:
-        type: integer
+        type: number
+      qtymax:
+        type: number
+      selected:
+        type: boolean
       suggestcode:
         type: string
     type: object
@@ -126,8 +134,22 @@ definitions:
         items:
           $ref: '#/definitions/models.InventoryImage'
         type: array
+      itemcode:
+        type: string
+      itemguid:
+        type: string
+      itemoptioncode:
+        type: string
+      itemoptionorder:
+        type: integer
       itemsku:
         type: string
+      itemunitcode:
+        type: string
+      itemunitdiv:
+        type: number
+      itemunitstd:
+        type: number
       memberprice:
         type: number
       name1:
@@ -145,6 +167,8 @@ definitions:
         items:
           $ref: '#/definitions/models.Option'
         type: array
+      parid:
+        type: string
       price:
         description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
         type: number
@@ -168,8 +192,6 @@ definitions:
     type: object
   models.InventoryImage:
     properties:
-      docID:
-        type: string
       url:
         type: string
     type: object
@@ -200,8 +222,22 @@ definitions:
         items:
           $ref: '#/definitions/models.InventoryImage'
         type: array
+      itemcode:
+        type: string
+      itemguid:
+        type: string
+      itemoptioncode:
+        type: string
+      itemoptionorder:
+        type: integer
       itemsku:
         type: string
+      itemunitcode:
+        type: string
+      itemunitdiv:
+        type: number
+      itemunitstd:
+        type: number
       memberprice:
         type: number
       name1:
@@ -219,6 +255,8 @@ definitions:
         items:
           $ref: '#/definitions/models.Option'
         type: array
+      parid:
+        type: string
       price:
         description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
         type: number
@@ -305,8 +343,6 @@ definitions:
     type: object
   models.InventoryTag:
     properties:
-      docID:
-        type: string
       name:
         type: string
     type: object
@@ -339,6 +375,8 @@ definitions:
         items:
           $ref: '#/definitions/models.Choice'
         type: array
+      choicetype:
+        type: integer
       code:
         type: string
       maxselect:
@@ -355,8 +393,6 @@ definitions:
         type: string
       required:
         type: boolean
-      selectmode:
-        type: string
     type: object
   models.PaginationDataResponse:
     properties:
