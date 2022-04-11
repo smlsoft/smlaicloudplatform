@@ -53,8 +53,8 @@ func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) I
 
 func (h InventoryHttp) RouteSetup() {
 	h.ms.GET("/inventory/:id", h.InfoInventory)
-	h.ms.GET("/inventory/:id/index", h.InfoIndexInventory)
-	h.ms.GET("/inventory/:id/mongo", h.InfoMongoInventory)
+	// h.ms.GET("/inventory/:id/index", h.InfoIndexInventory)
+	// h.ms.GET("/inventory/:id/mongo", h.InfoMongoInventory)
 	h.ms.GET("/inventory", h.SearchInventory)
 	h.ms.POST("/inventory", h.CreateInventory)
 	h.ms.PUT("/inventory/:id", h.UpdateInventory)
