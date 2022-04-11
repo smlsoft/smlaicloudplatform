@@ -83,7 +83,7 @@ func (h InventoryHttp) RouteSetup() {
 // @Security     AccessToken
 // @Router /inventory [post]
 func (h InventoryHttp) CreateInventory(ctx microservice.IContext) error {
-	h.ms.Logger.Debug("Creating Inventory")
+
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -98,23 +98,22 @@ func (h InventoryHttp) CreateInventory(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, guidx, err := h.invService.CreateInventory(shopID, authUsername, *inventoryReq)
+	_, guidx, err := h.invService.CreateInventory(shopID, authUsername, *inventoryReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	docIdx := models.InventoryIndex{}
-	docIdx.ID = idx
-	docIdx.ShopID = userInfo.ShopID
-	docIdx.GuidFixed = guidx
+	// docIdx := models.InventoryIndex{}
+	// docIdx.ID = idx
+	// docIdx.ShopID = userInfo.ShopID
+	// docIdx.GuidFixed = guidx
 
-	err = h.invService.CreateIndex(docIdx)
-
-	if err != nil {
-		return err
-	}
+	// err = h.invService.CreateIndex(docIdx)
+	// if err != nil {
+	// 	return err
+	// }
 
 	ctx.Response(
 		http.StatusCreated,
