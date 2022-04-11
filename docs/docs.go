@@ -1538,7 +1538,7 @@ const docTemplate = `{
         "models.CategoryInfo": {
             "type": "object",
             "properties": {
-                "guidFixed": {
+                "guidfixed": {
                     "type": "string"
                 },
                 "image": {
@@ -1619,7 +1619,7 @@ const docTemplate = `{
                 "qty": {
                     "type": "integer"
                 },
-                "suggestCode": {
+                "suggestcode": {
                     "type": "string"
                 }
             }
@@ -1642,7 +1642,7 @@ const docTemplate = `{
                 "barcode": {
                     "type": "string"
                 },
-                "categoryGuid": {
+                "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
                     "type": "string"
                 },
@@ -1668,10 +1668,10 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryImage"
                     }
                 },
-                "itemSku": {
+                "itemsku": {
                     "type": "string"
                 },
-                "memberPrice": {
+                "memberprice": {
                     "type": "number"
                 },
                 "name1": {
@@ -1710,19 +1710,19 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryTag"
                     }
                 },
-                "unitName1": {
+                "unitname1": {
                     "type": "string"
                 },
-                "unitName2": {
+                "unitname2": {
                     "type": "string"
                 },
-                "unitName3": {
+                "unitname3": {
                     "type": "string"
                 },
-                "unitName4": {
+                "unitname4": {
                     "type": "string"
                 },
-                "unitName5": {
+                "unitname5": {
                     "type": "string"
                 }
             }
@@ -1748,7 +1748,7 @@ const docTemplate = `{
                 "barcode": {
                     "type": "string"
                 },
-                "categoryGuid": {
+                "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
                     "type": "string"
                 },
@@ -1768,7 +1768,7 @@ const docTemplate = `{
                 "description5": {
                     "type": "string"
                 },
-                "guidFixed": {
+                "guidfixed": {
                     "type": "string"
                 },
                 "images": {
@@ -1777,10 +1777,10 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryImage"
                     }
                 },
-                "itemSku": {
+                "itemsku": {
                     "type": "string"
                 },
-                "memberPrice": {
+                "memberprice": {
                     "type": "number"
                 },
                 "name1": {
@@ -1819,19 +1819,19 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryTag"
                     }
                 },
-                "unitName1": {
+                "unitname1": {
                     "type": "string"
                 },
-                "unitName2": {
+                "unitname2": {
                     "type": "string"
                 },
-                "unitName3": {
+                "unitname3": {
                     "type": "string"
                 },
-                "unitName4": {
+                "unitname4": {
                     "type": "string"
                 },
-                "unitName5": {
+                "unitname5": {
                     "type": "string"
                 }
             }
@@ -1856,28 +1856,28 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryOptonGroupDetail"
                     }
                 },
-                "guidFixed": {
+                "guidfixed": {
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
-                "optionName1": {
+                "optionname1": {
                     "type": "string"
                 },
-                "productSelectOptionMax": {
-                    "type": "integer"
-                },
-                "productSelectOptionMin": {
-                    "type": "integer"
-                },
-                "productSelectoPtion1": {
+                "productselectoption1": {
                     "type": "boolean"
                 },
-                "productSelectoPtion2": {
+                "productselectoption2": {
                     "type": "boolean"
                 },
-                "shopID": {
+                "productselectoptionmax": {
+                    "type": "integer"
+                },
+                "productselectoptionmin": {
+                    "type": "integer"
+                },
+                "shopid": {
                     "type": "string"
                 }
             }
@@ -1885,19 +1885,19 @@ const docTemplate = `{
         "models.InventoryOptionMain": {
             "type": "object",
             "properties": {
-                "guidFixed": {
+                "guidfixed": {
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
-                "inventoryID": {
+                "inventoryid": {
                     "type": "string"
                 },
-                "optionGroupID": {
+                "optiongroupid": {
                     "type": "string"
                 },
-                "shopID": {
+                "shopid": {
                     "type": "string"
                 }
             }
@@ -1908,10 +1908,10 @@ const docTemplate = `{
                 "amount": {
                     "type": "number"
                 },
-                "detailName1": {
+                "detailname1": {
                     "type": "string"
                 },
-                "guidFixed": {
+                "guidfixed": {
                     "type": "string"
                 }
             }
@@ -1950,31 +1950,31 @@ const docTemplate = `{
                 "address": {
                     "type": "string"
                 },
-                "branchCode": {
+                "branchcode": {
                     "type": "string"
                 },
-                "branchType": {
+                "branchtype": {
                     "type": "integer"
                 },
-                "contactType": {
+                "contacttype": {
                     "type": "integer"
                 },
                 "name": {
                     "type": "string"
                 },
-                "personalType": {
+                "personaltype": {
                     "type": "integer"
                 },
                 "surname": {
                     "type": "string"
                 },
-                "taxID": {
+                "taxid": {
                     "type": "string"
                 },
                 "telephone": {
                     "type": "string"
                 },
-                "zipCode": {
+                "zipcode": {
                     "type": "string"
                 }
             }
@@ -1991,7 +1991,7 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
-                "maxSelect": {
+                "maxselect": {
                     "type": "integer"
                 },
                 "name1": {
@@ -2012,7 +2012,7 @@ const docTemplate = `{
                 "required": {
                     "type": "boolean"
                 },
-                "selectMode": {
+                "selectmode": {
                     "type": "string"
                 }
             }
@@ -2060,7 +2060,7 @@ const docTemplate = `{
         "models.ShopInfo": {
             "type": "object",
             "properties": {
-                "guidFixed": {
+                "guidfixed": {
                     "type": "string"
                 },
                 "name1": {
@@ -2071,7 +2071,7 @@ const docTemplate = `{
         "models.ShopSelectRequest": {
             "type": "object",
             "properties": {
-                "shopID": {
+                "shopid": {
                     "type": "string"
                 }
             }
@@ -2085,7 +2085,7 @@ const docTemplate = `{
                 "role": {
                     "type": "string"
                 },
-                "shopID": {
+                "shopid": {
                     "type": "string"
                 }
             }
@@ -2099,10 +2099,10 @@ const docTemplate = `{
                 "mode": {
                     "type": "integer"
                 },
-                "myGuid": {
+                "myguid": {
                     "type": "string"
                 },
-                "tableCode": {
+                "tablecode": {
                     "type": "string"
                 }
             }

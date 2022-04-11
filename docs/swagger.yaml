@@ -40,7 +40,7 @@ definitions:
     type: object
   models.CategoryInfo:
     properties:
-      guidFixed:
+      guidfixed:
         type: string
       image:
         type: string
@@ -93,7 +93,7 @@ definitions:
         type: number
       qty:
         type: integer
-      suggestCode:
+      suggestcode:
         type: string
     type: object
   models.Image:
@@ -108,7 +108,7 @@ definitions:
         type: boolean
       barcode:
         type: string
-      categoryGuid:
+      categoryguid:
         description: Guid กลุ่มสินค้า
         type: string
       description1:
@@ -126,9 +126,9 @@ definitions:
         items:
           $ref: '#/definitions/models.InventoryImage'
         type: array
-      itemSku:
+      itemsku:
         type: string
-      memberPrice:
+      memberprice:
         type: number
       name1:
         description: ชื่อภาษาไทย
@@ -155,15 +155,15 @@ definitions:
         items:
           $ref: '#/definitions/models.InventoryTag'
         type: array
-      unitName1:
+      unitname1:
         type: string
-      unitName2:
+      unitname2:
         type: string
-      unitName3:
+      unitname3:
         type: string
-      unitName4:
+      unitname4:
         type: string
-      unitName5:
+      unitname5:
         type: string
     type: object
   models.InventoryImage:
@@ -180,7 +180,7 @@ definitions:
         type: boolean
       barcode:
         type: string
-      categoryGuid:
+      categoryguid:
         description: Guid กลุ่มสินค้า
         type: string
       description1:
@@ -194,15 +194,15 @@ definitions:
         type: string
       description5:
         type: string
-      guidFixed:
+      guidfixed:
         type: string
       images:
         items:
           $ref: '#/definitions/models.InventoryImage'
         type: array
-      itemSku:
+      itemsku:
         type: string
-      memberPrice:
+      memberprice:
         type: number
       name1:
         description: ชื่อภาษาไทย
@@ -229,15 +229,15 @@ definitions:
         items:
           $ref: '#/definitions/models.InventoryTag'
         type: array
-      unitName1:
+      unitname1:
         type: string
-      unitName2:
+      unitname2:
         type: string
-      unitName3:
+      unitname3:
         type: string
-      unitName4:
+      unitname4:
         type: string
-      unitName5:
+      unitname5:
         type: string
     type: object
   models.InventoryInfoResponse:
@@ -253,43 +253,43 @@ definitions:
         items:
           $ref: '#/definitions/models.InventoryOptonGroupDetail'
         type: array
-      guidFixed:
+      guidfixed:
         type: string
       id:
         type: string
-      optionName1:
+      optionname1:
         type: string
-      productSelectOptionMax:
-        type: integer
-      productSelectOptionMin:
-        type: integer
-      productSelectoPtion1:
+      productselectoption1:
         type: boolean
-      productSelectoPtion2:
+      productselectoption2:
         type: boolean
-      shopID:
+      productselectoptionmax:
+        type: integer
+      productselectoptionmin:
+        type: integer
+      shopid:
         type: string
     type: object
   models.InventoryOptionMain:
     properties:
-      guidFixed:
+      guidfixed:
         type: string
       id:
         type: string
-      inventoryID:
+      inventoryid:
         type: string
-      optionGroupID:
+      optiongroupid:
         type: string
-      shopID:
+      shopid:
         type: string
     type: object
   models.InventoryOptonGroupDetail:
     properties:
       amount:
         type: number
-      detailName1:
+      detailname1:
         type: string
-      guidFixed:
+      guidfixed:
         type: string
     type: object
   models.InventoryPageResponse:
@@ -314,23 +314,23 @@ definitions:
     properties:
       address:
         type: string
-      branchCode:
+      branchcode:
         type: string
-      branchType:
+      branchtype:
         type: integer
-      contactType:
+      contacttype:
         type: integer
       name:
         type: string
-      personalType:
+      personaltype:
         type: integer
       surname:
         type: string
-      taxID:
+      taxid:
         type: string
       telephone:
         type: string
-      zipCode:
+      zipcode:
         type: string
     type: object
   models.Option:
@@ -341,7 +341,7 @@ definitions:
         type: array
       code:
         type: string
-      maxSelect:
+      maxselect:
         type: integer
       name1:
         type: string
@@ -355,7 +355,7 @@ definitions:
         type: string
       required:
         type: boolean
-      selectMode:
+      selectmode:
         type: string
     type: object
   models.PaginationDataResponse:
@@ -386,14 +386,14 @@ definitions:
     type: object
   models.ShopInfo:
     properties:
-      guidFixed:
+      guidfixed:
         type: string
       name1:
         type: string
     type: object
   models.ShopSelectRequest:
     properties:
-      shopID:
+      shopid:
         type: string
     type: object
   models.ShopUserInfo:
@@ -402,7 +402,7 @@ definitions:
         type: string
       role:
         type: string
-      shopID:
+      shopid:
         type: string
     type: object
   models.SyncInventoryData:
@@ -411,9 +411,9 @@ definitions:
         $ref: '#/definitions/models.Inventory'
       mode:
         type: integer
-      myGuid:
+      myguid:
         type: string
-      tableCode:
+      tablecode:
         type: string
     type: object
   models.UserProfile:
