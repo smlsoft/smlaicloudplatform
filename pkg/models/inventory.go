@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -136,6 +138,28 @@ type InventoryDoc struct {
 }
 
 func (InventoryDoc) CollectionName() string {
+	return inventoryCollectionName
+}
+
+type InventoryActivity struct {
+	InventoryData `bson:"inline"`
+	CreatedAt     *time.Time `json:"createdat,omitempty" bson:"createdat,omitempty"`
+	UpdatedAt     *time.Time `json:"updatedat,omitempty" bson:"updatedat,omitempty"`
+	DeletedAt     *time.Time `json:"deletedat,omitempty" bson:"deletedat,omitempty"`
+}
+
+func (InventoryActivity) CollectionName() string {
+	return inventoryCollectionName
+}
+
+type InventoryDeleteActivity struct {
+	Identity  `bson:"inline"`
+	CreatedAt *time.Time `json:"createdat,omitempty" bson:"createdat,omitempty"`
+	UpdatedAt *time.Time `json:"updatedat,omitempty" bson:"updatedat,omitempty"`
+	DeletedAt *time.Time `json:"deletedat,omitempty" bson:"deletedat,omitempty"`
+}
+
+func (InventoryDeleteActivity) CollectionName() string {
 	return inventoryCollectionName
 }
 

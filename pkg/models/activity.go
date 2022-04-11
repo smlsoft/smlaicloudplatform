@@ -10,3 +10,8 @@ type Activity struct {
 	DeletedBy string    `json:"-" bson:"deletedby,omitempty"`
 	DeletedAt time.Time `json:"-" bson:"deletedat,omitempty"`
 }
+
+type LastActivity struct {
+	New    interface{} `json:"new" `
+	Remove interface{} `json:"remove"`
+}

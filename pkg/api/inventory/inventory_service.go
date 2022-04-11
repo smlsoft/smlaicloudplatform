@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
+	"sync"
 	"time"
 
 	paginate "github.com/gobeam/mongo-go-pagination"
@@ -22,6 +23,7 @@ type IInventoryService interface {
 	InfoMongoInventory(id string) (models.InventoryInfo, error)
 	InfoIndexInventory(shopID string, guid string) (models.InventoryInfo, error)
 	SearchInventory(shopID string, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
+	LastActivityInventory(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, paginate.PaginationData, error)
 }
 
 type InventoryService struct {
@@ -93,6 +95,42 @@ func (svc InventoryService) CreateWithGuid(shopID string, authUsername string, g
 
 	return mongoIdx, nil
 }
+
+// func (svc InventoryService) CreateBulk(shopID string, authUsername string, guidFixed string, inventories []models.Inventory) (error) {
+
+// 	newGuid := guidFixed
+
+// 	invDocList := make([]models.InventoryDoc, len(inventories))
+
+// 	for index, inv := range inventories {
+// 		invDoc := models.InventoryDoc{}
+
+// 		invDoc.GuidFixed = newGuid
+// 		invDoc.ShopID = shopID
+// 		invDoc.Inventory = inv
+
+// 		invDoc.CreatedBy = authUsername
+// 		invDoc.CreatedAt = time.Now()
+
+// 		invDocList[index] = invDoc
+// 	}
+
+// 	mongoIdx, err := svc.invRepo.Create(invDoc)
+
+// 	if err != nil {
+// 		return "", err
+// 	}
+
+// 	if svc.invMqRepo != nil {
+// 		err = svc.invMqRepo.Create(invDoc.InventoryData)
+
+// 		if err != nil {
+// 			return "", err
+// 		}
+// 	}
+
+// 	return mongoIdx, nil
+// }
 
 func (svc InventoryService) CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, string, error) {
 
@@ -213,4 +251,52 @@ func (svc InventoryService) SearchInventory(shopID string, q string, page int, l
 	}
 
 	return docList, pagination, nil
+}
+
+func (svc InventoryService) LastActivityInventory(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, paginate.PaginationData, error) {
+
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	var deleteDocList []models.InventoryDeleteActivity
+	var pagination1 paginate.PaginationData
+	var err1 error
+
+	go func() {
+		deleteDocList, pagination1, err1 = svc.invRepo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	var createAndUpdateDocList []models.InventoryActivity
+	var pagination2 paginate.PaginationData
+	var err2 error
+
+	go func() {
+		createAndUpdateDocList, pagination2, err2 = svc.invRepo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
+		wg.Done()
+	}()
+
+	wg.Wait()
+
+	if err1 != nil {
+		return models.LastActivity{}, pagination1, err1
+	}
+
+	if err2 != nil {
+		return models.LastActivity{}, pagination2, err2
+	}
+
+	lastActivity := models.LastActivity{}
+
+	lastActivity.Remove = &deleteDocList
+	lastActivity.New = &createAndUpdateDocList
+
+	pagination := pagination1
+
+	if pagination.TotalPage < pagination2.TotalPage {
+		pagination = pagination2
+	}
+
+	return lastActivity, pagination, nil
 }

@@ -6,6 +6,8 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"strconv"
+	"strings"
+	"time"
 )
 
 type IInventoryHttp interface {
@@ -15,6 +17,7 @@ type IInventoryHttp interface {
 	DeleteInventory(ctx microservice.IContext) error
 	InfoInventory(ctx microservice.IContext) error
 	SearchInventory(ctx microservice.IContext) error
+	LastActivityInventory(ctx microservice.IContext) error
 }
 
 type InventoryHttp struct {
@@ -59,6 +62,7 @@ func (h InventoryHttp) RouteSetup() {
 	h.ms.POST("/inventory", h.CreateInventory)
 	h.ms.PUT("/inventory/:id", h.UpdateInventory)
 	h.ms.DELETE("/inventory/:id", h.DeleteInventory)
+	h.ms.GET("/inventory/sync", h.LastActivityInventory)
 
 	h.ms.GET("/option/:id", h.InfoInventoryOptionMain)
 	h.ms.GET("/option", h.SearchInventoryOptionMain)
@@ -324,6 +328,54 @@ func (h InventoryHttp) InfoMongoInventory(ctx microservice.IContext) error {
 			Data:    doc,
 		},
 	)
+
+	return nil
+}
+
+func (h InventoryHttp) LastActivityInventory(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	layout := "2006-01-02T15:04" //
+	lastUpdateStr := ctx.QueryParam("lastUpdate")
+
+	if len(strings.Trim(lastUpdateStr, " ")) < 1 {
+		ctx.ResponseError(400, "lastUpdate format invalid.")
+		return nil
+	}
+
+	lastUpdate, err := time.Parse(layout, lastUpdateStr)
+
+	if err != nil {
+		ctx.ResponseError(400, "lastUpdate format invalid.")
+		return err
+	}
+
+	page, err := strconv.Atoi(ctx.QueryParam("page"))
+	if err != nil {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
+
+	if err != nil {
+		limit = 20
+	}
+
+	docList, pagination, err := h.invService.LastActivityInventory(shopID, lastUpdate, page, limit)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(
+		http.StatusOK,
+		models.ApiResponse{
+			Success:    true,
+			Data:       docList,
+			Pagination: pagination,
+		})
 
 	return nil
 }

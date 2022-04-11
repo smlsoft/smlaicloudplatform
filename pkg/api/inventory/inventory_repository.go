@@ -4,6 +4,7 @@ import (
 	"errors"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
+	"time"
 
 	paginate "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
@@ -17,6 +18,8 @@ type IInventoryRepository interface {
 	FindByID(id primitive.ObjectID) (models.InventoryDoc, error)
 	FindByGuid(shopID string, guid string) (models.InventoryDoc, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryDeleteActivity, paginate.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryActivity, paginate.PaginationData, error)
 }
 
 type InventoryRepository struct {
@@ -103,6 +106,40 @@ func (repo InventoryRepository) FindPage(shopID string, q string, page int, limi
 
 	if err != nil {
 		return []models.InventoryInfo{}, paginate.PaginationData{}, err
+	}
+
+	return docList, pagination, nil
+}
+
+func (repo InventoryRepository) FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryDeleteActivity, paginate.PaginationData, error) {
+
+	docList := []models.InventoryDeleteActivity{}
+	pagination, err := repo.pst.FindPage(&models.InventoryInfo{}, limit, page, bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$gte": lastUpdatedDate},
+	}, &docList)
+
+	if err != nil {
+		return []models.InventoryDeleteActivity{}, paginate.PaginationData{}, err
+	}
+
+	return docList, pagination, nil
+}
+
+func (repo InventoryRepository) FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryActivity, paginate.PaginationData, error) {
+
+	docList := []models.InventoryActivity{}
+	pagination, err := repo.pst.FindPage(&models.InventoryInfo{}, limit, page, bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$not": bson.M{"$gte": lastUpdatedDate}},
+		"$or": []interface{}{
+			bson.M{"createdat": bson.M{"$gte": lastUpdatedDate}},
+			bson.M{"updatedat": bson.M{"$gte": lastUpdatedDate}},
+		},
+	}, &docList)
+
+	if err != nil {
+		return []models.InventoryActivity{}, paginate.PaginationData{}, err
 	}
 
 	return docList, pagination, nil
