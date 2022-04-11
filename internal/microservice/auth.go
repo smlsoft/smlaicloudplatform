@@ -70,8 +70,7 @@ func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...st
 				Role:     fmt.Sprintf("%v", tempUserInfo[3]),
 			}
 
-			cacher.Expire("auth-"+tokenStr, authService.expire)
-
+			cacher.Expire(cacheKey, authService.expire)
 			c.Set("UserInfo", userInfo)
 
 			return next(c)
@@ -159,6 +158,7 @@ func (authService *AuthService) GenerateTokenWithRedis(userInfo models.UserInfo)
 		"username": userInfo.Username,
 		"name":     userInfo.Name,
 	})
+	authService.cacher.Expire(cacheKey, authService.expire)
 
 	return tokenStr, nil
 }
