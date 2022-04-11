@@ -74,13 +74,13 @@ func (InventoryOption) TableName() string {
 }
 
 type InventoryImage struct {
-	DocID string `bson:"-" gorm:"docid;primaryKey"`
-	Url   string `bson:"url" gorm:"url;primaryKey"`
+	DocID string `json:"-" bson:"-" gorm:"docid;primaryKey"`
+	Url   string `json:"url" bson:"url" gorm:"url;primaryKey"`
 }
 
 type InventoryTag struct {
-	DocID string `bson:"-" gorm:"docid;primaryKey"`
-	Name  string `bson:"name" gorm:"name;primaryKey"`
+	DocID string `json:"-" bson:"-" gorm:"docid;primaryKey"`
+	Name  string `json:"name" bson:"name" gorm:"name;primaryKey"`
 }
 
 type Option struct {

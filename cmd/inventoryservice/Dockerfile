@@ -17,6 +17,8 @@ RUN go mod download
 
 ADD . /go/app
 
+RUN find . -name "*_test.go" -exec rm -rf {} \;
+
 RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build  -o go-app -tags musl ./cmd/inventoryservice/main.go  
 
 ##
