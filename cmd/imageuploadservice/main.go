@@ -14,7 +14,7 @@ func main() {
 	}
 
 	publicPath := []string{
-		"/images/*",
+		"/images*",
 		"/productimage/",
 	}
 

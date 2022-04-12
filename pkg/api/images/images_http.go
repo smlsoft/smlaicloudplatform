@@ -41,6 +41,7 @@ func (svc ImagesHttp) RouteSetup() {
 	storageConfig := microservice.NewStorageFileConfig()
 
 	svc.ms.POST("/upload/images", svc.UploadImage)
+	svc.ms.POST("/upload/productimage", svc.UploadImageToProduct)
 
 	svc.ms.GET("/productimage/:shopid/:itemguid", svc.GetProductImage)
 	svc.ms.GET("/productimage/:shopid/:itemguid/:index", svc.GetProductImage)
@@ -126,6 +127,39 @@ func (svc ImagesHttp) UploadImage(ctx microservice.IContext) error {
 	ctx.Response(http.StatusOK, &models.ApiResponse{
 		Success: true,
 		Data:    image,
+	})
+	return nil
+}
+
+// Upload Image
+// @Description Update Image
+// @Tags		Common
+// @Accept 		json
+// @Param		file  formData      file  true  "Image"
+// @Success		200	{array}	models.Image
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Failure		400	{object}	models.AuthResponseFailed
+// @Failure		500	{object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /upload/productimage [post]
+func (svc ImagesHttp) UploadImageToProduct(ctx microservice.IContext) error {
+
+	fileHeader, _ := ctx.FormFile("file")
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	// find
+	err := svc.service.UploadImageToProduct(shopID, fileHeader)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, &models.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return nil
+	}
+
+	ctx.Response(http.StatusOK, &models.ApiResponse{
+		Success: true,
 	})
 	return nil
 }

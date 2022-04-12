@@ -36,3 +36,7 @@ type UserProfileReponse struct {
 	Success bool        `json:"success"`
 	Data    UserProfile `json:"data"`
 }
+
+type ResponseSuccess struct {
+	Success bool `json:"success"`
+}
