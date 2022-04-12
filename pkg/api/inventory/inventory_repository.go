@@ -12,6 +12,7 @@ import (
 )
 
 type IInventoryRepository interface {
+	CreateInBatch(inventories []models.InventoryDoc) error
 	Create(inventory models.InventoryDoc) (string, error)
 	Update(guid string, inventory models.InventoryDoc) error
 	Delete(shopID string, guid string, username string) error
@@ -30,6 +31,21 @@ func NewInventoryRepository(pst microservice.IPersisterMongo) InventoryRepositor
 	return InventoryRepository{
 		pst: pst,
 	}
+}
+
+func (repo InventoryRepository) CreateInBatch(inventories []models.InventoryDoc) error {
+	var tempList []interface{}
+
+	for _, inv := range inventories {
+		tempList = append(tempList, inv)
+	}
+
+	err := repo.pst.CreateInBatch(&models.InventoryDoc{}, tempList)
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (repo InventoryRepository) Create(inventory models.InventoryDoc) (string, error) {
