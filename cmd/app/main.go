@@ -12,6 +12,7 @@ import (
 	"smlcloudplatform/pkg/api/member"
 	"smlcloudplatform/pkg/api/purchase"
 	"smlcloudplatform/pkg/api/shop"
+	"smlcloudplatform/pkg/api/shop/employee"
 	"smlcloudplatform/pkg/api/syncdata"
 	"smlcloudplatform/pkg/api/tools"
 	"smlcloudplatform/pkg/api/transaction"
@@ -43,6 +44,7 @@ func main() {
 		"/list-shop",
 		"/select-shop",
 		"/create-shop",
+		"/employee/login",
 		"/healthz",
 	}
 
@@ -77,6 +79,9 @@ func main() {
 
 	memberhttp := member.NewMemberHttp(ms, cfg)
 	memberhttp.RouteSetup()
+
+	emphttp := employee.NewEmployeeHttp(ms, cfg)
+	emphttp.RouteSetup()
 
 	toolSvc := tools.NewToolsService(ms, cfg)
 
