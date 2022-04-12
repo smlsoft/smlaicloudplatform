@@ -107,3 +107,7 @@ func (ctx *HTTPContext) Producer(mqConfig IMQConfig) IProducer {
 func (ctx *HTTPContext) MQ(mqConfig IMQConfig) IMQ {
 	return NewMQ(mqConfig, ctx.ms.Logger)
 }
+
+func (ctx *HTTPContext) EchoContext() echo.Context {
+	return ctx.c
+}

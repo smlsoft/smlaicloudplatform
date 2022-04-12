@@ -22,8 +22,8 @@ type Inventory struct {
 	ParID        string  `json:"parid" bson:"parid" gorm:"parid"`
 	ItemSku      string  `json:"itemsku,omitempty" bson:"itemsku,omitempty" gorm:"itemsku,omitempty"`
 	Barcode      string  `json:"barcode" bson:"barcode" gorm:"barcode"`
-	CategoryGuid string  `json:"categoryguid" bson:"categoryguid" gorm:"categoryguid"` // Guid กลุ่มสินค้า
-	Price        float32 `json:"price" bson:"price" gorm:"price"`                      // ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+	CategoryGuid string  `json:"categoryguid,omitempty" bson:"categoryguid" gorm:"categoryguid"` // Guid กลุ่มสินค้า
+	Price        float32 `json:"price" bson:"price" gorm:"price"`                                // ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
 	MemberPrice  float32 `json:"memberprice,omitempty" bson:"memberprice,omitempty" gorm:"memberprice,omitempty"`
 	Recommended  bool    `json:"recommended,omitempty" bson:"recommended,omitempty" gorm:"recommended,omitempty"` // สินค้าแนะนำ
 	Activated    bool    `json:"activated,omitempty" bson:"activated,omitempty" gorm:"activated,omitempty"`       // เปิดใช้งานอยู่

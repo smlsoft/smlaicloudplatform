@@ -7,6 +7,8 @@ import (
 	"smlcloudplatform/internal/microservice/models"
 	"strings"
 	"time"
+
+	"github.com/labstack/echo/v4"
 )
 
 // ConsumerContext implement IContext it is context for Consumer
@@ -104,4 +106,8 @@ func (ctx *ConsumerContext) Producer(mqConfig IMQConfig) IProducer {
 // MQ return MQ
 func (ctx *ConsumerContext) MQ(mqConfig IMQConfig) IMQ {
 	return NewMQ(mqConfig, ctx.ms.Logger)
+}
+
+func (ctx *ConsumerContext) EchoContext() echo.Context {
+	return nil
 }
