@@ -22,6 +22,7 @@ type IInventoryRepository interface {
 	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryDeleteActivity, paginate.PaginationData, error)
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryActivity, paginate.PaginationData, error)
 	FindByItemGuid(itemguid string, shopId string) (models.InventoryDoc, error)
+	FindByItemBarcode(shopId string, barcode string) (models.InventoryDoc, error)
 }
 
 type InventoryRepository struct {
@@ -166,6 +167,17 @@ func (repo InventoryRepository) FindByItemGuid(itemguid string, shopID string) (
 
 	findDoc := &models.InventoryDoc{}
 	err := repo.pst.FindOne(&models.InventoryDoc{}, bson.M{"shopid": shopID, "itemguid": itemguid, "deletedat": bson.M{"$exists": false}}, findDoc)
+
+	if err != nil {
+		return models.InventoryDoc{}, err
+	}
+	return *findDoc, nil
+}
+
+func (repo InventoryRepository) FindByItemBarcode(shopID string, barcode string) (models.InventoryDoc, error) {
+
+	findDoc := &models.InventoryDoc{}
+	err := repo.pst.FindOne(&models.InventoryDoc{}, bson.M{"shopid": shopID, "barcode": barcode, "deletedat": bson.M{"$exists": false}}, findDoc)
 
 	if err != nil {
 		return models.InventoryDoc{}, err
