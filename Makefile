@@ -20,7 +20,6 @@ docker_build_shop_and_ship:
 
 docker_build_inventory:
 	docker build -t smlsoft/smlcloudplatform:inventory -f ./cmd/inventoryservice/Dockerfile .
-	docker push smlsoft/smlcloudplatform:inventory
 
 docker_build_inventory_and_ship:
 	docker build -t smlsoft/smlcloudplatform:inventory -f ./cmd/inventoryservice/Dockerfile .
@@ -33,6 +32,9 @@ docker_build_masterservice_and_ship:
 docker_build_imageservice_and_ship:
 	docker build -t smlsoft/smlcloudplatform:imageuploadservice -f ./cmd/imageuploadservice/Dockerfile .
 	docker push smlsoft/smlcloudplatform:imageuploadservice
+
+docker_build_imageservice:
+	docker build -t smlsoft/smlcloudplatform:imageuploadservice -f ./cmd/imageuploadservice/Dockerfile .
 
 docker_build_memberservice_and_ship:
 	docker build -t smlsoft/smlcloudplatform:member -f ./cmd/memberservice/Dockerfile .

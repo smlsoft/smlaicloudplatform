@@ -63,7 +63,7 @@ func (h InventoryHttp) RouteSetup() {
 	h.ms.POST("/inventory/bulk", h.CreateInBatchInventory)
 	h.ms.PUT("/inventory/:id", h.UpdateInventory)
 	h.ms.DELETE("/inventory/:id", h.DeleteInventory)
-	h.ms.GET("/inventory/sync", h.LastActivityInventory)
+	h.ms.GET("/inventory/fetchupdate", h.LastActivityInventory)
 
 	h.ms.GET("/option/:id", h.InfoInventoryOptionMain)
 	h.ms.GET("/option", h.SearchInventoryOptionMain)
@@ -130,6 +130,15 @@ func (h InventoryHttp) CreateInventory(ctx microservice.IContext) error {
 	return nil
 }
 
+// Create Inventory Bulk godoc
+// @Description Create Inventory
+// @Tags		Inventory
+// @Param		Inventory  body      []models.Inventory  true  "Inventory"
+// @Accept 		json
+// @Success		201	{object}	models.ResponseSuccess
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /inventory/bulk [post]
 func (h InventoryHttp) CreateInBatchInventory(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
@@ -364,6 +373,15 @@ func (h InventoryHttp) InfoMongoInventory(ctx microservice.IContext) error {
 	return nil
 }
 
+// Fetch Update Inventory By Date godoc
+// @Description Fetch Update Inventory By Date
+// @Tags		Inventory
+// @Param		lastUpdate query string true "DateTime"
+// @Accept		json
+// @Success		200 {array} models.InventoryPageResponse
+// @Failure		401 {object} models.AuthResponseFailed
+// @Security	AccessToken
+// @Router		/inventory/fetchupdate [get]
 func (h InventoryHttp) LastActivityInventory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID

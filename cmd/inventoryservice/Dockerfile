@@ -19,6 +19,8 @@ ADD . /go/app
 
 RUN find . -name "*_test.go" -exec rm -rf {} \;
 
+ENV ENVIRONMENT=production
+
 RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build  -o go-app -tags musl ./cmd/inventoryservice/main.go  
 
 ##
@@ -26,6 +28,7 @@ RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build  -o go-app -tags musl ./cmd/i
 ##
 FROM alpine:latest 
 WORKDIR /root/
-COPY --from=builder /go/app/go-app .
 ENV SERVICE_NAME inventory-service
+
+COPY --from=builder /go/app/go-app .
 ENTRYPOINT  /root/go-app

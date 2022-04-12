@@ -1,5 +1,5 @@
+# syntax=docker/dockerfile:1
 
-## smlsoft/smlcloudplatform:authen
 ##
 ## Builder
 ##
@@ -17,6 +17,10 @@ RUN go mod download
 
 ADD . /go/app
 
+RUN find . -name "*_test.go" -exec rm -rf {} \;
+
+ENV ENVIRONMENT=production
+
 RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build  -o go-app -tags musl ./cmd/authenticationservice/main.go  
 
 ##
@@ -24,7 +28,6 @@ RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build  -o go-app -tags musl ./cmd/a
 ##
 FROM alpine:latest 
 WORKDIR /root/
-# ADD ./cmd/authenticationservice/.env .
 ENV SERVICE_NAME authenticaton-api
 
 COPY --from=builder /go/app/go-app .
