@@ -3,6 +3,8 @@ package microservice
 import (
 	"mime/multipart"
 	"smlcloudplatform/internal/microservice/models"
+
+	"github.com/labstack/echo/v4"
 )
 
 type IContext interface {
@@ -22,4 +24,6 @@ type IContext interface {
 	Cacher(cacherConfig ICacherConfig) ICacher
 	Producer(servers IMQConfig) IProducer
 	MQ(servers IMQConfig) IMQ
+
+	EchoContext() echo.Context
 }

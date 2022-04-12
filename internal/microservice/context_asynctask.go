@@ -7,6 +7,8 @@ import (
 	"smlcloudplatform/internal/microservice/models"
 	"strings"
 	"time"
+
+	"github.com/labstack/echo/v4"
 )
 
 // AsyncTaskContext implement IContext it is context for Consumer
@@ -123,4 +125,8 @@ func (ctx *AsyncTaskContext) Producer(mqConfig IMQConfig) IProducer {
 // MQ return MQ
 func (ctx *AsyncTaskContext) MQ(mqConfig IMQConfig) IMQ {
 	return NewMQ(mqConfig, ctx.ms.Logger)
+}
+
+func (ctx *AsyncTaskContext) EchoContext() echo.Context {
+	return nil
 }

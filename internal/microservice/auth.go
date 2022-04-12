@@ -35,9 +35,12 @@ func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...st
 			currentPath := c.Path()
 
 			for _, publicPath := range publicPath {
-				if currentPath == publicPath {
+				if strings.HasPrefix(currentPath, publicPath) {
+					return next(c)
+				} else if currentPath == publicPath {
 					return next(c)
 				}
+
 			}
 
 			tokenStr, err := authService.GetTokenFromContext(c)

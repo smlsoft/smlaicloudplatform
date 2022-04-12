@@ -15,6 +15,7 @@ func main() {
 
 	publicPath := []string{
 		"/images/*",
+		"/productimage/",
 	}
 
 	cacher := ms.Cacher(cfg.CacherConfig())
