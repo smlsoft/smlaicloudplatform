@@ -60,6 +60,7 @@ func (h InventoryHttp) RouteSetup() {
 	// h.ms.GET("/inventory/:id/mongo", h.InfoMongoInventory)
 	h.ms.GET("/inventory", h.SearchInventory)
 	h.ms.POST("/inventory", h.CreateInventory)
+	h.ms.POST("/inventory/bulk", h.CreateInBatchInventory)
 	h.ms.PUT("/inventory/:id", h.UpdateInventory)
 	h.ms.DELETE("/inventory/:id", h.DeleteInventory)
 	h.ms.GET("/inventory/sync", h.LastActivityInventory)
@@ -127,7 +128,38 @@ func (h InventoryHttp) CreateInventory(ctx microservice.IContext) error {
 		})
 
 	return nil
+}
 
+func (h InventoryHttp) CreateInBatchInventory(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	inventoryReq := &[]models.Inventory{}
+	err := json.Unmarshal([]byte(input), &inventoryReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.invService.CreateInBatch(shopID, authUsername, *inventoryReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(
+		http.StatusCreated,
+		models.ApiResponse{
+			Success: true,
+		})
+
+	return nil
 }
 
 // Update Inventory godoc

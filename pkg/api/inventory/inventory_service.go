@@ -14,6 +14,7 @@ import (
 
 type IInventoryService interface {
 	IsExistsGuid(shopID string, guidFixed string) (bool, error)
+	CreateInBatch(shopID string, authUsername string, inventories []models.Inventory) error
 	CreateIndex(doc models.InventoryIndex) error
 	CreateWithGuid(shopID string, authUsername string, guidFixed string, inventory models.Inventory) (string, error)
 	CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, string, error)
@@ -58,6 +59,35 @@ func (svc InventoryService) IsExistsGuid(shopID string, guidFixed string) (bool,
 func (svc InventoryService) CreateIndex(doc models.InventoryIndex) error {
 
 	err := svc.invPgRepo.Create(doc)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func (svc InventoryService) CreateInBatch(shopID string, authUsername string, inventories []models.Inventory) error {
+
+	tempInvDataList := []models.InventoryDoc{}
+
+	for _, inventory := range inventories {
+		newGuid := utils.NewGUID()
+
+		invDoc := models.InventoryDoc{}
+
+		invDoc.GuidFixed = newGuid
+		invDoc.ShopID = shopID
+		invDoc.Inventory = inventory
+
+		invDoc.CreatedBy = authUsername
+		invDoc.CreatedAt = time.Now()
+
+		tempInvDataList = append(tempInvDataList, invDoc)
+	}
+
+	err := svc.invRepo.CreateInBatch(tempInvDataList)
+
 	if err != nil {
 		return err
 	}
