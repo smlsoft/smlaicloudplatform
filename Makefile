@@ -39,3 +39,6 @@ docker_build_imageservice:
 docker_build_memberservice_and_ship:
 	docker build -t smlsoft/smlcloudplatform:member -f ./cmd/memberservice/Dockerfile .
 	docker push smlsoft/smlcloudplatform:member
+
+run_docker_cluster:
+	docker start zookeeper server-redis-1 server-mongodb-1 kafka

@@ -339,6 +339,143 @@ const docTemplate = `{
                 }
             }
         },
+        "/inventory/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Inventory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "description": "Inventory",
+                        "name": "Inventory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Inventory"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccess"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/inventory/categoryupdate/{catid}": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Inventory Category List",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Category ID",
+                        "name": "catid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Inventory",
+                        "name": "Inventory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DocIdentity"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccess"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/inventory/fetchupdate": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Fetch Update Inventory By Date",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "DateTime",
+                        "name": "lastUpdate",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.InventoryPageResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/inventory/{id}": {
             "get": {
                 "security": [
@@ -1473,6 +1610,60 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/upload/productimage": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Image",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Common"
+                ],
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Image",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Image"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1632,6 +1823,14 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "suggestcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DocIdentity": {
+            "type": "object",
+            "properties": {
+                "guidfixed": {
                     "type": "string"
                 }
             }
@@ -2094,6 +2293,14 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ResponseSuccess": {
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "models.ResponseSuccessWithID": {
             "type": "object",
             "properties": {
@@ -2108,6 +2315,9 @@ const docTemplate = `{
             "properties": {
                 "name1": {
                     "type": "string"
+                },
+                "telephone": {
+                    "type": "string"
                 }
             }
         },
@@ -2118,6 +2328,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name1": {
+                    "type": "string"
+                },
+                "telephone": {
                     "type": "string"
                 }
             }

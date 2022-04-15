@@ -104,6 +104,11 @@ definitions:
       suggestcode:
         type: string
     type: object
+  models.DocIdentity:
+    properties:
+      guidfixed:
+        type: string
+    type: object
   models.Image:
     properties:
       uri:
@@ -409,6 +414,11 @@ definitions:
       totalPage:
         type: integer
     type: object
+  models.ResponseSuccess:
+    properties:
+      success:
+        type: boolean
+    type: object
   models.ResponseSuccessWithID:
     properties:
       id: {}
@@ -419,12 +429,16 @@ definitions:
     properties:
       name1:
         type: string
+      telephone:
+        type: string
     type: object
   models.ShopInfo:
     properties:
       guidfixed:
         type: string
       name1:
+        type: string
+      telephone:
         type: string
     type: object
   models.ShopSelectRequest:
@@ -755,6 +769,91 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Inventory
+  /inventory/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Inventory
+      parameters:
+      - description: Inventory
+        in: body
+        name: Inventory
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Inventory'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Inventory
+  /inventory/categoryupdate/{catid}:
+    post:
+      consumes:
+      - application/json
+      description: Update Inventory Category List
+      parameters:
+      - description: Category ID
+        in: path
+        name: catid
+        required: true
+        type: string
+      - description: Inventory
+        in: body
+        name: Inventory
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.DocIdentity'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Inventory
+  /inventory/fetchupdate:
+    get:
+      consumes:
+      - application/json
+      description: Fetch Update Inventory By Date
+      parameters:
+      - description: DateTime
+        in: query
+        name: lastUpdate
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.InventoryPageResponse'
+            type: array
         "401":
           description: Unauthorized
           schema:
@@ -1358,6 +1457,40 @@ paths:
       tags:
       - Synchronize
   /upload/images:
+    post:
+      consumes:
+      - application/json
+      description: Update Image
+      parameters:
+      - description: Image
+        in: formData
+        name: file
+        required: true
+        type: file
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Image'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Common
+  /upload/productimage:
     post:
       consumes:
       - application/json

@@ -17,6 +17,13 @@
             "request": "launch",
             "mode": "auto",
             "program": "cmd/imageuploadservice/main.go"
+        },
+        {
+            "name" : "Launch Inventory Service",
+            "type" : "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "cmd/inventoryservice/main.go"
         }
     ]
 }

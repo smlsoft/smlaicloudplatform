@@ -76,6 +76,8 @@ func (h InventoryHttp) RouteSetup() {
 	h.ms.POST("/optgroup", h.CreateOptionGroup)
 	h.ms.PUT("/optgroup/:id", h.UpdateOptionGroup)
 	h.ms.DELETE("/optgroup/:id", h.DeleteOptionGroup)
+
+	h.ms.POST("/inventory/categoryupdate/:catid", h.UpdateProductCategory)
 }
 
 // Create Inventory godoc
@@ -425,6 +427,50 @@ func (h InventoryHttp) LastActivityInventory(ctx microservice.IContext) error {
 			Success:    true,
 			Data:       docList,
 			Pagination: pagination,
+		})
+
+	return nil
+}
+
+// Update Inventory Category List godoc
+// @Description Update Inventory Category List
+// @Tags		Inventory
+// @Param		catid  path      string  true  "Category ID"
+// @Param		Inventory  body      []models.DocIdentity  true  "Inventory"
+// @Accept 		json
+// @Success		201	{object}	models.ResponseSuccess
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /inventory/categoryupdate/{catid} [post]
+func (h InventoryHttp) UpdateProductCategory(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	catid := ctx.Param("catid")
+
+	input := ctx.ReadInput()
+
+	inventoryReq := &[]models.DocIdentity{}
+	err := json.Unmarshal([]byte(input), &inventoryReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.invService.UpdateProductCategory(shopID, authUsername, catid, *inventoryReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(
+		http.StatusCreated,
+		models.ApiResponse{
+			Success: true,
 		})
 
 	return nil

@@ -25,6 +25,7 @@ type IInventoryService interface {
 	InfoIndexInventory(shopID string, guid string) (models.InventoryInfo, error)
 	SearchInventory(shopID string, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
 	LastActivityInventory(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, paginate.PaginationData, error)
+	UpdateProductCategory(shopId string, authUsername string, catId string, guid []models.DocIdentity) error
 }
 
 type InventoryService struct {
@@ -329,4 +330,37 @@ func (svc InventoryService) LastActivityInventory(shopID string, lastUpdatedDate
 	}
 
 	return lastActivity, pagination, nil
+}
+
+func (svc InventoryService) UpdateProductCategory(shopId string, authUsername string, catId string, guids []models.DocIdentity) error {
+
+	for _, guid := range guids {
+
+		findDoc, err := svc.invRepo.FindByGuid(shopId, guid.GuidFixed)
+
+		if err != nil {
+			return err
+		}
+
+		if findDoc.ID == primitive.NilObjectID {
+			return errors.New("document not found")
+		}
+
+		findDoc.CategoryGuid = catId
+		findDoc.UpdatedBy = authUsername
+		findDoc.UpdatedAt = time.Now()
+
+		err = svc.invRepo.Update(guid.GuidFixed, findDoc)
+
+		if err != nil {
+			return err
+		}
+
+		err = svc.invMqRepo.Update(findDoc.InventoryData)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
