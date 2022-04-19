@@ -18,12 +18,11 @@ func getInventoryOptionMainRepo() inventory.InventoryOptionMainRepository {
 func TestCreateInventoryOptionMain(t *testing.T) {
 	repo := getInventoryOptionMainRepo()
 
-	give := models.InventoryOptionMain{
-		GuidFixed:     "fx01",
-		ShopID:        "mx01",
-		InventoryID:   "inv01",
-		OptionGroupID: "opts01",
-	}
+	give := models.InventoryOptionMainDoc{}
+
+	give.GuidFixed = "fx01"
+	give.ShopID = "mx01"
+	give.Code = "code001"
 
 	_, err := repo.Create(give)
 
@@ -32,7 +31,7 @@ func TestCreateInventoryOptionMain(t *testing.T) {
 		return
 	}
 
-	findDoc, err := repo.FindByGuid("fx01", "mx01")
+	findDoc, err := repo.FindByGuid("mx01", "fx01")
 
 	if err != nil {
 		t.Error(err)
