@@ -70,7 +70,7 @@ func (h *InventoryHttp) UpdateInventoryOptionMain(ctx microservice.IContext) err
 		return err
 	}
 
-	err = h.invOptService.UpdateInventoryOptionMain(id, shopID, authUsername, *docReq)
+	err = h.invOptService.UpdateInventoryOptionMain(shopID, id, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -101,7 +101,7 @@ func (h *InventoryHttp) DeleteInventoryOptionMain(ctx microservice.IContext) err
 
 	id := ctx.Param("id")
 
-	err := h.invOptService.DeleteInventoryOptionMain(id, shopID, authUsername)
+	err := h.invOptService.DeleteInventoryOptionMain(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -131,7 +131,7 @@ func (h *InventoryHttp) InfoInventoryOptionMain(ctx microservice.IContext) error
 
 	id := ctx.Param("id")
 
-	doc, err := h.invOptService.InfoInventoryOptionMain(id, shopID)
+	doc, err := h.invOptService.InfoInventoryOptionMain(shopID, id)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

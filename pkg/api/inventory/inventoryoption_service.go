@@ -12,10 +12,10 @@ import (
 
 type IInventoryOptionMainService interface {
 	CreateInventoryOptionMain(shopID string, authUsername string, invOpt models.InventoryOptionMain) (string, error)
-	UpdateInventoryOptionMain(guid string, shopID string, authUsername string, invOpt models.InventoryOptionMain) error
-	DeleteInventoryOptionMain(guid string, shopID string, username string) error
-	InfoInventoryOptionMain(guid string, shopID string) (models.InventoryOptionMain, error)
-	SearchInventoryOptionMain(shopID string, q string, page int, limit int) ([]models.InventoryOptionMain, paginate.PaginationData, error)
+	UpdateInventoryOptionMain(shopID string, guid string, authUsername string, invOpt models.InventoryOptionMain) error
+	DeleteInventoryOptionMain(shopID string, guid string, username string) error
+	InfoInventoryOptionMain(shopID string, guid string) (models.InventoryOptionMainInfo, error)
+	SearchInventoryOptionMain(shopID string, q string, page int, limit int) ([]models.InventoryOptionMainInfo, paginate.PaginationData, error)
 }
 
 type InventoryOptionMainService struct {
@@ -31,12 +31,21 @@ func NewInventoryOptionMainService(inventoryOptionRepository IInventoryOptionMai
 func (svc InventoryOptionMainService) CreateInventoryOptionMain(shopID string, authUsername string, invOpt models.InventoryOptionMain) (string, error) {
 
 	newGuidFixed := utils.NewGUID()
-	invOpt.ShopID = shopID
-	invOpt.GuidFixed = newGuidFixed
-	invOpt.CreatedBy = authUsername
-	invOpt.CreatedAt = time.Now()
 
-	_, err := svc.repo.Create(invOpt)
+	invOptDoc := models.InventoryOptionMainDoc{}
+	invOptDoc.ShopID = shopID
+	invOptDoc.GuidFixed = newGuidFixed
+
+	invOptDoc.InventoryOptionMain = invOpt
+
+	invOptDoc.CreatedBy = authUsername
+	invOptDoc.CreatedAt = time.Now()
+
+	if invOptDoc.InventoryOptionMain.Choices == nil {
+		invOptDoc.InventoryOptionMain.Choices = &[]models.Choice{}
+	}
+
+	_, err := svc.repo.Create(invOptDoc)
 
 	if err != nil {
 		return "", err
@@ -45,9 +54,9 @@ func (svc InventoryOptionMainService) CreateInventoryOptionMain(shopID string, a
 	return newGuidFixed, nil
 }
 
-func (svc InventoryOptionMainService) UpdateInventoryOptionMain(guid string, shopID string, authUsername string, invOpt models.InventoryOptionMain) error {
+func (svc InventoryOptionMainService) UpdateInventoryOptionMain(shopID string, guid string, authUsername string, invOpt models.InventoryOptionMain) error {
 
-	findDoc, err := svc.repo.FindByGuid(guid, shopID)
+	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return err
@@ -57,11 +66,16 @@ func (svc InventoryOptionMainService) UpdateInventoryOptionMain(guid string, sho
 		return errors.New("document not found")
 	}
 
-	findDoc.InventoryID = invOpt.InventoryID
-	findDoc.OptionGroupID = invOpt.OptionGroupID
+	findDoc.InventoryOptionMain = invOpt
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
+	if findDoc.InventoryOptionMain.Choices == nil {
+		findDoc.InventoryOptionMain.Choices = &[]models.Choice{}
+	}
+
+	svc.repo.Update(guid, findDoc)
+
 	if err != nil {
 		return err
 	}
@@ -69,9 +83,9 @@ func (svc InventoryOptionMainService) UpdateInventoryOptionMain(guid string, sho
 	return nil
 }
 
-func (svc InventoryOptionMainService) DeleteInventoryOptionMain(guid string, shopID string, username string) error {
+func (svc InventoryOptionMainService) DeleteInventoryOptionMain(shopID string, guid string, username string) error {
 
-	err := svc.repo.Delete(guid, shopID, username)
+	err := svc.repo.Delete(shopID, guid, username)
 
 	if err != nil {
 		return err
@@ -80,26 +94,26 @@ func (svc InventoryOptionMainService) DeleteInventoryOptionMain(guid string, sho
 	return nil
 }
 
-func (svc InventoryOptionMainService) InfoInventoryOptionMain(guid string, shopID string) (models.InventoryOptionMain, error) {
+func (svc InventoryOptionMainService) InfoInventoryOptionMain(shopID string, guid string) (models.InventoryOptionMainInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(guid, shopID)
+	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
-		return models.InventoryOptionMain{}, err
+		return models.InventoryOptionMainInfo{}, err
 	}
 
 	if findDoc.ID == primitive.NilObjectID {
-		return models.InventoryOptionMain{}, errors.New("document not found")
+		return models.InventoryOptionMainInfo{}, errors.New("document not found")
 	}
 
-	return findDoc, nil
+	return findDoc.InventoryOptionMainInfo, nil
 }
 
-func (svc InventoryOptionMainService) SearchInventoryOptionMain(shopID string, q string, page int, limit int) ([]models.InventoryOptionMain, paginate.PaginationData, error) {
+func (svc InventoryOptionMainService) SearchInventoryOptionMain(shopID string, q string, page int, limit int) ([]models.InventoryOptionMainInfo, paginate.PaginationData, error) {
 	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
 
 	if err != nil {
-		return []models.InventoryOptionMain{}, pagination, err
+		return []models.InventoryOptionMainInfo{}, pagination, err
 	}
 
 	return docList, pagination, nil

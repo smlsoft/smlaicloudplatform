@@ -97,7 +97,7 @@ type Option struct {
 }
 
 type Choice struct {
-	OptCode     string  `bson:"-" gorm:"optcode;primaryKey" `
+	OptCode     string  `json:"-" bson:"-" gorm:"optcode;primaryKey" `
 	Barcode     string  `json:"barcode" bson:"barcode" gorm:"barcode;primaryKey"`
 	SuggestCode string  `json:"suggestcode,omitempty" bson:"suggestcode,omitempty" gorm:"suggestcode,omitempty"`
 	Price       float64 `json:"price" bson:"price" gorm:"price"`
@@ -195,37 +195,32 @@ type InventoryOptonGroupDetail struct {
 	Amount      float32 `json:"amount" bson:"amount"`
 }
 
+const inventoryOptionCollectionName string = "inventoryOptions"
+
 type InventoryOptionMain struct {
-	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	ShopID        string             `json:"shopid" bson:"shopid"`
-	GuidFixed     string             `json:"guidfixed" bson:"guidfixed"`
-	InventoryID   string             `json:"inventoryid" bson:"inventoryid"`
-	OptionGroupID string             `json:"optiongroupid" bson:"optiongroupid"`
-	Activity
+	Option `bson:"inline" gorm:"embedded;"`
 }
 
-func (*InventoryOptionMain) CollectionName() string {
-	return "inventoryOption"
+type InventoryOptionMainInfo struct {
+	DocIdentity         `bson:"inline" gorm:"embedded;"`
+	InventoryOptionMain `bson:"inline" gorm:"embedded;"`
 }
 
-type InventoryPageResponse struct {
-	Success    bool                   `json:"success"`
-	Data       []InventoryInfo        `json:"data,omitempty"`
-	Pagination PaginationDataResponse `json:"pagination,omitempty"`
+func (InventoryOptionMainInfo) CollectionName() string {
+	return inventoryOptionCollectionName
 }
 
-type InventoryInfoResponse struct {
-	Success bool          `json:"success"`
-	Data    InventoryInfo `json:"data,omitempty"`
+type InventoryOptionMainData struct {
+	ShopIdentity            `bson:"inline" gorm:"embedded;"`
+	InventoryOptionMainInfo `bson:"inline" gorm:"embedded;"`
 }
 
-type InventoryOptionGroupResponse struct {
-	Success    bool                   `json:"success"`
-	Data       []InventoryInfo        `json:"data,omitempty"`
-	Pagination PaginationDataResponse `json:"pagination,omitempty"`
+type InventoryOptionMainDoc struct {
+	ID                      primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	InventoryOptionMainData `bson:"inline" gorm:"embedded;"`
+	Activity                `bson:"inline" gorm:"embedded;"`
 }
 
-type InventoryOptionGroupInfoResponse struct {
-	Success bool          `json:"success"`
-	Data    InventoryInfo `json:"data,omitempty"`
+func (InventoryOptionMainDoc) CollectionName() string {
+	return inventoryOptionCollectionName
 }
