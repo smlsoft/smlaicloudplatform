@@ -1807,9 +1807,6 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
-                "optCode": {
-                    "type": "string"
-                },
                 "price": {
                     "type": "number"
                 },
@@ -2141,20 +2138,38 @@ const docTemplate = `{
         "models.InventoryOptionMain": {
             "type": "object",
             "properties": {
-                "guidfixed": {
+                "choices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Choice"
+                    }
+                },
+                "choicetype": {
+                    "type": "integer"
+                },
+                "code": {
                     "type": "string"
                 },
-                "id": {
+                "maxselect": {
+                    "type": "integer"
+                },
+                "name1": {
                     "type": "string"
                 },
-                "inventoryid": {
+                "name2": {
                     "type": "string"
                 },
-                "optiongroupid": {
+                "name3": {
                     "type": "string"
                 },
-                "shopid": {
+                "name4": {
                     "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
                 }
             }
         },
