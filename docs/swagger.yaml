@@ -91,8 +91,6 @@ definitions:
         type: string
       name5:
         type: string
-      optCode:
-        type: string
       price:
         type: number
       qty:
@@ -315,16 +313,28 @@ definitions:
     type: object
   models.InventoryOptionMain:
     properties:
-      guidfixed:
+      choices:
+        items:
+          $ref: '#/definitions/models.Choice'
+        type: array
+      choicetype:
+        type: integer
+      code:
         type: string
-      id:
+      maxselect:
+        type: integer
+      name1:
         type: string
-      inventoryid:
+      name2:
         type: string
-      optiongroupid:
+      name3:
         type: string
-      shopid:
+      name4:
         type: string
+      name5:
+        type: string
+      required:
+        type: boolean
     type: object
   models.InventoryOptonGroupDetail:
     properties:
