@@ -32,4 +32,5 @@ mock/*.env
 *.development
 **.development
 *.local
-/.vscode
+/.vscode/
+/.vscode/*
