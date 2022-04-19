@@ -862,6 +862,85 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
+  /inventoryimport:
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.InventoryPageResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Import
+    post:
+      consumes:
+      - application/json
+      description: Create Inventory Import
+      parameters:
+      - description: Inventory
+        in: body
+        name: Inventory
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Inventory'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Import
+  /inventoryimport/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Inventory
+      parameters:
+      - description: Inventory Import ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Import
   /list-shop:
     get:
       consumes:

@@ -16,8 +16,13 @@ type IInventoryHttp interface {
 	UpdateInventory(ctx microservice.IContext) error
 	DeleteInventory(ctx microservice.IContext) error
 	InfoInventory(ctx microservice.IContext) error
+	CreateInBatchInventory(ctx microservice.IContext) error
 	SearchInventory(ctx microservice.IContext) error
 	LastActivityInventory(ctx microservice.IContext) error
+
+	SearchInventoryOptionMain(ctx microservice.IContext) error
+	CreateInventoryOptionMain(ctx microservice.IContext) error
+	DeleteInventoryOptionMain(ctx microservice.IContext) error
 }
 
 type InventoryHttp struct {
