@@ -42,13 +42,13 @@ func (h *InventoryImporOptionMaintHttp) RouteSetup() {
 
 // Create Inventory Option godoc
 // @Description Create Inventory Option
-// @Tags		Inventory
+// @Tags		Import
 // @Param		Option  body      models.InventoryOptionMain  true  "Option"
 // @Accept 		json
 // @Success		200	{object}	models.ApiResponse
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
-// @Router /option [post]
+// @Router /optionimport [post]
 func (h InventoryImporOptionMaintHttp) CreateInventoryOptionMain(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
@@ -77,13 +77,13 @@ func (h InventoryImporOptionMaintHttp) CreateInventoryOptionMain(ctx microservic
 
 // Delete Option godoc
 // @Description Delete Option
-// @Tags		Inventory
+// @Tags		Import
 // @Param		id  path      string  true  "Option ID"
 // @Accept 		json
 // @Success		200	{object}	models.ApiResponse
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
-// @Router /option/{id} [delete]
+// @Router /optionimport/{id} [delete]
 func (h InventoryImporOptionMaintHttp) DeleteInventoryOptionMain(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -114,7 +114,7 @@ func (h InventoryImporOptionMaintHttp) DeleteInventoryOptionMain(ctx microservic
 
 // List Inventory Option godoc
 // @Description List Inventory Option
-// @Tags		Inventory
+// @Tags		Import
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Add Category"
 // @Param		limit	query	integer		false  "Add Category"
@@ -122,7 +122,7 @@ func (h InventoryImporOptionMaintHttp) DeleteInventoryOptionMain(ctx microservic
 // @Success		200	{object}	models.ApiResponse
 // @Failure		401 {object}	models.ApiResponse
 // @Security     AccessToken
-// @Router /option [get]
+// @Router /optionimport [get]
 func (h InventoryImporOptionMaintHttp) ListInventoryOptionMain(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
