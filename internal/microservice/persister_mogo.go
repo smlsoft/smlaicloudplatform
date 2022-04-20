@@ -2,7 +2,6 @@ package microservice
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"sync"
 	"time"
@@ -28,7 +27,7 @@ type IPersisterMongo interface {
 	CreateInBatch(model interface{}, data []interface{}) error
 	Count(model interface{}, filter interface{}) (int, error)
 	Exec(model interface{}) (*mongo.Collection, error)
-	Delete(model interface{}, args ...interface{}) error
+	Delete(model interface{}, filter interface{}) error
 	DeleteByID(model interface{}, id string) error
 	SoftDelete(model interface{}, username string, filter interface{}) error
 	SoftBatchDeleteByID(model interface{}, username string, ids []string) error
@@ -452,7 +451,7 @@ func (pst *PersisterMongo) SoftBatchDeleteByID(model interface{}, username strin
 	return nil
 }
 
-func (pst *PersisterMongo) Delete(model interface{}, args ...interface{}) error {
+func (pst *PersisterMongo) Delete(model interface{}, filter interface{}) error {
 	db, err := pst.getClient()
 	if err != nil {
 		return err
@@ -463,7 +462,7 @@ func (pst *PersisterMongo) Delete(model interface{}, args ...interface{}) error 
 		return err
 	}
 
-	_, err = db.Collection(collectionName).DeleteMany(pst.ctx, args)
+	_, err = db.Collection(collectionName).DeleteMany(pst.ctx, filter)
 	if err != nil {
 		return err
 	}
@@ -543,7 +542,7 @@ func (pst *PersisterMongo) Aggregate(model interface{}, pipeline []bson.D, decod
 	// }
 
 	// fmt.Printf("%s\n\n", pageFilter)
-	fmt.Printf("%s\n\n", pipeline[0])
+	// fmt.Printf("%s\n\n", pipeline[0])
 
 	//facetStage := bson.D{{"$facet", query1}}
 
@@ -558,14 +557,14 @@ func (pst *PersisterMongo) Aggregate(model interface{}, pipeline []bson.D, decod
 		return err
 	}
 
-	rx, err := json.Marshal(resultx[0])
-	if err != nil {
-		return err
-	}
+	// rx, err := json.Marshal(resultx[0])
+	// if err != nil {
+	// 	return err
+	// }
 
-	fmt.Printf("\n\n%s\n", rx)
+	// fmt.Printf("\n\n%s\n", rx)
 
-	fmt.Printf("\n===result===\n%v\n\n", resultx)
+	// fmt.Printf("\n===result===\n%v\n\n", resultx)
 
 	return nil
 }
