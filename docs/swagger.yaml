@@ -38,6 +38,21 @@ definitions:
       name5:
         type: string
     type: object
+  models.CategoryImport:
+    properties:
+      image:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+    type: object
   models.CategoryInfo:
     properties:
       guidfixed:
@@ -312,6 +327,31 @@ definitions:
         type: string
     type: object
   models.InventoryOptionMain:
+    properties:
+      choices:
+        items:
+          $ref: '#/definitions/models.Choice'
+        type: array
+      choicetype:
+        type: integer
+      code:
+        type: string
+      maxselect:
+        type: integer
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      required:
+        type: boolean
+    type: object
+  models.InventoryOptionMainImport:
     properties:
       choices:
         items:
@@ -692,6 +732,87 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
+  /categoryimport:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Category
+      parameters:
+      - description: Category Import ID
+        in: body
+        name: id
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Import
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CategoryPageResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Import
+    post:
+      consumes:
+      - application/json
+      description: Create Catagory Import
+      parameters:
+      - description: Catagory
+        in: body
+        name: Catagory
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.CategoryImport'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Import
   /inventory:
     get:
       consumes:
@@ -911,16 +1032,42 @@ paths:
       tags:
       - Inventory
   /inventoryimport:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Inventory
+      parameters:
+      - description: Inventory Import ID
+        in: body
+        name: id
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Import
     get:
       consumes:
       - application/json
       description: get struct array by ID
       parameters:
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Size
         in: query
         name: limit
         type: integer
@@ -957,30 +1104,6 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/models.ResponseSuccess'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Import
-  /inventoryimport/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete Inventory
-      parameters:
-      - description: Inventory Import ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
@@ -1446,20 +1569,42 @@ paths:
       tags:
       - Inventory
   /optionimport:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Option
+      parameters:
+      - description: Option ID
+        in: body
+        name: id
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Import
     get:
       consumes:
       - application/json
       description: List Inventory Option
       parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Size
         in: query
         name: limit
         type: integer
@@ -1467,11 +1612,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.InventoryOptionPageResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -1486,40 +1631,18 @@ paths:
         name: Option
         required: true
         schema:
-          $ref: '#/definitions/models.InventoryOptionMain'
+          items:
+            $ref: '#/definitions/models.InventoryOptionMainImport'
+          type: array
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.ResponseSuccess'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
-      security:
-      - AccessToken: []
-      tags:
-      - Import
-  /optionimport/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete Option
-      parameters:
-      - description: Option ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:

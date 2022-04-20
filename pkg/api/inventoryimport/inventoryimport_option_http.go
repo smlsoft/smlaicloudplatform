@@ -43,10 +43,10 @@ func (h *InventoryImporOptionMaintHttp) RouteSetup() {
 // Create Inventory Option godoc
 // @Description Create Inventory Option
 // @Tags		Import
-// @Param		Option  body      models.InventoryOptionMain  true  "Option"
+// @Param		Option  body	[]models.InventoryOptionMainImport  true  "Option"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.ResponseSuccess
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /optionimport [post]
 func (h InventoryImporOptionMaintHttp) CreateInventoryOptionMain(ctx microservice.IContext) error {
@@ -69,7 +69,7 @@ func (h InventoryImporOptionMaintHttp) CreateInventoryOptionMain(ctx microservic
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusOK, models.ApiResponse{
 		Success: true,
 	})
 	return nil
@@ -78,12 +78,12 @@ func (h InventoryImporOptionMaintHttp) CreateInventoryOptionMain(ctx microservic
 // Delete Option godoc
 // @Description Delete Option
 // @Tags		Import
-// @Param		id  path      string  true  "Option ID"
+// @Param		id  body      []string  true  "Option ID"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.ResponseSuccess
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /optionimport/{id} [delete]
+// @Router /optionimport [delete]
 func (h InventoryImporOptionMaintHttp) DeleteInventoryOptionMain(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -105,7 +105,7 @@ func (h InventoryImporOptionMaintHttp) DeleteInventoryOptionMain(ctx microservic
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusOK, models.ApiResponse{
 		Success: true,
 	})
 
@@ -115,12 +115,11 @@ func (h InventoryImporOptionMaintHttp) DeleteInventoryOptionMain(ctx microservic
 // List Inventory Option godoc
 // @Description List Inventory Option
 // @Tags		Import
-// @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Size"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.InventoryOptionPageResponse
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /optionimport [get]
 func (h InventoryImporOptionMaintHttp) ListInventoryOptionMain(ctx microservice.IContext) error {
@@ -144,7 +143,7 @@ func (h InventoryImporOptionMaintHttp) ListInventoryOptionMain(ctx microservice.
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusOK, models.ApiResponse{
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
