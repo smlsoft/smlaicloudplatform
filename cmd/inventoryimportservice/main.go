@@ -2,7 +2,7 @@ package main
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/inventory"
+	"smlcloudplatform/pkg/api/inventoryimport"
 )
 
 func main() {
@@ -16,8 +16,15 @@ func main() {
 	authService := microservice.NewAuthService(cacher, 24*3)
 	ms.HttpMiddleware(authService.MWFuncWithRedis(cacher))
 
-	h := inventory.NewInventoryImportHttp(ms, cfg)
-	h.RouteSetup()
+	invImp := inventoryimport.NewInventoryImportHttp(ms, cfg)
+	invImp.RouteSetup()
+
+	invOptionImp := inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg)
+	invOptionImp.RouteSetup()
+
+	catImp := inventoryimport.NewCategoryImportHttp(ms, cfg)
+	catImp.RouteSetup()
+
 	// categoryHttp := category.NewCategoryHttp(ms, cfg)
 	// categoryHttp.RouteSetup()
 	ms.Start()

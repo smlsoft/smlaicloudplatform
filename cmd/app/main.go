@@ -9,6 +9,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/authentication"
 	"smlcloudplatform/pkg/api/inventory"
+	"smlcloudplatform/pkg/api/inventoryimport"
 	"smlcloudplatform/pkg/api/member"
 	"smlcloudplatform/pkg/api/purchase"
 	"smlcloudplatform/pkg/api/shop"
@@ -82,6 +83,15 @@ func main() {
 
 	emphttp := employee.NewEmployeeHttp(ms, cfg)
 	emphttp.RouteSetup()
+
+	invImp := inventoryimport.NewInventoryImportHttp(ms, cfg)
+	invImp.RouteSetup()
+
+	invOptionImp := inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg)
+	invOptionImp.RouteSetup()
+
+	catImp := inventoryimport.NewCategoryImportHttp(ms, cfg)
+	catImp.RouteSetup()
 
 	toolSvc := tools.NewToolsService(ms, cfg)
 
