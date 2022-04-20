@@ -43,8 +43,8 @@ func (h *InventoryImportHttp) RouteSetup() {
 // List Inventory Import godoc
 // @Description get struct array by ID
 // @Tags		Import
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Size"
 // @Accept 		json
 // @Success		200	{array}	models.InventoryPageResponse
 // @Failure		401 {object}	models.AuthResponseFailed
@@ -71,7 +71,7 @@ func (h *InventoryImportHttp) ListInventoryImport(ctx microservice.IContext) err
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusOK, models.ApiResponse{
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
@@ -117,12 +117,12 @@ func (h *InventoryImportHttp) CreateInventoryImport(ctx microservice.IContext) e
 // Delete Inventory Import godoc
 // @Description Delete Inventory
 // @Tags		Import
-// @Param		id  path      string  true  "Inventory Import ID"
+// @Param		id  body      []string  true  "Inventory Import ID"
 // @Accept 		json
-// @Success		200	{object}	models.ResponseSuccessWithID
+// @Success		200	{object}	models.ResponseSuccess
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /inventoryimport/{id} [delete]
+// @Router /inventoryimport [delete]
 func (h *InventoryImportHttp) DeleteInventoryImport(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -144,7 +144,7 @@ func (h *InventoryImportHttp) DeleteInventoryImport(ctx microservice.IContext) e
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusOK, models.ApiResponse{
 		Success: true,
 	})
 
