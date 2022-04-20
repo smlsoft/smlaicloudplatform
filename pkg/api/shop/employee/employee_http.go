@@ -2,7 +2,6 @@ package employee
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
@@ -31,7 +30,6 @@ func NewEmployeeHttp(ms *microservice.Microservice, cfg microservice.IConfig) Em
 }
 
 func (h EmployeeHttp) RouteSetup() {
-	fmt.Println("route set up")
 	h.ms.POST("/employee/login", h.Login)
 	h.ms.POST("/employee", h.Register)
 	h.ms.GET("/employee", h.SearchEmployee)
