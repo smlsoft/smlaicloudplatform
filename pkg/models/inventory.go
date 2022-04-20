@@ -86,8 +86,8 @@ type InventoryTag struct {
 type Option struct {
 	Code       string    `json:"code" bson:"code" gorm:"code;primaryKey"`
 	Required   bool      `json:"required" bson:"required" gorm:"required"`
-	ChoiceType int8      `json:"choicetype,omitempty" bson:"choicetype,omitempty" gorm:"choicetype,omitempty"`
-	MaxSelect  int8      `json:"maxselect,omitempty" bson:"maxselect,omitempty" gorm:"maxselect,omitempty"`
+	ChoiceType int8      `json:"choicetype" bson:"choicetype,omitempty" gorm:"choicetype,omitempty"`
+	MaxSelect  int8      `json:"maxselect" bson:"maxselect,omitempty" gorm:"maxselect,omitempty"`
 	Name1      string    `json:"name1" bson:"name1" gorm:"name1"`
 	Name2      string    `json:"name2,omitempty" bson:"name2,omitempty" gorm:"name2,omitempty"`
 	Name3      string    `json:"name3,omitempty" bson:"name3,omitempty" gorm:"name3,omitempty"`

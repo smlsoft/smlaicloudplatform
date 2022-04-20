@@ -336,6 +336,44 @@ definitions:
       required:
         type: boolean
     type: object
+  models.InventoryOptionMainInfo:
+    properties:
+      choices:
+        items:
+          $ref: '#/definitions/models.Choice'
+        type: array
+      choicetype:
+        type: integer
+      code:
+        type: string
+      guidfixed:
+        type: string
+      maxselect:
+        type: integer
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      required:
+        type: boolean
+    type: object
+  models.InventoryOptionPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.InventoryOptionMainInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
   models.InventoryOptonGroupDetail:
     properties:
       amount:
@@ -1298,11 +1336,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.InventoryOptionPageResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -1319,14 +1357,14 @@ paths:
         schema:
           $ref: '#/definitions/models.InventoryOptionMain'
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -1346,11 +1384,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -1369,11 +1407,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.InventoryOptionMainInfo'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
       tags:
@@ -1398,6 +1436,37 @@ paths:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Inventory
+  /optionimport:
+    get:
+      consumes:
+      - application/json
+      description: List Inventory Option
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
             $ref: '#/definitions/models.ApiResponse'
         "401":
           description: Unauthorized
@@ -1406,7 +1475,55 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Inventory
+      - Import
+    post:
+      consumes:
+      - application/json
+      description: Create Inventory Option
+      parameters:
+      - description: Option
+        in: body
+        name: Option
+        required: true
+        schema:
+          $ref: '#/definitions/models.InventoryOptionMain'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      security:
+      - AccessToken: []
+      tags:
+      - Import
+  /optionimport/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Option
+      parameters:
+      - description: Option ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      security:
+      - AccessToken: []
+      tags:
+      - Import
   /profile:
     get:
       consumes:

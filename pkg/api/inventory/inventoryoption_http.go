@@ -13,7 +13,7 @@ import (
 // @Tags		Inventory
 // @Param		Option  body      models.InventoryOptionMain  true  "Option"
 // @Accept 		json
-// @Success		200	{object}	models.ResponseSuccessWithID
+// @Success		201	{object}	models.ResponseSuccessWithID
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /option [post]
@@ -108,7 +108,7 @@ func (h *InventoryHttp) DeleteInventoryOptionMain(ctx microservice.IContext) err
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusOK, models.ApiResponse{
 		Success: true,
 		ID:      id,
 	})
@@ -138,7 +138,7 @@ func (h *InventoryHttp) InfoInventoryOptionMain(ctx microservice.IContext) error
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusOK, models.ApiResponse{
 		Success: true,
 		Data:    doc,
 	})
@@ -178,7 +178,7 @@ func (h *InventoryHttp) SearchInventoryOptionMain(ctx microservice.IContext) err
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusOK, models.ApiResponse{
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
