@@ -6,10 +6,10 @@ const categoryCollectionName = "categories"
 
 type Category struct {
 	Name1 string `json:"name1" bson:"name1"`
-	Name2 string `json:"name2" bson:"name2"`
-	Name3 string `json:"name3" bson:"name3"`
-	Name4 string `json:"name4" bson:"name4"`
-	Name5 string `json:"name5" bson:"name5"`
+	Name2 string `json:"name2,omitempty" bson:"name2,omitempty"`
+	Name3 string `json:"name3,omitempty" bson:"name3,omitempty"`
+	Name4 string `json:"name4,omitempty" bson:"name4,omitempty"`
+	Name5 string `json:"name5,omitempty" bson:"name5,omitempty"`
 	Image string `json:"image" bson:"image"`
 }
 
