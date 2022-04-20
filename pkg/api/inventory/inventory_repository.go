@@ -72,7 +72,11 @@ func (repo InventoryRepository) Update(guid string, inventory models.InventoryDo
 
 func (repo InventoryRepository) Delete(shopID string, guid string, username string) error {
 
-	err := repo.pst.SoftDelete(&models.InventoryDoc{}, username, bson.M{"guidfixed": guid, "shopid": shopID})
+	err := repo.pst.SoftDeleteLastUpdate(&models.InventoryDoc{}, username, bson.M{"guidfixed": guid, "shopid": shopID})
+
+	if err != nil {
+		return err
+	}
 
 	if err != nil {
 		return err

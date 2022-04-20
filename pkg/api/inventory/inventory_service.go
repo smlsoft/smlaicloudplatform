@@ -83,6 +83,7 @@ func (svc InventoryService) CreateInBatch(shopID string, authUsername string, in
 
 		invDoc.CreatedBy = authUsername
 		invDoc.CreatedAt = time.Now()
+		invDoc.LastUpdatedAt = time.Now()
 
 		tempInvDataList = append(tempInvDataList, invDoc)
 	}
@@ -109,6 +110,7 @@ func (svc InventoryService) CreateWithGuid(shopID string, authUsername string, g
 
 	invDoc.CreatedBy = authUsername
 	invDoc.CreatedAt = time.Now()
+	invDoc.LastUpdatedAt = time.Now()
 
 	mongoIdx, err := svc.invRepo.Create(invDoc)
 
@@ -186,6 +188,7 @@ func (svc InventoryService) UpdateInventory(shopID string, guid string, authUser
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
+	findDoc.LastUpdatedAt = time.Now()
 
 	err = svc.invRepo.Update(guid, findDoc)
 
@@ -241,7 +244,7 @@ func (svc InventoryService) InfoMongoInventory(id string) (models.InventoryInfo,
 }
 
 func (svc InventoryService) InfoInventory(shopID string, guid string) (models.InventoryInfo, error) {
-	start := time.Now()
+
 	findDoc, err := svc.invRepo.FindByGuid(shopID, guid)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
@@ -252,14 +255,11 @@ func (svc InventoryService) InfoInventory(shopID string, guid string) (models.In
 	// 	return models.InventoryInfo{}, nil
 	// }
 
-	elapsed := time.Since(start)
-	fmt.Printf("mongo :: shopID,guidFixed :: %s\n", elapsed)
-
 	return findDoc.InventoryInfo, nil
 }
 
 func (svc InventoryService) InfoIndexInventory(shopID string, guid string) (models.InventoryInfo, error) {
-	start := time.Now()
+
 	invIndex, err := svc.invPgRepo.FindByGuid(shopID, guid)
 
 	idx, err := primitive.ObjectIDFromHex(invIndex.ID)
@@ -269,8 +269,7 @@ func (svc InventoryService) InfoIndexInventory(shopID string, guid string) (mode
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return models.InventoryInfo{}, err
 	}
-	elapsed := time.Since(start)
-	fmt.Printf("mongo,pg :: shopID,guidFixed :: %s\n", elapsed)
+
 	return findDoc.InventoryInfo, nil
 }
 

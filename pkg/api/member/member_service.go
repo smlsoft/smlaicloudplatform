@@ -69,6 +69,8 @@ func (svc MemberService) CreateWithGuid(shopID string, username string, guid str
 	dataDoc.CreatedBy = username
 	dataDoc.CreatedAt = time.Now()
 
+	dataDoc.LastUpdatedAt = time.Now()
+
 	dataDoc.Member = doc
 
 	_, err := svc.memberRepo.Create(dataDoc)
@@ -88,6 +90,8 @@ func (svc MemberService) Create(shopID string, username string, doc models.Membe
 	dataDoc.ShopID = shopID
 	dataDoc.CreatedBy = username
 	dataDoc.CreatedAt = time.Now()
+
+	dataDoc.LastUpdatedAt = time.Now()
 
 	dataDoc.Member = doc
 
@@ -115,6 +119,8 @@ func (svc MemberService) Update(shopID string, guid string, username string, doc
 	findDoc.UpdatedBy = username
 	findDoc.UpdatedAt = time.Now()
 	findDoc.Member = doc
+
+	findDoc.LastUpdatedAt = time.Now()
 
 	err = svc.memberRepo.Update(guid, findDoc)
 

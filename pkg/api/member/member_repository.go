@@ -44,7 +44,7 @@ func (repo MemberRepository) Update(guid string, doc models.MemberDoc) error {
 }
 
 func (repo MemberRepository) Delete(shopID string, guid string, uername string) error {
-	err := repo.pst.SoftDelete(&models.MemberDoc{}, uername, bson.M{"guidfixed": guid, "shopid": shopID})
+	err := repo.pst.SoftDeleteLastUpdate(&models.MemberDoc{}, uername, bson.M{"guidfixed": guid, "shopid": shopID})
 	if err != nil {
 		return err
 	}

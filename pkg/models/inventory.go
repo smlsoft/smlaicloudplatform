@@ -135,6 +135,7 @@ type InventoryDoc struct {
 	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	InventoryData `bson:"inline"`
 	Activity      `bson:"inline"`
+	LastUpdate    `bson:"inline"`
 }
 
 func (InventoryDoc) CollectionName() string {

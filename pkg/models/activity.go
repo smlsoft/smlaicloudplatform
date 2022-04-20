@@ -15,3 +15,7 @@ type LastActivity struct {
 	New    interface{} `json:"new" `
 	Remove interface{} `json:"remove"`
 }
+
+type LastUpdate struct {
+	LastUpdatedAt time.Time `json:"lastupdatedat" bson:"lastupdatedat"`
+}

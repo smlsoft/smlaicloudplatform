@@ -37,6 +37,7 @@ type MemberDoc struct {
 	ID         primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	MemberData `bson:"inline"`
 	Activity   `bson:"inline"`
+	LastUpdate `bson:"inline"`
 }
 
 func (MemberDoc) CollectionName() string {
