@@ -13,8 +13,8 @@ import (
 // @Tags		Inventory
 // @Param		Option  body      models.InventoryOptionMain  true  "Option"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /option [post]
 func (h *InventoryHttp) CreateInventoryOptionMain(ctx microservice.IContext) error {
@@ -50,8 +50,8 @@ func (h *InventoryHttp) CreateInventoryOptionMain(ctx microservice.IContext) err
 // @Param		id  path      string  true  "Option ID"
 // @Param		Option  body      models.InventoryOptionMain  true  "Option"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /option/{id} [put]
 func (h *InventoryHttp) UpdateInventoryOptionMain(ctx microservice.IContext) error {
@@ -90,8 +90,8 @@ func (h *InventoryHttp) UpdateInventoryOptionMain(ctx microservice.IContext) err
 // @Tags		Inventory
 // @Param		id  path      string  true  "Option ID"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /option/{id} [delete]
 func (h *InventoryHttp) DeleteInventoryOptionMain(ctx microservice.IContext) error {
@@ -121,8 +121,8 @@ func (h *InventoryHttp) DeleteInventoryOptionMain(ctx microservice.IContext) err
 // @Tags		Inventory
 // @Param		id  path      string  true  "Option Id"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.InventoryOptionMainInfo
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /option/{id} [get]
 func (h *InventoryHttp) InfoInventoryOptionMain(ctx microservice.IContext) error {
@@ -152,8 +152,8 @@ func (h *InventoryHttp) InfoInventoryOptionMain(ctx microservice.IContext) error
 // @Param		page	query	integer		false  "Add Category"
 // @Param		limit	query	integer		false  "Add Category"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
-// @Failure		401 {object}	models.ApiResponse
+// @Success		200	{object}	models.InventoryOptionPageResponse
+// @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /option [get]
 func (h *InventoryHttp) SearchInventoryOptionMain(ctx microservice.IContext) error {
