@@ -34,9 +34,9 @@ func NewInventoryImporOptionMaintHttp(ms *microservice.Microservice, cfg microse
 
 func (h *InventoryImporOptionMaintHttp) RouteSetup() {
 
-	h.ms.GET("/optionimport", h.ListInventoryOptionMain)
-	h.ms.POST("/optionimport", h.CreateInventoryOptionMain)
-	h.ms.DELETE("/optionimport", h.DeleteInventoryOptionMain)
+	h.ms.GET("/import/option", h.ListInventoryOptionMain)
+	h.ms.POST("/import/option", h.CreateInventoryOptionMain)
+	h.ms.DELETE("/import/option", h.DeleteInventoryOptionMain)
 
 }
 
@@ -48,7 +48,7 @@ func (h *InventoryImporOptionMaintHttp) RouteSetup() {
 // @Success		200	{object}	models.ResponseSuccess
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /optionimport [post]
+// @Router /import/option [post]
 func (h InventoryImporOptionMaintHttp) CreateInventoryOptionMain(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
@@ -83,7 +83,7 @@ func (h InventoryImporOptionMaintHttp) CreateInventoryOptionMain(ctx microservic
 // @Success		200	{object}	models.ResponseSuccess
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /optionimport [delete]
+// @Router /import/option [delete]
 func (h InventoryImporOptionMaintHttp) DeleteInventoryOptionMain(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -121,7 +121,7 @@ func (h InventoryImporOptionMaintHttp) DeleteInventoryOptionMain(ctx microservic
 // @Success		200	{object}	models.InventoryOptionPageResponse
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /optionimport [get]
+// @Router /import/option [get]
 func (h InventoryImporOptionMaintHttp) ListInventoryOptionMain(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID

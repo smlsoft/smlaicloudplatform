@@ -33,9 +33,9 @@ func NewCategoryImportHttp(ms *microservice.Microservice, cfg microservice.IConf
 }
 
 func (h *CategoryImportHttp) RouteSetup() {
-	h.ms.GET("/categoryimport", h.ListCategoryImport)
-	h.ms.POST("/categoryimport", h.CreateCategoryImport)
-	h.ms.DELETE("/categoryimport", h.DeleteCategoryImport)
+	h.ms.GET("/import/category", h.ListCategoryImport)
+	h.ms.POST("/import/category", h.CreateCategoryImport)
+	h.ms.DELETE("/import/category", h.DeleteCategoryImport)
 }
 
 // List Category Import godoc
@@ -44,10 +44,10 @@ func (h *CategoryImportHttp) RouteSetup() {
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
 // @Accept 		json
-// @Success		200	{array}	models.CategoryPageResponse
+// @Success		200	{array}	models.CategoryImportPageResponse
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /categoryimport [get]
+// @Router /import/category [get]
 func (h *CategoryImportHttp) ListCategoryImport(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -85,7 +85,7 @@ func (h *CategoryImportHttp) ListCategoryImport(ctx microservice.IContext) error
 // @Success		201	{object}	models.ResponseSuccess
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /categoryimport [post]
+// @Router /import/category [post]
 func (h *CategoryImportHttp) CreateCategoryImport(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
@@ -120,7 +120,7 @@ func (h *CategoryImportHttp) CreateCategoryImport(ctx microservice.IContext) err
 // @Success		200	{object}	models.ResponseSuccess
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /categoryimport [delete]
+// @Router /import/category [delete]
 func (h *CategoryImportHttp) DeleteCategoryImport(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
