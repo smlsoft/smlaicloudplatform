@@ -46,8 +46,8 @@ func (svc InventoryOptionMainImportService) CreateInBatch(shopID string, authUse
 
 		tempInvDataList = append(tempInvDataList, invDoc)
 	}
-	//Clear old item
-	svc.repo.DeleteInBatch(shopID, codeList)
+	//Clear old items
+	svc.repo.DeleteInBatchCode(shopID, codeList)
 
 	err := svc.repo.CreateInBatch(tempInvDataList)
 

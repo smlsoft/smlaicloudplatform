@@ -11,6 +11,7 @@ import (
 type ICategoryImportRepository interface {
 	CreateInBatch(inventories []models.CategoryImportDoc) error
 	DeleteInBatch(shopID string, guidList []string) error
+	DeleteInBatchCode(shopID string, codeList []string) error
 	FindPage(shopID string, page int, limit int) ([]models.CategoryImportInfo, paginate.PaginationData, error)
 }
 
@@ -43,6 +44,19 @@ func (repo CategoryImportRepository) DeleteInBatch(shopID string, guidList []str
 	err := repo.pst.Delete(&models.CategoryImportDoc{}, bson.M{
 		"shopid":    shopID,
 		"guidfixed": bson.M{"$in": guidList},
+	})
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repo CategoryImportRepository) DeleteInBatchCode(shopID string, codeList []string) error {
+
+	err := repo.pst.Delete(&models.CategoryImportDoc{}, bson.M{
+		"shopid": shopID,
+		"code":   bson.M{"$in": codeList},
 	})
 
 	if err != nil {

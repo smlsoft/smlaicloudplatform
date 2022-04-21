@@ -11,6 +11,7 @@ import (
 type IInventoryOptionMainImportRepository interface {
 	CreateInBatch(inventories []models.InventoryOptionMainImportDoc) error
 	DeleteInBatch(shopID string, guidList []string) error
+	DeleteInBatchCode(shopID string, codeList []string) error
 	FindPage(shopID string, page int, limit int) ([]models.InventoryOptionMainImportInfo, paginate.PaginationData, error)
 }
 
@@ -43,6 +44,19 @@ func (repo InventoryOptionMainImportRepository) DeleteInBatch(shopID string, gui
 	err := repo.pst.Delete(&models.InventoryOptionMainImportDoc{}, bson.M{
 		"shopid":    shopID,
 		"guidfixed": bson.M{"$in": guidList},
+	})
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repo InventoryOptionMainImportRepository) DeleteInBatchCode(shopID string, codeList []string) error {
+
+	err := repo.pst.Delete(&models.InventoryOptionMainImportDoc{}, bson.M{
+		"shopid": shopID,
+		"code":   bson.M{"$in": codeList},
 	})
 
 	if err != nil {
