@@ -11,7 +11,7 @@ import (
 type ICategoryImportService interface {
 	CreateInBatch(shopID string, authUsername string, options []models.CategoryImport) error
 	Delete(shopID string, guidList []string) error
-	ListInventory(shopID string, page int, limit int) ([]models.CategoryImportInfo, paginate.PaginationData, error)
+	List(shopID string, page int, limit int) ([]models.CategoryImportInfo, paginate.PaginationData, error)
 }
 
 type CategoryImportService struct {
@@ -64,7 +64,7 @@ func (svc CategoryImportService) Delete(shopID string, guidList []string) error 
 	return nil
 }
 
-func (svc CategoryImportService) ListInventory(shopID string, page int, limit int) ([]models.CategoryImportInfo, paginate.PaginationData, error) {
+func (svc CategoryImportService) List(shopID string, page int, limit int) ([]models.CategoryImportInfo, paginate.PaginationData, error) {
 	docList, pagination, err := svc.repo.FindPage(shopID, page, limit)
 
 	if err != nil {

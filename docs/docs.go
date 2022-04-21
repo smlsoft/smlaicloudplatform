@@ -247,6 +247,137 @@ const docTemplate = `{
                 }
             }
         },
+        "/categoryimport": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Import"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CategoryPageResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Catagory Import",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Import"
+                ],
+                "parameters": [
+                    {
+                        "description": "Catagory",
+                        "name": "Catagory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CategoryImport"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccess"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Category",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Import"
+                ],
+                "parameters": [
+                    {
+                        "description": "Category Import ID",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccess"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/inventory": {
             "get": {
                 "security": [
@@ -615,13 +746,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Page",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Size",
                         "name": "limit",
                         "in": "query"
                     }
@@ -685,9 +816,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/inventoryimport/{id}": {
+            },
             "delete": {
                 "security": [
                     {
@@ -703,18 +832,23 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "type": "string",
                         "description": "Inventory Import ID",
                         "name": "id",
-                        "in": "path",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                            "$ref": "#/definitions/models.ResponseSuccess"
                         }
                     },
                     "401": {
@@ -1477,20 +1611,14 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Page",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Size",
                         "name": "limit",
                         "in": "query"
                     }
@@ -1499,13 +1627,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.InventoryOptionPageResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -1530,7 +1658,10 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.InventoryOptionMain"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.InventoryOptionMainImport"
+                            }
                         }
                     }
                 ],
@@ -1538,19 +1669,17 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.ResponseSuccess"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
-            }
-        },
-        "/optionimport/{id}": {
+            },
             "delete": {
                 "security": [
                     {
@@ -1566,24 +1695,29 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "type": "string",
                         "description": "Option ID",
                         "name": "id",
-                        "in": "path",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.ResponseSuccess"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     }
                 }
@@ -1960,6 +2094,29 @@ const docTemplate = `{
             }
         },
         "models.Category": {
+            "type": "object",
+            "properties": {
+                "image": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CategoryImport": {
             "type": "object",
             "properties": {
                 "image": {
@@ -2392,6 +2549,44 @@ const docTemplate = `{
             }
         },
         "models.InventoryOptionMain": {
+            "type": "object",
+            "properties": {
+                "choices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Choice"
+                    }
+                },
+                "choicetype": {
+                    "type": "integer"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "maxselect": {
+                    "type": "integer"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.InventoryOptionMainImport": {
             "type": "object",
             "properties": {
                 "choices": {
