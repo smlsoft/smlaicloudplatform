@@ -96,3 +96,9 @@ type CategoryImportDoc struct {
 func (CategoryImportDoc) CollectionName() string {
 	return categoryImportCollectionName
 }
+
+type CategoryImportPageResponse struct {
+	Success    bool                   `json:"success"`
+	Data       []CategoryImportInfo   `json:"data,omitempty"`
+	Pagination PaginationDataResponse `json:"pagination,omitempty"`
+}
