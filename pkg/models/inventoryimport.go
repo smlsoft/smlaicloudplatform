@@ -69,6 +69,7 @@ func (InventoryOptionMainImportDoc) CollectionName() string {
 const categoryImportCollectionName string = "categoryImports"
 
 type CategoryImport struct {
+	Code     string `json:"code" bson:"code"`
 	Category `bson:"inline"`
 }
 
