@@ -45,13 +45,11 @@ type Inventory struct {
 	UnitName4 string `json:"unitname4,omitempty" bson:"unitname4,omitempty" gorm:"unitname4,omitempty"`
 	UnitName5 string `json:"unitname5,omitempty" bson:"unitname5,omitempty" gorm:"unitname5,omitempty"`
 
-	ItemGuid        string  `json:"itemguid,omitempty" bson:"itemguid,omitempty" gorm:"itemguid,omitempty"`
-	ItemCode        string  `json:"itemcode,omitempty" bson:"itemcode,omitempty" gorm:"itemcode,omitempty"`
-	ItemUnitCode    string  `json:"itemunitcode,omitempty" bson:"itemunitcode,omitempty" gorm:"itemunitcode,omitempty"`
-	ItemUnitStd     float64 `json:"itemunitstd,omitempty" bson:"itemunitstd,omitempty" gorm:"itemunitstd,omitempty"`
-	ItemUnitDiv     float64 `json:"itemunitdiv,omitempty" bson:"itemunitdiv,omitempty" gorm:"itemunitdiv,omitempty"`
-	ItemOptionCode  string  `json:"itemoptioncode,omitempty" bson:"itemoptioncode,omitempty" gorm:"itemoptioncode,omitempty"`
-	ItemOptionOrder int8    `json:"itemoptionorder,omitempty" bson:"itemoptionorder,omitempty" gorm:"itemoptionorder,omitempty"`
+	ItemGuid     string  `json:"itemguid,omitempty" bson:"itemguid,omitempty" gorm:"itemguid,omitempty"`
+	ItemCode     string  `json:"itemcode,omitempty" bson:"itemcode,omitempty" gorm:"itemcode,omitempty"`
+	ItemUnitCode string  `json:"itemunitcode,omitempty" bson:"itemunitcode,omitempty" gorm:"itemunitcode,omitempty"`
+	ItemUnitStd  float64 `json:"itemunitstd,omitempty" bson:"itemunitstd,omitempty" gorm:"itemunitstd,omitempty"`
+	ItemUnitDiv  float64 `json:"itemunitdiv,omitempty" bson:"itemunitdiv,omitempty" gorm:"itemunitdiv,omitempty"`
 
 	Options *[]Option         `json:"options,omitempty" bson:"options,omitempty" gorm:"many2many:inventoryoptions;foreignKey:GuidFixed;joinForeignKey:DocID;References:Code;joinReferences:OptID"`
 	Images  *[]InventoryImage `json:"images,omitempty" bson:"images,omitempty" gorm:"images;foreignKey:DocID"`
@@ -85,6 +83,7 @@ type InventoryTag struct {
 
 type Option struct {
 	Code       string    `json:"code" bson:"code" gorm:"code;primaryKey"`
+	Order      int8      `json:"order" bson:"order" gorm:"order"`
 	Required   bool      `json:"required" bson:"required" gorm:"required"`
 	ChoiceType int8      `json:"choicetype" bson:"choicetype,omitempty" gorm:"choicetype,omitempty"`
 	MaxSelect  int8      `json:"maxselect" bson:"maxselect,omitempty" gorm:"maxselect,omitempty"`
