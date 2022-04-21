@@ -26,11 +26,14 @@ func NewInventoryImportService(inventoryRepo IInventoryImportRepository) Invento
 
 func (svc InventoryImportService) CreateInBatch(shopID string, authUsername string, inventories []models.InventoryImport) error {
 
+	codeList := []string{}
+
 	tempInvDataList := []models.InventoryImportDoc{}
 
 	for _, inventory := range inventories {
-		newGuid := utils.NewGUID()
+		codeList = append(codeList, inventory.ItemCode)
 
+		newGuid := utils.NewGUID()
 		invDoc := models.InventoryImportDoc{}
 
 		invDoc.GuidFixed = newGuid
@@ -42,6 +45,7 @@ func (svc InventoryImportService) CreateInBatch(shopID string, authUsername stri
 
 		tempInvDataList = append(tempInvDataList, invDoc)
 	}
+	svc.invRepo.DeleteInBatch(shopID, codeList)
 
 	err := svc.invRepo.CreateInBatch(tempInvDataList)
 

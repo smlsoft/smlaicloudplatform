@@ -26,9 +26,12 @@ func NewCategoryImportService(repository ICategoryImportRepository) CategoryImpo
 
 func (svc CategoryImportService) CreateInBatch(shopID string, authUsername string, categories []models.CategoryImport) error {
 
+	codeList := []string{}
 	tempInvDataList := []models.CategoryImportDoc{}
 
 	for _, category := range categories {
+		codeList = append(codeList, category.Code)
+
 		newGuid := utils.NewGUID()
 
 		invDoc := models.CategoryImportDoc{}
@@ -42,6 +45,8 @@ func (svc CategoryImportService) CreateInBatch(shopID string, authUsername strin
 
 		tempInvDataList = append(tempInvDataList, invDoc)
 	}
+	//Clear old items
+	svc.repo.DeleteInBatch(shopID, codeList)
 
 	err := svc.repo.CreateInBatch(tempInvDataList)
 

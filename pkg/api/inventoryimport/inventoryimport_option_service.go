@@ -26,9 +26,13 @@ func NewInventoryOptionMainImportService(invImportOptionMainRepository IInventor
 
 func (svc InventoryOptionMainImportService) CreateInBatch(shopID string, authUsername string, options []models.InventoryOptionMainImport) error {
 
+	codeList := []string{}
 	tempInvDataList := []models.InventoryOptionMainImportDoc{}
 
 	for _, opt := range options {
+
+		codeList = append(codeList, opt.Code)
+
 		newGuid := utils.NewGUID()
 
 		invDoc := models.InventoryOptionMainImportDoc{}
@@ -42,6 +46,8 @@ func (svc InventoryOptionMainImportService) CreateInBatch(shopID string, authUse
 
 		tempInvDataList = append(tempInvDataList, invDoc)
 	}
+	//Clear old item
+	svc.repo.DeleteInBatch(shopID, codeList)
 
 	err := svc.repo.CreateInBatch(tempInvDataList)
 
