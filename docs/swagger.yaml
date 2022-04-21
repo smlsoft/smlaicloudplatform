@@ -188,10 +188,6 @@ definitions:
         type: string
       itemguid:
         type: string
-      itemoptioncode:
-        type: string
-      itemoptionorder:
-        type: integer
       itemsku:
         type: string
       itemunitcode:
@@ -276,10 +272,6 @@ definitions:
         type: string
       itemguid:
         type: string
-      itemoptioncode:
-        type: string
-      itemoptionorder:
-        type: integer
       itemsku:
         type: string
       itemunitcode:
@@ -380,6 +372,8 @@ definitions:
         type: string
       name5:
         type: string
+      order:
+        type: integer
       required:
         type: boolean
     type: object
@@ -405,6 +399,8 @@ definitions:
         type: string
       name5:
         type: string
+      order:
+        type: integer
       required:
         type: boolean
     type: object
@@ -432,6 +428,8 @@ definitions:
         type: string
       name5:
         type: string
+      order:
+        type: integer
       required:
         type: boolean
     type: object
@@ -516,6 +514,8 @@ definitions:
         type: string
       name5:
         type: string
+      order:
+        type: integer
       required:
         type: boolean
     type: object

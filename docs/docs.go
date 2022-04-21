@@ -2344,12 +2344,6 @@ const docTemplate = `{
                 "itemguid": {
                     "type": "string"
                 },
-                "itemoptioncode": {
-                    "type": "string"
-                },
-                "itemoptionorder": {
-                    "type": "integer"
-                },
                 "itemsku": {
                     "type": "string"
                 },
@@ -2473,12 +2467,6 @@ const docTemplate = `{
                 },
                 "itemguid": {
                     "type": "string"
-                },
-                "itemoptioncode": {
-                    "type": "string"
-                },
-                "itemoptionorder": {
-                    "type": "integer"
                 },
                 "itemsku": {
                     "type": "string"
@@ -2630,6 +2618,9 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
+                "order": {
+                    "type": "integer"
+                },
                 "required": {
                     "type": "boolean"
                 }
@@ -2667,6 +2658,9 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 },
                 "required": {
                     "type": "boolean"
@@ -2708,6 +2702,9 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 },
                 "required": {
                     "type": "boolean"
@@ -2837,6 +2834,9 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 },
                 "required": {
                     "type": "boolean"
