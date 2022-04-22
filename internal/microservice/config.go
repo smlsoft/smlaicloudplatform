@@ -11,6 +11,7 @@ type IConfig interface {
 	PersisterConfig() IPersisterConfig
 	MongoPersisterConfig() IPersisterMongoConfig
 	ElkPersisterConfig() IPersisterElkConfig
+	OpenSearchPersisterConfig() IPersisterOpenSearchConfig
 	CacherConfig() ICacherConfig
 	MQConfig() IMQConfig
 	TopicName() string
@@ -168,6 +169,34 @@ func (c *PersisterElkConfig) Username() string {
 func (c *PersisterElkConfig) Password() string {
 	return getEnv("ELK_PASSWORD", "smlSoft2021")
 }
+
+//
+func (cfg *Config) OpenSearchPersisterConfig() IPersisterOpenSearchConfig {
+	return NewPersisterOpenSearchConfig()
+}
+
+type PersisterOpenSearchConfig struct{}
+
+func NewPersisterOpenSearchConfig() *PersisterOpenSearchConfig {
+	return &PersisterOpenSearchConfig{}
+}
+
+func (c *PersisterOpenSearchConfig) Address() []string {
+
+	return []string{
+		getEnv("OPEN_SEARCH_ADDRESS", "http://192.168.2.204:9200"),
+	}
+}
+
+func (c *PersisterOpenSearchConfig) Username() string {
+	return getEnv("OPEN_SEARCH_USERNAME", "elastic")
+}
+
+func (c *PersisterOpenSearchConfig) Password() string {
+	return getEnv("OPEN_SEARCH_PASSWORD", "smlSoft2021")
+}
+
+///
 
 func (cfg *Config) CacherConfig() ICacherConfig {
 	return NewCacherConfig()

@@ -28,7 +28,7 @@ func StartInventorySearchComsumerOnProductCreated(ms *microservice.Microservice,
 	ms.Consume(mqConfig.URI(), topic, groupID, timeout, func(ctx microservice.IContext) error {
 		moduleName := "comsume transaction created"
 
-		elkPst := ms.ElkPersister(cfg.ElkPersisterConfig())
+		openSearchPst := ms.SearchPersister(cfg.OpenSearchPersisterConfig())
 
 		msg := ctx.ReadInput()
 
@@ -39,7 +39,7 @@ func StartInventorySearchComsumerOnProductCreated(ms *microservice.Microservice,
 			ms.Log(moduleName, err.Error())
 		}
 
-		err = elkPst.CreateWithID(trans.GuidFixed, &trans)
+		err = openSearchPst.CreateWithID(trans.GuidFixed, &trans)
 
 		if err != nil {
 			ms.Log(moduleName, err.Error())

@@ -39,22 +39,24 @@ type IMicroservice interface {
 }
 
 type Microservice struct {
-	echo                 *echo.Echo
-	exitChannel          chan bool
-	cachers              map[string]ICacher
-	cachersMutex         sync.Mutex
-	persisters           map[string]IPersister
-	persistersMutex      sync.Mutex
-	mongoPersisters      map[string]IPersisterMongo
-	persistersMongoMutex sync.Mutex
-	elkPersisters        map[string]IPersisterElk
-	persistersElkMutex   sync.Mutex
-	prods                map[string]IProducer
-	prodMutex            sync.Mutex
-	pathPrefix           string
-	config               IConfig
-	Logger               *log.Entry
-	Mode                 string
+	echo                      *echo.Echo
+	exitChannel               chan bool
+	cachers                   map[string]ICacher
+	cachersMutex              sync.Mutex
+	persisters                map[string]IPersister
+	persistersMutex           sync.Mutex
+	mongoPersisters           map[string]IPersisterMongo
+	persistersMongoMutex      sync.Mutex
+	elkPersisters             map[string]IPersisterElk
+	persistersElkMutex        sync.Mutex
+	openSearchPersisters      map[string]IPersisterOpenSearch
+	persistersOpenSearchMutex sync.Mutex
+	prods                     map[string]IProducer
+	prodMutex                 sync.Mutex
+	pathPrefix                string
+	config                    IConfig
+	Logger                    *log.Entry
+	Mode                      string
 }
 
 type ServiceHandleFunc func(context IContext) error
@@ -274,6 +276,23 @@ func (ms *Microservice) ElkPersister(cfg IPersisterElkConfig) IPersisterElk {
 		ms.persistersElkMutex.Lock()
 		ms.elkPersisters[idx] = pst
 		ms.persistersElkMutex.Unlock()
+	}
+	return pst
+}
+
+func (ms *Microservice) SearchPersister(cfg IPersisterOpenSearchConfig) IPersisterElk {
+	if len(cfg.Address()) < 1 {
+		return nil
+	}
+
+	idx := cfg.Username() + cfg.Address()[0] + strconv.Itoa(len(cfg.Address()))
+
+	pst, ok := ms.openSearchPersisters[idx]
+	if !ok {
+		pst = NewPersisterOpenSearch(cfg)
+		ms.persistersOpenSearchMutex.Lock()
+		ms.elkPersisters[idx] = pst
+		ms.persistersOpenSearchMutex.Unlock()
 	}
 	return pst
 }
