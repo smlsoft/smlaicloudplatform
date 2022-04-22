@@ -761,7 +761,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccess"
+                            "$ref": "#/definitions/models.InventoryBulkInsertResponse"
                         }
                     },
                     "401": {
@@ -2113,6 +2113,9 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 }
             }
         },
@@ -2139,6 +2142,9 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 }
             }
         },
@@ -2168,6 +2174,9 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 }
             }
         },
@@ -2211,6 +2220,9 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 }
             }
         },
@@ -2311,6 +2323,9 @@ const docTemplate = `{
                 },
                 "barcode": {
                     "type": "string"
+                },
+                "category": {
+                    "$ref": "#/definitions/models.Category"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
@@ -2415,6 +2430,38 @@ const docTemplate = `{
                 }
             }
         },
+        "models.InventoryBulkInsertResponse": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "payloadDuplicate": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "updateFailed": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "models.InventoryImage": {
             "type": "object",
             "properties": {
@@ -2432,6 +2479,9 @@ const docTemplate = `{
                 },
                 "barcode": {
                     "type": "string"
+                },
+                "category": {
+                    "$ref": "#/definitions/models.Category"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",

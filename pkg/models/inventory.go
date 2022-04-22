@@ -263,3 +263,11 @@ type InventoryOptionPageResponse struct {
 	Data       []InventoryOptionMainInfo `json:"data,omitempty"`
 	Pagination PaginationDataResponse    `json:"pagination,omitempty"`
 }
+
+type InventoryBulkInsertResponse struct {
+	Success    bool     `json:"success"`
+	Created    []string `json:"created"`
+	Updated    []string `json:"updated"`
+	Failed     []string `json:"updateFailed"`
+	Duplicated []string `json:"payloadDuplicate"`
+}

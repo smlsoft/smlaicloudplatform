@@ -142,7 +142,7 @@ func (h InventoryHttp) CreateInventory(ctx microservice.IContext) error {
 // @Tags		Inventory
 // @Param		Inventory  body      []models.Inventory  true  "Inventory"
 // @Accept 		json
-// @Success		201	{object}	models.ResponseSuccess
+// @Success		201	{object}	models.InventoryBulkInsertResponse
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /inventory/bulk [post]

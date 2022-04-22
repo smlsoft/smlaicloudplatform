@@ -755,7 +755,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccess"
+                            "$ref": "#/definitions/models.InventoryBulkInsertResponse"
                         }
                     },
                     "401": {
@@ -2107,6 +2107,9 @@
                 },
                 "name5": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 }
             }
         },
@@ -2133,6 +2136,9 @@
                 },
                 "name5": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 }
             }
         },
@@ -2162,6 +2168,9 @@
                 },
                 "name5": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 }
             }
         },
@@ -2205,6 +2214,9 @@
                 },
                 "name5": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 }
             }
         },
@@ -2305,6 +2317,9 @@
                 },
                 "barcode": {
                     "type": "string"
+                },
+                "category": {
+                    "$ref": "#/definitions/models.Category"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
@@ -2409,6 +2424,38 @@
                 }
             }
         },
+        "models.InventoryBulkInsertResponse": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "payloadDuplicate": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "updateFailed": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "models.InventoryImage": {
             "type": "object",
             "properties": {
@@ -2426,6 +2473,9 @@
                 },
                 "barcode": {
                     "type": "string"
+                },
+                "category": {
+                    "$ref": "#/definitions/models.Category"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",

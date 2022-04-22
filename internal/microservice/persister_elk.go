@@ -74,7 +74,7 @@ func (pst *PersisterElk) getIndexName(model interface{}) (string, error) {
 	if ok {
 		return modelx.IndexName(), nil
 	}
-	return "", fmt.Errorf("struct is not implement ElasticModel")
+	return "", fmt.Errorf("struct is not implement IndexName()")
 }
 
 func (pst *PersisterElk) Create(model interface{}) error {

@@ -37,6 +37,8 @@ definitions:
         type: string
       name5:
         type: string
+      order:
+        type: integer
     type: object
   models.CategoryImport:
     properties:
@@ -54,6 +56,8 @@ definitions:
         type: string
       name5:
         type: string
+      order:
+        type: integer
     type: object
   models.CategoryImportInfo:
     properties:
@@ -73,6 +77,8 @@ definitions:
         type: string
       name5:
         type: string
+      order:
+        type: integer
     type: object
   models.CategoryImportPageResponse:
     properties:
@@ -101,6 +107,8 @@ definitions:
         type: string
       name5:
         type: string
+      order:
+        type: integer
     type: object
   models.CategoryInfoResponse:
     properties:
@@ -166,6 +174,8 @@ definitions:
         type: boolean
       barcode:
         type: string
+      category:
+        $ref: '#/definitions/models.Category'
       categoryguid:
         description: Guid กลุ่มสินค้า
         type: string
@@ -236,6 +246,27 @@ definitions:
       unitname5:
         type: string
     type: object
+  models.InventoryBulkInsertResponse:
+    properties:
+      created:
+        items:
+          type: string
+        type: array
+      payloadDuplicate:
+        items:
+          type: string
+        type: array
+      success:
+        type: boolean
+      updateFailed:
+        items:
+          type: string
+        type: array
+      updated:
+        items:
+          type: string
+        type: array
+    type: object
   models.InventoryImage:
     properties:
       url:
@@ -248,6 +279,8 @@ definitions:
         type: boolean
       barcode:
         type: string
+      category:
+        $ref: '#/definitions/models.Category'
       categoryguid:
         description: Guid กลุ่มสินค้า
         type: string
@@ -1156,7 +1189,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.ResponseSuccess'
+            $ref: '#/definitions/models.InventoryBulkInsertResponse'
         "401":
           description: Unauthorized
           schema:
