@@ -16,12 +16,13 @@ type IInventoryRepository interface {
 	Create(inventory models.InventoryDoc) (string, error)
 	Update(guid string, inventory models.InventoryDoc) error
 	Delete(shopID string, guid string, username string) error
+	FindByItemCodeGuid(shopID string, itemCodeGuidList []string) ([]models.InventoryItemGuid, error)
 	FindByID(id primitive.ObjectID) (models.InventoryDoc, error)
 	FindByGuid(shopID string, guid string) (models.InventoryDoc, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
 	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryDeleteActivity, paginate.PaginationData, error)
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryActivity, paginate.PaginationData, error)
-	FindByItemGuid(itemguid string, shopId string) (models.InventoryDoc, error)
+	FindByItemGuid(shopId string, itemguid string) (models.InventoryDoc, error)
 	FindByItemBarcode(shopId string, barcode string) (models.InventoryDoc, error)
 }
 
@@ -82,6 +83,17 @@ func (repo InventoryRepository) Delete(shopID string, guid string, username stri
 		return err
 	}
 	return nil
+}
+
+func (repo InventoryRepository) FindByItemCodeGuid(shopID string, itemCodeGuidList []string) ([]models.InventoryItemGuid, error) {
+
+	findDoc := []models.InventoryItemGuid{}
+	err := repo.pst.Find(&models.InventoryItemGuid{}, bson.M{"shopid": shopID, "itemguid": bson.M{"$in": itemCodeGuidList}}, &findDoc)
+
+	if err != nil {
+		return []models.InventoryItemGuid{}, err
+	}
+	return findDoc, nil
 }
 
 func (repo InventoryRepository) FindByID(id primitive.ObjectID) (models.InventoryDoc, error) {
@@ -167,15 +179,15 @@ func (repo InventoryRepository) FindCreatedOrUpdatedPage(shopID string, lastUpda
 	return docList, pagination, nil
 }
 
-func (repo InventoryRepository) FindByItemGuid(itemguid string, shopID string) (models.InventoryDoc, error) {
+func (repo InventoryRepository) FindByItemGuid(shopID string, itemguid string) (models.InventoryDoc, error) {
 
-	findDoc := &models.InventoryDoc{}
-	err := repo.pst.FindOne(&models.InventoryDoc{}, bson.M{"shopid": shopID, "itemguid": itemguid, "deletedat": bson.M{"$exists": false}}, findDoc)
+	findDoc := models.InventoryDoc{}
+	err := repo.pst.FindOne(&models.InventoryDoc{}, bson.M{"shopid": shopID, "itemguid": itemguid, "deletedat": bson.M{"$exists": false}}, &findDoc)
 
 	if err != nil {
 		return models.InventoryDoc{}, err
 	}
-	return *findDoc, nil
+	return findDoc, nil
 }
 
 func (repo InventoryRepository) FindByItemBarcode(shopID string, barcode string) (models.InventoryDoc, error) {

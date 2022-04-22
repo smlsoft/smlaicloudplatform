@@ -51,15 +51,24 @@ type Inventory struct {
 	ItemUnitStd  float64 `json:"itemunitstd,omitempty" bson:"itemunitstd,omitempty" gorm:"itemunitstd,omitempty"`
 	ItemUnitDiv  float64 `json:"itemunitdiv,omitempty" bson:"itemunitdiv,omitempty" gorm:"itemunitdiv,omitempty"`
 
-	Options *[]Option         `json:"options,omitempty" bson:"options,omitempty" gorm:"many2many:inventoryoptions;foreignKey:GuidFixed;joinForeignKey:DocID;References:Code;joinReferences:OptID"`
-	Images  *[]InventoryImage `json:"images,omitempty" bson:"images,omitempty" gorm:"images;foreignKey:DocID"`
-	Tags    *[]InventoryTag   `json:"tags,omitempty" bson:"tags" gorm:"tags;foreignKey:DocID"`
+	Options  *[]Option         `json:"options,omitempty" bson:"options,omitempty" gorm:"many2many:inventoryoptions;foreignKey:GuidFixed;joinForeignKey:DocID;References:Code;joinReferences:OptID"`
+	Images   *[]InventoryImage `json:"images,omitempty" bson:"images,omitempty" gorm:"images;foreignKey:DocID"`
+	Tags     *[]InventoryTag   `json:"tags,omitempty" bson:"tags" gorm:"tags;foreignKey:DocID"`
+	Category Category          `json:"category" bson:"category"`
 
 	// WaitType         int             `json:"-" bson:"waitType"`                // ประเภทการรอ (สินค้าหมด)
 	// WaitUntil        time.Time       `json:"-" bson:"waitUntil"`               // ระยะเวลาที่รอ
 	// MultipleUnits    bool            `json:"-" bson:"multipleuUits" `          // สินค้าหลายหน่วยนับ
 	// UnitStandardGuid string          `json:"-" bson:"unitStandardGuid" `       // หน่วยนับมาตรฐาน (นับสต๊อก)
 	// UnitList         []InventoryUnit `json:"unitlist" bson:"unitList" `        // กรณีหลายหน่วยนับ ตารางหน่วบนับ
+}
+
+type InventoryItemGuid struct {
+	ItemGuid string `json:"itemguid,omitempty" bson:"itemguid,omitempty"`
+}
+
+func (InventoryItemGuid) CollectionName() string {
+	return inventoryCollectionName
 }
 
 type InventoryOption struct {

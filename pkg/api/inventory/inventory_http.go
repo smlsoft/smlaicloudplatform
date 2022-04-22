@@ -162,7 +162,7 @@ func (h InventoryHttp) CreateInBatchInventory(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.invService.CreateInBatch(shopID, authUsername, *inventoryReq)
+	createdData, updateData, updateFailData, payloadDuplicateData, err := h.invService.CreateInBatch(shopID, authUsername, *inventoryReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -171,9 +171,14 @@ func (h InventoryHttp) CreateInBatchInventory(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		models.ApiResponse{
-			Success: true,
-		})
+		map[string]interface{}{
+			"success":          true,
+			"created":          createdData,
+			"updated":          updateData,
+			"updateFailed":     updateFailData,
+			"payloadDuplicate": payloadDuplicateData,
+		},
+	)
 
 	return nil
 }

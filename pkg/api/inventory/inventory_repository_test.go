@@ -34,3 +34,21 @@ func TestFindByID(t *testing.T) {
 	}
 
 }
+
+func TestFindByItemGuid(t *testing.T) {
+
+	repo := getInventoryRepo()
+
+	doc, err := repo.FindByItemGuid("27daMDw274R5hHejrjkHDuI91ag", "ix001x")
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log(doc)
+
+	// if doc.DeletedAt.IsZero() {
+	// 	t.Log("is zero")
+	// }
+
+}
