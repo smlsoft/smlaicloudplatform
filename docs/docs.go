@@ -247,7 +247,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/categoryimport": {
+        "/import/category": {
             "get": {
                 "security": [
                     {
@@ -281,7 +281,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.CategoryPageResponse"
+                                "$ref": "#/definitions/models.CategoryImportPageResponse"
                             }
                         }
                     },
@@ -351,6 +351,265 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Category Import ID",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccess"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/import/inventory": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Import"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.InventoryPageResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Inventory Import",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Import"
+                ],
+                "parameters": [
+                    {
+                        "description": "Inventory",
+                        "name": "Inventory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Inventory"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccess"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Inventory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Import"
+                ],
+                "parameters": [
+                    {
+                        "description": "Inventory Import ID",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccess"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/import/option": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "List Inventory Option",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Import"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.InventoryOptionPageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Inventory Option",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Import"
+                ],
+                "parameters": [
+                    {
+                        "description": "Option",
+                        "name": "Option",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.InventoryOptionMainImport"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccess"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Option",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Import"
+                ],
+                "parameters": [
+                    {
+                        "description": "Option ID",
                         "name": "id",
                         "in": "body",
                         "required": true,
@@ -718,137 +977,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/inventoryimport": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get struct array by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Import"
-                ],
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Size",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.InventoryPageResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Inventory Import",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Import"
-                ],
-                "parameters": [
-                    {
-                        "description": "Inventory",
-                        "name": "Inventory",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Inventory"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccess"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete Inventory",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Import"
-                ],
-                "parameters": [
-                    {
-                        "description": "Inventory Import ID",
-                        "name": "id",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccess"
                         }
                     },
                     "401": {
@@ -1595,134 +1723,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/optionimport": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "List Inventory Option",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Import"
-                ],
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Size",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.InventoryOptionPageResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Inventory Option",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Import"
-                ],
-                "parameters": [
-                    {
-                        "description": "Option",
-                        "name": "Option",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.InventoryOptionMainImport"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccess"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete Option",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Import"
-                ],
-                "parameters": [
-                    {
-                        "description": "Option ID",
-                        "name": "id",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccess"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/profile": {
             "get": {
                 "security": [
@@ -2119,6 +2119,9 @@ const docTemplate = `{
         "models.CategoryImport": {
             "type": "object",
             "properties": {
+                "code": {
+                    "type": "string"
+                },
                 "image": {
                     "type": "string"
                 },
@@ -2136,6 +2139,52 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                }
+            }
+        },
+        "models.CategoryImportInfo": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CategoryImportPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CategoryImportInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },
@@ -2295,12 +2344,6 @@ const docTemplate = `{
                 "itemguid": {
                     "type": "string"
                 },
-                "itemoptioncode": {
-                    "type": "string"
-                },
-                "itemoptionorder": {
-                    "type": "integer"
-                },
                 "itemsku": {
                     "type": "string"
                 },
@@ -2424,12 +2467,6 @@ const docTemplate = `{
                 },
                 "itemguid": {
                     "type": "string"
-                },
-                "itemoptioncode": {
-                    "type": "string"
-                },
-                "itemoptionorder": {
-                    "type": "integer"
                 },
                 "itemsku": {
                     "type": "string"
@@ -2581,6 +2618,9 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
+                "order": {
+                    "type": "integer"
+                },
                 "required": {
                     "type": "boolean"
                 }
@@ -2618,6 +2658,9 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 },
                 "required": {
                     "type": "boolean"
@@ -2659,6 +2702,9 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 },
                 "required": {
                     "type": "boolean"
@@ -2788,6 +2834,9 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 },
                 "required": {
                     "type": "boolean"

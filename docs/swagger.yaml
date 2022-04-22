@@ -40,6 +40,8 @@ definitions:
     type: object
   models.CategoryImport:
     properties:
+      code:
+        type: string
       image:
         type: string
       name1:
@@ -52,6 +54,36 @@ definitions:
         type: string
       name5:
         type: string
+    type: object
+  models.CategoryImportInfo:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      image:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+    type: object
+  models.CategoryImportPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.CategoryImportInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
     type: object
   models.CategoryInfo:
     properties:
@@ -156,10 +188,6 @@ definitions:
         type: string
       itemguid:
         type: string
-      itemoptioncode:
-        type: string
-      itemoptionorder:
-        type: integer
       itemsku:
         type: string
       itemunitcode:
@@ -244,10 +272,6 @@ definitions:
         type: string
       itemguid:
         type: string
-      itemoptioncode:
-        type: string
-      itemoptionorder:
-        type: integer
       itemsku:
         type: string
       itemunitcode:
@@ -348,6 +372,8 @@ definitions:
         type: string
       name5:
         type: string
+      order:
+        type: integer
       required:
         type: boolean
     type: object
@@ -373,6 +399,8 @@ definitions:
         type: string
       name5:
         type: string
+      order:
+        type: integer
       required:
         type: boolean
     type: object
@@ -400,6 +428,8 @@ definitions:
         type: string
       name5:
         type: string
+      order:
+        type: integer
       required:
         type: boolean
     type: object
@@ -484,6 +514,8 @@ definitions:
         type: string
       name5:
         type: string
+      order:
+        type: integer
       required:
         type: boolean
     type: object
@@ -732,7 +764,7 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
-  /categoryimport:
+  /import/category:
     delete:
       consumes:
       - application/json
@@ -777,7 +809,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.CategoryPageResponse'
+              $ref: '#/definitions/models.CategoryImportPageResponse'
             type: array
         "401":
           description: Unauthorized
@@ -803,6 +835,166 @@ paths:
       responses:
         "201":
           description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Import
+  /import/inventory:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Inventory
+      parameters:
+      - description: Inventory Import ID
+        in: body
+        name: id
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Import
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.InventoryPageResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Import
+    post:
+      consumes:
+      - application/json
+      description: Create Inventory Import
+      parameters:
+      - description: Inventory
+        in: body
+        name: Inventory
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Inventory'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Import
+  /import/option:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Option
+      parameters:
+      - description: Option ID
+        in: body
+        name: id
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Import
+    get:
+      consumes:
+      - application/json
+      description: List Inventory Option
+      parameters:
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.InventoryOptionPageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Import
+    post:
+      consumes:
+      - application/json
+      description: Create Inventory Option
+      parameters:
+      - description: Option
+        in: body
+        name: Option
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.InventoryOptionMainImport'
+          type: array
+      responses:
+        "200":
+          description: OK
           schema:
             $ref: '#/definitions/models.ResponseSuccess'
         "401":
@@ -1031,87 +1223,6 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
-  /inventoryimport:
-    delete:
-      consumes:
-      - application/json
-      description: Delete Inventory
-      parameters:
-      - description: Inventory Import ID
-        in: body
-        name: id
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccess'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Import
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Size
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.InventoryPageResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Import
-    post:
-      consumes:
-      - application/json
-      description: Create Inventory Import
-      parameters:
-      - description: Inventory
-        in: body
-        name: Inventory
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.Inventory'
-          type: array
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccess'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Import
   /list-shop:
     get:
       consumes:
@@ -1568,85 +1679,6 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
-  /optionimport:
-    delete:
-      consumes:
-      - application/json
-      description: Delete Option
-      parameters:
-      - description: Option ID
-        in: body
-        name: id
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccess'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Import
-    get:
-      consumes:
-      - application/json
-      description: List Inventory Option
-      parameters:
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Size
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.InventoryOptionPageResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Import
-    post:
-      consumes:
-      - application/json
-      description: Create Inventory Option
-      parameters:
-      - description: Option
-        in: body
-        name: Option
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.InventoryOptionMainImport'
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccess'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Import
   /profile:
     get:
       consumes:
