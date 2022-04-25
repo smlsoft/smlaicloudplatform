@@ -13,6 +13,8 @@ func main() {
 	}
 
 	inventorysearchconsumer.StartInventorySearchComsumerOnProductCreated(ms, cfg)
+	inventorysearchconsumer.StartInventorySearchComsumerOnProductUpdated(ms, cfg)
+	inventorysearchconsumer.StartInventorySearchComsumerOnProductDeleted(ms, cfg)
 
 	ms.Start()
 }

@@ -3,8 +3,11 @@ package microservice
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strings"
 	"sync"
 
 	"github.com/opensearch-project/opensearch-go"
@@ -49,6 +52,9 @@ func (pst *PersisterOpenSearch) getClient() (*opensearch.Client, error) {
 	pst.dbMutex.Lock()
 
 	cfg := opensearch.Config{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
 		Username:  pst.config.Username(),
 		Password:  pst.config.Password(),
 		Addresses: pst.config.Address(),
@@ -122,7 +128,7 @@ func (pst *PersisterOpenSearch) CreateWithID(docID string, model interface{}) er
 	}
 
 	txtByte, err := json.Marshal(model)
-
+	document := strings.NewReader(string(txtByte))
 	if err != nil {
 		return err
 	}
@@ -130,7 +136,7 @@ func (pst *PersisterOpenSearch) CreateWithID(docID string, model interface{}) er
 	req := opensearchapi.IndexRequest{
 		Index:      indexName,
 		DocumentID: docID,
-		Body:       bytes.NewReader(txtByte),
+		Body:       document,
 	}
 
 	_, err = req.Do(context.Background(), db)
