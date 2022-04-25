@@ -2570,6 +2570,38 @@ const docTemplate = `{
                 }
             }
         },
+        "models.InventoryBulkInsertResponse": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "payloadDuplicate": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "updateFailed": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "models.InventoryDeleteActivity": {
             "type": "object",
             "properties": {

@@ -335,6 +335,27 @@ definitions:
       updatedat:
         type: string
     type: object
+  models.InventoryBulkInsertResponse:
+    properties:
+      created:
+        items:
+          type: string
+        type: array
+      payloadDuplicate:
+        items:
+          type: string
+        type: array
+      success:
+        type: boolean
+      updateFailed:
+        items:
+          type: string
+        type: array
+      updated:
+        items:
+          type: string
+        type: array
+    type: object
   models.InventoryDeleteActivity:
     properties:
       createdat:
@@ -356,27 +377,6 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
-    type: object
-  models.InventoryBulkInsertResponse:
-    properties:
-      created:
-        items:
-          type: string
-        type: array
-      payloadDuplicate:
-        items:
-          type: string
-        type: array
-      success:
-        type: boolean
-      updateFailed:
-        items:
-          type: string
-        type: array
-      updated:
-        items:
-          type: string
-        type: array
     type: object
   models.InventoryImage:
     properties:
