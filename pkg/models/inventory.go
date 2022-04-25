@@ -271,3 +271,14 @@ type InventoryBulkInsertResponse struct {
 	Failed     []string `json:"updateFailed"`
 	Duplicated []string `json:"payloadDuplicate"`
 }
+
+type InventoryLastActivityResponse struct {
+	New    []InventoryActivity       `json:"new" `
+	Remove []InventoryDeleteActivity `json:"remove"`
+}
+
+type InventoryFetchUpdateResponse struct {
+	Success    bool                          `json:"success"`
+	Data       InventoryLastActivityResponse `json:"data,omitempty"`
+	Pagination PaginationDataResponse        `json:"pagination,omitempty"`
+}
