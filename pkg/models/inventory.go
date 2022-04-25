@@ -263,3 +263,22 @@ type InventoryOptionPageResponse struct {
 	Data       []InventoryOptionMainInfo `json:"data,omitempty"`
 	Pagination PaginationDataResponse    `json:"pagination,omitempty"`
 }
+
+type InventoryBulkInsertResponse struct {
+	Success    bool     `json:"success"`
+	Created    []string `json:"created"`
+	Updated    []string `json:"updated"`
+	Failed     []string `json:"updateFailed"`
+	Duplicated []string `json:"payloadDuplicate"`
+}
+
+type InventoryLastActivityResponse struct {
+	New    []InventoryActivity       `json:"new" `
+	Remove []InventoryDeleteActivity `json:"remove"`
+}
+
+type InventoryFetchUpdateResponse struct {
+	Success    bool                          `json:"success"`
+	Data       InventoryLastActivityResponse `json:"data,omitempty"`
+	Pagination PaginationDataResponse        `json:"pagination,omitempty"`
+}
