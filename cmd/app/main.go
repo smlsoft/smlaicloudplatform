@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/authentication"
+	"smlcloudplatform/pkg/api/category"
 	"smlcloudplatform/pkg/api/inventory"
 	"smlcloudplatform/pkg/api/inventoryimport"
 	"smlcloudplatform/pkg/api/member"
@@ -58,6 +59,9 @@ func main() {
 
 	svcShop := shop.NewShopHttp(ms, cfg)
 	svcShop.RouteSetup()
+
+	categoryHttp := category.NewCategoryHttp(ms, cfg)
+	categoryHttp.RouteSetup()
 
 	inventoryapi := inventory.NewInventoryHttp(ms, cfg)
 	inventoryapi.RouteSetup()

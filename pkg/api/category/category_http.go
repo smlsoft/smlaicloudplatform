@@ -6,6 +6,8 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"strconv"
+	"strings"
+	"time"
 )
 
 type ICategoryHttp interface{}
@@ -36,6 +38,7 @@ func (h CategoryHttp) RouteSetup() {
 	h.ms.POST("/category", h.CreateCategory)
 	h.ms.PUT("/category/:id", h.UpdateCategory)
 	h.ms.DELETE("/category/:id", h.DeleteCategory)
+	h.ms.GET("/category/fetchupdate", h.LastActivityCategory)
 }
 
 // Create Category godoc
@@ -217,5 +220,63 @@ func (h CategoryHttp) SearchCategory(ctx microservice.IContext) error {
 		Data:       docList,
 		Pagination: pagination,
 	})
+	return nil
+}
+
+// Fetch Update Category By Date godoc
+// @Description Fetch Update Category By Date
+// @Tags		Category
+// @Param		lastUpdate query string true "DateTime"
+// @Accept		json
+// @Success		200 {array} models.CategoryPageResponse
+// @Failure		401 {object} models.AuthResponseFailed
+// @Security	AccessToken
+// @Router		/category/fetchupdate [get]
+func (h CategoryHttp) LastActivityCategory(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	layout := "2006-01-02T15:04" //
+	lastUpdateStr := ctx.QueryParam("lastUpdate")
+
+	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
+	if len(lastUpdateStr) < 1 {
+		ctx.ResponseError(400, "lastUpdate format invalid.")
+		return nil
+	}
+
+	lastUpdate, err := time.Parse(layout, lastUpdateStr)
+
+	if err != nil {
+		ctx.ResponseError(400, "lastUpdate format invalid.")
+		return err
+	}
+
+	page, err := strconv.Atoi(ctx.QueryParam("page"))
+	if err != nil {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
+
+	if err != nil {
+		limit = 20
+	}
+
+	docList, pagination, err := h.cateService.LastActivityCategory(shopID, lastUpdate, page, limit)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(
+		http.StatusOK,
+		models.CategoryFetchUpdateResponse{
+			Success:    true,
+			Data:       docList,
+			Pagination: pagination,
+		})
+
 	return nil
 }

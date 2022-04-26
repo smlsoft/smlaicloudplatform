@@ -1,6 +1,11 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"time"
+
+	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 const categoryCollectionName = "categories"
 
@@ -36,6 +41,36 @@ type CategoryDoc struct {
 
 func (CategoryDoc) CollectionName() string {
 	return categoryCollectionName
+}
+
+type CategoryActivity struct {
+	CategoryData `bson:"inline"`
+	CreatedAt    *time.Time `json:"createdat,omitempty" bson:"createdat,omitempty"`
+	UpdatedAt    *time.Time `json:"updatedat,omitempty" bson:"updatedat,omitempty"`
+	DeletedAt    *time.Time `json:"deletedat,omitempty" bson:"deletedat,omitempty"`
+}
+
+func (CategoryActivity) CollectionName() string {
+	return categoryCollectionName
+}
+
+type CategoryDeleteActivity struct {
+	Identity  `bson:"inline"`
+	CreatedAt *time.Time `json:"createdat,omitempty" bson:"createdat,omitempty"`
+	UpdatedAt *time.Time `json:"updatedat,omitempty" bson:"updatedat,omitempty"`
+	DeletedAt *time.Time `json:"deletedat,omitempty" bson:"deletedat,omitempty"`
+}
+
+func (CategoryDeleteActivity) CollectionName() string {
+	return categoryCollectionName
+}
+
+//for swagger gen
+
+type CategoryFetchUpdateResponse struct {
+	Success    bool                           `json:"success"`
+	Data       LastActivity                   `json:"data,omitempty"`
+	Pagination mongopagination.PaginationData `json:"pagination,omitempty"`
 }
 
 type CategoryPageResponse struct {

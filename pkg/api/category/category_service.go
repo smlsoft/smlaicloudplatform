@@ -4,6 +4,7 @@ import (
 	"errors"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
+	"sync"
 	"time"
 
 	paginate "github.com/gobeam/mongo-go-pagination"
@@ -16,6 +17,7 @@ type ICategoryService interface {
 	DeleteCategory(guid string, shopID string, authUsername string) error
 	InfoCategory(guid string, shopID string) (models.CategoryInfo, error)
 	SearchCategory(shopID string, q string, page int, limit int) ([]models.CategoryInfo, paginate.PaginationData, error)
+	LastActivityCategory(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, paginate.PaginationData, error)
 }
 
 type CategoryService struct {
@@ -106,4 +108,51 @@ func (svc CategoryService) SearchCategory(shopID string, q string, page int, lim
 	}
 
 	return docList, pagination, nil
+}
+
+func (svc CategoryService) LastActivityCategory(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, paginate.PaginationData, error) {
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	var deleteDocList []models.CategoryDeleteActivity
+	var pagination1 paginate.PaginationData
+	var err1 error
+
+	go func() {
+		deleteDocList, pagination1, err1 = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	var createAndUpdateDocList []models.CategoryActivity
+	var pagination2 paginate.PaginationData
+	var err2 error
+
+	go func() {
+		createAndUpdateDocList, pagination2, err2 = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
+		wg.Done()
+	}()
+
+	wg.Wait()
+
+	if err1 != nil {
+		return models.LastActivity{}, pagination1, err1
+	}
+
+	if err2 != nil {
+		return models.LastActivity{}, pagination2, err2
+	}
+
+	lastActivity := models.LastActivity{}
+
+	lastActivity.Remove = &deleteDocList
+	lastActivity.New = &createAndUpdateDocList
+
+	pagination := pagination1
+
+	if pagination.TotalPage < pagination2.TotalPage {
+		pagination = pagination2
+	}
+
+	return lastActivity, pagination, nil
 }

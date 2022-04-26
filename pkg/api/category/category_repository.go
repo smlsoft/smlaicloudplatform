@@ -3,6 +3,7 @@ package category
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
+	"time"
 
 	paginate "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
@@ -16,6 +17,8 @@ type ICategoryRepository interface {
 	Delete(guid string, username string, shopID string) error
 	FindByGuid(guid string, shopID string) (models.CategoryDoc, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.CategoryInfo, paginate.PaginationData, error)
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.CategoryDeleteActivity, paginate.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.CategoryActivity, paginate.PaginationData, error)
 }
 
 type CategoryRepository struct {
@@ -98,6 +101,40 @@ func (repo CategoryRepository) FindPage(shopID string, q string, page int, limit
 
 	if err != nil {
 		return []models.CategoryInfo{}, paginate.PaginationData{}, err
+	}
+
+	return docList, pagination, nil
+}
+
+func (repo CategoryRepository) FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.CategoryDeleteActivity, paginate.PaginationData, error) {
+
+	docList := []models.CategoryDeleteActivity{}
+	pagination, err := repo.pst.FindPage(&models.CategoryDeleteActivity{}, limit, page, bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$gte": lastUpdatedDate},
+	}, &docList)
+
+	if err != nil {
+		return []models.CategoryDeleteActivity{}, paginate.PaginationData{}, err
+	}
+
+	return docList, pagination, nil
+}
+
+func (repo CategoryRepository) FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.CategoryActivity, paginate.PaginationData, error) {
+
+	docList := []models.CategoryActivity{}
+	pagination, err := repo.pst.FindPage(&models.CategoryActivity{}, limit, page, bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$not": bson.M{"$gte": lastUpdatedDate}},
+		"$or": []interface{}{
+			bson.M{"createdat": bson.M{"$gte": lastUpdatedDate}},
+			bson.M{"updatedat": bson.M{"$gte": lastUpdatedDate}},
+		},
+	}, &docList)
+
+	if err != nil {
+		return []models.CategoryActivity{}, paginate.PaginationData{}, err
 	}
 
 	return docList, pagination, nil
