@@ -14,7 +14,7 @@ import (
 
 type IInventoryService interface {
 	IsExistsGuid(shopID string, guidFixed string) (bool, error)
-	CreateInBatch(shopID string, authUsername string, inventories []models.Inventory) ([]string, []string, []string, []string, error)
+	CreateInBatch(shopID string, authUsername string, inventories []models.Inventory) (models.InventoryBulkImport, error)
 	CreateIndex(doc models.InventoryIndex) error
 	CreateWithGuid(shopID string, authUsername string, guidFixed string, inventory models.Inventory) (string, error)
 	CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, string, error)
@@ -68,7 +68,82 @@ func (svc InventoryService) CreateIndex(doc models.InventoryIndex) error {
 
 }
 
-func filterDuplicate(inventories []models.Inventory) (itemTemp []models.Inventory, itemDuplicate []models.Inventory) {
+func (svc InventoryService) CreateInBatch(shopID string, authUsername string, inventories []models.Inventory) (models.InventoryBulkImport, error) {
+
+	createDataList := []models.InventoryDoc{}
+	duplicateDataList := []models.Inventory{}
+
+	payloadInventoryList, payloadDuplicateInventoryList := filterDuplicateInventory(inventories)
+
+	itemCodeGuidList := []string{}
+	for _, inventory := range payloadInventoryList {
+		itemCodeGuidList = append(itemCodeGuidList, inventory.ItemGuid)
+	}
+
+	findItemGuid, err := svc.invRepo.FindByItemCodeGuid(shopID, itemCodeGuidList)
+
+	if err != nil {
+		return models.InventoryBulkImport{}, err
+	}
+
+	duplicateDataList, createDataList = preparePayloadDataInventory(shopID, authUsername, findItemGuid, payloadInventoryList)
+
+	updateSuccessDataList, updateFailDataList := updateOnDuplicateInventory(shopID, authUsername, duplicateDataList, svc.invRepo)
+
+	if len(createDataList) > 0 {
+		err = svc.invRepo.CreateInBatch(createDataList)
+
+		if err != nil {
+			return models.InventoryBulkImport{}, err
+		}
+	}
+	createDataKey := []string{}
+
+	for _, inv := range createDataList {
+		createDataKey = append(createDataKey, inv.ItemGuid)
+
+		// reply kafka
+		if svc.invMqRepo != nil {
+			err = svc.invMqRepo.Create(inv.InventoryData)
+
+			if err != nil {
+				return models.InventoryBulkImport{}, err
+			}
+		}
+	}
+
+	payloadDuplicateDataKey := []string{}
+	for _, inv := range payloadDuplicateInventoryList {
+		payloadDuplicateDataKey = append(payloadDuplicateDataKey, inv.ItemGuid)
+	}
+
+	updateDataKey := []string{}
+	for _, inv := range updateSuccessDataList {
+		updateDataKey = append(updateDataKey, inv.ItemGuid)
+		// reply kafka
+		if svc.invMqRepo != nil {
+			err = svc.invMqRepo.Update(inv.InventoryData)
+
+			if err != nil {
+				return models.InventoryBulkImport{}, err
+			}
+		}
+	}
+
+	updateFailDataKey := []string{}
+	for _, inv := range updateFailDataList {
+		updateFailDataKey = append(updateFailDataKey, inv.ItemGuid)
+	}
+
+	return models.InventoryBulkImport{
+		Created:          createDataKey,
+		Updated:          updateDataKey,
+		UpdateFailed:     updateFailDataKey,
+		PayloadDuplicate: payloadDuplicateDataKey,
+	}, nil
+}
+
+func filterDuplicateInventory(inventories []models.Inventory) (itemTemp []models.Inventory, itemDuplicate []models.Inventory) {
 	tempFilterDict := map[string]models.Inventory{}
 	for _, inventory := range inventories {
 		if _, ok := tempFilterDict[inventory.ItemGuid]; ok {
@@ -85,31 +160,45 @@ func filterDuplicate(inventories []models.Inventory) (itemTemp []models.Inventor
 	return itemTemp, itemDuplicate
 }
 
-func (svc InventoryService) CreateInBatch(shopID string, authUsername string, inventories []models.Inventory) ([]string, []string, []string, []string, error) {
+func updateOnDuplicateInventory(shopID string, authUsername string, duplicateDataList []models.Inventory, repo IInventoryRepository) ([]models.InventoryDoc, []models.Inventory) {
+	updateSuccessDataList := []models.InventoryDoc{}
+	updateFailDataList := []models.Inventory{}
+	for _, inv := range duplicateDataList {
+		findDoc, err := repo.FindByItemGuid(shopID, inv.ItemGuid)
 
+		if err != nil || findDoc.ID == primitive.NilObjectID {
+			updateFailDataList = append(updateFailDataList, inv)
+			continue
+		}
+
+		findDoc.Inventory = inv
+
+		findDoc.UpdatedBy = authUsername
+		findDoc.UpdatedAt = time.Now()
+		findDoc.LastUpdatedAt = time.Now()
+
+		err = repo.Update(findDoc.GuidFixed, findDoc)
+
+		if err != nil {
+			updateFailDataList = append(updateFailDataList, inv)
+			continue
+		}
+
+		updateSuccessDataList = append(updateSuccessDataList, findDoc)
+	}
+	return updateSuccessDataList, updateFailDataList
+}
+
+func preparePayloadDataInventory(shopID string, authUsername string, findItemGuid []models.InventoryItemGuid, payloadInventoryList []models.Inventory) ([]models.Inventory, []models.InventoryDoc) {
 	createDataList := []models.InventoryDoc{}
 	duplicateDataList := []models.Inventory{}
-
-	tempInventories, tempPayloadDuplicate := filterDuplicate(inventories)
-
-	itemCodeGuidList := []string{}
-	for _, inventory := range tempInventories {
-		itemCodeGuidList = append(itemCodeGuidList, inventory.ItemGuid)
-	}
-
-	findItemGuid, err := svc.invRepo.FindByItemCodeGuid(shopID, itemCodeGuidList)
-
-	if err != nil {
-		return []string{}, []string{}, []string{}, []string{}, err
-	}
-
 	tempItemGuidDict := make(map[string]bool)
 
 	for _, itemGuid := range findItemGuid {
 		tempItemGuidDict[itemGuid.ItemGuid] = true
 	}
 
-	for _, inventory := range tempInventories {
+	for _, inventory := range payloadInventoryList {
 
 		if _, ok := tempItemGuidDict[inventory.ItemGuid]; ok {
 			duplicateDataList = append(duplicateDataList, inventory)
@@ -129,79 +218,7 @@ func (svc InventoryService) CreateInBatch(shopID string, authUsername string, in
 			createDataList = append(createDataList, invDoc)
 		}
 	}
-
-	updateSuccessDataList := []models.InventoryDoc{}
-	updateFailDataList := []models.Inventory{}
-	for _, inv := range duplicateDataList {
-		findDoc, err := svc.invRepo.FindByItemGuid(shopID, inv.ItemGuid)
-
-		if err != nil || findDoc.ID == primitive.NilObjectID {
-			updateFailDataList = append(updateFailDataList, inv)
-			continue
-		}
-
-		findDoc.Inventory = inv
-
-		findDoc.UpdatedBy = authUsername
-		findDoc.UpdatedAt = time.Now()
-		findDoc.LastUpdatedAt = time.Now()
-
-		err = svc.invRepo.Update(findDoc.GuidFixed, findDoc)
-
-		if err != nil {
-			updateFailDataList = append(updateFailDataList, inv)
-			continue
-		}
-
-		updateSuccessDataList = append(updateSuccessDataList, findDoc)
-	}
-
-	if len(createDataList) > 0 {
-		err = svc.invRepo.CreateInBatch(createDataList)
-
-		if err != nil {
-			return []string{}, []string{}, []string{}, []string{}, err
-		}
-	}
-	createDataKey := []string{}
-
-	for _, inv := range createDataList {
-		createDataKey = append(createDataKey, inv.ItemGuid)
-
-		// reply kafka
-		if svc.invMqRepo != nil {
-			err = svc.invMqRepo.Create(inv.InventoryData)
-
-			if err != nil {
-				return []string{}, []string{}, []string{}, []string{}, err
-			}
-		}
-	}
-
-	payloadDuplicateDataKey := []string{}
-	for _, inv := range tempPayloadDuplicate {
-		payloadDuplicateDataKey = append(payloadDuplicateDataKey, inv.ItemGuid)
-	}
-
-	updateDataKey := []string{}
-	for _, inv := range updateSuccessDataList {
-		updateDataKey = append(updateDataKey, inv.ItemGuid)
-		// reply kafka
-		if svc.invMqRepo != nil {
-			err = svc.invMqRepo.Update(inv.InventoryData)
-
-			if err != nil {
-				return []string{}, []string{}, []string{}, []string{}, err
-			}
-		}
-	}
-
-	updateFailDataKey := []string{}
-	for _, inv := range updateFailDataList {
-		updateFailDataKey = append(updateFailDataKey, inv.ItemGuid)
-	}
-
-	return createDataKey, updateDataKey, updateFailDataKey, payloadDuplicateDataKey, nil
+	return duplicateDataList, createDataList
 }
 
 func (svc InventoryService) CreateWithGuid(shopID string, authUsername string, guidFixed string, inventory models.Inventory) (string, error) {

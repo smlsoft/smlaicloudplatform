@@ -236,6 +236,18 @@ func (InventoryOptionMainDoc) CollectionName() string {
 
 // for swagger gen
 
+type InventoryBulkImport struct {
+	Created          []string `json:"created"`
+	Updated          []string `json:"updated"`
+	UpdateFailed     []string `json:"updateFailed"`
+	PayloadDuplicate []string `json:"payloadDuplicate"`
+}
+
+type InventoryBulkReponse struct {
+	Success bool `json:"success"`
+	InventoryBulkImport
+}
+
 type InventoryPageResponse struct {
 	Success    bool                   `json:"success"`
 	Data       []InventoryInfo        `json:"data,omitempty"`

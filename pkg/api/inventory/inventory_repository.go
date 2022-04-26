@@ -182,7 +182,7 @@ func (repo InventoryRepository) FindCreatedOrUpdatedPage(shopID string, lastUpda
 func (repo InventoryRepository) FindByItemGuid(shopID string, itemguid string) (models.InventoryDoc, error) {
 
 	findDoc := models.InventoryDoc{}
-	err := repo.pst.FindOne(&models.InventoryDoc{}, bson.M{"shopid": shopID, "itemguid": itemguid, "deletedat": bson.M{"$exists": false}}, &findDoc)
+	err := repo.pst.FindOne(&models.InventoryDoc{}, bson.M{"shopid": shopID, "itemguid": itemguid}, &findDoc)
 
 	if err != nil {
 		return models.InventoryDoc{}, err
