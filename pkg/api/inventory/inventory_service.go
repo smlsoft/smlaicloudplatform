@@ -167,6 +167,15 @@ func (svc InventoryService) CreateInBatch(shopID string, authUsername string, in
 
 	for _, inv := range createDataList {
 		createDataKey = append(createDataKey, inv.ItemGuid)
+
+		// reply kafka
+		if svc.invMqRepo != nil {
+			err = svc.invMqRepo.Create(inv.InventoryData)
+
+			if err != nil {
+				return []string{}, []string{}, []string{}, []string{}, err
+			}
+		}
 	}
 
 	payloadDuplicateDataKey := []string{}
@@ -177,6 +186,14 @@ func (svc InventoryService) CreateInBatch(shopID string, authUsername string, in
 	updateDataKey := []string{}
 	for _, inv := range updateSuccessDataList {
 		updateDataKey = append(updateDataKey, inv.ItemGuid)
+		// reply kafka
+		if svc.invMqRepo != nil {
+			err = svc.invMqRepo.Update(inv.InventoryData)
+
+			if err != nil {
+				return []string{}, []string{}, []string{}, []string{}, err
+			}
+		}
 	}
 
 	updateFailDataKey := []string{}

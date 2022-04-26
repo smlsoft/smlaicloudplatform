@@ -761,7 +761,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccess"
+                            "$ref": "#/definitions/models.InventoryBulkInsertResponse"
                         }
                     },
                     "401": {
@@ -841,20 +841,29 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "DateTime",
+                        "description": "DateTime YYYY-MM-DDTHH:mm",
                         "name": "lastUpdate",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.InventoryPageResponse"
-                            }
+                            "$ref": "#/definitions/models.InventoryFetchUpdateResponse"
                         }
                     },
                     "401": {
@@ -2113,6 +2122,9 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 }
             }
         },
@@ -2139,6 +2151,9 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 }
             }
         },
@@ -2168,6 +2183,9 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 }
             }
         },
@@ -2211,6 +2229,9 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 }
             }
         },
@@ -2311,6 +2332,9 @@ const docTemplate = `{
                 },
                 "barcode": {
                     "type": "string"
+                },
+                "category": {
+                    "$ref": "#/definitions/models.Category"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
@@ -2415,6 +2439,203 @@ const docTemplate = `{
                 }
             }
         },
+        "models.InventoryActivity": {
+            "type": "object",
+            "properties": {
+                "activated": {
+                    "description": "เปิดใช้งานอยู่",
+                    "type": "boolean"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "category": {
+                    "$ref": "#/definitions/models.Category"
+                },
+                "categoryguid": {
+                    "description": "Guid กลุ่มสินค้า",
+                    "type": "string"
+                },
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "description1": {
+                    "description": "รายละเอียดภาษาไทย",
+                    "type": "string"
+                },
+                "description2": {
+                    "type": "string"
+                },
+                "description3": {
+                    "type": "string"
+                },
+                "description4": {
+                    "type": "string"
+                },
+                "description5": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InventoryImage"
+                    }
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemguid": {
+                    "type": "string"
+                },
+                "itemsku": {
+                    "type": "string"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitdiv": {
+                    "type": "number"
+                },
+                "itemunitstd": {
+                    "type": "number"
+                },
+                "memberprice": {
+                    "type": "number"
+                },
+                "name1": {
+                    "description": "ชื่อภาษาไทย",
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Option"
+                    }
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "recommended": {
+                    "description": "สินค้าแนะนำ",
+                    "type": "boolean"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InventoryTag"
+                    }
+                },
+                "unitname1": {
+                    "type": "string"
+                },
+                "unitname2": {
+                    "type": "string"
+                },
+                "unitname3": {
+                    "type": "string"
+                },
+                "unitname4": {
+                    "type": "string"
+                },
+                "unitname5": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.InventoryBulkInsertResponse": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "payloadDuplicate": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "updateFailed": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.InventoryDeleteActivity": {
+            "type": "object",
+            "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.InventoryFetchUpdateResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.InventoryLastActivityResponse"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "models.InventoryImage": {
             "type": "object",
             "properties": {
@@ -2432,6 +2653,9 @@ const docTemplate = `{
                 },
                 "barcode": {
                     "type": "string"
+                },
+                "category": {
+                    "$ref": "#/definitions/models.Category"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
@@ -2547,6 +2771,23 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.InventoryLastActivityResponse": {
+            "type": "object",
+            "properties": {
+                "new": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InventoryActivity"
+                    }
+                },
+                "remove": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InventoryDeleteActivity"
+                    }
                 }
             }
         },

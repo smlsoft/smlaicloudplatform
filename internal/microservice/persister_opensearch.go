@@ -3,44 +3,47 @@ package microservice
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strings"
 	"sync"
 
-	elk "github.com/elastic/go-elasticsearch/v8"
-	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"github.com/opensearch-project/opensearch-go"
+	"github.com/opensearch-project/opensearch-go/opensearchapi"
 )
 
-type IPersisterElk interface {
+type IPersisterOpenSearch interface {
 	Create(model interface{}) error
 	CreateWithID(docID string, model interface{}) error
 	Update(docID string, model interface{}) error
 	Delete(docID string, model interface{}) error
 }
 
-type IPersisterElkConfig interface {
-	ElkAddress() []string
+type IPersisterOpenSearchConfig interface {
+	Address() []string
 	Username() string
 	Password() string
 }
 
-type ElasticModel interface {
+type OpenSearchModel interface {
 	IndexName() string
 }
 
-type PersisterElk struct {
-	config  IPersisterElkConfig
-	db      *elk.Client
+type PersisterOpenSearch struct {
+	config  IPersisterOpenSearchConfig
+	db      *opensearch.Client
 	dbMutex sync.Mutex
 }
 
-func NewPersisterElk(config IPersisterElkConfig) *PersisterElk {
-	return &PersisterElk{
+func NewPersisterOpenSearch(config IPersisterOpenSearchConfig) *PersisterOpenSearch {
+	return &PersisterOpenSearch{
 		config: config,
 	}
 }
 
-func (pst *PersisterElk) getClient() (*elk.Client, error) {
+func (pst *PersisterOpenSearch) getClient() (*opensearch.Client, error) {
 
 	if pst.db != nil {
 		return pst.db, nil
@@ -48,13 +51,16 @@ func (pst *PersisterElk) getClient() (*elk.Client, error) {
 
 	pst.dbMutex.Lock()
 
-	cfg := elk.Config{
+	cfg := opensearch.Config{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
 		Username:  pst.config.Username(),
 		Password:  pst.config.Password(),
-		Addresses: pst.config.ElkAddress(),
+		Addresses: pst.config.Address(),
 	}
 
-	es, err := elk.NewClient(cfg)
+	es, err := opensearch.NewClient(cfg)
 
 	if err != nil {
 		return nil, err
@@ -67,17 +73,17 @@ func (pst *PersisterElk) getClient() (*elk.Client, error) {
 	return pst.db, nil
 }
 
-func (pst *PersisterElk) getIndexName(model interface{}) (string, error) {
+func (pst *PersisterOpenSearch) getIndexName(model interface{}) (string, error) {
 
 	modelx, ok := model.(ElasticModel)
 
 	if ok {
 		return modelx.IndexName(), nil
 	}
-	return "", fmt.Errorf("struct is not implement IndexName()")
+	return "", fmt.Errorf("struct is not implement IndexName() string")
 }
 
-func (pst *PersisterElk) Create(model interface{}) error {
+func (pst *PersisterOpenSearch) Create(model interface{}) error {
 	indexName, err := pst.getIndexName(model)
 	if err != nil {
 		return err
@@ -95,7 +101,7 @@ func (pst *PersisterElk) Create(model interface{}) error {
 		return err
 	}
 
-	req := esapi.IndexRequest{
+	req := opensearchapi.IndexRequest{
 		Index: indexName,
 		Body:  bytes.NewReader(txtByte),
 	}
@@ -109,7 +115,40 @@ func (pst *PersisterElk) Create(model interface{}) error {
 	return nil
 }
 
-func (pst *PersisterElk) CreateWithID(docID string, model interface{}) error {
+func (pst *PersisterOpenSearch) CreateWithID(docID string, model interface{}) error {
+	indexName, err := pst.getIndexName(model)
+	if err != nil {
+		return err
+	}
+
+	db, err := pst.getClient()
+
+	if err != nil {
+		return err
+	}
+
+	txtByte, err := json.Marshal(model)
+	document := strings.NewReader(string(txtByte))
+	if err != nil {
+		return err
+	}
+
+	req := opensearchapi.IndexRequest{
+		Index:      indexName,
+		DocumentID: docID,
+		Body:       document,
+	}
+
+	_, err = req.Do(context.Background(), db)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (pst *PersisterOpenSearch) Update(docID string, model interface{}) error {
 	indexName, err := pst.getIndexName(model)
 	if err != nil {
 		return err
@@ -127,7 +166,7 @@ func (pst *PersisterElk) CreateWithID(docID string, model interface{}) error {
 		return err
 	}
 
-	req := esapi.IndexRequest{
+	req := opensearchapi.IndexRequest{
 		Index:      indexName,
 		DocumentID: docID,
 		Body:       bytes.NewReader(txtByte),
@@ -142,7 +181,7 @@ func (pst *PersisterElk) CreateWithID(docID string, model interface{}) error {
 	return nil
 }
 
-func (pst *PersisterElk) Update(docID string, model interface{}) error {
+func (pst *PersisterOpenSearch) Delete(docID string, model interface{}) error {
 	indexName, err := pst.getIndexName(model)
 	if err != nil {
 		return err
@@ -153,40 +192,7 @@ func (pst *PersisterElk) Update(docID string, model interface{}) error {
 	if err != nil {
 		return err
 	}
-
-	txtByte, err := json.Marshal(model)
-
-	if err != nil {
-		return err
-	}
-
-	req := esapi.IndexRequest{
-		Index:      indexName,
-		DocumentID: docID,
-		Body:       bytes.NewReader(txtByte),
-	}
-
-	_, err = req.Do(context.Background(), db)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (pst *PersisterElk) Delete(docID string, model interface{}) error {
-	indexName, err := pst.getIndexName(model)
-	if err != nil {
-		return err
-	}
-
-	db, err := pst.getClient()
-
-	if err != nil {
-		return err
-	}
-	req := esapi.DeleteRequest{
+	req := opensearchapi.DeleteRequest{
 		Index:      indexName,
 		DocumentID: docID,
 	}

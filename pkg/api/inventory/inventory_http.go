@@ -142,7 +142,7 @@ func (h InventoryHttp) CreateInventory(ctx microservice.IContext) error {
 // @Tags		Inventory
 // @Param		Inventory  body      []models.Inventory  true  "Inventory"
 // @Accept 		json
-// @Success		201	{object}	models.ResponseSuccess
+// @Success		201	{object}	models.InventoryBulkInsertResponse
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /inventory/bulk [post]
@@ -388,9 +388,11 @@ func (h InventoryHttp) InfoMongoInventory(ctx microservice.IContext) error {
 // Fetch Update Inventory By Date godoc
 // @Description Fetch Update Inventory By Date
 // @Tags		Inventory
-// @Param		lastUpdate query string true "DateTime"
+// @Param		lastUpdate query string true "DateTime YYYY-MM-DDTHH:mm"
+// @Param		page	query	integer		false  "Add Category"
+// @Param		limit	query	integer		false  "Add Category"
 // @Accept		json
-// @Success		200 {array} models.InventoryPageResponse
+// @Success		200 {object} models.InventoryFetchUpdateResponse
 // @Failure		401 {object} models.AuthResponseFailed
 // @Security	AccessToken
 // @Router		/inventory/fetchupdate [get]
