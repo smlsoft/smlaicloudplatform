@@ -25,7 +25,7 @@ type IInventoryService interface {
 	InfoIndexInventory(shopID string, guid string) (models.InventoryInfo, error)
 	SearchInventory(shopID string, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
 	LastActivityInventory(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, paginate.PaginationData, error)
-	UpdateProductCategory(shopId string, authUsername string, catId string, guid []models.DocIdentity) error
+	UpdateProductCategory(shopId string, authUsername string, catId string, guid []string) error
 }
 
 type InventoryService struct {
@@ -454,11 +454,11 @@ func (svc InventoryService) LastActivityInventory(shopID string, lastUpdatedDate
 	return lastActivity, pagination, nil
 }
 
-func (svc InventoryService) UpdateProductCategory(shopId string, authUsername string, catId string, guids []models.DocIdentity) error {
+func (svc InventoryService) UpdateProductCategory(shopId string, authUsername string, catId string, guids []string) error {
 
 	for _, guid := range guids {
 
-		findDoc, err := svc.invRepo.FindByGuid(shopId, guid.GuidFixed)
+		findDoc, err := svc.invRepo.FindByItemGuid(shopId, guid)
 
 		if err != nil {
 			return err
@@ -472,7 +472,7 @@ func (svc InventoryService) UpdateProductCategory(shopId string, authUsername st
 		findDoc.UpdatedBy = authUsername
 		findDoc.UpdatedAt = time.Now()
 
-		err = svc.invRepo.Update(guid.GuidFixed, findDoc)
+		err = svc.invRepo.Update(findDoc.GuidFixed, findDoc)
 
 		if err != nil {
 			return err

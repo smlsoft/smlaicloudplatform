@@ -870,7 +870,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Category ID",
+                        "description": "Category GUID",
                         "name": "catid",
                         "in": "path",
                         "required": true
@@ -883,7 +883,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.DocIdentity"
+                                "type": "string"
                             }
                         }
                     }
@@ -2427,14 +2427,6 @@
                     "type": "boolean"
                 },
                 "suggestcode": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.DocIdentity": {
-            "type": "object",
-            "properties": {
-                "guidfixed": {
                     "type": "string"
                 }
             }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/api/category"
 	"smlcloudplatform/pkg/models"
 	"strconv"
 	"strings"
@@ -26,11 +27,12 @@ type IInventoryHttp interface {
 }
 
 type InventoryHttp struct {
-	ms              *microservice.Microservice
-	cfg             microservice.IConfig
-	invService      IInventoryService
-	invOptService   IInventoryOptionMainService
-	optGroupService IOptionGroupService
+	ms                       *microservice.Microservice
+	cfg                      microservice.IConfig
+	invService               IInventoryService
+	invOptService            IInventoryOptionMainService
+	optGroupService          IOptionGroupService
+	inventoryCategoryService IInventoryCategoryService
 }
 
 func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) IInventoryHttp {
@@ -50,12 +52,16 @@ func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) I
 	optGroupRepo := NewOptionGroupRepository(pst)
 	optGroupService := NewOptionGroupService(optGroupRepo)
 
+	categoryRepo := category.NewCategoryRepository(pst)
+	inventoryCategoryService := NewInventorycategoryService(invRepo, categoryRepo, invMqRepo)
+
 	return &InventoryHttp{
-		ms:              ms,
-		cfg:             cfg,
-		invService:      invService,
-		invOptService:   invOptService,
-		optGroupService: optGroupService,
+		ms:                       ms,
+		cfg:                      cfg,
+		invService:               invService,
+		invOptService:            invOptService,
+		optGroupService:          optGroupService,
+		inventoryCategoryService: inventoryCategoryService,
 	}
 }
 
@@ -445,8 +451,8 @@ func (h InventoryHttp) LastActivityInventory(ctx microservice.IContext) error {
 // Update Inventory Category List godoc
 // @Description Update Inventory Category List
 // @Tags		Inventory
-// @Param		catid  path      string  true  "Category ID"
-// @Param		Inventory  body      []models.DocIdentity  true  "Inventory"
+// @Param		catid  path      string  true  "Category GUID"
+// @Param		Inventory  body      []string  true  "Inventory"
 // @Accept 		json
 // @Success		201	{object}	models.ResponseSuccess
 // @Failure		401 {object}	models.AuthResponseFailed
@@ -462,7 +468,7 @@ func (h InventoryHttp) UpdateProductCategory(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	inventoryReq := &[]models.DocIdentity{}
+	var inventoryReq []string
 	err := json.Unmarshal([]byte(input), &inventoryReq)
 
 	if err != nil {
@@ -470,7 +476,7 @@ func (h InventoryHttp) UpdateProductCategory(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.invService.UpdateProductCategory(shopID, authUsername, catid, *inventoryReq)
+	err = h.inventoryCategoryService.UpdateInventoryCategoryBulk(shopID, authUsername, catid, inventoryReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

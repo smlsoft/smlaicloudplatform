@@ -876,7 +876,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Category ID",
+                        "description": "Category GUID",
                         "name": "catid",
                         "in": "path",
                         "required": true
@@ -889,7 +889,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.DocIdentity"
+                                "type": "string"
                             }
                         }
                     }
@@ -2433,14 +2433,6 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "suggestcode": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.DocIdentity": {
-            "type": "object",
-            "properties": {
-                "guidfixed": {
                     "type": "string"
                 }
             }

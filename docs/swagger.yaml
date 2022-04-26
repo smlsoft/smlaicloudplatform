@@ -186,11 +186,6 @@ definitions:
       suggestcode:
         type: string
     type: object
-  models.DocIdentity:
-    properties:
-      guidfixed:
-        type: string
-    type: object
   models.Image:
     properties:
       uri:
@@ -1408,7 +1403,7 @@ paths:
       - application/json
       description: Update Inventory Category List
       parameters:
-      - description: Category ID
+      - description: Category GUID
         in: path
         name: catid
         required: true
@@ -1419,7 +1414,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/models.DocIdentity'
+            type: string
           type: array
       responses:
         "201":
