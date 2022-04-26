@@ -87,6 +87,7 @@ func (svc ImagesHttp) GetProductImage(ctx microservice.IContext) error {
 	}
 
 	fileName, err := svc.service.GetImageByProductCode(shopId, itemguid, index)
+
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, &models.ApiResponse{
 			Success: false,

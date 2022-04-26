@@ -88,7 +88,7 @@ func (svc ImagesService) UploadImageToProduct(shopId string, fh *multipart.FileH
 
 func (svc ImagesService) GetImageByProductCode(shopid string, itemguid string, index int) (string, error) {
 
-	findDoc, err := svc.invRepo.FindByItemGuid(itemguid, shopid)
+	findDoc, err := svc.invRepo.FindByItemGuid(shopid, itemguid)
 
 	if err != nil {
 		return "", err
@@ -104,7 +104,11 @@ func (svc ImagesService) GetImageByProductCode(shopid string, itemguid string, i
 		return "", errors.New("Not Found Image")
 	}
 
-	imgFileName := productImage[index-1].Url
+	imgFileUrl := productImage[index-1].Url
+
+	storageCfg := microservice.NewStorageFileConfig()
+
+	imgFileName := strings.Replace(imgFileUrl, storageCfg.StorageUriAtlas(), "", -1)
 
 	return imgFileName, nil
 }
