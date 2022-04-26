@@ -36,6 +36,7 @@ func (h CategoryHttp) RouteSetup() {
 	h.ms.GET("/category/:id", h.InfoCategory)
 	h.ms.GET("/category", h.SearchCategory)
 	h.ms.POST("/category", h.CreateCategory)
+	h.ms.POST("/category/bulk", h.CreateInBatchCategory)
 	h.ms.PUT("/category/:id", h.UpdateCategory)
 	h.ms.DELETE("/category/:id", h.DeleteCategory)
 	h.ms.GET("/category/fetchupdate", h.LastActivityCategory)
@@ -225,7 +226,7 @@ func (h CategoryHttp) SearchCategory(ctx microservice.IContext) error {
 
 // Fetch Update Category By Date godoc
 // @Description Fetch Update Category By Date
-// @Tags		Category
+// @Tags		Inventory
 // @Param		lastUpdate query string true "DateTime"
 // @Accept		json
 // @Success		200 {array} models.CategoryPageResponse
@@ -277,6 +278,49 @@ func (h CategoryHttp) LastActivityCategory(ctx microservice.IContext) error {
 			Data:       docList,
 			Pagination: pagination,
 		})
+
+	return nil
+}
+
+// Create Category Bulk godoc
+// @Description Create Category
+// @Tags		Inventory
+// @Param		Category  body      []models.Category  true  "Category"
+// @Accept 		json
+// @Success		201	{object}	models.CategoryBulkReponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /category/bulk [post]
+func (h CategoryHttp) CreateInBatchCategory(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	dataReq := []models.Category{}
+	err := json.Unmarshal([]byte(input), &dataReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	categoryBulkResponse, err := h.cateService.CreateInBatch(shopID, authUsername, dataReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(
+		http.StatusCreated,
+		models.CategoryBulkReponse{
+			Success:            true,
+			CategoryBulkImport: categoryBulkResponse,
+		},
+	)
 
 	return nil
 }

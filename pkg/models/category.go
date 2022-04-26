@@ -10,13 +10,14 @@ import (
 const categoryCollectionName = "categories"
 
 type Category struct {
-	Name1 string `json:"name1" bson:"name1"`
-	Name2 string `json:"name2,omitempty" bson:"name2,omitempty"`
-	Name3 string `json:"name3,omitempty" bson:"name3,omitempty"`
-	Name4 string `json:"name4,omitempty" bson:"name4,omitempty"`
-	Name5 string `json:"name5,omitempty" bson:"name5,omitempty"`
-	Image string `json:"image" bson:"image"`
-	Order int8   `json:"order" bson:"order"`
+	CategoryGuid string `json:"categoryguid" bson:"categoryguid" gorm:"categoryguid"`
+	Name1        string `json:"name1" bson:"name1"`
+	Name2        string `json:"name2,omitempty" bson:"name2,omitempty"`
+	Name3        string `json:"name3,omitempty" bson:"name3,omitempty"`
+	Name4        string `json:"name4,omitempty" bson:"name4,omitempty"`
+	Name5        string `json:"name5,omitempty" bson:"name5,omitempty"`
+	Image        string `json:"image" bson:"image"`
+	Order        int8   `json:"order" bson:"order"`
 }
 
 type CategoryInfo struct {
@@ -37,6 +38,7 @@ type CategoryDoc struct {
 	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	CategoryData `bson:"inline"`
 	Activity     `bson:"inline"`
+	LastUpdate   `bson:"inline"`
 }
 
 func (CategoryDoc) CollectionName() string {
@@ -65,7 +67,27 @@ func (CategoryDeleteActivity) CollectionName() string {
 	return categoryCollectionName
 }
 
+type CategoryItemCategoryGuid struct {
+	CategoryGuid string `json:"categoryguid" bson:"categoryguid" gorm:"categoryguid"`
+}
+
+func (CategoryItemCategoryGuid) CollectionName() string {
+	return categoryCollectionName
+}
+
 //for swagger gen
+
+type CategoryBulkImport struct {
+	Created          []string `json:"created"`
+	Updated          []string `json:"updated"`
+	UpdateFailed     []string `json:"updateFailed"`
+	PayloadDuplicate []string `json:"payloadDuplicate"`
+}
+
+type CategoryBulkReponse struct {
+	Success bool `json:"success"`
+	CategoryBulkImport
+}
 
 type CategoryFetchUpdateResponse struct {
 	Success    bool                           `json:"success"`
