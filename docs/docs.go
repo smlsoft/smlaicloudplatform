@@ -125,6 +125,92 @@ const docTemplate = `{
                 }
             }
         },
+        "/category/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Category",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "description": "Category",
+                        "name": "Category",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Category"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.CategoryBulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/category/fetchupdate": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Fetch Update Category By Date",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "DateTime",
+                        "name": "lastUpdate",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CategoryPageResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/category/{id}": {
             "get": {
                 "security": [
@@ -2105,6 +2191,9 @@ const docTemplate = `{
         "models.Category": {
             "type": "object",
             "properties": {
+                "categoryguid": {
+                    "type": "string"
+                },
                 "image": {
                     "type": "string"
                 },
@@ -2128,9 +2217,44 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CategoryBulkReponse": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "payloadDuplicate": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "updateFailed": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "models.CategoryImport": {
             "type": "object",
             "properties": {
+                "categoryguid": {
+                    "type": "string"
+                },
                 "code": {
                     "type": "string"
                 },
@@ -2160,6 +2284,9 @@ const docTemplate = `{
         "models.CategoryImportInfo": {
             "type": "object",
             "properties": {
+                "categoryguid": {
+                    "type": "string"
+                },
                 "code": {
                     "type": "string"
                 },
@@ -2209,6 +2336,9 @@ const docTemplate = `{
         "models.CategoryInfo": {
             "type": "object",
             "properties": {
+                "categoryguid": {
+                    "type": "string"
+                },
                 "guidfixed": {
                     "type": "string"
                 },
