@@ -401,7 +401,8 @@ func (h InventoryHttp) LastActivityInventory(ctx microservice.IContext) error {
 	layout := "2006-01-02T15:04" //
 	lastUpdateStr := ctx.QueryParam("lastUpdate")
 
-	if len(strings.Trim(lastUpdateStr, " ")) < 1 {
+	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
+	if len(lastUpdateStr) < 1 {
 		ctx.ResponseError(400, "lastUpdate format invalid.")
 		return nil
 	}
