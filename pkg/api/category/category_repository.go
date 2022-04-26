@@ -13,9 +13,12 @@ import (
 type ICategoryRepository interface {
 	Count(shopID string) (int, error)
 	Create(category models.CategoryDoc) (string, error)
+	CreateInBatch(inventories []models.CategoryDoc) error
 	Update(guid string, category models.CategoryDoc) error
-	Delete(guid string, username string, shopID string) error
-	FindByGuid(guid string, shopID string) (models.CategoryDoc, error)
+	Delete(shopID string, guid string, username string) error
+	FindByGuid(shopID string, guid string) (models.CategoryDoc, error)
+	FindByCategoryGuid(shopID string, guid string) (models.CategoryDoc, error)
+	FindByCategoryGuidList(shopID string, categoryGuidList []string) ([]models.CategoryItemCategoryGuid, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.CategoryInfo, paginate.PaginationData, error)
 	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.CategoryDeleteActivity, paginate.PaginationData, error)
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.CategoryActivity, paginate.PaginationData, error)
@@ -51,6 +54,21 @@ func (repo CategoryRepository) Create(category models.CategoryDoc) (string, erro
 	return idx.Hex(), nil
 }
 
+func (repo CategoryRepository) CreateInBatch(inventories []models.CategoryDoc) error {
+	var tempList []interface{}
+
+	for _, inv := range inventories {
+		tempList = append(tempList, inv)
+	}
+
+	err := repo.pst.CreateInBatch(&models.CategoryDoc{}, tempList)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (repo CategoryRepository) Update(guid string, category models.CategoryDoc) error {
 	err := repo.pst.UpdateOne(&models.CategoryDoc{}, "guidfixed", guid, category)
 
@@ -61,7 +79,7 @@ func (repo CategoryRepository) Update(guid string, category models.CategoryDoc) 
 	return nil
 }
 
-func (repo CategoryRepository) Delete(guid string, shopID string, username string) error {
+func (repo CategoryRepository) Delete(shopID string, guid string, username string) error {
 	err := repo.pst.SoftDelete(&models.CategoryDoc{}, username, bson.M{"guidfixed": guid, "shopid": shopID})
 
 	if err != nil {
@@ -71,7 +89,7 @@ func (repo CategoryRepository) Delete(guid string, shopID string, username strin
 	return nil
 }
 
-func (repo CategoryRepository) FindByGuid(guid string, shopID string) (models.CategoryDoc, error) {
+func (repo CategoryRepository) FindByGuid(shopID string, guid string) (models.CategoryDoc, error) {
 
 	doc := &models.CategoryDoc{}
 
@@ -82,6 +100,30 @@ func (repo CategoryRepository) FindByGuid(guid string, shopID string) (models.Ca
 	}
 
 	return *doc, nil
+}
+
+func (repo CategoryRepository) FindByCategoryGuid(shopID string, categoryguid string) (models.CategoryDoc, error) {
+
+	doc := &models.CategoryDoc{}
+
+	err := repo.pst.FindOne(&models.CategoryInfo{}, bson.M{"shopid": shopID, "categoryguid": categoryguid, "deletedat": bson.M{"$exists": false}}, doc)
+
+	if err != nil {
+		return models.CategoryDoc{}, err
+	}
+
+	return *doc, nil
+}
+
+func (repo CategoryRepository) FindByCategoryGuidList(shopID string, categoryGuidList []string) ([]models.CategoryItemCategoryGuid, error) {
+
+	findDoc := []models.CategoryItemCategoryGuid{}
+	err := repo.pst.Find(&models.CategoryItemCategoryGuid{}, bson.M{"shopid": shopID, "categoryguid": bson.M{"$in": categoryGuidList}}, &findDoc)
+
+	if err != nil {
+		return []models.CategoryItemCategoryGuid{}, err
+	}
+	return findDoc, nil
 }
 
 func (repo CategoryRepository) FindPage(shopID string, q string, page int, limit int) ([]models.CategoryInfo, paginate.PaginationData, error) {
