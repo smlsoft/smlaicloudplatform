@@ -65,6 +65,15 @@ definitions:
           type: string
         type: array
     type: object
+  models.CategoryFetchUpdateResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.LastActivity'
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
   models.CategoryImport:
     properties:
       categoryguid:
@@ -412,7 +421,7 @@ definitions:
     type: object
   models.InventoryImage:
     properties:
-      url:
+      uri:
         type: string
     type: object
   models.InventoryInfo:
@@ -655,6 +664,11 @@ definitions:
     properties:
       name:
         type: string
+    type: object
+  models.LastActivity:
+    properties:
+      new: {}
+      remove: {}
     type: object
   models.Member:
     properties:
@@ -993,9 +1007,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/models.CategoryPageResponse'
-            type: array
+            $ref: '#/definitions/models.CategoryFetchUpdateResponse'
         "401":
           description: Unauthorized
           schema:

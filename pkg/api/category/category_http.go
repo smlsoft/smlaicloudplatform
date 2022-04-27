@@ -229,7 +229,7 @@ func (h CategoryHttp) SearchCategory(ctx microservice.IContext) error {
 // @Tags		Inventory
 // @Param		lastUpdate query string true "DateTime"
 // @Accept		json
-// @Success		200 {array} models.CategoryPageResponse
+// @Success		200 {object} models.CategoryFetchUpdateResponse
 // @Failure		401 {object} models.AuthResponseFailed
 // @Security	AccessToken
 // @Router		/category/fetchupdate [get]
@@ -273,7 +273,7 @@ func (h CategoryHttp) LastActivityCategory(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusOK,
-		models.CategoryFetchUpdateResponse{
+		models.ApiResponse{
 			Success:    true,
 			Data:       docList,
 			Pagination: pagination,
