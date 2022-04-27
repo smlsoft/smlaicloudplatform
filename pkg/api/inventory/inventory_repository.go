@@ -88,7 +88,7 @@ func (repo InventoryRepository) Delete(shopID string, guid string, username stri
 func (repo InventoryRepository) FindByItemCodeGuid(shopID string, itemCodeGuidList []string) ([]models.InventoryItemGuid, error) {
 
 	findDoc := []models.InventoryItemGuid{}
-	err := repo.pst.Find(&models.InventoryItemGuid{}, bson.M{"shopid": shopID, "itemguid": bson.M{"$in": itemCodeGuidList}}, &findDoc)
+	err := repo.pst.Find(&models.InventoryItemGuid{}, bson.M{"shopid": shopID, "itemguid": bson.M{"$in": itemCodeGuidList}, "deletedat": bson.M{"$exists": false}}, &findDoc)
 
 	if err != nil {
 		return []models.InventoryItemGuid{}, err
