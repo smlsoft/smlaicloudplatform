@@ -2208,6 +2208,9 @@
                 },
                 "order": {
                     "type": "integer"
+                },
+                "parentguid": {
+                    "type": "string"
                 }
             }
         },
@@ -2272,6 +2275,9 @@
                 },
                 "order": {
                     "type": "integer"
+                },
+                "parentguid": {
+                    "type": "string"
                 }
             }
         },
@@ -2307,6 +2313,9 @@
                 },
                 "order": {
                     "type": "integer"
+                },
+                "parentguid": {
+                    "type": "string"
                 }
             }
         },
@@ -2356,6 +2365,9 @@
                 },
                 "order": {
                     "type": "integer"
+                },
+                "parentguid": {
+                    "type": "string"
                 }
             }
         },

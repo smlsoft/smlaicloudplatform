@@ -2214,6 +2214,9 @@ const docTemplate = `{
                 },
                 "order": {
                     "type": "integer"
+                },
+                "parentguid": {
+                    "type": "string"
                 }
             }
         },
@@ -2278,6 +2281,9 @@ const docTemplate = `{
                 },
                 "order": {
                     "type": "integer"
+                },
+                "parentguid": {
+                    "type": "string"
                 }
             }
         },
@@ -2313,6 +2319,9 @@ const docTemplate = `{
                 },
                 "order": {
                     "type": "integer"
+                },
+                "parentguid": {
+                    "type": "string"
                 }
             }
         },
@@ -2362,6 +2371,9 @@ const docTemplate = `{
                 },
                 "order": {
                     "type": "integer"
+                },
+                "parentguid": {
+                    "type": "string"
                 }
             }
         },
