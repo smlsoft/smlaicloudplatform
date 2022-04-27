@@ -37,7 +37,7 @@ func (ics *InventoryCategoryService) UpdateInventoryCategoryBulk(shopId string, 
 	for _, findDoc := range itemsList {
 
 		findDoc.CategoryGuid = catId
-		findDoc.Category = findCategory.Category
+		findDoc.Category = &findCategory.Category
 		findDoc.UpdatedBy = authUsername
 		findDoc.UpdatedAt = time.Now()
 

@@ -74,7 +74,7 @@ func (svc ImagesService) UploadImageToProduct(shopId string, fh *multipart.FileH
 		imageSlice = *findDoc.Images
 	}
 	productImage := models.InventoryImage{
-		Url: uploadFileName,
+		Uri: uploadFileName,
 	}
 	// push image
 	imageSlice = append(imageSlice, productImage)
@@ -104,7 +104,7 @@ func (svc ImagesService) GetImageByProductCode(shopid string, itemguid string, i
 		return "", errors.New("Not Found Image")
 	}
 
-	imgFileUrl := productImage[index-1].Url
+	imgFileUrl := productImage[index-1].Uri
 
 	storageCfg := microservice.NewStorageFileConfig()
 
