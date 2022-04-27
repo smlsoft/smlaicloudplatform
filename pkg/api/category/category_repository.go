@@ -118,7 +118,7 @@ func (repo CategoryRepository) FindByCategoryGuid(shopID string, categoryguid st
 func (repo CategoryRepository) FindByCategoryGuidList(shopID string, categoryGuidList []string) ([]models.CategoryItemCategoryGuid, error) {
 
 	findDoc := []models.CategoryItemCategoryGuid{}
-	err := repo.pst.Find(&models.CategoryItemCategoryGuid{}, bson.M{"shopid": shopID, "categoryguid": bson.M{"$in": categoryGuidList}}, &findDoc)
+	err := repo.pst.Find(&models.CategoryItemCategoryGuid{}, bson.M{"shopid": shopID, "categoryguid": bson.M{"$in": categoryGuidList}, "deletedat": bson.M{"$exists": false}}, &findDoc)
 
 	if err != nil {
 		return []models.CategoryItemCategoryGuid{}, err
