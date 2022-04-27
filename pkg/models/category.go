@@ -11,6 +11,7 @@ const categoryCollectionName = "categories"
 
 type Category struct {
 	CategoryGuid string `json:"categoryguid" bson:"categoryguid" gorm:"categoryguid"`
+	ParentGuid   string `json:"parentguid"  bson:"parentguid"`
 	Name1        string `json:"name1" bson:"name1"`
 	Name2        string `json:"name2,omitempty" bson:"name2,omitempty"`
 	Name3        string `json:"name3,omitempty" bson:"name3,omitempty"`
