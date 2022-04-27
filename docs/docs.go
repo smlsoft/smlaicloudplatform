@@ -196,10 +196,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.CategoryPageResponse"
-                            }
+                            "$ref": "#/definitions/models.CategoryFetchUpdateResponse"
                         }
                     },
                     "401": {
@@ -2252,6 +2249,20 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CategoryFetchUpdateResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.LastActivity"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "models.CategoryImport": {
             "type": "object",
             "properties": {
@@ -2773,7 +2784,7 @@ const docTemplate = `{
         "models.InventoryImage": {
             "type": "object",
             "properties": {
-                "url": {
+                "uri": {
                     "type": "string"
                 }
             }
@@ -3140,6 +3151,13 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 }
+            }
+        },
+        "models.LastActivity": {
+            "type": "object",
+            "properties": {
+                "new": {},
+                "remove": {}
             }
         },
         "models.Member": {

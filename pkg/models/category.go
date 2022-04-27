@@ -3,7 +3,6 @@ package models
 import (
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -91,9 +90,9 @@ type CategoryBulkReponse struct {
 }
 
 type CategoryFetchUpdateResponse struct {
-	Success    bool                           `json:"success"`
-	Data       LastActivity                   `json:"data,omitempty"`
-	Pagination mongopagination.PaginationData `json:"pagination,omitempty"`
+	Success    bool                   `json:"success"`
+	Data       LastActivity           `json:"data,omitempty"`
+	Pagination PaginationDataResponse `json:"pagination,omitempty"`
 }
 
 type CategoryPageResponse struct {
