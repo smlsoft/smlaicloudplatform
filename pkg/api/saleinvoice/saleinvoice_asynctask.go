@@ -1,4 +1,4 @@
-package transaction
+package saleinvoice
 
 import (
 	"encoding/json"
@@ -8,20 +8,20 @@ import (
 	"smlcloudplatform/pkg/models"
 )
 
-func StartTransactionAsync(ms *microservice.Microservice, cfg microservice.IConfig) {
+func StartSaleinvoiceAsync(ms *microservice.Microservice, cfg microservice.IConfig) {
 
-	repo := NewTransactionRepository(ms.MongoPersister(cfg.MongoPersisterConfig()))
+	repo := NewSaleinvoiceRepository(ms.MongoPersister(cfg.MongoPersisterConfig()))
 	prod := ms.Producer(cfg.MQConfig())
 
-	mqRepo := NewTransactionMQRepository(prod)
-	service := NewTransactionService(repo, mqRepo)
+	mqRepo := NewSaleinvoiceMQRepository(prod)
+	service := NewSaleinvoiceService(repo, mqRepo)
 	err := ms.AsyncPOST("/trans", cfg.CacherConfig(), cfg.MQConfig(), func(ctx microservice.IContext) error {
 		userInfo := ctx.UserInfo()
 		authUsername := userInfo.Username
 		shopID := userInfo.ShopID
 		input := ctx.ReadInput()
 
-		trans := models.Transaction{}
+		trans := models.Saleinvoice{}
 		err := json.Unmarshal([]byte(input), &trans)
 
 		if err != nil {
@@ -30,7 +30,7 @@ func StartTransactionAsync(ms *microservice.Microservice, cfg microservice.IConf
 			return err
 		}
 
-		idx, err := service.CreateTransaction(shopID, authUsername, trans)
+		idx, err := service.CreateSaleinvoice(shopID, authUsername, trans)
 
 		if err != nil {
 			ctx.ResponseError(400, err.Error())

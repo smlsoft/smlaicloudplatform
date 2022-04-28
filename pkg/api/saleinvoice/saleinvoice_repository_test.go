@@ -1,25 +1,25 @@
-package transaction_test
+package saleinvoice_test
 
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
-	"smlcloudplatform/pkg/api/transaction"
+	"smlcloudplatform/pkg/api/saleinvoice"
 	"smlcloudplatform/pkg/models"
 	"testing"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func TestCreateTransaction(t *testing.T) {
+func TestCreateSaleinvoice(t *testing.T) {
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
-	repo := transaction.NewTransactionRepository(mongoPersister)
+	repo := saleinvoice.NewSaleinvoiceRepository(mongoPersister)
 
-	give := models.TransactionDoc{}
+	give := models.SaleinvoiceDoc{}
 
 	give.ShopID = "mx01"
 	give.GuidFixed = "fx01"
-	give.Items = &[]models.TransactionDetail{
+	give.Items = &[]models.SaleinvoiceDetail{
 		{
 			ItemSku:      "sku01",
 			CategoryGuid: "xxx",
@@ -42,16 +42,16 @@ func TestCreateTransaction(t *testing.T) {
 
 }
 
-func TestUpdateTransaction(t *testing.T) {
+func TestUpdateSaleinvoice(t *testing.T) {
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
-	repo := transaction.NewTransactionRepository(mongoPersister)
+	repo := saleinvoice.NewSaleinvoiceRepository(mongoPersister)
 
-	trans := models.TransactionDoc{}
+	trans := models.SaleinvoiceDoc{}
 
 	trans.ShopID = "mx01"
 	trans.GuidFixed = "fx02"
-	trans.Items = &[]models.TransactionDetail{
+	trans.Items = &[]models.SaleinvoiceDetail{
 		{
 			InventoryID:  "inv01",
 			ItemSku:      "sku01",
@@ -59,11 +59,11 @@ func TestUpdateTransaction(t *testing.T) {
 		},
 	}
 
-	give := models.TransactionDoc{}
+	give := models.SaleinvoiceDoc{}
 
 	give.ShopID = "mx01"
 	give.GuidFixed = "fx02"
-	give.Items = &[]models.TransactionDetail{
+	give.Items = &[]models.SaleinvoiceDetail{
 		{
 			InventoryID:  "inv01",
 			ItemSku:      "sku01",
@@ -110,16 +110,16 @@ func TestUpdateTransaction(t *testing.T) {
 
 }
 
-func TestDeleteTransaction(t *testing.T) {
+func TestDeleteSaleinvoice(t *testing.T) {
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
-	repo := transaction.NewTransactionRepository(mongoPersister)
+	repo := saleinvoice.NewSaleinvoiceRepository(mongoPersister)
 
-	give := models.TransactionDoc{}
+	give := models.SaleinvoiceDoc{}
 
 	give.ShopID = "mx01"
 	give.GuidFixed = "fx03"
-	give.Items = &[]models.TransactionDetail{
+	give.Items = &[]models.SaleinvoiceDetail{
 		{
 			InventoryID:  "inv01",
 			ItemSku:      "sku01",
@@ -161,10 +161,10 @@ func TestDeleteTransaction(t *testing.T) {
 
 }
 
-func TestFindTransaction(t *testing.T) {
+func TestFindSaleinvoice(t *testing.T) {
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
-	repo := transaction.NewTransactionRepository(mongoPersister)
+	repo := saleinvoice.NewSaleinvoiceRepository(mongoPersister)
 
 	shopID := "mx01"
 	give := "fx01"
@@ -183,10 +183,10 @@ func TestFindTransaction(t *testing.T) {
 	}
 }
 
-func TestFindPageTransaction(t *testing.T) {
+func TestFindPageSaleinvoice(t *testing.T) {
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
-	repo := transaction.NewTransactionRepository(mongoPersister)
+	repo := saleinvoice.NewSaleinvoiceRepository(mongoPersister)
 
 	shopID := "mx01"
 	// give := "fx01"

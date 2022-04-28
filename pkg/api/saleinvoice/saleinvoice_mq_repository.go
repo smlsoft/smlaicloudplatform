@@ -1,31 +1,31 @@
-package transaction
+package saleinvoice
 
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 )
 
-type ITransactionMQRepository interface {
-	Create(doc models.TransactionData) error
-	Update(doc models.TransactionData) error
+type ISaleinvoiceMQRepository interface {
+	Create(doc models.SaleinvoiceData) error
+	Update(doc models.SaleinvoiceData) error
 	Delete(doc models.Identity) error
 }
 
-type TransactionMQRepository struct {
+type SaleinvoiceMQRepository struct {
 	prod  microservice.IProducer
 	mqKey string
 }
 
-func NewTransactionMQRepository(prod microservice.IProducer) TransactionMQRepository {
+func NewSaleinvoiceMQRepository(prod microservice.IProducer) SaleinvoiceMQRepository {
 	mqKey := ""
 
-	return TransactionMQRepository{
+	return SaleinvoiceMQRepository{
 		prod:  prod,
 		mqKey: mqKey,
 	}
 }
 
-func (repo TransactionMQRepository) Create(doc models.TransactionData) error {
+func (repo SaleinvoiceMQRepository) Create(doc models.SaleinvoiceData) error {
 	err := repo.prod.SendMessage(MQ_TOPIC_TRANSACTION_CREATED, repo.mqKey, doc)
 
 	if err != nil {
@@ -34,7 +34,7 @@ func (repo TransactionMQRepository) Create(doc models.TransactionData) error {
 
 	return nil
 }
-func (repo TransactionMQRepository) Update(doc models.TransactionData) error {
+func (repo SaleinvoiceMQRepository) Update(doc models.SaleinvoiceData) error {
 	err := repo.prod.SendMessage(MQ_TOPIC_TRANSACTION_UPDATED, repo.mqKey, doc)
 
 	if err != nil {
@@ -44,7 +44,7 @@ func (repo TransactionMQRepository) Update(doc models.TransactionData) error {
 	return nil
 }
 
-func (repo TransactionMQRepository) Delete(doc models.Identity) error {
+func (repo SaleinvoiceMQRepository) Delete(doc models.Identity) error {
 	err := repo.prod.SendMessage(MQ_TOPIC_TRANSACTION_DELETED, repo.mqKey, doc)
 
 	if err != nil {

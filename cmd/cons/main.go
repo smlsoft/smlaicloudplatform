@@ -4,7 +4,7 @@ import (
 	"log"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/purchase"
-	"smlcloudplatform/pkg/api/transaction"
+	"smlcloudplatform/pkg/api/saleinvoice"
 
 	"github.com/joho/godotenv"
 )
@@ -18,7 +18,7 @@ func main() {
 	cfg := microservice.NewConfig()
 	ms, _ := microservice.NewMicroservice(cfg)
 
-	transaction.StartTransactionComsumeCreated(ms, cfg)
+	saleinvoice.StartSaleinvoiceComsumeCreated(ms, cfg)
 
 	purchase.StartPurchaseComsume(ms, cfg)
 

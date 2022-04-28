@@ -1,4 +1,4 @@
-package transaction
+package saleinvoice
 
 import (
 	"encoding/json"
@@ -7,9 +7,9 @@ import (
 	"time"
 )
 
-func StartTransactionComsumeCreated(ms *microservice.Microservice, cfg microservice.IConfig) {
-	topic := "when-transaction-created"
-	groupID := "elk-transaction-consumer"
+func StartSaleinvoiceComsumeCreated(ms *microservice.Microservice, cfg microservice.IConfig) {
+	topic := "when-saleinvoice-created"
+	groupID := "elk-saleinvoice-consumer"
 	timeout := time.Duration(-1)
 
 	mqConfig := cfg.MQConfig()
@@ -17,15 +17,15 @@ func StartTransactionComsumeCreated(ms *microservice.Microservice, cfg microserv
 	mq := microservice.NewMQ(mqConfig, ms.Logger)
 	mq.CreateTopicR(topic, 5, 1, time.Hour*24*7)
 
-	//Consume transaction Created
+	//Consume saleinvoice Created
 	ms.Consume(mqConfig.URI(), topic, groupID, timeout, func(ctx microservice.IContext) error {
-		moduleName := "comsume transaction created"
+		moduleName := "comsume saleinvoice created"
 
 		elkPst := ms.ElkPersister(cfg.ElkPersisterConfig())
 
 		msg := ctx.ReadInput()
 
-		trans := models.TransactionData{}
+		trans := models.SaleinvoiceData{}
 		err := json.Unmarshal([]byte(msg), &trans)
 
 		if err != nil {

@@ -13,11 +13,11 @@ import (
 	"smlcloudplatform/pkg/api/inventoryimport"
 	"smlcloudplatform/pkg/api/member"
 	"smlcloudplatform/pkg/api/purchase"
+	"smlcloudplatform/pkg/api/saleinvoice"
 	"smlcloudplatform/pkg/api/shop"
 	"smlcloudplatform/pkg/api/shop/employee"
 	"smlcloudplatform/pkg/api/syncdata"
 	"smlcloudplatform/pkg/api/tools"
-	"smlcloudplatform/pkg/api/transaction"
 
 	_ "net/http/pprof"
 
@@ -54,48 +54,48 @@ func main() {
 
 	ms.RegisterLivenessProbeEndpoint("/healthz")
 
-	svcAuth := authentication.NewAuthenticationHttp(ms, cfg)
-	svcAuth.RouteSetup()
+	authHttp := authentication.NewAuthenticationHttp(ms, cfg)
+	authHttp.RouteSetup()
 
-	svcShop := shop.NewShopHttp(ms, cfg)
-	svcShop.RouteSetup()
+	shopHttp := shop.NewShopHttp(ms, cfg)
+	shopHttp.RouteSetup()
 
 	categoryHttp := category.NewCategoryHttp(ms, cfg)
 	categoryHttp.RouteSetup()
 
-	inventoryapi := inventory.NewInventoryHttp(ms, cfg)
-	inventoryapi.RouteSetup()
+	inventoryHttp := inventory.NewInventoryHttp(ms, cfg)
+	inventoryHttp.RouteSetup()
 
 	inventory.StartInventoryAsync(ms, cfg)
 	inventory.StartInventoryComsumeCreated(ms, cfg)
 
-	transapi := transaction.NewTransactionHttp(ms, cfg)
-	transapi.RouteSetup()
+	saleinvoiceHttp := saleinvoice.NewSaleinvoiceHttp(ms, cfg)
+	saleinvoiceHttp.RouteSetup()
 
-	transaction.StartTransactionAsync(ms, cfg)
+	saleinvoice.StartSaleinvoiceAsync(ms, cfg)
 
-	purchaseapi := purchase.NewPurchaseHttp(ms, cfg)
-	purchaseapi.RouteSetup()
+	purchaseHttp := purchase.NewPurchaseHttp(ms, cfg)
+	purchaseHttp.RouteSetup()
 
 	purchase.StartPurchaseAsync(ms, cfg)
 
-	syncapi := syncdata.NewSyncDataHttp(ms, cfg)
-	syncapi.RouteSetup()
+	syncDataHttp := syncdata.NewSyncDataHttp(ms, cfg)
+	syncDataHttp.RouteSetup()
 
-	memberhttp := member.NewMemberHttp(ms, cfg)
-	memberhttp.RouteSetup()
+	memberHttp := member.NewMemberHttp(ms, cfg)
+	memberHttp.RouteSetup()
 
 	emphttp := employee.NewEmployeeHttp(ms, cfg)
 	emphttp.RouteSetup()
 
-	invImp := inventoryimport.NewInventoryImportHttp(ms, cfg)
-	invImp.RouteSetup()
+	inventoryImportHttp := inventoryimport.NewInventoryImportHttp(ms, cfg)
+	inventoryImportHttp.RouteSetup()
 
-	invOptionImp := inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg)
-	invOptionImp.RouteSetup()
+	inventoryOptionImportHttp := inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg)
+	inventoryOptionImportHttp.RouteSetup()
 
-	catImp := inventoryimport.NewCategoryImportHttp(ms, cfg)
-	catImp.RouteSetup()
+	categoryImportHttp := inventoryimport.NewCategoryImportHttp(ms, cfg)
+	categoryImportHttp.RouteSetup()
 
 	toolSvc := tools.NewToolsService(ms, cfg)
 

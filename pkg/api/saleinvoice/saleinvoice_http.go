@@ -1,4 +1,4 @@
-package transaction
+package saleinvoice
 
 import (
 	"encoding/json"
@@ -8,57 +8,57 @@ import (
 	"strconv"
 )
 
-type ITransactionHttp interface {
+type ISaleinvoiceHttp interface {
 	RouteSetup()
-	CreateTransaction(ctx microservice.IContext) error
-	UpdateTransaction(ctx microservice.IContext) error
-	DeleteTransaction(ctx microservice.IContext) error
-	InfoTransaction(ctx microservice.IContext) error
-	SearchTransaction(ctx microservice.IContext) error
-	SearchTransactionItems(ctx microservice.IContext) error
+	CreateSaleinvoice(ctx microservice.IContext) error
+	UpdateSaleinvoice(ctx microservice.IContext) error
+	DeleteSaleinvoice(ctx microservice.IContext) error
+	InfoSaleinvoice(ctx microservice.IContext) error
+	SearchSaleinvoice(ctx microservice.IContext) error
+	SearchSaleinvoiceItems(ctx microservice.IContext) error
 }
 
-type TransactionHttp struct {
+type SaleinvoiceHttp struct {
 	ms      *microservice.Microservice
 	cfg     microservice.IConfig
-	service ITransactionService
+	service ISaleinvoiceService
 }
 
-func NewTransactionHttp(ms *microservice.Microservice, cfg microservice.IConfig) TransactionHttp {
+func NewSaleinvoiceHttp(ms *microservice.Microservice, cfg microservice.IConfig) SaleinvoiceHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
 
-	transRepo := NewTransactionRepository(pst)
-	mqRepo := NewTransactionMQRepository(prod)
+	transRepo := NewSaleinvoiceRepository(pst)
+	mqRepo := NewSaleinvoiceMQRepository(prod)
 
-	service := NewTransactionService(transRepo, mqRepo)
-	return TransactionHttp{
+	service := NewSaleinvoiceService(transRepo, mqRepo)
+	return SaleinvoiceHttp{
 		ms:      ms,
 		cfg:     cfg,
 		service: service,
 	}
 }
 
-func (h TransactionHttp) RouteSetup() {
+func (h SaleinvoiceHttp) RouteSetup() {
 
-	h.ms.GET("/transaction/:id", h.InfoTransaction)
-	h.ms.GET("/transaction", h.SearchTransaction)
-	h.ms.GET("/transaction/:id/items", h.SearchTransactionItems)
+	h.ms.GET("/saleinvoice/:id", h.InfoSaleinvoice)
+	h.ms.GET("/saleinvoice", h.SearchSaleinvoice)
+	h.ms.GET("/saleinvoice/:id/items", h.SearchSaleinvoiceItems)
 
-	h.ms.POST("/transaction", h.CreateTransaction)
-	h.ms.PUT("/transaction/:id", h.UpdateTransaction)
-	h.ms.DELETE("/transaction/:id", h.DeleteTransaction)
+	h.ms.POST("/saleinvoice", h.CreateSaleinvoice)
+	h.ms.PUT("/saleinvoice/:id", h.UpdateSaleinvoice)
+	h.ms.DELETE("/saleinvoice/:id", h.DeleteSaleinvoice)
 }
 
-func (h TransactionHttp) CreateTransaction(ctx microservice.IContext) error {
+func (h SaleinvoiceHttp) CreateSaleinvoice(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
 
 	input := ctx.ReadInput()
 
-	trans := models.Transaction{}
+	trans := models.Saleinvoice{}
 	err := json.Unmarshal([]byte(input), &trans)
 
 	if err != nil {
@@ -66,7 +66,7 @@ func (h TransactionHttp) CreateTransaction(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.service.CreateTransaction(shopID, authUsername, trans)
+	idx, err := h.service.CreateSaleinvoice(shopID, authUsername, trans)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -80,7 +80,7 @@ func (h TransactionHttp) CreateTransaction(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h TransactionHttp) UpdateTransaction(ctx microservice.IContext) error {
+func (h SaleinvoiceHttp) UpdateSaleinvoice(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -88,7 +88,7 @@ func (h TransactionHttp) UpdateTransaction(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	transReq := &models.Transaction{}
+	transReq := &models.Saleinvoice{}
 	err := json.Unmarshal([]byte(input), &transReq)
 
 	if err != nil {
@@ -96,7 +96,7 @@ func (h TransactionHttp) UpdateTransaction(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.service.UpdateTransaction(id, shopID, authUsername, *transReq)
+	err = h.service.UpdateSaleinvoice(id, shopID, authUsername, *transReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -109,14 +109,14 @@ func (h TransactionHttp) UpdateTransaction(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h TransactionHttp) DeleteTransaction(ctx microservice.IContext) error {
+func (h SaleinvoiceHttp) DeleteSaleinvoice(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	err := h.service.DeleteTransaction(id, shopID, authUsername)
+	err := h.service.DeleteSaleinvoice(id, shopID, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -129,14 +129,14 @@ func (h TransactionHttp) DeleteTransaction(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h TransactionHttp) InfoTransaction(ctx microservice.IContext) error {
+func (h SaleinvoiceHttp) InfoSaleinvoice(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	trans, err := h.service.InfoTransaction(id, shopID)
+	trans, err := h.service.InfoSaleinvoice(id, shopID)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		ctx.ResponseError(400, err.Error())
@@ -150,7 +150,7 @@ func (h TransactionHttp) InfoTransaction(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h TransactionHttp) SearchTransaction(ctx microservice.IContext) error {
+func (h SaleinvoiceHttp) SearchSaleinvoice(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -167,7 +167,7 @@ func (h TransactionHttp) SearchTransaction(ctx microservice.IContext) error {
 		limit = 20
 	}
 
-	docList, pagination, err := h.service.SearchTransaction(shopID, q, page, limit)
+	docList, pagination, err := h.service.SearchSaleinvoice(shopID, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -185,7 +185,7 @@ func (h TransactionHttp) SearchTransaction(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h TransactionHttp) SearchTransactionItems(ctx microservice.IContext) error {
+func (h SaleinvoiceHttp) SearchSaleinvoiceItems(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -204,7 +204,7 @@ func (h TransactionHttp) SearchTransactionItems(ctx microservice.IContext) error
 		limit = 20
 	}
 
-	docList, pagination, err := h.service.SearchItemsTransaction(transID, shopID, q, page, limit)
+	docList, pagination, err := h.service.SearchItemsSaleinvoice(transID, shopID, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

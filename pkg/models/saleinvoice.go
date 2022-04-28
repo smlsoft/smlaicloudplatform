@@ -2,15 +2,15 @@ package models
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
-const transactionCollectionName = "transactions"
-const transactionIndexName = "transactions"
+const saleinvoiceCollectionName = "saleinvoices"
+const saleinvoiceIndexName = "saleinvoices"
 
-type Transaction struct {
-	Items     *[]TransactionDetail `json:"items" bson:"items" `
+type Saleinvoice struct {
+	Items     *[]SaleinvoiceDetail `json:"items" bson:"items" `
 	SumAmount float64              `json:"sumamount" bson:"sumamount" `
 }
 
-type TransactionDetail struct {
+type SaleinvoiceDetail struct {
 	InventoryID    string  `json:"inventoryid" bson:"inventoryid"`
 	ItemSku        string  `json:"itemsku,omitempty" bson:"itemsku,omitempty"`
 	CategoryGuid   string  `json:"categoryguid" bson:"categoryguid"`
@@ -21,30 +21,30 @@ type TransactionDetail struct {
 	DiscountText   string  `json:"discounttext" bson:"discounttext"`
 }
 
-type TransactionInfo struct {
+type SaleinvoiceInfo struct {
 	DocIdentity `bson:"inline"`
-	Transaction `bson:"inline"`
+	Saleinvoice `bson:"inline"`
 }
 
-func (TransactionInfo) CollectionName() string {
-	return transactionCollectionName
+func (SaleinvoiceInfo) CollectionName() string {
+	return saleinvoiceCollectionName
 }
 
-type TransactionData struct {
+type SaleinvoiceData struct {
 	ShopIdentity    `bson:"inline"`
-	TransactionInfo `bson:"inline"`
+	SaleinvoiceInfo `bson:"inline"`
 }
 
-func (TransactionData) IndexName() string {
-	return transactionIndexName
+func (SaleinvoiceData) IndexName() string {
+	return saleinvoiceIndexName
 }
 
-type TransactionDoc struct {
+type SaleinvoiceDoc struct {
 	ID              primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	TransactionData `bson:"inline"`
+	SaleinvoiceData `bson:"inline"`
 	Activity        `bson:"inline"`
 }
 
-func (TransactionDoc) CollectionName() string {
-	return transactionCollectionName
+func (SaleinvoiceDoc) CollectionName() string {
+	return saleinvoiceCollectionName
 }
