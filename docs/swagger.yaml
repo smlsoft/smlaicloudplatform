@@ -785,6 +785,56 @@ definitions:
       totalPage:
         type: integer
     type: object
+  models.Purchase:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/models.PurchaseDetail'
+        type: array
+      sumamount:
+        type: number
+    type: object
+  models.PurchaseDetail:
+    properties:
+      categoryguid:
+        type: string
+      discountamount:
+        type: number
+      discounttext:
+        type: string
+      inventoryid:
+        type: string
+      itemsku:
+        type: string
+      linenumber:
+        type: integer
+      price:
+        type: number
+      qty:
+        type: number
+    type: object
+  models.PurchaseInfo:
+    properties:
+      guidfixed:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/models.PurchaseDetail'
+        type: array
+      sumamount:
+        type: number
+    type: object
+  models.PurchaseListPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.PurchaseInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
   models.ResponseSuccess:
     properties:
       success:
@@ -795,6 +845,56 @@ definitions:
       id: {}
       success:
         type: boolean
+    type: object
+  models.SaleInvoiceListPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.SaleinvoiceInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  models.Saleinvoice:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/models.SaleinvoiceDetail'
+        type: array
+      sumamount:
+        type: number
+    type: object
+  models.SaleinvoiceDetail:
+    properties:
+      categoryguid:
+        type: string
+      discountamount:
+        type: number
+      discounttext:
+        type: string
+      inventoryid:
+        type: string
+      itemsku:
+        type: string
+      linenumber:
+        type: integer
+      price:
+        type: number
+      qty:
+        type: number
+    type: object
+  models.SaleinvoiceInfo:
+    properties:
+      guidfixed:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/models.SaleinvoiceDetail'
+        type: array
+      sumamount:
+        type: number
     type: object
   models.Shop:
     properties:
@@ -2007,6 +2107,139 @@ paths:
       - AccessToken: []
       tags:
       - Authentication
+  /purchase:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.PurchaseListPageResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Purchase
+    post:
+      consumes:
+      - application/json
+      description: Create Purchase Transaction
+      parameters:
+      - description: payload
+        in: body
+        name: Purchase
+        required: true
+        schema:
+          $ref: '#/definitions/models.Purchase'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Purchase
+  /purchase/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Tempolaty Delete  Purchase Transaction
+      parameters:
+      - description: Purchase Doc ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Purchase
+    get:
+      consumes:
+      - application/json
+      description: After Purchare Doc Create system will be return Id of Purchase
+        Document. this Id can get Purchase Document in this service.
+      parameters:
+      - description: Document ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PurchaseInfo'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Purchase
+    put:
+      consumes:
+      - application/json
+      description: Update Inventory
+      parameters:
+      - description: Purchase Document ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: payload
+        in: body
+        name: Purchase
+        required: true
+        schema:
+          $ref: '#/definitions/models.Purchase'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Purchase
   /register:
     post:
       consumes:
@@ -2031,6 +2264,139 @@ paths:
       summary: Register An Account
       tags:
       - Authentication
+  /saleinvoice:
+    get:
+      consumes:
+      - application/json
+      description: List Sale Invoice Document
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.SaleInvoiceListPageResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Sale Invoice
+    post:
+      consumes:
+      - application/json
+      description: Create Inventory
+      parameters:
+      - description: Body
+        in: body
+        name: SaleInvoice
+        required: true
+        schema:
+          $ref: '#/definitions/models.Saleinvoice'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Sale Invoice
+  /saleinvoice/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Document
+      parameters:
+      - description: Document ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Sale Invoice
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Inventory ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SaleinvoiceInfo'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Sale Invoice
+    put:
+      consumes:
+      - application/json
+      description: Update Sale Invoice
+      parameters:
+      - description: Document ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Body
+        in: body
+        name: Invoice
+        required: true
+        schema:
+          $ref: '#/definitions/models.Saleinvoice'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Sale Invoice
   /select-shop:
     post:
       consumes:

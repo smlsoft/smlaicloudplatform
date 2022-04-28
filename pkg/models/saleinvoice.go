@@ -48,3 +48,9 @@ type SaleinvoiceDoc struct {
 func (SaleinvoiceDoc) CollectionName() string {
 	return saleinvoiceCollectionName
 }
+
+type SaleInvoiceListPageResponse struct {
+	Success    bool                   `json:"success"`
+	Data       []SaleinvoiceInfo      `json:"data,omitempty"`
+	Pagination PaginationDataResponse `json:"pagination,omitempty"`
+}

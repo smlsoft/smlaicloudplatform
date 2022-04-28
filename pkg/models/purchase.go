@@ -50,3 +50,9 @@ type PurchaseDoc struct {
 func (PurchaseDoc) CollectionName() string {
 	return purchaseCollectionName
 }
+
+type PurchaseListPageResponse struct {
+	Success    bool                   `json:"success"`
+	Data       []PurchaseInfo         `json:"data,omitempty"`
+	Pagination PaginationDataResponse `json:"pagination,omitempty"`
+}

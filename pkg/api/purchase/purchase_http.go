@@ -51,6 +51,15 @@ func (h PurchaseHttp) RouteSetup() {
 	h.ms.DELETE("/purchase/:id", h.DeletePurchase)
 }
 
+// Create Purchase Transaction godoc
+// @Description Create Purchase Transaction
+// @Tags		Purchase
+// @Param		Purchase  body      models.Purchase  true  "payload"
+// @Accept 		json
+// @Success		201	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /purchase [post]
 func (h PurchaseHttp) CreatePurchase(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -80,6 +89,16 @@ func (h PurchaseHttp) CreatePurchase(ctx microservice.IContext) error {
 	return nil
 }
 
+// Update Inventory godoc
+// @Description Update Inventory
+// @Tags		Purchase
+// @Param		id  path      string  true  "Purchase Document ID"
+// @Param		Purchase  body      models.Purchase  true  "payload"
+// @Accept 		json
+// @Success		201	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /purchase/{id} [put]
 func (h PurchaseHttp) UpdatePurchase(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -109,6 +128,15 @@ func (h PurchaseHttp) UpdatePurchase(ctx microservice.IContext) error {
 	return nil
 }
 
+// Delete Purchase Transaction godoc
+// @Description Tempolaty Delete  Purchase Transaction
+// @Tags		Purchase
+// @Param		id  path      string  true  "Purchase Doc ID"
+// @Accept 		json
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /purchase/{id} [delete]
 func (h PurchaseHttp) DeletePurchase(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -129,6 +157,15 @@ func (h PurchaseHttp) DeletePurchase(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Purchase By Doc guid godoc
+// @Description After Purchare Doc Create system will be return Id of Purchase Document. this Id can get Purchase Document in this service.
+// @Tags		Purchase
+// @Param		id  path      string  true  "Document ID"
+// @Accept 		json
+// @Success		200	{object}	models.PurchaseInfo
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /purchase/{id} [get]
 func (h PurchaseHttp) InfoPurchase(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
@@ -150,6 +187,16 @@ func (h PurchaseHttp) InfoPurchase(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Purchase Transaction godoc
+// @Tags		Purchase
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Add Category"
+// @Param		limit	query	integer		false  "Add Category"
+// @Accept 		json
+// @Success		200	{array}	models.PurchaseListPageResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /purchase [get]
 func (h PurchaseHttp) SearchPurchase(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
