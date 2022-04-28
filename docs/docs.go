@@ -196,10 +196,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.CategoryPageResponse"
-                            }
+                            "$ref": "#/definitions/models.CategoryFetchUpdateResponse"
                         }
                     },
                     "401": {
@@ -2220,6 +2217,53 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CategoryActivity": {
+            "type": "object",
+            "properties": {
+                "categoryguid": {
+                    "type": "string"
+                },
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "parentguid": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
         "models.CategoryBulkReponse": {
             "type": "object",
             "properties": {
@@ -2249,6 +2293,40 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "models.CategoryDeleteActivity": {
+            "type": "object",
+            "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CategoryFetchUpdateResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.CategoryLastActivityResponse"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },
@@ -2385,6 +2463,23 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.CategoryLastActivityResponse": {
+            "type": "object",
+            "properties": {
+                "new": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CategoryActivity"
+                    }
+                },
+                "remove": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CategoryDeleteActivity"
+                    }
                 }
             }
         },
@@ -2773,7 +2868,7 @@ const docTemplate = `{
         "models.InventoryImage": {
             "type": "object",
             "properties": {
-                "url": {
+                "uri": {
                     "type": "string"
                 }
             }

@@ -44,6 +44,37 @@ definitions:
       parentguid:
         type: string
     type: object
+  models.CategoryActivity:
+    properties:
+      categoryguid:
+        type: string
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      image:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      order:
+        type: integer
+      parentguid:
+        type: string
+      shopid:
+        type: string
+      updatedat:
+        type: string
+    type: object
   models.CategoryBulkReponse:
     properties:
       created:
@@ -64,6 +95,28 @@ definitions:
         items:
           type: string
         type: array
+    type: object
+  models.CategoryDeleteActivity:
+    properties:
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      shopid:
+        type: string
+      updatedat:
+        type: string
+    type: object
+  models.CategoryFetchUpdateResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.CategoryLastActivityResponse'
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
     type: object
   models.CategoryImport:
     properties:
@@ -153,6 +206,17 @@ definitions:
         $ref: '#/definitions/models.CategoryInfo'
       success:
         type: boolean
+    type: object
+  models.CategoryLastActivityResponse:
+    properties:
+      new:
+        items:
+          $ref: '#/definitions/models.CategoryActivity'
+        type: array
+      remove:
+        items:
+          $ref: '#/definitions/models.CategoryDeleteActivity'
+        type: array
     type: object
   models.CategoryPageResponse:
     properties:
@@ -412,7 +476,7 @@ definitions:
     type: object
   models.InventoryImage:
     properties:
-      url:
+      uri:
         type: string
     type: object
   models.InventoryInfo:
@@ -993,9 +1057,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/models.CategoryPageResponse'
-            type: array
+            $ref: '#/definitions/models.CategoryFetchUpdateResponse'
         "401":
           description: Unauthorized
           schema:
