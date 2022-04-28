@@ -2217,6 +2217,53 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CategoryActivity": {
+            "type": "object",
+            "properties": {
+                "categoryguid": {
+                    "type": "string"
+                },
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "parentguid": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
         "models.CategoryBulkReponse": {
             "type": "object",
             "properties": {
@@ -2249,11 +2296,31 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CategoryDeleteActivity": {
+            "type": "object",
+            "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
         "models.CategoryFetchUpdateResponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/models.LastActivity"
+                    "$ref": "#/definitions/models.CategoryLastActivityResponse"
                 },
                 "pagination": {
                     "$ref": "#/definitions/models.PaginationDataResponse"
@@ -2396,6 +2463,23 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.CategoryLastActivityResponse": {
+            "type": "object",
+            "properties": {
+                "new": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CategoryActivity"
+                    }
+                },
+                "remove": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CategoryDeleteActivity"
+                    }
                 }
             }
         },
@@ -3151,13 +3235,6 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 }
-            }
-        },
-        "models.LastActivity": {
-            "type": "object",
-            "properties": {
-                "new": {},
-                "remove": {}
             }
         },
         "models.Member": {

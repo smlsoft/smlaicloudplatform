@@ -89,10 +89,15 @@ type CategoryBulkReponse struct {
 	CategoryBulkImport
 }
 
+type CategoryLastActivityResponse struct {
+	New    []CategoryActivity       `json:"new" `
+	Remove []CategoryDeleteActivity `json:"remove"`
+}
+
 type CategoryFetchUpdateResponse struct {
-	Success    bool                   `json:"success"`
-	Data       LastActivity           `json:"data,omitempty"`
-	Pagination PaginationDataResponse `json:"pagination,omitempty"`
+	Success    bool                         `json:"success"`
+	Data       CategoryLastActivityResponse `json:"data,omitempty"`
+	Pagination PaginationDataResponse       `json:"pagination,omitempty"`
 }
 
 type CategoryPageResponse struct {

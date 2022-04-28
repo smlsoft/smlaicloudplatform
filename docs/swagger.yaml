@@ -44,6 +44,37 @@ definitions:
       parentguid:
         type: string
     type: object
+  models.CategoryActivity:
+    properties:
+      categoryguid:
+        type: string
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      image:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      order:
+        type: integer
+      parentguid:
+        type: string
+      shopid:
+        type: string
+      updatedat:
+        type: string
+    type: object
   models.CategoryBulkReponse:
     properties:
       created:
@@ -65,10 +96,23 @@ definitions:
           type: string
         type: array
     type: object
+  models.CategoryDeleteActivity:
+    properties:
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      shopid:
+        type: string
+      updatedat:
+        type: string
+    type: object
   models.CategoryFetchUpdateResponse:
     properties:
       data:
-        $ref: '#/definitions/models.LastActivity'
+        $ref: '#/definitions/models.CategoryLastActivityResponse'
       pagination:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
@@ -162,6 +206,17 @@ definitions:
         $ref: '#/definitions/models.CategoryInfo'
       success:
         type: boolean
+    type: object
+  models.CategoryLastActivityResponse:
+    properties:
+      new:
+        items:
+          $ref: '#/definitions/models.CategoryActivity'
+        type: array
+      remove:
+        items:
+          $ref: '#/definitions/models.CategoryDeleteActivity'
+        type: array
     type: object
   models.CategoryPageResponse:
     properties:
@@ -664,11 +719,6 @@ definitions:
     properties:
       name:
         type: string
-    type: object
-  models.LastActivity:
-    properties:
-      new: {}
-      remove: {}
     type: object
   models.Member:
     properties:
