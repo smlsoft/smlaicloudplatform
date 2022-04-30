@@ -258,6 +258,19 @@ definitions:
       suggestcode:
         type: string
     type: object
+  models.CreditCardPayment:
+    properties:
+      amount:
+        type: number
+      approvedcode:
+        type: string
+      cardnumber:
+        type: string
+      cardtype:
+        type: string
+      remark:
+        type: string
+    type: object
   models.Image:
     properties:
       uri:
@@ -785,43 +798,161 @@ definitions:
       totalPage:
         type: integer
     type: object
+  models.Payment:
+    properties:
+      cash:
+        type: number
+      creditcard:
+        type: number
+      creditcarddetails:
+        items:
+          $ref: '#/definitions/models.CreditCardPayment'
+        type: array
+    type: object
   models.Purchase:
     properties:
+      discountamount:
+        type: number
+      docdate:
+        type: string
+      docno:
+        type: string
       items:
         items:
           $ref: '#/definitions/models.PurchaseDetail'
         type: array
+      member:
+        $ref: '#/definitions/models.Member'
+      payment:
+        $ref: '#/definitions/models.Payment'
       sumamount:
+        type: number
+      taxamount:
+        type: number
+      taxbaseamount:
+        type: number
+      taxrate:
+        type: number
+      totalamount:
         type: number
     type: object
   models.PurchaseDetail:
     properties:
+      activated:
+        description: เปิดใช้งานอยู่
+        type: boolean
+      amount:
+        type: number
+      barcode:
+        type: string
+      category:
+        $ref: '#/definitions/models.Category'
       categoryguid:
+        description: Guid กลุ่มสินค้า
+        type: string
+      description1:
+        description: รายละเอียดภาษาไทย
+        type: string
+      description2:
+        type: string
+      description3:
+        type: string
+      description4:
+        type: string
+      description5:
         type: string
       discountamount:
         type: number
       discounttext:
         type: string
-      inventoryid:
+      guidfixed:
+        type: string
+      images:
+        items:
+          $ref: '#/definitions/models.InventoryImage'
+        type: array
+      itemcode:
+        type: string
+      itemguid:
         type: string
       itemsku:
         type: string
+      itemunitcode:
+        type: string
+      itemunitdiv:
+        type: number
+      itemunitstd:
+        type: number
       linenumber:
         type: integer
+      memberprice:
+        type: number
+      name1:
+        description: ชื่อภาษาไทย
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      options:
+        items:
+          $ref: '#/definitions/models.Option'
+        type: array
+      parid:
+        type: string
       price:
         type: number
       qty:
         type: number
+      recommended:
+        description: สินค้าแนะนำ
+        type: boolean
+      tags:
+        items:
+          $ref: '#/definitions/models.InventoryTag'
+        type: array
+      unitname1:
+        type: string
+      unitname2:
+        type: string
+      unitname3:
+        type: string
+      unitname4:
+        type: string
+      unitname5:
+        type: string
     type: object
   models.PurchaseInfo:
     properties:
+      discountamount:
+        type: number
+      docdate:
+        type: string
+      docno:
+        type: string
       guidfixed:
         type: string
       items:
         items:
           $ref: '#/definitions/models.PurchaseDetail'
         type: array
+      member:
+        $ref: '#/definitions/models.Member'
+      payment:
+        $ref: '#/definitions/models.Payment'
       sumamount:
+        type: number
+      taxamount:
+        type: number
+      taxbaseamount:
+        type: number
+      taxrate:
+        type: number
+      totalamount:
         type: number
     type: object
   models.PurchaseListPageResponse:
@@ -859,41 +990,148 @@ definitions:
     type: object
   models.Saleinvoice:
     properties:
+      discountamount:
+        type: number
+      docdate:
+        type: string
+      docno:
+        type: string
       items:
         items:
           $ref: '#/definitions/models.SaleinvoiceDetail'
         type: array
+      member:
+        $ref: '#/definitions/models.Member'
+      payment:
+        $ref: '#/definitions/models.Payment'
       sumamount:
+        type: number
+      taxamount:
+        type: number
+      taxbaseamount:
+        type: number
+      taxrate:
+        type: number
+      totalamount:
         type: number
     type: object
   models.SaleinvoiceDetail:
     properties:
+      activated:
+        description: เปิดใช้งานอยู่
+        type: boolean
+      amount:
+        type: number
+      barcode:
+        type: string
+      category:
+        $ref: '#/definitions/models.Category'
       categoryguid:
+        description: Guid กลุ่มสินค้า
+        type: string
+      description1:
+        description: รายละเอียดภาษาไทย
+        type: string
+      description2:
+        type: string
+      description3:
+        type: string
+      description4:
+        type: string
+      description5:
         type: string
       discountamount:
         type: number
       discounttext:
         type: string
-      inventoryid:
+      guidfixed:
+        type: string
+      images:
+        items:
+          $ref: '#/definitions/models.InventoryImage'
+        type: array
+      itemcode:
+        type: string
+      itemguid:
         type: string
       itemsku:
         type: string
+      itemunitcode:
+        type: string
+      itemunitdiv:
+        type: number
+      itemunitstd:
+        type: number
       linenumber:
         type: integer
+      memberprice:
+        type: number
+      name1:
+        description: ชื่อภาษาไทย
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      options:
+        items:
+          $ref: '#/definitions/models.Option'
+        type: array
+      parid:
+        type: string
       price:
         type: number
       qty:
         type: number
+      recommended:
+        description: สินค้าแนะนำ
+        type: boolean
+      tags:
+        items:
+          $ref: '#/definitions/models.InventoryTag'
+        type: array
+      unitname1:
+        type: string
+      unitname2:
+        type: string
+      unitname3:
+        type: string
+      unitname4:
+        type: string
+      unitname5:
+        type: string
     type: object
   models.SaleinvoiceInfo:
     properties:
+      discountamount:
+        type: number
+      docdate:
+        type: string
+      docno:
+        type: string
       guidfixed:
         type: string
       items:
         items:
           $ref: '#/definitions/models.SaleinvoiceDetail'
         type: array
+      member:
+        $ref: '#/definitions/models.Member'
+      payment:
+        $ref: '#/definitions/models.Payment'
       sumamount:
+        type: number
+      taxamount:
+        type: number
+      taxbaseamount:
+        type: number
+      taxrate:
+        type: number
+      totalamount:
         type: number
     type: object
   models.Shop:

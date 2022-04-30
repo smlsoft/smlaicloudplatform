@@ -2971,6 +2971,26 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CreditCardPayment": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "approvedcode": {
+                    "type": "string"
+                },
+                "cardnumber": {
+                    "type": "string"
+                },
+                "cardtype": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Image": {
             "type": "object",
             "properties": {
@@ -3763,16 +3783,60 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Payment": {
+            "type": "object",
+            "properties": {
+                "cash": {
+                    "type": "number"
+                },
+                "creditcard": {
+                    "type": "number"
+                },
+                "creditcarddetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CreditCardPayment"
+                    }
+                }
+            }
+        },
         "models.Purchase": {
             "type": "object",
             "properties": {
+                "discountamount": {
+                    "type": "number"
+                },
+                "docdate": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
                 "items": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.PurchaseDetail"
                     }
                 },
+                "member": {
+                    "$ref": "#/definitions/models.Member"
+                },
+                "payment": {
+                    "$ref": "#/definitions/models.Payment"
+                },
                 "sumamount": {
+                    "type": "number"
+                },
+                "taxamount": {
+                    "type": "number"
+                },
+                "taxbaseamount": {
+                    "type": "number"
+                },
+                "taxrate": {
+                    "type": "number"
+                },
+                "totalamount": {
                     "type": "number"
                 }
             }
@@ -3780,7 +3844,37 @@ const docTemplate = `{
         "models.PurchaseDetail": {
             "type": "object",
             "properties": {
+                "activated": {
+                    "description": "เปิดใช้งานอยู่",
+                    "type": "boolean"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "category": {
+                    "$ref": "#/definitions/models.Category"
+                },
                 "categoryguid": {
+                    "description": "Guid กลุ่มสินค้า",
+                    "type": "string"
+                },
+                "description1": {
+                    "description": "รายละเอียดภาษาไทย",
+                    "type": "string"
+                },
+                "description2": {
+                    "type": "string"
+                },
+                "description3": {
+                    "type": "string"
+                },
+                "description4": {
+                    "type": "string"
+                },
+                "description5": {
                     "type": "string"
                 },
                 "discountamount": {
@@ -3789,26 +3883,109 @@ const docTemplate = `{
                 "discounttext": {
                     "type": "string"
                 },
-                "inventoryid": {
+                "guidfixed": {
+                    "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InventoryImage"
+                    }
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemguid": {
                     "type": "string"
                 },
                 "itemsku": {
                     "type": "string"
                 },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitdiv": {
+                    "type": "number"
+                },
+                "itemunitstd": {
+                    "type": "number"
+                },
                 "linenumber": {
                     "type": "integer"
+                },
+                "memberprice": {
+                    "type": "number"
+                },
+                "name1": {
+                    "description": "ชื่อภาษาไทย",
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Option"
+                    }
+                },
+                "parid": {
+                    "type": "string"
                 },
                 "price": {
                     "type": "number"
                 },
                 "qty": {
                     "type": "number"
+                },
+                "recommended": {
+                    "description": "สินค้าแนะนำ",
+                    "type": "boolean"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InventoryTag"
+                    }
+                },
+                "unitname1": {
+                    "type": "string"
+                },
+                "unitname2": {
+                    "type": "string"
+                },
+                "unitname3": {
+                    "type": "string"
+                },
+                "unitname4": {
+                    "type": "string"
+                },
+                "unitname5": {
+                    "type": "string"
                 }
             }
         },
         "models.PurchaseInfo": {
             "type": "object",
             "properties": {
+                "discountamount": {
+                    "type": "number"
+                },
+                "docdate": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
                 "guidfixed": {
                     "type": "string"
                 },
@@ -3818,7 +3995,25 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.PurchaseDetail"
                     }
                 },
+                "member": {
+                    "$ref": "#/definitions/models.Member"
+                },
+                "payment": {
+                    "$ref": "#/definitions/models.Payment"
+                },
                 "sumamount": {
+                    "type": "number"
+                },
+                "taxamount": {
+                    "type": "number"
+                },
+                "taxbaseamount": {
+                    "type": "number"
+                },
+                "taxrate": {
+                    "type": "number"
+                },
+                "totalamount": {
                     "type": "number"
                 }
             }
@@ -3877,13 +4072,40 @@ const docTemplate = `{
         "models.Saleinvoice": {
             "type": "object",
             "properties": {
+                "discountamount": {
+                    "type": "number"
+                },
+                "docdate": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
                 "items": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.SaleinvoiceDetail"
                     }
                 },
+                "member": {
+                    "$ref": "#/definitions/models.Member"
+                },
+                "payment": {
+                    "$ref": "#/definitions/models.Payment"
+                },
                 "sumamount": {
+                    "type": "number"
+                },
+                "taxamount": {
+                    "type": "number"
+                },
+                "taxbaseamount": {
+                    "type": "number"
+                },
+                "taxrate": {
+                    "type": "number"
+                },
+                "totalamount": {
                     "type": "number"
                 }
             }
@@ -3891,7 +4113,37 @@ const docTemplate = `{
         "models.SaleinvoiceDetail": {
             "type": "object",
             "properties": {
+                "activated": {
+                    "description": "เปิดใช้งานอยู่",
+                    "type": "boolean"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "category": {
+                    "$ref": "#/definitions/models.Category"
+                },
                 "categoryguid": {
+                    "description": "Guid กลุ่มสินค้า",
+                    "type": "string"
+                },
+                "description1": {
+                    "description": "รายละเอียดภาษาไทย",
+                    "type": "string"
+                },
+                "description2": {
+                    "type": "string"
+                },
+                "description3": {
+                    "type": "string"
+                },
+                "description4": {
+                    "type": "string"
+                },
+                "description5": {
                     "type": "string"
                 },
                 "discountamount": {
@@ -3900,26 +4152,109 @@ const docTemplate = `{
                 "discounttext": {
                     "type": "string"
                 },
-                "inventoryid": {
+                "guidfixed": {
+                    "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InventoryImage"
+                    }
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemguid": {
                     "type": "string"
                 },
                 "itemsku": {
                     "type": "string"
                 },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitdiv": {
+                    "type": "number"
+                },
+                "itemunitstd": {
+                    "type": "number"
+                },
                 "linenumber": {
                     "type": "integer"
+                },
+                "memberprice": {
+                    "type": "number"
+                },
+                "name1": {
+                    "description": "ชื่อภาษาไทย",
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Option"
+                    }
+                },
+                "parid": {
+                    "type": "string"
                 },
                 "price": {
                     "type": "number"
                 },
                 "qty": {
                     "type": "number"
+                },
+                "recommended": {
+                    "description": "สินค้าแนะนำ",
+                    "type": "boolean"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InventoryTag"
+                    }
+                },
+                "unitname1": {
+                    "type": "string"
+                },
+                "unitname2": {
+                    "type": "string"
+                },
+                "unitname3": {
+                    "type": "string"
+                },
+                "unitname4": {
+                    "type": "string"
+                },
+                "unitname5": {
+                    "type": "string"
                 }
             }
         },
         "models.SaleinvoiceInfo": {
             "type": "object",
             "properties": {
+                "discountamount": {
+                    "type": "number"
+                },
+                "docdate": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
                 "guidfixed": {
                     "type": "string"
                 },
@@ -3929,7 +4264,25 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.SaleinvoiceDetail"
                     }
                 },
+                "member": {
+                    "$ref": "#/definitions/models.Member"
+                },
+                "payment": {
+                    "$ref": "#/definitions/models.Payment"
+                },
                 "sumamount": {
+                    "type": "number"
+                },
+                "taxamount": {
+                    "type": "number"
+                },
+                "taxbaseamount": {
+                    "type": "number"
+                },
+                "taxrate": {
+                    "type": "number"
+                },
+                "totalamount": {
                     "type": "number"
                 }
             }

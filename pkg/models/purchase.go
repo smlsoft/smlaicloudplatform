@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -8,19 +10,27 @@ const purchaseCollectionName = "purchases"
 const purchaseIndexName = "purchases"
 
 type Purchase struct {
-	Items     *[]PurchaseDetail `json:"items" bson:"items" `
-	SumAmount float64           `json:"sumamount" bson:"sumamount" `
+	DocDate        *time.Time        `json:"docdate,omitempty" bson:"docdate,omitempty"`
+	DocNo          string            `json:"docno,omitempty"  bson:"docno,omitempty"`
+	Member         Member            `json:"member,omitempty"  bson:"member,omitempty"`
+	Items          *[]PurchaseDetail `json:"items" bson:"items" `
+	TotalAmount    float64           `json:"totalamount" bson:"totalamount" `
+	TaxRate        float64           `json:"taxrate" bson:"taxrate" `
+	TaxAmount      float64           `json:"taxamount" bson:"taxamount" `
+	TaxBaseAmount  float64           `json:"taxbaseamount" bson:"taxbaseamount" `
+	DiscountAmount float64           `json:"discountamount" bson:"discountamount" `
+	Payment        Payment           `json:"payment" bson:"payment"`
+	SumAmount      float64           `json:"sumamount" bson:"sumamount" `
 }
 
 type PurchaseDetail struct {
-	InventoryID    string  `json:"inventoryid" bson:"inventoryid"`
-	ItemSku        string  `json:"itemsku,omitempty" bson:"itemsku,omitempty"`
-	CategoryGuid   string  `json:"categoryguid" bson:"categoryguid"`
-	LineNumber     int     `json:"linenumber" bson:"linenumber"`
+	LineNumber     int `json:"linenumber" bson:"linenumber"`
+	InventoryInfo  `bson:"inline" gorm:"embedded;"`
 	Price          float64 `json:"price" bson:"price" `
 	Qty            float64 `json:"qty" bson:"qty" `
 	DiscountAmount float64 `json:"discountamount" bson:"discountamount"`
 	DiscountText   string  `json:"discounttext" bson:"discounttext"`
+	Amount         float64 `json:"amount" bson:"amount"`
 }
 
 type PurchaseInfo struct {
