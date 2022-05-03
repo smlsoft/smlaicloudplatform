@@ -44,7 +44,7 @@ func (PurchaseData) IndexName() string {
 type PurchaseDoc struct {
 	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	PurchaseData `bson:"inline"`
-	Activity     `bson:"inline"`
+	ActivityDoc  `bson:"inline"`
 }
 
 func (PurchaseDoc) CollectionName() string {

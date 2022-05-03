@@ -26,7 +26,7 @@ type InventoryImportData struct {
 type InventoryImportDoc struct {
 	ID                  primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	InventoryImportData `bson:"inline"`
-	Activity            `bson:"inline"`
+	ActivityDoc         `bson:"inline"`
 }
 
 func (InventoryImportDoc) CollectionName() string {
@@ -58,7 +58,7 @@ type InventoryOptionMainImportData struct {
 type InventoryOptionMainImportDoc struct {
 	ID                            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	InventoryOptionMainImportData `bson:"inline" `
-	Activity                      `bson:"inline" `
+	ActivityDoc                   `bson:"inline" `
 }
 
 func (InventoryOptionMainImportDoc) CollectionName() string {
@@ -90,7 +90,7 @@ type CategoryImportData struct {
 type CategoryImportDoc struct {
 	ID                 primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	CategoryImportData `bson:"inline"`
-	Activity           `bson:"inline"`
+	ActivityDoc        `bson:"inline"`
 }
 
 func (CategoryImportDoc) CollectionName() string {

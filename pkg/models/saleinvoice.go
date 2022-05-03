@@ -42,7 +42,7 @@ func (SaleinvoiceData) IndexName() string {
 type SaleinvoiceDoc struct {
 	ID              primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	SaleinvoiceData `bson:"inline"`
-	Activity        `bson:"inline"`
+	ActivityDoc     `bson:"inline"`
 }
 
 func (SaleinvoiceDoc) CollectionName() string {

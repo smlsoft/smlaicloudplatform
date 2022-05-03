@@ -23,7 +23,7 @@ func TestFindShop(t *testing.T) {
 	newGuidFixed := utils.NewGUID()
 	createAt := time.Now()
 
-	activity := models.Activity{
+	activity := models.ActivityDoc{
 		CreatedBy: "test",
 		CreatedAt: createAt,
 	}
@@ -31,12 +31,12 @@ func TestFindShop(t *testing.T) {
 	give := models.ShopDoc{}
 	give.GuidFixed = newGuidFixed
 	give.Name1 = "shop test"
-	give.Activity = activity
+	give.ActivityDoc = activity
 
 	want := models.ShopDoc{}
 	want.GuidFixed = newGuidFixed
 	want.Name1 = "shop test"
-	want.Activity = activity
+	want.ActivityDoc = activity
 
 	get, err := repository.Create(give)
 	if err != nil {

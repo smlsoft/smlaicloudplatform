@@ -37,7 +37,7 @@ type CategoryData struct {
 type CategoryDoc struct {
 	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	CategoryData `bson:"inline"`
-	Activity     `bson:"inline"`
+	ActivityDoc  `bson:"inline"`
 	LastUpdate   `bson:"inline"`
 }
 

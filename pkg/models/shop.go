@@ -5,9 +5,9 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 const shopCollectionName = "shops"
 
 type ShopDoc struct {
-	ID       primitive.ObjectID `json:"-" bson:"_id,omitempty"`
-	ShopInfo `bson:"inline"`
-	Activity `bson:"inline"`
+	ID          primitive.ObjectID `json:"-" bson:"_id,omitempty"`
+	ShopInfo    `bson:"inline"`
+	ActivityDoc `bson:"inline"`
 }
 
 func (ShopDoc) CollectionName() string {

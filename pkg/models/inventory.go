@@ -142,7 +142,7 @@ func (InventoryData) TableName() string {
 type InventoryDoc struct {
 	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	InventoryData `bson:"inline"`
-	Activity      `bson:"inline"`
+	ActivityDoc   `bson:"inline"`
 	LastUpdate    `bson:"inline"`
 }
 
@@ -191,7 +191,7 @@ type InventoryOptionGroup struct {
 	ProductSelectOptionMin int                         `json:"productselectoptionmin" bson:"productselectoptionmin"`
 	ProductSelectOptionMax int                         `json:"productselectoptionmax" bson:"productselectoptionmax"`
 	Details                []InventoryOptonGroupDetail `json:"details" bson:"details"`
-	Activity
+	ActivityDoc
 }
 
 func (*InventoryOptionGroup) CollectionName() string {
@@ -227,7 +227,7 @@ type InventoryOptionMainData struct {
 type InventoryOptionMainDoc struct {
 	ID                      primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	InventoryOptionMainData `bson:"inline" gorm:"embedded;"`
-	Activity                `bson:"inline" gorm:"embedded;"`
+	ActivityDoc             `bson:"inline" gorm:"embedded;"`
 }
 
 func (InventoryOptionMainDoc) CollectionName() string {

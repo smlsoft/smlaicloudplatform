@@ -28,7 +28,7 @@ type EmployeeData struct {
 type EmployeeDoc struct {
 	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	EmployeeData `bson:"inline"`
-	Activity     `bson:"inline"`
+	ActivityDoc  `bson:"inline"`
 }
 
 func (EmployeeDoc) CollectionName() string {
