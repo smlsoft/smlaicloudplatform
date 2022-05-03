@@ -6,6 +6,8 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"strconv"
+	"strings"
+	"time"
 )
 
 type IMemberHttp interface {
@@ -48,6 +50,7 @@ func (h MemberHttp) RouteSetup() {
 	h.ms.POST("/member", h.CreateMember)
 	h.ms.PUT("/member/:id", h.UpdateMember)
 	h.ms.DELETE("/member/:id", h.DeleteMember)
+	h.ms.GET("/member/fetchupdate", h.LastActivityMember)
 }
 
 // Create Member godoc
@@ -223,6 +226,64 @@ func (h MemberHttp) SearchMember(ctx microservice.IContext) error {
 	}
 
 	docList, pagination, err := h.service.Search(shopID, q, page, limit)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(
+		http.StatusOK,
+		models.ApiResponse{
+			Success:    true,
+			Data:       docList,
+			Pagination: pagination,
+		})
+
+	return nil
+}
+
+// Fetch Update Member By Date godoc
+// @Description Fetch Update Member By Date
+// @Tags		Member
+// @Param		lastUpdate query string true "DateTime"
+// @Accept		json
+// @Success		200 {object} models.MemberFetchUpdateResponse
+// @Failure		401 {object} models.AuthResponseFailed
+// @Security	AccessToken
+// @Router		//fetchupdate [get]
+func (h MemberHttp) LastActivityMember(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	layout := "2006-01-02T15:04" //
+	lastUpdateStr := ctx.QueryParam("lastUpdate")
+
+	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
+	if len(lastUpdateStr) < 1 {
+		ctx.ResponseError(400, "lastUpdate format invalid.")
+		return nil
+	}
+
+	lastUpdate, err := time.Parse(layout, lastUpdateStr)
+
+	if err != nil {
+		ctx.ResponseError(400, "lastUpdate format invalid.")
+		return err
+	}
+
+	page, err := strconv.Atoi(ctx.QueryParam("page"))
+	if err != nil {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
+
+	if err != nil {
+		limit = 20
+	}
+
+	docList, pagination, err := h.service.LastActivityCategory(shopID, lastUpdate, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

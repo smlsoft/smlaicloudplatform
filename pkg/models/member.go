@@ -34,10 +34,10 @@ type MemberData struct {
 	MemberInfo   `bson:"inline"`
 }
 type MemberDoc struct {
-	ID         primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	MemberData `bson:"inline"`
-	Activity   `bson:"inline"`
-	LastUpdate `bson:"inline"`
+	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	MemberData  `bson:"inline"`
+	ActivityDoc `bson:"inline"`
+	LastUpdate  `bson:"inline"`
 }
 
 func (MemberDoc) CollectionName() string {
@@ -68,4 +68,33 @@ type MemberRequestPassword struct {
 
 func (MemberRequestPassword) CollectionName() string {
 	return memberCollectionName
+}
+
+type MemberActivity struct {
+	MemberData   `bson:"inline"`
+	ActivityTime `bson:"inline"`
+}
+
+func (MemberActivity) CollectionName() string {
+	return categoryCollectionName
+}
+
+type MemberDeleteActivity struct {
+	Identity     `bson:"inline"`
+	ActivityTime `bson:"inline"`
+}
+
+func (MemberDeleteActivity) CollectionName() string {
+	return categoryCollectionName
+}
+
+type MemberLastActivityResponse struct {
+	New    []MemberActivity       `json:"new" `
+	Remove []MemberDeleteActivity `json:"remove"`
+}
+
+type MemberFetchUpdateResponse struct {
+	Success    bool                       `json:"success"`
+	Data       MemberLastActivityResponse `json:"data,omitempty"`
+	Pagination PaginationDataResponse     `json:"pagination,omitempty"`
 }

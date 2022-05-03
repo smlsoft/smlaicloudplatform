@@ -3,6 +3,7 @@ package member
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
+	"time"
 
 	paginate "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
@@ -15,6 +16,8 @@ type IMemberRepository interface {
 	Delete(shopID string, guid string, username string) error
 	FindByGuid(shopID string, guid string) (models.MemberDoc, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error)
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.MemberDeleteActivity, paginate.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.MemberActivity, paginate.PaginationData, error)
 }
 
 type MemberRepository struct {
@@ -76,6 +79,40 @@ func (repo MemberRepository) FindPage(shopID string, q string, page int, limit i
 
 	if err != nil {
 		return []models.MemberInfo{}, paginate.PaginationData{}, err
+	}
+
+	return docList, pagination, nil
+}
+
+func (repo MemberRepository) FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.MemberDeleteActivity, paginate.PaginationData, error) {
+
+	docList := []models.MemberDeleteActivity{}
+	pagination, err := repo.pst.FindPage(&models.MemberDeleteActivity{}, limit, page, bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$gte": lastUpdatedDate},
+	}, &docList)
+
+	if err != nil {
+		return []models.MemberDeleteActivity{}, paginate.PaginationData{}, err
+	}
+
+	return docList, pagination, nil
+}
+
+func (repo MemberRepository) FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.MemberActivity, paginate.PaginationData, error) {
+
+	docList := []models.MemberActivity{}
+	pagination, err := repo.pst.FindPage(&models.MemberActivity{}, limit, page, bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$not": bson.M{"$gte": lastUpdatedDate}},
+		"$or": []interface{}{
+			bson.M{"createdat": bson.M{"$gte": lastUpdatedDate}},
+			bson.M{"updatedat": bson.M{"$gte": lastUpdatedDate}},
+		},
+	}, &docList)
+
+	if err != nil {
+		return []models.MemberActivity{}, paginate.PaginationData{}, err
 	}
 
 	return docList, pagination, nil
