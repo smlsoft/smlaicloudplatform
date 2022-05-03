@@ -13,6 +13,7 @@ import (
 	"smlcloudplatform/pkg/api/inventoryimport"
 	"smlcloudplatform/pkg/api/member"
 	"smlcloudplatform/pkg/api/purchase"
+	"smlcloudplatform/pkg/api/restaurant/shopzone"
 	"smlcloudplatform/pkg/api/saleinvoice"
 	"smlcloudplatform/pkg/api/shop"
 	"smlcloudplatform/pkg/api/shop/employee"
@@ -96,6 +97,9 @@ func main() {
 
 	categoryImportHttp := inventoryimport.NewCategoryImportHttp(ms, cfg)
 	categoryImportHttp.RouteSetup()
+
+	shopzonehttp := shopzone.NewShopZoneHttp(ms, cfg)
+	shopzonehttp.RouteSetup()
 
 	toolSvc := tools.NewToolsService(ms, cfg)
 
