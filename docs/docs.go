@@ -1238,6 +1238,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/member/fetchupdate": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Fetch Update Member By Date",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "DateTime",
+                        "name": "lastUpdate",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.MemberFetchUpdateResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/member/{id}": {
             "get": {
                 "security": [
@@ -3716,6 +3755,107 @@ const docTemplate = `{
                 },
                 "zipcode": {
                     "type": "string"
+                }
+            }
+        },
+        "models.MemberActivity": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "branchcode": {
+                    "type": "string"
+                },
+                "branchtype": {
+                    "type": "integer"
+                },
+                "contacttype": {
+                    "type": "integer"
+                },
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "personaltype": {
+                    "type": "integer"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "surname": {
+                    "type": "string"
+                },
+                "taxid": {
+                    "type": "string"
+                },
+                "telephone": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.MemberDeleteActivity": {
+            "type": "object",
+            "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.MemberFetchUpdateResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.MemberLastActivityResponse"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.MemberLastActivityResponse": {
+            "type": "object",
+            "properties": {
+                "new": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.MemberActivity"
+                    }
+                },
+                "remove": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.MemberDeleteActivity"
+                    }
                 }
             }
         },
