@@ -151,7 +151,7 @@ func (svc CategoryService) LastActivityCategory(shopID string, lastUpdatedDate t
 
 	pagination := pagination1
 
-	if pagination.TotalPage < pagination2.TotalPage {
+	if pagination.Total < pagination2.Total {
 		pagination = pagination2
 	}
 
