@@ -51,6 +51,15 @@ func (h SaleinvoiceHttp) RouteSetup() {
 	h.ms.DELETE("/saleinvoice/:id", h.DeleteSaleinvoice)
 }
 
+// Create Sale Invoice godoc
+// @Description Create Inventory
+// @Tags		Sale Invoice
+// @Param		SaleInvoice  body      models.Saleinvoice  true  "Body"
+// @Accept 		json
+// @Success		201	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /saleinvoice [post]
 func (h SaleinvoiceHttp) CreateSaleinvoice(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -80,6 +89,16 @@ func (h SaleinvoiceHttp) CreateSaleinvoice(ctx microservice.IContext) error {
 	return nil
 }
 
+// Update Sale Invoice godoc
+// @Description Update Sale Invoice
+// @Tags		Sale Invoice
+// @Param		id  path      string  true  "Document ID"
+// @Param		Invoice  body      models.Saleinvoice  true  "Body"
+// @Accept 		json
+// @Success		201	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /saleinvoice/{id} [put]
 func (h SaleinvoiceHttp) UpdateSaleinvoice(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -109,6 +128,15 @@ func (h SaleinvoiceHttp) UpdateSaleinvoice(ctx microservice.IContext) error {
 	return nil
 }
 
+// Delete Sale Invoice Document godoc
+// @Description Delete Document
+// @Tags		Sale Invoice
+// @Param		id  path      string  true  "Document ID"
+// @Accept 		json
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /saleinvoice/{id} [delete]
 func (h SaleinvoiceHttp) DeleteSaleinvoice(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -129,6 +157,15 @@ func (h SaleinvoiceHttp) DeleteSaleinvoice(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Sale Invoice Document Info godoc
+// @Description get struct array by ID
+// @Tags		Sale Invoice
+// @Param		id  path      string  true  "Inventory ID"
+// @Accept 		json
+// @Success		200	{object}	models.SaleinvoiceInfo
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /saleinvoice/{id} [get]
 func (h SaleinvoiceHttp) InfoSaleinvoice(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
@@ -150,6 +187,17 @@ func (h SaleinvoiceHttp) InfoSaleinvoice(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Sale Invoice godoc
+// @Description List Sale Invoice Document
+// @Tags		Sale Invoice
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Size"
+// @Accept 		json
+// @Success		200	{array}	models.SaleInvoiceListPageResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /saleinvoice [get]
 func (h SaleinvoiceHttp) SearchSaleinvoice(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()

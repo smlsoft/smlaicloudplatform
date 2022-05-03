@@ -1848,6 +1848,219 @@ const docTemplate = `{
                 }
             }
         },
+        "/purchase": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.PurchaseListPageResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Purchase Transaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "description": "payload",
+                        "name": "Purchase",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Purchase"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/purchase/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "After Purchare Doc Create system will be return Id of Purchase Document. this Id can get Purchase Document in this service.",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Document ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.PurchaseInfo"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Inventory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Purchase Document ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "payload",
+                        "name": "Purchase",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Purchase"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Tempolaty Delete  Purchase Transaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Purchase Doc ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "description": "For User Register Application",
@@ -1878,6 +2091,220 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/saleinvoice": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "List Sale Invoice Document",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sale Invoice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.SaleInvoiceListPageResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Inventory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sale Invoice"
+                ],
+                "parameters": [
+                    {
+                        "description": "Body",
+                        "name": "SaleInvoice",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Saleinvoice"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/saleinvoice/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sale Invoice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Inventory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SaleinvoiceInfo"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Sale Invoice",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sale Invoice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Document ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Body",
+                        "name": "Invoice",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Saleinvoice"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Document",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sale Invoice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Document ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
                         }
@@ -2540,6 +2967,26 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "suggestcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CreditCardPayment": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "approvedcode": {
+                    "type": "string"
+                },
+                "cardnumber": {
+                    "type": "string"
+                },
+                "cardtype": {
+                    "type": "string"
+                },
+                "remark": {
                     "type": "string"
                 }
             }
@@ -3336,6 +3783,258 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Payment": {
+            "type": "object",
+            "properties": {
+                "cash": {
+                    "type": "number"
+                },
+                "creditcard": {
+                    "type": "number"
+                },
+                "creditcarddetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CreditCardPayment"
+                    }
+                }
+            }
+        },
+        "models.Purchase": {
+            "type": "object",
+            "properties": {
+                "discountamount": {
+                    "type": "number"
+                },
+                "docdate": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PurchaseDetail"
+                    }
+                },
+                "member": {
+                    "$ref": "#/definitions/models.Member"
+                },
+                "payment": {
+                    "$ref": "#/definitions/models.Payment"
+                },
+                "sumamount": {
+                    "type": "number"
+                },
+                "taxamount": {
+                    "type": "number"
+                },
+                "taxbaseamount": {
+                    "type": "number"
+                },
+                "taxrate": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.PurchaseDetail": {
+            "type": "object",
+            "properties": {
+                "activated": {
+                    "description": "เปิดใช้งานอยู่",
+                    "type": "boolean"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "category": {
+                    "$ref": "#/definitions/models.Category"
+                },
+                "categoryguid": {
+                    "description": "Guid กลุ่มสินค้า",
+                    "type": "string"
+                },
+                "description1": {
+                    "description": "รายละเอียดภาษาไทย",
+                    "type": "string"
+                },
+                "description2": {
+                    "type": "string"
+                },
+                "description3": {
+                    "type": "string"
+                },
+                "description4": {
+                    "type": "string"
+                },
+                "description5": {
+                    "type": "string"
+                },
+                "discountamount": {
+                    "type": "number"
+                },
+                "discounttext": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InventoryImage"
+                    }
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemguid": {
+                    "type": "string"
+                },
+                "itemsku": {
+                    "type": "string"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitdiv": {
+                    "type": "number"
+                },
+                "itemunitstd": {
+                    "type": "number"
+                },
+                "linenumber": {
+                    "type": "integer"
+                },
+                "memberprice": {
+                    "type": "number"
+                },
+                "name1": {
+                    "description": "ชื่อภาษาไทย",
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Option"
+                    }
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "recommended": {
+                    "description": "สินค้าแนะนำ",
+                    "type": "boolean"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InventoryTag"
+                    }
+                },
+                "unitname1": {
+                    "type": "string"
+                },
+                "unitname2": {
+                    "type": "string"
+                },
+                "unitname3": {
+                    "type": "string"
+                },
+                "unitname4": {
+                    "type": "string"
+                },
+                "unitname5": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.PurchaseInfo": {
+            "type": "object",
+            "properties": {
+                "discountamount": {
+                    "type": "number"
+                },
+                "docdate": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PurchaseDetail"
+                    }
+                },
+                "member": {
+                    "$ref": "#/definitions/models.Member"
+                },
+                "payment": {
+                    "$ref": "#/definitions/models.Payment"
+                },
+                "sumamount": {
+                    "type": "number"
+                },
+                "taxamount": {
+                    "type": "number"
+                },
+                "taxbaseamount": {
+                    "type": "number"
+                },
+                "taxrate": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.PurchaseListPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PurchaseInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "models.ResponseSuccess": {
             "type": "object",
             "properties": {
@@ -3350,6 +4049,241 @@ const docTemplate = `{
                 "id": {},
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.SaleInvoiceListPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SaleinvoiceInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.Saleinvoice": {
+            "type": "object",
+            "properties": {
+                "discountamount": {
+                    "type": "number"
+                },
+                "docdate": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SaleinvoiceDetail"
+                    }
+                },
+                "member": {
+                    "$ref": "#/definitions/models.Member"
+                },
+                "payment": {
+                    "$ref": "#/definitions/models.Payment"
+                },
+                "sumamount": {
+                    "type": "number"
+                },
+                "taxamount": {
+                    "type": "number"
+                },
+                "taxbaseamount": {
+                    "type": "number"
+                },
+                "taxrate": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.SaleinvoiceDetail": {
+            "type": "object",
+            "properties": {
+                "activated": {
+                    "description": "เปิดใช้งานอยู่",
+                    "type": "boolean"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "category": {
+                    "$ref": "#/definitions/models.Category"
+                },
+                "categoryguid": {
+                    "description": "Guid กลุ่มสินค้า",
+                    "type": "string"
+                },
+                "description1": {
+                    "description": "รายละเอียดภาษาไทย",
+                    "type": "string"
+                },
+                "description2": {
+                    "type": "string"
+                },
+                "description3": {
+                    "type": "string"
+                },
+                "description4": {
+                    "type": "string"
+                },
+                "description5": {
+                    "type": "string"
+                },
+                "discountamount": {
+                    "type": "number"
+                },
+                "discounttext": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InventoryImage"
+                    }
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemguid": {
+                    "type": "string"
+                },
+                "itemsku": {
+                    "type": "string"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitdiv": {
+                    "type": "number"
+                },
+                "itemunitstd": {
+                    "type": "number"
+                },
+                "linenumber": {
+                    "type": "integer"
+                },
+                "memberprice": {
+                    "type": "number"
+                },
+                "name1": {
+                    "description": "ชื่อภาษาไทย",
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Option"
+                    }
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "recommended": {
+                    "description": "สินค้าแนะนำ",
+                    "type": "boolean"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InventoryTag"
+                    }
+                },
+                "unitname1": {
+                    "type": "string"
+                },
+                "unitname2": {
+                    "type": "string"
+                },
+                "unitname3": {
+                    "type": "string"
+                },
+                "unitname4": {
+                    "type": "string"
+                },
+                "unitname5": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SaleinvoiceInfo": {
+            "type": "object",
+            "properties": {
+                "discountamount": {
+                    "type": "number"
+                },
+                "docdate": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SaleinvoiceDetail"
+                    }
+                },
+                "member": {
+                    "$ref": "#/definitions/models.Member"
+                },
+                "payment": {
+                    "$ref": "#/definitions/models.Payment"
+                },
+                "sumamount": {
+                    "type": "number"
+                },
+                "taxamount": {
+                    "type": "number"
+                },
+                "taxbaseamount": {
+                    "type": "number"
+                },
+                "taxrate": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
                 }
             }
         },
