@@ -15,14 +15,20 @@ func TestCreateSaleinvoice(t *testing.T) {
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := saleinvoice.NewSaleinvoiceRepository(mongoPersister)
 
+	inv := models.Inventory{
+		ItemSku:      "sku01",
+		CategoryGuid: "xxx",
+	}
+
 	give := models.SaleinvoiceDoc{}
 
 	give.ShopID = "mx01"
 	give.GuidFixed = "fx01"
 	give.Items = &[]models.SaleinvoiceDetail{
 		{
-			ItemSku:      "sku01",
-			CategoryGuid: "xxx",
+			InventoryInfo: models.InventoryInfo{
+				Inventory: inv,
+			},
 		},
 	}
 
@@ -47,13 +53,32 @@ func TestUpdateSaleinvoice(t *testing.T) {
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := saleinvoice.NewSaleinvoiceRepository(mongoPersister)
 
+	invInfo := models.InventoryInfo{
+		Inventory: models.Inventory{
+			ItemSku:      "sku01",
+			CategoryGuid: "xxx",
+		},
+	}
+
 	trans := models.SaleinvoiceDoc{}
 
 	trans.ShopID = "mx01"
 	trans.GuidFixed = "fx02"
 	trans.Items = &[]models.SaleinvoiceDetail{
 		{
-			InventoryID:  "inv01",
+			InventoryInfo: invInfo,
+		},
+	}
+
+	invGive1 := models.InventoryInfo{
+		Inventory: models.Inventory{
+			ItemSku:      "sku01",
+			CategoryGuid: "xxx",
+		},
+	}
+
+	invGive2 := models.InventoryInfo{
+		Inventory: models.Inventory{
 			ItemSku:      "sku01",
 			CategoryGuid: "xxx",
 		},
@@ -65,14 +90,10 @@ func TestUpdateSaleinvoice(t *testing.T) {
 	give.GuidFixed = "fx02"
 	give.Items = &[]models.SaleinvoiceDetail{
 		{
-			InventoryID:  "inv01",
-			ItemSku:      "sku01",
-			CategoryGuid: "xxx",
+			InventoryInfo: invGive1,
 		},
 		{
-			InventoryID:  "inv02",
-			ItemSku:      "sku02",
-			CategoryGuid: "xxx2",
+			InventoryInfo: invGive2,
 		},
 	}
 
@@ -117,13 +138,18 @@ func TestDeleteSaleinvoice(t *testing.T) {
 
 	give := models.SaleinvoiceDoc{}
 
+	invGive1 := models.InventoryInfo{
+		Inventory: models.Inventory{
+			ItemSku:      "sku01",
+			CategoryGuid: "xxx",
+		},
+	}
+
 	give.ShopID = "mx01"
 	give.GuidFixed = "fx03"
 	give.Items = &[]models.SaleinvoiceDetail{
 		{
-			InventoryID:  "inv01",
-			ItemSku:      "sku01",
-			CategoryGuid: "xxx",
+			InventoryInfo: invGive1,
 		},
 	}
 
