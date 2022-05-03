@@ -447,7 +447,7 @@ func (svc InventoryService) LastActivityInventory(shopID string, lastUpdatedDate
 
 	pagination := pagination1
 
-	if pagination.TotalPage < pagination2.TotalPage {
+	if pagination.Total < pagination2.Total {
 		pagination = pagination2
 	}
 
