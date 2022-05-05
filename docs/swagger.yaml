@@ -756,6 +756,72 @@ definitions:
       zipcode:
         type: string
     type: object
+  models.MemberActivity:
+    properties:
+      address:
+        type: string
+      branchcode:
+        type: string
+      branchtype:
+        type: integer
+      contacttype:
+        type: integer
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      name:
+        type: string
+      personaltype:
+        type: integer
+      shopid:
+        type: string
+      surname:
+        type: string
+      taxid:
+        type: string
+      telephone:
+        type: string
+      updatedat:
+        type: string
+      zipcode:
+        type: string
+    type: object
+  models.MemberDeleteActivity:
+    properties:
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      shopid:
+        type: string
+      updatedat:
+        type: string
+    type: object
+  models.MemberFetchUpdateResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.MemberLastActivityResponse'
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  models.MemberLastActivityResponse:
+    properties:
+      new:
+        items:
+          $ref: '#/definitions/models.MemberActivity'
+        type: array
+      remove:
+        items:
+          $ref: '#/definitions/models.MemberDeleteActivity'
+        type: array
+    type: object
   models.Option:
     properties:
       choices:
@@ -2035,6 +2101,30 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Member
+  /member/fetchupdate:
+    get:
+      consumes:
+      - application/json
+      description: Fetch Update Member By Date
+      parameters:
+      - description: DateTime
+        in: query
+        name: lastUpdate
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.MemberFetchUpdateResponse'
         "401":
           description: Unauthorized
           schema:

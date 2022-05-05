@@ -76,7 +76,7 @@ type MemberActivity struct {
 }
 
 func (MemberActivity) CollectionName() string {
-	return categoryCollectionName
+	return memberCollectionName
 }
 
 type MemberDeleteActivity struct {
@@ -85,7 +85,7 @@ type MemberDeleteActivity struct {
 }
 
 func (MemberDeleteActivity) CollectionName() string {
-	return categoryCollectionName
+	return memberCollectionName
 }
 
 type MemberLastActivityResponse struct {

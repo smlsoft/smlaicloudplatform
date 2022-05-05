@@ -251,7 +251,7 @@ func (h MemberHttp) SearchMember(ctx microservice.IContext) error {
 // @Success		200 {object} models.MemberFetchUpdateResponse
 // @Failure		401 {object} models.AuthResponseFailed
 // @Security	AccessToken
-// @Router		//fetchupdate [get]
+// @Router		/member/fetchupdate [get]
 func (h MemberHttp) LastActivityMember(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
