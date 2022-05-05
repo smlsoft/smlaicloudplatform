@@ -13,6 +13,9 @@ import (
 	"smlcloudplatform/pkg/api/inventoryimport"
 	"smlcloudplatform/pkg/api/member"
 	"smlcloudplatform/pkg/api/purchase"
+	"smlcloudplatform/pkg/api/restaurant/kitchen"
+	"smlcloudplatform/pkg/api/restaurant/shopprinter"
+	"smlcloudplatform/pkg/api/restaurant/shoptable"
 	"smlcloudplatform/pkg/api/restaurant/shopzone"
 	"smlcloudplatform/pkg/api/saleinvoice"
 	"smlcloudplatform/pkg/api/shop"
@@ -100,6 +103,15 @@ func main() {
 
 	shopzonehttp := shopzone.NewShopZoneHttp(ms, cfg)
 	shopzonehttp.RouteSetup()
+
+	shoptablehttp := shoptable.NewShopTableHttp(ms, cfg)
+	shoptablehttp.RouteSetup()
+
+	shopprinterhttp := shopprinter.NewShopPrinterHttp(ms, cfg)
+	shopprinterhttp.RouteSetup()
+
+	kitchenhttp := kitchen.NewKitchenHttp(ms, cfg)
+	kitchenhttp.RouteSetup()
 
 	toolSvc := tools.NewToolsService(ms, cfg)
 
