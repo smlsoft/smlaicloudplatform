@@ -34,11 +34,11 @@ func NewShopZoneHttp(ms *microservice.Microservice, cfg microservice.IConfig) Sh
 
 func (h ShopZoneHttp) RouteSetup() {
 
-	h.ms.GET("/zone/:id", h.InfoShopZone)
-	h.ms.GET("/zone", h.SearchShopZone)
-	h.ms.POST("/zone", h.CreateShopZone)
-	h.ms.PUT("/zone/:id", h.UpdateShopZone)
-	h.ms.DELETE("/zone/:id", h.DeleteShopZone)
+	h.ms.GET("/restaurant/zone/:id", h.InfoShopZone)
+	h.ms.GET("/restaurant/zone", h.SearchShopZone)
+	h.ms.POST("/restaurant/zone", h.CreateShopZone)
+	h.ms.PUT("/restaurant/zone/:id", h.UpdateShopZone)
+	h.ms.DELETE("/restaurant/zone/:id", h.DeleteShopZone)
 }
 
 func (h ShopZoneHttp) CreateShopZone(ctx microservice.IContext) error {
