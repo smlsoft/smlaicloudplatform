@@ -67,11 +67,11 @@ func (CategoryDeleteActivity) CollectionName() string {
 	return categoryCollectionName
 }
 
-type CategoryItemCategoryGuid struct {
+type CategoryItemGuid struct {
 	CategoryGuid string `json:"categoryguid" bson:"categoryguid" gorm:"categoryguid"`
 }
 
-func (CategoryItemCategoryGuid) CollectionName() string {
+func (CategoryItemGuid) CollectionName() string {
 	return categoryCollectionName
 }
 

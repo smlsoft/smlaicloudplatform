@@ -3,11 +3,13 @@ package category
 import (
 	"errors"
 	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/importdata"
 	"sync"
 	"time"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -16,18 +18,26 @@ type ICategoryService interface {
 	UpdateCategory(guid string, shopID string, authUsername string, category models.Category) error
 	DeleteCategory(guid string, shopID string, authUsername string) error
 	InfoCategory(guid string, shopID string) (models.CategoryInfo, error)
-	SearchCategory(shopID string, q string, page int, limit int) ([]models.CategoryInfo, paginate.PaginationData, error)
-	LastActivityCategory(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, paginate.PaginationData, error)
-	CreateInBatch(shopID string, authUsername string, categories []models.Category) (models.CategoryBulkImport, error)
+	SearchCategory(shopID string, q string, page int, limit int) ([]models.CategoryInfo, mongopagination.PaginationData, error)
+	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, mongopagination.PaginationData, error)
+	SaveInBatch(shopID string, authUsername string, categories []models.Category) (models.BulkImport, error)
 }
 
 type CategoryService struct {
-	repo ICategoryRepository
+	repo         ICategoryRepository
+	guidRepo     repositories.GuidRepository[models.CategoryItemGuid]
+	activityRepo repositories.ActivityRepository[models.CategoryActivity, models.CategoryDeleteActivity]
 }
 
-func NewCategoryService(categoryRepository ICategoryRepository) CategoryService {
+func NewCategoryService(
+	categoryRepository ICategoryRepository,
+	guidRepo repositories.GuidRepository[models.CategoryItemGuid],
+	activityRepo repositories.ActivityRepository[models.CategoryActivity, models.CategoryDeleteActivity],
+) CategoryService {
 	return CategoryService{
-		repo: categoryRepository,
+		repo:         categoryRepository,
+		guidRepo:     guidRepo,
+		activityRepo: activityRepo,
 	}
 }
 
@@ -101,7 +111,7 @@ func (svc CategoryService) InfoCategory(guid string, shopID string) (models.Cate
 
 }
 
-func (svc CategoryService) SearchCategory(shopID string, q string, page int, limit int) ([]models.CategoryInfo, paginate.PaginationData, error) {
+func (svc CategoryService) SearchCategory(shopID string, q string, page int, limit int) ([]models.CategoryInfo, mongopagination.PaginationData, error) {
 	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
 
 	if err != nil {
@@ -111,26 +121,26 @@ func (svc CategoryService) SearchCategory(shopID string, q string, page int, lim
 	return docList, pagination, nil
 }
 
-func (svc CategoryService) LastActivityCategory(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, paginate.PaginationData, error) {
+func (svc CategoryService) LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, mongopagination.PaginationData, error) {
 	var wg sync.WaitGroup
 
 	wg.Add(1)
 	var deleteDocList []models.CategoryDeleteActivity
-	var pagination1 paginate.PaginationData
+	var pagination1 mongopagination.PaginationData
 	var err1 error
 
 	go func() {
-		deleteDocList, pagination1, err1 = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
+		deleteDocList, pagination1, err1 = svc.activityRepo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
 		wg.Done()
 	}()
 
 	wg.Add(1)
 	var createAndUpdateDocList []models.CategoryActivity
-	var pagination2 paginate.PaginationData
+	var pagination2 mongopagination.PaginationData
 	var err2 error
 
 	go func() {
-		createAndUpdateDocList, pagination2, err2 = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
+		createAndUpdateDocList, pagination2, err2 = svc.activityRepo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
 		wg.Done()
 	}()
 
@@ -158,33 +168,74 @@ func (svc CategoryService) LastActivityCategory(shopID string, lastUpdatedDate t
 	return lastActivity, pagination, nil
 }
 
-func (svc CategoryService) CreateInBatch(shopID string, authUsername string, categories []models.Category) (models.CategoryBulkImport, error) {
+func (svc CategoryService) SaveInBatch(shopID string, authUsername string, dataList []models.Category) (models.BulkImport, error) {
 
 	createDataList := []models.CategoryDoc{}
 	duplicateDataList := []models.Category{}
 
-	payloadCategoryList, payloadDuplicateCategoryList := filterDuplicateCategory(categories)
+	payloadCategoryList, payloadDuplicateCategoryList := importdata.FilterDuplicate[models.Category](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
-	for _, category := range payloadCategoryList {
-		itemCodeGuidList = append(itemCodeGuidList, category.CategoryGuid)
+	for _, doc := range payloadCategoryList {
+		itemCodeGuidList = append(itemCodeGuidList, doc.CategoryGuid)
 	}
 
-	findItemGuid, err := svc.repo.FindByCategoryGuidList(shopID, itemCodeGuidList)
+	findItemGuid, err := svc.guidRepo.FindInItemGuid(shopID, "code", itemCodeGuidList)
 
 	if err != nil {
-		return models.CategoryBulkImport{}, err
+		return models.BulkImport{}, err
 	}
 
-	duplicateDataList, createDataList = preparePayloadDataCategory(shopID, authUsername, findItemGuid, payloadCategoryList)
+	foundItemGuidList := []string{}
+	for _, doc := range findItemGuid {
+		foundItemGuidList = append(foundItemGuidList, doc.CategoryGuid)
+	}
 
-	updateSuccessDataList, updateFailDataList := updateOnDuplicateCategory(shopID, authUsername, duplicateDataList, svc.repo)
+	duplicateDataList, createDataList = importdata.PreparePayloadData[models.Category, models.CategoryDoc](
+		shopID,
+		authUsername,
+		foundItemGuidList,
+		payloadCategoryList,
+		svc.getDocIDKey,
+		func(shopID string, authUsername string, doc models.Category) models.CategoryDoc {
+			newGuid := utils.NewGUID()
+
+			dataDoc := models.CategoryDoc{}
+
+			dataDoc.GuidFixed = newGuid
+			dataDoc.ShopID = shopID
+			dataDoc.Category = doc
+
+			currentTime := time.Now()
+			dataDoc.CreatedBy = authUsername
+			dataDoc.CreatedAt = currentTime
+			dataDoc.LastUpdatedAt = currentTime
+			return dataDoc
+		},
+	)
+
+	updateSuccessDataList, updateFailDataList := importdata.UpdateOnDuplicate[models.Category, models.CategoryDoc](
+		shopID,
+		authUsername,
+		duplicateDataList,
+		svc.getDocIDKey,
+		func(shopID string, guid string) (models.CategoryDoc, error) {
+			return svc.repo.FindByGuid(shopID, guid)
+		},
+		func(doc models.CategoryDoc) bool {
+			return false
+		},
+		func(shopID string, authUsername string, data models.Category, doc models.CategoryDoc) error {
+
+			return nil
+		},
+	)
 
 	if len(createDataList) > 0 {
 		err = svc.repo.CreateInBatch(createDataList)
 
 		if err != nil {
-			return models.CategoryBulkImport{}, err
+			return models.BulkImport{}, err
 		}
 	}
 	createDataKey := []string{}
@@ -208,7 +259,7 @@ func (svc CategoryService) CreateInBatch(shopID string, authUsername string, cat
 		updateFailDataKey = append(updateFailDataKey, doc.CategoryGuid)
 	}
 
-	return models.CategoryBulkImport{
+	return models.BulkImport{
 		Created:          createDataKey,
 		Updated:          updateDataKey,
 		UpdateFailed:     updateFailDataKey,
@@ -216,81 +267,6 @@ func (svc CategoryService) CreateInBatch(shopID string, authUsername string, cat
 	}, nil
 }
 
-func filterDuplicateCategory(categories []models.Category) (itemTemp []models.Category, itemDuplicate []models.Category) {
-	tempFilterDict := map[string]models.Category{}
-	for _, category := range categories {
-		if _, ok := tempFilterDict[category.CategoryGuid]; ok {
-			itemDuplicate = append(itemDuplicate, category)
-
-		}
-		tempFilterDict[category.CategoryGuid] = category
-	}
-
-	for _, inventory := range tempFilterDict {
-		itemTemp = append(itemTemp, inventory)
-	}
-
-	return itemTemp, itemDuplicate
-}
-
-func updateOnDuplicateCategory(shopID string, authUsername string, duplicateDataList []models.Category, repo ICategoryRepository) ([]models.CategoryDoc, []models.Category) {
-	updateSuccessDataList := []models.CategoryDoc{}
-	updateFailDataList := []models.Category{}
-
-	for _, doc := range duplicateDataList {
-		findDoc, err := repo.FindByCategoryGuid(shopID, doc.CategoryGuid)
-
-		if err != nil || findDoc.ID == primitive.NilObjectID {
-			updateFailDataList = append(updateFailDataList, doc)
-			continue
-		}
-
-		findDoc.Category = doc
-
-		findDoc.UpdatedBy = authUsername
-		findDoc.UpdatedAt = time.Now()
-		findDoc.LastUpdatedAt = time.Now()
-
-		err = repo.Update(findDoc.GuidFixed, findDoc)
-
-		if err != nil {
-			updateFailDataList = append(updateFailDataList, doc)
-			continue
-		}
-
-		updateSuccessDataList = append(updateSuccessDataList, findDoc)
-	}
-	return updateSuccessDataList, updateFailDataList
-}
-
-func preparePayloadDataCategory(shopID string, authUsername string, itemGuidList []models.CategoryItemCategoryGuid, payloadCategoryList []models.Category) ([]models.Category, []models.CategoryDoc) {
-	tempItemGuidDict := make(map[string]bool)
-	duplicateDataList := []models.Category{}
-	createDataList := []models.CategoryDoc{}
-
-	for _, itemGuid := range itemGuidList {
-		tempItemGuidDict[itemGuid.CategoryGuid] = true
-	}
-
-	for _, categories := range payloadCategoryList {
-
-		if _, ok := tempItemGuidDict[categories.CategoryGuid]; ok {
-			duplicateDataList = append(duplicateDataList, categories)
-		} else {
-			newGuid := utils.NewGUID()
-
-			dataDoc := models.CategoryDoc{}
-
-			dataDoc.GuidFixed = newGuid
-			dataDoc.ShopID = shopID
-			dataDoc.Category = categories
-
-			dataDoc.CreatedBy = authUsername
-			dataDoc.CreatedAt = time.Now()
-			dataDoc.LastUpdatedAt = time.Now()
-
-			createDataList = append(createDataList, dataDoc)
-		}
-	}
-	return duplicateDataList, createDataList
+func (svc CategoryService) getDocIDKey(doc models.Category) string {
+	return doc.CategoryGuid
 }

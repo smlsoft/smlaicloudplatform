@@ -18,7 +18,7 @@ type ICategoryRepository interface {
 	Delete(shopID string, guid string, username string) error
 	FindByGuid(shopID string, guid string) (models.CategoryDoc, error)
 	FindByCategoryGuid(shopID string, guid string) (models.CategoryDoc, error)
-	FindByCategoryGuidList(shopID string, categoryGuidList []string) ([]models.CategoryItemCategoryGuid, error)
+	FindByCategoryGuidList(shopID string, categoryGuidList []string) ([]models.CategoryItemGuid, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.CategoryInfo, paginate.PaginationData, error)
 	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.CategoryDeleteActivity, paginate.PaginationData, error)
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.CategoryActivity, paginate.PaginationData, error)
@@ -54,10 +54,10 @@ func (repo CategoryRepository) Create(category models.CategoryDoc) (string, erro
 	return idx.Hex(), nil
 }
 
-func (repo CategoryRepository) CreateInBatch(inventories []models.CategoryDoc) error {
+func (repo CategoryRepository) CreateInBatch(docList []models.CategoryDoc) error {
 	var tempList []interface{}
 
-	for _, inv := range inventories {
+	for _, inv := range docList {
 		tempList = append(tempList, inv)
 	}
 
@@ -115,13 +115,13 @@ func (repo CategoryRepository) FindByCategoryGuid(shopID string, categoryguid st
 	return *doc, nil
 }
 
-func (repo CategoryRepository) FindByCategoryGuidList(shopID string, categoryGuidList []string) ([]models.CategoryItemCategoryGuid, error) {
+func (repo CategoryRepository) FindByCategoryGuidList(shopID string, categoryGuidList []string) ([]models.CategoryItemGuid, error) {
 
-	findDoc := []models.CategoryItemCategoryGuid{}
-	err := repo.pst.Find(&models.CategoryItemCategoryGuid{}, bson.M{"shopid": shopID, "categoryguid": bson.M{"$in": categoryGuidList}, "deletedat": bson.M{"$exists": false}}, &findDoc)
+	findDoc := []models.CategoryItemGuid{}
+	err := repo.pst.Find(&models.CategoryItemGuid{}, bson.M{"shopid": shopID, "categoryguid": bson.M{"$in": categoryGuidList}, "deletedat": bson.M{"$exists": false}}, &findDoc)
 
 	if err != nil {
-		return []models.CategoryItemCategoryGuid{}, err
+		return []models.CategoryItemGuid{}, err
 	}
 	return findDoc, nil
 }

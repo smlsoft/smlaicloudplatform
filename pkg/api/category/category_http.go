@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/repositories"
 	"strconv"
 	"strings"
 	"time"
@@ -22,7 +23,10 @@ func NewCategoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) Ca
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	cateRepo := NewCategoryRepository(pst)
-	cateService := NewCategoryService(cateRepo)
+
+	guidRepo := repositories.NewGuidRepository[models.CategoryItemGuid](pst)
+	activityRepo := repositories.NewActivityRepository[models.CategoryActivity, models.CategoryDeleteActivity](pst)
+	cateService := NewCategoryService(cateRepo, guidRepo, activityRepo)
 
 	return CategoryHttp{
 		ms:          ms,
@@ -264,7 +268,7 @@ func (h CategoryHttp) LastActivityCategory(ctx microservice.IContext) error {
 		limit = 20
 	}
 
-	docList, pagination, err := h.cateService.LastActivityCategory(shopID, lastUpdate, page, limit)
+	docList, pagination, err := h.cateService.LastActivity(shopID, lastUpdate, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -307,7 +311,7 @@ func (h CategoryHttp) CreateInBatchCategory(ctx microservice.IContext) error {
 		return err
 	}
 
-	categoryBulkResponse, err := h.cateService.CreateInBatch(shopID, authUsername, dataReq)
+	bulkResponse, err := h.cateService.SaveInBatch(shopID, authUsername, dataReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -316,9 +320,9 @@ func (h CategoryHttp) CreateInBatchCategory(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		models.CategoryBulkReponse{
-			Success:            true,
-			CategoryBulkImport: categoryBulkResponse,
+		models.BulkReponse{
+			Success:    true,
+			BulkImport: bulkResponse,
 		},
 	)
 
