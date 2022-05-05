@@ -10,7 +10,7 @@ import (
 )
 
 type ISearchRepo interface {
-	restaurant.ShopZoneInfo
+	restaurant.ShopZoneInfo | restaurant.ShopTableInfo | restaurant.PrinterTerminalInfo | restaurant.KitchenInfo
 }
 
 type SearchRepository[T ISearchRepo] struct {
@@ -37,7 +37,7 @@ func (repo SearchRepository[T]) FindPage(shopID string, colNameSearch []string, 
 	}
 
 	docList := []T{}
-	pagination, err := repo.pst.FindPage(&T{}, limit, page, bson.M{
+	pagination, err := repo.pst.FindPage(new(T), limit, page, bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$exists": false},
 		"$or":       searchFilterList,

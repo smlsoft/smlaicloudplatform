@@ -8,9 +8,8 @@ import (
 )
 
 type ICrudRepo interface {
-	restaurant.ShopZoneDoc
+	restaurant.ShopZoneDoc | restaurant.ShopTableDoc | restaurant.PrinterTerminalDoc | restaurant.KitchenDoc
 }
-
 type CrudRepository[T ICrudRepo] struct {
 	pst microservice.IPersisterMongo
 }
@@ -23,7 +22,7 @@ func NewCrudRepository[T ICrudRepo](pst microservice.IPersisterMongo) CrudReposi
 
 func (repo CrudRepository[T]) Count(shopID string) (int, error) {
 
-	count, err := repo.pst.Count(&T{}, bson.M{"shopid": shopID})
+	count, err := repo.pst.Count(new(T), bson.M{"shopid": shopID})
 
 	if err != nil {
 		return 0, err
@@ -32,7 +31,7 @@ func (repo CrudRepository[T]) Count(shopID string) (int, error) {
 }
 
 func (repo CrudRepository[T]) Create(doc T) (string, error) {
-	idx, err := repo.pst.Create(&T{}, doc)
+	idx, err := repo.pst.Create(new(T), doc)
 
 	if err != nil {
 		return "", err
@@ -48,7 +47,7 @@ func (repo CrudRepository[T]) CreateInBatch(docList []T) error {
 		tempList = append(tempList, inv)
 	}
 
-	err := repo.pst.CreateInBatch(&T{}, tempList)
+	err := repo.pst.CreateInBatch(new(T), tempList)
 
 	if err != nil {
 		return err
@@ -57,7 +56,7 @@ func (repo CrudRepository[T]) CreateInBatch(docList []T) error {
 }
 
 func (repo CrudRepository[T]) Update(guid string, doc T) error {
-	err := repo.pst.UpdateOne(&T{}, "guidfixed", guid, doc)
+	err := repo.pst.UpdateOne(new(T), "guidfixed", guid, doc)
 
 	if err != nil {
 		return err
@@ -67,7 +66,7 @@ func (repo CrudRepository[T]) Update(guid string, doc T) error {
 }
 
 func (repo CrudRepository[T]) Delete(shopID string, guid string, username string) error {
-	err := repo.pst.SoftDelete(&T{}, username, bson.M{"guidfixed": guid, "shopid": shopID})
+	err := repo.pst.SoftDelete(new(T), username, bson.M{"guidfixed": guid, "shopid": shopID})
 
 	if err != nil {
 		return err
@@ -78,12 +77,12 @@ func (repo CrudRepository[T]) Delete(shopID string, guid string, username string
 
 func (repo CrudRepository[T]) FindByGuid(shopID string, guid string) (T, error) {
 
-	doc := &T{}
+	doc := new(T)
 
-	err := repo.pst.FindOne(&T{}, bson.M{"guidfixed": guid, "shopid": shopID, "deletedat": bson.M{"$exists": false}}, doc)
+	err := repo.pst.FindOne(new(T), bson.M{"guidfixed": guid, "shopid": shopID, "deletedat": bson.M{"$exists": false}}, doc)
 
 	if err != nil {
-		return T{}, err
+		return *new(T), err
 	}
 
 	return *doc, nil
