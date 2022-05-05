@@ -8,6 +8,8 @@ import (
 	"smlcloudplatform/pkg/models/restaurant"
 	"smlcloudplatform/pkg/repositories"
 	"strconv"
+	"strings"
+	"time"
 )
 
 type IShopTableHttp interface{}
@@ -23,7 +25,10 @@ func NewShopTableHttp(ms *microservice.Microservice, cfg microservice.IConfig) S
 
 	crudRepo := repositories.NewCrudRepository[restaurant.ShopTableDoc](pst)
 	searchRepo := repositories.NewSearchRepository[restaurant.ShopTableInfo](pst)
-	svc := NewShopTableService(crudRepo, searchRepo)
+	guidRepo := repositories.NewGuidRepository[restaurant.ShopTableItemGuid](pst)
+	activityRepo := repositories.NewActivityRepository[restaurant.ShopTableActivity, restaurant.ShopTableDeleteActivity](pst)
+
+	svc := NewShopTableService(crudRepo, searchRepo, guidRepo, activityRepo)
 
 	return ShopTableHttp{
 		ms:  ms,
@@ -34,11 +39,15 @@ func NewShopTableHttp(ms *microservice.Microservice, cfg microservice.IConfig) S
 
 func (h ShopTableHttp) RouteSetup() {
 
-	h.ms.GET("/restaurant/table/:id", h.InfoShopTable)
+	h.ms.POST("/restaurant/table/bulk", h.SaveBulk)
+	h.ms.GET("/restaurant/table/fetchupdate", h.FetchUpdate)
+
 	h.ms.GET("/restaurant/table", h.SearchShopTable)
 	h.ms.POST("/restaurant/table", h.CreateShopTable)
+	h.ms.GET("/restaurant/table/:id", h.InfoShopTable)
 	h.ms.PUT("/restaurant/table/:id", h.UpdateShopTable)
 	h.ms.DELETE("/restaurant/table/:id", h.DeleteShopTable)
+
 }
 
 func (h ShopTableHttp) CreateShopTable(ctx microservice.IContext) error {
@@ -170,5 +179,88 @@ func (h ShopTableHttp) SearchShopTable(ctx microservice.IContext) error {
 		Data:       docList,
 		Pagination: pagination,
 	})
+	return nil
+}
+
+func (h ShopTableHttp) FetchUpdate(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	layout := "2006-01-02T15:04" //
+	lastUpdateStr := ctx.QueryParam("lastUpdate")
+
+	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
+	if len(lastUpdateStr) < 1 {
+		ctx.ResponseError(400, "lastUpdate format invalid.")
+		return nil
+	}
+
+	lastUpdate, err := time.Parse(layout, lastUpdateStr)
+
+	if err != nil {
+		ctx.ResponseError(400, "lastUpdate format invalid.")
+		return err
+	}
+
+	page, err := strconv.Atoi(ctx.QueryParam("page"))
+	if err != nil {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
+
+	if err != nil {
+		limit = 20
+	}
+
+	docList, pagination, err := h.svc.LastActivity(shopID, lastUpdate, page, limit)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(
+		http.StatusOK,
+		models.ApiResponse{
+			Success:    true,
+			Data:       docList,
+			Pagination: pagination,
+		})
+
+	return nil
+}
+
+func (h ShopTableHttp) SaveBulk(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	dataReq := []restaurant.ShopTable{}
+	err := json.Unmarshal([]byte(input), &dataReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	bulkResponse, err := h.svc.SaveInBatch(shopID, authUsername, dataReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(
+		http.StatusCreated,
+		models.BulkReponse{
+			Success:    true,
+			BulkImport: bulkResponse,
+		},
+	)
+
 	return nil
 }
