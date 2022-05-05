@@ -39,8 +39,35 @@ type KitchenDoc struct {
 	ID                 primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	KitchenData        `bson:"inline"`
 	models.ActivityDoc `bson:"inline"`
+	models.LastUpdate  `bson:"inline"`
 }
 
 func (KitchenDoc) CollectionName() string {
+	return kitchenCollectionName
+}
+
+type KitchenItemGuid struct {
+	Code string `json:"code" bson:"code" gorm:"code"`
+}
+
+func (KitchenItemGuid) CollectionName() string {
+	return kitchenCollectionName
+}
+
+type KitchenActivity struct {
+	KitchenData         `bson:"inline"`
+	models.ActivityTime `bson:"inline"`
+}
+
+func (KitchenActivity) CollectionName() string {
+	return kitchenCollectionName
+}
+
+type KitchenDeleteActivity struct {
+	models.Identity     `bson:"inline"`
+	models.ActivityTime `bson:"inline"`
+}
+
+func (KitchenDeleteActivity) CollectionName() string {
 	return kitchenCollectionName
 }

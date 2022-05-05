@@ -36,8 +36,35 @@ type ShopZoneDoc struct {
 	ID                 primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	ShopZoneData       `bson:"inline"`
 	models.ActivityDoc `bson:"inline"`
+	models.LastUpdate  `bson:"inline"`
 }
 
 func (ShopZoneDoc) CollectionName() string {
+	return shopZoneCollectionName
+}
+
+type ShopZoneItemGuid struct {
+	Code string `json:"code" bson:"code" gorm:"code"`
+}
+
+func (ShopZoneItemGuid) CollectionName() string {
+	return shopZoneCollectionName
+}
+
+type ShopZoneActivity struct {
+	ShopZoneData        `bson:"inline"`
+	models.ActivityTime `bson:"inline"`
+}
+
+func (ShopZoneActivity) CollectionName() string {
+	return shopZoneCollectionName
+}
+
+type ShopZoneDeleteActivity struct {
+	models.Identity     `bson:"inline"`
+	models.ActivityTime `bson:"inline"`
+}
+
+func (ShopZoneDeleteActivity) CollectionName() string {
 	return shopZoneCollectionName
 }
