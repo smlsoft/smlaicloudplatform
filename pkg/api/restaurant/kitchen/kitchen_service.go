@@ -3,9 +3,12 @@ package kitchen
 import (
 	"errors"
 	"fmt"
+	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/restaurant"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/importdata"
+	"sync"
 	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
@@ -19,17 +22,28 @@ type IKitchenService interface {
 	DeleteKitchen(guid string, shopID string, authUsername string) error
 	InfoKitchen(guid string, shopID string) (restaurant.KitchenInfo, error)
 	SearchKitchen(shopID string, q string, page int, limit int) ([]restaurant.KitchenInfo, mongopagination.PaginationData, error)
+	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, mongopagination.PaginationData, error)
+	SaveInBatch(shopID string, authUsername string, dataList []restaurant.Kitchen) (models.BulkImport, error)
 }
 
 type KitchenService struct {
-	crudRepo   repositories.CrudRepository[restaurant.KitchenDoc]
-	searchRepo repositories.SearchRepository[restaurant.KitchenInfo]
+	crudRepo     repositories.CrudRepository[restaurant.KitchenDoc]
+	searchRepo   repositories.SearchRepository[restaurant.KitchenInfo]
+	guidRepo     repositories.GuidRepository[restaurant.KitchenItemGuid]
+	activityRepo repositories.ActivityRepository[restaurant.KitchenActivity, restaurant.KitchenDeleteActivity]
 }
 
-func NewKitchenService(crudRepo repositories.CrudRepository[restaurant.KitchenDoc], searchRepo repositories.SearchRepository[restaurant.KitchenInfo]) KitchenService {
+func NewKitchenService(
+	crudRepo repositories.CrudRepository[restaurant.KitchenDoc],
+	searchRepo repositories.SearchRepository[restaurant.KitchenInfo],
+	guidRepo repositories.GuidRepository[restaurant.KitchenItemGuid],
+	activityRepo repositories.ActivityRepository[restaurant.KitchenActivity, restaurant.KitchenDeleteActivity],
+) KitchenService {
 	return KitchenService{
-		crudRepo:   crudRepo,
-		searchRepo: searchRepo,
+		crudRepo:     crudRepo,
+		searchRepo:   searchRepo,
+		guidRepo:     guidRepo,
+		activityRepo: activityRepo,
 	}
 }
 
@@ -119,4 +133,154 @@ func (svc KitchenService) SearchKitchen(shopID string, q string, page int, limit
 	}
 
 	return docList, pagination, nil
+}
+
+func (svc KitchenService) LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, mongopagination.PaginationData, error) {
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	var deleteDocList []restaurant.KitchenDeleteActivity
+	var pagination1 mongopagination.PaginationData
+	var err1 error
+
+	go func() {
+		deleteDocList, pagination1, err1 = svc.activityRepo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	var createAndUpdateDocList []restaurant.KitchenActivity
+	var pagination2 mongopagination.PaginationData
+	var err2 error
+
+	go func() {
+		createAndUpdateDocList, pagination2, err2 = svc.activityRepo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
+		wg.Done()
+	}()
+
+	wg.Wait()
+
+	if err1 != nil {
+		return models.LastActivity{}, pagination1, err1
+	}
+
+	if err2 != nil {
+		return models.LastActivity{}, pagination2, err2
+	}
+
+	lastActivity := models.LastActivity{}
+
+	lastActivity.Remove = &deleteDocList
+	lastActivity.New = &createAndUpdateDocList
+
+	pagination := pagination1
+
+	if pagination.Total < pagination2.Total {
+		pagination = pagination2
+	}
+
+	return lastActivity, pagination, nil
+}
+
+func (svc KitchenService) SaveInBatch(shopID string, authUsername string, dataList []restaurant.Kitchen) (models.BulkImport, error) {
+
+	createDataList := []restaurant.KitchenDoc{}
+	duplicateDataList := []restaurant.Kitchen{}
+
+	payloadCategoryList, payloadDuplicateCategoryList := importdata.FilterDuplicate[restaurant.Kitchen](dataList, svc.getDocIDKey)
+
+	itemCodeGuidList := []string{}
+	for _, doc := range payloadCategoryList {
+		itemCodeGuidList = append(itemCodeGuidList, doc.Code)
+	}
+
+	findItemGuid, err := svc.guidRepo.FindInItemGuid(shopID, "code", itemCodeGuidList)
+
+	if err != nil {
+		return models.BulkImport{}, err
+	}
+
+	foundItemGuidList := []string{}
+	for _, doc := range findItemGuid {
+		foundItemGuidList = append(foundItemGuidList, doc.Code)
+	}
+
+	duplicateDataList, createDataList = importdata.PreparePayloadData[restaurant.Kitchen, restaurant.KitchenDoc](
+		shopID,
+		authUsername,
+		foundItemGuidList,
+		payloadCategoryList,
+		svc.getDocIDKey,
+		func(shopID string, authUsername string, doc restaurant.Kitchen) restaurant.KitchenDoc {
+			newGuid := utils.NewGUID()
+
+			dataDoc := restaurant.KitchenDoc{}
+
+			dataDoc.GuidFixed = newGuid
+			dataDoc.ShopID = shopID
+			dataDoc.Kitchen = doc
+
+			currentTime := time.Now()
+			dataDoc.CreatedBy = authUsername
+			dataDoc.CreatedAt = currentTime
+			dataDoc.LastUpdatedAt = currentTime
+			return dataDoc
+		},
+	)
+
+	updateSuccessDataList, updateFailDataList := importdata.UpdateOnDuplicate[restaurant.Kitchen, restaurant.KitchenDoc](
+		shopID,
+		authUsername,
+		duplicateDataList,
+		svc.getDocIDKey,
+		func(shopID string, guid string) (restaurant.KitchenDoc, error) {
+			return svc.crudRepo.FindByGuid(shopID, guid)
+		},
+		func(doc restaurant.KitchenDoc) bool {
+			return false
+		},
+		func(shopID string, authUsername string, data restaurant.Kitchen, doc restaurant.KitchenDoc) error {
+
+			return nil
+		},
+	)
+
+	if len(createDataList) > 0 {
+		err = svc.crudRepo.CreateInBatch(createDataList)
+
+		if err != nil {
+			return models.BulkImport{}, err
+		}
+	}
+	createDataKey := []string{}
+
+	for _, doc := range createDataList {
+		createDataKey = append(createDataKey, doc.Code)
+	}
+
+	payloadDuplicateDataKey := []string{}
+	for _, doc := range payloadDuplicateCategoryList {
+		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.Code)
+	}
+
+	updateDataKey := []string{}
+	for _, doc := range updateSuccessDataList {
+		updateDataKey = append(updateDataKey, doc.Code)
+	}
+
+	updateFailDataKey := []string{}
+	for _, doc := range updateFailDataList {
+		updateFailDataKey = append(updateFailDataKey, doc.Code)
+	}
+
+	return models.BulkImport{
+		Created:          createDataKey,
+		Updated:          updateDataKey,
+		UpdateFailed:     updateFailDataKey,
+		PayloadDuplicate: payloadDuplicateDataKey,
+	}, nil
+}
+
+func (svc KitchenService) getDocIDKey(doc restaurant.Kitchen) string {
+	return doc.Code
 }

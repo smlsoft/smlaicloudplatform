@@ -37,8 +37,37 @@ type PrinterTerminalDoc struct {
 	ID                  primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	PrinterTerminalData `bson:"inline"`
 	models.ActivityDoc  `bson:"inline"`
+	models.LastUpdate   `bson:"inline"`
 }
 
 func (PrinterTerminalDoc) CollectionName() string {
+	return printerTerminalCollectionName
+}
+
+//Extra
+
+type PrinterTerminalItemGuid struct {
+	Code string `json:"code" bson:"code" gorm:"code"`
+}
+
+func (PrinterTerminalItemGuid) CollectionName() string {
+	return printerTerminalCollectionName
+}
+
+type PrinterTerminalActivity struct {
+	PrinterTerminalData `bson:"inline"`
+	models.ActivityTime `bson:"inline"`
+}
+
+func (PrinterTerminalActivity) CollectionName() string {
+	return printerTerminalCollectionName
+}
+
+type PrinterTerminalDeleteActivity struct {
+	models.Identity     `bson:"inline"`
+	models.ActivityTime `bson:"inline"`
+}
+
+func (PrinterTerminalDeleteActivity) CollectionName() string {
 	return printerTerminalCollectionName
 }

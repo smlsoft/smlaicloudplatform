@@ -8,6 +8,8 @@ import (
 	"smlcloudplatform/pkg/models/restaurant"
 	"smlcloudplatform/pkg/repositories"
 	"strconv"
+	"strings"
+	"time"
 )
 
 type IKitchenHttp interface{}
@@ -23,7 +25,10 @@ func NewKitchenHttp(ms *microservice.Microservice, cfg microservice.IConfig) Kit
 
 	crudRepo := repositories.NewCrudRepository[restaurant.KitchenDoc](pst)
 	searchRepo := repositories.NewSearchRepository[restaurant.KitchenInfo](pst)
-	svc := NewKitchenService(crudRepo, searchRepo)
+	guidRepo := repositories.NewGuidRepository[restaurant.KitchenItemGuid](pst)
+	activityRepo := repositories.NewActivityRepository[restaurant.KitchenActivity, restaurant.KitchenDeleteActivity](pst)
+
+	svc := NewKitchenService(crudRepo, searchRepo, guidRepo, activityRepo)
 
 	return KitchenHttp{
 		ms:  ms,
@@ -34,9 +39,12 @@ func NewKitchenHttp(ms *microservice.Microservice, cfg microservice.IConfig) Kit
 
 func (h KitchenHttp) RouteSetup() {
 
-	h.ms.GET("/restaurant/kitchen/:id", h.InfoKitchen)
+	h.ms.POST("/restaurant/kitchen/bulk", h.SaveBulk)
+	h.ms.GET("/restaurant/kitchen/fetchupdate", h.FetchUpdate)
+
 	h.ms.GET("/restaurant/kitchen", h.SearchKitchen)
 	h.ms.POST("/restaurant/kitchen", h.CreateKitchen)
+	h.ms.GET("/restaurant/kitchen/:id", h.InfoKitchen)
 	h.ms.PUT("/restaurant/kitchen/:id", h.UpdateKitchen)
 	h.ms.DELETE("/restaurant/kitchen/:id", h.DeleteKitchen)
 }
@@ -170,5 +178,88 @@ func (h KitchenHttp) SearchKitchen(ctx microservice.IContext) error {
 		Data:       docList,
 		Pagination: pagination,
 	})
+	return nil
+}
+
+func (h KitchenHttp) FetchUpdate(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	layout := "2006-01-02T15:04" //
+	lastUpdateStr := ctx.QueryParam("lastUpdate")
+
+	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
+	if len(lastUpdateStr) < 1 {
+		ctx.ResponseError(400, "lastUpdate format invalid.")
+		return nil
+	}
+
+	lastUpdate, err := time.Parse(layout, lastUpdateStr)
+
+	if err != nil {
+		ctx.ResponseError(400, "lastUpdate format invalid.")
+		return err
+	}
+
+	page, err := strconv.Atoi(ctx.QueryParam("page"))
+	if err != nil {
+		page = 1
+	}
+
+	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
+
+	if err != nil {
+		limit = 20
+	}
+
+	docList, pagination, err := h.svc.LastActivity(shopID, lastUpdate, page, limit)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(
+		http.StatusOK,
+		models.ApiResponse{
+			Success:    true,
+			Data:       docList,
+			Pagination: pagination,
+		})
+
+	return nil
+}
+
+func (h KitchenHttp) SaveBulk(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	dataReq := []restaurant.Kitchen{}
+	err := json.Unmarshal([]byte(input), &dataReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	bulkResponse, err := h.svc.SaveInBatch(shopID, authUsername, dataReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(
+		http.StatusCreated,
+		models.BulkReponse{
+			Success:    true,
+			BulkImport: bulkResponse,
+		},
+	)
+
 	return nil
 }
