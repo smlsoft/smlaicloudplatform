@@ -1,5 +1,13 @@
 package restaurant
 
+import (
+	"smlcloudplatform/pkg/models"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+const shopTableCollectionName = "shopTables"
+
 type ShopTable struct {
 	Number string    `json:"number" bson:"number"`
 	Name1  string    `json:"name1" bson:"name1" gorm:"name1"`
@@ -9,4 +17,28 @@ type ShopTable struct {
 	Name5  string    `json:"name5,omitempty" bson:"name5,omitempty"`
 	Seat   int8      `json:"seat" bson:"seat"`
 	Zone   *ShopZone `json:"zone" bson:"zone"`
+}
+
+type ShopTableInfo struct {
+	models.DocIdentity `bson:"inline"`
+	ShopTable          `bson:"inline"`
+}
+
+func (ShopTableInfo) CollectionName() string {
+	return shopTableCollectionName
+}
+
+type ShopTableData struct {
+	models.ShopIdentity `bson:"inline"`
+	ShopTableInfo       `bson:"inline"`
+}
+
+type ShopTableDoc struct {
+	ID                 primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	ShopTableData      `bson:"inline"`
+	models.ActivityDoc `bson:"inline"`
+}
+
+func (ShopTableDoc) CollectionName() string {
+	return shopTableCollectionName
 }

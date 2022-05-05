@@ -1,6 +1,12 @@
 package restaurant
 
-import "smlcloudplatform/pkg/models"
+import (
+	"smlcloudplatform/pkg/models"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+const kitchenCollectionName = "kitchens"
 
 type Kitchen struct {
 	Code     string              `json:"code" bson:"code"`
@@ -13,4 +19,28 @@ type Kitchen struct {
 	Products *[]models.Inventory `json:"products" bson:"products"`
 	Zones    *[]ShopZone         `json:"zones" bson:"zones"`
 	Category *models.Category    `json:"category" bson:"category"`
+}
+
+type KitchenInfo struct {
+	models.DocIdentity `bson:"inline"`
+	Kitchen            `bson:"inline"`
+}
+
+func (KitchenInfo) CollectionName() string {
+	return kitchenCollectionName
+}
+
+type KitchenData struct {
+	models.ShopIdentity `bson:"inline"`
+	KitchenInfo         `bson:"inline"`
+}
+
+type KitchenDoc struct {
+	ID                 primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	KitchenData        `bson:"inline"`
+	models.ActivityDoc `bson:"inline"`
+}
+
+func (KitchenDoc) CollectionName() string {
+	return kitchenCollectionName
 }
