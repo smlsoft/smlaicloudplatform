@@ -10,6 +10,7 @@ import (
 	"smlcloudplatform/pkg/api/images"
 	"smlcloudplatform/pkg/api/inventory"
 	"smlcloudplatform/pkg/api/inventoryimport"
+	"smlcloudplatform/pkg/api/member"
 	"smlcloudplatform/pkg/api/shop"
 
 	"github.com/joho/godotenv"
@@ -102,6 +103,9 @@ func main() {
 
 	shopHttp := shop.NewShopHttp(ms, cfg)
 	shopHttp.RouteSetup()
+
+	memberapi := member.NewMemberHttp(ms, cfg)
+	memberapi.RouteSetup()
 
 	inventoryapi := inventory.NewInventoryHttp(ms, cfg)
 	inventoryapi.RouteSetup()

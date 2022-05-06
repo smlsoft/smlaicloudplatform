@@ -46,3 +46,12 @@ docker_build_memberservice_and_ship:
 
 run_docker_cluster:
 	docker start zookeeper server-redis-1 server-mongodb-1 kafka
+
+docker_build_app_dev:
+	swag init
+	docker build -t smlsoft/smlcloudplatform:appdev .
+	docker push smlsoft/smlcloudplatform:appdev
+
+run_app_dev:
+	swag init
+	go run main.go
