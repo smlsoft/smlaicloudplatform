@@ -49,6 +49,15 @@ func (h KitchenHttp) RouteSetup() {
 	h.ms.DELETE("/restaurant/kitchen/:id", h.DeleteKitchen)
 }
 
+// Create Restaurant Kitchen godoc
+// @Description Restaurant Kitchen
+// @Tags		Restaurant
+// @Param		Kitchen  body      restaurant.Kitchen  true  "Kitchen"
+// @Accept 		json
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/kitchen [post]
 func (h KitchenHttp) CreateKitchen(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
@@ -76,6 +85,16 @@ func (h KitchenHttp) CreateKitchen(ctx microservice.IContext) error {
 	return nil
 }
 
+// Update Restaurant Kitchen godoc
+// @Description Restaurant Kitchen
+// @Tags		Restaurant
+// @Param		id  path      string  true  "Kitchen ID"
+// @Param		Kitchen  body      restaurant.Kitchen  true  "Kitchen"
+// @Accept 		json
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/kitchen/{id} [put]
 func (h KitchenHttp) UpdateKitchen(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -107,6 +126,15 @@ func (h KitchenHttp) UpdateKitchen(ctx microservice.IContext) error {
 	return nil
 }
 
+// Delete Restaurant Kitchen godoc
+// @Description Restaurant Kitchen
+// @Tags		Restaurant
+// @Param		id  path      string  true  "Kitchen ID"
+// @Accept 		json
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/kitchen/{id} [delete]
 func (h KitchenHttp) DeleteKitchen(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -129,6 +157,15 @@ func (h KitchenHttp) DeleteKitchen(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Restaurant Kitchen Infomation godoc
+// @Description Get Restaurant Kitchen
+// @Tags		Restaurant
+// @Param		id  path      string  true  "Kitchen Id"
+// @Accept 		json
+// @Success		200	{object}	restaurant.KitchenInfoResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/kitchen/{id} [get]
 func (h KitchenHttp) InfoKitchen(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -151,6 +188,17 @@ func (h KitchenHttp) InfoKitchen(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Restaurant Kitchen godoc
+// @Description List Restaurant Kitchen Category
+// @Tags		Restaurant
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Size"
+// @Accept 		json
+// @Success		200	{object}	restaurant.KitchenPageResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/kitchen [get]
 func (h KitchenHttp) SearchKitchen(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -181,6 +229,17 @@ func (h KitchenHttp) SearchKitchen(ctx microservice.IContext) error {
 	return nil
 }
 
+// Fetch Restaurant Kitchen Update By Date godoc
+// @Description Fetch Restaurant Kitchen Update By Date
+// @Tags		Restaurant
+// @Param		lastUpdate query string true "DateTime YYYY-MM-DDTHH:mm"
+// @Param		page	query	integer		false  "Add Category"
+// @Param		limit	query	integer		false  "Add Category"
+// @Accept		json
+// @Success		200 {object} restaurant.KitchenFetchUpdateResponse
+// @Failure		401 {object} models.AuthResponseFailed
+// @Security	AccessToken
+// @Router		/restaurant/kitchen/fetchupdate [get]
 func (h KitchenHttp) FetchUpdate(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -230,6 +289,15 @@ func (h KitchenHttp) FetchUpdate(ctx microservice.IContext) error {
 	return nil
 }
 
+// Create Kitchen Bulk godoc
+// @Description Create Kitchen
+// @Tags		Restaurant
+// @Param		Kitchen  body      []restaurant.Kitchen  true  "Kitchen"
+// @Accept 		json
+// @Success		201	{object}	models.BulkInsertResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/kitchen/bulk [post]
 func (h KitchenHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()

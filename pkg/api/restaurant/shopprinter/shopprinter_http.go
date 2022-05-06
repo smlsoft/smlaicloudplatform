@@ -49,6 +49,15 @@ func (h ShopPrinterHttp) RouteSetup() {
 
 }
 
+// Create Restaurant Printer godoc
+// @Description Restaurant Printer
+// @Tags		Restaurant
+// @Param		Printer  body      restaurant.PrinterTerminal  true  "Printer"
+// @Accept 		json
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/printer [post]
 func (h ShopPrinterHttp) CreateShopPrinter(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
@@ -76,6 +85,16 @@ func (h ShopPrinterHttp) CreateShopPrinter(ctx microservice.IContext) error {
 	return nil
 }
 
+// Update Restaurant Printer godoc
+// @Description Restaurant Printer
+// @Tags		Restaurant
+// @Param		id  path      string  true  "Printer ID"
+// @Param		Printer  body      restaurant.PrinterTerminal  true  "Printer"
+// @Accept 		json
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/printer/{id} [put]
 func (h ShopPrinterHttp) UpdateShopPrinter(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -107,6 +126,15 @@ func (h ShopPrinterHttp) UpdateShopPrinter(ctx microservice.IContext) error {
 	return nil
 }
 
+// Delete Restaurant Printer godoc
+// @Description Restaurant Printer
+// @Tags		Restaurant
+// @Param		id  path      string  true  "Printer ID"
+// @Accept 		json
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/printer/{id} [delete]
 func (h ShopPrinterHttp) DeleteShopPrinter(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -129,6 +157,15 @@ func (h ShopPrinterHttp) DeleteShopPrinter(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Restaurant Printer Infomation godoc
+// @Description Get Restaurant Printer
+// @Tags		Restaurant
+// @Param		id  path      string  true  "Printer Id"
+// @Accept 		json
+// @Success		200	{object}	restaurant.PrinterTerminalInfoResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/printer/{id} [get]
 func (h ShopPrinterHttp) InfoShopPrinter(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -151,6 +188,17 @@ func (h ShopPrinterHttp) InfoShopPrinter(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Restaurant Printer godoc
+// @Description List Restaurant Printer Category
+// @Tags		Restaurant
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Size"
+// @Accept 		json
+// @Success		200	{object}	restaurant.PrinterTerminalPageResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/printer [get]
 func (h ShopPrinterHttp) SearchShopPrinter(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -181,6 +229,17 @@ func (h ShopPrinterHttp) SearchShopPrinter(ctx microservice.IContext) error {
 	return nil
 }
 
+// Fetch Restaurant Printer Update By Date godoc
+// @Description Fetch Restaurant Printer Update By Date
+// @Tags		Restaurant
+// @Param		lastUpdate query string true "DateTime YYYY-MM-DDTHH:mm"
+// @Param		page	query	integer		false  "Add Category"
+// @Param		limit	query	integer		false  "Add Category"
+// @Accept		json
+// @Success		200 {object} restaurant.PrinterTerminalFetchUpdateResponse
+// @Failure		401 {object} models.AuthResponseFailed
+// @Security	AccessToken
+// @Router		/restaurant/printer/fetchupdate [get]
 func (h ShopPrinterHttp) FetchUpdate(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -230,6 +289,15 @@ func (h ShopPrinterHttp) FetchUpdate(ctx microservice.IContext) error {
 	return nil
 }
 
+// Create Printer Bulk godoc
+// @Description Printer ShopZone
+// @Tags		Restaurant
+// @Param		Printer  body      []restaurant.PrinterTerminal  true  "Printer"
+// @Accept 		json
+// @Success		201	{object}	models.BulkInsertResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/printer/bulk [post]
 func (h ShopPrinterHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()

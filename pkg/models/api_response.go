@@ -40,3 +40,11 @@ type UserProfileReponse struct {
 type ResponseSuccess struct {
 	Success bool `json:"success"`
 }
+
+type BulkInsertResponse struct {
+	Success    bool     `json:"success"`
+	Created    []string `json:"created"`
+	Updated    []string `json:"updated"`
+	Failed     []string `json:"updateFailed"`
+	Duplicated []string `json:"payloadDuplicate"`
+}

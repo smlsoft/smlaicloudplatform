@@ -160,11 +160,11 @@ func (h MemberHttp) DeleteMember(ctx microservice.IContext) error {
 }
 
 // Get Member Infomation godoc
-// @Description Get Member Category
+// @Description Get Member
 // @Tags		Member
 // @Param		id  path      string  true  "Member Id"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
+// @Success		200	{object}	models.MemberInfoResponse
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /member/{id} [get]
@@ -204,7 +204,7 @@ func (h MemberHttp) InfoMember(ctx microservice.IContext) error {
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
 // @Accept 		json
-// @Success		200	{object}	models.ApiResponse
+// @Success		200	{object}	models.MemberPageResponse
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /member [get]

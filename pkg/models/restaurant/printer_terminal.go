@@ -71,3 +71,25 @@ type PrinterTerminalDeleteActivity struct {
 func (PrinterTerminalDeleteActivity) CollectionName() string {
 	return printerTerminalCollectionName
 }
+
+type PrinterTerminalInfoResponse struct {
+	Success bool                `json:"success"`
+	Data    PrinterTerminalInfo `json:"data,omitempty"`
+}
+
+type PrinterTerminalPageResponse struct {
+	Success    bool                          `json:"success"`
+	Data       []PrinterTerminalInfo         `json:"data,omitempty"`
+	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
+}
+
+type PrinterTerminalLastActivityResponse struct {
+	New    []PrinterTerminalActivity       `json:"new" `
+	Remove []PrinterTerminalDeleteActivity `json:"remove"`
+}
+
+type PrinterTerminalFetchUpdateResponse struct {
+	Success    bool                                `json:"success"`
+	Data       PrinterTerminalLastActivityResponse `json:"data,omitempty"`
+	Pagination models.PaginationDataResponse       `json:"pagination,omitempty"`
+}

@@ -11,6 +11,10 @@ import (
 	"smlcloudplatform/pkg/api/inventory"
 	"smlcloudplatform/pkg/api/inventoryimport"
 	"smlcloudplatform/pkg/api/member"
+	"smlcloudplatform/pkg/api/restaurant/kitchen"
+	"smlcloudplatform/pkg/api/restaurant/shopprinter"
+	"smlcloudplatform/pkg/api/restaurant/shoptable"
+	"smlcloudplatform/pkg/api/restaurant/shopzone"
 	"smlcloudplatform/pkg/api/shop"
 
 	"github.com/joho/godotenv"
@@ -128,6 +132,18 @@ func main() {
 	ms.Logger.Debugf("Store File Path %v", filePersister.StoreFilePath)
 	imageHttp := images.NewImagesHttp(ms, cfg, imagePersister)
 	imageHttp.RouteSetup()
+
+	shopzonehttp := shopzone.NewShopZoneHttp(ms, cfg)
+	shopzonehttp.RouteSetup()
+
+	shoptablehttp := shoptable.NewShopTableHttp(ms, cfg)
+	shoptablehttp.RouteSetup()
+
+	shopprinterhttp := shopprinter.NewShopPrinterHttp(ms, cfg)
+	shopprinterhttp.RouteSetup()
+
+	kitchenhttp := kitchen.NewKitchenHttp(ms, cfg)
+	kitchenhttp.RouteSetup()
 
 	ms.Start()
 }

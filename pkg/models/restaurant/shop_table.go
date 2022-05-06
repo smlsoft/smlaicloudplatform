@@ -70,3 +70,25 @@ type ShopTableDeleteActivity struct {
 func (ShopTableDeleteActivity) CollectionName() string {
 	return shopTableCollectionName
 }
+
+type ShopTableInfoResponse struct {
+	Success bool          `json:"success"`
+	Data    ShopTableInfo `json:"data,omitempty"`
+}
+
+type ShopTablePageResponse struct {
+	Success    bool                          `json:"success"`
+	Data       []ShopTableInfo               `json:"data,omitempty"`
+	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
+}
+
+type ShopTableLastActivityResponse struct {
+	New    []ShopTableActivity       `json:"new" `
+	Remove []ShopTableDeleteActivity `json:"remove"`
+}
+
+type ShopTableFetchUpdateResponse struct {
+	Success    bool                          `json:"success"`
+	Data       ShopTableLastActivityResponse `json:"data,omitempty"`
+	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
+}

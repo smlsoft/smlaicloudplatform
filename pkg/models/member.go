@@ -98,3 +98,14 @@ type MemberFetchUpdateResponse struct {
 	Data       MemberLastActivityResponse `json:"data,omitempty"`
 	Pagination PaginationDataResponse     `json:"pagination,omitempty"`
 }
+
+type MemberInfoResponse struct {
+	Success bool       `json:"success"`
+	Data    MemberInfo `json:"data,omitempty"`
+}
+
+type MemberPageResponse struct {
+	Success    bool                   `json:"success"`
+	Data       []MemberInfo           `json:"data,omitempty"`
+	Pagination PaginationDataResponse `json:"pagination,omitempty"`
+}

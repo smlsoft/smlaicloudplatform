@@ -50,6 +50,15 @@ func (h ShopTableHttp) RouteSetup() {
 
 }
 
+// Create Restaurant Shop Table godoc
+// @Description Restaurant Shop Table
+// @Tags		Restaurant
+// @Param		Table  body      restaurant.ShopTable  true  "Table"
+// @Accept 		json
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/table [post]
 func (h ShopTableHttp) CreateShopTable(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
@@ -77,6 +86,16 @@ func (h ShopTableHttp) CreateShopTable(ctx microservice.IContext) error {
 	return nil
 }
 
+// Update Restaurant Shop Table godoc
+// @Description Restaurant Shop Table
+// @Tags		Restaurant
+// @Param		id  path      string  true  "Table ID"
+// @Param		Table  body      restaurant.ShopTable  true  "Table"
+// @Accept 		json
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/table/{id} [put]
 func (h ShopTableHttp) UpdateShopTable(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -108,6 +127,15 @@ func (h ShopTableHttp) UpdateShopTable(ctx microservice.IContext) error {
 	return nil
 }
 
+// Delete Restaurant Shop Table godoc
+// @Description Restaurant Shop Table
+// @Tags		Restaurant
+// @Param		id  path      string  true  "ShopTable ID"
+// @Accept 		json
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/table/{id} [delete]
 func (h ShopTableHttp) DeleteShopTable(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -130,6 +158,15 @@ func (h ShopTableHttp) DeleteShopTable(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Restaurant Shop Table Infomation godoc
+// @Description Get Restaurant Shop Table
+// @Tags		Restaurant
+// @Param		id  path      string  true  "ShopTable Id"
+// @Accept 		json
+// @Success		200	{object}	restaurant.ShopTableInfoResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/table/{id} [get]
 func (h ShopTableHttp) InfoShopTable(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -152,6 +189,17 @@ func (h ShopTableHttp) InfoShopTable(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Restaurant Shop Table godoc
+// @Description List Restaurant Shop Table Category
+// @Tags		Restaurant
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Size"
+// @Accept 		json
+// @Success		200	{object}	restaurant.ShopTablePageResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/table [get]
 func (h ShopTableHttp) SearchShopTable(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -182,6 +230,17 @@ func (h ShopTableHttp) SearchShopTable(ctx microservice.IContext) error {
 	return nil
 }
 
+// Fetch Restaurant ShopTable Update By Date godoc
+// @Description Fetch Restaurant ShopTable Update By Date
+// @Tags		Restaurant
+// @Param		lastUpdate query string true "DateTime YYYY-MM-DDTHH:mm"
+// @Param		page	query	integer		false  "Add Category"
+// @Param		limit	query	integer		false  "Add Category"
+// @Accept		json
+// @Success		200 {object} restaurant.ShopTableFetchUpdateResponse
+// @Failure		401 {object} models.AuthResponseFailed
+// @Security	AccessToken
+// @Router		/restaurant/table/fetchupdate [get]
 func (h ShopTableHttp) FetchUpdate(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -231,6 +290,15 @@ func (h ShopTableHttp) FetchUpdate(ctx microservice.IContext) error {
 	return nil
 }
 
+// Create ShopTable Bulk godoc
+// @Description Create ShopTable
+// @Tags		Restaurant
+// @Param		ShopTable  body      []restaurant.ShopTable  true  "ShopTable"
+// @Accept 		json
+// @Success		201	{object}	models.BulkInsertResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/table/bulk [post]
 func (h ShopTableHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()

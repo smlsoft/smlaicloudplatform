@@ -49,6 +49,15 @@ func (h ShopZoneHttp) RouteSetup() {
 
 }
 
+// Create Restaurant Shop Zone godoc
+// @Description Restaurant Shop Zone
+// @Tags		Restaurant
+// @Param		Zone  body      restaurant.ShopZone  true  "Zone"
+// @Accept 		json
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/zone [post]
 func (h ShopZoneHttp) CreateShopZone(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
@@ -76,6 +85,16 @@ func (h ShopZoneHttp) CreateShopZone(ctx microservice.IContext) error {
 	return nil
 }
 
+// Update Restaurant Shop Zone godoc
+// @Description Restaurant Shop Zone
+// @Tags		Restaurant
+// @Param		id  path      string  true  "Zone ID"
+// @Param		Zone  body      restaurant.ShopZone  true  "Zone"
+// @Accept 		json
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/zone/{id} [put]
 func (h ShopZoneHttp) UpdateShopZone(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -107,6 +126,15 @@ func (h ShopZoneHttp) UpdateShopZone(ctx microservice.IContext) error {
 	return nil
 }
 
+// Delete Restaurant Shop Zone godoc
+// @Description Restaurant Shop Zone
+// @Tags		Restaurant
+// @Param		id  path      string  true  "ShopZone ID"
+// @Accept 		json
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/zone/{id} [delete]
 func (h ShopZoneHttp) DeleteShopZone(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -129,6 +157,15 @@ func (h ShopZoneHttp) DeleteShopZone(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Restaurant Shop Zone Infomation godoc
+// @Description Get Restaurant Shop Zone
+// @Tags		Restaurant
+// @Param		id  path      string  true  "ShopZone Id"
+// @Accept 		json
+// @Success		200	{object}	restaurant.ShopZoneInfoResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/zone/{id} [get]
 func (h ShopZoneHttp) InfoShopZone(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -151,6 +188,17 @@ func (h ShopZoneHttp) InfoShopZone(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Restaurant Shop Zone godoc
+// @Description List Restaurant Shop Zone Category
+// @Tags		Restaurant
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Size"
+// @Accept 		json
+// @Success		200	{object}	restaurant.ShopZonePageResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/zone [get]
 func (h ShopZoneHttp) SearchShopZone(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -181,6 +229,17 @@ func (h ShopZoneHttp) SearchShopZone(ctx microservice.IContext) error {
 	return nil
 }
 
+// Fetch Restaurant ShopZone Update By Date godoc
+// @Description Fetch Restaurant ShopZone Update By Date
+// @Tags		Restaurant
+// @Param		lastUpdate query string true "DateTime YYYY-MM-DDTHH:mm"
+// @Param		page	query	integer		false  "Add Category"
+// @Param		limit	query	integer		false  "Add Category"
+// @Accept		json
+// @Success		200 {object} restaurant.ShopZoneFetchUpdateResponse
+// @Failure		401 {object} models.AuthResponseFailed
+// @Security	AccessToken
+// @Router		/restaurant/zone/fetchupdate [get]
 func (h ShopZoneHttp) FetchUpdate(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -230,6 +289,15 @@ func (h ShopZoneHttp) FetchUpdate(ctx microservice.IContext) error {
 	return nil
 }
 
+// Create ShopZone Bulk godoc
+// @Description Create ShopZone
+// @Tags		Restaurant
+// @Param		ShopZone  body      []restaurant.ShopZone  true  "ShopZone"
+// @Accept 		json
+// @Success		201	{object}	models.BulkInsertResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/zone/bulk [post]
 func (h ShopZoneHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()

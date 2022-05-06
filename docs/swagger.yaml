@@ -23,6 +23,27 @@ definitions:
       success:
         type: boolean
     type: object
+  models.BulkInsertResponse:
+    properties:
+      created:
+        items:
+          type: string
+        type: array
+      payloadDuplicate:
+        items:
+          type: string
+        type: array
+      success:
+        type: boolean
+      updateFailed:
+        items:
+          type: string
+        type: array
+      updated:
+        items:
+          type: string
+        type: array
+    type: object
   models.Category:
     properties:
       categoryguid:
@@ -811,6 +832,38 @@ definitions:
       success:
         type: boolean
     type: object
+  models.MemberInfo:
+    properties:
+      address:
+        type: string
+      branchcode:
+        type: string
+      branchtype:
+        type: integer
+      contacttype:
+        type: integer
+      guidfixed:
+        type: string
+      name:
+        type: string
+      personaltype:
+        type: integer
+      surname:
+        type: string
+      taxid:
+        type: string
+      telephone:
+        type: string
+      zipcode:
+        type: string
+    type: object
+  models.MemberInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.MemberInfo'
+      success:
+        type: boolean
+    type: object
   models.MemberLastActivityResponse:
     properties:
       new:
@@ -821,6 +874,17 @@ definitions:
         items:
           $ref: '#/definitions/models.MemberDeleteActivity'
         type: array
+    type: object
+  models.MemberPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.MemberInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
     type: object
   models.Option:
     properties:
@@ -1268,6 +1332,510 @@ definitions:
     required:
     - password
     - username
+    type: object
+  restaurant.Kitchen:
+    properties:
+      category:
+        $ref: '#/definitions/models.Category'
+      code:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      printers:
+        items:
+          $ref: '#/definitions/restaurant.PrinterTerminal'
+        type: array
+      products:
+        items:
+          $ref: '#/definitions/models.Inventory'
+        type: array
+      zones:
+        items:
+          $ref: '#/definitions/restaurant.ShopZone'
+        type: array
+    type: object
+  restaurant.KitchenActivity:
+    properties:
+      category:
+        $ref: '#/definitions/models.Category'
+      code:
+        type: string
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      printers:
+        items:
+          $ref: '#/definitions/restaurant.PrinterTerminal'
+        type: array
+      products:
+        items:
+          $ref: '#/definitions/models.Inventory'
+        type: array
+      shopid:
+        type: string
+      updatedat:
+        type: string
+      zones:
+        items:
+          $ref: '#/definitions/restaurant.ShopZone'
+        type: array
+    type: object
+  restaurant.KitchenDeleteActivity:
+    properties:
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      shopid:
+        type: string
+      updatedat:
+        type: string
+    type: object
+  restaurant.KitchenFetchUpdateResponse:
+    properties:
+      data:
+        $ref: '#/definitions/restaurant.KitchenLastActivityResponse'
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  restaurant.KitchenInfo:
+    properties:
+      category:
+        $ref: '#/definitions/models.Category'
+      code:
+        type: string
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      printers:
+        items:
+          $ref: '#/definitions/restaurant.PrinterTerminal'
+        type: array
+      products:
+        items:
+          $ref: '#/definitions/models.Inventory'
+        type: array
+      zones:
+        items:
+          $ref: '#/definitions/restaurant.ShopZone'
+        type: array
+    type: object
+  restaurant.KitchenInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/restaurant.KitchenInfo'
+      success:
+        type: boolean
+    type: object
+  restaurant.KitchenLastActivityResponse:
+    properties:
+      new:
+        items:
+          $ref: '#/definitions/restaurant.KitchenActivity'
+        type: array
+      remove:
+        items:
+          $ref: '#/definitions/restaurant.KitchenDeleteActivity'
+        type: array
+    type: object
+  restaurant.KitchenPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/restaurant.KitchenInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  restaurant.PrinterTerminal:
+    properties:
+      address:
+        type: string
+      code:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      type:
+        type: integer
+    type: object
+  restaurant.PrinterTerminalActivity:
+    properties:
+      address:
+        type: string
+      code:
+        type: string
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      shopid:
+        type: string
+      type:
+        type: integer
+      updatedat:
+        type: string
+    type: object
+  restaurant.PrinterTerminalDeleteActivity:
+    properties:
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      shopid:
+        type: string
+      updatedat:
+        type: string
+    type: object
+  restaurant.PrinterTerminalFetchUpdateResponse:
+    properties:
+      data:
+        $ref: '#/definitions/restaurant.PrinterTerminalLastActivityResponse'
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  restaurant.PrinterTerminalInfo:
+    properties:
+      address:
+        type: string
+      code:
+        type: string
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      type:
+        type: integer
+    type: object
+  restaurant.PrinterTerminalInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/restaurant.PrinterTerminalInfo'
+      success:
+        type: boolean
+    type: object
+  restaurant.PrinterTerminalLastActivityResponse:
+    properties:
+      new:
+        items:
+          $ref: '#/definitions/restaurant.PrinterTerminalActivity'
+        type: array
+      remove:
+        items:
+          $ref: '#/definitions/restaurant.PrinterTerminalDeleteActivity'
+        type: array
+    type: object
+  restaurant.PrinterTerminalPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/restaurant.PrinterTerminalInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  restaurant.ShopTable:
+    properties:
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      number:
+        type: string
+      seat:
+        type: integer
+      zone:
+        $ref: '#/definitions/restaurant.ShopZone'
+    type: object
+  restaurant.ShopTableActivity:
+    properties:
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      number:
+        type: string
+      seat:
+        type: integer
+      shopid:
+        type: string
+      updatedat:
+        type: string
+      zone:
+        $ref: '#/definitions/restaurant.ShopZone'
+    type: object
+  restaurant.ShopTableDeleteActivity:
+    properties:
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      shopid:
+        type: string
+      updatedat:
+        type: string
+    type: object
+  restaurant.ShopTableFetchUpdateResponse:
+    properties:
+      data:
+        $ref: '#/definitions/restaurant.ShopTableLastActivityResponse'
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  restaurant.ShopTableInfo:
+    properties:
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      number:
+        type: string
+      seat:
+        type: integer
+      zone:
+        $ref: '#/definitions/restaurant.ShopZone'
+    type: object
+  restaurant.ShopTableInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/restaurant.ShopTableInfo'
+      success:
+        type: boolean
+    type: object
+  restaurant.ShopTableLastActivityResponse:
+    properties:
+      new:
+        items:
+          $ref: '#/definitions/restaurant.ShopTableActivity'
+        type: array
+      remove:
+        items:
+          $ref: '#/definitions/restaurant.ShopTableDeleteActivity'
+        type: array
+    type: object
+  restaurant.ShopTablePageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/restaurant.ShopTableInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  restaurant.ShopZone:
+    properties:
+      code:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      printer:
+        $ref: '#/definitions/restaurant.PrinterTerminal'
+    type: object
+  restaurant.ShopZoneActivity:
+    properties:
+      code:
+        type: string
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      printer:
+        $ref: '#/definitions/restaurant.PrinterTerminal'
+      shopid:
+        type: string
+      updatedat:
+        type: string
+    type: object
+  restaurant.ShopZoneDeleteActivity:
+    properties:
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      shopid:
+        type: string
+      updatedat:
+        type: string
+    type: object
+  restaurant.ShopZoneFetchUpdateResponse:
+    properties:
+      data:
+        $ref: '#/definitions/restaurant.ShopZoneLastActivityResponse'
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  restaurant.ShopZoneInfo:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      printer:
+        $ref: '#/definitions/restaurant.PrinterTerminal'
+    type: object
+  restaurant.ShopZoneInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/restaurant.ShopZoneInfo'
+      success:
+        type: boolean
+    type: object
+  restaurant.ShopZoneLastActivityResponse:
+    properties:
+      new:
+        items:
+          $ref: '#/definitions/restaurant.ShopZoneActivity'
+        type: array
+      remove:
+        items:
+          $ref: '#/definitions/restaurant.ShopZoneDeleteActivity'
+        type: array
+    type: object
+  restaurant.ShopZonePageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/restaurant.ShopZoneInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
     type: object
 info:
   contact:
@@ -2000,7 +2568,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.MemberPageResponse'
         "401":
           description: Unauthorized
           schema:
@@ -2060,7 +2628,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get Member Category
+      description: Get Member
       parameters:
       - description: Member Id
         in: path
@@ -2071,7 +2639,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ApiResponse'
+            $ref: '#/definitions/models.MemberInfoResponse'
         "401":
           description: Unauthorized
           schema:
@@ -2592,6 +3160,766 @@ paths:
       summary: Register An Account
       tags:
       - Authentication
+  /restaurant/kitchen:
+    get:
+      consumes:
+      - application/json
+      description: List Restaurant Kitchen Category
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restaurant.KitchenPageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+    post:
+      consumes:
+      - application/json
+      description: Restaurant Kitchen
+      parameters:
+      - description: Kitchen
+        in: body
+        name: Kitchen
+        required: true
+        schema:
+          $ref: '#/definitions/restaurant.Kitchen'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/kitchen/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Restaurant Kitchen
+      parameters:
+      - description: Kitchen ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+    get:
+      consumes:
+      - application/json
+      description: Get Restaurant Kitchen
+      parameters:
+      - description: Kitchen Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restaurant.KitchenInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+    put:
+      consumes:
+      - application/json
+      description: Restaurant Kitchen
+      parameters:
+      - description: Kitchen ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Kitchen
+        in: body
+        name: Kitchen
+        required: true
+        schema:
+          $ref: '#/definitions/restaurant.Kitchen'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/kitchen/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Kitchen
+      parameters:
+      - description: Kitchen
+        in: body
+        name: Kitchen
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/restaurant.Kitchen'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkInsertResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/kitchen/fetchupdate:
+    get:
+      consumes:
+      - application/json
+      description: Fetch Restaurant Kitchen Update By Date
+      parameters:
+      - description: DateTime YYYY-MM-DDTHH:mm
+        in: query
+        name: lastUpdate
+        required: true
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restaurant.KitchenFetchUpdateResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/printer:
+    get:
+      consumes:
+      - application/json
+      description: List Restaurant Printer Category
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restaurant.PrinterTerminalPageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+    post:
+      consumes:
+      - application/json
+      description: Restaurant Printer
+      parameters:
+      - description: Printer
+        in: body
+        name: Printer
+        required: true
+        schema:
+          $ref: '#/definitions/restaurant.PrinterTerminal'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/printer/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Restaurant Printer
+      parameters:
+      - description: Printer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+    get:
+      consumes:
+      - application/json
+      description: Get Restaurant Printer
+      parameters:
+      - description: Printer Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restaurant.PrinterTerminalInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+    put:
+      consumes:
+      - application/json
+      description: Restaurant Printer
+      parameters:
+      - description: Printer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Printer
+        in: body
+        name: Printer
+        required: true
+        schema:
+          $ref: '#/definitions/restaurant.PrinterTerminal'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/printer/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Printer ShopZone
+      parameters:
+      - description: Printer
+        in: body
+        name: Printer
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/restaurant.PrinterTerminal'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkInsertResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/printer/fetchupdate:
+    get:
+      consumes:
+      - application/json
+      description: Fetch Restaurant Printer Update By Date
+      parameters:
+      - description: DateTime YYYY-MM-DDTHH:mm
+        in: query
+        name: lastUpdate
+        required: true
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restaurant.PrinterTerminalFetchUpdateResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/table:
+    get:
+      consumes:
+      - application/json
+      description: List Restaurant Shop Table Category
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restaurant.ShopTablePageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+    post:
+      consumes:
+      - application/json
+      description: Restaurant Shop Table
+      parameters:
+      - description: Table
+        in: body
+        name: Table
+        required: true
+        schema:
+          $ref: '#/definitions/restaurant.ShopTable'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/table/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Restaurant Shop Table
+      parameters:
+      - description: ShopTable ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+    get:
+      consumes:
+      - application/json
+      description: Get Restaurant Shop Table
+      parameters:
+      - description: ShopTable Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restaurant.ShopTableInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+    put:
+      consumes:
+      - application/json
+      description: Restaurant Shop Table
+      parameters:
+      - description: Table ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Table
+        in: body
+        name: Table
+        required: true
+        schema:
+          $ref: '#/definitions/restaurant.ShopTable'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/table/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create ShopTable
+      parameters:
+      - description: ShopTable
+        in: body
+        name: ShopTable
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/restaurant.ShopTable'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkInsertResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/table/fetchupdate:
+    get:
+      consumes:
+      - application/json
+      description: Fetch Restaurant ShopTable Update By Date
+      parameters:
+      - description: DateTime YYYY-MM-DDTHH:mm
+        in: query
+        name: lastUpdate
+        required: true
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restaurant.ShopTableFetchUpdateResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/zone:
+    get:
+      consumes:
+      - application/json
+      description: List Restaurant Shop Zone Category
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restaurant.ShopZonePageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+    post:
+      consumes:
+      - application/json
+      description: Restaurant Shop Zone
+      parameters:
+      - description: Zone
+        in: body
+        name: Zone
+        required: true
+        schema:
+          $ref: '#/definitions/restaurant.ShopZone'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/zone/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Restaurant Shop Zone
+      parameters:
+      - description: ShopZone ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+    get:
+      consumes:
+      - application/json
+      description: Get Restaurant Shop Zone
+      parameters:
+      - description: ShopZone Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restaurant.ShopZoneInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+    put:
+      consumes:
+      - application/json
+      description: Restaurant Shop Zone
+      parameters:
+      - description: Zone ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Zone
+        in: body
+        name: Zone
+        required: true
+        schema:
+          $ref: '#/definitions/restaurant.ShopZone'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/zone/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create ShopZone
+      parameters:
+      - description: ShopZone
+        in: body
+        name: ShopZone
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/restaurant.ShopZone'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkInsertResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/zone/fetchupdate:
+    get:
+      consumes:
+      - application/json
+      description: Fetch Restaurant ShopZone Update By Date
+      parameters:
+      - description: DateTime YYYY-MM-DDTHH:mm
+        in: query
+        name: lastUpdate
+        required: true
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restaurant.ShopZoneFetchUpdateResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
   /saleinvoice:
     get:
       consumes:

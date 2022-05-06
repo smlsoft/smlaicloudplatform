@@ -71,3 +71,25 @@ type KitchenDeleteActivity struct {
 func (KitchenDeleteActivity) CollectionName() string {
 	return kitchenCollectionName
 }
+
+type KitchenInfoResponse struct {
+	Success bool        `json:"success"`
+	Data    KitchenInfo `json:"data,omitempty"`
+}
+
+type KitchenPageResponse struct {
+	Success    bool                          `json:"success"`
+	Data       []KitchenInfo                 `json:"data,omitempty"`
+	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
+}
+
+type KitchenLastActivityResponse struct {
+	New    []KitchenActivity       `json:"new" `
+	Remove []KitchenDeleteActivity `json:"remove"`
+}
+
+type KitchenFetchUpdateResponse struct {
+	Success    bool                          `json:"success"`
+	Data       KitchenLastActivityResponse   `json:"data,omitempty"`
+	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
+}

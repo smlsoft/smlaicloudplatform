@@ -68,3 +68,25 @@ type ShopZoneDeleteActivity struct {
 func (ShopZoneDeleteActivity) CollectionName() string {
 	return shopZoneCollectionName
 }
+
+type ShopZoneInfoResponse struct {
+	Success bool         `json:"success"`
+	Data    ShopZoneInfo `json:"data,omitempty"`
+}
+
+type ShopZonePageResponse struct {
+	Success    bool                          `json:"success"`
+	Data       []ShopZoneInfo                `json:"data,omitempty"`
+	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
+}
+
+type ShopZoneLastActivityResponse struct {
+	New    []ShopZoneActivity       `json:"new" `
+	Remove []ShopZoneDeleteActivity `json:"remove"`
+}
+
+type ShopZoneFetchUpdateResponse struct {
+	Success    bool                          `json:"success"`
+	Data       ShopZoneLastActivityResponse  `json:"data,omitempty"`
+	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
+}
