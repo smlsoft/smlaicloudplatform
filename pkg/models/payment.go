@@ -1,9 +1,9 @@
 package models
 
 type Payment struct {
-	Cash              float64             `json:"cash" bson:"cash" `
-	CreditCard        float64             `json:"creditcard" bson:"creditcard" `
-	CreditCardDetails []CreditCardPayment `json:"creditcarddetails" bson:"creditcarddetails" `
+	Cash              float64              `json:"cash" bson:"cash" `
+	CreditCard        float64              `json:"creditcard" bson:"creditcard" `
+	CreditCardDetails *[]CreditCardPayment `json:"creditcarddetails" bson:"creditcarddetails" `
 }
 
 type CreditCardPayment struct {

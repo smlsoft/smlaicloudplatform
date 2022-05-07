@@ -10,11 +10,15 @@ import (
 	"smlcloudplatform/pkg/api/images"
 	"smlcloudplatform/pkg/api/inventory"
 	"smlcloudplatform/pkg/api/inventoryimport"
+	"smlcloudplatform/pkg/api/inventorysearchconsumer"
 	"smlcloudplatform/pkg/api/member"
+	"smlcloudplatform/pkg/api/migration"
+	"smlcloudplatform/pkg/api/purchase"
 	"smlcloudplatform/pkg/api/restaurant/kitchen"
 	"smlcloudplatform/pkg/api/restaurant/shopprinter"
 	"smlcloudplatform/pkg/api/restaurant/shoptable"
 	"smlcloudplatform/pkg/api/restaurant/shopzone"
+	"smlcloudplatform/pkg/api/saleinvoice"
 	"smlcloudplatform/pkg/api/shop"
 
 	"github.com/joho/godotenv"
@@ -102,6 +106,8 @@ func main() {
 	ms.HttpMiddleware(authService.MWFuncWithRedis(cacher, publicPath...))
 	ms.RegisterLivenessProbeEndpoint("/healthz")
 
+	migration.StartMigrateModel(ms, cfg)
+
 	authHttp := authentication.NewAuthenticationHttp(ms, cfg)
 	authHttp.RouteSetup()
 
@@ -144,6 +150,16 @@ func main() {
 
 	kitchenhttp := kitchen.NewKitchenHttp(ms, cfg)
 	kitchenhttp.RouteSetup()
+
+	purchase := purchase.NewPurchaseHttp(ms, cfg)
+	purchase.RouteSetup()
+
+	saleinvoice := saleinvoice.NewSaleinvoiceHttp(ms, cfg)
+	saleinvoice.RouteSetup()
+
+	inventorysearchconsumer.StartInventorySearchComsumerOnProductCreated(ms, cfg)
+	inventorysearchconsumer.StartInventorySearchComsumerOnProductUpdated(ms, cfg)
+	inventorysearchconsumer.StartInventorySearchComsumerOnProductDeleted(ms, cfg)
 
 	ms.Start()
 }

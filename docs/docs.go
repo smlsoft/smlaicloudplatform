@@ -3428,7 +3428,7 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "Body",
+                        "description": "SaleInvoice",
                         "name": "SaleInvoice",
                         "in": "body",
                         "required": true,
@@ -5538,7 +5538,8 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "docdate": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "docno": {
                     "type": "string"
@@ -5712,7 +5713,8 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "docdate": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "docno": {
                     "type": "string"

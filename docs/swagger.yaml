@@ -1123,6 +1123,7 @@ definitions:
       discountamount:
         type: number
       docdate:
+        format: date-time
         type: string
       docno:
         type: string
@@ -1240,6 +1241,7 @@ definitions:
       discountamount:
         type: number
       docdate:
+        format: date-time
         type: string
       docno:
         type: string
@@ -3958,7 +3960,7 @@ paths:
       - application/json
       description: Create Inventory
       parameters:
-      - description: Body
+      - description: SaleInvoice
         in: body
         name: SaleInvoice
         required: true

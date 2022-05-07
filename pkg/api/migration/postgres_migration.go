@@ -1,9 +1,8 @@
 package migration
 
 import (
-	"fmt"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/saleinvoice"
 )
 
 func StartMigrateModel(ms *microservice.Microservice, cfg microservice.IConfig) error {
@@ -11,19 +10,25 @@ func StartMigrateModel(ms *microservice.Microservice, cfg microservice.IConfig) 
 
 	// pst.DropTable(&models.InventoryData{}, &models.InventoryOption{}, &models.Option{}, &models.InventoryImage{}, &models.InventoryTag{}, &models.Choice{})
 
-	if err := pst.SetupJoinTable(&models.InventoryData{}, "Options", &models.InventoryOption{}); err != nil {
-		fmt.Printf("Failed to setup join table , got error %v \n", err)
-		return err
-	}
+	// if err := pst.SetupJoinTable(&models.InventoryData{}, "Options", &models.InventoryOption{}); err != nil {
+	// 	fmt.Printf("Failed to setup join table , got error %v \n", err)
+	// 	return err
+	// }
 
 	pst.AutoMigrate(
-		&models.InventoryData{},
-		&models.InventoryOption{},
-		&models.Option{},
-		&models.InventoryImage{},
-		&models.InventoryTag{},
-		&models.Choice{},
-		&models.InventoryIndex{},
+		&saleinvoice.SaleInvoiceTable{},
+		&saleinvoice.SaleInvoiceDetailTable{},
+	// &models.InventoryImage{},
+	// &models.InventoryTag{},
+
+	// &models.CategoryData{},
+
+	// &models.InventoryData{},
+	// &models.InventoryOption{},
+	// &models.Option{},
+	// &models.Choice{},
+	// &models.InventoryIndex{},
+
 	)
 
 	return nil

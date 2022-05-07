@@ -6,7 +6,7 @@ type Identity struct {
 }
 
 type ShopIdentity struct {
-	ShopID string `json:"shopid" bson:"shopid" gorm:"shopid"`
+	ShopID string `json:"shopid" bson:"shopid" gorm:"column:shopid"`
 }
 
 type DocIdentity struct {

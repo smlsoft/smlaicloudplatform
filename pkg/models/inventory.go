@@ -25,8 +25,8 @@ type Inventory struct {
 	CategoryGuid string  `json:"categoryguid,omitempty" bson:"categoryguid" gorm:"categoryguid"` // Guid กลุ่มสินค้า
 	Price        float32 `json:"price" bson:"price" gorm:"price"`                                // ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
 	MemberPrice  float32 `json:"memberprice,omitempty" bson:"memberprice,omitempty" gorm:"memberprice,omitempty"`
-	Recommended  bool    `json:"recommended,omitempty" bson:"recommended,omitempty" gorm:"recommended,omitempty"` // สินค้าแนะนำ
-	Activated    bool    `json:"activated,omitempty" bson:"activated,omitempty" gorm:"activated,omitempty"`       // เปิดใช้งานอยู่
+	Recommended  bool    `json:"recommended,omitempty" bson:"recommended,omitempty" gorm:"recommended,omitempty,type:bool,default:false"` // สินค้าแนะนำ
+	Activated    bool    `json:"activated,omitempty" bson:"activated,omitempty" gorm:"activated,omitempty,type:bool,default:false"`       // เปิดใช้งานอยู่
 
 	Name1        string `json:"name1" bson:"name1" gorm:"name1"` // ชื่อภาษาไทย
 	Name2        string `json:"name2,omitempty" bson:"name2,omitempty" gorm:"name2,omitempty"`
@@ -93,7 +93,7 @@ type InventoryTag struct {
 type Option struct {
 	Code       string    `json:"code" bson:"code" gorm:"code;primaryKey"`
 	Order      int8      `json:"order" bson:"order" gorm:"order"`
-	Required   bool      `json:"required" bson:"required" gorm:"required"`
+	Required   bool      `json:"required" bson:"required" gorm:"required,type:bool,default:false"`
 	ChoiceType int8      `json:"choicetype" bson:"choicetype,omitempty" gorm:"choicetype,omitempty"`
 	MaxSelect  int8      `json:"maxselect" bson:"maxselect,omitempty" gorm:"maxselect,omitempty"`
 	Name1      string    `json:"name1" bson:"name1" gorm:"name1"`
@@ -117,8 +117,8 @@ type Choice struct {
 	Name4       string  `json:"name4,omitempty" bson:"name4,omitempty" gorm:"name4,omitempty"`
 	Name5       string  `json:"name5,omitempty" bson:"name5,omitempty" gorm:"name5,omitempty"`
 	ItemUnit    string  `json:"itemunit,omitempty" bson:"itemunit" gorm:"itemunit,omitempty"`
-	Selected    bool    `json:"selected" bson:"selected" gorm:"selected"`
-	Default     bool    `json:"default" bson:"default" gorm:"default"`
+	Selected    bool    `json:"selected" bson:"selected" gorm:"selected,type:bool,default:false"`
+	Default     bool    `json:"default" bson:"default" gorm:"default,type:bool,default:false"`
 }
 
 type InventoryInfo struct {

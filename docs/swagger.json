@@ -3422,7 +3422,7 @@
                 ],
                 "parameters": [
                     {
-                        "description": "Body",
+                        "description": "SaleInvoice",
                         "name": "SaleInvoice",
                         "in": "body",
                         "required": true,
@@ -5532,7 +5532,8 @@
                     "type": "number"
                 },
                 "docdate": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "docno": {
                     "type": "string"
@@ -5706,7 +5707,8 @@
                     "type": "number"
                 },
                 "docdate": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "docno": {
                     "type": "string"

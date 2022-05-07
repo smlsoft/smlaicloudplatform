@@ -54,7 +54,7 @@ func (h SaleinvoiceHttp) RouteSetup() {
 // Create Sale Invoice godoc
 // @Description Create Inventory
 // @Tags		Sale Invoice
-// @Param		SaleInvoice  body      models.Saleinvoice  true  "Body"
+// @Param		SaleInvoice  body      models.Saleinvoice  true  "SaleInvoice"
 // @Accept 		json
 // @Success		201	{object}	models.ResponseSuccessWithID
 // @Failure		401 {object}	models.AuthResponseFailed

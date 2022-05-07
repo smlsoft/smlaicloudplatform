@@ -10,10 +10,10 @@ const saleinvoiceCollectionName = "saleinvoices"
 const saleinvoiceIndexName = "saleinvoices"
 
 type Saleinvoice struct {
-	DocDate        *time.Time           `json:"docdate,omitempty" bson:"docdate,omitempty"`
+	DocDate        *time.Time           `json:"docdate,omitempty" bson:"docdate,omitempty" format:"date-time" examples:"2019-10-12T07:20:50.52Z or 2019-10-12T07:20:50.52+07:00" gorm:"docdate,type:date"`
 	DocNo          string               `json:"docno,omitempty"  bson:"docno,omitempty"`
-	Member         Member               `json:"member,omitempty"  bson:"member,omitempty"`
-	Items          *[]SaleinvoiceDetail `json:"items" bson:"items" `
+	Member         *Member              `json:"member,omitempty"  bson:"member,omitempty"`
+	Items          *[]SaleinvoiceDetail `json:"items" bson:"items" gorm:""`
 	TotalAmount    float64              `json:"totalamount" bson:"totalamount" `
 	TaxRate        float64              `json:"taxrate" bson:"taxrate" `
 	TaxAmount      float64              `json:"taxamount" bson:"taxamount" `
