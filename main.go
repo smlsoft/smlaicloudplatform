@@ -154,12 +154,14 @@ func main() {
 	purchase := purchase.NewPurchaseHttp(ms, cfg)
 	purchase.RouteSetup()
 
-	saleinvoice := saleinvoice.NewSaleinvoiceHttp(ms, cfg)
-	saleinvoice.RouteSetup()
+	saleinvoiceHttp := saleinvoice.NewSaleinvoiceHttp(ms, cfg)
+	saleinvoiceHttp.RouteSetup()
 
 	inventorysearchconsumer.StartInventorySearchComsumerOnProductCreated(ms, cfg)
 	inventorysearchconsumer.StartInventorySearchComsumerOnProductUpdated(ms, cfg)
 	inventorysearchconsumer.StartInventorySearchComsumerOnProductDeleted(ms, cfg)
+
+	saleinvoice.StartSaleinvoiceComsumeCreated(ms, cfg)
 
 	ms.Start()
 }

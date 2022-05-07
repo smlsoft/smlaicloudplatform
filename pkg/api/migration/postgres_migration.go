@@ -2,7 +2,7 @@ package migration
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/saleinvoice"
+	"smlcloudplatform/pkg/api/saleinvoice"
 )
 
 func StartMigrateModel(ms *microservice.Microservice, cfg microservice.IConfig) error {

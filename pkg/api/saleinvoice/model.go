@@ -8,14 +8,14 @@ import (
 type SaleInvoiceTable struct {
 	Id                  uint `gorm:"primaryKey"`
 	models.ShopIdentity `gorm:"embedded"`
-	DocDate             time.Time                 `json:"docdate,omitempty" gorm:"column:docdate"`
-	DocNo               string                    `json:"docno,omitempty"  gorm:"column:docno"`
-	TaxRate             float64                   `json:"taxrate" gorm:"column:taxrate;" `
-	TaxAmount           float64                   `json:"taxamount" gorm:"column:taxamount;" `
-	TaxBaseAmount       float64                   `json:"taxbaseamount" gorm:"column:taxbaseamount;" `
-	DiscountAmount      float64                   `json:"discountamount" gorm:"column:discountamount;" `
-	SumAmount           float64                   `json:"sumamount" gorm:"column:sumamount;" `
-	Items               *[]SaleInvoiceDetailTable `json:"items" bson:"items" gorm:"foreignKey:SaleInvoiceId" `
+	DocDate             time.Time                `json:"docdate,omitempty" gorm:"column:docdate"`
+	DocNo               string                   `json:"docno,omitempty"  gorm:"column:docno"`
+	TaxRate             float64                  `json:"taxrate" gorm:"column:taxrate;" `
+	TaxAmount           float64                  `json:"taxamount" gorm:"column:taxamount;" `
+	TaxBaseAmount       float64                  `json:"taxbaseamount" gorm:"column:taxbaseamount;" `
+	DiscountAmount      float64                  `json:"discountamount" gorm:"column:discountamount;" `
+	SumAmount           float64                  `json:"sumamount" gorm:"column:sumamount;" `
+	Items               []SaleInvoiceDetailTable `json:"items" bson:"items" gorm:"foreignKey:SaleInvoiceId" `
 }
 
 func (*SaleInvoiceTable) TableName() string {
@@ -25,7 +25,7 @@ func (*SaleInvoiceTable) TableName() string {
 type SaleInvoiceDetailTable struct {
 	Id                  uint `gorm:"primaryKey"`
 	models.ShopIdentity `gorm:"embedded"`
-	SaleInvoiceId       uint    `json:"saleinvoiceid,omitempty"  gorm:"column:saleinvoiceid"`
+	SaleInvoiceId       uint    `json:"saleinvoiceid,omitempty"  gorm:"column:saleinvoiceid;foreignKey:Id"`
 	DocNo               string  `json:"docno,omitempty"  gorm:"column:docno"`
 	LineNumber          int     `json:"linenumber" gorm:"column:linenumber"`
 	ItemGuid            string  `json:"itemguid,omitempty" gorm:"column:itemguid"`

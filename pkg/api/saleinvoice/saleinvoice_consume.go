@@ -21,22 +21,37 @@ func StartSaleinvoiceComsumeCreated(ms *microservice.Microservice, cfg microserv
 	ms.Consume(mqConfig.URI(), topic, groupID, timeout, func(ctx microservice.IContext) error {
 		moduleName := "comsume saleinvoice created"
 
-		elkPst := ms.ElkPersister(cfg.ElkPersisterConfig())
-
 		msg := ctx.ReadInput()
 
-		trans := models.SaleinvoiceData{}
-		err := json.Unmarshal([]byte(msg), &trans)
+		saleinvoiceJson := models.Saleinvoice{}
+		err := json.Unmarshal([]byte(msg), &saleinvoiceJson)
 
 		if err != nil {
 			ms.Log(moduleName, err.Error())
 		}
 
-		err = elkPst.CreateWithID(trans.GuidFixed, &trans)
+		// postgresql
+		saleInvoiceTable := SaleInvoiceTable{}
+		err = json.Unmarshal([]byte(msg), &saleInvoiceTable)
 
 		if err != nil {
 			ms.Log(moduleName, err.Error())
 		}
+
+		pst := ms.Persister(cfg.PersisterConfig())
+		err = pst.Create(&saleInvoiceTable)
+
+		if err != nil {
+			ms.Log(moduleName, err.Error())
+		}
+
+		// elk
+		// elkPst := ms.ElkPersister(cfg.ElkPersisterConfig())
+		// err = elkPst.CreateWithID(trans.GuidFixed, &trans)
+
+		// if err != nil {
+		// 	ms.Log(moduleName, err.Error())
+		// }
 		return nil
 	})
 
