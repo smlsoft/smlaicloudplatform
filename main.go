@@ -73,95 +73,103 @@ func main() {
 	// 	serverPort = "1323"
 	// }
 	// e.Logger.Fatal(e.Start(":" + serverPort))
+	devApiMode := os.Getenv("DEV_API_MODE")
 
 	host := os.Getenv("HOST_API")
 	if host != "" {
 		fmt.Printf("Host: %v\n", host)
 		docs.SwaggerInfo.Host = host
 	}
+
 	cfg := microservice.NewConfig()
 	ms, err := microservice.NewMicroservice(cfg)
 	if err != nil {
 		panic(err)
 	}
 
-	ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)
+	if devApiMode == "" || devApiMode == "2" {
 
-	cacher := ms.Cacher(cfg.CacherConfig())
-	authService := microservice.NewAuthService(cacher, 24*3)
-	publicPath := []string{
-		"/swagger",
-		"/login",
-		"/register",
-		"/list-shop",
-		"/select-shop",
-		"/create-shop",
-		"/employee/login",
+		ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)
 
-		"/images*",
-		"/productimage",
+		cacher := ms.Cacher(cfg.CacherConfig())
+		authService := microservice.NewAuthService(cacher, 24*3)
+		publicPath := []string{
+			"/swagger",
+			"/login",
+			"/register",
+			"/shop",
+			"/list-shop",
+			"/select-shop",
+			"/create-shop",
+			"/employee/login",
 
-		"/healthz",
+			"/images*",
+			"/productimage",
+
+			"/healthz",
+		}
+		ms.HttpMiddleware(authService.MWFuncWithRedis(cacher, publicPath...))
+		ms.RegisterLivenessProbeEndpoint("/healthz")
+
+		migration.StartMigrateModel(ms, cfg)
+
+		authHttp := authentication.NewAuthenticationHttp(ms, cfg)
+		authHttp.RouteSetup()
+
+		shopHttp := shop.NewShopHttp(ms, cfg)
+		shopHttp.RouteSetup()
+
+		memberapi := member.NewMemberHttp(ms, cfg)
+		memberapi.RouteSetup()
+
+		inventoryapi := inventory.NewInventoryHttp(ms, cfg)
+		inventoryapi.RouteSetup()
+
+		categoryHttp := category.NewCategoryHttp(ms, cfg)
+		categoryHttp.RouteSetup()
+
+		invImp := inventoryimport.NewInventoryImportHttp(ms, cfg)
+		invImp.RouteSetup()
+
+		invOptionImp := inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg)
+		invOptionImp.RouteSetup()
+
+		catImp := inventoryimport.NewCategoryImportHttp(ms, cfg)
+		catImp.RouteSetup()
+
+		filePersister := microservice.NewPersisterFile(microservice.NewStorageFileConfig())
+		imagePersister := microservice.NewPersisterImage(filePersister)
+
+		ms.Logger.Debugf("Store File Path %v", filePersister.StoreFilePath)
+		imageHttp := images.NewImagesHttp(ms, cfg, imagePersister)
+		imageHttp.RouteSetup()
+
+		shopzonehttp := shopzone.NewShopZoneHttp(ms, cfg)
+		shopzonehttp.RouteSetup()
+
+		shoptablehttp := shoptable.NewShopTableHttp(ms, cfg)
+		shoptablehttp.RouteSetup()
+
+		shopprinterhttp := shopprinter.NewShopPrinterHttp(ms, cfg)
+		shopprinterhttp.RouteSetup()
+
+		kitchenhttp := kitchen.NewKitchenHttp(ms, cfg)
+		kitchenhttp.RouteSetup()
+
+		purchase := purchase.NewPurchaseHttp(ms, cfg)
+		purchase.RouteSetup()
+
+		saleinvoiceHttp := saleinvoice.NewSaleinvoiceHttp(ms, cfg)
+		saleinvoiceHttp.RouteSetup()
 	}
-	ms.HttpMiddleware(authService.MWFuncWithRedis(cacher, publicPath...))
-	ms.RegisterLivenessProbeEndpoint("/healthz")
 
-	migration.StartMigrateModel(ms, cfg)
+	if devApiMode == "1" || devApiMode == "2" {
+		inventorysearchconsumer.StartInventorySearchComsumerOnProductCreated(ms, cfg)
+		inventorysearchconsumer.StartInventorySearchComsumerOnProductUpdated(ms, cfg)
+		inventorysearchconsumer.StartInventorySearchComsumerOnProductDeleted(ms, cfg)
 
-	authHttp := authentication.NewAuthenticationHttp(ms, cfg)
-	authHttp.RouteSetup()
-
-	shopHttp := shop.NewShopHttp(ms, cfg)
-	shopHttp.RouteSetup()
-
-	memberapi := member.NewMemberHttp(ms, cfg)
-	memberapi.RouteSetup()
-
-	inventoryapi := inventory.NewInventoryHttp(ms, cfg)
-	inventoryapi.RouteSetup()
-
-	categoryHttp := category.NewCategoryHttp(ms, cfg)
-	categoryHttp.RouteSetup()
-
-	invImp := inventoryimport.NewInventoryImportHttp(ms, cfg)
-	invImp.RouteSetup()
-
-	invOptionImp := inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg)
-	invOptionImp.RouteSetup()
-
-	catImp := inventoryimport.NewCategoryImportHttp(ms, cfg)
-	catImp.RouteSetup()
-
-	filePersister := microservice.NewPersisterFile(microservice.NewStorageFileConfig())
-	imagePersister := microservice.NewPersisterImage(filePersister)
-
-	ms.Logger.Debugf("Store File Path %v", filePersister.StoreFilePath)
-	imageHttp := images.NewImagesHttp(ms, cfg, imagePersister)
-	imageHttp.RouteSetup()
-
-	shopzonehttp := shopzone.NewShopZoneHttp(ms, cfg)
-	shopzonehttp.RouteSetup()
-
-	shoptablehttp := shoptable.NewShopTableHttp(ms, cfg)
-	shoptablehttp.RouteSetup()
-
-	shopprinterhttp := shopprinter.NewShopPrinterHttp(ms, cfg)
-	shopprinterhttp.RouteSetup()
-
-	kitchenhttp := kitchen.NewKitchenHttp(ms, cfg)
-	kitchenhttp.RouteSetup()
-
-	purchase := purchase.NewPurchaseHttp(ms, cfg)
-	purchase.RouteSetup()
-
-	saleinvoiceHttp := saleinvoice.NewSaleinvoiceHttp(ms, cfg)
-	saleinvoiceHttp.RouteSetup()
-
-	inventorysearchconsumer.StartInventorySearchComsumerOnProductCreated(ms, cfg)
-	inventorysearchconsumer.StartInventorySearchComsumerOnProductUpdated(ms, cfg)
-	inventorysearchconsumer.StartInventorySearchComsumerOnProductDeleted(ms, cfg)
-
-	saleinvoice.StartSaleinvoiceComsumeCreated(ms, cfg)
+		saleinvoice.StartSaleinvoiceComsumeCreated(ms, cfg)
+	}
 
 	ms.Start()
 }

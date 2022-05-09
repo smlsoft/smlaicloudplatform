@@ -52,6 +52,11 @@ docker_build_app_dev:
 	docker build -t smlsoft/smlcloudplatform:appdev .
 	docker push smlsoft/smlcloudplatform:appdev
 
+docker_build_api_dev:
+	swag init
+	docker build -t smlsoft/smlcloudplatform:apidev .
+	docker push smlsoft/smlcloudplatform:apidev
+
 run_app_dev:
 	swag init
 	go run main.go

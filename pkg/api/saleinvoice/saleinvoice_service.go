@@ -95,7 +95,7 @@ func (svc SaleinvoiceService) UpdateSaleinvoice(guid string, shopID string, user
 		return err
 	}
 
-	err = svc.mqRepo.Create(findDoc.SaleinvoiceData)
+	err = svc.mqRepo.Update(findDoc.SaleinvoiceData)
 	if err != nil {
 		return err
 	}

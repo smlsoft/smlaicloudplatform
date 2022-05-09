@@ -7,9 +7,13 @@ import (
 	"time"
 )
 
+const MQ_CONSUMER_SALEINVOICE_CREATED_GROUPNAME string = "saleinvoice-postgresql-oncreated-consumer"
+const MQ_CONSUMER_SALEINVOICE_UPDATED_GROUPNAME string = "saleinvoice-postgresql-onupdated-consumer"
+const MQ_CONSUMER_SALEINVOICE_DELETED_GROUPNAME string = "saleinvoice-postgresql-ondeleted-consumer"
+
 func StartSaleinvoiceComsumeCreated(ms *microservice.Microservice, cfg microservice.IConfig) {
-	topic := "when-saleinvoice-created"
-	groupID := "elk-saleinvoice-consumer"
+	topic := MQ_TOPIC_TRANSACTION_CREATED
+	groupID := MQ_CONSUMER_SALEINVOICE_CREATED_GROUPNAME
 	timeout := time.Duration(-1)
 
 	mqConfig := cfg.MQConfig()
@@ -31,19 +35,19 @@ func StartSaleinvoiceComsumeCreated(ms *microservice.Microservice, cfg microserv
 		}
 
 		// postgresql
-		saleInvoiceTable := SaleInvoiceTable{}
-		err = json.Unmarshal([]byte(msg), &saleInvoiceTable)
+		// saleInvoiceTable := SaleInvoiceTable{}
+		// err = json.Unmarshal([]byte(msg), &saleInvoiceTable)
 
-		if err != nil {
-			ms.Log(moduleName, err.Error())
-		}
+		// if err != nil {
+		// 	ms.Log(moduleName, err.Error())
+		// }
 
-		pst := ms.Persister(cfg.PersisterConfig())
-		err = pst.Create(&saleInvoiceTable)
+		// pst := ms.Persister(cfg.PersisterConfig())
+		// err = pst.Create(&saleInvoiceTable)
 
-		if err != nil {
-			ms.Log(moduleName, err.Error())
-		}
+		// if err != nil {
+		// 	ms.Log(moduleName, err.Error())
+		// }
 
 		// elk
 		// elkPst := ms.ElkPersister(cfg.ElkPersisterConfig())
@@ -55,4 +59,9 @@ func StartSaleinvoiceComsumeCreated(ms *microservice.Microservice, cfg microserv
 		return nil
 	})
 
+}
+
+func StartSaleInvoiceConsumerUpdated(ms *microservice.Microservice, cfg microservice.IConfig) error {
+
+	return nil
 }
