@@ -6,7 +6,6 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/restaurant"
-	"smlcloudplatform/pkg/repositories"
 	"strconv"
 	"strings"
 	"time"
@@ -23,11 +22,8 @@ type ShopPrinterHttp struct {
 func NewShopPrinterHttp(ms *microservice.Microservice, cfg microservice.IConfig) ShopPrinterHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
-	crudRepo := repositories.NewCrudRepository[restaurant.PrinterTerminalDoc](pst)
-	searchRepo := repositories.NewSearchRepository[restaurant.PrinterTerminalInfo](pst)
-	guidRepo := repositories.NewGuidRepository[restaurant.PrinterTerminalItemGuid](pst)
-	activityRepo := repositories.NewActivityRepository[restaurant.PrinterTerminalActivity, restaurant.PrinterTerminalDeleteActivity](pst)
-	svc := NewShopPrinterService(crudRepo, searchRepo, guidRepo, activityRepo)
+	repo := NewShopPrinterRepository(pst)
+	svc := NewShopPrinterService(repo)
 
 	return ShopPrinterHttp{
 		ms:  ms,
