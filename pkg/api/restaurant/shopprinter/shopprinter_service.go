@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/restaurant"
-	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
 	"sync"
@@ -27,24 +26,13 @@ type IShopPrinterService interface {
 }
 
 type ShopPrinterService struct {
-	crudRepo     repositories.CrudRepository[restaurant.PrinterTerminalDoc]
-	searchRepo   repositories.SearchRepository[restaurant.PrinterTerminalInfo]
-	guidRepo     repositories.GuidRepository[restaurant.PrinterTerminalItemGuid]
-	activityRepo repositories.ActivityRepository[restaurant.PrinterTerminalActivity, restaurant.PrinterTerminalDeleteActivity]
+	repo IShopPrinterRepository
 }
 
-func NewShopPrinterService(
-	crudRepo repositories.CrudRepository[restaurant.PrinterTerminalDoc],
-	searchRepo repositories.SearchRepository[restaurant.PrinterTerminalInfo],
-	guidRepo repositories.GuidRepository[restaurant.PrinterTerminalItemGuid],
-	activityRepo repositories.ActivityRepository[restaurant.PrinterTerminalActivity, restaurant.PrinterTerminalDeleteActivity],
-) ShopPrinterService {
+func NewShopPrinterService(repo IShopPrinterRepository) ShopPrinterService {
 
 	return ShopPrinterService{
-		crudRepo:     crudRepo,
-		searchRepo:   searchRepo,
-		guidRepo:     guidRepo,
-		activityRepo: activityRepo,
+		repo: repo,
 	}
 }
 
@@ -60,7 +48,7 @@ func (svc ShopPrinterService) CreateShopPrinter(shopID string, authUsername stri
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err := svc.crudRepo.Create(docData)
+	_, err := svc.repo.Create(docData)
 
 	if err != nil {
 		return "", err
@@ -70,7 +58,7 @@ func (svc ShopPrinterService) CreateShopPrinter(shopID string, authUsername stri
 
 func (svc ShopPrinterService) UpdateShopPrinter(guid string, shopID string, authUsername string, doc restaurant.PrinterTerminal) error {
 
-	findDoc, err := svc.crudRepo.FindByGuid(shopID, guid)
+	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return err
@@ -85,7 +73,7 @@ func (svc ShopPrinterService) UpdateShopPrinter(guid string, shopID string, auth
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.crudRepo.Update(guid, findDoc)
+	err = svc.repo.Update(guid, findDoc)
 
 	if err != nil {
 		return err
@@ -94,7 +82,7 @@ func (svc ShopPrinterService) UpdateShopPrinter(guid string, shopID string, auth
 }
 
 func (svc ShopPrinterService) DeleteShopPrinter(guid string, shopID string, authUsername string) error {
-	err := svc.crudRepo.Delete(shopID, guid, authUsername)
+	err := svc.repo.Delete(shopID, guid, authUsername)
 
 	if err != nil {
 		return err
@@ -104,7 +92,7 @@ func (svc ShopPrinterService) DeleteShopPrinter(guid string, shopID string, auth
 
 func (svc ShopPrinterService) InfoShopPrinter(guid string, shopID string) (restaurant.PrinterTerminalInfo, error) {
 
-	findDoc, err := svc.crudRepo.FindByGuid(shopID, guid)
+	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return restaurant.PrinterTerminalInfo{}, err
@@ -127,7 +115,7 @@ func (svc ShopPrinterService) SearchShopPrinter(shopID string, q string, page in
 		searchCols = append(searchCols, fmt.Sprintf("name%d", (i+1)))
 	}
 
-	docList, pagination, err := svc.searchRepo.FindPage(shopID, searchCols, q, page, limit)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
 
 	if err != nil {
 		return []restaurant.PrinterTerminalInfo{}, pagination, err
@@ -145,7 +133,7 @@ func (svc ShopPrinterService) LastActivity(shopID string, lastUpdatedDate time.T
 	var err1 error
 
 	go func() {
-		deleteDocList, pagination1, err1 = svc.activityRepo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
+		deleteDocList, pagination1, err1 = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
 		wg.Done()
 	}()
 
@@ -155,7 +143,7 @@ func (svc ShopPrinterService) LastActivity(shopID string, lastUpdatedDate time.T
 	var err2 error
 
 	go func() {
-		createAndUpdateDocList, pagination2, err2 = svc.activityRepo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
+		createAndUpdateDocList, pagination2, err2 = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
 		wg.Done()
 	}()
 
@@ -195,7 +183,7 @@ func (svc ShopPrinterService) SaveInBatch(shopID string, authUsername string, da
 		itemCodeGuidList = append(itemCodeGuidList, doc.Code)
 	}
 
-	findItemGuid, err := svc.guidRepo.FindInItemGuid(shopID, "code", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "code", itemCodeGuidList)
 
 	if err != nil {
 		return models.BulkImport{}, err
@@ -235,7 +223,7 @@ func (svc ShopPrinterService) SaveInBatch(shopID string, authUsername string, da
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (restaurant.PrinterTerminalDoc, error) {
-			return svc.crudRepo.FindByGuid(shopID, guid)
+			return svc.repo.FindByGuid(shopID, guid)
 		},
 		func(doc restaurant.PrinterTerminalDoc) bool {
 			return false
@@ -247,7 +235,7 @@ func (svc ShopPrinterService) SaveInBatch(shopID string, authUsername string, da
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.crudRepo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(createDataList)
 
 		if err != nil {
 			return models.BulkImport{}, err

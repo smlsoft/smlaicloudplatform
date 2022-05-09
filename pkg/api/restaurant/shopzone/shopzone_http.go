@@ -6,7 +6,6 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/restaurant"
-	"smlcloudplatform/pkg/repositories"
 	"strconv"
 	"strings"
 	"time"
@@ -23,11 +22,8 @@ type ShopZoneHttp struct {
 func NewShopZoneHttp(ms *microservice.Microservice, cfg microservice.IConfig) ShopZoneHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
-	crudRepo := repositories.NewCrudRepository[restaurant.ShopZoneDoc](pst)
-	searchRepo := repositories.NewSearchRepository[restaurant.ShopZoneInfo](pst)
-	guidRepo := repositories.NewGuidRepository[restaurant.ShopZoneItemGuid](pst)
-	activityRepo := repositories.NewActivityRepository[restaurant.ShopZoneActivity, restaurant.ShopZoneDeleteActivity](pst)
-	svc := NewShopZoneService(crudRepo, searchRepo, guidRepo, activityRepo)
+	repo := NewShopZoneRepository(pst)
+	svc := NewShopZoneService(repo)
 
 	return ShopZoneHttp{
 		ms:  ms,

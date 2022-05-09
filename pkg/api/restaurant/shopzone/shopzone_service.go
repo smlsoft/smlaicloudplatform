@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/restaurant"
-	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
 	"sync"
@@ -27,24 +26,15 @@ type IShopZoneService interface {
 }
 
 type ShopZoneService struct {
-	crudRepo     repositories.CrudRepository[restaurant.ShopZoneDoc]
-	searchRepo   repositories.SearchRepository[restaurant.ShopZoneInfo]
-	guidRepo     repositories.GuidRepository[restaurant.ShopZoneItemGuid]
-	activityRepo repositories.ActivityRepository[restaurant.ShopZoneActivity, restaurant.ShopZoneDeleteActivity]
+	repo IShopZoneRepository
 }
 
 func NewShopZoneService(
-	crudRepo repositories.CrudRepository[restaurant.ShopZoneDoc],
-	searchRepo repositories.SearchRepository[restaurant.ShopZoneInfo],
-	guidRepo repositories.GuidRepository[restaurant.ShopZoneItemGuid],
-	activityRepo repositories.ActivityRepository[restaurant.ShopZoneActivity, restaurant.ShopZoneDeleteActivity],
+	repo IShopZoneRepository,
 ) ShopZoneService {
 
 	return ShopZoneService{
-		crudRepo:     crudRepo,
-		searchRepo:   searchRepo,
-		guidRepo:     guidRepo,
-		activityRepo: activityRepo,
+		repo: repo,
 	}
 }
 
@@ -62,7 +52,7 @@ func (svc ShopZoneService) CreateShopZone(shopID string, authUsername string, do
 
 	docData.LastUpdatedAt = time.Now()
 
-	_, err := svc.crudRepo.Create(docData)
+	_, err := svc.repo.Create(docData)
 
 	if err != nil {
 		return "", err
@@ -72,7 +62,7 @@ func (svc ShopZoneService) CreateShopZone(shopID string, authUsername string, do
 
 func (svc ShopZoneService) UpdateShopZone(guid string, shopID string, authUsername string, doc restaurant.ShopZone) error {
 
-	findDoc, err := svc.crudRepo.FindByGuid(shopID, guid)
+	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return err
@@ -89,7 +79,7 @@ func (svc ShopZoneService) UpdateShopZone(guid string, shopID string, authUserna
 
 	findDoc.LastUpdatedAt = time.Now()
 
-	err = svc.crudRepo.Update(guid, findDoc)
+	err = svc.repo.Update(guid, findDoc)
 
 	if err != nil {
 		return err
@@ -98,7 +88,7 @@ func (svc ShopZoneService) UpdateShopZone(guid string, shopID string, authUserna
 }
 
 func (svc ShopZoneService) DeleteShopZone(guid string, shopID string, authUsername string) error {
-	err := svc.crudRepo.Delete(shopID, guid, authUsername)
+	err := svc.repo.Delete(shopID, guid, authUsername)
 
 	if err != nil {
 		return err
@@ -108,7 +98,7 @@ func (svc ShopZoneService) DeleteShopZone(guid string, shopID string, authUserna
 
 func (svc ShopZoneService) InfoShopZone(guid string, shopID string) (restaurant.ShopZoneInfo, error) {
 
-	findDoc, err := svc.crudRepo.FindByGuid(shopID, guid)
+	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return restaurant.ShopZoneInfo{}, err
@@ -131,7 +121,7 @@ func (svc ShopZoneService) SearchShopZone(shopID string, q string, page int, lim
 		searchCols = append(searchCols, fmt.Sprintf("name%d", (i+1)))
 	}
 
-	docList, pagination, err := svc.searchRepo.FindPage(shopID, searchCols, q, page, limit)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
 
 	if err != nil {
 		return []restaurant.ShopZoneInfo{}, pagination, err
@@ -149,7 +139,7 @@ func (svc ShopZoneService) LastActivity(shopID string, lastUpdatedDate time.Time
 	var err1 error
 
 	go func() {
-		deleteDocList, pagination1, err1 = svc.activityRepo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
+		deleteDocList, pagination1, err1 = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
 		wg.Done()
 	}()
 
@@ -159,7 +149,7 @@ func (svc ShopZoneService) LastActivity(shopID string, lastUpdatedDate time.Time
 	var err2 error
 
 	go func() {
-		createAndUpdateDocList, pagination2, err2 = svc.activityRepo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
+		createAndUpdateDocList, pagination2, err2 = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
 		wg.Done()
 	}()
 
@@ -199,7 +189,7 @@ func (svc ShopZoneService) SaveInBatch(shopID string, authUsername string, dataL
 		itemCodeGuidList = append(itemCodeGuidList, doc.Code)
 	}
 
-	findItemGuid, err := svc.guidRepo.FindInItemGuid(shopID, "code", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "code", itemCodeGuidList)
 
 	if err != nil {
 		return models.BulkImport{}, err
@@ -239,7 +229,7 @@ func (svc ShopZoneService) SaveInBatch(shopID string, authUsername string, dataL
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (restaurant.ShopZoneDoc, error) {
-			return svc.crudRepo.FindByGuid(shopID, guid)
+			return svc.repo.FindByGuid(shopID, guid)
 		},
 		func(doc restaurant.ShopZoneDoc) bool {
 			return false
@@ -251,7 +241,7 @@ func (svc ShopZoneService) SaveInBatch(shopID string, authUsername string, dataL
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.crudRepo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(createDataList)
 
 		if err != nil {
 			return models.BulkImport{}, err

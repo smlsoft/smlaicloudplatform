@@ -6,7 +6,6 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/restaurant"
-	"smlcloudplatform/pkg/repositories"
 	"strconv"
 	"strings"
 	"time"
@@ -23,12 +22,9 @@ type ShopTableHttp struct {
 func NewShopTableHttp(ms *microservice.Microservice, cfg microservice.IConfig) ShopTableHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
-	crudRepo := repositories.NewCrudRepository[restaurant.ShopTableDoc](pst)
-	searchRepo := repositories.NewSearchRepository[restaurant.ShopTableInfo](pst)
-	guidRepo := repositories.NewGuidRepository[restaurant.ShopTableItemGuid](pst)
-	activityRepo := repositories.NewActivityRepository[restaurant.ShopTableActivity, restaurant.ShopTableDeleteActivity](pst)
+	repo := NewShopTableRepository(pst)
 
-	svc := NewShopTableService(crudRepo, searchRepo, guidRepo, activityRepo)
+	svc := NewShopTableService(repo)
 
 	return ShopTableHttp{
 		ms:  ms,

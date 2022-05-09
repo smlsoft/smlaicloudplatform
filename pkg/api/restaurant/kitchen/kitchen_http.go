@@ -6,7 +6,6 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/restaurant"
-	"smlcloudplatform/pkg/repositories"
 	"strconv"
 	"strings"
 	"time"
@@ -23,12 +22,8 @@ type KitchenHttp struct {
 func NewKitchenHttp(ms *microservice.Microservice, cfg microservice.IConfig) KitchenHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
-	crudRepo := repositories.NewCrudRepository[restaurant.KitchenDoc](pst)
-	searchRepo := repositories.NewSearchRepository[restaurant.KitchenInfo](pst)
-	guidRepo := repositories.NewGuidRepository[restaurant.KitchenItemGuid](pst)
-	activityRepo := repositories.NewActivityRepository[restaurant.KitchenActivity, restaurant.KitchenDeleteActivity](pst)
-
-	svc := NewKitchenService(crudRepo, searchRepo, guidRepo, activityRepo)
+	repo := NewKitchenRepository(pst)
+	svc := NewKitchenService(repo)
 
 	return KitchenHttp{
 		ms:  ms,
