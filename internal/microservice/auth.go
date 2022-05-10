@@ -27,6 +27,67 @@ type AuthService struct {
 	prefixAuthorization string
 }
 
+func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath []string, publicPath ...string) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+
+			currentPath := c.Path()
+
+			for _, publicPath := range publicPath {
+				if strings.HasPrefix(currentPath, publicPath) {
+					return next(c)
+				} else if currentPath == publicPath {
+					return next(c)
+				}
+
+			}
+
+			tokenStr, err := authService.GetTokenFromContext(c)
+
+			if err != nil {
+				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
+			}
+
+			cacheKey := authService.prefixCacheKey + tokenStr
+			tempUserInfo, err := authService.cacher.HMGet(cacheKey, []string{"username", "name", "shopid", "role"})
+
+			if err != nil || tempUserInfo[0] == nil {
+				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
+			}
+
+			tempShopID := ""
+
+			if tempUserInfo[2] != nil {
+				tempShopID = fmt.Sprintf("%v", tempUserInfo[2])
+			}
+
+			// check accept shop path
+			thisPathExceptShopSelected := false
+			for _, publicPath := range shopPath {
+				if currentPath == publicPath {
+					thisPathExceptShopSelected = true
+				}
+			}
+
+			if thisPathExceptShopSelected == false && len(string(tempShopID)) < 1 {
+				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Shop not selected."})
+			}
+
+			userInfo := models.UserInfo{
+				Username: fmt.Sprintf("%v", tempUserInfo[0]),
+				Name:     fmt.Sprintf("%v", tempUserInfo[1]),
+				ShopID:   fmt.Sprintf("%v", tempUserInfo[2]),
+				Role:     fmt.Sprintf("%v", tempUserInfo[3]),
+			}
+
+			cacher.Expire(cacheKey, authService.expire)
+			c.Set("UserInfo", userInfo)
+
+			return next(c)
+		}
+	}
+}
+
 func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...string) echo.MiddlewareFunc {
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
