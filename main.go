@@ -97,10 +97,7 @@ func main() {
 			"/swagger",
 			"/login",
 			"/register",
-			"/shop",
-			"/list-shop",
-			"/select-shop",
-			"/create-shop",
+
 			"/employee/login",
 
 			"/images*",
@@ -108,7 +105,14 @@ func main() {
 
 			"/healthz",
 		}
-		ms.HttpMiddleware(authService.MWFuncWithRedis(cacher, publicPath...))
+
+		exceptShopPath := []string{
+			"/shop",
+			"/list-shop",
+			"/select-shop",
+			"/create-shop",
+		}
+		ms.HttpMiddleware(authService.MWFuncWithRedisMixShop(cacher, exceptShopPath, publicPath...))
 		ms.RegisterLivenessProbeEndpoint("/healthz")
 
 		migration.StartMigrateModel(ms, cfg)

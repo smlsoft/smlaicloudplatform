@@ -12,17 +12,28 @@ services:
     networks:
        - backend
   mongodb:
-    image: bitnami/mongodb:4
-    container_name: mongodb
+    image: bitnami/mongodb:5.0
+    container_name: mongodbdev
     volumes:
       - ./mongodb_data:/bitnami/mongodb
-#    ports:
-#      - 27017:27017
+    ports:
+      - 27017:27017
     environment:
-      - ALLOW_EMPTY_PASSWORD=yes
+#      - MONGODB_ROOT_USERNAME=smlmgdb
+      - MONGODB_ROOT_PASSWORD=smlmgdb
       - MONGODB_SYSTEM_LOG_VERBOSITY=3
     networks:
       - backend
+  postgresql:
+    container_name: postgresql
+    image: postgres:14
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: sml
+    networks:
+       - backend
 
 networks:
   backend:
