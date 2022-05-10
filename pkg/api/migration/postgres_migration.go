@@ -2,7 +2,7 @@ package migration
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/saleinvoice"
+	"smlcloudplatform/pkg/models"
 )
 
 func StartMigrateModel(ms *microservice.Microservice, cfg microservice.IConfig) error {
@@ -15,21 +15,26 @@ func StartMigrateModel(ms *microservice.Microservice, cfg microservice.IConfig) 
 	// 	return err
 	// }
 
+	// pst.DropTable(models.Trans{}, models.TransItemDetail{})
+
 	pst.AutoMigrate(
-		&saleinvoice.SaleInvoiceTable{},
-		&saleinvoice.SaleInvoiceDetailTable{},
-	// &models.InventoryImage{},
-	// &models.InventoryTag{},
+		// &saleinvoice.SaleInvoiceTable{},
+		// &saleinvoice.SaleInvoiceDetailTable{},
+		// &models.InventoryImage{},
+		// &models.InventoryTag{},
 
-	// &models.CategoryData{},
+		// &models.CategoryData{},
 
-	// &models.InventoryData{},
-	// &models.InventoryOption{},
-	// &models.Option{},
-	// &models.Choice{},
-	// &models.InventoryIndex{},
-
+		// &models.InventoryData{},
+		// &models.InventoryOption{},
+		// &models.Option{},
+		// &models.Choice{},
+		// &models.InventoryIndex{},
+		models.Trans{},
+		models.TransItemDetail{},
 	)
+
+	pst.AutoMigrate()
 
 	return nil
 }
