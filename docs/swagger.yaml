@@ -1337,8 +1337,10 @@ definitions:
     type: object
   restaurant.Kitchen:
     properties:
-      category:
-        $ref: '#/definitions/models.Category'
+      categories:
+        items:
+          $ref: '#/definitions/models.Category'
+        type: array
       code:
         type: string
       name1:
@@ -1366,8 +1368,10 @@ definitions:
     type: object
   restaurant.KitchenActivity:
     properties:
-      category:
-        $ref: '#/definitions/models.Category'
+      categories:
+        items:
+          $ref: '#/definitions/models.Category'
+        type: array
       code:
         type: string
       createdat:
@@ -1427,8 +1431,10 @@ definitions:
     type: object
   restaurant.KitchenInfo:
     properties:
-      category:
-        $ref: '#/definitions/models.Category'
+      categories:
+        items:
+          $ref: '#/definitions/models.Category'
+        type: array
       code:
         type: string
       guidfixed:

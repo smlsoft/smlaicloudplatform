@@ -34,7 +34,7 @@ func StartMigrateModel(ms *microservice.Microservice, cfg microservice.IConfig) 
 		models.TransItemDetail{},
 	)
 
-	pst.AutoMigrate()
+	// pst.AutoMigrate()
 
 	return nil
 }

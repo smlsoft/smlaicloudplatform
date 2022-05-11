@@ -5860,8 +5860,11 @@ const docTemplate = `{
         "restaurant.Kitchen": {
             "type": "object",
             "properties": {
-                "category": {
-                    "$ref": "#/definitions/models.Category"
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Category"
+                    }
                 },
                 "code": {
                     "type": "string"
@@ -5904,8 +5907,11 @@ const docTemplate = `{
         "restaurant.KitchenActivity": {
             "type": "object",
             "properties": {
-                "category": {
-                    "$ref": "#/definitions/models.Category"
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Category"
+                    }
                 },
                 "code": {
                     "type": "string"
@@ -5997,8 +6003,11 @@ const docTemplate = `{
         "restaurant.KitchenInfo": {
             "type": "object",
             "properties": {
-                "category": {
-                    "$ref": "#/definitions/models.Category"
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Category"
+                    }
                 },
                 "code": {
                     "type": "string"

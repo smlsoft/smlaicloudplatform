@@ -5854,8 +5854,11 @@
         "restaurant.Kitchen": {
             "type": "object",
             "properties": {
-                "category": {
-                    "$ref": "#/definitions/models.Category"
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Category"
+                    }
                 },
                 "code": {
                     "type": "string"
@@ -5898,8 +5901,11 @@
         "restaurant.KitchenActivity": {
             "type": "object",
             "properties": {
-                "category": {
-                    "$ref": "#/definitions/models.Category"
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Category"
+                    }
                 },
                 "code": {
                     "type": "string"
@@ -5991,8 +5997,11 @@
         "restaurant.KitchenInfo": {
             "type": "object",
             "properties": {
-                "category": {
-                    "$ref": "#/definitions/models.Category"
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Category"
+                    }
                 },
                 "code": {
                     "type": "string"
