@@ -23,15 +23,24 @@ type IShopPrinterRepository interface {
 }
 
 type ShopPrinterRepository struct {
-	pst microservice.IPersisterMongo
-	repositories.CrudRepository[restaurant.PrinterTerminalDoc]
-	repositories.SearchRepository[restaurant.PrinterTerminalInfo]
-	repositories.GuidRepository[restaurant.PrinterTerminalItemGuid]
-	repositories.ActivityRepository[restaurant.PrinterTerminalActivity, restaurant.PrinterTerminalDeleteActivity]
+	pst          microservice.IPersisterMongo
+	crudRepo     repositories.CrudRepository[restaurant.PrinterTerminalDoc]
+	searchRepo   repositories.SearchRepository[restaurant.PrinterTerminalInfo]
+	guidRepo     repositories.GuidRepository[restaurant.PrinterTerminalItemGuid]
+	activityRepo repositories.ActivityRepository[restaurant.PrinterTerminalActivity, restaurant.PrinterTerminalDeleteActivity]
 }
 
 func NewShopPrinterRepository(pst microservice.IPersisterMongo) ShopPrinterRepository {
+	crudRepo := repositories.NewCrudRepository[restaurant.PrinterTerminalDoc](pst)
+	searchRepo := repositories.NewSearchRepository[restaurant.PrinterTerminalInfo](pst)
+	guidRepo := repositories.NewGuidRepository[restaurant.PrinterTerminalItemGuid](pst)
+	activityRepo := repositories.NewActivityRepository[restaurant.PrinterTerminalActivity, restaurant.PrinterTerminalDeleteActivity](pst)
+
 	return ShopPrinterRepository{
-		pst: pst,
+		pst:          pst,
+		crudRepo:     crudRepo,
+		searchRepo:   searchRepo,
+		guidRepo:     guidRepo,
+		activityRepo: activityRepo,
 	}
 }
