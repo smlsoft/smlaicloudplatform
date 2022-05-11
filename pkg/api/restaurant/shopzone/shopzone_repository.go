@@ -23,15 +23,24 @@ type IShopZoneRepository interface {
 }
 
 type ShopZoneRepository struct {
-	pst microservice.IPersisterMongo
-	repositories.CrudRepository[restaurant.ShopZoneDoc]
-	repositories.SearchRepository[restaurant.ShopZoneInfo]
-	repositories.GuidRepository[restaurant.ShopZoneItemGuid]
-	repositories.ActivityRepository[restaurant.ShopZoneActivity, restaurant.ShopZoneDeleteActivity]
+	pst          microservice.IPersisterMongo
+	crudRepo     repositories.CrudRepository[restaurant.ShopZoneDoc]
+	searchRepo   repositories.SearchRepository[restaurant.ShopZoneInfo]
+	guidRepo     repositories.GuidRepository[restaurant.ShopZoneItemGuid]
+	activityRepo repositories.ActivityRepository[restaurant.ShopZoneActivity, restaurant.ShopZoneDeleteActivity]
 }
 
 func NewShopZoneRepository(pst microservice.IPersisterMongo) ShopZoneRepository {
+	crudRepo := repositories.NewCrudRepository[restaurant.ShopZoneDoc](pst)
+	searchRepo := repositories.NewSearchRepository[restaurant.ShopZoneInfo](pst)
+	guidRepo := repositories.NewGuidRepository[restaurant.ShopZoneItemGuid](pst)
+	activityRepo := repositories.NewActivityRepository[restaurant.ShopZoneActivity, restaurant.ShopZoneDeleteActivity](pst)
+
 	return ShopZoneRepository{
-		pst: pst,
+		pst:          pst,
+		crudRepo:     crudRepo,
+		searchRepo:   searchRepo,
+		guidRepo:     guidRepo,
+		activityRepo: activityRepo,
 	}
 }

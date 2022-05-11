@@ -26,10 +26,11 @@ type IKitchenService interface {
 }
 
 type KitchenService struct {
-	repo IKitchenRepository
+	repo KitchenRepository
 }
 
-func NewKitchenService(repo IKitchenRepository) KitchenService {
+func NewKitchenService(repo KitchenRepository) KitchenService {
+
 	return KitchenService{
 		repo: repo,
 	}
@@ -47,7 +48,7 @@ func (svc KitchenService) CreateKitchen(shopID string, authUsername string, doc 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err := svc.repo.Create(docData)
+	_, err := svc.repo.crudRepo.Create(docData)
 
 	if err != nil {
 		return "", err
@@ -57,7 +58,7 @@ func (svc KitchenService) CreateKitchen(shopID string, authUsername string, doc 
 
 func (svc KitchenService) UpdateKitchen(guid string, shopID string, authUsername string, doc restaurant.Kitchen) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	findDoc, err := svc.repo.crudRepo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return err
@@ -72,7 +73,7 @@ func (svc KitchenService) UpdateKitchen(guid string, shopID string, authUsername
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(guid, findDoc)
+	err = svc.repo.crudRepo.Update(guid, findDoc)
 
 	if err != nil {
 		return err
@@ -81,7 +82,7 @@ func (svc KitchenService) UpdateKitchen(guid string, shopID string, authUsername
 }
 
 func (svc KitchenService) DeleteKitchen(guid string, shopID string, authUsername string) error {
-	err := svc.repo.Delete(shopID, guid, authUsername)
+	err := svc.repo.crudRepo.Delete(shopID, guid, authUsername)
 
 	if err != nil {
 		return err
@@ -91,7 +92,7 @@ func (svc KitchenService) DeleteKitchen(guid string, shopID string, authUsername
 
 func (svc KitchenService) InfoKitchen(guid string, shopID string) (restaurant.KitchenInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	findDoc, err := svc.repo.crudRepo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return restaurant.KitchenInfo{}, err
@@ -114,7 +115,7 @@ func (svc KitchenService) SearchKitchen(shopID string, q string, page int, limit
 		searchCols = append(searchCols, fmt.Sprintf("name%d", (i+1)))
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
+	docList, pagination, err := svc.repo.searchRepo.FindPage(shopID, searchCols, q, page, limit)
 
 	if err != nil {
 		return []restaurant.KitchenInfo{}, pagination, err
@@ -132,7 +133,7 @@ func (svc KitchenService) LastActivity(shopID string, lastUpdatedDate time.Time,
 	var err1 error
 
 	go func() {
-		deleteDocList, pagination1, err1 = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
+		deleteDocList, pagination1, err1 = svc.repo.activityRepo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
 		wg.Done()
 	}()
 
@@ -142,7 +143,7 @@ func (svc KitchenService) LastActivity(shopID string, lastUpdatedDate time.Time,
 	var err2 error
 
 	go func() {
-		createAndUpdateDocList, pagination2, err2 = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
+		createAndUpdateDocList, pagination2, err2 = svc.repo.activityRepo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
 		wg.Done()
 	}()
 
@@ -182,7 +183,7 @@ func (svc KitchenService) SaveInBatch(shopID string, authUsername string, dataLi
 		itemCodeGuidList = append(itemCodeGuidList, doc.Code)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "code", itemCodeGuidList)
+	findItemGuid, err := svc.repo.guidRepo.FindInItemGuid(shopID, "code", itemCodeGuidList)
 
 	if err != nil {
 		return models.BulkImport{}, err
@@ -222,7 +223,7 @@ func (svc KitchenService) SaveInBatch(shopID string, authUsername string, dataLi
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (restaurant.KitchenDoc, error) {
-			return svc.repo.FindByGuid(shopID, guid)
+			return svc.repo.crudRepo.FindByGuid(shopID, guid)
 		},
 		func(doc restaurant.KitchenDoc) bool {
 			return false
@@ -234,7 +235,7 @@ func (svc KitchenService) SaveInBatch(shopID string, authUsername string, dataLi
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.CreateInBatch(createDataList)
+		err = svc.repo.crudRepo.CreateInBatch(createDataList)
 
 		if err != nil {
 			return models.BulkImport{}, err

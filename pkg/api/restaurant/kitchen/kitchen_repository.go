@@ -23,15 +23,25 @@ type IKitchenRepository interface {
 }
 
 type KitchenRepository struct {
-	pst microservice.IPersisterMongo
-	repositories.CrudRepository[restaurant.KitchenDoc]
-	repositories.SearchRepository[restaurant.KitchenInfo]
-	repositories.GuidRepository[restaurant.KitchenItemGuid]
-	repositories.ActivityRepository[restaurant.KitchenActivity, restaurant.KitchenDeleteActivity]
+	pst          microservice.IPersisterMongo
+	crudRepo     repositories.CrudRepository[restaurant.KitchenDoc]
+	searchRepo   repositories.SearchRepository[restaurant.KitchenInfo]
+	guidRepo     repositories.GuidRepository[restaurant.KitchenItemGuid]
+	activityRepo repositories.ActivityRepository[restaurant.KitchenActivity, restaurant.KitchenDeleteActivity]
 }
 
 func NewKitchenRepository(pst microservice.IPersisterMongo) KitchenRepository {
+
+	crudRepo := repositories.NewCrudRepository[restaurant.KitchenDoc](pst)
+	searchRepo := repositories.NewSearchRepository[restaurant.KitchenInfo](pst)
+	guidRepo := repositories.NewGuidRepository[restaurant.KitchenItemGuid](pst)
+	activityRepo := repositories.NewActivityRepository[restaurant.KitchenActivity, restaurant.KitchenDeleteActivity](pst)
+
 	return KitchenRepository{
-		pst: pst,
+		pst:          pst,
+		crudRepo:     crudRepo,
+		searchRepo:   searchRepo,
+		guidRepo:     guidRepo,
+		activityRepo: activityRepo,
 	}
 }
