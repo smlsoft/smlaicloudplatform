@@ -20,6 +20,7 @@ import (
 	"smlcloudplatform/pkg/api/restaurant/shopzone"
 	"smlcloudplatform/pkg/api/saleinvoice"
 	"smlcloudplatform/pkg/api/shop"
+	"smlcloudplatform/pkg/api/shop/employee"
 
 	"github.com/joho/godotenv"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -122,6 +123,9 @@ func main() {
 
 		shopHttp := shop.NewShopHttp(ms, cfg)
 		shopHttp.RouteSetup()
+
+		empHttp := employee.NewEmployeeHttp(ms, cfg)
+		empHttp.RouteSetup()
 
 		memberapi := member.NewMemberHttp(ms, cfg)
 		memberapi.RouteSetup()
