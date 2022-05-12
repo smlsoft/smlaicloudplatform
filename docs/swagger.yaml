@@ -292,6 +292,70 @@ definitions:
       remark:
         type: string
     type: object
+  models.Employee:
+    properties:
+      name:
+        type: string
+      password:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      username:
+        type: string
+    type: object
+  models.EmployeeInfo:
+    properties:
+      guidfixed:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      username:
+        type: string
+    type: object
+  models.EmployeePageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.EmployeeInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  models.EmployeeRequestLogin:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.EmployeeRequestPassword:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.EmployeeRequestUpdate:
+    properties:
+      name:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      username:
+        type: string
+    type: object
   models.Image:
     properties:
       uri:
@@ -2046,6 +2110,145 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
+  /employee:
+    get:
+      consumes:
+      - application/json
+      description: List Employee
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.EmployeePageResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Employee
+    post:
+      consumes:
+      - application/json
+      description: For Create Employee
+      parameters:
+      - description: Register Employee
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.Employee'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      summary: Create Employee
+      tags:
+      - Employee
+  /employee/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update Employee
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Employee
+        in: body
+        name: Employee
+        required: true
+        schema:
+          $ref: '#/definitions/models.EmployeeRequestUpdate'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      summary: Update Employee
+      tags:
+      - Employee
+  /employee/password/{id}:
+    put:
+      consumes:
+      - application/json
+      description: For User Register Application
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Register Employee
+        in: body
+        name: Employee
+        required: true
+        schema:
+          $ref: '#/definitions/models.EmployeeRequestPassword'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      summary: Register An Account
+      tags:
+      - Employee
+  /employee/whois:
+    post:
+      consumes:
+      - application/json
+      description: Validate Employee
+      parameters:
+      - description: EmployeeUserPassword
+        in: body
+        name: EmployeeUserPassword
+        required: true
+        schema:
+          $ref: '#/definitions/models.EmployeeRequestLogin'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.EmployeeInfo'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Employee
   /import/category:
     delete:
       consumes:

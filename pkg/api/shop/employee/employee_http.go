@@ -30,13 +30,22 @@ func NewEmployeeHttp(ms *microservice.Microservice, cfg microservice.IConfig) Em
 }
 
 func (h EmployeeHttp) RouteSetup() {
-	h.ms.POST("/employee/login", h.Login)
+	h.ms.POST("/employee/whois", h.Login)
 	h.ms.POST("/employee", h.Register)
 	h.ms.GET("/employee", h.SearchEmployee)
 	h.ms.PUT("/employee", h.Update)
 	h.ms.PUT("/employee/password", h.UpdatePassword)
 }
 
+// Validate Employee godoc
+// @Description Validate Employee
+// @Tags		Employee
+// @Param		EmployeeUserPassword  body      models.EmployeeRequestLogin  true  "EmployeeUserPassword"
+// @Accept 		json
+// @Success		201	{object}	models.EmployeeInfo
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /employee/whois [post]
 func (h EmployeeHttp) Login(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	input := ctx.ReadInput()
@@ -63,6 +72,15 @@ func (h EmployeeHttp) Login(ctx microservice.IContext) error {
 	return nil
 }
 
+// Create Employee godoc
+// @Summary		Create Employee
+// @Description	For Create Employee
+// @Tags		Employee
+// @Param		User  body      models.Employee  true  "Register Employee"
+// @Success		200	{object}	models.ResponseSuccessWithID
+// @Failure		400 {object}	models.AuthResponseFailed
+// @Accept 		json
+// @Router		/employee [post]
 func (h EmployeeHttp) Register(ctx microservice.IContext) error {
 	userAuthInfo := ctx.UserInfo()
 	authUsername := userAuthInfo.Username
@@ -95,6 +113,16 @@ func (h EmployeeHttp) Register(ctx microservice.IContext) error {
 	return nil
 }
 
+// Update Employee godoc
+// @Summary		Update Employee
+// @Description	Update Employee
+// @Tags		Employee
+// @Param		id  path      string  true  "Employee ID"
+// @Param		Employee  body      models.EmployeeRequestUpdate  true  "Employee"
+// @Success		200	{object}	models.ResponseSuccess
+// @Failure		400 {object}	models.AuthResponseFailed
+// @Accept 		json
+// @Router		/employee/{id} [put]
 func (h EmployeeHttp) Update(ctx microservice.IContext) error {
 	userAuthInfo := ctx.UserInfo()
 	authUsername := userAuthInfo.Username
@@ -126,6 +154,16 @@ func (h EmployeeHttp) Update(ctx microservice.IContext) error {
 	return nil
 }
 
+// Register Employee godoc
+// @Summary		Register An Account
+// @Description	For User Register Application
+// @Tags		Employee
+// @Param		id  path      string  true  "Employee ID"
+// @Param		Employee  body      models.EmployeeRequestPassword  true  "Register Employee"
+// @Success		200	{object}	models.ResponseSuccess
+// @Failure		400 {object}	models.AuthResponseFailed
+// @Accept 		json
+// @Router		/employee/password/{id} [put]
 func (h EmployeeHttp) UpdatePassword(ctx microservice.IContext) error {
 	userAuthInfo := ctx.UserInfo()
 	authUsername := userAuthInfo.Username
@@ -158,6 +196,17 @@ func (h EmployeeHttp) UpdatePassword(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Employee godoc
+// @Description List Employee
+// @Tags		Employee
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Size"
+// @Accept 		json
+// @Success		200	{array}	models.EmployeePageResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /employee [get]
 func (h EmployeeHttp) SearchEmployee(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
