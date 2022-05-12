@@ -23,25 +23,23 @@ type IKitchenRepository interface {
 }
 
 type KitchenRepository struct {
-	pst          microservice.IPersisterMongo
-	crudRepo     repositories.CrudRepository[restaurant.KitchenDoc]
-	searchRepo   repositories.SearchRepository[restaurant.KitchenInfo]
-	guidRepo     repositories.GuidRepository[restaurant.KitchenItemGuid]
-	activityRepo repositories.ActivityRepository[restaurant.KitchenActivity, restaurant.KitchenDeleteActivity]
+	pst microservice.IPersisterMongo
+	repositories.CrudRepository[restaurant.KitchenDoc]
+	repositories.SearchRepository[restaurant.KitchenInfo]
+	repositories.GuidRepository[restaurant.KitchenItemGuid]
+	repositories.ActivityRepository[restaurant.KitchenActivity, restaurant.KitchenDeleteActivity]
 }
 
 func NewKitchenRepository(pst microservice.IPersisterMongo) KitchenRepository {
 
-	crudRepo := repositories.NewCrudRepository[restaurant.KitchenDoc](pst)
-	searchRepo := repositories.NewSearchRepository[restaurant.KitchenInfo](pst)
-	guidRepo := repositories.NewGuidRepository[restaurant.KitchenItemGuid](pst)
-	activityRepo := repositories.NewActivityRepository[restaurant.KitchenActivity, restaurant.KitchenDeleteActivity](pst)
-
-	return KitchenRepository{
-		pst:          pst,
-		crudRepo:     crudRepo,
-		searchRepo:   searchRepo,
-		guidRepo:     guidRepo,
-		activityRepo: activityRepo,
+	insRepo := KitchenRepository{
+		pst: pst,
 	}
+
+	insRepo.CrudRepository = repositories.NewCrudRepository[restaurant.KitchenDoc](pst)
+	insRepo.SearchRepository = repositories.NewSearchRepository[restaurant.KitchenInfo](pst)
+	insRepo.GuidRepository = repositories.NewGuidRepository[restaurant.KitchenItemGuid](pst)
+	insRepo.ActivityRepository = repositories.NewActivityRepository[restaurant.KitchenActivity, restaurant.KitchenDeleteActivity](pst)
+
+	return insRepo
 }

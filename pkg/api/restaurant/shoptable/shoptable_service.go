@@ -46,7 +46,7 @@ func (svc ShopTableService) CreateShopTable(shopID string, authUsername string, 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err := svc.repo.crudRepo.Create(docData)
+	_, err := svc.repo.Create(docData)
 
 	if err != nil {
 		return "", err
@@ -56,7 +56,7 @@ func (svc ShopTableService) CreateShopTable(shopID string, authUsername string, 
 
 func (svc ShopTableService) UpdateShopTable(guid string, shopID string, authUsername string, doc restaurant.ShopTable) error {
 
-	findDoc, err := svc.repo.crudRepo.FindByGuid(shopID, guid)
+	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return err
@@ -71,7 +71,7 @@ func (svc ShopTableService) UpdateShopTable(guid string, shopID string, authUser
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.crudRepo.Update(guid, findDoc)
+	err = svc.repo.Update(guid, findDoc)
 
 	if err != nil {
 		return err
@@ -80,7 +80,7 @@ func (svc ShopTableService) UpdateShopTable(guid string, shopID string, authUser
 }
 
 func (svc ShopTableService) DeleteShopTable(guid string, shopID string, authUsername string) error {
-	err := svc.repo.crudRepo.Delete(shopID, guid, authUsername)
+	err := svc.repo.Delete(shopID, guid, authUsername)
 
 	if err != nil {
 		return err
@@ -90,7 +90,7 @@ func (svc ShopTableService) DeleteShopTable(guid string, shopID string, authUser
 
 func (svc ShopTableService) InfoShopTable(guid string, shopID string) (restaurant.ShopTableInfo, error) {
 
-	findDoc, err := svc.repo.crudRepo.FindByGuid(shopID, guid)
+	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return restaurant.ShopTableInfo{}, err
@@ -113,7 +113,7 @@ func (svc ShopTableService) SearchShopTable(shopID string, q string, page int, l
 		searchCols = append(searchCols, fmt.Sprintf("name%d", (i+1)))
 	}
 
-	docList, pagination, err := svc.repo.searchRepo.FindPage(shopID, searchCols, q, page, limit)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
 
 	if err != nil {
 		return []restaurant.ShopTableInfo{}, pagination, err
@@ -131,7 +131,7 @@ func (svc ShopTableService) LastActivity(shopID string, lastUpdatedDate time.Tim
 	var err1 error
 
 	go func() {
-		deleteDocList, pagination1, err1 = svc.repo.activityRepo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
+		deleteDocList, pagination1, err1 = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
 		wg.Done()
 	}()
 
@@ -141,7 +141,7 @@ func (svc ShopTableService) LastActivity(shopID string, lastUpdatedDate time.Tim
 	var err2 error
 
 	go func() {
-		createAndUpdateDocList, pagination2, err2 = svc.repo.activityRepo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
+		createAndUpdateDocList, pagination2, err2 = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
 		wg.Done()
 	}()
 
@@ -181,7 +181,7 @@ func (svc ShopTableService) SaveInBatch(shopID string, authUsername string, data
 		itemCodeGuidList = append(itemCodeGuidList, doc.Number)
 	}
 
-	findItemGuid, err := svc.repo.guidRepo.FindInItemGuid(shopID, "code", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "code", itemCodeGuidList)
 
 	if err != nil {
 		return models.BulkImport{}, err
@@ -221,7 +221,7 @@ func (svc ShopTableService) SaveInBatch(shopID string, authUsername string, data
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (restaurant.ShopTableDoc, error) {
-			return svc.repo.crudRepo.FindByGuid(shopID, guid)
+			return svc.repo.FindByGuid(shopID, guid)
 		},
 		func(doc restaurant.ShopTableDoc) bool {
 			return false
@@ -233,7 +233,7 @@ func (svc ShopTableService) SaveInBatch(shopID string, authUsername string, data
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.crudRepo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(createDataList)
 
 		if err != nil {
 			return models.BulkImport{}, err
