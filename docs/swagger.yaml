@@ -1002,6 +1002,12 @@ definitions:
         items:
           $ref: '#/definitions/models.CreditCardPayment'
         type: array
+      transfer:
+        type: number
+      transferdetails:
+        items:
+          $ref: '#/definitions/models.TransferPayment'
+        type: array
     type: object
   models.Purchase:
     properties:
@@ -1195,6 +1201,10 @@ definitions:
         items:
           $ref: '#/definitions/models.SaleinvoiceDetail'
         type: array
+      localdate:
+        type: string
+      localtime:
+        type: string
       member:
         $ref: '#/definitions/models.Member'
       payment:
@@ -1315,6 +1325,10 @@ definitions:
         items:
           $ref: '#/definitions/models.SaleinvoiceDetail'
         type: array
+      localdate:
+        type: string
+      localtime:
+        type: string
       member:
         $ref: '#/definitions/models.Member'
       payment:
@@ -1369,6 +1383,13 @@ definitions:
       myguid:
         type: string
       tablecode:
+        type: string
+    type: object
+  models.TransferPayment:
+    properties:
+      amount:
+        type: number
+      bankcode:
         type: string
     type: object
   models.UserProfile:

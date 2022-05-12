@@ -5575,6 +5575,15 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.CreditCardPayment"
                     }
+                },
+                "transfer": {
+                    "type": "number"
+                },
+                "transferdetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TransferPayment"
+                    }
                 }
             }
         },
@@ -5866,6 +5875,12 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.SaleinvoiceDetail"
                     }
                 },
+                "localdate": {
+                    "type": "string"
+                },
+                "localtime": {
+                    "type": "string"
+                },
                 "member": {
                     "$ref": "#/definitions/models.Member"
                 },
@@ -6044,6 +6059,12 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.SaleinvoiceDetail"
                     }
                 },
+                "localdate": {
+                    "type": "string"
+                },
+                "localtime": {
+                    "type": "string"
+                },
                 "member": {
                     "$ref": "#/definitions/models.Member"
                 },
@@ -6127,6 +6148,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "tablecode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.TransferPayment": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "bankcode": {
                     "type": "string"
                 }
             }
