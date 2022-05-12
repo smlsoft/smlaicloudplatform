@@ -21,12 +21,14 @@ type Saleinvoice struct {
 	DiscountAmount float64              `json:"discountamount" bson:"discountamount" `
 	SumAmount      float64              `json:"sumamount" bson:"sumamount" `
 	Payment        Payment              `json:"payment" bson:"payment"`
+	LocalDate      string               `json:"localdate" bson:"localdate"`
+	LocalTime      string               `json:"localtime" bson:"localtime"`
 }
 
 type SaleinvoiceDetail struct {
 	LineNumber     int `json:"linenumber" bson:"linenumber"`
 	InventoryInfo  `bson:"inline" gorm:"embedded;"`
-	Price          float64 `json:"price" bson:"price" `
+	Price          float64 `json:"price" bson:"price"`
 	Qty            float64 `json:"qty" bson:"qty" `
 	DiscountAmount float64 `json:"discountamount" bson:"discountamount"`
 	DiscountText   string  `json:"discounttext" bson:"discounttext"`
