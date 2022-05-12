@@ -50,3 +50,9 @@ type EmployeeRequestPassword struct {
 	Username string `json:"username" bson:"username"`
 	Password string `json:"password" bson:"password"`
 }
+
+type EmployeePageResponse struct {
+	Success    bool                   `json:"success"`
+	Data       []EmployeeInfo         `json:"data,omitempty"`
+	Pagination PaginationDataResponse `json:"pagination,omitempty"`
+}
