@@ -64,3 +64,15 @@ make runswagger
 ```
 
 ```
+
+
+# FOR M1 Run Please Read
+
+```
+brew install opensslß
+brew install librdkafka
+brew install pkg-config
+export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig"
+go build --tags dynamic main.go
+
+```
