@@ -60,3 +60,11 @@ docker_build_api_dev:
 run_app_dev:
 	swag init
 	go run main.go
+
+run_m1_local_appdev:
+	swag init
+	PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" go run --tags dynamic main.go
+
+run_m1_stagging_appdev:
+	swag init
+	PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" MODE=staging go run --tags dynamic main.go
