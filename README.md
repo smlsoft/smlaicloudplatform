@@ -76,3 +76,10 @@ export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig"
 go build --tags dynamic main.go
 
 ```
+
+
+## FOR M1 Build Docker and push
+```
+docker buildx create --use
+docker buildx build --platform linux/amd64 --push -t <tag_to_push> .
+```
