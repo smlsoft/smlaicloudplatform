@@ -377,6 +377,11 @@
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
                 "description": "For Create Employee",
                 "consumes": [
                     "application/json"
@@ -414,6 +419,11 @@
         },
         "/employee/password/{id}": {
             "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
                 "description": "For User Register Application",
                 "consumes": [
                     "application/json"
@@ -499,6 +509,11 @@
         },
         "/employee/{id}": {
             "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
                 "description": "Update Employee",
                 "consumes": [
                     "application/json"

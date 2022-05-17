@@ -2184,6 +2184,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
       summary: Create Employee
       tags:
       - Employee
@@ -2213,6 +2215,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
       summary: Update Employee
       tags:
       - Employee
@@ -2242,6 +2246,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
       summary: Register An Account
       tags:
       - Employee

@@ -383,6 +383,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
                 "description": "For Create Employee",
                 "consumes": [
                     "application/json"
@@ -420,6 +425,11 @@ const docTemplate = `{
         },
         "/employee/password/{id}": {
             "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
                 "description": "For User Register Application",
                 "consumes": [
                     "application/json"
@@ -505,6 +515,11 @@ const docTemplate = `{
         },
         "/employee/{id}": {
             "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
                 "description": "Update Employee",
                 "consumes": [
                     "application/json"

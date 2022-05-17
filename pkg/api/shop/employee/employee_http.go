@@ -80,6 +80,7 @@ func (h EmployeeHttp) Login(ctx microservice.IContext) error {
 // @Success		200	{object}	models.ResponseSuccessWithID
 // @Failure		400 {object}	models.AuthResponseFailed
 // @Accept 		json
+// @Security     AccessToken
 // @Router		/employee [post]
 func (h EmployeeHttp) Register(ctx microservice.IContext) error {
 	userAuthInfo := ctx.UserInfo()
@@ -122,6 +123,7 @@ func (h EmployeeHttp) Register(ctx microservice.IContext) error {
 // @Success		200	{object}	models.ResponseSuccess
 // @Failure		400 {object}	models.AuthResponseFailed
 // @Accept 		json
+// @Security     AccessToken
 // @Router		/employee/{id} [put]
 func (h EmployeeHttp) Update(ctx microservice.IContext) error {
 	userAuthInfo := ctx.UserInfo()
@@ -163,6 +165,7 @@ func (h EmployeeHttp) Update(ctx microservice.IContext) error {
 // @Success		200	{object}	models.ResponseSuccess
 // @Failure		400 {object}	models.AuthResponseFailed
 // @Accept 		json
+// @Security     AccessToken
 // @Router		/employee/password/{id} [put]
 func (h EmployeeHttp) UpdatePassword(ctx microservice.IContext) error {
 	userAuthInfo := ctx.UserInfo()

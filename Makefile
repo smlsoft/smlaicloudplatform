@@ -68,3 +68,8 @@ run_m1_local_appdev:
 run_m1_stagging_appdev:
 	swag init
 	PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" MODE=staging go run --tags dynamic main.go
+
+docker_m1_build_api_dev:
+	swag init
+	docker build -t smlsoft/smlcloudplatform:apidev .
+	docker push smlsoft/smlcloudplatform:apidev
