@@ -29,18 +29,18 @@ func NewEmployeeRepository(pst microservice.IPersisterMongo) EmployeeRepository 
 func (r EmployeeRepository) FindEmployeeByShopIDPage(shopID string, q string, page int, limit int) ([]models.EmployeeInfo, paginate.PaginationData, error) {
 
 	docList := []models.EmployeeInfo{}
-	pagination, err := r.pst.FindPage(&models.InventoryInfo{}, limit, page, bson.M{
+	pagination, err := r.pst.FindPage(&models.EmployeeInfo{}, limit, page, bson.M{
 		"shopid": shopID,
-		"$or": []interface{}{
-			bson.M{"username": bson.M{"$regex": primitive.Regex{
-				Pattern: ".*" + q + ".*",
-				Options: "",
-			}}},
-			bson.M{"name": bson.M{"$regex": primitive.Regex{
-				Pattern: ".*" + q + ".*",
-				Options: "",
-			}}},
-		},
+		// "$or": []interface{}{
+		// 	bson.M{"username": bson.M{"$regex": primitive.Regex{
+		// 		Pattern: ".*" + q + ".*",
+		// 		Options: "",
+		// 	}}},
+		// 	bson.M{"name": bson.M{"$regex": primitive.Regex{
+		// 		Pattern: ".*" + q + ".*",
+		// 		Options: "",
+		// 	}}},
+		// },
 	}, &docList)
 
 	if err != nil {

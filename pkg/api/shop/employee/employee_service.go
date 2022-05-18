@@ -11,7 +11,7 @@ import (
 )
 
 type IEmployeeService interface {
-	Login(shopID string, loginReq models.EmployeeRequestLogin) (string, error)
+	Login(loginReq models.EmployeeRequestLogin) (string, error)
 	Register(shopID string, authUsername string, emp models.Employee) (string, error)
 	List(shopID string, q string, page int, limit int) ([]models.EmployeeInfo, paginate.PaginationData, error)
 	Update(shopID string, authUsername string, emp models.EmployeeRequestUpdate) error
@@ -28,11 +28,11 @@ func NewEmployeeService(empRepo IEmployeeRepository) EmployeeService {
 	}
 }
 
-func (svc EmployeeService) Login(shopID string, loginReq models.EmployeeRequestLogin) (string, error) {
+func (svc EmployeeService) Login(loginReq models.EmployeeRequestLogin) (string, error) {
 
 	loginReq.Username = strings.TrimSpace(loginReq.Username)
 
-	findUser, err := svc.empRepo.FindEmployeeByUsername(shopID, loginReq.Username)
+	findUser, err := svc.empRepo.FindEmployeeByUsername(loginReq.ShopID, loginReq.Username)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return "", errors.New("auth: database connect error")
@@ -48,7 +48,13 @@ func (svc EmployeeService) Login(shopID string, loginReq models.EmployeeRequestL
 		return "", errors.New("password is not invalid")
 	}
 
-	return findUser.Username, nil
+	authToken := utils.NewGUID()
+
+	//
+	// Implement employee token
+	//
+
+	return authToken, nil
 }
 
 func (svc EmployeeService) Register(shopID string, authUsername string, emp models.Employee) (string, error) {

@@ -38,7 +38,7 @@ func (h EmployeeHttp) RouteSetup() {
 }
 
 func (h EmployeeHttp) Login(ctx microservice.IContext) error {
-	authUsername := ctx.UserInfo().Username
+
 	input := ctx.ReadInput()
 
 	userReq := &models.EmployeeRequestLogin{}
@@ -49,7 +49,7 @@ func (h EmployeeHttp) Login(ctx microservice.IContext) error {
 		return err
 	}
 
-	_, err = h.empService.Login(authUsername, *userReq)
+	authToken, err := h.empService.Login(*userReq)
 
 	if err != nil {
 		ctx.ResponseError(400, "login failed.")
@@ -58,6 +58,7 @@ func (h EmployeeHttp) Login(ctx microservice.IContext) error {
 
 	ctx.Response(http.StatusOK, models.AuthResponse{
 		Success: true,
+		Token:   authToken,
 	})
 
 	return nil
