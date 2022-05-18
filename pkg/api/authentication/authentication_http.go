@@ -99,7 +99,7 @@ func (h AuthenticationHttp) Login(ctx microservice.IContext) error {
 	return nil
 }
 
-// RegisterMember register
+// Register Member godoc
 // @Summary		Register An Account
 // @Description	For User Register Application
 // @Tags		Authentication
