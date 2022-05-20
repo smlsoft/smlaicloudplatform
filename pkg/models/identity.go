@@ -12,3 +12,7 @@ type ShopIdentity struct {
 type DocIdentity struct {
 	GuidFixed string `json:"guidfixed" bson:"guidfixed" gorm:"guidfixed;primaryKey"`
 }
+
+type PartitionIdentity struct {
+	ParID string `json:"parid"  gorm:"parid"`
+}
