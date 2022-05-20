@@ -3,12 +3,13 @@ package repositories
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models/restaurant"
+	"smlcloudplatform/pkg/models/vfgl"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type ICrudRepo interface {
-	restaurant.ShopZoneDoc | restaurant.ShopTableDoc | restaurant.PrinterTerminalDoc | restaurant.KitchenDoc
+	restaurant.ShopZoneDoc | restaurant.ShopTableDoc | restaurant.PrinterTerminalDoc | restaurant.KitchenDoc | vfgl.JournalDoc
 }
 type CrudRepository[T ICrudRepo] struct {
 	pst microservice.IPersisterMongo

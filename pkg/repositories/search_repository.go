@@ -3,6 +3,7 @@ package repositories
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models/restaurant"
+	"smlcloudplatform/pkg/models/vfgl"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
@@ -10,7 +11,7 @@ import (
 )
 
 type ISearchRepo interface {
-	restaurant.ShopZoneInfo | restaurant.ShopTableInfo | restaurant.PrinterTerminalInfo | restaurant.KitchenInfo
+	restaurant.ShopZoneInfo | restaurant.ShopTableInfo | restaurant.PrinterTerminalInfo | restaurant.KitchenInfo | vfgl.JournalInfo
 }
 
 type SearchRepository[T ISearchRepo] struct {

@@ -4,12 +4,13 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/restaurant"
+	"smlcloudplatform/pkg/models/vfgl"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IGuidRepo interface {
-	models.CategoryItemGuid | restaurant.ShopZoneItemGuid | restaurant.ShopTableItemGuid | restaurant.PrinterTerminalItemGuid | restaurant.KitchenItemGuid
+	models.CategoryItemGuid | restaurant.ShopZoneItemGuid | restaurant.ShopTableItemGuid | restaurant.PrinterTerminalItemGuid | restaurant.KitchenItemGuid | vfgl.JournalItemGuid
 }
 
 type GuidRepository[T IGuidRepo] struct {

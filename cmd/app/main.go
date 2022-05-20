@@ -22,6 +22,7 @@ import (
 	"smlcloudplatform/pkg/api/shop/employee"
 	"smlcloudplatform/pkg/api/syncdata"
 	"smlcloudplatform/pkg/api/tools"
+	"smlcloudplatform/pkg/vfgl/journal"
 
 	_ "net/http/pprof"
 
@@ -112,6 +113,9 @@ func main() {
 
 	kitchenhttp := kitchen.NewKitchenHttp(ms, cfg)
 	kitchenhttp.RouteSetup()
+
+	journalhttp := journal.NewJournalHttp(ms, cfg)
+	journalhttp.RouteSetup()
 
 	toolSvc := tools.NewToolsService(ms, cfg)
 
