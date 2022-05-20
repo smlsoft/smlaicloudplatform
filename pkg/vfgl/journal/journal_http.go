@@ -43,15 +43,15 @@ func (h JournalHttp) RouteSetup() {
 	h.ms.DELETE("/journal/:id", h.DeleteJournal)
 }
 
-// Create Restaurant Journal godoc
-// @Description Restaurant Journal
-// @Tags		Restaurant
+// Create Journal godoc
+// @Description Journal
+// @Tags		GL
 // @Param		Journal  body      vfgl.Journal  true  "Journal"
 // @Accept 		json
 // @Success		200	{object}	models.ResponseSuccessWithID
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /vfgl/kitchen [post]
+// @Router /journal [post]
 func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
@@ -79,16 +79,16 @@ func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
 	return nil
 }
 
-// Update Restaurant Journal godoc
-// @Description Restaurant Journal
-// @Tags		Restaurant
+// Update Journal godoc
+// @Description Journal
+// @Tags		GL
 // @Param		id  path      string  true  "Journal ID"
 // @Param		Journal  body      vfgl.Journal  true  "Journal"
 // @Accept 		json
 // @Success		200	{object}	models.ResponseSuccessWithID
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /vfgl/kitchen/{id} [put]
+// @Router /journal/{id} [put]
 func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -120,15 +120,15 @@ func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete Restaurant Journal godoc
-// @Description Restaurant Journal
-// @Tags		Restaurant
+// Delete Journal godoc
+// @Description Journal
+// @Tags		GL
 // @Param		id  path      string  true  "Journal ID"
 // @Accept 		json
 // @Success		200	{object}	models.ResponseSuccessWithID
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /vfgl/kitchen/{id} [delete]
+// @Router /journal/{id} [delete]
 func (h JournalHttp) DeleteJournal(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -151,15 +151,15 @@ func (h JournalHttp) DeleteJournal(ctx microservice.IContext) error {
 	return nil
 }
 
-// Get Restaurant Journal Infomation godoc
-// @Description Get Restaurant Journal
-// @Tags		Restaurant
+// Get Journal Infomation godoc
+// @Description Get Journal
+// @Tags		GL
 // @Param		id  path      string  true  "Journal Id"
 // @Accept 		json
 // @Success		200	{object}	vfgl.JournalInfoResponse
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /vfgl/kitchen/{id} [get]
+// @Router /journal/{id} [get]
 func (h JournalHttp) InfoJournal(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -182,9 +182,9 @@ func (h JournalHttp) InfoJournal(ctx microservice.IContext) error {
 	return nil
 }
 
-// List Restaurant Journal godoc
-// @Description List Restaurant Journal Category
-// @Tags		Restaurant
+// List Journal godoc
+// @Description List Journal Category
+// @Tags		GL
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
@@ -192,7 +192,7 @@ func (h JournalHttp) InfoJournal(ctx microservice.IContext) error {
 // @Success		200	{object}	vfgl.JournalPageResponse
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /vfgl/kitchen [get]
+// @Router /journal [get]
 func (h JournalHttp) SearchJournal(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -225,13 +225,13 @@ func (h JournalHttp) SearchJournal(ctx microservice.IContext) error {
 
 // Create Journal Bulk godoc
 // @Description Create Journal
-// @Tags		Restaurant
+// @Tags		GL
 // @Param		Journal  body      []vfgl.Journal  true  "Journal"
 // @Accept 		json
 // @Success		201	{object}	models.BulkInsertResponse
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /vfgl/kitchen/bulk [post]
+// @Router /journal/bulk [post]
 func (h JournalHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()

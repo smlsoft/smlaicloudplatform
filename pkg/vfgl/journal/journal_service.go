@@ -51,6 +51,12 @@ func (svc JournalService) CreateJournal(shopID string, authUsername string, doc 
 	if err != nil {
 		return "", err
 	}
+
+	svc.mqRepo.Create(docData)
+
+	if err != nil {
+		return "", err
+	}
 	return newGuidFixed, nil
 }
 
@@ -169,13 +175,24 @@ func (svc JournalService) SaveInBatch(shopID string, authUsername string, dataLi
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (vfgl.JournalDoc, error) {
-			return svc.repo.FindByGuid(shopID, guid)
+			return svc.repo.FindByDocIndentiryGuid(shopID, "docno", guid)
 		},
 		func(doc vfgl.JournalDoc) bool {
+			if doc.Docno != "" {
+				return true
+			}
 			return false
 		},
 		func(shopID string, authUsername string, data vfgl.Journal, doc vfgl.JournalDoc) error {
 
+			doc.Journal = data
+			doc.UpdatedBy = authUsername
+			doc.UpdatedAt = time.Now()
+
+			err = svc.repo.Update(doc.GuidFixed, doc)
+			if err != nil {
+				return nil
+			}
 			return nil
 		},
 	)
@@ -193,6 +210,7 @@ func (svc JournalService) SaveInBatch(shopID string, authUsername string, dataLi
 			return models.BulkImport{}, err
 		}
 	}
+
 	createDataKey := []string{}
 
 	for _, doc := range createDataList {
@@ -206,6 +224,7 @@ func (svc JournalService) SaveInBatch(shopID string, authUsername string, dataLi
 
 	updateDataKey := []string{}
 	for _, doc := range updateSuccessDataList {
+		svc.mqRepo.Update(doc)
 		updateDataKey = append(updateDataKey, doc.Docno)
 	}
 

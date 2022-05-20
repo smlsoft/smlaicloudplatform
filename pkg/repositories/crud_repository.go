@@ -88,3 +88,16 @@ func (repo CrudRepository[T]) FindByGuid(shopID string, guid string) (T, error) 
 
 	return *doc, nil
 }
+
+func (repo CrudRepository[T]) FindByDocIndentiryGuid(shopID string, indentityField string, guid string) (T, error) {
+
+	doc := new(T)
+
+	err := repo.pst.FindOne(new(T), bson.M{indentityField: guid, "shopid": shopID, "deletedat": bson.M{"$exists": false}}, doc)
+
+	if err != nil {
+		return *new(T), err
+	}
+
+	return *doc, nil
+}

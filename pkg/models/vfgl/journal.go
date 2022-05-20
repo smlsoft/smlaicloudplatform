@@ -13,7 +13,7 @@ type Journal struct {
 	models.PartitionIdentity `bson:"inline"`
 	BatchID                  string          `json:"batchId" bson:"batch"`
 	Docno                    string          `json:"docno" bson:"docno"`
-	DocDate                  time.Time       `json:"docdate" bson:"docdate"`
+	DocDate                  time.Time       `json:"docdate" bson:"docdate" format:"dateTime"`
 	AccountPeriod            int16           `json:"accountperiod" bson:"accountperiod"`
 	AccountYear              int16           `json:"accountyear" bson:"accountyear"`
 	AccountGroup             string          `json:"accountgroup" bson:"accountgroup"`
@@ -101,7 +101,7 @@ type JournalDetailPg struct {
 	Docno                    string `json:"docno" gorm:"column:docno;primaryKey"`
 	models.ShopIdentity      `gorm:"embedded;"`
 	models.PartitionIdentity `gorm:"embedded;"`
-	AccountCode              string  `json:"accountcode" gorm:"column:accountcode"`
+	AccountCode              string  `json:"accountcode" gorm:"column:accountcode;primaryKey"`
 	AccountName              string  `json:"accountname" gorm:"column:accountname"`
 	DebitAmount              float64 `json:"debitamount" gorm:"column:debitamount"`
 	CreditAmount             float64 `json:"creditamount" gorm:"column:creditamount"`
@@ -109,4 +109,15 @@ type JournalDetailPg struct {
 
 func (JournalDetailPg) TableName() string {
 	return "journals_detail"
+}
+
+type JournalInfoResponse struct {
+	Success bool        `json:"success"`
+	Data    JournalInfo `json:"data,omitempty"`
+}
+
+type JournalPageResponse struct {
+	Success    bool                          `json:"success"`
+	Data       []JournalInfo                 `json:"data,omitempty"`
+	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
 }

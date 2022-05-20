@@ -15,7 +15,7 @@ func StartMigrateModel(ms *microservice.Microservice, cfg microservice.IConfig) 
 	// 	return err
 	// }
 
-	pst.DropTable(vfgl.JournalPg{}, vfgl.JournalDetailPg{})
+	// pst.DropTable(vfgl.JournalPg{}, vfgl.JournalDetailPg{})
 
 	pst.AutoMigrate(
 		// &saleinvoice.SaleInvoiceTable{},

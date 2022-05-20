@@ -12,7 +12,6 @@ import (
 	"smlcloudplatform/pkg/api/inventoryimport"
 	"smlcloudplatform/pkg/api/inventorysearchconsumer"
 	"smlcloudplatform/pkg/api/member"
-	"smlcloudplatform/pkg/api/migration"
 	"smlcloudplatform/pkg/api/purchase"
 	"smlcloudplatform/pkg/api/restaurant/kitchen"
 	"smlcloudplatform/pkg/api/restaurant/shopprinter"
@@ -21,6 +20,7 @@ import (
 	"smlcloudplatform/pkg/api/saleinvoice"
 	"smlcloudplatform/pkg/api/shop"
 	"smlcloudplatform/pkg/api/shop/employee"
+	"smlcloudplatform/pkg/vfgl/journal"
 
 	"github.com/joho/godotenv"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -116,7 +116,8 @@ func main() {
 		ms.HttpMiddleware(authService.MWFuncWithRedisMixShop(cacher, exceptShopPath, publicPath...))
 		ms.RegisterLivenessProbeEndpoint("/healthz")
 
-		migration.StartMigrateModel(ms, cfg)
+		//migration.StartMigrateModel(ms, cfg)
+		journal.MigrationJournalTable(ms, cfg)
 
 		authHttp := authentication.NewAuthenticationHttp(ms, cfg)
 		authHttp.RouteSetup()
@@ -169,6 +170,9 @@ func main() {
 
 		saleinvoiceHttp := saleinvoice.NewSaleinvoiceHttp(ms, cfg)
 		saleinvoiceHttp.RouteSetup()
+
+		journalhttp := journal.NewJournalHttp(ms, cfg)
+		journalhttp.RouteSetup()
 	}
 
 	if devApiMode == "1" || devApiMode == "2" {
@@ -177,6 +181,9 @@ func main() {
 		inventorysearchconsumer.StartInventorySearchComsumerOnProductDeleted(ms, cfg)
 
 		saleinvoice.StartSaleinvoiceComsumeCreated(ms, cfg)
+
+		journal.StartJournalComsumeCreated(ms, cfg, "99")
+		journal.StartJournalComsumeBlukCreated(ms, cfg, "11")
 	}
 
 	ms.Start()
