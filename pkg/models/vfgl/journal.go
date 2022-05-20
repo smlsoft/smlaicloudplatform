@@ -10,15 +10,16 @@ import (
 const journalCollectionName = "journals"
 
 type Journal struct {
-	BatchID            string          `json:"batchId" bson:"batch"`
-	Docno              string          `json:"docno" bson:"docno"`
-	DocDate            time.Time       `json:"docdate" bson:"docdate"`
-	AccountPeriod      int16           `json:"accountperiod" bson:"accountperiod"`
-	AccountYear        int16           `json:"accountyear" bson:"accountyear"`
-	AccountGroup       string          `json:"accountgroup" bson:"accountgroup"`
-	AccountBook        []JournalDetail `json:"journaldetail" bson:"journaldetail"`
-	Amount             float64         `json:"amount" bson:"amount"`
-	AccountDescription string          `json:"accountdescription" bson:"accountdescription"`
+	models.PartitionIdentity `bson:"inline"`
+	BatchID                  string          `json:"batchId" bson:"batch"`
+	Docno                    string          `json:"docno" bson:"docno"`
+	DocDate                  time.Time       `json:"docdate" bson:"docdate"`
+	AccountPeriod            int16           `json:"accountperiod" bson:"accountperiod"`
+	AccountYear              int16           `json:"accountyear" bson:"accountyear"`
+	AccountGroup             string          `json:"accountgroup" bson:"accountgroup"`
+	AccountBook              []JournalDetail `json:"journaldetail" bson:"journaldetail"`
+	Amount                   float64         `json:"amount" bson:"amount"`
+	AccountDescription       string          `json:"accountdescription" bson:"accountdescription"`
 }
 
 type JournalDetail struct {
@@ -83,7 +84,7 @@ type JournalPg struct {
 	Docno                    string `json:"docno" gorm:"column:docno;primaryKey"`
 	models.ShopIdentity      `gorm:"embedded;"`
 	models.PartitionIdentity `gorm:"embedded;"`
-	BatchID                  string    `json:"barcode" gorm:"column:batchid"`
+	BatchID                  string    `json:"batchid" gorm:"column:batchid"`
 	DocDate                  time.Time `json:"docdate" gorm:"column:docdate"`
 	AccountPeriod            int16     `json:"accountperiod" gorm:"column:accountperiod"`
 	AccountYear              int16     `json:"accountyear" gorm:"column:accountyear"`

@@ -34,10 +34,9 @@ func StartJournalComsumeCreated(ms *microservice.Microservice, cfg microservice.
 
 		pgDocList := []vfgl.JournalPg{}
 		pgDocDetailList := []vfgl.JournalDetailPg{}
-		docDetailList := []vfgl.JournalDetail{}
 
 		for _, doc := range docList {
-			docDetailList = append(docDetailList, doc.AccountBook...)
+
 			tmpJsonDoc, err := json.Marshal(doc)
 
 			if err != nil {
@@ -57,6 +56,28 @@ func StartJournalComsumeCreated(ms *microservice.Microservice, cfg microservice.
 			}
 
 			pgDocList = append(pgDocList, tmpDoc)
+
+			docDetailList := doc.AccountBook
+
+			for _, docDetail := range docDetailList {
+				tmpDocDetail := vfgl.JournalDetailPg{}
+
+				tmpJsonDocDetail, err := json.Marshal(docDetail)
+				if err != nil {
+					ms.Log(moduleName, err.Error())
+				}
+				err = json.Unmarshal([]byte(tmpJsonDocDetail), &tmpDocDetail)
+
+				if err != nil {
+					ms.Log(moduleName, err.Error())
+				}
+
+				tmpDocDetail.ParID = doc.ParID
+				tmpDocDetail.ShopID = doc.ShopID
+				tmpDocDetail.Docno = doc.Docno
+
+				pgDocDetailList = append(pgDocDetailList, tmpDocDetail)
+			}
 		}
 
 		err = pst.CreateInBatch(pgDocList, len(pgDocList))
@@ -65,11 +86,7 @@ func StartJournalComsumeCreated(ms *microservice.Microservice, cfg microservice.
 			ms.Log(moduleName, err.Error())
 		}
 
-		tmpJsonDocDetail, err := json.Marshal(docDetailList)
-		if err != nil {
-			ms.Log(moduleName, err.Error())
-		}
-		err = json.Unmarshal([]byte(tmpJsonDocDetail), &pgDocDetailList)
+		err = pst.CreateInBatch(pgDocDetailList, len(pgDocDetailList))
 
 		if err != nil {
 			ms.Log(moduleName, err.Error())

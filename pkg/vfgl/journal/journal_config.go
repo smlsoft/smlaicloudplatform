@@ -4,7 +4,7 @@ const (
 	MQ_TOPIC_JOURNAL_CREATED      string = "when-journal-created"
 	MQ_TOPIC_JOURNAL_UPDATED      string = "when-journal-updated"
 	MQ_TOPIC_JOURNAL_DELETED      string = "when-journal-deleted"
-	MQ_TOPIC_JOURNAL_BULK_CREATED string = "when-journal-created"
+	MQ_TOPIC_JOURNAL_BULK_CREATED string = "when-journal-bulk-created"
 )
 
 type JournalMessageQueueConfig struct{}
