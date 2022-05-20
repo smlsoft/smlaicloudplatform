@@ -32,7 +32,7 @@ func (svc EmployeeService) Login(shopID string, loginReq models.EmployeeRequestL
 
 	loginReq.Username = strings.TrimSpace(loginReq.Username)
 
-	findUser, err := svc.empRepo.FindEmployeeByUsername(loginReq.ShopID, loginReq.Username)
+	findUser, err := svc.empRepo.FindEmployeeByUsername(shopID, loginReq.Username)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return nil, errors.New("auth: database connect error")

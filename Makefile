@@ -71,5 +71,4 @@ run_m1_stagging_appdev:
 
 docker_m1_build_api_dev:
 	swag init
-	docker build -t smlsoft/smlcloudplatform:apidev .
-	docker push smlsoft/smlcloudplatform:apidev
+	docker buildx build --platform linux/amd64 --push -t smlsoft/smlcloudplatform:apidev .
