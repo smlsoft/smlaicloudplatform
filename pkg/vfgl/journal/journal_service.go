@@ -22,13 +22,15 @@ type IJournalService interface {
 }
 
 type JournalService struct {
-	repo JournalRepository
+	repo   JournalRepository
+	mqRepo JournalMqRepository
 }
 
-func NewJournalService(repo JournalRepository) JournalService {
+func NewJournalService(repo JournalRepository, mqRepo JournalMqRepository) JournalService {
 
 	return JournalService{
-		repo: repo,
+		repo:   repo,
+		mqRepo: mqRepo,
 	}
 }
 
@@ -45,6 +47,12 @@ func (svc JournalService) CreateJournal(shopID string, authUsername string, doc 
 	docData.CreatedAt = time.Now()
 
 	_, err := svc.repo.Create(docData)
+
+	if err != nil {
+		return "", err
+	}
+
+	svc.mqRepo.Create(docData)
 
 	if err != nil {
 		return "", err
@@ -121,10 +129,10 @@ func (svc JournalService) SaveInBatch(shopID string, authUsername string, dataLi
 	createDataList := []vfgl.JournalDoc{}
 	duplicateDataList := []vfgl.Journal{}
 
-	payloadCategoryList, payloadDuplicateCategoryList := importdata.FilterDuplicate[vfgl.Journal](dataList, svc.getDocIDKey)
+	payloadList, payloadDuplicateList := importdata.FilterDuplicate[vfgl.Journal](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
-	for _, doc := range payloadCategoryList {
+	for _, doc := range payloadList {
 		itemCodeGuidList = append(itemCodeGuidList, doc.Docno)
 	}
 
@@ -143,7 +151,7 @@ func (svc JournalService) SaveInBatch(shopID string, authUsername string, dataLi
 		shopID,
 		authUsername,
 		foundItemGuidList,
-		payloadCategoryList,
+		payloadList,
 		svc.getDocIDKey,
 		func(shopID string, authUsername string, doc vfgl.Journal) vfgl.JournalDoc {
 			newGuid := utils.NewGUID()
@@ -167,13 +175,24 @@ func (svc JournalService) SaveInBatch(shopID string, authUsername string, dataLi
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (vfgl.JournalDoc, error) {
-			return svc.repo.FindByGuid(shopID, guid)
+			return svc.repo.FindByDocIndentiryGuid(shopID, "docno", guid)
 		},
 		func(doc vfgl.JournalDoc) bool {
+			if doc.Docno != "" {
+				return true
+			}
 			return false
 		},
 		func(shopID string, authUsername string, data vfgl.Journal, doc vfgl.JournalDoc) error {
 
+			doc.Journal = data
+			doc.UpdatedBy = authUsername
+			doc.UpdatedAt = time.Now()
+
+			err = svc.repo.Update(doc.GuidFixed, doc)
+			if err != nil {
+				return nil
+			}
 			return nil
 		},
 	)
@@ -184,7 +203,14 @@ func (svc JournalService) SaveInBatch(shopID string, authUsername string, dataLi
 		if err != nil {
 			return models.BulkImport{}, err
 		}
+
+		svc.mqRepo.CreateInBatch(createDataList)
+
+		if err != nil {
+			return models.BulkImport{}, err
+		}
 	}
+
 	createDataKey := []string{}
 
 	for _, doc := range createDataList {
@@ -192,12 +218,13 @@ func (svc JournalService) SaveInBatch(shopID string, authUsername string, dataLi
 	}
 
 	payloadDuplicateDataKey := []string{}
-	for _, doc := range payloadDuplicateCategoryList {
+	for _, doc := range payloadDuplicateList {
 		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.Docno)
 	}
 
 	updateDataKey := []string{}
 	for _, doc := range updateSuccessDataList {
+		svc.mqRepo.Update(doc)
 		updateDataKey = append(updateDataKey, doc.Docno)
 	}
 

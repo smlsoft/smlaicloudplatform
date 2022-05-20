@@ -1312,6 +1312,261 @@ const docTemplate = `{
                 }
             }
         },
+        "/journal": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "List Journal Category",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/vfgl.JournalPageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Journal",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "parameters": [
+                    {
+                        "description": "Journal",
+                        "name": "Journal",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/vfgl.Journal"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/journal/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Journal",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "parameters": [
+                    {
+                        "description": "Journal",
+                        "name": "Journal",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/vfgl.Journal"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkInsertResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/journal/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Journal",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Journal Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/vfgl.JournalInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Journal",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Journal ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Journal",
+                        "name": "Journal",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/vfgl.Journal"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Journal",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Journal ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/list-shop": {
             "get": {
                 "security": [
@@ -4584,6 +4839,9 @@ const docTemplate = `{
                 "password": {
                     "type": "string"
                 },
+                "shopid": {
+                    "type": "string"
+                },
                 "username": {
                     "type": "string"
                 }
@@ -6991,6 +7249,132 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/restaurant.ShopZoneInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "vfgl.Journal": {
+            "type": "object",
+            "properties": {
+                "accountdescription": {
+                    "type": "string"
+                },
+                "accountgroup": {
+                    "type": "string"
+                },
+                "accountperiod": {
+                    "type": "integer"
+                },
+                "accountyear": {
+                    "type": "integer"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "batchId": {
+                    "type": "string"
+                },
+                "docdate": {
+                    "type": "string",
+                    "format": "dateTime"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "journaldetail": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/vfgl.JournalDetail"
+                    }
+                },
+                "parid": {
+                    "type": "string"
+                }
+            }
+        },
+        "vfgl.JournalDetail": {
+            "type": "object",
+            "properties": {
+                "accountcode": {
+                    "type": "string"
+                },
+                "accountname": {
+                    "type": "string"
+                },
+                "creditamount": {
+                    "type": "number"
+                },
+                "debitamount": {
+                    "type": "number"
+                }
+            }
+        },
+        "vfgl.JournalInfo": {
+            "type": "object",
+            "properties": {
+                "accountdescription": {
+                    "type": "string"
+                },
+                "accountgroup": {
+                    "type": "string"
+                },
+                "accountperiod": {
+                    "type": "integer"
+                },
+                "accountyear": {
+                    "type": "integer"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "batchId": {
+                    "type": "string"
+                },
+                "docdate": {
+                    "type": "string",
+                    "format": "dateTime"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "journaldetail": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/vfgl.JournalDetail"
+                    }
+                },
+                "parid": {
+                    "type": "string"
+                }
+            }
+        },
+        "vfgl.JournalInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/vfgl.JournalInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "vfgl.JournalPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/vfgl.JournalInfo"
                     }
                 },
                 "pagination": {

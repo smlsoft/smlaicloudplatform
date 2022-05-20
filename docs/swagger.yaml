@@ -335,6 +335,8 @@ definitions:
     properties:
       password:
         type: string
+      shopid:
+        type: string
       username:
         type: string
     type: object
@@ -1930,6 +1932,89 @@ definitions:
       success:
         type: boolean
     type: object
+  vfgl.Journal:
+    properties:
+      accountdescription:
+        type: string
+      accountgroup:
+        type: string
+      accountperiod:
+        type: integer
+      accountyear:
+        type: integer
+      amount:
+        type: number
+      batchId:
+        type: string
+      docdate:
+        format: dateTime
+        type: string
+      docno:
+        type: string
+      journaldetail:
+        items:
+          $ref: '#/definitions/vfgl.JournalDetail'
+        type: array
+      parid:
+        type: string
+    type: object
+  vfgl.JournalDetail:
+    properties:
+      accountcode:
+        type: string
+      accountname:
+        type: string
+      creditamount:
+        type: number
+      debitamount:
+        type: number
+    type: object
+  vfgl.JournalInfo:
+    properties:
+      accountdescription:
+        type: string
+      accountgroup:
+        type: string
+      accountperiod:
+        type: integer
+      accountyear:
+        type: integer
+      amount:
+        type: number
+      batchId:
+        type: string
+      docdate:
+        format: dateTime
+        type: string
+      docno:
+        type: string
+      guidfixed:
+        type: string
+      journaldetail:
+        items:
+          $ref: '#/definitions/vfgl.JournalDetail'
+        type: array
+      parid:
+        type: string
+    type: object
+  vfgl.JournalInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/vfgl.JournalInfo'
+      success:
+        type: boolean
+    type: object
+  vfgl.JournalPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/vfgl.JournalInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
 info:
   contact:
     email: support@swagger.io
@@ -2741,6 +2826,164 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
+  /journal:
+    get:
+      consumes:
+      - application/json
+      description: List Journal Category
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vfgl.JournalPageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GL
+    post:
+      consumes:
+      - application/json
+      description: Journal
+      parameters:
+      - description: Journal
+        in: body
+        name: Journal
+        required: true
+        schema:
+          $ref: '#/definitions/vfgl.Journal'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GL
+  /journal/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Journal
+      parameters:
+      - description: Journal ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GL
+    get:
+      consumes:
+      - application/json
+      description: Get Journal
+      parameters:
+      - description: Journal Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vfgl.JournalInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GL
+    put:
+      consumes:
+      - application/json
+      description: Journal
+      parameters:
+      - description: Journal ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Journal
+        in: body
+        name: Journal
+        required: true
+        schema:
+          $ref: '#/definitions/vfgl.Journal'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GL
+  /journal/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Journal
+      parameters:
+      - description: Journal
+        in: body
+        name: Journal
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/vfgl.Journal'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkInsertResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GL
   /list-shop:
     get:
       consumes:
