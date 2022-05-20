@@ -19,9 +19,11 @@ type JournalHttp struct {
 
 func NewJournalHttp(ms *microservice.Microservice, cfg microservice.IConfig) JournalHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	prod := ms.Producer(cfg.MQConfig())
 
 	repo := NewJournalRepository(pst)
-	svc := NewJournalService(repo)
+	mqRepo := NewJournalMqRepository(prod)
+	svc := NewJournalService(repo, mqRepo)
 
 	return JournalHttp{
 		ms:  ms,

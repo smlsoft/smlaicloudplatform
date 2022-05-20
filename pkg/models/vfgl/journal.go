@@ -10,6 +10,7 @@ import (
 const journalCollectionName = "journals"
 
 type Journal struct {
+	BatchID            string          `json:"batchId" bson:"batch"`
 	Docno              string          `json:"docno" bson:"docno"`
 	DocDate            time.Time       `json:"docdate" bson:"docdate"`
 	AccountPeriod      int16           `json:"accountperiod" bson:"accountperiod"`
@@ -79,18 +80,32 @@ func (JournalDeleteActivity) CollectionName() string {
 
 // Postgresql model
 type JournalPg struct {
-	Docno              string    `json:"docno" gorm:"docno"`
-	DocDate            time.Time `json:"docdate" gorm:"docdate"`
-	AccountPeriod      int16     `json:"accountperiod" gorm:"accountperiod"`
-	AccountYear        int16     `json:"accountyear" gorm:"accountyear"`
-	AccountGroup       string    `json:"accountgroup" gorm:"accountgroup"`
-	Amount             float64   `json:"amount" gorm:"amount"`
-	AccountDescription string    `json:"accountdescription" gorm:"accountdescription"`
+	Docno                    string `json:"docno" gorm:"column:docno;primaryKey"`
+	models.ShopIdentity      `gorm:"embedded;"`
+	models.PartitionIdentity `gorm:"embedded;"`
+	BatchID                  string    `json:"barcode" gorm:"column:batchid"`
+	DocDate                  time.Time `json:"docdate" gorm:"column:docdate"`
+	AccountPeriod            int16     `json:"accountperiod" gorm:"column:accountperiod"`
+	AccountYear              int16     `json:"accountyear" gorm:"column:accountyear"`
+	AccountGroup             string    `json:"accountgroup" gorm:"column:accountgroup"`
+	Amount                   float64   `json:"amount" gorm:"column:amount"`
+	AccountDescription       string    `json:"accountdescription" gorm:"column:accountdescription"`
+}
+
+func (JournalPg) TableName() string {
+	return "journals"
 }
 
 type JournalDetailPg struct {
-	AccountCode  string  `json:"accountcode" gorm:"accountcode"`
-	AccountName  string  `json:"accountname" gorm:"accountname"`
-	DebitAmount  float64 `json:"debitamount" gorm:"debitamount"`
-	CreditAmount float64 `json:"creditamount" gorm:"creditamount"`
+	Docno                    string `json:"docno" gorm:"column:docno;primaryKey"`
+	models.ShopIdentity      `gorm:"embedded;"`
+	models.PartitionIdentity `gorm:"embedded;"`
+	AccountCode              string  `json:"accountcode" gorm:"column:accountcode"`
+	AccountName              string  `json:"accountname" gorm:"column:accountname"`
+	DebitAmount              float64 `json:"debitamount" gorm:"column:debitamount"`
+	CreditAmount             float64 `json:"creditamount" gorm:"column:creditamount"`
+}
+
+func (JournalDetailPg) TableName() string {
+	return "journals_detail"
 }

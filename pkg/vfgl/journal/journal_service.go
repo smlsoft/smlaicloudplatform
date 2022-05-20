@@ -22,13 +22,15 @@ type IJournalService interface {
 }
 
 type JournalService struct {
-	repo JournalRepository
+	repo   JournalRepository
+	mqRepo JournalMqRepository
 }
 
-func NewJournalService(repo JournalRepository) JournalService {
+func NewJournalService(repo JournalRepository, mqRepo JournalMqRepository) JournalService {
 
 	return JournalService{
-		repo: repo,
+		repo:   repo,
+		mqRepo: mqRepo,
 	}
 }
 
@@ -121,10 +123,10 @@ func (svc JournalService) SaveInBatch(shopID string, authUsername string, dataLi
 	createDataList := []vfgl.JournalDoc{}
 	duplicateDataList := []vfgl.Journal{}
 
-	payloadCategoryList, payloadDuplicateCategoryList := importdata.FilterDuplicate[vfgl.Journal](dataList, svc.getDocIDKey)
+	payloadList, payloadDuplicateList := importdata.FilterDuplicate[vfgl.Journal](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
-	for _, doc := range payloadCategoryList {
+	for _, doc := range payloadList {
 		itemCodeGuidList = append(itemCodeGuidList, doc.Docno)
 	}
 
@@ -143,7 +145,7 @@ func (svc JournalService) SaveInBatch(shopID string, authUsername string, dataLi
 		shopID,
 		authUsername,
 		foundItemGuidList,
-		payloadCategoryList,
+		payloadList,
 		svc.getDocIDKey,
 		func(shopID string, authUsername string, doc vfgl.Journal) vfgl.JournalDoc {
 			newGuid := utils.NewGUID()
@@ -184,6 +186,12 @@ func (svc JournalService) SaveInBatch(shopID string, authUsername string, dataLi
 		if err != nil {
 			return models.BulkImport{}, err
 		}
+
+		svc.mqRepo.CreateInBatch(createDataList)
+
+		if err != nil {
+			return models.BulkImport{}, err
+		}
 	}
 	createDataKey := []string{}
 
@@ -192,7 +200,7 @@ func (svc JournalService) SaveInBatch(shopID string, authUsername string, dataLi
 	}
 
 	payloadDuplicateDataKey := []string{}
-	for _, doc := range payloadDuplicateCategoryList {
+	for _, doc := range payloadDuplicateList {
 		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.Docno)
 	}
 

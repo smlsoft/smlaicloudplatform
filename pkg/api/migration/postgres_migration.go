@@ -2,7 +2,7 @@ package migration
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/models/vfgl"
 )
 
 func StartMigrateModel(ms *microservice.Microservice, cfg microservice.IConfig) error {
@@ -15,7 +15,7 @@ func StartMigrateModel(ms *microservice.Microservice, cfg microservice.IConfig) 
 	// 	return err
 	// }
 
-	// pst.DropTable(models.Trans{}, models.TransItemDetail{})
+	pst.DropTable(vfgl.JournalPg{}, vfgl.JournalDetailPg{})
 
 	pst.AutoMigrate(
 		// &saleinvoice.SaleInvoiceTable{},
@@ -30,8 +30,10 @@ func StartMigrateModel(ms *microservice.Microservice, cfg microservice.IConfig) 
 		// &models.Option{},
 		// &models.Choice{},
 		// &models.InventoryIndex{},
-		models.Trans{},
-		models.TransItemDetail{},
+		// models.Trans{},
+		// models.TransItemDetail{},
+		vfgl.JournalPg{},
+		vfgl.JournalDetailPg{},
 	)
 
 	// pst.AutoMigrate()
