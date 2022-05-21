@@ -24,9 +24,9 @@ func NewJournalReportHttp(ms *microservice.Microservice, cfg microservice.IConfi
 }
 
 func (h JournalReportHttp) RouteSetup() {
-	h.ms.GET("/journal/trialbalancesheetreport", h.ProcessReportTrialBalanceSheet)
-	h.ms.GET("/journal/balancesheetreport", h.ProcessBalanceSheetReport)
-	h.ms.GET("/journal/profitandlostreport", h.ProcessProfitAndLossReport)
+	h.ms.GET("/gl/report/trialbalancesheet", h.ProcessReportTrialBalanceSheet)
+	h.ms.GET("/gl/report/balancesheet", h.ProcessBalanceSheetReport)
+	h.ms.GET("/gl/report/profitandloss", h.ProcessProfitAndLossReport)
 }
 
 // Fetch Update Inventory By Date godoc
@@ -40,7 +40,7 @@ func (h JournalReportHttp) RouteSetup() {
 // @Failure		400 {object} models.AuthResponseFailed
 // @Failure		401 {object} models.AuthResponseFailed
 // @Security	AccessToken
-// @Router		/journal/trialbalancesheetreport [get]
+// @Router		/gl/report/trialbalancesheet [get]
 func (r JournalReportHttp) ProcessReportTrialBalanceSheet(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
@@ -96,7 +96,7 @@ func (r JournalReportHttp) ProcessReportTrialBalanceSheet(ctx microservice.ICont
 // @Failure		400 {object} models.AuthResponseFailed
 // @Failure		401 {object} models.AuthResponseFailed
 // @Security	AccessToken
-// @Router		/journal/balancesheetreport [get]
+// @Router		/gl/report/balancesheet [get]
 func (r JournalReportHttp) ProcessBalanceSheetReport(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -145,7 +145,7 @@ func (r JournalReportHttp) ProcessBalanceSheetReport(ctx microservice.IContext) 
 // @Failure		400 {object} models.AuthResponseFailed
 // @Failure		401 {object} models.AuthResponseFailed
 // @Security	AccessToken
-// @Router		/journal/profitandlostreport [get]
+// @Router		/gl/report/profitandloss [get]
 func (r JournalReportHttp) ProcessProfitAndLossReport(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID

@@ -10,7 +10,7 @@ import (
 )
 
 type IGuidRepo interface {
-	models.CategoryItemGuid | restaurant.ShopZoneItemGuid | restaurant.ShopTableItemGuid | restaurant.PrinterTerminalItemGuid | restaurant.KitchenItemGuid | vfgl.JournalItemGuid
+	models.CategoryItemGuid | restaurant.ShopZoneItemGuid | restaurant.ShopTableItemGuid | restaurant.PrinterTerminalItemGuid | restaurant.KitchenItemGuid | vfgl.JournalItemGuid | vfgl.ChartOfAccountIndentityId
 }
 
 type GuidRepository[T IGuidRepo] struct {

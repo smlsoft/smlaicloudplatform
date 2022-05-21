@@ -20,6 +20,7 @@ import (
 	"smlcloudplatform/pkg/api/saleinvoice"
 	"smlcloudplatform/pkg/api/shop"
 	"smlcloudplatform/pkg/api/shop/employee"
+	"smlcloudplatform/pkg/vfgl/chartofaccount"
 	"smlcloudplatform/pkg/vfgl/journal"
 	"smlcloudplatform/pkg/vfgl/journalreport"
 
@@ -89,7 +90,7 @@ func main() {
 		panic(err)
 	}
 
-	if devApiMode == "" || devApiMode == "2" {
+	if devApiMode == "" || devApiMode == 2 {
 
 		ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)
 
@@ -172,6 +173,9 @@ func main() {
 		saleinvoiceHttp := saleinvoice.NewSaleinvoiceHttp(ms, cfg)
 		saleinvoiceHttp.RouteSetup()
 
+		chartHttp := chartofaccount.NewChartOfAccountHttp(ms, cfg)
+		chartHttp.RouteSetup()
+
 		journalhttp := journal.NewJournalHttp(ms, cfg)
 		journalhttp.RouteSetup()
 
@@ -179,7 +183,7 @@ func main() {
 		journalReportHttp.RouteSetup()
 	}
 
-	if devApiMode == "1" || devApiMode == "2" {
+	if devApiMode == 1 || devApiMode == 2 {
 		inventorysearchconsumer.StartInventorySearchComsumerOnProductCreated(ms, cfg)
 		inventorysearchconsumer.StartInventorySearchComsumerOnProductUpdated(ms, cfg)
 		inventorysearchconsumer.StartInventorySearchComsumerOnProductDeleted(ms, cfg)

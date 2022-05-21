@@ -9,7 +9,7 @@ import (
 )
 
 type ICrudRepo interface {
-	restaurant.ShopZoneDoc | restaurant.ShopTableDoc | restaurant.PrinterTerminalDoc | restaurant.KitchenDoc | vfgl.JournalDoc
+	restaurant.ShopZoneDoc | restaurant.ShopTableDoc | restaurant.PrinterTerminalDoc | restaurant.KitchenDoc | vfgl.JournalDoc | vfgl.ChartOfAccountDoc
 }
 type CrudRepository[T ICrudRepo] struct {
 	pst microservice.IPersisterMongo

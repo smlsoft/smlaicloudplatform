@@ -1968,6 +1968,67 @@ definitions:
       success:
         type: boolean
     type: object
+  vfgl.ChartOfAccount:
+    properties:
+      accountbalancetype:
+        description: ด้านบัญชี 1=เดบิต,2=เครดิต
+        type: integer
+      accountcategory:
+        description: หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย
+        type: integer
+      accountcode:
+        description: รหัสผังบัญชี
+        type: string
+      accountgroup:
+        description: กลุ่มบัญชี
+        type: string
+      accountlevel:
+        description: ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ
+        type: integer
+      accountname:
+        description: ชื่อบัญชี
+        type: string
+      consolidateaccountcode:
+        description: รหัสผังบัญชีกลาง
+        type: string
+    type: object
+  vfgl.ChartOfAccountInfo:
+    properties:
+      accountbalancetype:
+        description: ด้านบัญชี 1=เดบิต,2=เครดิต
+        type: integer
+      accountcategory:
+        description: หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย
+        type: integer
+      accountcode:
+        description: รหัสผังบัญชี
+        type: string
+      accountgroup:
+        description: กลุ่มบัญชี
+        type: string
+      accountlevel:
+        description: ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ
+        type: integer
+      accountname:
+        description: ชื่อบัญชี
+        type: string
+      consolidateaccountcode:
+        description: รหัสผังบัญชีกลาง
+        type: string
+      guidfixed:
+        type: string
+    type: object
+  vfgl.ChartOfAccountPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/vfgl.ChartOfAccountInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
   vfgl.Journal:
     properties:
       accountdescription:
@@ -2060,24 +2121,30 @@ definitions:
     type: object
   vfgl.ProfitAndLossSheetAccountDetail:
     properties:
-      accountBalanceType:
-        description: ด้านบัญชี เดบิต,เครดิต
-        type: string
-      accountCategory:
+      accountbalancetype:
+        description: ด้านบัญชี 1=เดบิต,2=เครดิต
+        type: integer
+      accountcategory:
         description: หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย
         type: integer
-      accountCode:
+      accountcode:
         description: รหัสผังบัญชี
         type: string
-      accountGroup:
+      accountgroup:
         description: กลุ่มบัญชี
         type: string
-      accountName:
+      accountlevel:
+        description: ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ
+        type: integer
+      accountname:
         description: ชื่อบัญชี
         type: string
       amount:
         description: มูลค่า
         type: number
+      consolidateaccountcode:
+        description: รหัสผังบัญชีกลาง
+        type: string
     type: object
   vfgl.ProfitAndLossSheetReport:
     properties:
@@ -2115,19 +2182,22 @@ definitions:
     type: object
   vfgl.TrialBalanceSheetAccountDetail:
     properties:
-      accountBalanceType:
-        description: ด้านบัญชี เดบิต,เครดิต
-        type: string
-      accountCategory:
+      accountbalancetype:
+        description: ด้านบัญชี 1=เดบิต,2=เครดิต
+        type: integer
+      accountcategory:
         description: หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย
         type: integer
-      accountCode:
+      accountcode:
         description: รหัสผังบัญชี
         type: string
-      accountGroup:
+      accountgroup:
         description: กลุ่มบัญชี
         type: string
-      accountName:
+      accountlevel:
+        description: ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ
+        type: integer
+      accountname:
         description: ชื่อบัญชี
         type: string
       amount:
@@ -2142,6 +2212,9 @@ definitions:
       balanceDebitAmount:
         description: ยอดยกมาเดบิต
         type: number
+      consolidateaccountcode:
+        description: รหัสผังบัญชีกลาง
+        type: string
       creditAmount:
         description: ยอดเครดิต
         type: number
@@ -2161,7 +2234,7 @@ definitions:
   vfgl.TrialBalanceSheetReport:
     properties:
       accountDetail:
-        description: รายละเอียดบัญชีß
+        description: รายละเอียดบัญชี
         items:
           $ref: '#/definitions/vfgl.TrialBalanceSheetAccountDetail'
         type: array
@@ -2184,10 +2257,10 @@ definitions:
         description: รวมเดบิต
         type: number
       totalBalanceCredit:
-        description: รวมยกมาเครดิต
+        description: รวมยอดยกมาเครดิต
         type: number
       totalBalanceDebit:
-        description: รวมยอดมาเดบิต
+        description: รวมยอดยกมาเดบิต
         type: number
       totalNextBalanceCredit:
         description: รวมยอดสะสมเครดิต
@@ -2549,6 +2622,431 @@ paths:
       - AccessToken: []
       tags:
       - Employee
+  /gl/chartofaccount:
+    get:
+      consumes:
+      - application/json
+      description: List Chart Of Account
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vfgl.ChartOfAccountPageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GL
+    post:
+      consumes:
+      - application/json
+      description: Create Chart Of Account
+      parameters:
+      - description: ChartOfAccount
+        in: body
+        name: ChartOfAccount
+        required: true
+        schema:
+          $ref: '#/definitions/vfgl.ChartOfAccount'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GL
+  /gl/chartofaccount/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Chart Of Account
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GL
+    get:
+      consumes:
+      - application/json
+      description: Get Chart Of Account
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vfgl.ChartOfAccountInfo'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GL
+    put:
+      consumes:
+      - application/json
+      description: Update Chart Of Account
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: ChartOfAccount
+        in: body
+        name: ChartOfAccount
+        required: true
+        schema:
+          $ref: '#/definitions/vfgl.ChartOfAccount'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GL
+  /gl/chartofaccount/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Chart Of Account Journal
+      parameters:
+      - description: ChartOfAccount
+        in: body
+        name: ChartOfAccount
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/vfgl.ChartOfAccount'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkInsertResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GL
+  /gl/journal:
+    get:
+      consumes:
+      - application/json
+      description: List Journal Category
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vfgl.JournalPageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GL
+    post:
+      consumes:
+      - application/json
+      description: Journal
+      parameters:
+      - description: Journal
+        in: body
+        name: Journal
+        required: true
+        schema:
+          $ref: '#/definitions/vfgl.Journal'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GL
+  /gl/journal/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Journal
+      parameters:
+      - description: Journal ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GL
+    get:
+      consumes:
+      - application/json
+      description: Get Journal
+      parameters:
+      - description: Journal Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vfgl.JournalInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GL
+    put:
+      consumes:
+      - application/json
+      description: Journal
+      parameters:
+      - description: Journal ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Journal
+        in: body
+        name: Journal
+        required: true
+        schema:
+          $ref: '#/definitions/vfgl.Journal'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GL
+  /gl/journal/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Journal
+      parameters:
+      - description: Journal
+        in: body
+        name: Journal
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/vfgl.Journal'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkInsertResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GL
+  /gl/report/balancesheet:
+    get:
+      consumes:
+      - application/json
+      description: Fetch Update Inventory By Date
+      parameters:
+      - description: AccountGroup
+        in: query
+        name: accountgroup
+        required: true
+        type: string
+      - description: Date YYYY-MM-DD
+        in: query
+        name: enddate
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vfgl.BalanceSheetReportResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GLReport
+  /gl/report/profitandloss:
+    get:
+      consumes:
+      - application/json
+      description: Fetch Update Inventory By Date
+      parameters:
+      - description: AccountGroup
+        in: query
+        name: accountgroup
+        required: true
+        type: string
+      - description: Date YYYY-MM-DD
+        in: query
+        name: startdate
+        required: true
+        type: string
+      - description: Date YYYY-MM-DD
+        in: query
+        name: enddate
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vfgl.LostAndProfitSheetReportResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GLReport
+  /gl/report/trialbalancesheet:
+    get:
+      consumes:
+      - application/json
+      description: Fetch Update Inventory By Date
+      parameters:
+      - description: AccountGroup
+        in: query
+        name: accountgroup
+        required: true
+        type: string
+      - description: Date YYYY-MM-DD
+        in: query
+        name: startdate
+        required: true
+        type: string
+      - description: Date YYYY-MM-DD
+        in: query
+        name: enddate
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vfgl.TrialBalanceSheetReportResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GLReport
   /import/category:
     delete:
       consumes:
@@ -3014,273 +3512,6 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
-  /journal:
-    get:
-      consumes:
-      - application/json
-      description: List Journal Category
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Size
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/vfgl.JournalPageResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - GL
-    post:
-      consumes:
-      - application/json
-      description: Journal
-      parameters:
-      - description: Journal
-        in: body
-        name: Journal
-        required: true
-        schema:
-          $ref: '#/definitions/vfgl.Journal'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - GL
-  /journal/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Journal
-      parameters:
-      - description: Journal ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - GL
-    get:
-      consumes:
-      - application/json
-      description: Get Journal
-      parameters:
-      - description: Journal Id
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/vfgl.JournalInfoResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - GL
-    put:
-      consumes:
-      - application/json
-      description: Journal
-      parameters:
-      - description: Journal ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Journal
-        in: body
-        name: Journal
-        required: true
-        schema:
-          $ref: '#/definitions/vfgl.Journal'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - GL
-  /journal/balancesheetreport:
-    get:
-      consumes:
-      - application/json
-      description: Fetch Update Inventory By Date
-      parameters:
-      - description: AccountGroup
-        in: query
-        name: accountgroup
-        required: true
-        type: string
-      - description: Date YYYY-MM-DD
-        in: query
-        name: enddate
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/vfgl.BalanceSheetReportResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - GLReport
-  /journal/bulk:
-    post:
-      consumes:
-      - application/json
-      description: Create Journal
-      parameters:
-      - description: Journal
-        in: body
-        name: Journal
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/vfgl.Journal'
-          type: array
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.BulkInsertResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - GL
-  /journal/profitandlostreport:
-    get:
-      consumes:
-      - application/json
-      description: Fetch Update Inventory By Date
-      parameters:
-      - description: AccountGroup
-        in: query
-        name: accountgroup
-        required: true
-        type: string
-      - description: Date YYYY-MM-DD
-        in: query
-        name: startdate
-        required: true
-        type: string
-      - description: Date YYYY-MM-DD
-        in: query
-        name: enddate
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/vfgl.LostAndProfitSheetReportResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - GLReport
-  /journal/trialbalancesheetreport:
-    get:
-      consumes:
-      - application/json
-      description: Fetch Update Inventory By Date
-      parameters:
-      - description: AccountGroup
-        in: query
-        name: accountgroup
-        required: true
-        type: string
-      - description: Date YYYY-MM-DD
-        in: query
-        name: startdate
-        required: true
-        type: string
-      - description: Date YYYY-MM-DD
-        in: query
-        name: enddate
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/vfgl.TrialBalanceSheetReportResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - GLReport
   /list-shop:
     get:
       consumes:
