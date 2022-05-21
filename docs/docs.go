@@ -5264,9 +5264,6 @@ const docTemplate = `{
                 "password": {
                     "type": "string"
                 },
-                "shopid": {
-                    "type": "string"
-                },
                 "username": {
                     "type": "string"
                 }
@@ -7684,6 +7681,43 @@ const docTemplate = `{
                 }
             }
         },
+        "vfgl.BalanceSheetAccountDetail": {
+            "type": "object",
+            "properties": {
+                "accountbalancetype": {
+                    "description": "ด้านบัญชี 1=เดบิต,2=เครดิต",
+                    "type": "integer"
+                },
+                "accountcategory": {
+                    "description": "หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย",
+                    "type": "integer"
+                },
+                "accountcode": {
+                    "description": "รหัสผังบัญชี",
+                    "type": "string"
+                },
+                "accountgroup": {
+                    "description": "กลุ่มบัญชี",
+                    "type": "string"
+                },
+                "accountlevel": {
+                    "description": "ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ",
+                    "type": "integer"
+                },
+                "accountname": {
+                    "description": "ชื่อบัญชี",
+                    "type": "string"
+                },
+                "amount": {
+                    "description": "มูลค่า",
+                    "type": "number"
+                },
+                "consolidateaccountcode": {
+                    "description": "รหัสผังบัญชีกลาง",
+                    "type": "string"
+                }
+            }
+        },
         "vfgl.BalanceSheetReport": {
             "type": "object",
             "properties": {
@@ -7693,7 +7727,7 @@ const docTemplate = `{
                 "assets": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/vfgl.BalanceSheetReport"
+                        "$ref": "#/definitions/vfgl.BalanceSheetAccountDetail"
                     }
                 },
                 "endDate": {
@@ -7702,13 +7736,13 @@ const docTemplate = `{
                 "liabilities": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/vfgl.BalanceSheetReport"
+                        "$ref": "#/definitions/vfgl.BalanceSheetAccountDetail"
                     }
                 },
                 "ownesQutitys": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/vfgl.BalanceSheetReport"
+                        "$ref": "#/definitions/vfgl.BalanceSheetAccountDetail"
                     }
                 },
                 "reportDate": {

@@ -53,9 +53,9 @@ type BalanceSheetReport struct {
 	ReportDate                           time.Time
 	EndDate                              time.Time
 	AccountGroup                         string
-	Assets                               *[]BalanceSheetReport
-	Liabilities                          *[]BalanceSheetReport
-	OwnesQutitys                         *[]BalanceSheetReport
+	Assets                               *[]BalanceSheetAccountDetail
+	Liabilities                          *[]BalanceSheetAccountDetail
+	OwnesQutitys                         *[]BalanceSheetAccountDetail
 	TotalAssetAmount                     float64
 	TotalLiabilityAmount                 float64
 	TotalOwnersEqutityAmount             float64
