@@ -34,13 +34,13 @@ func NewJournalHttp(ms *microservice.Microservice, cfg microservice.IConfig) Jou
 
 func (h JournalHttp) RouteSetup() {
 
-	h.ms.POST("/journal/bulk", h.SaveBulk)
+	h.ms.POST("/gl/journal/bulk", h.SaveBulk)
 
-	h.ms.GET("/journal", h.SearchJournal)
-	h.ms.POST("/journal", h.CreateJournal)
-	h.ms.GET("/journal/:id", h.InfoJournal)
-	h.ms.PUT("/journal/:id", h.UpdateJournal)
-	h.ms.DELETE("/journal/:id", h.DeleteJournal)
+	h.ms.GET("/gl/journal", h.SearchJournal)
+	h.ms.POST("/gl/journal", h.CreateJournal)
+	h.ms.GET("/gl/journal/:id", h.InfoJournal)
+	h.ms.PUT("/gl/journal/:id", h.UpdateJournal)
+	h.ms.DELETE("/gl/journal/:id", h.DeleteJournal)
 }
 
 // Create Journal godoc
@@ -51,7 +51,7 @@ func (h JournalHttp) RouteSetup() {
 // @Success		200	{object}	models.ResponseSuccessWithID
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /journal [post]
+// @Router /gl/journal [post]
 func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
@@ -88,7 +88,7 @@ func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
 // @Success		200	{object}	models.ResponseSuccessWithID
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /journal/{id} [put]
+// @Router /gl/journal/{id} [put]
 func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -128,7 +128,7 @@ func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
 // @Success		200	{object}	models.ResponseSuccessWithID
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /journal/{id} [delete]
+// @Router /gl/journal/{id} [delete]
 func (h JournalHttp) DeleteJournal(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -159,7 +159,7 @@ func (h JournalHttp) DeleteJournal(ctx microservice.IContext) error {
 // @Success		200	{object}	vfgl.JournalInfoResponse
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /journal/{id} [get]
+// @Router /gl/journal/{id} [get]
 func (h JournalHttp) InfoJournal(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -192,7 +192,7 @@ func (h JournalHttp) InfoJournal(ctx microservice.IContext) error {
 // @Success		200	{object}	vfgl.JournalPageResponse
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /journal [get]
+// @Router /gl/journal [get]
 func (h JournalHttp) SearchJournal(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -231,7 +231,7 @@ func (h JournalHttp) SearchJournal(ctx microservice.IContext) error {
 // @Success		201	{object}	models.BulkInsertResponse
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /journal/bulk [post]
+// @Router /gl/journal/bulk [post]
 func (h JournalHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()

@@ -20,7 +20,9 @@ import (
 	"smlcloudplatform/pkg/api/saleinvoice"
 	"smlcloudplatform/pkg/api/shop"
 	"smlcloudplatform/pkg/api/shop/employee"
+	"smlcloudplatform/pkg/vfgl/chartofaccount"
 	"smlcloudplatform/pkg/vfgl/journal"
+	"smlcloudplatform/pkg/vfgl/journalreport"
 
 	"github.com/joho/godotenv"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -56,26 +58,7 @@ func init() {
 // @schemes http https
 func main() {
 
-	// old swagger run
-	// fmt.Println("Start Swagger API")
-
-	// host := os.Getenv("HOST_API")
-	// if host != "" {
-	// 	fmt.Printf("Host: %v\n", host)
-	// 	docs.SwaggerInfo.Host = host
-	// }
-
-	// e := echo.New()
-
-	// e.GET("/swagger/*", echoSwagger.WrapHandler)
-
-	// serverPort := os.Getenv("SERVER_PORT")
-	// if serverPort == "" {
-	// 	serverPort = "1323"
-	// }
-	// e.Logger.Fatal(e.Start(":" + serverPort))
 	devApiMode := os.Getenv("DEV_API_MODE")
-
 	host := os.Getenv("HOST_API")
 	if host != "" {
 		fmt.Printf("Host: %v\n", host)
@@ -117,6 +100,7 @@ func main() {
 		ms.RegisterLivenessProbeEndpoint("/healthz")
 
 		//migration.StartMigrateModel(ms, cfg)
+		chartofaccount.MigrationChartOfAccountTable(ms, cfg)
 		journal.MigrationJournalTable(ms, cfg)
 
 		authHttp := authentication.NewAuthenticationHttp(ms, cfg)
@@ -171,8 +155,14 @@ func main() {
 		saleinvoiceHttp := saleinvoice.NewSaleinvoiceHttp(ms, cfg)
 		saleinvoiceHttp.RouteSetup()
 
+		chartHttp := chartofaccount.NewChartOfAccountHttp(ms, cfg)
+		chartHttp.RouteSetup()
+
 		journalhttp := journal.NewJournalHttp(ms, cfg)
 		journalhttp.RouteSetup()
+
+		journalReportHttp := journalreport.NewJournalReportHttp(ms, cfg)
+		journalReportHttp.RouteSetup()
 	}
 
 	if devApiMode == "1" || devApiMode == "2" {
@@ -184,6 +174,8 @@ func main() {
 
 		journal.StartJournalComsumeCreated(ms, cfg, "99")
 		journal.StartJournalComsumeBlukCreated(ms, cfg, "11")
+		chartofaccount.StartChartOfAccountConsumerCreated(ms, cfg, "01")
+		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, "01")
 	}
 
 	ms.Start()

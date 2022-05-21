@@ -11,7 +11,7 @@ import (
 )
 
 type ISearchRepo interface {
-	restaurant.ShopZoneInfo | restaurant.ShopTableInfo | restaurant.PrinterTerminalInfo | restaurant.KitchenInfo | vfgl.JournalInfo
+	restaurant.ShopZoneInfo | restaurant.ShopTableInfo | restaurant.PrinterTerminalInfo | restaurant.KitchenInfo | vfgl.JournalInfo | vfgl.ChartOfAccountInfo
 }
 
 type SearchRepository[T ISearchRepo] struct {
