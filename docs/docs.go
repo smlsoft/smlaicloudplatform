@@ -1401,6 +1401,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/journal/balancesheetreport": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Fetch Update Inventory By Date",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GLReport"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "AccountGroup",
+                        "name": "accountgroup",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date YYYY-MM-DD",
+                        "name": "enddate",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/vfgl.BalanceSheetReportResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/journal/bulk": {
             "post": {
                 "security": [
@@ -1434,6 +1486,124 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.BulkInsertResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/journal/profitandlostreport": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Fetch Update Inventory By Date",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GLReport"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "AccountGroup",
+                        "name": "accountgroup",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date YYYY-MM-DD",
+                        "name": "startdate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date YYYY-MM-DD",
+                        "name": "enddate",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/vfgl.LostAndProfitSheetReportResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/journal/trialbalancesheetreport": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Fetch Update Inventory By Date",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GLReport"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "AccountGroup",
+                        "name": "accountgroup",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date YYYY-MM-DD",
+                        "name": "startdate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Date YYYY-MM-DD",
+                        "name": "enddate",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/vfgl.TrialBalanceSheetReportResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
                         }
                     },
                     "401": {
@@ -7259,6 +7429,61 @@ const docTemplate = `{
                 }
             }
         },
+        "vfgl.BalanceSheetReport": {
+            "type": "object",
+            "properties": {
+                "accountGroup": {
+                    "type": "string"
+                },
+                "assets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/vfgl.BalanceSheetReport"
+                    }
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "liabilities": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/vfgl.BalanceSheetReport"
+                    }
+                },
+                "ownesQutitys": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/vfgl.BalanceSheetReport"
+                    }
+                },
+                "reportDate": {
+                    "type": "string"
+                },
+                "totalAssetAmount": {
+                    "type": "number"
+                },
+                "totalLiabilityAmount": {
+                    "type": "number"
+                },
+                "totalLiabilityAndOwnersEqutityAmount": {
+                    "type": "number"
+                },
+                "totalOwnersEqutityAmount": {
+                    "type": "number"
+                }
+            }
+        },
+        "vfgl.BalanceSheetReportResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/vfgl.BalanceSheetReport"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "vfgl.Journal": {
             "type": "object",
             "properties": {
@@ -7379,6 +7604,217 @@ const docTemplate = `{
                 },
                 "pagination": {
                     "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "vfgl.LostAndProfitSheetReportResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/vfgl.ProfitAndLossSheetReport"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "vfgl.ProfitAndLossSheetAccountDetail": {
+            "type": "object",
+            "properties": {
+                "accountBalanceType": {
+                    "description": "ด้านบัญชี เดบิต,เครดิต",
+                    "type": "string"
+                },
+                "accountCategory": {
+                    "description": "หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย",
+                    "type": "integer"
+                },
+                "accountCode": {
+                    "description": "รหัสผังบัญชี",
+                    "type": "string"
+                },
+                "accountGroup": {
+                    "description": "กลุ่มบัญชี",
+                    "type": "string"
+                },
+                "accountName": {
+                    "description": "ชื่อบัญชี",
+                    "type": "string"
+                },
+                "amount": {
+                    "description": "มูลค่า",
+                    "type": "number"
+                }
+            }
+        },
+        "vfgl.ProfitAndLossSheetReport": {
+            "type": "object",
+            "properties": {
+                "accountGroup": {
+                    "description": "เล่มบัญชี",
+                    "type": "string"
+                },
+                "endDate": {
+                    "description": "วันที่สิ้นสุด",
+                    "type": "string"
+                },
+                "expenses": {
+                    "description": "รายการค่าใช้จ่าย",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/vfgl.ProfitAndLossSheetAccountDetail"
+                    }
+                },
+                "incomes": {
+                    "description": "รายการรายได้",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/vfgl.ProfitAndLossSheetAccountDetail"
+                    }
+                },
+                "profitAndLossAmount": {
+                    "description": "กำไรขาดทุน",
+                    "type": "number"
+                },
+                "reportDate": {
+                    "description": "วันที่ทำรายการ",
+                    "type": "string"
+                },
+                "startDate": {
+                    "description": "วันที่เริ่มต้น",
+                    "type": "string"
+                },
+                "totalExpenseAmount": {
+                    "description": "รวมค่าใช้จ่าย",
+                    "type": "number"
+                },
+                "totalIncomeAmount": {
+                    "description": "รวมรายได้",
+                    "type": "number"
+                }
+            }
+        },
+        "vfgl.TrialBalanceSheetAccountDetail": {
+            "type": "object",
+            "properties": {
+                "accountBalanceType": {
+                    "description": "ด้านบัญชี เดบิต,เครดิต",
+                    "type": "string"
+                },
+                "accountCategory": {
+                    "description": "หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย",
+                    "type": "integer"
+                },
+                "accountCode": {
+                    "description": "รหัสผังบัญชี",
+                    "type": "string"
+                },
+                "accountGroup": {
+                    "description": "กลุ่มบัญชี",
+                    "type": "string"
+                },
+                "accountName": {
+                    "description": "ชื่อบัญชี",
+                    "type": "string"
+                },
+                "amount": {
+                    "description": "ยอดคงเหลือ(ประจำงวด)",
+                    "type": "number"
+                },
+                "balanceAmount": {
+                    "description": "ยอดคงเหลือยกมา",
+                    "type": "number"
+                },
+                "balanceCreditAmount": {
+                    "description": "ยอดยกมาเครดิต",
+                    "type": "number"
+                },
+                "balanceDebitAmount": {
+                    "description": "ยอดยกมาเดบิต",
+                    "type": "number"
+                },
+                "creditAmount": {
+                    "description": "ยอดเครดิต",
+                    "type": "number"
+                },
+                "debitAmount": {
+                    "description": "ยอดเดบิต",
+                    "type": "number"
+                },
+                "nextBalanceAmount": {
+                    "description": "ยอดคงเหลือสะสม",
+                    "type": "number"
+                },
+                "nextBalanceCreditAmount": {
+                    "description": "ยอดสะสมเครดิต",
+                    "type": "number"
+                },
+                "nextBalanceDebitAmount": {
+                    "description": "ยอดสะสมเดบิต",
+                    "type": "number"
+                }
+            }
+        },
+        "vfgl.TrialBalanceSheetReport": {
+            "type": "object",
+            "properties": {
+                "accountDetail": {
+                    "description": "รายละเอียดบัญชีß",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/vfgl.TrialBalanceSheetAccountDetail"
+                    }
+                },
+                "accountGroup": {
+                    "description": "เล่มบัญชี",
+                    "type": "string"
+                },
+                "endDate": {
+                    "description": "วันที่สิ้นสุด",
+                    "type": "string"
+                },
+                "reportDate": {
+                    "description": "วันที่ทำรายการ",
+                    "type": "string"
+                },
+                "startDate": {
+                    "description": "วันที่เริ่มต้น",
+                    "type": "string"
+                },
+                "totalAmountCredit": {
+                    "description": "รวมเครดิต",
+                    "type": "number"
+                },
+                "totalAmountDebit": {
+                    "description": "รวมเดบิต",
+                    "type": "number"
+                },
+                "totalBalanceCredit": {
+                    "description": "รวมยกมาเครดิต",
+                    "type": "number"
+                },
+                "totalBalanceDebit": {
+                    "description": "รวมยอดมาเดบิต",
+                    "type": "number"
+                },
+                "totalNextBalanceCredit": {
+                    "description": "รวมยอดสะสมเครดิต",
+                    "type": "number"
+                },
+                "totalNextBalanceDebit": {
+                    "description": "รวมยอดสะสมเดบิต",
+                    "type": "number"
+                }
+            }
+        },
+        "vfgl.TrialBalanceSheetReportResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/vfgl.TrialBalanceSheetReport"
                 },
                 "success": {
                     "type": "boolean"

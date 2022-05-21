@@ -1932,6 +1932,42 @@ definitions:
       success:
         type: boolean
     type: object
+  vfgl.BalanceSheetReport:
+    properties:
+      accountGroup:
+        type: string
+      assets:
+        items:
+          $ref: '#/definitions/vfgl.BalanceSheetReport'
+        type: array
+      endDate:
+        type: string
+      liabilities:
+        items:
+          $ref: '#/definitions/vfgl.BalanceSheetReport'
+        type: array
+      ownesQutitys:
+        items:
+          $ref: '#/definitions/vfgl.BalanceSheetReport'
+        type: array
+      reportDate:
+        type: string
+      totalAssetAmount:
+        type: number
+      totalLiabilityAmount:
+        type: number
+      totalLiabilityAndOwnersEqutityAmount:
+        type: number
+      totalOwnersEqutityAmount:
+        type: number
+    type: object
+  vfgl.BalanceSheetReportResponse:
+    properties:
+      data:
+        $ref: '#/definitions/vfgl.BalanceSheetReport'
+      success:
+        type: boolean
+    type: object
   vfgl.Journal:
     properties:
       accountdescription:
@@ -2012,6 +2048,158 @@ definitions:
         type: array
       pagination:
         $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  vfgl.LostAndProfitSheetReportResponse:
+    properties:
+      data:
+        $ref: '#/definitions/vfgl.ProfitAndLossSheetReport'
+      success:
+        type: boolean
+    type: object
+  vfgl.ProfitAndLossSheetAccountDetail:
+    properties:
+      accountBalanceType:
+        description: ด้านบัญชี เดบิต,เครดิต
+        type: string
+      accountCategory:
+        description: หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย
+        type: integer
+      accountCode:
+        description: รหัสผังบัญชี
+        type: string
+      accountGroup:
+        description: กลุ่มบัญชี
+        type: string
+      accountName:
+        description: ชื่อบัญชี
+        type: string
+      amount:
+        description: มูลค่า
+        type: number
+    type: object
+  vfgl.ProfitAndLossSheetReport:
+    properties:
+      accountGroup:
+        description: เล่มบัญชี
+        type: string
+      endDate:
+        description: วันที่สิ้นสุด
+        type: string
+      expenses:
+        description: รายการค่าใช้จ่าย
+        items:
+          $ref: '#/definitions/vfgl.ProfitAndLossSheetAccountDetail'
+        type: array
+      incomes:
+        description: รายการรายได้
+        items:
+          $ref: '#/definitions/vfgl.ProfitAndLossSheetAccountDetail'
+        type: array
+      profitAndLossAmount:
+        description: กำไรขาดทุน
+        type: number
+      reportDate:
+        description: วันที่ทำรายการ
+        type: string
+      startDate:
+        description: วันที่เริ่มต้น
+        type: string
+      totalExpenseAmount:
+        description: รวมค่าใช้จ่าย
+        type: number
+      totalIncomeAmount:
+        description: รวมรายได้
+        type: number
+    type: object
+  vfgl.TrialBalanceSheetAccountDetail:
+    properties:
+      accountBalanceType:
+        description: ด้านบัญชี เดบิต,เครดิต
+        type: string
+      accountCategory:
+        description: หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย
+        type: integer
+      accountCode:
+        description: รหัสผังบัญชี
+        type: string
+      accountGroup:
+        description: กลุ่มบัญชี
+        type: string
+      accountName:
+        description: ชื่อบัญชี
+        type: string
+      amount:
+        description: ยอดคงเหลือ(ประจำงวด)
+        type: number
+      balanceAmount:
+        description: ยอดคงเหลือยกมา
+        type: number
+      balanceCreditAmount:
+        description: ยอดยกมาเครดิต
+        type: number
+      balanceDebitAmount:
+        description: ยอดยกมาเดบิต
+        type: number
+      creditAmount:
+        description: ยอดเครดิต
+        type: number
+      debitAmount:
+        description: ยอดเดบิต
+        type: number
+      nextBalanceAmount:
+        description: ยอดคงเหลือสะสม
+        type: number
+      nextBalanceCreditAmount:
+        description: ยอดสะสมเครดิต
+        type: number
+      nextBalanceDebitAmount:
+        description: ยอดสะสมเดบิต
+        type: number
+    type: object
+  vfgl.TrialBalanceSheetReport:
+    properties:
+      accountDetail:
+        description: รายละเอียดบัญชีß
+        items:
+          $ref: '#/definitions/vfgl.TrialBalanceSheetAccountDetail'
+        type: array
+      accountGroup:
+        description: เล่มบัญชี
+        type: string
+      endDate:
+        description: วันที่สิ้นสุด
+        type: string
+      reportDate:
+        description: วันที่ทำรายการ
+        type: string
+      startDate:
+        description: วันที่เริ่มต้น
+        type: string
+      totalAmountCredit:
+        description: รวมเครดิต
+        type: number
+      totalAmountDebit:
+        description: รวมเดบิต
+        type: number
+      totalBalanceCredit:
+        description: รวมยกมาเครดิต
+        type: number
+      totalBalanceDebit:
+        description: รวมยอดมาเดบิต
+        type: number
+      totalNextBalanceCredit:
+        description: รวมยอดสะสมเครดิต
+        type: number
+      totalNextBalanceDebit:
+        description: รวมยอดสะสมเดบิต
+        type: number
+    type: object
+  vfgl.TrialBalanceSheetReportResponse:
+    properties:
+      data:
+        $ref: '#/definitions/vfgl.TrialBalanceSheetReport'
       success:
         type: boolean
     type: object
@@ -2957,6 +3145,39 @@ paths:
       - AccessToken: []
       tags:
       - GL
+  /journal/balancesheetreport:
+    get:
+      consumes:
+      - application/json
+      description: Fetch Update Inventory By Date
+      parameters:
+      - description: AccountGroup
+        in: query
+        name: accountgroup
+        required: true
+        type: string
+      - description: Date YYYY-MM-DD
+        in: query
+        name: enddate
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vfgl.BalanceSheetReportResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GLReport
   /journal/bulk:
     post:
       consumes:
@@ -2984,6 +3205,82 @@ paths:
       - AccessToken: []
       tags:
       - GL
+  /journal/profitandlostreport:
+    get:
+      consumes:
+      - application/json
+      description: Fetch Update Inventory By Date
+      parameters:
+      - description: AccountGroup
+        in: query
+        name: accountgroup
+        required: true
+        type: string
+      - description: Date YYYY-MM-DD
+        in: query
+        name: startdate
+        required: true
+        type: string
+      - description: Date YYYY-MM-DD
+        in: query
+        name: enddate
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vfgl.LostAndProfitSheetReportResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GLReport
+  /journal/trialbalancesheetreport:
+    get:
+      consumes:
+      - application/json
+      description: Fetch Update Inventory By Date
+      parameters:
+      - description: AccountGroup
+        in: query
+        name: accountgroup
+        required: true
+        type: string
+      - description: Date YYYY-MM-DD
+        in: query
+        name: startdate
+        required: true
+        type: string
+      - description: Date YYYY-MM-DD
+        in: query
+        name: enddate
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vfgl.TrialBalanceSheetReportResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - GLReport
   /list-shop:
     get:
       consumes:

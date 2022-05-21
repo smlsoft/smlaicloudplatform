@@ -21,6 +21,7 @@ import (
 	"smlcloudplatform/pkg/api/shop"
 	"smlcloudplatform/pkg/api/shop/employee"
 	"smlcloudplatform/pkg/vfgl/journal"
+	"smlcloudplatform/pkg/vfgl/journalreport"
 
 	"github.com/joho/godotenv"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -173,6 +174,9 @@ func main() {
 
 		journalhttp := journal.NewJournalHttp(ms, cfg)
 		journalhttp.RouteSetup()
+
+		journalReportHttp := journalreport.NewJournalReportHttp(ms, cfg)
+		journalReportHttp.RouteSetup()
 	}
 
 	if devApiMode == "1" || devApiMode == "2" {
