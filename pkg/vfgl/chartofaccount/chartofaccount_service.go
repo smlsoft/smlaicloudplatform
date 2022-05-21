@@ -22,12 +22,14 @@ type IChartOfAccountService interface {
 }
 
 type ChartOfAccountService struct {
-	repo ChartOfAccountRepository
+	repo   ChartOfAccountRepository
+	mqRepo ChartOfAccountMQRepository
 }
 
-func NewChartOfAccountService(repo ChartOfAccountRepository) ChartOfAccountService {
+func NewChartOfAccountService(repo ChartOfAccountRepository, mqRepo ChartOfAccountMQRepository) ChartOfAccountService {
 	return ChartOfAccountService{
-		repo: repo,
+		repo:   repo,
+		mqRepo: mqRepo,
 	}
 }
 
@@ -48,11 +50,11 @@ func (svc ChartOfAccountService) Create(shopID string, authUsername string, doc 
 		return "", err
 	}
 
-	// svc.mqRepo.Create(docData)
+	svc.mqRepo.Create(docData)
+	if err != nil {
+		return "", err
+	}
 
-	// if err != nil {
-	// 	return "", err
-	// }
 	return newGuidFixed, nil
 }
 
@@ -133,7 +135,7 @@ func (svc ChartOfAccountService) SaveInBatch(shopID string, authUsername string,
 		itemCodeGuidList = append(itemCodeGuidList, doc.AccountCode)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "docno", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "accountcode", itemCodeGuidList)
 
 	if err != nil {
 		return models.BulkImport{}, err
@@ -172,7 +174,7 @@ func (svc ChartOfAccountService) SaveInBatch(shopID string, authUsername string,
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (vfgl.ChartOfAccountDoc, error) {
-			return svc.repo.FindByDocIndentiryGuid(shopID, "docno", guid)
+			return svc.repo.FindByDocIndentiryGuid(shopID, "accountcode", guid)
 		},
 		func(doc vfgl.ChartOfAccountDoc) bool {
 			if doc.AccountCode != "" {
@@ -201,11 +203,11 @@ func (svc ChartOfAccountService) SaveInBatch(shopID string, authUsername string,
 			return models.BulkImport{}, err
 		}
 
-		// svc.mqRepo.CreateInBatch(createDataList)
+		svc.mqRepo.CreateInBatch(createDataList)
 
-		// if err != nil {
-		// 	return models.BulkImport{}, err
-		// }
+		if err != nil {
+			return models.BulkImport{}, err
+		}
 	}
 
 	createDataKey := []string{}
@@ -221,7 +223,7 @@ func (svc ChartOfAccountService) SaveInBatch(shopID string, authUsername string,
 
 	updateDataKey := []string{}
 	for _, doc := range updateSuccessDataList {
-		// svc.mqRepo.Update(doc)
+		svc.mqRepo.Update(doc)
 		updateDataKey = append(updateDataKey, doc.AccountCode)
 	}
 

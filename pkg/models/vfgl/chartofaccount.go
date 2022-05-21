@@ -80,3 +80,19 @@ type ChartOfAccountInfoResponse struct {
 	Success bool               `json:"success"`
 	Data    ChartOfAccountInfo `json:"data,omitempty"`
 }
+
+type ChartOfAccountPG struct {
+	models.ShopIdentity      `gorm:"embedded;"`
+	models.PartitionIdentity `gorm:"embedded;"`
+	AccountCode              string `json:"accountcode" gorm:"column:accountcode;primaryKey"`
+	AccountName              string `json:"accountname" gorm:"column:accountname"`
+	AccountCategory          int16  `json:"accountcategory" gorm:"column:accountcategory"`
+	AccountBalanceType       int16  `json:"accountbalancetype" gorm:"column:accountbalancetype"`
+	AccountGroup             string `json:"accountgroup" gorm:"column:accountgroup"`
+	AccountLevel             int16  `json:"accountlevel" gorm:"column:accountlevel"`
+	ConsolidateAccountCode   string `json:"consolidateaccountcode" gorm:"column:consolidateaccountcode"`
+}
+
+func (ChartOfAccountPG) TableName() string {
+	return "chartofaccounts"
+}

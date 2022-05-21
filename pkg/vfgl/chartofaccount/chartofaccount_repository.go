@@ -32,5 +32,6 @@ func NewChartOfAccountRepository(pst microservice.IPersisterMongo) ChartOfAccoun
 
 	repo.CrudRepository = repositories.NewCrudRepository[vfgl.ChartOfAccountDoc](pst)
 	repo.SearchRepository = repositories.NewSearchRepository[vfgl.ChartOfAccountInfo](pst)
+	repo.GuidRepository = repositories.NewGuidRepository[vfgl.ChartOfAccountIndentityId](pst)
 	return repo
 }

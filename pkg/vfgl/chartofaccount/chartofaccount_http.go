@@ -20,9 +20,12 @@ type ChartOfAccountHttp struct {
 func NewChartOfAccountHttp(ms *microservice.Microservice, cfg microservice.IConfig) ChartOfAccountHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
-	repo := NewChartOfAccountRepository(pst)
+	prod := ms.Producer(cfg.MQConfig())
 
-	svc := NewChartOfAccountService(repo)
+	repo := NewChartOfAccountRepository(pst)
+	mqRepo := NewChartOfAccountMQRepository(prod)
+
+	svc := NewChartOfAccountService(repo, mqRepo)
 
 	return ChartOfAccountHttp{
 		ms:  ms,

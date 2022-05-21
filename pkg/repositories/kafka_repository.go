@@ -7,7 +7,7 @@ import (
 )
 
 type IKafkaRepo interface {
-	vfgl.JournalDoc
+	vfgl.JournalDoc | vfgl.ChartOfAccountDoc
 }
 
 type KafkaConfig interface {

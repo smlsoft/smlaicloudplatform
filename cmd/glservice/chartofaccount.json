@@ -20,7 +20,7 @@
     "accountcode": "11010",
     "accountname": "เงินสด - บัญชี 1",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "11000"
   },
   {
@@ -28,7 +28,7 @@
     "accountcode": "11020",
     "accountname": "เงินสด - บัญชี 2",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "11000"
   },
   {
@@ -36,7 +36,7 @@
     "accountcode": "11030",
     "accountname": "เงินสด - บัญชีร้านค้า",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "11000"
   },
   {
@@ -52,7 +52,7 @@
     "accountcode": "12101",
     "accountname": "เงินฝากธนาคาร บัญชี 1 (เงินล้าน)",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "12000"
   },
   {
@@ -60,7 +60,7 @@
     "accountcode": "12102",
     "accountname": "เงินฝากธนาคาร บัญชี 2 (เงินออม)",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "12000"
   },
   {
@@ -68,7 +68,7 @@
     "accountcode": "12103",
     "accountname": "เงินฝากธนาคาร บัญชี 3 (เงินสัจจะ)",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "12000"
   },
   {
@@ -76,7 +76,7 @@
     "accountcode": "12104",
     "accountname": "เงินฝากธนาคาร บัญชี 4 (สวัสดิการ)",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "12000"
   },
   {
@@ -84,7 +84,7 @@
     "accountcode": "12105",
     "accountname": "เงินฝากธนาคาร บัญชี 5 (ร้านค้า)",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "12000"
   },
   {
@@ -92,7 +92,7 @@
     "accountcode": "12201",
     "accountname": "เงินฝากประจำธนาคาร A",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "12000"
   },
   {
@@ -108,7 +108,7 @@
     "accountcode": "13010",
     "accountname": "ลูกหนี้เงินกู้ - บัญชี 1 (เงินล้าน)",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "13000"
   },
   {
@@ -116,7 +116,7 @@
     "accountcode": "13020",
     "accountname": "ลูกหนี้เงินกู้ - บัญชี 2 (เงินออม)",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "13000"
   },
   {
@@ -124,7 +124,7 @@
     "accountcode": "13030",
     "accountname": "ลูกหนี้เงินกู้ - บัญชี 3 (เงินสัจจะ)",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "13000"
   },
   {
@@ -132,7 +132,7 @@
     "accountcode": "13040",
     "accountname": "ลูกหนี้เงินกู้ - บัญชี 4 (สวัสดิการ)",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "13000"
   },
   {
@@ -140,7 +140,7 @@
     "accountcode": "13050",
     "accountname": "ลูกหนี้เงินกุ้ - บัญชี 5 (ร้านค้า)",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "13000"
   },
   {
@@ -148,7 +148,7 @@
     "accountcode": "13060",
     "accountname": "ลูกหนี้ - เงินกู้ฉุกเฉิน",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "13000"
   },
   {
@@ -156,7 +156,7 @@
     "accountcode": "13070",
     "accountname": "ลูกหนี้ - เงินกู้อื่น",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "13000"
   },
   {
@@ -172,7 +172,7 @@
     "accountcode": "14010",
     "accountname": "ลูกหนี้การค้า - ค้างชำระ",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "14000"
   },
   {
@@ -188,7 +188,7 @@
     "accountcode": "15010",
     "accountname": "เงินกันสำรองหนี้สูญ",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "15000"
   },
   {
@@ -196,7 +196,7 @@
     "accountcode": "15020",
     "accountname": "รายได้ค้างรับ",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "15000"
   },
   {
@@ -204,7 +204,7 @@
     "accountcode": "15030",
     "accountname": "สินทรัพย์หมุนเวียนอื่น ๆ",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "15000"
   },
   {
@@ -220,7 +220,7 @@
     "accountcode": "16010",
     "accountname": "ที่ดิน",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "16000"
   },
   {
@@ -228,7 +228,7 @@
     "accountcode": "16020",
     "accountname": "อาคารสำนักงาน",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "16000"
   },
   {
@@ -236,7 +236,7 @@
     "accountcode": "16021",
     "accountname": "ค่าเสื่อมราคาสะสม - อาคารสำนักงาน",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "16000"
   },
   {
@@ -244,7 +244,7 @@
     "accountcode": "16030",
     "accountname": "อุปกรณ์สำนักงาน",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "16000"
   },
   {
@@ -252,7 +252,7 @@
     "accountcode": "16031",
     "accountname": "ค่าเสื่อมราคาสะสม - อุปกรณ์สำนักงาน",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "16000"
   },
   {
@@ -260,7 +260,7 @@
     "accountcode": "16040",
     "accountname": "ครุภัณฑ์",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "16000"
   },
   {
@@ -268,7 +268,7 @@
     "accountcode": "16041",
     "accountname": "ค่าเสื่อมราคาสะสม - ครุภัณฑ์",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "16000"
   },
   {
@@ -292,7 +292,7 @@
     "accountcode": "21020",
     "accountname": "เจ้าหนี้ - เงินกู้จากธนาคาร",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "21010"
   },
   {
@@ -300,7 +300,7 @@
     "accountcode": "21030",
     "accountname": "เจ้าหนี้ - เงินกู้เบิกเกินบัญชี (OD)",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "21010"
   },
   {
@@ -308,7 +308,7 @@
     "accountcode": "21040",
     "accountname": "เจ้าหนี้ - เงินกู้ระยะสั้น",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "21010"
   },
   {
@@ -316,7 +316,7 @@
     "accountcode": "21050",
     "accountname": "เจ้าหนี้ - สถาบันการเงินอื่น",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "21010"
   },
   {
@@ -332,7 +332,7 @@
     "accountcode": "22010",
     "accountname": "เจ้าหนี้ - เงินรับฝากออมทรัพย์/เผื่อเรียก",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "22000"
   },
   {
@@ -340,7 +340,7 @@
     "accountcode": "22020",
     "accountname": "เจ้าหนี้ - เงินรับฝากออมทรัพย์/เผื่อเรียก พิเศษ",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "22000"
   },
   {
@@ -348,7 +348,7 @@
     "accountcode": "22030",
     "accountname": "เจ้าหนี้ - เงินรับฝากประจำ 6 เดือน",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "22000"
   },
   {
@@ -356,7 +356,7 @@
     "accountcode": "22040",
     "accountname": "เจ้าหนี้ - เงินรับฝากประจำ 12 เดือน",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "22000"
   },
   {
@@ -372,7 +372,7 @@
     "accountcode": "23010",
     "accountname": "เจ้าหนี้การค้า",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "23000"
   },
   {
@@ -380,7 +380,7 @@
     "accountcode": "23020",
     "accountname": "เงินรับล่วงหน้า",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "23000"
   },
   {
@@ -388,7 +388,7 @@
     "accountcode": "23030",
     "accountname": "ค่าใช้จ่ายค้างจ่าย",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "23000"
   },
   {
@@ -396,7 +396,7 @@
     "accountcode": "23040",
     "accountname": "ภาษีหัก ณ ที่จ่าย ค้างจ่าย",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "23000"
   },
   {
@@ -404,7 +404,7 @@
     "accountcode": "23050",
     "accountname": "เจ้าหนี้อื่นๆ",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "23000"
   },
   {
@@ -420,7 +420,7 @@
     "accountcode": "24010",
     "accountname": "เงินกู้ยืมที่มีอายุเกิน 1 ปี",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "24000"
   },
   {
@@ -428,7 +428,7 @@
     "accountcode": "24020",
     "accountname": "เงินกู้ยืมระยะยาว",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "24000"
   },
   {
@@ -436,7 +436,7 @@
     "accountcode": "24030",
     "accountname": "หนี้สินระยาวอื่น",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "24000"
   },
   {
@@ -460,7 +460,7 @@
     "accountcode": "31010",
     "accountname": "ทุน - หุ้นสมาชิก",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "31000"
   },
   {
@@ -468,7 +468,7 @@
     "accountcode": "31020",
     "accountname": "ทุน - เงินออมสัจจะ",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "31000"
   },
   {
@@ -484,7 +484,7 @@
     "accountcode": "32010",
     "accountname": "ทุน - เงินล้าน",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "32000"
   },
   {
@@ -492,7 +492,7 @@
     "accountcode": "32020",
     "accountname": "ทุน - โครงการ 3A",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "32000"
   },
   {
@@ -500,7 +500,7 @@
     "accountcode": "32030",
     "accountname": "ทุน - เงินเพิ่มทุนระยะ 2",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "32000"
   },
   {
@@ -508,7 +508,7 @@
     "accountcode": "32040",
     "accountname": "ทุน - เงินเพิ่มทุนระยะ 2",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "32000"
   },
   {
@@ -516,7 +516,7 @@
     "accountcode": "32050",
     "accountname": "ทุน - อื่น",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "32000"
   },
   {
@@ -532,7 +532,7 @@
     "accountcode": "33010",
     "accountname": "กำไรที่จัดสรร - บัญชี 1",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "33000"
   },
   {
@@ -540,7 +540,7 @@
     "accountcode": "33020",
     "accountname": "กำไรที่จัดสรร - บัญชี 2",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "33000"
   },
   {
@@ -548,7 +548,7 @@
     "accountcode": "33030",
     "accountname": "จ่ายเงินเฉลี่ยคืน",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "33000"
   },
   {
@@ -556,7 +556,7 @@
     "accountcode": "33040",
     "accountname": "เงินฌาปณกิจ",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "33000"
   },
   {
@@ -564,7 +564,7 @@
     "accountcode": "33050",
     "accountname": "สาธารณะประโยชน์",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "33000"
   },
   {
@@ -572,7 +572,7 @@
     "accountcode": "33060",
     "accountname": "เงินประกันความเสี่ยง",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "33000"
   },
   {
@@ -580,7 +580,7 @@
     "accountcode": "33070",
     "accountname": "เงินสมทบกองทุน",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "33000"
   },
   {
@@ -588,7 +588,7 @@
     "accountcode": "33080",
     "accountname": "เงินสวัสดิการ",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "33000"
   },
   {
@@ -596,7 +596,7 @@
     "accountcode": "33090",
     "accountname": "ค่าดำเนินงาน/ค่าบริหารจัดการ",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "33000"
   },
   {
@@ -612,7 +612,7 @@
     "accountcode": "34010",
     "accountname": "กำไรสะสม (ขาดทุน) สะสม บัญชี 1",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "34000"
   },
   {
@@ -620,7 +620,7 @@
     "accountcode": "34020",
     "accountname": "กำไรสะสม (ขาดทุน) สะสม บัญชี 2",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "34000"
   },
   {
@@ -636,7 +636,7 @@
     "accountcode": "35010",
     "accountname": "กำไร ( ขาดทุน ) บัญชี 1",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "35000"
   },
   {
@@ -644,7 +644,7 @@
     "accountcode": "35020",
     "accountname": "กำไร ( ขาดทุน ) บัญชี 2",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "35000"
   },
   {
@@ -668,7 +668,7 @@
     "accountcode": "41010",
     "accountname": "รายได้ - ดอกเบี้ยเงินกู้ - บัญชี 1",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "41000"
   },
   {
@@ -676,7 +676,7 @@
     "accountcode": "41020",
     "accountname": "รายได้ - ดอกเบี้ยเงินกู้ - บัญชี 2",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "41000"
   },
   {
@@ -692,7 +692,7 @@
     "accountcode": "42010",
     "accountname": "รายได้ - ค่าปรับเงินกู้บัญชี 1",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "42000"
   },
   {
@@ -700,7 +700,7 @@
     "accountcode": "42020",
     "accountname": "รายได้ - ค่าปรับเงินกู้บัญชี 2",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "42000"
   },
   {
@@ -716,7 +716,7 @@
     "accountcode": "43010",
     "accountname": "รายได้ - ค่าธรรมเนียม-แรกเข้า",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "43000"
   },
   {
@@ -724,7 +724,7 @@
     "accountcode": "43020",
     "accountname": "รายได้ - ค่าธรรมเนียม-ขอกู้",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "43000"
   },
   {
@@ -732,7 +732,7 @@
     "accountcode": "43030",
     "accountname": "รายได้ - ค่าธรรมเนียม-ติดตามหนี้",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "43000"
   },
   {
@@ -740,7 +740,7 @@
     "accountcode": "43040",
     "accountname": "รายได้ - ค่าธรรมเนียมอื่น",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "43000"
   },
   {
@@ -756,7 +756,7 @@
     "accountcode": "44010",
     "accountname": "รายได้จากการขายสินค้า - xxx",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "44000"
   },
   {
@@ -764,7 +764,7 @@
     "accountcode": "44020",
     "accountname": "รายได้จากการให้บริการ",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "44000"
   },
   {
@@ -780,7 +780,7 @@
     "accountcode": "45010",
     "accountname": "รายได้ - ดอกเบี้ยเงินฝากธนาคาร-บัญชี 1",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "45000"
   },
   {
@@ -788,7 +788,7 @@
     "accountcode": "45020",
     "accountname": "รายได้ - ดอกเบี้ยเงินฝากธนาคาร-บัญชี 2",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "45000"
   },
   {
@@ -804,7 +804,7 @@
     "accountcode": "46010",
     "accountname": "รายได้ - เบ็ดเตล็ด",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "46000"
   },
   {
@@ -812,7 +812,7 @@
     "accountcode": "46020",
     "accountname": "รายได้ - เงินรับบริจาค",
     "accountbalancetype": 2,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "46000"
   },
   {
@@ -836,7 +836,7 @@
     "accountcode": "51010",
     "accountname": "ดอกเบี้ยจ่าย-เงินฝากออมทรัพย์",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "51000"
   },
   {
@@ -844,7 +844,7 @@
     "accountcode": "51020",
     "accountname": "ดอกเบี้ยจ่าย-เงินฝากประจำ",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "51000"
   },
   {
@@ -852,7 +852,7 @@
     "accountcode": "51030",
     "accountname": "ผลต่างจากการปิดบัญชี",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "51000"
   },
   {
@@ -868,7 +868,7 @@
     "accountcode": "52010",
     "accountname": "ซื้อสินค้า",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "52000"
   },
   {
@@ -876,7 +876,7 @@
     "accountcode": "52020",
     "accountname": "ส่งคืนและส่วนลด",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "52000"
   },
   {
@@ -884,7 +884,7 @@
     "accountcode": "52030",
     "accountname": "ค่าขนส่ง",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "52000"
   },
   {
@@ -900,7 +900,7 @@
     "accountcode": "53010",
     "accountname": "เงินเดือนและค่าตอบแทน",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "53000"
   },
   {
@@ -908,7 +908,7 @@
     "accountcode": "53020",
     "accountname": "ค่าเบี้ยเลี้ยงกรรมการ",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "53000"
   },
   {
@@ -916,7 +916,7 @@
     "accountcode": "53030",
     "accountname": "ค่ารับรอง",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "53000"
   },
   {
@@ -932,7 +932,7 @@
     "accountcode": "54010",
     "accountname": "ค่าเช่า",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "54000"
   },
   {
@@ -940,7 +940,7 @@
     "accountcode": "54020",
     "accountname": "ค่าน้ำ",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "54000"
   },
   {
@@ -948,7 +948,7 @@
     "accountcode": "54030",
     "accountname": "ค่าไฟฟ้า",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "54000"
   },
   {
@@ -956,7 +956,7 @@
     "accountcode": "54040",
     "accountname": "ค่าโทรศัพท์และอินเตอร์เน็ต",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "54000"
   },
   {
@@ -964,7 +964,7 @@
     "accountcode": "54050",
     "accountname": "ค่าเครื่องเขียนแบบพิมพ์",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "54000"
   },
   {
@@ -972,7 +972,7 @@
     "accountcode": "54060",
     "accountname": "ค่าพาหนะเดินทาง",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "54000"
   },
   {
@@ -980,7 +980,7 @@
     "accountcode": "54070",
     "accountname": "ดอกเบี้ยจ่าย",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "54000"
   },
   {
@@ -988,7 +988,7 @@
     "accountcode": "54080",
     "accountname": "ค่าธรรมเนียมอื่นๆ",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "54000"
   },
   {
@@ -996,7 +996,7 @@
     "accountcode": "54090",
     "accountname": "ค่าใช้จ่ายเบ็ดเตล็ด",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "54000"
   },
   {
@@ -1012,7 +1012,7 @@
     "accountcode": "55010",
     "accountname": "สวัสดิการ - รักษาพยาบาล",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "55000"
   },
   {
@@ -1020,7 +1020,7 @@
     "accountcode": "55020",
     "accountname": "สวัสดิการ - ผู้สูงอายุ",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "55000"
   },
   {
@@ -1028,7 +1028,7 @@
     "accountcode": "55030",
     "accountname": "สวัสดิการ - แรกเกิด/บุตร",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "55000"
   },
   {
@@ -1036,7 +1036,7 @@
     "accountcode": "55040",
     "accountname": "สวัสดิการ - เสียชีวิต",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "55000"
   },
   {
@@ -1044,7 +1044,7 @@
     "accountcode": "55050",
     "accountname": "สวัสดิการ - อื่น",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "55000"
   },
   {
@@ -1052,7 +1052,7 @@
     "accountcode": "55060",
     "accountname": "ทุนสาธารณะประโยชน์",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "55000"
   },
   {
@@ -1060,7 +1060,7 @@
     "accountcode": "55070",
     "accountname": "จ่ายเงินปันผล",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "55000"
   },
   {
@@ -1068,7 +1068,7 @@
     "accountcode": "55080",
     "accountname": "จ่ายเงินเฉลี่ยคืน",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "55000"
   },
   {
@@ -1084,7 +1084,7 @@
     "accountcode": "56010",
     "accountname": "ค่าเสื่อมราคา - อาคาร",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "56000"
   },
   {
@@ -1092,7 +1092,7 @@
     "accountcode": "56020",
     "accountname": "ค่าเสื่อมราคา - อุปกรณ์",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "56000"
   },
   {
@@ -1100,7 +1100,7 @@
     "accountcode": "56030",
     "accountname": "ค่าเสื่อมราคา - ครุภัณฑ์",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "56000"
   },
   {
@@ -1116,7 +1116,7 @@
     "accountcode": "57010",
     "accountname": "ตัดหนี้สูญ",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "57000"
   },
   {
@@ -1124,7 +1124,7 @@
     "accountcode": "57020",
     "accountname": "ค่าใช้จ่ายอื่นๆ",
     "accountbalancetype": 1,
-    "accountlevel": "0",
+    "accountlevel": 0,
     "accountgroup": "57000"
   }
 ]
