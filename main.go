@@ -90,7 +90,7 @@ func main() {
 		panic(err)
 	}
 
-	if devApiMode == "" || devApiMode == 2 {
+	if devApiMode == "" || devApiMode == "2" {
 
 		ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)
 
@@ -183,7 +183,7 @@ func main() {
 		journalReportHttp.RouteSetup()
 	}
 
-	if devApiMode == 1 || devApiMode == 2 {
+	if devApiMode == "1" || devApiMode == "2" {
 		inventorysearchconsumer.StartInventorySearchComsumerOnProductCreated(ms, cfg)
 		inventorysearchconsumer.StartInventorySearchComsumerOnProductUpdated(ms, cfg)
 		inventorysearchconsumer.StartInventorySearchComsumerOnProductDeleted(ms, cfg)

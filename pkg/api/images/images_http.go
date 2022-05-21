@@ -69,7 +69,7 @@ func (svc ImagesHttp) GetProductImage(ctx microservice.IContext) error {
 	imageIndex := ctx.Param("index")
 
 	if imageIndex == "" {
-		imageIndex = 1
+		imageIndex = "1"
 	}
 
 	// index, err := strconv.Atoi(queryParams[2])

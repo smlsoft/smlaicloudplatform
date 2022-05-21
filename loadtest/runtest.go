@@ -22,7 +22,7 @@ func main() {
 
 	templates := []*wrkgo.LoadTestTemplate{
 		{
-			ID:      0,
+			ID:      "0",
 			URLPath: "/transaction",
 			Timeout: time.Second * 6,
 			Method:  "POST",

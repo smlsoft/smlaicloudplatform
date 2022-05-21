@@ -108,7 +108,8 @@ func (svc ChartOfAccountService) Info(guid string, shopID string) (vfgl.ChartOfA
 
 func (svc ChartOfAccountService) Search(shopID string, q string, page int, limit int) ([]vfgl.ChartOfAccountInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
-		"docno",
+		"accountcode",
+		"accountname",
 	}
 
 	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
