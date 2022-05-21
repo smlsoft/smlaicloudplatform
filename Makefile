@@ -66,7 +66,6 @@ run_m1_local_appdev:
 	PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" go run --tags dynamic main.go
 
 run_m1_local_comsumerdev:
-	swag init
 	DEV_API_MODE=1 PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" go run --tags dynamic main.go
 
 run_m1_stagging_appdev:
