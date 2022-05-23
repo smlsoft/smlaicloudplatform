@@ -17,7 +17,8 @@ type IPersister interface {
 	Where(model interface{}, expr string, args ...interface{}) ( /*result*/ interface{}, error)
 	FindOne(model interface{}, idColumn string, id string) ( /*result*/ interface{}, error)
 	Create(model interface{}) error
-	Update(model interface{}, columnIDName string, id int) error
+	Update(model interface{}, where map[string]interface{}) error
+	Delete(model interface{}, where map[string]interface{}) error
 	CreateInBatch(models interface{}, bulkSize int) error
 	Exec(sql string, args ...interface{}) error
 	TableExists(model interface{}) (bool, error)
@@ -26,6 +27,7 @@ type IPersister interface {
 	SetupJoinTable(model interface{}, field string, joinTable interface{}) error
 	AutoMigrate(dst ...interface{}) error
 	TestConnect() error
+	Transaction(funcTransaction func(*Persister) error) error
 }
 
 // IPersisterConfig is interface for persister
@@ -49,9 +51,12 @@ type Persister struct {
 
 // NewPersister return new persister
 func NewPersister(config IPersisterConfig) *Persister {
-	return &Persister{
+	pst := &Persister{
 		config: config,
 	}
+
+	pst.getClient()
+	return pst
 }
 
 func (pst *Persister) getConnectionString() (string, error) {
@@ -95,7 +100,6 @@ func (pst *Persister) getClient() (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	//fmt.Println("Test Connectd To : " + connection)
 	loggerLevel := pst.GetLeggerLevel()
 	db, err := gorm.Open(postgres.Open(connection), &gorm.Config{
 		SkipDefaultTransaction: true,
@@ -113,10 +117,7 @@ func (pst *Persister) getClient() (*gorm.DB, error) {
 
 // TableExists check if table exists
 func (pst *Persister) TableExists(model interface{}) (bool, error) {
-	db, err := pst.getClient()
-	if err != nil {
-		return false, err
-	}
+	db := pst.db
 
 	has := db.Migrator().HasTable(model)
 
@@ -125,10 +126,7 @@ func (pst *Persister) TableExists(model interface{}) (bool, error) {
 
 // Exec execute sql
 func (pst *Persister) Exec(sql string, args ...interface{}) error {
-	db, err := pst.getClient()
-	if err != nil {
-		return err
-	}
+	db := pst.db
 
 	if err := db.Exec(sql, args...).Error; err != nil {
 		return err
@@ -149,10 +147,7 @@ func (pst *Persister) calcOffset(page int, pageLimit int) int {
 
 // WhereSP find objects by expressions and sorting with paging
 func (pst *Persister) WhereSP(model interface{}, sortexpr string, pageLimit int, page int, expr string, args ...interface{}) ( /*result*/ interface{}, error) {
-	db, err := pst.getClient()
-	if err != nil {
-		return nil, err
-	}
+	db := pst.db
 
 	offset := pst.calcOffset(page, pageLimit)
 
@@ -197,10 +192,7 @@ func (pst *Persister) Where(model interface{}, expr string, args ...interface{})
 
 // Count return count by expression
 func (pst *Persister) Count(model interface{}, expr string, args ...interface{}) (int64, error) {
-	db, err := pst.getClient()
-	if err != nil {
-		return 0, err
-	}
+	db := pst.db
 
 	count := new(int64)
 	if err := db.Model(model).Where(expr, args...).Count(count).Error; err != nil {
@@ -212,10 +204,7 @@ func (pst *Persister) Count(model interface{}, expr string, args ...interface{})
 
 // FindOne find object by id
 func (pst *Persister) FindOne(model interface{}, idColumn string, id string) ( /*result*/ interface{}, error) {
-	db, err := pst.getClient()
-	if err != nil {
-		return nil, err
-	}
+	db := pst.db
 
 	where := fmt.Sprintf("%s = ?", idColumn)
 	if err := db.Where(where, id).First(model).Error; err != nil {
@@ -226,12 +215,9 @@ func (pst *Persister) FindOne(model interface{}, idColumn string, id string) ( /
 
 // Create create the object
 func (pst *Persister) Create(model interface{}) error {
-	db, err := pst.getClient()
-	if err != nil {
-		return err
-	}
+	db := pst.db
 
-	err = db.Create(model).Error
+	err := db.Create(model).Error
 	if err != nil {
 		return err
 	}
@@ -240,18 +226,46 @@ func (pst *Persister) Create(model interface{}) error {
 }
 
 // Update update the object
-func (pst *Persister) Update(model interface{}, columnIDName string, id int) error {
-	db, err := pst.getClient()
+func (pst *Persister) Update(model interface{}, where map[string]interface{}) error {
+
+	db := pst.db
+
+	whereConditions := ""
+	whereValues := []interface{}{}
+
+	for columnName, value := range where {
+		if len(whereConditions) != 0 {
+			whereConditions = whereConditions + " AND "
+		}
+		whereConditions = whereConditions + fmt.Sprintf(`"%s" = ? `, columnName)
+		whereValues = append(whereValues, value)
+	}
+
+	err := db.Model(model).Where(whereConditions, whereValues...).Updates(model).Error
 	if err != nil {
 		return err
 	}
 
-	// err = db.Save(model).Error
+	return nil
+}
 
-	where := fmt.Sprintf("%s = ?", columnIDName)
-	// err = db.Model(&model).Where(where, id).Error
-	fmt.Printf("%+v\n", model)
-	err = db.Model(model).Where(where, id).Updates(model).Error
+// Delete update the object
+func (pst *Persister) Delete(model interface{}, where map[string]interface{}) error {
+
+	db := pst.db
+
+	whereConditions := ""
+	whereValues := []interface{}{}
+
+	for columnName, value := range where {
+		if len(whereConditions) != 0 {
+			whereConditions = whereConditions + " AND "
+		}
+		whereConditions = whereConditions + fmt.Sprintf(`"%s" = ? `, columnName)
+		whereValues = append(whereValues, value)
+	}
+
+	err := db.Where(whereConditions, whereValues...).Delete(model).Error
 	if err != nil {
 		return err
 	}
@@ -261,10 +275,7 @@ func (pst *Persister) Update(model interface{}, columnIDName string, id int) err
 
 // CreateInBatch create the objects in batch
 func (pst *Persister) CreateInBatch(models interface{}, bulkSize int) error {
-	db, err := pst.getClient()
-	if err != nil {
-		return err
-	}
+	db := pst.db
 
 	db.CreateInBatches(models, bulkSize)
 
@@ -272,38 +283,38 @@ func (pst *Persister) CreateInBatch(models interface{}, bulkSize int) error {
 }
 
 func (pst *Persister) DropTable(table ...interface{}) error {
-	db, err := pst.getClient()
-	if err != nil {
-		return err
-	}
+	db := pst.db
 
 	return db.Migrator().DropTable(table...)
 }
 
 func (pst *Persister) SetupJoinTable(model interface{}, field string, joinTable interface{}) error {
-	db, err := pst.getClient()
-	if err != nil {
-		return err
-	}
+	db := pst.db
 
 	return db.SetupJoinTable(model, field, joinTable)
 }
 
 func (pst *Persister) AutoMigrate(dst ...interface{}) error {
-	db, err := pst.getClient()
-	if err != nil {
-		return err
-	}
+	db := pst.db
 	return db.AutoMigrate(dst...)
 }
 
 func (pst *Persister) TestConnect() error {
-	db, err := pst.getClient()
-	if err != nil {
-		return err
-	}
+	db := pst.db
 
 	var success int
-	err = db.Raw("SELECT 1").Scan(&success).Error
+	err := db.Raw("SELECT 1").Scan(&success).Error
 	return err
+}
+
+func (pst *Persister) Transaction(funcTransaction func(*Persister) error) error {
+	pst.db.Transaction(func(tx *gorm.DB) error {
+		pst := &Persister{
+			config: nil,
+			db:     tx,
+		}
+		return funcTransaction(pst)
+	})
+
+	return nil
 }

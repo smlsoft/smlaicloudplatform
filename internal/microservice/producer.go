@@ -92,8 +92,6 @@ func (p *Producer) Close() error {
 	prod.Flush(5000) // 5s for flush message in queue
 	prod.Close()
 
-	p.logger.Debugf("PROD", "Close successfully")
-
 	return nil
 }
 
