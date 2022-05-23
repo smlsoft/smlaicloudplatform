@@ -7756,43 +7756,53 @@ const docTemplate = `{
         "vfgl.BalanceSheetReport": {
             "type": "object",
             "properties": {
-                "accountGroup": {
+                "accountgroup": {
+                    "description": "เล่มบัญชี",
                     "type": "string"
                 },
                 "assets": {
+                    "description": "สินทรัพย์",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/vfgl.BalanceSheetAccountDetail"
                     }
                 },
-                "endDate": {
+                "enddate": {
+                    "description": "วันที่สิ้นสุด",
                     "type": "string"
                 },
                 "liabilities": {
+                    "description": "หนี้สิน",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/vfgl.BalanceSheetAccountDetail"
                     }
                 },
-                "ownesQutitys": {
+                "ownesequities": {
+                    "description": "ทุนและส่วนของเจ้าของ",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/vfgl.BalanceSheetAccountDetail"
                     }
                 },
-                "reportDate": {
+                "reportdate": {
+                    "description": "วันที่ทำรายการ",
                     "type": "string"
                 },
-                "totalAssetAmount": {
+                "totalassetamount": {
+                    "description": "รวมสินทรัพย์",
                     "type": "number"
                 },
-                "totalLiabilityAmount": {
+                "totalliabilityamount": {
+                    "description": "รวมหนี้สิน",
                     "type": "number"
                 },
-                "totalLiabilityAndOwnersEqutityAmount": {
+                "totalliabilityandownersequityamount": {
+                    "description": "รวมหนี้สิน ทุน และส่วนของเจ้าของ",
                     "type": "number"
                 },
-                "totalOwnersEqutityAmount": {
+                "totalownersequityamount": {
+                    "description": "รวมทุนและส่วนของเจ้าของ",
                     "type": "number"
                 }
             }
@@ -8071,11 +8081,11 @@ const docTemplate = `{
         "vfgl.ProfitAndLossSheetReport": {
             "type": "object",
             "properties": {
-                "accountGroup": {
+                "accountgroup": {
                     "description": "เล่มบัญชี",
                     "type": "string"
                 },
-                "endDate": {
+                "enddate": {
                     "description": "วันที่สิ้นสุด",
                     "type": "string"
                 },
@@ -8093,23 +8103,23 @@ const docTemplate = `{
                         "$ref": "#/definitions/vfgl.ProfitAndLossSheetAccountDetail"
                     }
                 },
-                "profitAndLossAmount": {
+                "profitandlossamount": {
                     "description": "กำไรขาดทุน",
                     "type": "number"
                 },
-                "reportDate": {
+                "reportdate": {
                     "description": "วันที่ทำรายการ",
                     "type": "string"
                 },
-                "startDate": {
+                "startdate": {
                     "description": "วันที่เริ่มต้น",
                     "type": "string"
                 },
-                "totalExpenseAmount": {
+                "totalexpenseamount": {
                     "description": "รวมค่าใช้จ่าย",
                     "type": "number"
                 },
-                "totalIncomeAmount": {
+                "totalincomeamount": {
                     "description": "รวมรายได้",
                     "type": "number"
                 }
@@ -8146,15 +8156,15 @@ const docTemplate = `{
                     "description": "ยอดคงเหลือ(ประจำงวด)",
                     "type": "number"
                 },
-                "balanceAmount": {
+                "balanceamount": {
                     "description": "ยอดคงเหลือยกมา",
                     "type": "number"
                 },
-                "balanceCreditAmount": {
+                "balancecreditamount": {
                     "description": "ยอดยกมาเครดิต",
                     "type": "number"
                 },
-                "balanceDebitAmount": {
+                "balancedebitamount": {
                     "description": "ยอดยกมาเดบิต",
                     "type": "number"
                 },
@@ -8162,23 +8172,23 @@ const docTemplate = `{
                     "description": "รหัสผังบัญชีกลาง",
                     "type": "string"
                 },
-                "creditAmount": {
+                "creditamount": {
                     "description": "ยอดเครดิต",
                     "type": "number"
                 },
-                "debitAmount": {
+                "debitamount": {
                     "description": "ยอดเดบิต",
                     "type": "number"
                 },
-                "nextBalanceAmount": {
+                "nextbalanceamount": {
                     "description": "ยอดคงเหลือสะสม",
                     "type": "number"
                 },
-                "nextBalanceCreditAmount": {
+                "nextbalancecreditamount": {
                     "description": "ยอดสะสมเครดิต",
                     "type": "number"
                 },
-                "nextBalanceDebitAmount": {
+                "nextbalancedebitamount": {
                     "description": "ยอดสะสมเดบิต",
                     "type": "number"
                 }
@@ -8187,50 +8197,50 @@ const docTemplate = `{
         "vfgl.TrialBalanceSheetReport": {
             "type": "object",
             "properties": {
-                "accountDetail": {
+                "accountdetails": {
                     "description": "รายละเอียดบัญชี",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/vfgl.TrialBalanceSheetAccountDetail"
                     }
                 },
-                "accountGroup": {
+                "accountgroup": {
                     "description": "เล่มบัญชี",
                     "type": "string"
                 },
-                "endDate": {
+                "enddate": {
                     "description": "วันที่สิ้นสุด",
                     "type": "string"
                 },
-                "reportDate": {
+                "reportdate": {
                     "description": "วันที่ทำรายการ",
                     "type": "string"
                 },
-                "startDate": {
+                "startdate": {
                     "description": "วันที่เริ่มต้น",
                     "type": "string"
                 },
-                "totalAmountCredit": {
+                "totalamountcredit": {
                     "description": "รวมเครดิต",
                     "type": "number"
                 },
-                "totalAmountDebit": {
+                "totalamountdebit": {
                     "description": "รวมเดบิต",
                     "type": "number"
                 },
-                "totalBalanceCredit": {
+                "totalbalancecredit": {
                     "description": "รวมยอดยกมาเครดิต",
                     "type": "number"
                 },
-                "totalBalanceDebit": {
+                "totalbalancedebit": {
                     "description": "รวมยอดยกมาเดบิต",
                     "type": "number"
                 },
-                "totalNextBalanceCredit": {
+                "totalnextbalancecredit": {
                     "description": "รวมยอดสะสมเครดิต",
                     "type": "number"
                 },
-                "totalNextBalanceDebit": {
+                "totalnextbalancedebit": {
                     "description": "รวมยอดสะสมเดบิต",
                     "type": "number"
                 }
