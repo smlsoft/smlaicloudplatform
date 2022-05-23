@@ -1,10 +1,11 @@
-package journal
+package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/vfgl"
 	"smlcloudplatform/pkg/repositories"
+	"smlcloudplatform/pkg/vfgl/journal/config"
 )
 
 type IJournalMqRepository interface {
@@ -27,6 +28,6 @@ func NewJournalMqRepository(prod microservice.IProducer) JournalMqRepository {
 		prod:  prod,
 		mqKey: mqKey,
 	}
-	insRepo.KafkaRepository = repositories.NewKafkaRepository[vfgl.JournalDoc](prod, JournalMessageQueueConfig{}, "")
+	insRepo.KafkaRepository = repositories.NewKafkaRepository[vfgl.JournalDoc](prod, config.JournalMessageQueueConfig{}, "")
 	return insRepo
 }

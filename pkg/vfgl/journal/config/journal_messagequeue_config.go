@@ -1,4 +1,4 @@
-package journal
+package config
 
 const (
 	MQ_TOPIC_JOURNAL_CREATED      string = "when-journal-created"

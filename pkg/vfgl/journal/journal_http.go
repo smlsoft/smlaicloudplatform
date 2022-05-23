@@ -6,6 +6,8 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/vfgl"
+	"smlcloudplatform/pkg/vfgl/journal/repositories"
+	"smlcloudplatform/pkg/vfgl/journal/services"
 	"strconv"
 )
 
@@ -14,16 +16,16 @@ type IJournalHttp interface{}
 type JournalHttp struct {
 	ms  *microservice.Microservice
 	cfg microservice.IConfig
-	svc IJournalService
+	svc services.IJournalHttpService
 }
 
 func NewJournalHttp(ms *microservice.Microservice, cfg microservice.IConfig) JournalHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
 
-	repo := NewJournalRepository(pst)
-	mqRepo := NewJournalMqRepository(prod)
-	svc := NewJournalService(repo, mqRepo)
+	repo := repositories.NewJournalRepository(pst)
+	mqRepo := repositories.NewJournalMqRepository(prod)
+	svc := services.NewJournalHttpService(repo, mqRepo)
 
 	return JournalHttp{
 		ms:  ms,

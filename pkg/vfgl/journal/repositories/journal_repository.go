@@ -1,4 +1,4 @@
-package journal
+package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
