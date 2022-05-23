@@ -116,7 +116,7 @@ func MockTrialBalanceSheetReport(shopId string, accountGroup string, startDate t
 		ReportDate:             time.Now(),
 		StartDate:              startDate,
 		EndDate:                endDate,
-		AccountDetail:          &accountDetail,
+		AccountDetails:         &accountDetail,
 		TotalAmountDebit:       2911026.03,
 		TotalAmountCredit:      2911026.03,
 		TotalNextBalanceDebit:  2911026.03,
@@ -243,15 +243,15 @@ func MockBalanceSheetReport(shopId string, accountGroup string, endDate time.Tim
 	ownersEqutities = append(assets, *acc35010)
 
 	reportMock := &vfgl.BalanceSheetReport{
-		AccountGroup:                         accountGroup,
-		ReportDate:                           time.Now(),
-		EndDate:                              endDate,
-		Assets:                               &assets,
-		TotalAssetAmount:                     2911026.03,
-		OwnesQutitys:                         &ownersEqutities,
-		TotalLiabilityAmount:                 0,
-		TotalOwnersEqutityAmount:             2911026.03,
-		TotalLiabilityAndOwnersEqutityAmount: 2911026.03,
+		AccountGroup:                        accountGroup,
+		ReportDate:                          time.Now(),
+		EndDate:                             endDate,
+		Assets:                              &assets,
+		TotalAssetAmount:                    2911026.03,
+		OwnesEquities:                       &ownersEqutities,
+		TotalLiabilityAmount:                0,
+		TotalOwnersEquityAmount:             2911026.03,
+		TotalLiabilityAndOwnersEquityAmount: 2911026.03,
 	}
 	return reportMock
 }
