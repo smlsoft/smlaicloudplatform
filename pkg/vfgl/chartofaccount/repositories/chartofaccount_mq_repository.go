@@ -1,10 +1,11 @@
-package chartofaccount
+package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/vfgl"
 	"smlcloudplatform/pkg/repositories"
+	"smlcloudplatform/pkg/vfgl/chartofaccount/config"
 )
 
 type IChartOfAccountMQRepository interface {
@@ -27,6 +28,6 @@ func NewChartOfAccountMQRepository(prod microservice.IProducer) ChartOfAccountMQ
 		prod:  prod,
 		mqKey: mqKey,
 	}
-	repo.KafkaRepository = repositories.NewKafkaRepository[vfgl.ChartOfAccountDoc](prod, ChartOfAccountMessageQueueConfig{}, "")
+	repo.KafkaRepository = repositories.NewKafkaRepository[vfgl.ChartOfAccountDoc](prod, config.ChartOfAccountMessageQueueConfig{}, "")
 	return repo
 }

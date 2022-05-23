@@ -81,9 +81,9 @@ func (JournalDeleteActivity) CollectionName() string {
 
 // Postgresql model
 type JournalPg struct {
-	Docno                    string `json:"docno" gorm:"column:docno;primaryKey"`
-	models.ShopIdentity      `gorm:"embedded;"`
+	models.Identity          `gorm:"embedded;"`
 	models.PartitionIdentity `gorm:"embedded;"`
+	Docno                    string    `json:"docno" gorm:"column:docno;primaryKey"`
 	BatchID                  string    `json:"batchid" gorm:"column:batchid"`
 	DocDate                  time.Time `json:"docdate" gorm:"column:docdate"`
 	AccountPeriod            int16     `json:"accountperiod" gorm:"column:accountperiod"`
@@ -98,9 +98,9 @@ func (JournalPg) TableName() string {
 }
 
 type JournalDetailPg struct {
-	Docno                    string `json:"docno" gorm:"column:docno;primaryKey"`
 	models.ShopIdentity      `gorm:"embedded;"`
 	models.PartitionIdentity `gorm:"embedded;"`
+	Docno                    string  `json:"docno" gorm:"column:docno;primaryKey"`
 	AccountCode              string  `json:"accountcode" gorm:"column:accountcode;primaryKey"`
 	AccountName              string  `json:"accountname" gorm:"column:accountname"`
 	DebitAmount              float64 `json:"debitamount" gorm:"column:debitamount"`

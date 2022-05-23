@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models/vfgl"
+	"smlcloudplatform/pkg/vfgl/chartofaccount/config"
+	"smlcloudplatform/pkg/vfgl/chartofaccount/repositories"
+	"smlcloudplatform/pkg/vfgl/chartofaccount/services"
 	"time"
 )
 
@@ -17,7 +20,7 @@ func MigrationChartOfAccountTable(ms *microservice.Microservice, cfg microservic
 
 func StartChartOfAccountConsumerCreated(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
 
-	topicCreated := MQ_TOPIC_CHARTOFACCOUNT_CREATED
+	topicCreated := config.MQ_TOPIC_CHARTOFACCOUNT_CREATED
 	timeout := time.Duration(-1)
 	mqConfig := cfg.MQConfig()
 	mq := microservice.NewMQ(mqConfig, ms.Logger)
@@ -36,44 +39,97 @@ func StartChartOfAccountConsumerCreated(ms *microservice.Microservice, cfg micro
 			ms.Logger.Errorf(moduleName, err.Error())
 		}
 
-		pgDocList := []vfgl.ChartOfAccountPG{}
+		repo := repositories.NewChartOfAccountPgRepository(pst)
+		svc := services.NewChartOfAccountConsumeService(repo)
 
-		tmpJsonDoc, err := json.Marshal(doc)
-		if err != nil {
-			ms.Logger.Errorf(moduleName, err.Error())
-		}
-
-		tmpDoc := vfgl.ChartOfAccountPG{}
-		err = json.Unmarshal([]byte(tmpJsonDoc), &tmpDoc)
-		if err != nil {
-			ms.Logger.Errorf(moduleName, err.Error())
-		}
-
-		pgDocList = append(pgDocList, tmpDoc)
-
-		err = pst.CreateInBatch(pgDocList, len(pgDocList))
+		err = svc.Create(doc)
 
 		if err != nil {
 			ms.Logger.Errorf(moduleName, err.Error())
 		}
 		return nil
 	})
+}
 
+func StartChartOfAccountConsumerUpdated(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
+
+	topicUpdated := config.MQ_TOPIC_CHARTOFACCOUNT_UPDATED
+	timeout := time.Duration(-1)
+	mqConfig := cfg.MQConfig()
+	mq := microservice.NewMQ(mqConfig, ms.Logger)
+	mq.CreateTopicR(topicUpdated, 5, 1, time.Hour*24*7)
+	ms.Consume(mqConfig.URI(), topicUpdated, groupID, timeout, func(ctx microservice.IContext) error {
+		moduleName := "comsume chartofaccount updated"
+
+		pst := ms.Persister(cfg.PersisterConfig())
+		msg := ctx.ReadInput()
+
+		ms.Logger.Debugf("Consume Journal Updated : %v", msg)
+		doc := vfgl.ChartOfAccountDoc{}
+		err := json.Unmarshal([]byte(msg), &doc)
+
+		if err != nil {
+			ms.Logger.Errorf(moduleName, err.Error())
+		}
+
+		repo := repositories.NewChartOfAccountPgRepository(pst)
+		svc := services.NewChartOfAccountConsumeService(repo)
+
+		err = svc.Update(doc.ShopID, doc.AccountCode, doc)
+
+		if err != nil {
+			ms.Logger.Errorf(moduleName, err.Error())
+		}
+		return nil
+	})
+}
+
+func StartChartOfAccountConsumerDeleted(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
+
+	topicDeleted := config.MQ_TOPIC_CHARTOFACCOUNT_DELETED
+	timeout := time.Duration(-1)
+	mqConfig := cfg.MQConfig()
+	mq := microservice.NewMQ(mqConfig, ms.Logger)
+	mq.CreateTopicR(topicDeleted, 5, 1, time.Hour*24*7)
+	ms.Consume(mqConfig.URI(), topicDeleted, groupID, timeout, func(ctx microservice.IContext) error {
+		moduleName := "comsume chartofaccount deleted"
+
+		pst := ms.Persister(cfg.PersisterConfig())
+		msg := ctx.ReadInput()
+
+		ms.Logger.Debugf("Consume Journal Deleted : %v", msg)
+		doc := vfgl.ChartOfAccountDoc{}
+		err := json.Unmarshal([]byte(msg), &doc)
+
+		if err != nil {
+			ms.Logger.Errorf(moduleName, err.Error())
+		}
+
+		repo := repositories.NewChartOfAccountPgRepository(pst)
+		svc := services.NewChartOfAccountConsumeService(repo)
+
+		err = svc.Delete(doc.ShopID, doc.AccountCode)
+
+		if err != nil {
+			ms.Logger.Errorf(moduleName, err.Error())
+		}
+		return nil
+	})
 }
 
 func StartChartOfAccountConsumerBlukCreated(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
 
-	topicCreated := MQ_TOPIC_CHARTOFACCOUNT_BULK_CREATED
+	topicCreated := config.MQ_TOPIC_CHARTOFACCOUNT_BULK_CREATED
 	timeout := time.Duration(-1)
 	mqConfig := cfg.MQConfig()
 	mq := microservice.NewMQ(mqConfig, ms.Logger)
 	mq.CreateTopicR(topicCreated, 5, 1, time.Hour*24*7)
 	ms.Consume(mqConfig.URI(), topicCreated, groupID, timeout, func(ctx microservice.IContext) error {
-		moduleName := "comsume chartofaccount created"
+		moduleName := "comsume chartofaccount bulk created"
 
 		pst := ms.Persister(cfg.PersisterConfig())
 		msg := ctx.ReadInput()
-		ms.Logger.Debugf("Consume Journal Created : %v", msg)
+		ms.Logger.Debugf("Consume Journal Bulk Created : %v", msg)
 
 		docList := []vfgl.ChartOfAccountDoc{}
 		err := json.Unmarshal([]byte(msg), &docList)
@@ -81,21 +137,11 @@ func StartChartOfAccountConsumerBlukCreated(ms *microservice.Microservice, cfg m
 			ms.Logger.Errorf(moduleName, err.Error())
 		}
 
-		pgDocList := []vfgl.ChartOfAccountPG{}
-		for _, doc := range docList {
-			tmpJsonDoc, err := json.Marshal(doc)
-			if err != nil {
-				ms.Logger.Errorf(moduleName, err.Error())
-			}
-			tmpDoc := vfgl.ChartOfAccountPG{}
-			err = json.Unmarshal([]byte(tmpJsonDoc), &tmpDoc)
-			if err != nil {
-				ms.Logger.Errorf(moduleName, err.Error())
-			}
-			pgDocList = append(pgDocList, tmpDoc)
-		}
+		repo := repositories.NewChartOfAccountPgRepository(pst)
+		svc := services.NewChartOfAccountConsumeService(repo)
 
-		err = pst.CreateInBatch(pgDocList, len(pgDocList))
+		err = svc.SaveInBatch(docList)
+
 		if err != nil {
 			ms.Logger.Errorf(moduleName, err.Error())
 		}

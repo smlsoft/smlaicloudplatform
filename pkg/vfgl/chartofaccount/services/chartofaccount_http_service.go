@@ -1,4 +1,4 @@
-package chartofaccount
+package services
 
 import (
 	"errors"
@@ -6,13 +6,14 @@ import (
 	"smlcloudplatform/pkg/models/vfgl"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
+	"smlcloudplatform/pkg/vfgl/chartofaccount/repositories"
 	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type IChartOfAccountService interface {
+type IChartOfAccountHttpService interface {
 	Create(shopID string, authUsername string, doc vfgl.ChartOfAccount) (string, error)
 	Update(guid string, shopID string, authUsername string, doc vfgl.ChartOfAccount) error
 	Delete(guid string, shopID string, authUsername string) error
@@ -21,19 +22,19 @@ type IChartOfAccountService interface {
 	SaveInBatch(shopID string, authUsername string, dataList []vfgl.ChartOfAccount) (models.BulkImport, error)
 }
 
-type ChartOfAccountService struct {
-	repo   ChartOfAccountRepository
-	mqRepo ChartOfAccountMQRepository
+type ChartOfAccountHttpService struct {
+	repo   repositories.ChartOfAccountRepository
+	mqRepo repositories.ChartOfAccountMQRepository
 }
 
-func NewChartOfAccountService(repo ChartOfAccountRepository, mqRepo ChartOfAccountMQRepository) ChartOfAccountService {
-	return ChartOfAccountService{
+func NewChartOfAccountHttpService(repo repositories.ChartOfAccountRepository, mqRepo repositories.ChartOfAccountMQRepository) ChartOfAccountHttpService {
+	return ChartOfAccountHttpService{
 		repo:   repo,
 		mqRepo: mqRepo,
 	}
 }
 
-func (svc ChartOfAccountService) Create(shopID string, authUsername string, doc vfgl.ChartOfAccount) (string, error) {
+func (svc ChartOfAccountHttpService) Create(shopID string, authUsername string, doc vfgl.ChartOfAccount) (string, error) {
 	newGuidFixed := utils.NewGUID()
 
 	docData := vfgl.ChartOfAccountDoc{}
@@ -58,7 +59,7 @@ func (svc ChartOfAccountService) Create(shopID string, authUsername string, doc 
 	return newGuidFixed, nil
 }
 
-func (svc ChartOfAccountService) Update(guid string, shopID string, authUsername string, doc vfgl.ChartOfAccount) error {
+func (svc ChartOfAccountHttpService) Update(guid string, shopID string, authUsername string, doc vfgl.ChartOfAccount) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -83,7 +84,7 @@ func (svc ChartOfAccountService) Update(guid string, shopID string, authUsername
 	return nil
 }
 
-func (svc ChartOfAccountService) Delete(guid string, shopID string, authUsername string) error {
+func (svc ChartOfAccountHttpService) Delete(guid string, shopID string, authUsername string) error {
 	err := svc.repo.Delete(shopID, guid, authUsername)
 
 	if err != nil {
@@ -92,7 +93,7 @@ func (svc ChartOfAccountService) Delete(guid string, shopID string, authUsername
 	return nil
 }
 
-func (svc ChartOfAccountService) Info(guid string, shopID string) (vfgl.ChartOfAccountInfo, error) {
+func (svc ChartOfAccountHttpService) Info(guid string, shopID string) (vfgl.ChartOfAccountInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -108,7 +109,7 @@ func (svc ChartOfAccountService) Info(guid string, shopID string) (vfgl.ChartOfA
 
 }
 
-func (svc ChartOfAccountService) Search(shopID string, q string, page int, limit int) ([]vfgl.ChartOfAccountInfo, mongopagination.PaginationData, error) {
+func (svc ChartOfAccountHttpService) Search(shopID string, q string, page int, limit int) ([]vfgl.ChartOfAccountInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
 		"accountcode",
 		"accountname",
@@ -123,7 +124,7 @@ func (svc ChartOfAccountService) Search(shopID string, q string, page int, limit
 	return docList, pagination, nil
 }
 
-func (svc ChartOfAccountService) SaveInBatch(shopID string, authUsername string, dataList []vfgl.ChartOfAccount) (models.BulkImport, error) {
+func (svc ChartOfAccountHttpService) SaveInBatch(shopID string, authUsername string, dataList []vfgl.ChartOfAccount) (models.BulkImport, error) {
 
 	createDataList := []vfgl.ChartOfAccountDoc{}
 	duplicateDataList := []vfgl.ChartOfAccount{}
@@ -240,6 +241,6 @@ func (svc ChartOfAccountService) SaveInBatch(shopID string, authUsername string,
 	}, nil
 }
 
-func (svc ChartOfAccountService) getDocIDKey(doc vfgl.ChartOfAccount) string {
+func (svc ChartOfAccountHttpService) getDocIDKey(doc vfgl.ChartOfAccount) string {
 	return doc.AccountCode
 }

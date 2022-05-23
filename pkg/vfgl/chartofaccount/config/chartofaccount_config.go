@@ -1,4 +1,4 @@
-package chartofaccount
+package config
 
 const (
 	MQ_TOPIC_CHARTOFACCOUNT_CREATED      string = "when-chartofaccount-created"

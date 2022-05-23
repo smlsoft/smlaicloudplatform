@@ -6,6 +6,8 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/vfgl"
+	"smlcloudplatform/pkg/vfgl/chartofaccount/repositories"
+	"smlcloudplatform/pkg/vfgl/chartofaccount/services"
 	"strconv"
 )
 
@@ -14,7 +16,7 @@ type IChartOfAccountHttp interface{}
 type ChartOfAccountHttp struct {
 	ms  *microservice.Microservice
 	cfg microservice.IConfig
-	svc IChartOfAccountService
+	svc services.IChartOfAccountHttpService
 }
 
 func NewChartOfAccountHttp(ms *microservice.Microservice, cfg microservice.IConfig) ChartOfAccountHttp {
@@ -22,10 +24,10 @@ func NewChartOfAccountHttp(ms *microservice.Microservice, cfg microservice.IConf
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
 
-	repo := NewChartOfAccountRepository(pst)
-	mqRepo := NewChartOfAccountMQRepository(prod)
+	repo := repositories.NewChartOfAccountRepository(pst)
+	mqRepo := repositories.NewChartOfAccountMQRepository(prod)
 
-	svc := NewChartOfAccountService(repo, mqRepo)
+	svc := services.NewChartOfAccountHttpService(repo, mqRepo)
 
 	return ChartOfAccountHttp{
 		ms:  ms,
