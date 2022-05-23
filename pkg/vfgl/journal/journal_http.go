@@ -44,9 +44,10 @@ func (h JournalHttp) RouteSetup() {
 }
 
 // Create Journal godoc
-// @Description Journal
+// @Summary		บันทึกข้อมูลรายวัน
+// @Description บันทึกข้อมูลรายวัน
 // @Tags		GL
-// @Param		Journal  body      vfgl.Journal  true  "Journal"
+// @Param		Journal  body      vfgl.Journal  true  "ข้อมูลรายวัน"
 // @Accept 		json
 // @Success		200	{object}	models.ResponseSuccessWithID
 // @Failure		401 {object}	models.AuthResponseFailed
@@ -80,10 +81,11 @@ func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
 }
 
 // Update Journal godoc
-// @Description Journal
+// @Summary		แก้ไขข้อมูลรายวัน
+// @Description แก้ไขข้อมูลรายวัน
 // @Tags		GL
 // @Param		id  path      string  true  "Journal ID"
-// @Param		Journal  body      vfgl.Journal  true  "Journal"
+// @Param		Journal  body      vfgl.Journal  true  "ข้อมูลรายวัน"
 // @Accept 		json
 // @Success		200	{object}	models.ResponseSuccessWithID
 // @Failure		401 {object}	models.AuthResponseFailed
@@ -121,7 +123,8 @@ func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
 }
 
 // Delete Journal godoc
-// @Description Journal
+// @Summary		ลบข้อมูลรายวัน
+// @Description ลบข้อมูลรายวัน
 // @Tags		GL
 // @Param		id  path      string  true  "Journal ID"
 // @Accept 		json
@@ -152,7 +155,8 @@ func (h JournalHttp) DeleteJournal(ctx microservice.IContext) error {
 }
 
 // Get Journal Infomation godoc
-// @Description Get Journal
+// @Summary		แสดงรายละเอียดข้อมูลรายวัน
+// @Description แสดงรายละเอียดข้อมูลรายวัน
 // @Tags		GL
 // @Param		id  path      string  true  "Journal Id"
 // @Accept 		json
@@ -183,7 +187,8 @@ func (h JournalHttp) InfoJournal(ctx microservice.IContext) error {
 }
 
 // List Journal godoc
-// @Description List Journal Category
+// @Summary		แสดงรายการข้อมูลรายวัน
+// @Description แสดงรายการข้อมูลรายวัน
 // @Tags		GL
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
@@ -224,9 +229,10 @@ func (h JournalHttp) SearchJournal(ctx microservice.IContext) error {
 }
 
 // Create Journal Bulk godoc
-// @Description Create Journal
+// @Summary		นำเข้าข้อมูลรายวัน
+// @Description นำเข้าข้อมูลรายวัน
 // @Tags		GL
-// @Param		Journal  body      []vfgl.Journal  true  "Journal"
+// @Param		Journal  body      []vfgl.Journal  true  "ข้อมูลรายวัน"
 // @Accept 		json
 // @Success		201	{object}	models.BulkInsertResponse
 // @Failure		401 {object}	models.AuthResponseFailed

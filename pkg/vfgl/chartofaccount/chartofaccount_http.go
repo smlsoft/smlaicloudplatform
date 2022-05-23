@@ -46,7 +46,8 @@ func (h ChartOfAccountHttp) RouteSetup() {
 }
 
 // List Chart Of Account godoc
-// @Description List Chart Of Account
+// @Summary		แสดงรายการผังบัญชี
+// @Description แสดงรายการผังบัญชี
 // @Tags		GL
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
@@ -87,7 +88,8 @@ func (h ChartOfAccountHttp) Search(ctx microservice.IContext) error {
 }
 
 // Create Chart Of Account godoc
-// @Description Create Chart Of Account
+// @Summary		สร้างผังบัญชี
+// @Description สร้างผังบัญชี
 // @Tags		GL
 // @Param		ChartOfAccount  body      vfgl.ChartOfAccount  true  "ChartOfAccount"
 // @Accept 		json
@@ -123,7 +125,8 @@ func (h ChartOfAccountHttp) Create(ctx microservice.IContext) error {
 }
 
 // Get Chart Of Account Infomation godoc
-// @Description Get Chart Of Account
+// @Summary		แสดงรายละเอียดผังบัญชี
+// @Description แสดงรายละเอียดผังบัญชี
 // @Tags		GL
 // @Param		id  path      string  true  "Id"
 // @Accept 		json
@@ -154,7 +157,8 @@ func (h ChartOfAccountHttp) Info(ctx microservice.IContext) error {
 }
 
 // Update Chart Of Account godoc
-// @Description Update Chart Of Account
+// @Summary		แก้ไขผังบัญชี
+// @Description แก้ไขผังบัญชี
 // @Tags		GL
 // @Param		id  path      string  true  "ID"
 // @Param		ChartOfAccount  body      vfgl.ChartOfAccount  true  "ChartOfAccount"
@@ -195,7 +199,8 @@ func (h ChartOfAccountHttp) Update(ctx microservice.IContext) error {
 }
 
 // Delete Chart Of Account godoc
-// @Description Delete Chart Of Account
+// @Summary		ลบผังบัญชี
+// @Description ลบผังบัญชี
 // @Tags		GL
 // @Param		id  path      string  true  "ID"
 // @Accept 		json
@@ -226,7 +231,8 @@ func (h ChartOfAccountHttp) Delete(ctx microservice.IContext) error {
 }
 
 // Create Chart Of Account Bulk godoc
-// @Description Chart Of Account Journal
+// @Summary		นำเข้าผังบัญชี
+// @Description นำเข้าผังบัญชี
 // @Tags		GL
 // @Param		ChartOfAccount  body      []vfgl.ChartOfAccount  true  "ChartOfAccount"
 // @Accept 		json

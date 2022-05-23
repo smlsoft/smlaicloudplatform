@@ -67,7 +67,7 @@ func (h AuthenticationHttp) RouteSetup() {
 // Login login
 // @Description get struct array by ID
 // @Tags		Authentication
-// @Param		User  body      models.UserRequest  true  "User Account"
+// @Param		User  body      models.UserLoginRequest  true  "User Account"
 // @Accept 		json
 // @Success		200	{object}	models.AuthResponse
 // @Failure		400 {object}	models.AuthResponseFailed
