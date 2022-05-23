@@ -29,12 +29,13 @@ func (h JournalReportHttp) RouteSetup() {
 	h.ms.GET("/gl/report/profitandloss", h.ProcessProfitAndLossReport)
 }
 
-// Fetch Update Inventory By Date godoc
-// @Description Fetch Update Inventory By Date
+// Fetch TrialBalanceSheet godoc
+// @Summary		ดึงข้อมูลงบทดลอง
+// @Description ดึงข้อมูลงบทดลอง
 // @Tags		GLReport
-// @Param		accountgroup query string true "AccountGroup"
-// @Param		startdate query string true "Date YYYY-MM-DD"
-// @Param		enddate query string true "Date YYYY-MM-DD"
+// @Param		accountgroup query string true "กลุ่มบัญชี"
+// @Param		startdate query string true "จากวันที่ (Date Format: YYYY-MM-DD)"
+// @Param		enddate query string true "ถึงวันที่ (Date Format: YYYY-MM-DD)"
 // @Accept		json
 // @Success		200 {object} vfgl.TrialBalanceSheetReportResponse
 // @Failure		400 {object} models.AuthResponseFailed
@@ -86,11 +87,12 @@ func (r JournalReportHttp) ProcessReportTrialBalanceSheet(ctx microservice.ICont
 	return nil
 }
 
-// Fetch Update Inventory By Date godoc
-// @Description Fetch Update Inventory By Date
+// Fetch Data Balance Sheet godoc
+// @Summary		ดึงข้อมูลงบดุล
+// @Description ดึงข้อมูลงบดุล
 // @Tags		GLReport
-// @Param		accountgroup query string true "AccountGroup"
-// @Param		enddate query string true "Date YYYY-MM-DD"
+// @Param		accountgroup query string true "กลุ่มบัญชี"
+// @Param		enddate query string true "ณ วันที่ (Date Format: YYYY-MM-DD)"
 // @Accept		json
 // @Success		200 {object} vfgl.BalanceSheetReportResponse
 // @Failure		400 {object} models.AuthResponseFailed
@@ -134,12 +136,13 @@ func (r JournalReportHttp) ProcessBalanceSheetReport(ctx microservice.IContext) 
 	return nil
 }
 
-// Fetch Update Inventory By Date godoc
-// @Description Fetch Update Inventory By Date
+// Fetch ProfitAndLossSheet godoc
+// @Summary		ดึงข้อมูลงบกำไรขาดทุน
+// @Description ดึงข้อมูลงบกำไรขาดทุน
 // @Tags		GLReport
-// @Param		accountgroup query string true "AccountGroup"
-// @Param		startdate query string true "Date YYYY-MM-DD"
-// @Param		enddate query string true "Date YYYY-MM-DD"
+// @Param		accountgroup query string true "กลุ่มบัญชี"
+// @Param		startdate query string true "จากวันที่ (Date Format: YYYY-MM-DD)"
+// @Param		enddate query string true "ถึงวันที่ (Date Format: YYYY-MM-DD)"
 // @Accept		json
 // @Success		200 {object} vfgl.LostAndProfitSheetReportResponse
 // @Failure		400 {object} models.AuthResponseFailed

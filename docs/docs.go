@@ -569,13 +569,14 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "List Chart Of Account",
+                "description": "แสดงรายการผังบัญชี",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "GL"
                 ],
+                "summary": "แสดงรายการผังบัญชี",
                 "parameters": [
                     {
                         "type": "string",
@@ -617,13 +618,14 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Create Chart Of Account",
+                "description": "สร้างผังบัญชี",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "GL"
                 ],
+                "summary": "สร้างผังบัญชี",
                 "parameters": [
                     {
                         "description": "ChartOfAccount",
@@ -658,13 +660,14 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Chart Of Account Journal",
+                "description": "นำเข้าผังบัญชี",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "GL"
                 ],
+                "summary": "นำเข้าผังบัญชี",
                 "parameters": [
                     {
                         "description": "ChartOfAccount",
@@ -702,13 +705,14 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Get Chart Of Account",
+                "description": "แสดงรายละเอียดผังบัญชี",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "GL"
                 ],
+                "summary": "แสดงรายละเอียดผังบัญชี",
                 "parameters": [
                     {
                         "type": "string",
@@ -739,13 +743,14 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Update Chart Of Account",
+                "description": "แก้ไขผังบัญชี",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "GL"
                 ],
+                "summary": "แก้ไขผังบัญชี",
                 "parameters": [
                     {
                         "type": "string",
@@ -785,13 +790,14 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Delete Chart Of Account",
+                "description": "ลบผังบัญชี",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "GL"
                 ],
+                "summary": "ลบผังบัญชี",
                 "parameters": [
                     {
                         "type": "string",
@@ -824,13 +830,14 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "List Journal Category",
+                "description": "แสดงรายการข้อมูลรายวัน",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "GL"
                 ],
+                "summary": "แสดงรายการข้อมูลรายวัน",
                 "parameters": [
                     {
                         "type": "string",
@@ -872,16 +879,17 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Journal",
+                "description": "บันทึกข้อมูลรายวัน",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "GL"
                 ],
+                "summary": "บันทึกข้อมูลรายวัน",
                 "parameters": [
                     {
-                        "description": "Journal",
+                        "description": "ข้อมูลรายวัน",
                         "name": "Journal",
                         "in": "body",
                         "required": true,
@@ -913,16 +921,17 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Create Journal",
+                "description": "นำเข้าข้อมูลรายวัน",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "GL"
                 ],
+                "summary": "นำเข้าข้อมูลรายวัน",
                 "parameters": [
                     {
-                        "description": "Journal",
+                        "description": "ข้อมูลรายวัน",
                         "name": "Journal",
                         "in": "body",
                         "required": true,
@@ -957,13 +966,14 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Get Journal",
+                "description": "แสดงรายละเอียดข้อมูลรายวัน",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "GL"
                 ],
+                "summary": "แสดงรายละเอียดข้อมูลรายวัน",
                 "parameters": [
                     {
                         "type": "string",
@@ -994,13 +1004,14 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Journal",
+                "description": "แก้ไขข้อมูลรายวัน",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "GL"
                 ],
+                "summary": "แก้ไขข้อมูลรายวัน",
                 "parameters": [
                     {
                         "type": "string",
@@ -1010,7 +1021,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Journal",
+                        "description": "ข้อมูลรายวัน",
                         "name": "Journal",
                         "in": "body",
                         "required": true,
@@ -1040,13 +1051,14 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Journal",
+                "description": "ลบข้อมูลรายวัน",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "GL"
                 ],
+                "summary": "ลบข้อมูลรายวัน",
                 "parameters": [
                     {
                         "type": "string",
@@ -1079,24 +1091,25 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Fetch Update Inventory By Date",
+                "description": "ดึงข้อมูลงบดุล",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "GLReport"
                 ],
+                "summary": "ดึงข้อมูลงบดุล",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "AccountGroup",
+                        "description": "กลุ่มบัญชี",
                         "name": "accountgroup",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Date YYYY-MM-DD",
+                        "description": "ณ วันที่ (Date Format: YYYY-MM-DD)",
                         "name": "enddate",
                         "in": "query",
                         "required": true
@@ -1131,31 +1144,32 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Fetch Update Inventory By Date",
+                "description": "ดึงข้อมูลงบกำไรขาดทุน",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "GLReport"
                 ],
+                "summary": "ดึงข้อมูลงบกำไรขาดทุน",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "AccountGroup",
+                        "description": "กลุ่มบัญชี",
                         "name": "accountgroup",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Date YYYY-MM-DD",
+                        "description": "จากวันที่ (Date Format: YYYY-MM-DD)",
                         "name": "startdate",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Date YYYY-MM-DD",
+                        "description": "ถึงวันที่ (Date Format: YYYY-MM-DD)",
                         "name": "enddate",
                         "in": "query",
                         "required": true
@@ -1190,31 +1204,32 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Fetch Update Inventory By Date",
+                "description": "ดึงข้อมูลงบทดลอง",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "GLReport"
                 ],
+                "summary": "ดึงข้อมูลงบทดลอง",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "AccountGroup",
+                        "description": "กลุ่มบัญชี",
                         "name": "accountgroup",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Date YYYY-MM-DD",
+                        "description": "จากวันที่ (Date Format: YYYY-MM-DD)",
                         "name": "startdate",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Date YYYY-MM-DD",
+                        "description": "ถึงวันที่ (Date Format: YYYY-MM-DD)",
                         "name": "enddate",
                         "in": "query",
                         "required": true
@@ -2041,7 +2056,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserRequest"
+                            "$ref": "#/definitions/models.UserLoginRequest"
                         }
                     }
                 ],
@@ -6855,6 +6870,26 @@ const docTemplate = `{
                 },
                 "bankcode": {
                     "type": "string"
+                }
+            }
+        },
+        "models.UserLoginRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "minLength": 6
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string",
+                    "minLength": 3
                 }
             }
         },

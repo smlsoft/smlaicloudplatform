@@ -1392,6 +1392,20 @@ definitions:
       bankcode:
         type: string
     type: object
+  models.UserLoginRequest:
+    properties:
+      password:
+        minLength: 6
+        type: string
+      shopid:
+        type: string
+      username:
+        minLength: 3
+        type: string
+    required:
+    - password
+    - username
+    type: object
   models.UserProfile:
     properties:
       name:
@@ -2651,7 +2665,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: List Chart Of Account
+      description: แสดงรายการผังบัญชี
       parameters:
       - description: Search Value
         in: query
@@ -2676,12 +2690,13 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      summary: แสดงรายการผังบัญชี
       tags:
       - GL
     post:
       consumes:
       - application/json
-      description: Create Chart Of Account
+      description: สร้างผังบัญชี
       parameters:
       - description: ChartOfAccount
         in: body
@@ -2700,13 +2715,14 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      summary: สร้างผังบัญชี
       tags:
       - GL
   /gl/chartofaccount/{id}:
     delete:
       consumes:
       - application/json
-      description: Delete Chart Of Account
+      description: ลบผังบัญชี
       parameters:
       - description: ID
         in: path
@@ -2724,12 +2740,13 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      summary: ลบผังบัญชี
       tags:
       - GL
     get:
       consumes:
       - application/json
-      description: Get Chart Of Account
+      description: แสดงรายละเอียดผังบัญชี
       parameters:
       - description: Id
         in: path
@@ -2747,12 +2764,13 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      summary: แสดงรายละเอียดผังบัญชี
       tags:
       - GL
     put:
       consumes:
       - application/json
-      description: Update Chart Of Account
+      description: แก้ไขผังบัญชี
       parameters:
       - description: ID
         in: path
@@ -2776,13 +2794,14 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      summary: แก้ไขผังบัญชี
       tags:
       - GL
   /gl/chartofaccount/bulk:
     post:
       consumes:
       - application/json
-      description: Chart Of Account Journal
+      description: นำเข้าผังบัญชี
       parameters:
       - description: ChartOfAccount
         in: body
@@ -2803,13 +2822,14 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      summary: นำเข้าผังบัญชี
       tags:
       - GL
   /gl/journal:
     get:
       consumes:
       - application/json
-      description: List Journal Category
+      description: แสดงรายการข้อมูลรายวัน
       parameters:
       - description: Search Value
         in: query
@@ -2834,14 +2854,15 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      summary: แสดงรายการข้อมูลรายวัน
       tags:
       - GL
     post:
       consumes:
       - application/json
-      description: Journal
+      description: บันทึกข้อมูลรายวัน
       parameters:
-      - description: Journal
+      - description: ข้อมูลรายวัน
         in: body
         name: Journal
         required: true
@@ -2858,13 +2879,14 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      summary: บันทึกข้อมูลรายวัน
       tags:
       - GL
   /gl/journal/{id}:
     delete:
       consumes:
       - application/json
-      description: Journal
+      description: ลบข้อมูลรายวัน
       parameters:
       - description: Journal ID
         in: path
@@ -2882,12 +2904,13 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      summary: ลบข้อมูลรายวัน
       tags:
       - GL
     get:
       consumes:
       - application/json
-      description: Get Journal
+      description: แสดงรายละเอียดข้อมูลรายวัน
       parameters:
       - description: Journal Id
         in: path
@@ -2905,19 +2928,20 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      summary: แสดงรายละเอียดข้อมูลรายวัน
       tags:
       - GL
     put:
       consumes:
       - application/json
-      description: Journal
+      description: แก้ไขข้อมูลรายวัน
       parameters:
       - description: Journal ID
         in: path
         name: id
         required: true
         type: string
-      - description: Journal
+      - description: ข้อมูลรายวัน
         in: body
         name: Journal
         required: true
@@ -2934,15 +2958,16 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      summary: แก้ไขข้อมูลรายวัน
       tags:
       - GL
   /gl/journal/bulk:
     post:
       consumes:
       - application/json
-      description: Create Journal
+      description: นำเข้าข้อมูลรายวัน
       parameters:
-      - description: Journal
+      - description: ข้อมูลรายวัน
         in: body
         name: Journal
         required: true
@@ -2961,20 +2986,21 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      summary: นำเข้าข้อมูลรายวัน
       tags:
       - GL
   /gl/report/balancesheet:
     get:
       consumes:
       - application/json
-      description: Fetch Update Inventory By Date
+      description: ดึงข้อมูลงบดุล
       parameters:
-      - description: AccountGroup
+      - description: กลุ่มบัญชี
         in: query
         name: accountgroup
         required: true
         type: string
-      - description: Date YYYY-MM-DD
+      - description: 'ณ วันที่ (Date Format: YYYY-MM-DD)'
         in: query
         name: enddate
         required: true
@@ -2994,25 +3020,26 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      summary: ดึงข้อมูลงบดุล
       tags:
       - GLReport
   /gl/report/profitandloss:
     get:
       consumes:
       - application/json
-      description: Fetch Update Inventory By Date
+      description: ดึงข้อมูลงบกำไรขาดทุน
       parameters:
-      - description: AccountGroup
+      - description: กลุ่มบัญชี
         in: query
         name: accountgroup
         required: true
         type: string
-      - description: Date YYYY-MM-DD
+      - description: 'จากวันที่ (Date Format: YYYY-MM-DD)'
         in: query
         name: startdate
         required: true
         type: string
-      - description: Date YYYY-MM-DD
+      - description: 'ถึงวันที่ (Date Format: YYYY-MM-DD)'
         in: query
         name: enddate
         required: true
@@ -3032,25 +3059,26 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      summary: ดึงข้อมูลงบกำไรขาดทุน
       tags:
       - GLReport
   /gl/report/trialbalancesheet:
     get:
       consumes:
       - application/json
-      description: Fetch Update Inventory By Date
+      description: ดึงข้อมูลงบทดลอง
       parameters:
-      - description: AccountGroup
+      - description: กลุ่มบัญชี
         in: query
         name: accountgroup
         required: true
         type: string
-      - description: Date YYYY-MM-DD
+      - description: 'จากวันที่ (Date Format: YYYY-MM-DD)'
         in: query
         name: startdate
         required: true
         type: string
-      - description: Date YYYY-MM-DD
+      - description: 'ถึงวันที่ (Date Format: YYYY-MM-DD)'
         in: query
         name: enddate
         required: true
@@ -3070,6 +3098,7 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      summary: ดึงข้อมูลงบทดลอง
       tags:
       - GLReport
   /import/category:
@@ -3568,7 +3597,7 @@ paths:
         name: User
         required: true
         schema:
-          $ref: '#/definitions/models.UserRequest'
+          $ref: '#/definitions/models.UserLoginRequest'
       responses:
         "200":
           description: OK
