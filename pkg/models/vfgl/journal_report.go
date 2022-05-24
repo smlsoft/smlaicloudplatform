@@ -4,95 +4,105 @@ import "time"
 
 type TrialBalanceSheetReport struct {
 	// วันที่ทำรายการ
-	ReportDate time.Time
+	ReportDate time.Time `json:"reportdate"`
 	// วันที่เริ่มต้น
-	StartDate time.Time
+	StartDate time.Time `json:"startdate"`
 	// วันที่สิ้นสุด
-	EndDate time.Time
+	EndDate time.Time `json:"enddate"`
 	// เล่มบัญชี
-	AccountGroup string
+	AccountGroup string `json:"accountgroup"`
 	// รายละเอียดบัญชี
-	AccountDetail *[]TrialBalanceSheetAccountDetail
+	AccountDetails *[]TrialBalanceSheetAccountDetail `json:"accountdetails"`
 	// รวมยอดยกมาเดบิต
-	TotalBalanceDebit float64
+	TotalBalanceDebit float64 `json:"totalbalancedebit"`
 	// รวมยอดยกมาเครดิต
-	TotalBalanceCredit float64
+	TotalBalanceCredit float64 `json:"totalbalancecredit"`
 	// รวมเดบิต
-	TotalAmountDebit float64
+	TotalAmountDebit float64 `json:"totalamountdebit"`
 	// รวมเครดิต
-	TotalAmountCredit float64
+	TotalAmountCredit float64 `json:"totalamountcredit"`
 	// รวมยอดสะสมเดบิต
-	TotalNextBalanceDebit float64
+	TotalNextBalanceDebit float64 `json:"totalnextbalancedebit"`
 	// รวมยอดสะสมเครดิต
-	TotalNextBalanceCredit float64
+	TotalNextBalanceCredit float64 `json:"totalnextbalancecredit"`
 }
 
 type TrialBalanceSheetAccountDetail struct {
 	ChartOfAccount
 	// ยอดคงเหลือ(ประจำงวด)
-	Amount float64 ``
+	Amount float64 `json:"amount"`
 	// ยอดคงเหลือยกมา
-	BalanceAmount float64 ``
+	BalanceAmount float64 `json:"balanceamount"`
 	// ยอดคงเหลือสะสม
-	NextBalanceAmount float64 ``
+	NextBalanceAmount float64 `json:"nextbalanceamount"`
 	// ยอดเดบิต
-	DebitAmount float64 ``
+	DebitAmount float64 `json:"debitamount"`
 	// ยอดเครดิต
-	CreditAmount float64 ``
+	CreditAmount float64 `json:"creditamount"`
 	// ยอดยกมาเดบิต
-	BalanceDebitAmount float64 ``
+	BalanceDebitAmount float64 `json:"balancedebitamount"`
 	// ยอดยกมาเครดิต
-	BalanceCreditAmount float64 ``
+	BalanceCreditAmount float64 `json:"balancecreditamount"`
 	// ยอดสะสมเดบิต
-	NextBalanceDebitAmount float64 ``
+	NextBalanceDebitAmount float64 `json:"nextbalancedebitamount"`
 	// ยอดสะสมเครดิต
-	NextBalanceCreditAmount float64 ``
+	NextBalanceCreditAmount float64 `json:"nextbalancecreditamount"`
 }
 
 type BalanceSheetReport struct {
-	ReportDate                           time.Time
-	EndDate                              time.Time
-	AccountGroup                         string
-	Assets                               *[]BalanceSheetAccountDetail
-	Liabilities                          *[]BalanceSheetAccountDetail
-	OwnesQutitys                         *[]BalanceSheetAccountDetail
-	TotalAssetAmount                     float64
-	TotalLiabilityAmount                 float64
-	TotalOwnersEqutityAmount             float64
-	TotalLiabilityAndOwnersEqutityAmount float64
+	// วันที่ทำรายการ
+	ReportDate time.Time `json:"reportdate"`
+	// วันที่สิ้นสุด
+	EndDate time.Time `json:"enddate"`
+	// เล่มบัญชี
+	AccountGroup string `json:"accountgroup"`
+	// สินทรัพย์
+	Assets *[]BalanceSheetAccountDetail `json:"assets"`
+	// หนี้สิน
+	Liabilities *[]BalanceSheetAccountDetail `json:"liabilities"`
+	// ทุนและส่วนของเจ้าของ
+	OwnesEquities *[]BalanceSheetAccountDetail `json:"ownesequities"`
+	// รวมสินทรัพย์
+	TotalAssetAmount float64 `json:"totalassetamount"`
+	// รวมหนี้สิน
+	TotalLiabilityAmount float64 `json:"totalliabilityamount"`
+	// รวมทุนและส่วนของเจ้าของ
+	TotalOwnersEquityAmount float64 `json:"totalownersequityamount"`
+	// รวมหนี้สิน ทุน และส่วนของเจ้าของ
+	TotalLiabilityAndOwnersEquityAmount float64 `json:"totalliabilityandownersequityamount"`
 }
 
 type BalanceSheetAccountDetail struct {
 	ChartOfAccount
 	// มูลค่า
-	Amount float64 ``
+	Amount float64 `json:"amount"`
 }
 
 type ProfitAndLossSheetReport struct {
 	// วันที่ทำรายการ
-	ReportDate time.Time
+	ReportDate time.Time `json:"reportdate"`
 	// วันที่เริ่มต้น
-	StartDate time.Time
+	StartDate time.Time `json:"startdate"`
 	// วันที่สิ้นสุด
-	EndDate time.Time
+	EndDate time.Time `json:"enddate"`
 	// เล่มบัญชี
-	AccountGroup string
+	AccountGroup string `json:"accountgroup"`
 	// รายการรายได้
-	Incomes *[]ProfitAndLossSheetAccountDetail
+	Incomes *[]ProfitAndLossSheetAccountDetail `json:"incomes"`
 	// รายการค่าใช้จ่าย
-	Expenses *[]ProfitAndLossSheetAccountDetail
+	Expenses *[]ProfitAndLossSheetAccountDetail `json:"expenses"`
 	// รวมรายได้
-	TotalIncomeAmount float64
+	TotalIncomeAmount float64 `json:"totalincomeamount"`
 	// รวมค่าใช้จ่าย
-	TotalExpenseAmount float64
+	TotalExpenseAmount float64 `json:"totalexpenseamount"`
 	// กำไรขาดทุน
-	ProfitAndLossAmount float64
+	ProfitAndLossAmount float64 `json:"profitandlossamount"`
 }
 
 type ProfitAndLossSheetAccountDetail struct {
 	ChartOfAccount
 	// มูลค่า
-	Amount float64 ``
+	Amount float64 `json:"amount"`
 }
 
 type TrialBalanceSheetReportResponse struct {
