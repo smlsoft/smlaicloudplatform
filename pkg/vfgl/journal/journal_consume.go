@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models/vfgl"
+	"smlcloudplatform/pkg/vfgl/journal/config"
+	"smlcloudplatform/pkg/vfgl/journal/repositories"
+	"smlcloudplatform/pkg/vfgl/journal/services"
 	"time"
 )
 
@@ -18,7 +21,7 @@ func MigrationJournalTable(ms *microservice.Microservice, cfg microservice.IConf
 
 func StartJournalComsumeCreated(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
 
-	topicCreated := MQ_TOPIC_JOURNAL_CREATED
+	topicCreated := config.MQ_TOPIC_JOURNAL_CREATED
 	timeout := time.Duration(-1)
 
 	mqConfig := cfg.MQConfig()
@@ -41,67 +44,14 @@ func StartJournalComsumeCreated(ms *microservice.Microservice, cfg microservice.
 			ms.Logger.Errorf(moduleName, err.Error())
 		}
 
-		pgDocList := []vfgl.JournalPg{}
-		pgDocDetailList := []vfgl.JournalDetailPg{}
+		repo := repositories.NewJournalPgRepository(pst)
+		svc := services.NewJournalConsumeService(repo)
 
-		//for _, doc := range docList
-		{
-
-			tmpJsonDoc, err := json.Marshal(doc)
-
-			if err != nil {
-				ms.Logger.Errorf(moduleName, err.Error())
-			}
-
-			tmpDoc := vfgl.JournalPg{}
-			err = json.Unmarshal([]byte(tmpJsonDoc), &tmpDoc)
-			if err != nil {
-				ms.Logger.Errorf(moduleName, err.Error())
-			}
-
-			// err = json.Unmarshal([]byte(msg), &doc)
-
-			// if err != nil {
-			// 	ms.Logger.Errorf(moduleName, err.Error())
-			// }
-
-			pgDocList = append(pgDocList, tmpDoc)
-
-			docDetailList := doc.AccountBook
-
-			for _, docDetail := range docDetailList {
-				tmpDocDetail := vfgl.JournalDetailPg{}
-
-				tmpJsonDocDetail, err := json.Marshal(docDetail)
-				if err != nil {
-					ms.Logger.Errorf(moduleName, err.Error())
-				}
-				err = json.Unmarshal([]byte(tmpJsonDocDetail), &tmpDocDetail)
-
-				if err != nil {
-					ms.Logger.Errorf(moduleName, err.Error())
-				}
-
-				tmpDocDetail.ParID = doc.ParID
-				tmpDocDetail.ShopID = doc.ShopID
-				tmpDocDetail.Docno = doc.Docno
-
-				pgDocDetailList = append(pgDocDetailList, tmpDocDetail)
-			}
-		}
-
-		err = pst.CreateInBatch(pgDocList, len(pgDocList))
+		err = svc.Create(doc)
 
 		if err != nil {
 			ms.Logger.Errorf(moduleName, err.Error())
 		}
-
-		err = pst.CreateInBatch(pgDocDetailList, len(pgDocDetailList))
-
-		if err != nil {
-			ms.Logger.Errorf(moduleName, err.Error())
-		}
-
 		return nil
 	})
 
@@ -109,7 +59,7 @@ func StartJournalComsumeCreated(ms *microservice.Microservice, cfg microservice.
 
 func StartJournalComsumeUpdated(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
 
-	topicCreated := MQ_TOPIC_JOURNAL_UPDATED
+	topicCreated := config.MQ_TOPIC_JOURNAL_UPDATED
 	timeout := time.Duration(-1)
 
 	mqConfig := cfg.MQConfig()
@@ -132,59 +82,13 @@ func StartJournalComsumeUpdated(ms *microservice.Microservice, cfg microservice.
 			ms.Logger.Errorf(moduleName, err.Error())
 		}
 
-		pgDocList := []vfgl.JournalPg{}
-		pgDocDetailList := []vfgl.JournalDetailPg{}
+		repo := repositories.NewJournalPgRepository(pst)
+		svc := services.NewJournalConsumeService(repo)
 
-		//for _, doc := range docList
-		{
-
-			tmpJsonDoc, err := json.Marshal(doc)
-
-			if err != nil {
-				ms.Logger.Errorf(moduleName, err.Error())
-			}
-
-			tmpDoc := vfgl.JournalPg{}
-			err = json.Unmarshal([]byte(tmpJsonDoc), &tmpDoc)
-			if err != nil {
-				ms.Logger.Errorf(moduleName, err.Error())
-			}
-
-			pgDocList = append(pgDocList, tmpDoc)
-
-			docDetailList := doc.AccountBook
-
-			for _, docDetail := range docDetailList {
-				tmpDocDetail := vfgl.JournalDetailPg{}
-
-				tmpJsonDocDetail, err := json.Marshal(docDetail)
-				if err != nil {
-					ms.Logger.Errorf(moduleName, err.Error())
-				}
-				err = json.Unmarshal([]byte(tmpJsonDocDetail), &tmpDocDetail)
-
-				if err != nil {
-					ms.Logger.Errorf(moduleName, err.Error())
-				}
-
-				tmpDocDetail.ParID = doc.ParID
-				tmpDocDetail.ShopID = doc.ShopID
-				tmpDocDetail.Docno = doc.Docno
-
-				pgDocDetailList = append(pgDocDetailList, tmpDocDetail)
-			}
-		}
-
-		err = pst.CreateInBatch(pgDocList, len(pgDocList))
+		err = svc.Update(doc.ShopID, doc.DocNo, doc)
 
 		if err != nil {
-			ms.Logger.Errorf(moduleName, err.Error())
-		}
-
-		err = pst.CreateInBatch(pgDocDetailList, len(pgDocDetailList))
-
-		if err != nil {
-			ms.Logger.Errorf(moduleName, err.Error())
+			return err
 		}
 
 		return nil
@@ -194,7 +98,7 @@ func StartJournalComsumeUpdated(ms *microservice.Microservice, cfg microservice.
 
 func StartJournalComsumeDeleted(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
 
-	topicCreated := MQ_TOPIC_JOURNAL_DELETED
+	topicCreated := config.MQ_TOPIC_JOURNAL_DELETED
 	timeout := time.Duration(-1)
 
 	mqConfig := cfg.MQConfig()
@@ -217,67 +121,14 @@ func StartJournalComsumeDeleted(ms *microservice.Microservice, cfg microservice.
 			ms.Logger.Errorf(moduleName, err.Error())
 		}
 
-		pgDocList := []vfgl.JournalPg{}
-		pgDocDetailList := []vfgl.JournalDetailPg{}
+		repo := repositories.NewJournalPgRepository(pst)
+		svc := services.NewJournalConsumeService(repo)
 
-		//for _, doc := range docList
-		{
-
-			tmpJsonDoc, err := json.Marshal(doc)
-
-			if err != nil {
-				ms.Logger.Errorf(moduleName, err.Error())
-			}
-
-			tmpDoc := vfgl.JournalPg{}
-			err = json.Unmarshal([]byte(tmpJsonDoc), &tmpDoc)
-			if err != nil {
-				ms.Logger.Errorf(moduleName, err.Error())
-			}
-
-			// err = json.Unmarshal([]byte(msg), &doc)
-
-			// if err != nil {
-			// 	ms.Logger.Errorf(moduleName, err.Error())
-			// }
-
-			pgDocList = append(pgDocList, tmpDoc)
-
-			docDetailList := doc.AccountBook
-
-			for _, docDetail := range docDetailList {
-				tmpDocDetail := vfgl.JournalDetailPg{}
-
-				tmpJsonDocDetail, err := json.Marshal(docDetail)
-				if err != nil {
-					ms.Logger.Errorf(moduleName, err.Error())
-				}
-				err = json.Unmarshal([]byte(tmpJsonDocDetail), &tmpDocDetail)
-
-				if err != nil {
-					ms.Logger.Errorf(moduleName, err.Error())
-				}
-
-				tmpDocDetail.ParID = doc.ParID
-				tmpDocDetail.ShopID = doc.ShopID
-				tmpDocDetail.Docno = doc.Docno
-
-				pgDocDetailList = append(pgDocDetailList, tmpDocDetail)
-			}
-		}
-
-		err = pst.CreateInBatch(pgDocList, len(pgDocList))
+		err = svc.Delete(doc.ShopID, doc.DocNo)
 
 		if err != nil {
-			ms.Logger.Errorf(moduleName, err.Error())
+			return err
 		}
-
-		err = pst.CreateInBatch(pgDocDetailList, len(pgDocDetailList))
-
-		if err != nil {
-			ms.Logger.Errorf(moduleName, err.Error())
-		}
-
 		return nil
 	})
 
@@ -285,7 +136,7 @@ func StartJournalComsumeDeleted(ms *microservice.Microservice, cfg microservice.
 
 func StartJournalComsumeBlukCreated(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
 
-	topicCreated := MQ_TOPIC_JOURNAL_BULK_CREATED
+	topicCreated := config.MQ_TOPIC_JOURNAL_BULK_CREATED
 	timeout := time.Duration(-1)
 
 	mqConfig := cfg.MQConfig()
@@ -308,66 +159,14 @@ func StartJournalComsumeBlukCreated(ms *microservice.Microservice, cfg microserv
 			ms.Logger.Errorf(moduleName, err.Error())
 		}
 
-		pgDocList := []vfgl.JournalPg{}
-		pgDocDetailList := []vfgl.JournalDetailPg{}
+		repo := repositories.NewJournalPgRepository(pst)
+		svc := services.NewJournalConsumeService(repo)
 
-		for _, doc := range docList {
-
-			tmpJsonDoc, err := json.Marshal(doc)
-
-			if err != nil {
-				ms.Logger.Errorf(moduleName, err.Error())
-			}
-
-			tmpDoc := vfgl.JournalPg{}
-			err = json.Unmarshal([]byte(tmpJsonDoc), &tmpDoc)
-			if err != nil {
-				ms.Logger.Errorf(moduleName, err.Error())
-			}
-
-			err = json.Unmarshal([]byte(msg), &docList)
-
-			if err != nil {
-				ms.Logger.Errorf(moduleName, err.Error())
-			}
-
-			pgDocList = append(pgDocList, tmpDoc)
-
-			docDetailList := doc.AccountBook
-
-			for _, docDetail := range docDetailList {
-				tmpDocDetail := vfgl.JournalDetailPg{}
-
-				tmpJsonDocDetail, err := json.Marshal(docDetail)
-				if err != nil {
-					ms.Logger.Errorf(moduleName, err.Error())
-				}
-				err = json.Unmarshal([]byte(tmpJsonDocDetail), &tmpDocDetail)
-
-				if err != nil {
-					ms.Logger.Errorf(moduleName, err.Error())
-				}
-
-				tmpDocDetail.ParID = doc.ParID
-				tmpDocDetail.ShopID = doc.ShopID
-				tmpDocDetail.Docno = doc.Docno
-
-				pgDocDetailList = append(pgDocDetailList, tmpDocDetail)
-			}
-		}
-
-		err = pst.CreateInBatch(pgDocList, len(pgDocList))
+		err = svc.SaveInBatch(docList)
 
 		if err != nil {
-			ms.Logger.Errorf(moduleName, err.Error())
+			return err
 		}
-
-		err = pst.CreateInBatch(pgDocDetailList, len(pgDocDetailList))
-
-		if err != nil {
-			ms.Logger.Errorf(moduleName, err.Error())
-		}
-
 		return nil
 	})
 

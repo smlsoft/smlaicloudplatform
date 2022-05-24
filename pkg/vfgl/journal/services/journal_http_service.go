@@ -1,4 +1,4 @@
-package journal
+package services
 
 import (
 	"errors"
@@ -6,13 +6,14 @@ import (
 	"smlcloudplatform/pkg/models/vfgl"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
+	"smlcloudplatform/pkg/vfgl/journal/repositories"
 	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type IJournalService interface {
+type IJournalHttpService interface {
 	CreateJournal(shopID string, authUsername string, doc vfgl.Journal) (string, error)
 	UpdateJournal(guid string, shopID string, authUsername string, doc vfgl.Journal) error
 	DeleteJournal(guid string, shopID string, authUsername string) error
@@ -21,20 +22,20 @@ type IJournalService interface {
 	SaveInBatch(shopID string, authUsername string, dataList []vfgl.Journal) (models.BulkImport, error)
 }
 
-type JournalService struct {
-	repo   JournalRepository
-	mqRepo JournalMqRepository
+type JournalHttpService struct {
+	repo   repositories.JournalRepository
+	mqRepo repositories.JournalMqRepository
 }
 
-func NewJournalService(repo JournalRepository, mqRepo JournalMqRepository) JournalService {
+func NewJournalHttpService(repo repositories.JournalRepository, mqRepo repositories.JournalMqRepository) JournalHttpService {
 
-	return JournalService{
+	return JournalHttpService{
 		repo:   repo,
 		mqRepo: mqRepo,
 	}
 }
 
-func (svc JournalService) CreateJournal(shopID string, authUsername string, doc vfgl.Journal) (string, error) {
+func (svc JournalHttpService) CreateJournal(shopID string, authUsername string, doc vfgl.Journal) (string, error) {
 
 	newGuidFixed := utils.NewGUID()
 
@@ -60,7 +61,7 @@ func (svc JournalService) CreateJournal(shopID string, authUsername string, doc 
 	return newGuidFixed, nil
 }
 
-func (svc JournalService) UpdateJournal(guid string, shopID string, authUsername string, doc vfgl.Journal) error {
+func (svc JournalHttpService) UpdateJournal(guid string, shopID string, authUsername string, doc vfgl.Journal) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -85,7 +86,7 @@ func (svc JournalService) UpdateJournal(guid string, shopID string, authUsername
 	return nil
 }
 
-func (svc JournalService) DeleteJournal(guid string, shopID string, authUsername string) error {
+func (svc JournalHttpService) DeleteJournal(guid string, shopID string, authUsername string) error {
 	err := svc.repo.Delete(shopID, guid, authUsername)
 
 	if err != nil {
@@ -94,7 +95,7 @@ func (svc JournalService) DeleteJournal(guid string, shopID string, authUsername
 	return nil
 }
 
-func (svc JournalService) InfoJournal(guid string, shopID string) (vfgl.JournalInfo, error) {
+func (svc JournalHttpService) InfoJournal(guid string, shopID string) (vfgl.JournalInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -110,7 +111,7 @@ func (svc JournalService) InfoJournal(guid string, shopID string) (vfgl.JournalI
 
 }
 
-func (svc JournalService) SearchJournal(shopID string, q string, page int, limit int) ([]vfgl.JournalInfo, mongopagination.PaginationData, error) {
+func (svc JournalHttpService) SearchJournal(shopID string, q string, page int, limit int) ([]vfgl.JournalInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
 		"docno",
 	}
@@ -124,7 +125,7 @@ func (svc JournalService) SearchJournal(shopID string, q string, page int, limit
 	return docList, pagination, nil
 }
 
-func (svc JournalService) SaveInBatch(shopID string, authUsername string, dataList []vfgl.Journal) (models.BulkImport, error) {
+func (svc JournalHttpService) SaveInBatch(shopID string, authUsername string, dataList []vfgl.Journal) (models.BulkImport, error) {
 
 	createDataList := []vfgl.JournalDoc{}
 	duplicateDataList := []vfgl.Journal{}
@@ -133,7 +134,7 @@ func (svc JournalService) SaveInBatch(shopID string, authUsername string, dataLi
 
 	itemCodeGuidList := []string{}
 	for _, doc := range payloadList {
-		itemCodeGuidList = append(itemCodeGuidList, doc.Docno)
+		itemCodeGuidList = append(itemCodeGuidList, doc.DocNo)
 	}
 
 	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "docno", itemCodeGuidList)
@@ -144,7 +145,7 @@ func (svc JournalService) SaveInBatch(shopID string, authUsername string, dataLi
 
 	foundItemGuidList := []string{}
 	for _, doc := range findItemGuid {
-		foundItemGuidList = append(foundItemGuidList, doc.Docno)
+		foundItemGuidList = append(foundItemGuidList, doc.DocNo)
 	}
 
 	duplicateDataList, createDataList = importdata.PreparePayloadData[vfgl.Journal, vfgl.JournalDoc](
@@ -178,7 +179,7 @@ func (svc JournalService) SaveInBatch(shopID string, authUsername string, dataLi
 			return svc.repo.FindByDocIndentiryGuid(shopID, "docno", guid)
 		},
 		func(doc vfgl.JournalDoc) bool {
-			if doc.Docno != "" {
+			if doc.DocNo != "" {
 				return true
 			}
 			return false
@@ -214,18 +215,18 @@ func (svc JournalService) SaveInBatch(shopID string, authUsername string, dataLi
 	createDataKey := []string{}
 
 	for _, doc := range createDataList {
-		createDataKey = append(createDataKey, doc.Docno)
+		createDataKey = append(createDataKey, doc.DocNo)
 	}
 
 	payloadDuplicateDataKey := []string{}
 	for _, doc := range payloadDuplicateList {
-		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.Docno)
+		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.DocNo)
 	}
 
 	updateDataKey := []string{}
 	for _, doc := range updateSuccessDataList {
 		svc.mqRepo.Update(doc)
-		updateDataKey = append(updateDataKey, doc.Docno)
+		updateDataKey = append(updateDataKey, doc.DocNo)
 	}
 
 	updateFailDataKey := []string{}
@@ -241,6 +242,6 @@ func (svc JournalService) SaveInBatch(shopID string, authUsername string, dataLi
 	}, nil
 }
 
-func (svc JournalService) getDocIDKey(doc vfgl.Journal) string {
-	return doc.Docno
+func (svc JournalHttpService) getDocIDKey(doc vfgl.Journal) string {
+	return doc.DocNo
 }

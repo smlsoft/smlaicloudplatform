@@ -12,7 +12,7 @@ const journalCollectionName = "journals"
 type Journal struct {
 	models.PartitionIdentity `bson:"inline"`
 	BatchID                  string          `json:"batchId" bson:"batch"`
-	Docno                    string          `json:"docno" bson:"docno"`
+	DocNo                    string          `json:"docno" bson:"docno"`
 	DocDate                  time.Time       `json:"docdate" bson:"docdate" format:"dateTime"`
 	AccountPeriod            int16           `json:"accountperiod" bson:"accountperiod"`
 	AccountYear              int16           `json:"accountyear" bson:"accountyear"`
@@ -54,7 +54,7 @@ func (JournalDoc) CollectionName() string {
 }
 
 type JournalItemGuid struct {
-	Docno string `json:"docno" bson:"docno" gorm:"docno"`
+	DocNo string `json:"docno" bson:"docno" gorm:"docno"`
 }
 
 func (JournalItemGuid) CollectionName() string {
