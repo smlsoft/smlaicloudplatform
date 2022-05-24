@@ -115,7 +115,7 @@ func (h SaleinvoiceHttp) UpdateSaleinvoice(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.service.UpdateSaleinvoice(id, shopID, authUsername, *transReq)
+	err = h.service.UpdateSaleinvoice(shopID, id, authUsername, *transReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -144,7 +144,7 @@ func (h SaleinvoiceHttp) DeleteSaleinvoice(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	err := h.service.DeleteSaleinvoice(id, shopID, authUsername)
+	err := h.service.DeleteSaleinvoice(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -173,7 +173,7 @@ func (h SaleinvoiceHttp) InfoSaleinvoice(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	trans, err := h.service.InfoSaleinvoice(id, shopID)
+	trans, err := h.service.InfoSaleinvoice(shopID, id)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		ctx.ResponseError(400, err.Error())

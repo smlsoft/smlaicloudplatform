@@ -13,7 +13,7 @@ type IPurchaseRepository interface {
 	Create(doc models.PurchaseDoc) (primitive.ObjectID, error)
 	Update(shopID string, guid string, doc models.PurchaseDoc) error
 	Delete(shopID string, guid string, username string) error
-	FindByGuid(guid string, shopID string) (models.PurchaseDoc, error)
+	FindByGuid(shopID string, guid string) (models.PurchaseDoc, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.PurchaseInfo, paginate.PaginationData, error)
 	FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.PurchaseInfo, paginate.PaginationData, error)
 }
@@ -57,7 +57,7 @@ func (repo PurchaseRepository) Delete(shopID string, guid string, username strin
 	return nil
 }
 
-func (repo PurchaseRepository) FindByGuid(guid string, shopID string) (models.PurchaseDoc, error) {
+func (repo PurchaseRepository) FindByGuid(shopID string, guid string) (models.PurchaseDoc, error) {
 	doc := &models.PurchaseDoc{}
 	err := repo.pst.FindOne(&models.PurchaseDoc{}, bson.M{"shopid": shopID, "guidfixed": guid, "deletedat": bson.M{"$exists": false}}, doc)
 	if err != nil {

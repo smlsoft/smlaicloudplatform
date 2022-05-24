@@ -12,11 +12,11 @@ import (
 
 type IStockInOutService interface {
 	CreateStockInOut(shopID string, username string, doc models.StockInOut) (string, error)
-	UpdateStockInOut(guid string, shopID string, username string, doc models.StockInOut) error
-	DeleteStockInOut(guid string, shopID string, username string) error
-	InfoStockInOut(guid string, shopID string) (models.StockInOutInfo, error)
+	UpdateStockInOut(shopID string, guid string, username string, doc models.StockInOut) error
+	DeleteStockInOut(shopID string, guid string, username string) error
+	InfoStockInOut(shopID string, guid string) (models.StockInOutInfo, error)
 	SearchStockInOut(shopID string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error)
-	SearchItemsStockInOut(guid string, shopID string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error)
+	SearchItemsStockInOut(shopID string, guid string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error)
 }
 
 type StockInOutService struct {
@@ -65,9 +65,9 @@ func (svc StockInOutService) CreateStockInOut(shopID string, username string, do
 	return newGuidFixed, nil
 }
 
-func (svc StockInOutService) UpdateStockInOut(guid string, shopID string, username string, doc models.StockInOut) error {
+func (svc StockInOutService) UpdateStockInOut(shopID string, guid string, username string, doc models.StockInOut) error {
 
-	findDoc, err := svc.repo.FindByGuid(guid, shopID)
+	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return err
@@ -97,8 +97,8 @@ func (svc StockInOutService) UpdateStockInOut(guid string, shopID string, userna
 	return nil
 }
 
-func (svc StockInOutService) DeleteStockInOut(guid string, shopID string, username string) error {
-	err := svc.repo.Delete(guid, shopID, username)
+func (svc StockInOutService) DeleteStockInOut(shopID string, guid string, username string) error {
+	err := svc.repo.Delete(shopID, guid, username)
 	if err != nil {
 		return err
 	}
@@ -106,8 +106,8 @@ func (svc StockInOutService) DeleteStockInOut(guid string, shopID string, userna
 	return nil
 }
 
-func (svc StockInOutService) InfoStockInOut(guid string, shopID string) (models.StockInOutInfo, error) {
-	doc, err := svc.repo.FindByGuid(guid, shopID)
+func (svc StockInOutService) InfoStockInOut(shopID string, guid string) (models.StockInOutInfo, error) {
+	doc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return models.StockInOutInfo{}, err
@@ -126,8 +126,8 @@ func (svc StockInOutService) SearchStockInOut(shopID string, q string, page int,
 	return docList, pagination, nil
 }
 
-func (svc StockInOutService) SearchItemsStockInOut(guid string, shopID string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindItemsByGuidPage(guid, shopID, q, page, limit)
+func (svc StockInOutService) SearchItemsStockInOut(shopID string, guid string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindItemsByGuidPage(shopID, guid, q, page, limit)
 
 	if err != nil {
 		return docList, pagination, err

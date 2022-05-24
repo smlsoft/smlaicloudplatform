@@ -12,10 +12,10 @@ import (
 type IStockInOutRepository interface {
 	Create(doc models.StockInOutDoc) (primitive.ObjectID, error)
 	Update(shopID string, guid string, doc models.StockInOutDoc) error
-	Delete(guid string, shopID string, username string) error
-	FindByGuid(guid string, shopID string) (models.StockInOutDoc, error)
+	Delete(shopID string, guid string, username string) error
+	FindByGuid(shopID string, guid string) (models.StockInOutDoc, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error)
-	FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error)
+	FindItemsByGuidPage(shopID string, guid string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error)
 }
 
 type StockInOutRepository struct {
@@ -49,7 +49,7 @@ func (repo StockInOutRepository) Update(shopID string, guid string, doc models.S
 	return nil
 }
 
-func (repo StockInOutRepository) Delete(guid string, shopID string, username string) error {
+func (repo StockInOutRepository) Delete(shopID string, guid string, username string) error {
 	err := repo.pst.SoftDelete(&models.StockInOutDoc{}, username, bson.M{"guidfixed": guid, "shopid": shopID})
 	if err != nil {
 		return err
@@ -57,7 +57,7 @@ func (repo StockInOutRepository) Delete(guid string, shopID string, username str
 	return nil
 }
 
-func (repo StockInOutRepository) FindByGuid(guid string, shopID string) (models.StockInOutDoc, error) {
+func (repo StockInOutRepository) FindByGuid(shopID string, guid string) (models.StockInOutDoc, error) {
 	doc := &models.StockInOutDoc{}
 	err := repo.pst.FindOne(&models.StockInOutDoc{}, bson.M{"shopid": shopID, "guidfixed": guid, "deletedat": bson.M{"$exists": false}}, doc)
 	if err != nil {
@@ -87,7 +87,7 @@ func (repo StockInOutRepository) FindPage(shopID string, q string, page int, lim
 	return docList, pagination, nil
 }
 
-func (repo StockInOutRepository) FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error) {
+func (repo StockInOutRepository) FindItemsByGuidPage(shopID string, guid string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error) {
 
 	docList := []models.StockInOutInfo{}
 	pagination, err := repo.pst.FindPage(&models.StockInOutInfo{}, limit, page, bson.M{

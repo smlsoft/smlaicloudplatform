@@ -12,9 +12,9 @@ import (
 
 type IPurchaseService interface {
 	CreatePurchase(shopID string, username string, doc models.Purchase) (string, error)
-	UpdatePurchase(guid string, shopID string, username string, doc models.Purchase) error
-	DeletePurchase(guid string, shopID string, username string) error
-	InfoPurchase(guid string, shopID string) (models.PurchaseInfo, error)
+	UpdatePurchase(shopID string, guid string, username string, doc models.Purchase) error
+	DeletePurchase(shopID string, guid string, username string) error
+	InfoPurchase(shopID string, guid string) (models.PurchaseInfo, error)
 	SearchPurchase(shopID string, q string, page int, limit int) ([]models.PurchaseInfo, paginate.PaginationData, error)
 	SearchItemsPurchase(guid string, shopID string, q string, page int, limit int) ([]models.PurchaseInfo, paginate.PaginationData, error)
 }
@@ -66,9 +66,9 @@ func (svc PurchaseService) CreatePurchase(shopID string, username string, doc mo
 	return newGuidFixed, nil
 }
 
-func (svc PurchaseService) UpdatePurchase(guid string, shopID string, username string, doc models.Purchase) error {
+func (svc PurchaseService) UpdatePurchase(shopID string, guid string, username string, doc models.Purchase) error {
 
-	findDoc, err := svc.repo.FindByGuid(guid, shopID)
+	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return err
@@ -99,7 +99,7 @@ func (svc PurchaseService) UpdatePurchase(guid string, shopID string, username s
 	return nil
 }
 
-func (svc PurchaseService) DeletePurchase(guid string, shopID string, username string) error {
+func (svc PurchaseService) DeletePurchase(shopID string, guid string, username string) error {
 
 	err := svc.repo.Delete(shopID, guid, username)
 	if err != nil {
@@ -109,8 +109,8 @@ func (svc PurchaseService) DeletePurchase(guid string, shopID string, username s
 	return nil
 }
 
-func (svc PurchaseService) InfoPurchase(guid string, shopID string) (models.PurchaseInfo, error) {
-	doc, err := svc.repo.FindByGuid(guid, shopID)
+func (svc PurchaseService) InfoPurchase(shopID string, guid string) (models.PurchaseInfo, error) {
+	doc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return models.PurchaseInfo{}, err

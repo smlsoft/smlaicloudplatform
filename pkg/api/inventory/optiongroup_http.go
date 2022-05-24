@@ -70,7 +70,7 @@ func (h *InventoryHttp) UpdateOptionGroup(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.optGroupService.UpdateOptionGroup(id, shopID, authUsername, *docReq)
+	err = h.optGroupService.UpdateOptionGroup(shopID, id, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -101,7 +101,7 @@ func (h *InventoryHttp) DeleteOptionGroup(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	err := h.optGroupService.DeleteOptionGroup(id, shopID, authUsername)
+	err := h.optGroupService.DeleteOptionGroup(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -131,7 +131,7 @@ func (h *InventoryHttp) InfoOptionGroup(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	doc, err := h.optGroupService.InfoOptionGroup(id, shopID)
+	doc, err := h.optGroupService.InfoOptionGroup(shopID, id)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

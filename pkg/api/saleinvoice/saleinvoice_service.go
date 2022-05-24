@@ -12,9 +12,9 @@ import (
 
 type ISaleinvoiceService interface {
 	CreateSaleinvoice(shopID string, username string, trans models.Saleinvoice) (string, error)
-	UpdateSaleinvoice(guid string, shopID string, username string, trans models.Saleinvoice) error
-	DeleteSaleinvoice(guid string, shopID string, username string) error
-	InfoSaleinvoice(guid string, shopID string) (models.SaleinvoiceInfo, error)
+	UpdateSaleinvoice(shopID string, guid string, username string, trans models.Saleinvoice) error
+	DeleteSaleinvoice(shopID string, guid string, username string) error
+	InfoSaleinvoice(shopID string, guid string) (models.SaleinvoiceInfo, error)
 	SearchSaleinvoice(shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, paginate.PaginationData, error)
 	SearchItemsSaleinvoice(guid string, shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, paginate.PaginationData, error)
 }
@@ -65,9 +65,9 @@ func (svc SaleinvoiceService) CreateSaleinvoice(shopID string, username string, 
 	return newGuidFixed, nil
 }
 
-func (svc SaleinvoiceService) UpdateSaleinvoice(guid string, shopID string, username string, trans models.Saleinvoice) error {
+func (svc SaleinvoiceService) UpdateSaleinvoice(shopID string, guid string, username string, trans models.Saleinvoice) error {
 
-	findDoc, err := svc.saleinvoiceRepository.FindByGuid(guid, shopID)
+	findDoc, err := svc.saleinvoiceRepository.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return err
@@ -103,9 +103,9 @@ func (svc SaleinvoiceService) UpdateSaleinvoice(guid string, shopID string, user
 	return nil
 }
 
-func (svc SaleinvoiceService) DeleteSaleinvoice(guid string, shopID string, username string) error {
+func (svc SaleinvoiceService) DeleteSaleinvoice(shopID string, guid string, username string) error {
 
-	err := svc.saleinvoiceRepository.Delete(guid, shopID, username)
+	err := svc.saleinvoiceRepository.Delete(shopID, guid, username)
 	if err != nil {
 		return err
 	}
@@ -123,8 +123,8 @@ func (svc SaleinvoiceService) DeleteSaleinvoice(guid string, shopID string, user
 	return nil
 }
 
-func (svc SaleinvoiceService) InfoSaleinvoice(guid string, shopID string) (models.SaleinvoiceInfo, error) {
-	trans, err := svc.saleinvoiceRepository.FindByGuid(guid, shopID)
+func (svc SaleinvoiceService) InfoSaleinvoice(shopID string, guid string) (models.SaleinvoiceInfo, error) {
+	trans, err := svc.saleinvoiceRepository.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return models.SaleinvoiceInfo{}, err

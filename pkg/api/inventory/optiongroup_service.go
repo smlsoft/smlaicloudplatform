@@ -12,9 +12,9 @@ import (
 
 type IOptionGroupService interface {
 	CreateOptionGroup(shopID string, authUsername string, doc models.InventoryOptionGroup) (string, error)
-	UpdateOptionGroup(guid string, shopID string, authUsername string, doc models.InventoryOptionGroup) error
-	DeleteOptionGroup(guid string, shopID string, username string) error
-	InfoOptionGroup(guid string, shopID string) (models.InventoryOptionGroup, error)
+	UpdateOptionGroup(shopID string, guid string, authUsername string, doc models.InventoryOptionGroup) error
+	DeleteOptionGroup(shopID string, guid string, username string) error
+	InfoOptionGroup(shopID string, guid string) (models.InventoryOptionGroup, error)
 	SearchOptionGroup(shopID string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error)
 }
 
@@ -49,9 +49,9 @@ func (svc OptionGroupService) CreateOptionGroup(shopID string, authUsername stri
 	return newGuid, nil
 }
 
-func (svc OptionGroupService) UpdateOptionGroup(guid string, shopID string, authUsername string, doc models.InventoryOptionGroup) error {
+func (svc OptionGroupService) UpdateOptionGroup(shopID string, guid string, authUsername string, doc models.InventoryOptionGroup) error {
 
-	findDoc, err := svc.repo.FindByGuid(guid, shopID)
+	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return err
@@ -78,7 +78,7 @@ func (svc OptionGroupService) UpdateOptionGroup(guid string, shopID string, auth
 	return nil
 }
 
-func (svc OptionGroupService) DeleteOptionGroup(guid string, shopID string, username string) error {
+func (svc OptionGroupService) DeleteOptionGroup(shopID string, guid string, username string) error {
 	err := svc.repo.Delete(shopID, guid, username)
 
 	if err != nil {
@@ -87,7 +87,7 @@ func (svc OptionGroupService) DeleteOptionGroup(guid string, shopID string, user
 	return nil
 }
 
-func (svc OptionGroupService) InfoOptionGroup(guid string, shopID string) (models.InventoryOptionGroup, error) {
+func (svc OptionGroupService) InfoOptionGroup(shopID string, guid string) (models.InventoryOptionGroup, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 

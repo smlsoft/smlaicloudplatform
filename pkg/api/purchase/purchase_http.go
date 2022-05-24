@@ -115,7 +115,7 @@ func (h PurchaseHttp) UpdatePurchase(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.service.UpdatePurchase(id, shopID, authUsername, *docReq)
+	err = h.service.UpdatePurchase(shopID, id, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -144,7 +144,7 @@ func (h PurchaseHttp) DeletePurchase(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	err := h.service.DeletePurchase(id, shopID, authUsername)
+	err := h.service.DeletePurchase(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -173,7 +173,7 @@ func (h PurchaseHttp) InfoPurchase(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	doc, err := h.service.InfoPurchase(id, shopID)
+	doc, err := h.service.InfoPurchase(shopID, id)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		ctx.ResponseError(400, err.Error())

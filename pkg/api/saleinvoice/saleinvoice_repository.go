@@ -12,8 +12,8 @@ import (
 type ISaleinvoiceRepository interface {
 	Create(trans models.SaleinvoiceDoc) (primitive.ObjectID, error)
 	Update(shopID string, guid string, trans models.SaleinvoiceDoc) error
-	Delete(guid string, shopID string, username string) error
-	FindByGuid(guid string, shopID string) (models.SaleinvoiceDoc, error)
+	Delete(shopID string, guid string, username string) error
+	FindByGuid(shopID string, guid string) (models.SaleinvoiceDoc, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, paginate.PaginationData, error)
 	FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, paginate.PaginationData, error)
 }
@@ -49,7 +49,7 @@ func (repo SaleinvoiceRepository) Update(shopID string, guid string, trans model
 	return nil
 }
 
-func (repo SaleinvoiceRepository) Delete(guid string, shopID string, username string) error {
+func (repo SaleinvoiceRepository) Delete(shopID string, guid string, username string) error {
 	err := repo.pst.SoftDelete(&models.SaleinvoiceDoc{}, username, bson.M{"guidfixed": guid, "shopid": shopID})
 	if err != nil {
 		return err
@@ -57,11 +57,13 @@ func (repo SaleinvoiceRepository) Delete(guid string, shopID string, username st
 	return nil
 }
 
-func (repo SaleinvoiceRepository) FindByGuid(guid string, shopID string) (models.SaleinvoiceDoc, error) {
+func (repo SaleinvoiceRepository) FindByGuid(shopID string, guid string) (models.SaleinvoiceDoc, error) {
 	trans := &models.SaleinvoiceDoc{}
+	filterDoc := bson.M{"shopid": shopID, "guidfixed": guid, "deletedat": bson.M{"$exists": false}}
+
 	err := repo.pst.FindOne(
 		&models.SaleinvoiceDoc{},
-		bson.M{"shopid": shopID, "guidfixed": guid, "deletedat": bson.M{"$exists": false}},
+		filterDoc,
 		trans,
 	)
 	if err != nil {

@@ -96,7 +96,7 @@ func (h StockInOutHttp) UpdateStockInOut(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.service.UpdateStockInOut(id, shopID, authUsername, *docReq)
+	err = h.service.UpdateStockInOut(shopID, id, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -116,7 +116,7 @@ func (h StockInOutHttp) DeleteStockInOut(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	err := h.service.DeleteStockInOut(id, shopID, authUsername)
+	err := h.service.DeleteStockInOut(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -136,7 +136,7 @@ func (h StockInOutHttp) InfoStockInOut(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	doc, err := h.service.InfoStockInOut(id, shopID)
+	doc, err := h.service.InfoStockInOut(shopID, id)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		ctx.ResponseError(400, err.Error())
@@ -204,7 +204,7 @@ func (h StockInOutHttp) SearchStockInOutItems(ctx microservice.IContext) error {
 		limit = 20
 	}
 
-	docList, pagination, err := h.service.SearchItemsStockInOut(docID, shopID, q, page, limit)
+	docList, pagination, err := h.service.SearchItemsStockInOut(shopID, docID, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
