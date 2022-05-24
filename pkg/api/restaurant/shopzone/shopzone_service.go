@@ -17,9 +17,9 @@ import (
 
 type IShopZoneService interface {
 	CreateShopZone(shopID string, authUsername string, doc restaurant.ShopZone) (string, error)
-	UpdateShopZone(guid string, shopID string, authUsername string, doc restaurant.ShopZone) error
-	DeleteShopZone(guid string, shopID string, authUsername string) error
-	InfoShopZone(guid string, shopID string) (restaurant.ShopZoneInfo, error)
+	UpdateShopZone(shopID string, guid string, authUsername string, doc restaurant.ShopZone) error
+	DeleteShopZone(shopID string, guid string, authUsername string) error
+	InfoShopZone(shopID string, guid string) (restaurant.ShopZoneInfo, error)
 	SearchShopZone(shopID string, q string, page int, limit int) ([]restaurant.ShopZoneInfo, mongopagination.PaginationData, error)
 	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []restaurant.ShopZone) (models.BulkImport, error)
@@ -57,7 +57,7 @@ func (svc ShopZoneService) CreateShopZone(shopID string, authUsername string, do
 	return newGuidFixed, nil
 }
 
-func (svc ShopZoneService) UpdateShopZone(guid string, shopID string, authUsername string, doc restaurant.ShopZone) error {
+func (svc ShopZoneService) UpdateShopZone(shopID string, guid string, authUsername string, doc restaurant.ShopZone) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -84,7 +84,7 @@ func (svc ShopZoneService) UpdateShopZone(guid string, shopID string, authUserna
 	return nil
 }
 
-func (svc ShopZoneService) DeleteShopZone(guid string, shopID string, authUsername string) error {
+func (svc ShopZoneService) DeleteShopZone(shopID string, guid string, authUsername string) error {
 	err := svc.repo.Delete(shopID, guid, authUsername)
 
 	if err != nil {
@@ -93,7 +93,7 @@ func (svc ShopZoneService) DeleteShopZone(guid string, shopID string, authUserna
 	return nil
 }
 
-func (svc ShopZoneService) InfoShopZone(guid string, shopID string) (restaurant.ShopZoneInfo, error) {
+func (svc ShopZoneService) InfoShopZone(shopID string, guid string) (restaurant.ShopZoneInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 

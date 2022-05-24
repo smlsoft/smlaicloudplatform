@@ -108,7 +108,7 @@ func (h ShopTableHttp) UpdateShopTable(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svc.UpdateShopTable(id, shopID, authUsername, *docReq)
+	err = h.svc.UpdateShopTable(shopID, id, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -139,7 +139,7 @@ func (h ShopTableHttp) DeleteShopTable(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	err := h.svc.DeleteShopTable(id, shopID, authUsername)
+	err := h.svc.DeleteShopTable(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -170,7 +170,7 @@ func (h ShopTableHttp) InfoShopTable(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 
 	h.ms.Logger.Debugf("Get ShopTable %v", id)
-	doc, err := h.svc.InfoShopTable(id, shopID)
+	doc, err := h.svc.InfoShopTable(shopID, id)
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)

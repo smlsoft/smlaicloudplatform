@@ -16,9 +16,9 @@ import (
 
 type IShopTableService interface {
 	CreateShopTable(shopID string, authUsername string, doc restaurant.ShopTable) (string, error)
-	UpdateShopTable(guid string, shopID string, authUsername string, doc restaurant.ShopTable) error
-	DeleteShopTable(guid string, shopID string, authUsername string) error
-	InfoShopTable(guid string, shopID string) (restaurant.ShopTableInfo, error)
+	UpdateShopTable(shopID string, guid string, authUsername string, doc restaurant.ShopTable) error
+	DeleteShopTable(shopID string, guid string, authUsername string) error
+	InfoShopTable(shopID string, guid string) (restaurant.ShopTableInfo, error)
 	SearchShopTable(shopID string, q string, page int, limit int) ([]restaurant.ShopTableInfo, mongopagination.PaginationData, error)
 	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []restaurant.ShopTable) (models.BulkImport, error)
@@ -54,7 +54,7 @@ func (svc ShopTableService) CreateShopTable(shopID string, authUsername string, 
 	return newGuidFixed, nil
 }
 
-func (svc ShopTableService) UpdateShopTable(guid string, shopID string, authUsername string, doc restaurant.ShopTable) error {
+func (svc ShopTableService) UpdateShopTable(shopID string, guid string, authUsername string, doc restaurant.ShopTable) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -79,7 +79,7 @@ func (svc ShopTableService) UpdateShopTable(guid string, shopID string, authUser
 	return nil
 }
 
-func (svc ShopTableService) DeleteShopTable(guid string, shopID string, authUsername string) error {
+func (svc ShopTableService) DeleteShopTable(shopID string, guid string, authUsername string) error {
 	err := svc.repo.Delete(shopID, guid, authUsername)
 
 	if err != nil {
@@ -88,7 +88,7 @@ func (svc ShopTableService) DeleteShopTable(guid string, shopID string, authUser
 	return nil
 }
 
-func (svc ShopTableService) InfoShopTable(guid string, shopID string) (restaurant.ShopTableInfo, error) {
+func (svc ShopTableService) InfoShopTable(shopID string, guid string) (restaurant.ShopTableInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 

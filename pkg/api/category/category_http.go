@@ -108,7 +108,7 @@ func (h CategoryHttp) UpdateCategory(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.cateService.UpdateCategory(id, shopID, authUsername, *categoryReq)
+	err = h.cateService.UpdateCategory(shopID, id, authUsername, *categoryReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -139,7 +139,7 @@ func (h CategoryHttp) DeleteCategory(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	err := h.cateService.DeleteCategory(id, shopID, authUsername)
+	err := h.cateService.DeleteCategory(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -170,7 +170,7 @@ func (h CategoryHttp) InfoCategory(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 
 	h.ms.Logger.Debugf("Get Category %v", id)
-	doc, err := h.cateService.InfoCategory(id, shopID)
+	doc, err := h.cateService.InfoCategory(shopID, id)
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting category %v: %v", id, err)

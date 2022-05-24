@@ -107,7 +107,7 @@ func (h ShopPrinterHttp) UpdateShopPrinter(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svc.UpdateShopPrinter(id, shopID, authUsername, *docReq)
+	err = h.svc.UpdateShopPrinter(shopID, id, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -138,7 +138,7 @@ func (h ShopPrinterHttp) DeleteShopPrinter(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	err := h.svc.DeleteShopPrinter(id, shopID, authUsername)
+	err := h.svc.DeleteShopPrinter(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -169,7 +169,7 @@ func (h ShopPrinterHttp) InfoShopPrinter(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 
 	h.ms.Logger.Debugf("Get ShopPrinter %v", id)
-	doc, err := h.svc.InfoShopPrinter(id, shopID)
+	doc, err := h.svc.InfoShopPrinter(shopID, id)
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)

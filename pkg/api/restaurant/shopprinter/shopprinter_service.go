@@ -17,9 +17,9 @@ import (
 
 type IShopPrinterService interface {
 	CreateShopPrinter(shopID string, authUsername string, doc restaurant.PrinterTerminal) (string, error)
-	UpdateShopPrinter(guid string, shopID string, authUsername string, doc restaurant.PrinterTerminal) error
-	DeleteShopPrinter(guid string, shopID string, authUsername string) error
-	InfoShopPrinter(guid string, shopID string) (restaurant.PrinterTerminalInfo, error)
+	UpdateShopPrinter(shopID string, guid string, authUsername string, doc restaurant.PrinterTerminal) error
+	DeleteShopPrinter(shopID string, guid string, authUsername string) error
+	InfoShopPrinter(shopID string, guid string) (restaurant.PrinterTerminalInfo, error)
 	SearchShopPrinter(shopID string, q string, page int, limit int) ([]restaurant.PrinterTerminalInfo, mongopagination.PaginationData, error)
 	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []restaurant.PrinterTerminal) (models.BulkImport, error)
@@ -56,7 +56,7 @@ func (svc ShopPrinterService) CreateShopPrinter(shopID string, authUsername stri
 	return newGuidFixed, nil
 }
 
-func (svc ShopPrinterService) UpdateShopPrinter(guid string, shopID string, authUsername string, doc restaurant.PrinterTerminal) error {
+func (svc ShopPrinterService) UpdateShopPrinter(shopID string, guid string, authUsername string, doc restaurant.PrinterTerminal) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -81,7 +81,7 @@ func (svc ShopPrinterService) UpdateShopPrinter(guid string, shopID string, auth
 	return nil
 }
 
-func (svc ShopPrinterService) DeleteShopPrinter(guid string, shopID string, authUsername string) error {
+func (svc ShopPrinterService) DeleteShopPrinter(shopID string, guid string, authUsername string) error {
 	err := svc.repo.Delete(shopID, guid, authUsername)
 
 	if err != nil {
@@ -90,7 +90,7 @@ func (svc ShopPrinterService) DeleteShopPrinter(guid string, shopID string, auth
 	return nil
 }
 
-func (svc ShopPrinterService) InfoShopPrinter(guid string, shopID string) (restaurant.PrinterTerminalInfo, error) {
+func (svc ShopPrinterService) InfoShopPrinter(shopID string, guid string) (restaurant.PrinterTerminalInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 

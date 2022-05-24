@@ -107,7 +107,7 @@ func (h ShopZoneHttp) UpdateShopZone(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svc.UpdateShopZone(id, shopID, authUsername, *docReq)
+	err = h.svc.UpdateShopZone(shopID, id, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -138,7 +138,7 @@ func (h ShopZoneHttp) DeleteShopZone(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	err := h.svc.DeleteShopZone(id, shopID, authUsername)
+	err := h.svc.DeleteShopZone(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -169,7 +169,7 @@ func (h ShopZoneHttp) InfoShopZone(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 
 	h.ms.Logger.Debugf("Get ShopZone %v", id)
-	doc, err := h.svc.InfoShopZone(id, shopID)
+	doc, err := h.svc.InfoShopZone(shopID, id)
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)

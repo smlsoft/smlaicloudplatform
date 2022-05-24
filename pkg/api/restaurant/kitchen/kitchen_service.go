@@ -17,9 +17,9 @@ import (
 
 type IKitchenService interface {
 	CreateKitchen(shopID string, authUsername string, doc restaurant.Kitchen) (string, error)
-	UpdateKitchen(guid string, shopID string, authUsername string, doc restaurant.Kitchen) error
-	DeleteKitchen(guid string, shopID string, authUsername string) error
-	InfoKitchen(guid string, shopID string) (restaurant.KitchenInfo, error)
+	UpdateKitchen(shopID string, guid string, authUsername string, doc restaurant.Kitchen) error
+	DeleteKitchen(shopID string, guid string, authUsername string) error
+	InfoKitchen(shopID string, guid string) (restaurant.KitchenInfo, error)
 	SearchKitchen(shopID string, q string, page int, limit int) ([]restaurant.KitchenInfo, mongopagination.PaginationData, error)
 	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []restaurant.Kitchen) (models.BulkImport, error)
@@ -56,7 +56,7 @@ func (svc KitchenService) CreateKitchen(shopID string, authUsername string, doc 
 	return newGuidFixed, nil
 }
 
-func (svc KitchenService) UpdateKitchen(guid string, shopID string, authUsername string, doc restaurant.Kitchen) error {
+func (svc KitchenService) UpdateKitchen(shopID string, guid string, authUsername string, doc restaurant.Kitchen) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -81,7 +81,7 @@ func (svc KitchenService) UpdateKitchen(guid string, shopID string, authUsername
 	return nil
 }
 
-func (svc KitchenService) DeleteKitchen(guid string, shopID string, authUsername string) error {
+func (svc KitchenService) DeleteKitchen(shopID string, guid string, authUsername string) error {
 	err := svc.repo.Delete(shopID, guid, authUsername)
 
 	if err != nil {
@@ -90,7 +90,7 @@ func (svc KitchenService) DeleteKitchen(guid string, shopID string, authUsername
 	return nil
 }
 
-func (svc KitchenService) InfoKitchen(guid string, shopID string) (restaurant.KitchenInfo, error) {
+func (svc KitchenService) InfoKitchen(shopID string, guid string) (restaurant.KitchenInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 

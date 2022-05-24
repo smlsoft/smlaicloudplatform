@@ -15,9 +15,9 @@ import (
 
 type ICategoryService interface {
 	CreateCategory(shopID string, authUsername string, category models.Category) (string, error)
-	UpdateCategory(guid string, shopID string, authUsername string, category models.Category) error
-	DeleteCategory(guid string, shopID string, authUsername string) error
-	InfoCategory(guid string, shopID string) (models.CategoryInfo, error)
+	UpdateCategory(shopID string, guid string, authUsername string, category models.Category) error
+	DeleteCategory(shopID string, guid string, authUsername string) error
+	InfoCategory(shopID string, guid string) (models.CategoryInfo, error)
 	SearchCategory(shopID string, q string, page int, limit int) ([]models.CategoryInfo, mongopagination.PaginationData, error)
 	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, categories []models.Category) (models.BulkImport, error)
@@ -61,7 +61,7 @@ func (svc CategoryService) CreateCategory(shopID string, authUsername string, ca
 	return newGuidFixed, nil
 }
 
-func (svc CategoryService) UpdateCategory(guid string, shopID string, authUsername string, category models.Category) error {
+func (svc CategoryService) UpdateCategory(shopID string, guid string, authUsername string, category models.Category) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -86,7 +86,7 @@ func (svc CategoryService) UpdateCategory(guid string, shopID string, authUserna
 	return nil
 }
 
-func (svc CategoryService) DeleteCategory(guid string, shopID string, authUsername string) error {
+func (svc CategoryService) DeleteCategory(shopID string, guid string, authUsername string) error {
 	err := svc.repo.Delete(shopID, guid, authUsername)
 
 	if err != nil {
@@ -95,7 +95,7 @@ func (svc CategoryService) DeleteCategory(guid string, shopID string, authUserna
 	return nil
 }
 
-func (svc CategoryService) InfoCategory(guid string, shopID string) (models.CategoryInfo, error) {
+func (svc CategoryService) InfoCategory(shopID string, guid string) (models.CategoryInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
