@@ -48,7 +48,11 @@ func (r AuthenticationRepository) CreateUser(user models.User) (primitive.Object
 
 func (r AuthenticationRepository) UpdateUser(username string, user models.User) error {
 
-	err := r.pst.UpdateOne(&models.User{}, "username", username, user)
+	filterDoc := map[string]interface{}{
+		"username": username,
+	}
+
+	err := r.pst.UpdateOne(&models.User{}, filterDoc, user)
 
 	if err != nil {
 		return err

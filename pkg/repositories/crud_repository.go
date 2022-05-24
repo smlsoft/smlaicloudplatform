@@ -56,8 +56,13 @@ func (repo CrudRepository[T]) CreateInBatch(docList []T) error {
 	return nil
 }
 
-func (repo CrudRepository[T]) Update(guid string, doc T) error {
-	err := repo.pst.UpdateOne(new(T), "guidfixed", guid, doc)
+func (repo CrudRepository[T]) Update(shopID string, guid string, doc T) error {
+	filterDoc := map[string]interface{}{
+		"shopid":    shopID,
+		"guidfixed": guid,
+	}
+
+	err := repo.pst.UpdateOne(new(T), filterDoc, doc)
 
 	if err != nil {
 		return err

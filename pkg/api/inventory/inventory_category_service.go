@@ -8,7 +8,7 @@ import (
 )
 
 type IInventoryCategoryService interface {
-	UpdateInventoryCategoryBulk(authUsername string, shopId string, catId string, guids []string) error
+	UpdateInventoryCategoryBulk(authUsername string, shopID string, catId string, guids []string) error
 }
 
 type InventoryCategoryService struct {
@@ -25,15 +25,15 @@ func NewInventorycategoryService(inventoryRepository InventoryRepository, catego
 	}
 }
 
-func (ics *InventoryCategoryService) UpdateInventoryCategoryBulk(shopId string, authUsername string, catId string, guids []string) error {
+func (ics *InventoryCategoryService) UpdateInventoryCategoryBulk(shopID string, authUsername string, catId string, guids []string) error {
 
 	// find category
-	findCategory, err := ics.categoryRepository.FindByCategoryGuid(shopId, catId)
+	findCategory, err := ics.categoryRepository.FindByCategoryGuid(shopID, catId)
 	if err != nil || findCategory.ID == primitive.NilObjectID {
 		return err
 	}
 
-	itemsList, err := ics.inventoryRepository.FindByItemGuidList(shopId, guids)
+	itemsList, err := ics.inventoryRepository.FindByItemGuidList(shopID, guids)
 	for _, findDoc := range itemsList {
 
 		findDoc.CategoryGuid = catId
@@ -41,7 +41,7 @@ func (ics *InventoryCategoryService) UpdateInventoryCategoryBulk(shopId string, 
 		findDoc.UpdatedBy = authUsername
 		findDoc.UpdatedAt = time.Now()
 
-		err = ics.inventoryRepository.Update(findDoc.GuidFixed, findDoc)
+		err = ics.inventoryRepository.Update(shopID, findDoc.GuidFixed, findDoc)
 
 		if err != nil {
 			return err

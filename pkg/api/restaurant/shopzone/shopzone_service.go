@@ -76,7 +76,7 @@ func (svc ShopZoneService) UpdateShopZone(shopID string, guid string, authUserna
 
 	findDoc.LastUpdatedAt = time.Now()
 
-	err = svc.repo.Update(guid, findDoc)
+	err = svc.repo.Update(shopID, guid, findDoc)
 
 	if err != nil {
 		return err

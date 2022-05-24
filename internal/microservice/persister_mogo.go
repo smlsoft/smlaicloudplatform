@@ -22,7 +22,7 @@ type IPersisterMongo interface {
 	FindOne(model interface{}, filter interface{}, decode interface{}) error
 	FindByID(model interface{}, keyName string, id interface{}, decode interface{}) error
 	Create(model interface{}, data interface{}) (primitive.ObjectID, error)
-	UpdateOne(model interface{}, keyName string, id interface{}, data interface{}) error
+	UpdateOne(model interface{}, filterConditions map[string]interface{}, data interface{}) error
 	Update(model interface{}, filter interface{}, data interface{}, opts ...*options.UpdateOptions) error
 	CreateInBatch(model interface{}, data []interface{}) error
 	Count(model interface{}, filter interface{}) (int, error)
@@ -321,7 +321,7 @@ func (pst *PersisterMongo) Update(model interface{}, filter interface{}, data in
 	return nil
 }
 
-func (pst *PersisterMongo) UpdateOne(model interface{}, keyName string, id interface{}, data interface{}) error {
+func (pst *PersisterMongo) UpdateOne(model interface{}, filterConditions map[string]interface{}, data interface{}) error {
 	db, err := pst.getClient()
 	if err != nil {
 		return err
@@ -337,12 +337,15 @@ func (pst *PersisterMongo) UpdateOne(model interface{}, keyName string, id inter
 		return err
 	}
 
+	var filterDoc bson.D
+
+	for key, val := range filterConditions {
+		filterDoc = append(filterDoc, bson.E{key, val})
+	}
+
 	_, err = db.Collection(collectionName).UpdateOne(
 		pst.ctx,
-		bson.D{{
-			Key:   keyName,
-			Value: id,
-		}},
+		filterDoc,
 		bson.D{
 			{Key: "$set", Value: updateDoc},
 		},

@@ -13,7 +13,7 @@ type IKitchenRepository interface {
 	Count(shopID string) (int, error)
 	Create(category restaurant.KitchenDoc) (string, error)
 	CreateInBatch(inventories []restaurant.KitchenDoc) error
-	Update(guid string, category restaurant.KitchenDoc) error
+	Update(shopID string, guid string, category restaurant.KitchenDoc) error
 	Delete(shopID string, guid string, username string) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]restaurant.KitchenInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (restaurant.KitchenDoc, error)

@@ -13,7 +13,7 @@ type IShopPrinterRepository interface {
 	Count(shopID string) (int, error)
 	Create(category restaurant.PrinterTerminalDoc) (string, error)
 	CreateInBatch(inventories []restaurant.PrinterTerminalDoc) error
-	Update(guid string, category restaurant.PrinterTerminalDoc) error
+	Update(shopID string, guid string, category restaurant.PrinterTerminalDoc) error
 	Delete(shopID string, guid string, username string) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]restaurant.PrinterTerminalInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (restaurant.PrinterTerminalDoc, error)

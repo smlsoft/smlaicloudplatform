@@ -12,7 +12,7 @@ import (
 
 type IMemberRepository interface {
 	Create(doc models.MemberDoc) (primitive.ObjectID, error)
-	Update(guid string, doc models.MemberDoc) error
+	Update(shopID string, guid string, doc models.MemberDoc) error
 	Delete(shopID string, guid string, username string) error
 	FindByGuid(shopID string, guid string) (models.MemberDoc, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error)
@@ -38,8 +38,12 @@ func (repo MemberRepository) Create(doc models.MemberDoc) (primitive.ObjectID, e
 	return idx, nil
 }
 
-func (repo MemberRepository) Update(guid string, doc models.MemberDoc) error {
-	err := repo.pst.UpdateOne(&models.MemberDoc{}, "guidfixed", guid, doc)
+func (repo MemberRepository) Update(shopID string, guid string, doc models.MemberDoc) error {
+	filterDoc := map[string]interface{}{
+		"shopid":    shopID,
+		"guidfixed": guid,
+	}
+	err := repo.pst.UpdateOne(&models.MemberDoc{}, filterDoc, doc)
 	if err != nil {
 		return err
 	}

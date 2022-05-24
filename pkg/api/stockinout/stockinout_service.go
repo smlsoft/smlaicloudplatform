@@ -89,7 +89,7 @@ func (svc StockInOutService) UpdateStockInOut(guid string, shopID string, userna
 	findDoc.UpdatedBy = username
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(guid, findDoc)
+	err = svc.repo.Update(shopID, guid, findDoc)
 
 	if err != nil {
 		return err

@@ -111,7 +111,7 @@ func TestUpdateSaleinvoice(t *testing.T) {
 		return
 	}
 
-	err = repo.Update(give.GuidFixed, give)
+	err = repo.Update(give.ShopID, give.GuidFixed, give)
 
 	if err != nil {
 		t.Error(err)

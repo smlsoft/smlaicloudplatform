@@ -124,7 +124,7 @@ func (svc MemberService) Update(shopID string, guid string, username string, doc
 
 	findDoc.LastUpdatedAt = time.Now()
 
-	err = svc.memberRepo.Update(guid, findDoc)
+	err = svc.memberRepo.Update(shopID, guid, findDoc)
 
 	if err != nil {
 		return err

@@ -70,7 +70,7 @@ func (svc OptionGroupService) UpdateOptionGroup(guid string, shopID string, auth
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(guid, findDoc)
+	err = svc.repo.Update(shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -79,7 +79,7 @@ func (svc OptionGroupService) UpdateOptionGroup(guid string, shopID string, auth
 }
 
 func (svc OptionGroupService) DeleteOptionGroup(guid string, shopID string, username string) error {
-	err := svc.repo.Delete(guid, shopID, username)
+	err := svc.repo.Delete(shopID, guid, username)
 
 	if err != nil {
 		return err
@@ -89,7 +89,7 @@ func (svc OptionGroupService) DeleteOptionGroup(guid string, shopID string, user
 
 func (svc OptionGroupService) InfoOptionGroup(guid string, shopID string) (models.InventoryOptionGroup, error) {
 
-	findDoc, err := svc.repo.FindByGuid(guid, shopID)
+	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return models.InventoryOptionGroup{}, err

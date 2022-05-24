@@ -12,9 +12,9 @@ import (
 type IOptionGroupRepository interface {
 	Count(shopID string) (int, error)
 	Create(category models.InventoryOptionGroup) (string, error)
-	Update(guid string, category models.InventoryOptionGroup) error
-	Delete(guid string, shopID string, username string) error
-	FindByGuid(guid string, shopID string) (models.InventoryOptionGroup, error)
+	Update(shopID string, guid string, category models.InventoryOptionGroup) error
+	Delete(shopID string, guid string, username string) error
+	FindByGuid(shopID string, guid string) (models.InventoryOptionGroup, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error)
 }
 
@@ -48,8 +48,12 @@ func (repo OptionGroupRepository) Create(category models.InventoryOptionGroup) (
 	return idx.Hex(), nil
 }
 
-func (repo OptionGroupRepository) Update(guid string, category models.InventoryOptionGroup) error {
-	err := repo.pst.UpdateOne(&models.InventoryOptionGroup{}, "guidfixed", guid, category)
+func (repo OptionGroupRepository) Update(shopID string, guid string, category models.InventoryOptionGroup) error {
+	filterDoc := map[string]interface{}{
+		"shopid":    shopID,
+		"guidfixed": guid,
+	}
+	err := repo.pst.UpdateOne(&models.InventoryOptionGroup{}, filterDoc, category)
 
 	if err != nil {
 		return err
@@ -58,7 +62,7 @@ func (repo OptionGroupRepository) Update(guid string, category models.InventoryO
 	return nil
 }
 
-func (repo OptionGroupRepository) Delete(guid string, shopID string, username string) error {
+func (repo OptionGroupRepository) Delete(shopID string, guid string, username string) error {
 	err := repo.pst.SoftDelete(&models.InventoryOptionGroup{}, username, bson.M{"guidfixed": guid, "shopid": shopID})
 
 	if err != nil {
@@ -68,7 +72,7 @@ func (repo OptionGroupRepository) Delete(guid string, shopID string, username st
 	return nil
 }
 
-func (repo OptionGroupRepository) FindByGuid(guid string, shopID string) (models.InventoryOptionGroup, error) {
+func (repo OptionGroupRepository) FindByGuid(shopID string, guid string) (models.InventoryOptionGroup, error) {
 
 	doc := &models.InventoryOptionGroup{}
 	err := repo.pst.FindOne(&models.InventoryOptionGroup{}, bson.M{"guidfixed": guid, "shopid": shopID, "deletedat": bson.M{"$exists": false}}, doc)

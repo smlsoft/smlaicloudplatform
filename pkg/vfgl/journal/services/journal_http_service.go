@@ -78,7 +78,7 @@ func (svc JournalHttpService) UpdateJournal(guid string, shopID string, authUser
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(guid, findDoc)
+	err = svc.repo.Update(shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -190,7 +190,7 @@ func (svc JournalHttpService) SaveInBatch(shopID string, authUsername string, da
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
-			err = svc.repo.Update(doc.GuidFixed, doc)
+			err = svc.repo.Update(shopID, doc.GuidFixed, doc)
 			if err != nil {
 				return nil
 			}

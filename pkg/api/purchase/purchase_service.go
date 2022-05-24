@@ -91,7 +91,7 @@ func (svc PurchaseService) UpdatePurchase(guid string, shopID string, username s
 	findDoc.UpdatedBy = username
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(guid, findDoc)
+	err = svc.repo.Update(shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -101,7 +101,7 @@ func (svc PurchaseService) UpdatePurchase(guid string, shopID string, username s
 
 func (svc PurchaseService) DeletePurchase(guid string, shopID string, username string) error {
 
-	err := svc.repo.Delete(guid, shopID, username)
+	err := svc.repo.Delete(shopID, guid, username)
 	if err != nil {
 		return err
 	}

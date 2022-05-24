@@ -14,7 +14,7 @@ import (
 type IInventoryRepository interface {
 	CreateInBatch(inventories []models.InventoryDoc) error
 	Create(inventory models.InventoryDoc) (string, error)
-	Update(guid string, inventory models.InventoryDoc) error
+	Update(shopID string, guid string, inventory models.InventoryDoc) error
 	Delete(shopID string, guid string, username string) error
 	FindByItemCodeGuid(shopID string, itemCodeGuidList []string) ([]models.InventoryItemGuid, error)
 	FindByID(id primitive.ObjectID) (models.InventoryDoc, error)
@@ -61,9 +61,14 @@ func (repo InventoryRepository) Create(inventory models.InventoryDoc) (string, e
 	return idx.Hex(), nil
 }
 
-func (repo InventoryRepository) Update(guid string, inventory models.InventoryDoc) error {
+func (repo InventoryRepository) Update(shopID string, guid string, inventory models.InventoryDoc) error {
 
-	err := repo.pst.UpdateOne(&models.InventoryDoc{}, "guidfixed", guid, inventory)
+	filterDoc := map[string]interface{}{
+		"shopid":    shopID,
+		"guidfixed": guid,
+	}
+
+	err := repo.pst.UpdateOne(&models.InventoryDoc{}, filterDoc, inventory)
 
 	if err != nil {
 		return err

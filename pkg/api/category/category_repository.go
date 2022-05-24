@@ -14,7 +14,7 @@ type ICategoryRepository interface {
 	Count(shopID string) (int, error)
 	Create(category models.CategoryDoc) (string, error)
 	CreateInBatch(inventories []models.CategoryDoc) error
-	Update(guid string, category models.CategoryDoc) error
+	Update(shopID string, guid string, category models.CategoryDoc) error
 	Delete(shopID string, guid string, username string) error
 	FindByGuid(shopID string, guid string) (models.CategoryDoc, error)
 	FindByCategoryGuid(shopID string, guid string) (models.CategoryDoc, error)
@@ -69,8 +69,14 @@ func (repo CategoryRepository) CreateInBatch(docList []models.CategoryDoc) error
 	return nil
 }
 
-func (repo CategoryRepository) Update(guid string, category models.CategoryDoc) error {
-	err := repo.pst.UpdateOne(&models.CategoryDoc{}, "guidfixed", guid, category)
+func (repo CategoryRepository) Update(shopID string, guid string, category models.CategoryDoc) error {
+
+	filterDoc := map[string]interface{}{
+		"shopid":    shopID,
+		"guidfixed": guid,
+	}
+
+	err := repo.pst.UpdateOne(&models.CategoryDoc{}, filterDoc, category)
 
 	if err != nil {
 		return err

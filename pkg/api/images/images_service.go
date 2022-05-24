@@ -12,7 +12,7 @@ import (
 
 type IImagesService interface {
 	UploadImage(fh *multipart.FileHeader) (*models.Image, error)
-	UploadImageToProduct(shopId string, fh *multipart.FileHeader) error
+	UploadImageToProduct(shopID string, fh *multipart.FileHeader) error
 	GetImageByProductCode(shopid string, itemguid string, index int) (string, error)
 	GetStoragePath() string
 }
@@ -49,7 +49,7 @@ func (svc ImagesService) UploadImage(fh *multipart.FileHeader) (*models.Image, e
 	return image, nil
 }
 
-func (svc ImagesService) UploadImageToProduct(shopId string, fh *multipart.FileHeader) error {
+func (svc ImagesService) UploadImageToProduct(shopID string, fh *multipart.FileHeader) error {
 
 	fileUploadMetadataSlice := strings.Split(fh.Filename, ".")
 
@@ -57,7 +57,7 @@ func (svc ImagesService) UploadImageToProduct(shopId string, fh *multipart.FileH
 	fileName := fileUploadMetadataSlice[0]
 	// fileExtension := fileUploadMetadataSlice[1]
 
-	findDoc, err := svc.invRepo.FindByItemBarcode(shopId, fileName)
+	findDoc, err := svc.invRepo.FindByItemBarcode(shopID, fileName)
 	if err != nil {
 		return err
 	}
@@ -82,7 +82,7 @@ func (svc ImagesService) UploadImageToProduct(shopId string, fh *multipart.FileH
 	findDoc.Images = &imageSlice
 
 	// save and return
-	err = svc.invRepo.Update(findDoc.GuidFixed, findDoc)
+	err = svc.invRepo.Update(shopID, findDoc.GuidFixed, findDoc)
 	return err
 }
 

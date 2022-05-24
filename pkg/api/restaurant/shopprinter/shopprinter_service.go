@@ -73,7 +73,7 @@ func (svc ShopPrinterService) UpdateShopPrinter(shopID string, guid string, auth
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(guid, findDoc)
+	err = svc.repo.Update(shopID, guid, findDoc)
 
 	if err != nil {
 		return err

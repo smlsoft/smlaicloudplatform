@@ -25,7 +25,7 @@ type IInventoryService interface {
 	InfoIndexInventory(shopID string, guid string) (models.InventoryInfo, error)
 	SearchInventory(shopID string, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
 	LastActivityInventory(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, paginate.PaginationData, error)
-	UpdateProductCategory(shopId string, authUsername string, catId string, guid []string) error
+	UpdateProductCategory(shopID string, authUsername string, catId string, guid []string) error
 }
 
 type InventoryService struct {
@@ -177,7 +177,7 @@ func updateOnDuplicateInventory(shopID string, authUsername string, duplicateDat
 		findDoc.UpdatedAt = time.Now()
 		findDoc.LastUpdatedAt = time.Now()
 
-		err = repo.Update(findDoc.GuidFixed, findDoc)
+		err = repo.Update(shopID, findDoc.GuidFixed, findDoc)
 
 		if err != nil {
 			updateFailDataList = append(updateFailDataList, inv)
@@ -313,7 +313,7 @@ func (svc InventoryService) UpdateInventory(shopID string, guid string, authUser
 	findDoc.UpdatedAt = time.Now()
 	findDoc.LastUpdatedAt = time.Now()
 
-	err = svc.invRepo.Update(guid, findDoc)
+	err = svc.invRepo.Update(shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -454,11 +454,11 @@ func (svc InventoryService) LastActivityInventory(shopID string, lastUpdatedDate
 	return lastActivity, pagination, nil
 }
 
-func (svc InventoryService) UpdateProductCategory(shopId string, authUsername string, catId string, guids []string) error {
+func (svc InventoryService) UpdateProductCategory(shopID string, authUsername string, catId string, guids []string) error {
 
 	for _, guid := range guids {
 
-		findDoc, err := svc.invRepo.FindByItemGuid(shopId, guid)
+		findDoc, err := svc.invRepo.FindByItemGuid(shopID, guid)
 
 		if err != nil {
 			return err
@@ -472,7 +472,7 @@ func (svc InventoryService) UpdateProductCategory(shopId string, authUsername st
 		findDoc.UpdatedBy = authUsername
 		findDoc.UpdatedAt = time.Now()
 
-		err = svc.invRepo.Update(findDoc.GuidFixed, findDoc)
+		err = svc.invRepo.Update(shopID, findDoc.GuidFixed, findDoc)
 
 		if err != nil {
 			return err

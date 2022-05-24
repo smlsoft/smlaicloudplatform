@@ -118,7 +118,7 @@ func (svc EmployeeService) Update(shopID string, authUsername string, emp models
 	userFind.UpdatedBy = authUsername
 	userFind.UpdatedAt = time.Now()
 
-	err = svc.empRepo.Update(userFind.GuidFixed, userFind)
+	err = svc.empRepo.Update(shopID, userFind.GuidFixed, userFind)
 
 	if err != nil {
 		return err
@@ -149,7 +149,7 @@ func (svc EmployeeService) UpdatePassword(shopID string, authUsername string, em
 	userFind.UpdatedBy = authUsername
 	userFind.UpdatedAt = time.Now()
 
-	err = svc.empRepo.Update(userFind.GuidFixed, userFind)
+	err = svc.empRepo.Update(shopID, userFind.GuidFixed, userFind)
 
 	if err != nil {
 		return err

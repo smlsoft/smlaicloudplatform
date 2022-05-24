@@ -11,7 +11,7 @@ import (
 
 type ISaleinvoiceRepository interface {
 	Create(trans models.SaleinvoiceDoc) (primitive.ObjectID, error)
-	Update(guid string, trans models.SaleinvoiceDoc) error
+	Update(shopID string, guid string, trans models.SaleinvoiceDoc) error
 	Delete(guid string, shopID string, username string) error
 	FindByGuid(guid string, shopID string) (models.SaleinvoiceDoc, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, paginate.PaginationData, error)
@@ -37,8 +37,12 @@ func (repo SaleinvoiceRepository) Create(trans models.SaleinvoiceDoc) (primitive
 	return idx, nil
 }
 
-func (repo SaleinvoiceRepository) Update(guid string, trans models.SaleinvoiceDoc) error {
-	err := repo.pst.UpdateOne(&models.SaleinvoiceDoc{}, "guidfixed", guid, trans)
+func (repo SaleinvoiceRepository) Update(shopID string, guid string, trans models.SaleinvoiceDoc) error {
+	filterDoc := map[string]interface{}{
+		"shopid":    shopID,
+		"guidfixed": guid,
+	}
+	err := repo.pst.UpdateOne(&models.SaleinvoiceDoc{}, filterDoc, trans)
 	if err != nil {
 		return err
 	}

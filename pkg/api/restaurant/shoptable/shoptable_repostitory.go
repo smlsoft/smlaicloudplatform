@@ -13,7 +13,7 @@ type IShopTableRepository interface {
 	Count(shopID string) (int, error)
 	Create(category restaurant.ShopTableDoc) (string, error)
 	CreateInBatch(inventories []restaurant.ShopTableDoc) error
-	Update(guid string, category restaurant.ShopTableDoc) error
+	Update(shopID string, guid string, category restaurant.ShopTableDoc) error
 	Delete(shopID string, guid string, username string) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]restaurant.ShopTableInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (restaurant.ShopTableDoc, error)

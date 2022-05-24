@@ -11,7 +11,7 @@ import (
 
 type IStockInOutRepository interface {
 	Create(doc models.StockInOutDoc) (primitive.ObjectID, error)
-	Update(guid string, doc models.StockInOutDoc) error
+	Update(shopID string, guid string, doc models.StockInOutDoc) error
 	Delete(guid string, shopID string, username string) error
 	FindByGuid(guid string, shopID string) (models.StockInOutDoc, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error)
@@ -37,8 +37,12 @@ func (repo StockInOutRepository) Create(doc models.StockInOutDoc) (primitive.Obj
 	return idx, nil
 }
 
-func (repo StockInOutRepository) Update(guid string, doc models.StockInOutDoc) error {
-	err := repo.pst.UpdateOne(&models.StockInOutDoc{}, "guidfixed", guid, doc)
+func (repo StockInOutRepository) Update(shopID string, guid string, doc models.StockInOutDoc) error {
+	filterDoc := map[string]interface{}{
+		"shopid":    shopID,
+		"guidfixed": guid,
+	}
+	err := repo.pst.UpdateOne(&models.StockInOutDoc{}, filterDoc, doc)
 	if err != nil {
 		return err
 	}

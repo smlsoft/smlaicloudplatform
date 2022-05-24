@@ -11,7 +11,7 @@ import (
 
 type IInventoryOptionMainRepository interface {
 	Create(doc models.InventoryOptionMainDoc) (string, error)
-	Update(guid string, doc models.InventoryOptionMainDoc) error
+	Update(shopID string, guid string, doc models.InventoryOptionMainDoc) error
 	Delete(shopID string, guid string, username string) error
 	FindByGuid(shopID string, guid string) (models.InventoryOptionMainDoc, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.InventoryOptionMainInfo, paginate.PaginationData, error)
@@ -37,8 +37,14 @@ func (repo InventoryOptionMainRepository) Create(doc models.InventoryOptionMainD
 	return idx.Hex(), nil
 }
 
-func (repo InventoryOptionMainRepository) Update(guid string, doc models.InventoryOptionMainDoc) error {
-	err := repo.pst.UpdateOne(&models.InventoryOptionMainDoc{}, "guidfixed", guid, doc)
+func (repo InventoryOptionMainRepository) Update(shopID string, guid string, doc models.InventoryOptionMainDoc) error {
+
+	filterDoc := map[string]interface{}{
+		"shopid":    shopID,
+		"guidfixed": guid,
+	}
+
+	err := repo.pst.UpdateOne(&models.InventoryOptionMainDoc{}, filterDoc, doc)
 
 	if err != nil {
 		return err

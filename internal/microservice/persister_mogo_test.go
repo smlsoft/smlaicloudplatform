@@ -166,7 +166,7 @@ func TestMongodbFindByID(t *testing.T) {
 
 func TestMongodbUpdateOne(t *testing.T) {
 
-	productNameModified := "product name modify"
+	productNameModified := "product name modifyx"
 
 	cfg := &ConfigDBTest{}
 
@@ -179,10 +179,15 @@ func TestMongodbUpdateOne(t *testing.T) {
 		t.Error(err.Error())
 	}
 
-	err = pst.UpdateOne(&Product{}, "_id", productFind.ID, &Product{
-		ProductCode: productCode,
-		ProductName: productNameModified,
-	})
+	err = pst.UpdateOne(
+		&Product{},
+		map[string]interface{}{
+			"_id":          productFind.ID,
+			"product_code": productFind.ProductCode,
+		}, &Product{
+			ProductCode: productCode,
+			ProductName: productNameModified,
+		})
 
 	if err != nil {
 		t.Error(err.Error())

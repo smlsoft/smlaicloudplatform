@@ -13,7 +13,7 @@ type IEmployeeRepository interface {
 	FindEmployeeByShopIDPage(shopID string, q string, page int, limit int) ([]models.EmployeeInfo, paginate.PaginationData, error)
 	FindEmployeeByUsername(shopID string, username string) (models.EmployeeDoc, error)
 	Create(models.EmployeeDoc) (primitive.ObjectID, error)
-	Update(guidFixed string, employee models.EmployeeDoc) error
+	Update(shopID string, guidFixed string, employee models.EmployeeDoc) error
 }
 
 type EmployeeRepository struct {
@@ -75,9 +75,13 @@ func (r EmployeeRepository) Create(employee models.EmployeeDoc) (primitive.Objec
 	return idx, nil
 }
 
-func (r EmployeeRepository) Update(guidFixed string, employee models.EmployeeDoc) error {
+func (r EmployeeRepository) Update(shopID string, guidFixed string, employee models.EmployeeDoc) error {
+	filterDoc := map[string]interface{}{
+		"shopid":    shopID,
+		"guidFixed": guidFixed,
+	}
 
-	err := r.pst.UpdateOne(&models.EmployeeDoc{}, "guidFixed", guidFixed, employee)
+	err := r.pst.UpdateOne(&models.EmployeeDoc{}, filterDoc, employee)
 
 	if err != nil {
 		return err

@@ -11,7 +11,7 @@ import (
 
 type IStockAdjustmentRepository interface {
 	Create(doc models.StockAdjustmentDoc) (primitive.ObjectID, error)
-	Update(guid string, doc models.StockAdjustmentDoc) error
+	Update(shopID string, guid string, doc models.StockAdjustmentDoc) error
 	Delete(guid string, shopID string, username string) error
 	FindByGuid(guid string, shopID string) (models.StockAdjustmentDoc, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, paginate.PaginationData, error)
@@ -37,8 +37,12 @@ func (repo StockAdjustmentRepository) Create(doc models.StockAdjustmentDoc) (pri
 	return idx, nil
 }
 
-func (repo StockAdjustmentRepository) Update(guid string, doc models.StockAdjustmentDoc) error {
-	err := repo.pst.UpdateOne(&models.StockAdjustmentDoc{}, "guidfixed", guid, doc)
+func (repo StockAdjustmentRepository) Update(shopID string, guid string, doc models.StockAdjustmentDoc) error {
+	filterDoc := map[string]interface{}{
+		"shopid":    shopID,
+		"guidfixed": guid,
+	}
+	err := repo.pst.UpdateOne(&models.StockAdjustmentDoc{}, filterDoc, doc)
 	if err != nil {
 		return err
 	}

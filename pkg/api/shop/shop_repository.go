@@ -36,7 +36,10 @@ func (repo ShopRepository) Create(shop models.ShopDoc) (string, error) {
 }
 
 func (repo ShopRepository) Update(guid string, shop models.ShopDoc) error {
-	err := repo.pst.UpdateOne(&models.ShopDoc{}, "guidfixed", guid, shop)
+	filterDoc := map[string]interface{}{
+		"guidfixed": guid,
+	}
+	err := repo.pst.UpdateOne(&models.ShopDoc{}, filterDoc, shop)
 
 	if err != nil {
 		return err

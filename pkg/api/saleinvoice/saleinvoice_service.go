@@ -89,7 +89,7 @@ func (svc SaleinvoiceService) UpdateSaleinvoice(guid string, shopID string, user
 	findDoc.UpdatedBy = username
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.saleinvoiceRepository.Update(guid, findDoc)
+	err = svc.saleinvoiceRepository.Update(shopID, guid, findDoc)
 
 	if err != nil {
 		return err

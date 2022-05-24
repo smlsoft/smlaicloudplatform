@@ -12,7 +12,7 @@ type IJournalRepository interface {
 	Count(shopID string) (int, error)
 	Create(category vfgl.JournalDoc) (string, error)
 	CreateInBatch(inventories []vfgl.JournalDoc) error
-	Update(guid string, category vfgl.JournalDoc) error
+	Update(shopID string, guid string, category vfgl.JournalDoc) error
 	Delete(shopID string, guid string, username string) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]vfgl.JournalInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (vfgl.JournalDoc, error)

@@ -74,7 +74,7 @@ func (svc InventoryOptionMainService) UpdateInventoryOptionMain(shopID string, g
 		findDoc.InventoryOptionMain.Choices = &[]models.Choice{}
 	}
 
-	svc.repo.Update(guid, findDoc)
+	svc.repo.Update(shopID, guid, findDoc)
 
 	if err != nil {
 		return err

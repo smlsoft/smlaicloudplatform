@@ -11,8 +11,8 @@ import (
 
 type IPurchaseRepository interface {
 	Create(doc models.PurchaseDoc) (primitive.ObjectID, error)
-	Update(guid string, doc models.PurchaseDoc) error
-	Delete(guid string, shopID string, username string) error
+	Update(shopID string, guid string, doc models.PurchaseDoc) error
+	Delete(shopID string, guid string, username string) error
 	FindByGuid(guid string, shopID string) (models.PurchaseDoc, error)
 	FindPage(shopID string, q string, page int, limit int) ([]models.PurchaseInfo, paginate.PaginationData, error)
 	FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.PurchaseInfo, paginate.PaginationData, error)
@@ -37,15 +37,19 @@ func (repo PurchaseRepository) Create(doc models.PurchaseDoc) (primitive.ObjectI
 	return idx, nil
 }
 
-func (repo PurchaseRepository) Update(guid string, doc models.PurchaseDoc) error {
-	err := repo.pst.UpdateOne(&models.PurchaseDoc{}, "guidfixed", guid, doc)
+func (repo PurchaseRepository) Update(shopID string, guid string, doc models.PurchaseDoc) error {
+	filterDoc := map[string]interface{}{
+		"shopid":    shopID,
+		"guidfixed": guid,
+	}
+	err := repo.pst.UpdateOne(&models.PurchaseDoc{}, filterDoc, doc)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (repo PurchaseRepository) Delete(guid string, shopID string, username string) error {
+func (repo PurchaseRepository) Delete(shopID string, guid string, username string) error {
 	err := repo.pst.SoftDelete(&models.PurchaseDoc{}, username, bson.M{"guidfixed": guid, "shopid": shopID})
 	if err != nil {
 		return err
