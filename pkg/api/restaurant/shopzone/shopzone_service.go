@@ -85,7 +85,7 @@ func (svc ShopZoneService) UpdateShopZone(shopID string, guid string, authUserna
 }
 
 func (svc ShopZoneService) DeleteShopZone(shopID string, guid string, authUsername string) error {
-	err := svc.repo.Delete(shopID, guid, authUsername)
+	err := svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
 
 	if err != nil {
 		return err

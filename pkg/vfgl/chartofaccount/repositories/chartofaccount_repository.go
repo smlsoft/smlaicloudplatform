@@ -13,7 +13,7 @@ type IChartOfAccountRepository interface {
 	Create(category vfgl.ChartOfAccountDoc) (string, error)
 	CreateInBatch(docList []vfgl.ChartOfAccountDoc) error
 	Update(shopID string, guid string, doc vfgl.ChartOfAccountDoc) error
-	Delete(shopID string, guid string, username string) error
+	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]vfgl.ChartOfAccountInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (vfgl.ChartOfAccountDoc, error)
 }

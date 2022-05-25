@@ -85,7 +85,7 @@ func (svc ChartOfAccountHttpService) Update(guid string, shopID string, authUser
 }
 
 func (svc ChartOfAccountHttpService) Delete(guid string, shopID string, authUsername string) error {
-	err := svc.repo.Delete(shopID, guid, authUsername)
+	err := svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
 
 	if err != nil {
 		return err

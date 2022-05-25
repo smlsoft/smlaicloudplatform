@@ -2,6 +2,8 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	documentimage "smlcloudplatform/pkg/documentwarehouse/documentimage/models"
+	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/restaurant"
 	"smlcloudplatform/pkg/models/vfgl"
 
@@ -9,7 +11,9 @@ import (
 )
 
 type ICrudRepo interface {
-	restaurant.ShopZoneDoc | restaurant.ShopTableDoc | restaurant.PrinterTerminalDoc | restaurant.KitchenDoc | vfgl.JournalDoc | vfgl.ChartOfAccountDoc
+	restaurant.ShopZoneDoc | restaurant.ShopTableDoc | restaurant.PrinterTerminalDoc |
+		restaurant.KitchenDoc | vfgl.JournalDoc | vfgl.ChartOfAccountDoc |
+		models.CategoryDoc | documentimage.DocumentImageDoc
 }
 type CrudRepository[T ICrudRepo] struct {
 	pst microservice.IPersisterMongo
@@ -71,7 +75,26 @@ func (repo CrudRepository[T]) Update(shopID string, guid string, doc T) error {
 	return nil
 }
 
-func (repo CrudRepository[T]) Delete(shopID string, guid string, username string) error {
+func (repo CrudRepository[T]) Delete(shopID string, username string, filters map[string]interface{}) error {
+
+	filterQuery := bson.M{}
+
+	for col, val := range filters {
+		filterQuery[col] = val
+	}
+
+	filterQuery["shopid"] = shopID
+
+	err := repo.pst.SoftDelete(new(T), username, filterQuery)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repo CrudRepository[T]) DeleteByGuidfixed(shopID string, guid string, username string) error {
 	err := repo.pst.SoftDelete(new(T), username, bson.M{"guidfixed": guid, "shopid": shopID})
 
 	if err != nil {
@@ -79,6 +102,28 @@ func (repo CrudRepository[T]) Delete(shopID string, guid string, username string
 	}
 
 	return nil
+}
+
+func (repo CrudRepository[T]) FindOne(shopID string, filters map[string]interface{}) (T, error) {
+
+	doc := new(T)
+
+	filterQuery := bson.M{}
+
+	for col, val := range filters {
+		filterQuery[col] = val
+	}
+
+	filterQuery["shopid"] = shopID
+	filterQuery["deletedat"] = bson.M{"$exists": false}
+
+	err := repo.pst.FindOne(new(T), filterQuery, doc)
+
+	if err != nil {
+		return *new(T), err
+	}
+
+	return *doc, nil
 }
 
 func (repo CrudRepository[T]) FindByGuid(shopID string, guid string) (T, error) {

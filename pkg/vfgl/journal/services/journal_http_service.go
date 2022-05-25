@@ -87,7 +87,7 @@ func (svc JournalHttpService) UpdateJournal(guid string, shopID string, authUser
 }
 
 func (svc JournalHttpService) DeleteJournal(guid string, shopID string, authUsername string) error {
-	err := svc.repo.Delete(shopID, guid, authUsername)
+	err := svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
 
 	if err != nil {
 		return err

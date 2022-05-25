@@ -82,7 +82,7 @@ func (svc ShopPrinterService) UpdateShopPrinter(shopID string, guid string, auth
 }
 
 func (svc ShopPrinterService) DeleteShopPrinter(shopID string, guid string, authUsername string) error {
-	err := svc.repo.Delete(shopID, guid, authUsername)
+	err := svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
 
 	if err != nil {
 		return err

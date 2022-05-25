@@ -14,7 +14,7 @@ type IShopZoneRepository interface {
 	Create(category restaurant.ShopZoneDoc) (string, error)
 	CreateInBatch(inventories []restaurant.ShopZoneDoc) error
 	Update(shopID string, guid string, category restaurant.ShopZoneDoc) error
-	Delete(shopID string, guid string, username string) error
+	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]restaurant.ShopZoneInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (restaurant.ShopZoneDoc, error)
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]restaurant.ShopZoneItemGuid, error)
