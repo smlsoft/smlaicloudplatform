@@ -1,31 +1,28 @@
-package authentication
+package authentication_test
 
 import (
-	"errors"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
+	"smlcloudplatform/pkg/api/authentication"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func getRepo() AuthenticationRepository {
+var repoMock authentication.AuthenticationRepository
+
+func init() {
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
-	repository := NewAuthenticationRepository(mongoPersister)
-	return repository
+	repoMock = authentication.NewAuthenticationRepository(mongoPersister)
 }
 
 func TestFindUser(t *testing.T) {
-
-	// os.Setenv("MONGODB_URI", "mongodb://root:rootx@localhost:27017/")
-	// defer os.Unsetenv("MONGODB_URI")
-
-	repository := getRepo()
-
 	password, _ := utils.HashPassword("test")
 
 	createAt := time.Now()
@@ -42,27 +39,21 @@ func TestFindUser(t *testing.T) {
 		CreatedAt: createAt,
 	}
 
-	get, err := repository.CreateUser(*give)
+	createUserID, err := repoMock.CreateUser(*give)
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
 
-	if get == primitive.NilObjectID {
-		t.Error(errors.New("Create User Failed"))
-	}
+	require.NotEqual(t, createUserID, primitive.NilObjectID, "Create User Failed")
 
-	t.Logf("Create User Success With ID %v", get)
+	getUser, err := repoMock.FindUser(want.Username)
 
-	getUser, err := repository.FindUser(want.Username)
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
 
-	if getUser.Username != want.Username {
-		t.Error(errors.New("Create User And Find Not Match"))
-		return
-	}
+	assert.Equal(t, getUser.Username, want.Username, "Create User And Find Not Match")
 
 }

@@ -1,4 +1,4 @@
-package authentication
+package authentication_test
 
 import "testing"
 

@@ -2,6 +2,8 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	documentimage "smlcloudplatform/pkg/documentwarehouse/documentimage/models"
+	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/restaurant"
 	"smlcloudplatform/pkg/models/vfgl"
 
@@ -11,7 +13,9 @@ import (
 )
 
 type ISearchRepo interface {
-	restaurant.ShopZoneInfo | restaurant.ShopTableInfo | restaurant.PrinterTerminalInfo | restaurant.KitchenInfo | vfgl.JournalInfo | vfgl.ChartOfAccountInfo
+	restaurant.ShopZoneInfo | restaurant.ShopTableInfo | restaurant.PrinterTerminalInfo |
+		restaurant.KitchenInfo | vfgl.JournalInfo | vfgl.ChartOfAccountInfo |
+		models.CategoryInfo | documentimage.DocumentImageInfo
 }
 
 type SearchRepository[T ISearchRepo] struct {
