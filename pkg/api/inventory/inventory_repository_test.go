@@ -9,19 +9,19 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func getInventoryRepo() inventory.InventoryRepository {
+var repoMock inventory.InventoryRepository
+
+func init() {
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
-	repo := inventory.NewInventoryRepository(mongoPersister)
-	return repo
+	repoMock = inventory.NewInventoryRepository(mongoPersister)
 }
 
 func TestFindByID(t *testing.T) {
 
-	repo := getInventoryRepo()
 	idx, _ := primitive.ObjectIDFromHex("62398ea81e4743ecba54da23")
 
-	doc, err := repo.FindByID(idx)
+	doc, err := repoMock.FindByID(idx)
 
 	if err != nil {
 		t.Error(err)
@@ -37,9 +37,7 @@ func TestFindByID(t *testing.T) {
 
 func TestFindByItemGuid(t *testing.T) {
 
-	repo := getInventoryRepo()
-
-	doc, err := repo.FindByItemGuid("27daMDw274R5hHejrjkHDuI91ag", "ix001x")
+	doc, err := repoMock.FindByItemGuid("27daMDw274R5hHejrjkHDuI91ag", "ix001x")
 
 	if err != nil {
 		t.Error(err)
