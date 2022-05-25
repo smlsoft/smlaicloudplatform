@@ -28,7 +28,7 @@ func NewInventorycategoryService(inventoryRepository InventoryRepository, catego
 func (ics *InventoryCategoryService) UpdateInventoryCategoryBulk(shopID string, authUsername string, catId string, guids []string) error {
 
 	// find category
-	findCategory, err := ics.categoryRepository.FindByCategoryGuid(shopID, catId)
+	findCategory, err := ics.categoryRepository.FindByGuid(shopID, catId)
 	if err != nil || findCategory.ID == primitive.NilObjectID {
 		return err
 	}

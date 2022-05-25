@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/repositories"
 	"strconv"
 	"strings"
 	"time"
@@ -23,10 +22,7 @@ func NewCategoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) Ca
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	cateRepo := NewCategoryRepository(pst)
-
-	guidRepo := repositories.NewGuidRepository[models.CategoryItemGuid](pst)
-	activityRepo := repositories.NewActivityRepository[models.CategoryActivity, models.CategoryDeleteActivity](pst)
-	cateService := NewCategoryService(cateRepo, guidRepo, activityRepo)
+	cateService := NewCategoryService(cateRepo)
 
 	return CategoryHttp{
 		ms:          ms,

@@ -3,7 +3,6 @@ package category
 import (
 	"errors"
 	"smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
 	"sync"
@@ -24,24 +23,28 @@ type ICategoryService interface {
 }
 
 type CategoryService struct {
-	repo         ICategoryRepository
-	guidRepo     repositories.GuidRepository[models.CategoryItemGuid]
-	activityRepo repositories.ActivityRepository[models.CategoryActivity, models.CategoryDeleteActivity]
+	repo ICategoryRepository
 }
 
-func NewCategoryService(
-	categoryRepository ICategoryRepository,
-	guidRepo repositories.GuidRepository[models.CategoryItemGuid],
-	activityRepo repositories.ActivityRepository[models.CategoryActivity, models.CategoryDeleteActivity],
-) CategoryService {
+func NewCategoryService(categoryRepository ICategoryRepository) CategoryService {
 	return CategoryService{
-		repo:         categoryRepository,
-		guidRepo:     guidRepo,
-		activityRepo: activityRepo,
+		repo: categoryRepository,
 	}
 }
 
 func (svc CategoryService) CreateCategory(shopID string, authUsername string, category models.Category) (string, error) {
+
+	findDoc, err := svc.repo.FindOne(shopID, map[string]interface{}{
+		"categoryguid": category.CategoryGuid,
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	if findDoc.CategoryGuid == category.CategoryGuid {
+		return "", errors.New("document is duplicated")
+	}
 
 	newGuidFixed := utils.NewGUID()
 
@@ -53,7 +56,7 @@ func (svc CategoryService) CreateCategory(shopID string, authUsername string, ca
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err := svc.repo.Create(docData)
+	_, err = svc.repo.Create(docData)
 
 	if err != nil {
 		return "", err
@@ -87,7 +90,7 @@ func (svc CategoryService) UpdateCategory(shopID string, guid string, authUserna
 }
 
 func (svc CategoryService) DeleteCategory(shopID string, guid string, authUsername string) error {
-	err := svc.repo.Delete(shopID, guid, authUsername)
+	err := svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
 
 	if err != nil {
 		return err
@@ -112,7 +115,7 @@ func (svc CategoryService) InfoCategory(shopID string, guid string) (models.Cate
 }
 
 func (svc CategoryService) SearchCategory(shopID string, q string, page int, limit int) ([]models.CategoryInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
+	docList, pagination, err := svc.repo.FindPage(shopID, []string{"guidfixed", "name1"}, q, page, limit)
 
 	if err != nil {
 		return []models.CategoryInfo{}, pagination, err
@@ -130,7 +133,7 @@ func (svc CategoryService) LastActivity(shopID string, lastUpdatedDate time.Time
 	var err1 error
 
 	go func() {
-		deleteDocList, pagination1, err1 = svc.activityRepo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
+		deleteDocList, pagination1, err1 = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
 		wg.Done()
 	}()
 
@@ -140,7 +143,7 @@ func (svc CategoryService) LastActivity(shopID string, lastUpdatedDate time.Time
 	var err2 error
 
 	go func() {
-		createAndUpdateDocList, pagination2, err2 = svc.activityRepo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
+		createAndUpdateDocList, pagination2, err2 = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
 		wg.Done()
 	}()
 
@@ -180,7 +183,7 @@ func (svc CategoryService) SaveInBatch(shopID string, authUsername string, dataL
 		itemCodeGuidList = append(itemCodeGuidList, doc.CategoryGuid)
 	}
 
-	findItemGuid, err := svc.guidRepo.FindInItemGuid(shopID, "code", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "code", itemCodeGuidList)
 
 	if err != nil {
 		return models.BulkImport{}, err
