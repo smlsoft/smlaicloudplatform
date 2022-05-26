@@ -10,7 +10,7 @@ const RequestSearchMinLimit = 1
 const RequestSearchDefaultPage = 1
 const RequestSearchDefaultLimit = 20
 
-func GetSearchParam(fnGetParam func(string) string) (uint, uint) {
+func GetPaginationParam(fnGetParam func(string) string) (uint, uint) {
 
 	pageRawText := fnGetParam("page")
 	limitRawText := fnGetParam("limit")
