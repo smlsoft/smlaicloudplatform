@@ -26,9 +26,8 @@ func NewSyncDataHttp(ms *microservice.Microservice, cfg microservice.IConfig) Sy
 	prod := ms.Producer(cfg.MQConfig())
 
 	invRepo := inventory.NewInventoryRepository(pst)
-	invPgRepo := inventory.NewInventoryIndexPGRepository(pstPg)
 	invMqRepo := inventory.NewInventoryMQRepository(prod)
-	invService := inventory.NewInventoryService(invRepo, invPgRepo, invMqRepo)
+	invService := inventory.NewInventoryService(invRepo, invMqRepo)
 
 	memberRepo := member.NewMemberRepository(pst)
 	memberPgRepo := member.NewMemberPGRepository(pstPg)

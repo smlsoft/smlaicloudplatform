@@ -11,13 +11,11 @@ import (
 func StartInventoryAsync(ms *microservice.Microservice, cfg microservice.IConfig) {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
-	pstPg := ms.Persister(cfg.PersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
 
 	invRepo := NewInventoryRepository(pst)
-	invPgRepo := NewInventoryIndexPGRepository(pstPg)
 	invMqRepo := NewInventoryMQRepository(prod)
-	invService := NewInventoryService(invRepo, invPgRepo, invMqRepo)
+	invService := NewInventoryService(invRepo, invMqRepo)
 
 	err := ms.AsyncPOST("/inv", cfg.CacherConfig(), cfg.MQConfig(), func(ctx microservice.IContext) error {
 		userInfo := ctx.UserInfo()

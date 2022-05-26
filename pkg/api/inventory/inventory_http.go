@@ -38,13 +38,11 @@ type InventoryHttp struct {
 func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) IInventoryHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
-	pstPg := ms.Persister(cfg.PersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
 
 	invRepo := NewInventoryRepository(pst)
-	invPgRepo := NewInventoryIndexPGRepository(pstPg)
 	invMqRepo := NewInventoryMQRepository(prod)
-	invService := NewInventoryService(invRepo, invPgRepo, invMqRepo)
+	invService := NewInventoryService(invRepo, invMqRepo)
 
 	invOptRepo := NewInventoryOptionMainRepository(pst)
 	invOptService := NewInventoryOptionMainService(invOptRepo)
@@ -67,8 +65,6 @@ func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) I
 
 func (h InventoryHttp) RouteSetup() {
 	h.ms.GET("/inventory/:id", h.InfoInventory)
-	// h.ms.GET("/inventory/:id/index", h.InfoIndexInventory)
-	// h.ms.GET("/inventory/:id/mongo", h.InfoMongoInventory)
 	h.ms.GET("/inventory", h.SearchInventory)
 	h.ms.POST("/inventory", h.CreateInventory)
 	h.ms.POST("/inventory/bulk", h.CreateInBatchInventory)
@@ -328,31 +324,6 @@ func (h InventoryHttp) SearchInventory(ctx microservice.IContext) error {
 			Data:       docList,
 			Pagination: pagination,
 		})
-
-	return nil
-}
-
-func (h InventoryHttp) InfoIndexInventory(ctx microservice.IContext) error {
-
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-
-	id := ctx.Param("id")
-
-	doc, err := h.invService.InfoIndexInventory(shopID, id)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	ctx.Response(
-		http.StatusOK,
-		models.ApiResponse{
-			Success: true,
-			Data:    doc,
-		},
-	)
 
 	return nil
 }

@@ -15,14 +15,12 @@ import (
 type IInventoryService interface {
 	IsExistsGuid(shopID string, guidFixed string) (bool, error)
 	CreateInBatch(shopID string, authUsername string, inventories []models.Inventory) (models.InventoryBulkImport, error)
-	CreateIndex(doc models.InventoryIndex) error
 	CreateWithGuid(shopID string, authUsername string, guidFixed string, inventory models.Inventory) (string, error)
 	CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, string, error)
 	UpdateInventory(shopID string, guid string, authUsername string, inventory models.Inventory) error
 	DeleteInventory(shopID string, guid string, username string) error
 	InfoInventory(shopID string, guid string) (models.InventoryInfo, error)
 	InfoMongoInventory(id string) (models.InventoryInfo, error)
-	InfoIndexInventory(shopID string, guid string) (models.InventoryInfo, error)
 	SearchInventory(shopID string, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
 	LastActivityInventory(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, paginate.PaginationData, error)
 	UpdateProductCategory(shopID string, authUsername string, catId string, guid []string) error
@@ -30,14 +28,12 @@ type IInventoryService interface {
 
 type InventoryService struct {
 	invRepo   IInventoryRepository
-	invPgRepo IInventoryIndexPGRepository
 	invMqRepo IInventoryMQRepository
 }
 
-func NewInventoryService(inventoryRepo IInventoryRepository, inventoryPgRepo IInventoryIndexPGRepository, inventoryMqRepo IInventoryMQRepository) InventoryService {
+func NewInventoryService(inventoryRepo IInventoryRepository, inventoryMqRepo IInventoryMQRepository) InventoryService {
 	return InventoryService{
 		invRepo:   inventoryRepo,
-		invPgRepo: inventoryPgRepo,
 		invMqRepo: inventoryMqRepo,
 	}
 }
@@ -55,17 +51,6 @@ func (svc InventoryService) IsExistsGuid(shopID string, guidFixed string) (bool,
 	}
 
 	return true, nil
-}
-
-func (svc InventoryService) CreateIndex(doc models.InventoryIndex) error {
-
-	err := svc.invPgRepo.Create(doc)
-	if err != nil {
-		return err
-	}
-
-	return nil
-
 }
 
 func (svc InventoryService) CreateInBatch(shopID string, authUsername string, inventories []models.Inventory) (models.InventoryBulkImport, error) {
@@ -377,21 +362,6 @@ func (svc InventoryService) InfoInventory(shopID string, guid string) (models.In
 	// if findDoc.ID == primitive.NilObjectID {
 	// 	return models.InventoryInfo{}, nil
 	// }
-
-	return findDoc.InventoryInfo, nil
-}
-
-func (svc InventoryService) InfoIndexInventory(shopID string, guid string) (models.InventoryInfo, error) {
-
-	invIndex, err := svc.invPgRepo.FindByGuid(shopID, guid)
-
-	idx, err := primitive.ObjectIDFromHex(invIndex.ID)
-
-	findDoc, err := svc.invRepo.FindByID(idx)
-
-	if err != nil && err.Error() != "mongo: no documents in result" {
-		return models.InventoryInfo{}, err
-	}
 
 	return findDoc.InventoryInfo, nil
 }
