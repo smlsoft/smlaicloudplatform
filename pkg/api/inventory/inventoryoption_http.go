@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
-	"strconv"
+	"smlcloudplatform/pkg/utils"
 )
 
 // Create Inventory Option godoc
@@ -161,16 +161,8 @@ func (h *InventoryHttp) SearchInventoryOptionMain(ctx microservice.IContext) err
 	shopID := userInfo.ShopID
 
 	q := ctx.QueryParam("q")
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
+	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
-
-	if err != nil {
-		limit = 20
-	}
 	docList, pagination, err := h.invOptService.SearchInventoryOptionMain(shopID, q, page, limit)
 
 	if err != nil {

@@ -6,7 +6,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/category"
 	"smlcloudplatform/pkg/models"
-	"strconv"
+	"smlcloudplatform/pkg/utils"
 	"strings"
 	"time"
 )
@@ -312,16 +312,7 @@ func (h InventoryHttp) SearchInventory(ctx microservice.IContext) error {
 	shopID := userInfo.ShopID
 
 	q := ctx.QueryParam("q")
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
-
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
-
-	if err != nil {
-		limit = 20
-	}
+	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 
 	docList, pagination, err := h.invService.SearchInventory(shopID, q, page, limit)
 
@@ -419,16 +410,7 @@ func (h InventoryHttp) LastActivityInventory(ctx microservice.IContext) error {
 		return err
 	}
 
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
-
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
-
-	if err != nil {
-		limit = 20
-	}
+	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 
 	docList, pagination, err := h.invService.LastActivityInventory(shopID, lastUpdate, page, limit)
 

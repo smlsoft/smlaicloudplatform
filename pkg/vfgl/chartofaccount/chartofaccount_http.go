@@ -6,9 +6,9 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/vfgl"
+	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/repositories"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/services"
-	"strconv"
 )
 
 type IChartOfAccountHttp interface{}
@@ -62,16 +62,7 @@ func (h ChartOfAccountHttp) Search(ctx microservice.IContext) error {
 	shopID := userInfo.ShopID
 
 	q := ctx.QueryParam("q")
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
-
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
-
-	if err != nil {
-		limit = 20
-	}
+	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 	docList, pagination, err := h.svc.Search(shopID, q, page, limit)
 
 	if err != nil {

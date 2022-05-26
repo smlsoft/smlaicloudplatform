@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
-	"strconv"
+	"smlcloudplatform/pkg/utils"
 )
 
 type IShopHttp interface {
@@ -215,29 +215,8 @@ func (h ShopHttp) InfoShop(ctx microservice.IContext) error {
 // @Router /shop [get]
 func (h ShopHttp) SearchShop(ctx microservice.IContext) error {
 
-	h.ms.Logger.Debug("Search Merchant")
-	// userInfo := ctx.UserInfo()
-
-	// if userInfo.Role == "" || userInfo.Role != models.ROLE_OWNER {
-	// 	ctx.Response(http.StatusOK, &models.ApiResponse{
-	// 		Success: false,
-	// 		Message: "permission denied",
-	// 	})
-
-	// 	return errors.New("permission denied")
-	// }
-
 	q := ctx.QueryParam("q")
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
-
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
-
-	if err != nil {
-		limit = 20
-	}
+	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 
 	shopList, pagination, err := h.service.SearchShop(q, page, limit)
 

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
-	"strconv"
+	"smlcloudplatform/pkg/utils"
 )
 
 // Create Inventory Option Group godoc
@@ -161,16 +161,7 @@ func (h *InventoryHttp) SearchOptionGroup(ctx microservice.IContext) error {
 	shopID := userInfo.ShopID
 
 	q := ctx.QueryParam("q")
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
-
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
-
-	if err != nil {
-		limit = 20
-	}
+	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 	docList, pagination, err := h.optGroupService.SearchOptionGroup(shopID, q, page, limit)
 
 	if err != nil {

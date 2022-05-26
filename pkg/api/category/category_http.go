@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
-	"strconv"
+	"smlcloudplatform/pkg/utils"
 	"strings"
 	"time"
 )
@@ -64,6 +64,11 @@ func (h CategoryHttp) CreateCategory(ctx microservice.IContext) error {
 		return err
 	}
 
+	if err = ctx.Validate(categoryReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
 	idx, err := h.cateService.CreateCategory(shopID, authUsername, *categoryReq)
 
 	if err != nil {
@@ -100,6 +105,11 @@ func (h CategoryHttp) UpdateCategory(ctx microservice.IContext) error {
 	err := json.Unmarshal([]byte(input), &categoryReq)
 
 	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(categoryReq); err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
@@ -199,16 +209,9 @@ func (h CategoryHttp) SearchCategory(ctx microservice.IContext) error {
 	shopID := userInfo.ShopID
 
 	q := ctx.QueryParam("q")
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
 
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
+	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 
-	if err != nil {
-		limit = 20
-	}
 	docList, pagination, err := h.cateService.SearchCategory(shopID, q, page, limit)
 
 	if err != nil {
@@ -253,16 +256,7 @@ func (h CategoryHttp) LastActivityCategory(ctx microservice.IContext) error {
 		return err
 	}
 
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
-
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
-
-	if err != nil {
-		limit = 20
-	}
+	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 
 	docList, pagination, err := h.cateService.LastActivity(shopID, lastUpdate, page, limit)
 
@@ -304,6 +298,11 @@ func (h CategoryHttp) CreateInBatchCategory(ctx microservice.IContext) error {
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if len(dataReq) < 1 {
+		ctx.ResponseError(400, "Require category more than one")
 		return err
 	}
 

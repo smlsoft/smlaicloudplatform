@@ -6,7 +6,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/restaurant"
-	"strconv"
+	"smlcloudplatform/pkg/utils"
 	"strings"
 	"time"
 )
@@ -199,16 +199,7 @@ func (h KitchenHttp) SearchKitchen(ctx microservice.IContext) error {
 	shopID := userInfo.ShopID
 
 	q := ctx.QueryParam("q")
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
-
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
-
-	if err != nil {
-		limit = 20
-	}
+	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 	docList, pagination, err := h.svc.SearchKitchen(shopID, q, page, limit)
 
 	if err != nil {
@@ -255,16 +246,7 @@ func (h KitchenHttp) FetchUpdate(ctx microservice.IContext) error {
 		return err
 	}
 
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
-
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
-
-	if err != nil {
-		limit = 20
-	}
+	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 
 	docList, pagination, err := h.svc.LastActivity(shopID, lastUpdate, page, limit)
 

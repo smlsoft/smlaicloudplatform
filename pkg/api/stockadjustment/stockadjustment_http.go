@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
-	"strconv"
+	"smlcloudplatform/pkg/utils"
 )
 
 type IStockAdjustmentHttp interface {
@@ -156,16 +156,7 @@ func (h StockAdjustmentHttp) SearchStockAdjustment(ctx microservice.IContext) er
 	shopID := userInfo.ShopID
 
 	q := ctx.QueryParam("q")
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
-
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
-
-	if err != nil {
-		limit = 20
-	}
+	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 
 	docList, pagination, err := h.service.SearchStockAdjustment(shopID, q, page, limit)
 
@@ -193,16 +184,7 @@ func (h StockAdjustmentHttp) SearchStockAdjustmentItems(ctx microservice.IContex
 	docID := ctx.Param("id")
 
 	q := ctx.QueryParam("q")
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
-
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
-
-	if err != nil {
-		limit = 20
-	}
+	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 
 	docList, pagination, err := h.service.SearchItemsStockAdjustment(docID, shopID, q, page, limit)
 

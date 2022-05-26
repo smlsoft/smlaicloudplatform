@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
-	"strconv"
+	"smlcloudplatform/pkg/utils"
 )
 
 type InventoryImportHttp struct {
@@ -54,16 +54,7 @@ func (h *InventoryImportHttp) ListInventoryImport(ctx microservice.IContext) err
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
-
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
-
-	if err != nil {
-		limit = 20
-	}
+	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 	docList, pagination, err := h.svc.ListInventory(shopID, page, limit)
 
 	if err != nil {

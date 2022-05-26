@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
-	"strconv"
+	"smlcloudplatform/pkg/utils"
 )
 
 type CategoryImportHttp struct {
@@ -52,16 +52,7 @@ func (h *CategoryImportHttp) ListCategoryImport(ctx microservice.IContext) error
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
-
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
-
-	if err != nil {
-		limit = 20
-	}
+	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 	docList, pagination, err := h.svc.List(shopID, page, limit)
 
 	if err != nil {
