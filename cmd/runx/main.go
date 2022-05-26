@@ -15,21 +15,18 @@ import (
 func main() {
 
 	pstMongoCfg := mock.NewPersisterMongoConfig()
-	pstPgCfg := mock.NewPersisterPostgresqlConfig()
 	mqConfig := mock.NewMqConfig()
 
 	logctx := log.WithFields(log.Fields{
 		"name": "runx App ",
 	})
 
-	pstPg := microservice.NewPersister(pstPgCfg)
 	pst := microservice.NewPersisterMongo(pstMongoCfg)
 	prod := microservice.NewProducer(mqConfig.URI(), logctx)
 
 	invRepo := inventory.NewInventoryRepository(pst)
-	invPgRepo := inventory.NewInventoryIndexPGRepository(pstPg)
 	invMqRepo := inventory.NewInventoryMQRepository(prod)
-	invService := inventory.NewInventoryService(invRepo, invPgRepo, invMqRepo)
+	invService := inventory.NewInventoryService(invRepo, invMqRepo)
 
 	shopID := "shoptest"
 	authUser := "devtest"
@@ -80,7 +77,6 @@ func main() {
 			docIdx.GuidFixed = guidx
 
 			// startPg := time.Now()
-			err = invService.CreateIndex(docIdx)
 			// fmt.Printf("pg :: %s\n", time.Since(startPg))
 
 			if err != nil {
