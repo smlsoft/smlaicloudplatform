@@ -8,23 +8,35 @@ import (
 
 const userCollectionName = "users"
 
-type User struct {
-	ID        primitive.ObjectID `json:"-" bson:"_id,omitempty"`
-	Username  string             `json:"username" bson:"username"`
-	Password  string             `json:"password" bson:"password"`
-	Name      string             `json:"name,omitempty" bson:"name"`
-	CreatedAt time.Time          `json:"-" bson:"createdat,omitempty"`
-	UpdatedAt time.Time          `json:"-" bson:"updatedat,omitempty"`
+type UserDetail struct {
+	Name string `json:"name,omitempty"  validate:"required"`
 }
 
-func (*User) CollectionName() string {
+type UsernameCode struct {
+	Username string `json:"username,omitempty" bson:"username" validate:"required,gte=3"`
+}
+
+type UserPassword struct {
+	Password string `json:"password,omitempty" bson:"password" validate:"required,gte=3"`
+}
+
+type UserDoc struct {
+	ID           primitive.ObjectID `json:"-" bson:"_id,omitempty"`
+	UsernameCode `bson:"inline"`
+	UserPassword `bson:"inline"`
+	UserDetail   `bson:"inline"`
+	CreatedAt    time.Time `json:"-" bson:"createdat,omitempty"`
+	UpdatedAt    time.Time `json:"-" bson:"updatedat,omitempty"`
+}
+
+func (*UserDoc) CollectionName() string {
 	return userCollectionName
 }
 
 type UserRequest struct {
-	Username string `json:"username,omitempty" validate:"required,gte=3"`
-	Password string `json:"password,omitempty" validate:"required,gte=6"`
-	Name     string `json:"name,omitempty" `
+	UsernameCode `bson:"inline"`
+	UserPassword `bson:"inline"`
+	UserDetail   `bson:"inline"`
 }
 
 func (*UserRequest) CollectionName() string {
@@ -32,24 +44,28 @@ func (*UserRequest) CollectionName() string {
 }
 
 type UserLoginRequest struct {
-	Username string `json:"username" validate:"required,gte=3"`
-	Password string `json:"password" validate:"required,gte=6"`
-	ShopID   string `json:"shopid,omitempty"`
+	UsernameCode `bson:"inline"`
+	UserPassword `bson:"inline"`
+	ShopID       string `json:"shopid,omitempty"`
 }
 
 type UserProfile struct {
-	Username  string    `json:"username" bson:"username"`
-	Name      string    `json:"name,omitempty" bson:"name"`
-	CreatedAt time.Time `json:"-" bson:"created_at,omitempty"`
+	UsernameCode `bson:"inline"`
+	UserDetail   `bson:"inline"`
+	CreatedAt    time.Time `json:"-" bson:"created_at,omitempty"`
+}
+
+type UserProfileRequest struct {
+	UserDetail `bson:"inline"`
 }
 
 type UserPasswordRequest struct {
-	CurrentPassword string `json:"currentpassword" bson:"currentpassword"`
-	NewPassword     string `json:"newpassword" bson:"newpassword"`
+	CurrentPassword string `json:"currentpassword" bson:"currentpassword" validate:"required,gte=3"`
+	NewPassword     string `json:"newpassword" bson:"newpassword" validate:"required,gte=3"`
 }
 
 type ShopSelectRequest struct {
-	ShopID string `json:"shopid"`
+	ShopID string `json:"shopid" validate:"required"`
 }
 
 const (

@@ -17,7 +17,7 @@ import (
 type IAuthenticationService interface {
 	Login(userReq *models.UserLoginRequest) (string, error)
 	Register(userRequest models.UserRequest) (string, error)
-	Update(username string, userRequest models.UserRequest) error
+	Update(username string, userRequest models.UserProfileRequest) error
 	UpdatePassword(username string, currentPassword string, newPassword string) error
 	Logout(authorizationHeader string) error
 	Profile(username string) (models.UserProfile, error)
@@ -104,12 +104,12 @@ func (svc AuthenticationService) Register(userRequest models.UserRequest) (strin
 		return "", err
 	}
 
-	user := models.User{
-		Username:  userRequest.Username,
-		Password:  hashPassword,
-		Name:      userRequest.Name,
-		CreatedAt: time.Now(),
-	}
+	user := models.UserDoc{}
+
+	user.Username = userRequest.Username
+	user.Password = hashPassword
+	user.UserDetail = userRequest.UserDetail
+	user.CreatedAt = time.Now()
 
 	idx, err := svc.authRepo.CreateUser(user)
 
@@ -120,7 +120,7 @@ func (svc AuthenticationService) Register(userRequest models.UserRequest) (strin
 	return idx.Hex(), nil
 }
 
-func (svc AuthenticationService) Update(username string, userRequest models.UserRequest) error {
+func (svc AuthenticationService) Update(username string, userRequest models.UserProfileRequest) error {
 
 	if username == "" {
 		return errors.New("username invalid")

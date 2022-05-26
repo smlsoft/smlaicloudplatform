@@ -84,6 +84,11 @@ func (h AuthenticationHttp) Login(ctx microservice.IContext) error {
 		return err
 	}
 
+	if err = ctx.Validate(userReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
 	tokenString, err := h.authenticationService.Login(userReq)
 
 	if err != nil {
@@ -120,6 +125,11 @@ func (h AuthenticationHttp) Register(ctx microservice.IContext) error {
 		return err
 	}
 
+	if err = ctx.Validate(userReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
 	idx, err := h.authenticationService.Register(userReq)
 
 	if err != nil {
@@ -142,11 +152,16 @@ func (h AuthenticationHttp) Update(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	input := ctx.ReadInput()
 
-	userReq := models.UserRequest{}
+	userReq := models.UserProfileRequest{}
 	err := json.Unmarshal([]byte(input), &userReq)
 
 	if err != nil {
 		ctx.ResponseError(400, "user payload invalid")
+		return err
+	}
+
+	if err = ctx.Validate(userReq); err != nil {
+		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
@@ -176,6 +191,11 @@ func (h AuthenticationHttp) UpdatePassword(ctx microservice.IContext) error {
 
 	if err != nil {
 		ctx.ResponseError(400, "user payload invalid")
+		return err
+	}
+
+	if err = ctx.Validate(userPwdReq); err != nil {
+		ctx.ResponseError(400, err.Error())
 		return err
 	}
 

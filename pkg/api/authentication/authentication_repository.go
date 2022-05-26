@@ -9,9 +9,9 @@ import (
 )
 
 type IAuthenticationRepository interface {
-	FindUser(id string) (*models.User, error)
-	CreateUser(models.User) (primitive.ObjectID, error)
-	UpdateUser(username string, user models.User) error
+	FindUser(id string) (*models.UserDoc, error)
+	CreateUser(models.UserDoc) (primitive.ObjectID, error)
+	UpdateUser(username string, user models.UserDoc) error
 }
 
 type AuthenticationRepository struct {
@@ -24,10 +24,10 @@ func NewAuthenticationRepository(pst microservice.IPersisterMongo) Authenticatio
 	}
 }
 
-func (r AuthenticationRepository) FindUser(username string) (*models.User, error) {
+func (r AuthenticationRepository) FindUser(username string) (*models.UserDoc, error) {
 
-	findUser := &models.User{}
-	err := r.pst.FindOne(&models.User{}, bson.M{"username": username}, findUser)
+	findUser := &models.UserDoc{}
+	err := r.pst.FindOne(&models.UserDoc{}, bson.M{"username": username}, findUser)
 
 	if err != nil {
 		return nil, err
@@ -36,9 +36,9 @@ func (r AuthenticationRepository) FindUser(username string) (*models.User, error
 	return findUser, nil
 }
 
-func (r AuthenticationRepository) CreateUser(user models.User) (primitive.ObjectID, error) {
+func (r AuthenticationRepository) CreateUser(user models.UserDoc) (primitive.ObjectID, error) {
 
-	idx, err := r.pst.Create(&models.User{}, user)
+	idx, err := r.pst.Create(&models.UserDoc{}, user)
 
 	if err != nil {
 		return primitive.NilObjectID, err
@@ -46,13 +46,13 @@ func (r AuthenticationRepository) CreateUser(user models.User) (primitive.Object
 	return idx, nil
 }
 
-func (r AuthenticationRepository) UpdateUser(username string, user models.User) error {
+func (r AuthenticationRepository) UpdateUser(username string, user models.UserDoc) error {
 
 	filterDoc := map[string]interface{}{
 		"username": username,
 	}
 
-	err := r.pst.UpdateOne(&models.User{}, filterDoc, user)
+	err := r.pst.UpdateOne(&models.UserDoc{}, filterDoc, user)
 
 	if err != nil {
 		return err

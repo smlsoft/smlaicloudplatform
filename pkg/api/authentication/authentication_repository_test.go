@@ -25,18 +25,31 @@ func init() {
 func TestFindUser(t *testing.T) {
 	password, _ := utils.HashPassword("test")
 
-	createAt := time.Now()
-	give := &models.User{
-		Username:  "test",
-		Name:      "test",
-		Password:  password,
-		CreatedAt: createAt,
+	username := models.UsernameCode{
+		Username: "test",
 	}
-	want := &models.User{
-		Username:  "test",
-		Name:      "test",
-		Password:  password,
-		CreatedAt: createAt,
+
+	userPass := models.UserPassword{
+		Password: password,
+	}
+
+	userDetail := models.UserDetail{
+		Name: "test",
+	}
+
+	createAt := time.Now()
+	give := &models.UserDoc{
+		UsernameCode: username,
+		UserPassword: userPass,
+		UserDetail:   userDetail,
+		CreatedAt:    createAt,
+	}
+
+	want := &models.UserDoc{
+		UsernameCode: username,
+		UserPassword: userPass,
+		UserDetail:   userDetail,
+		CreatedAt:    createAt,
 	}
 
 	createUserID, err := repoMock.CreateUser(*give)
