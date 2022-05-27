@@ -2,27 +2,17 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/models/restaurant"
 	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type IActivityDeleteRepo interface {
-	models.CategoryDeleteActivity | restaurant.ShopZoneDeleteActivity | restaurant.ShopTableDeleteActivity | restaurant.PrinterTerminalDeleteActivity | restaurant.KitchenDeleteActivity
-}
-
-type IActivityCreateUpdateReo interface {
-	models.CategoryActivity | restaurant.ShopZoneActivity | restaurant.ShopTableActivity | restaurant.PrinterTerminalActivity | restaurant.KitchenActivity
-}
-
-type ActivityRepository[TCU IActivityCreateUpdateReo, TDEL IActivityDeleteRepo] struct {
+type ActivityRepository[TCU any, TDEL any] struct {
 	pst microservice.IPersisterMongo
 }
 
-func NewActivityRepository[TCU IActivityCreateUpdateReo, TDEL IActivityDeleteRepo](pst microservice.IPersisterMongo) ActivityRepository[TCU, TDEL] {
+func NewActivityRepository[TCU any, TDEL any](pst microservice.IPersisterMongo) ActivityRepository[TCU, TDEL] {
 	return ActivityRepository[TCU, TDEL]{
 		pst: pst,
 	}

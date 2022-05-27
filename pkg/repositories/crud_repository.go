@@ -2,24 +2,15 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
-	documentimage "smlcloudplatform/pkg/documentwarehouse/documentimage/models"
-	"smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/models/restaurant"
-	"smlcloudplatform/pkg/models/vfgl"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type ICrudRepo interface {
-	restaurant.ShopZoneDoc | restaurant.ShopTableDoc | restaurant.PrinterTerminalDoc |
-		restaurant.KitchenDoc | vfgl.JournalDoc | vfgl.ChartOfAccountDoc |
-		models.CategoryDoc | documentimage.DocumentImageDoc
-}
-type CrudRepository[T ICrudRepo] struct {
+type CrudRepository[T any] struct {
 	pst microservice.IPersisterMongo
 }
 
-func NewCrudRepository[T ICrudRepo](pst microservice.IPersisterMongo) CrudRepository[T] {
+func NewCrudRepository[T any](pst microservice.IPersisterMongo) CrudRepository[T] {
 	return CrudRepository[T]{
 		pst: pst,
 	}

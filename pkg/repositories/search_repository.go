@@ -2,27 +2,17 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
-	documentimage "smlcloudplatform/pkg/documentwarehouse/documentimage/models"
-	"smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/models/restaurant"
-	"smlcloudplatform/pkg/models/vfgl"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type ISearchRepo interface {
-	restaurant.ShopZoneInfo | restaurant.ShopTableInfo | restaurant.PrinterTerminalInfo |
-		restaurant.KitchenInfo | vfgl.JournalInfo | vfgl.ChartOfAccountInfo |
-		models.CategoryInfo | documentimage.DocumentImageInfo
-}
-
-type SearchRepository[T ISearchRepo] struct {
+type SearchRepository[T any] struct {
 	pst microservice.IPersisterMongo
 }
 
-func NewSearchRepository[T ISearchRepo](pst microservice.IPersisterMongo) SearchRepository[T] {
+func NewSearchRepository[T any](pst microservice.IPersisterMongo) SearchRepository[T] {
 	return SearchRepository[T]{
 		pst: pst,
 	}

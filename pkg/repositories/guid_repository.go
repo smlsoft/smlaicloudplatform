@@ -2,22 +2,15 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/models/restaurant"
-	"smlcloudplatform/pkg/models/vfgl"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type IGuidRepo interface {
-	models.CategoryItemGuid | restaurant.ShopZoneItemGuid | restaurant.ShopTableItemGuid | restaurant.PrinterTerminalItemGuid | restaurant.KitchenItemGuid | vfgl.JournalItemGuid | vfgl.ChartOfAccountIndentityId
-}
-
-type GuidRepository[T IGuidRepo] struct {
+type GuidRepository[T any] struct {
 	pst microservice.IPersisterMongo
 }
 
-func NewGuidRepository[T IGuidRepo](pst microservice.IPersisterMongo) GuidRepository[T] {
+func NewGuidRepository[T any](pst microservice.IPersisterMongo) GuidRepository[T] {
 	return GuidRepository[T]{
 		pst: pst,
 	}

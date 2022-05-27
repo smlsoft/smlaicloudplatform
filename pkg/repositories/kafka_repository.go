@@ -3,12 +3,7 @@ package repositories
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/models/vfgl"
 )
-
-type IKafkaRepo interface {
-	vfgl.JournalDoc | vfgl.ChartOfAccountDoc
-}
 
 type KafkaConfig interface {
 	TopicCreated() string
@@ -23,7 +18,7 @@ type KafkaRepository[T any] struct {
 	mqKey string
 }
 
-func NewKafkaRepository[T IKafkaRepo](prod microservice.IProducer, topicConfig KafkaConfig, mqKey string) KafkaRepository[T] {
+func NewKafkaRepository[T any](prod microservice.IProducer, topicConfig KafkaConfig, mqKey string) KafkaRepository[T] {
 	return KafkaRepository[T]{
 		prod:  prod,
 		topic: topicConfig,
