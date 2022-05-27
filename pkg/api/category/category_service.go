@@ -2,6 +2,7 @@ package category
 
 import (
 	"errors"
+	"fmt"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
@@ -115,7 +116,15 @@ func (svc CategoryService) InfoCategory(shopID string, guid string) (models.Cate
 }
 
 func (svc CategoryService) SearchCategory(shopID string, q string, page int, limit int) ([]models.CategoryInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindPage(shopID, []string{"guidfixed", "name1"}, q, page, limit)
+	searchCols := []string{
+		"guidfixed",
+	}
+
+	for i := range [5]bool{} {
+		searchCols = append(searchCols, fmt.Sprintf("name%d", (i+1)))
+	}
+
+	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
 
 	if err != nil {
 		return []models.CategoryInfo{}, pagination, err
