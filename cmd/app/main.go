@@ -22,7 +22,9 @@ import (
 	"smlcloudplatform/pkg/api/shop/employee"
 	"smlcloudplatform/pkg/api/syncdata"
 	"smlcloudplatform/pkg/api/tools"
+	"smlcloudplatform/pkg/vfgl/accountgroup"
 	"smlcloudplatform/pkg/vfgl/journal"
+	"smlcloudplatform/pkg/vfgl/journalbook"
 
 	_ "net/http/pprof"
 
@@ -116,6 +118,12 @@ func main() {
 
 	journalhttp := journal.NewJournalHttp(ms, cfg)
 	journalhttp.RouteSetup()
+
+	accountGroupHttp := accountgroup.NewAccountGroupHttp(ms, cfg)
+	accountGroupHttp.RouteSetup()
+
+	journalBookhttp := journalbook.NewJournalBookHttp(ms, cfg)
+	journalBookhttp.RouteSetup()
 
 	toolSvc := tools.NewToolsService(ms, cfg)
 
