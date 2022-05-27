@@ -20,6 +20,7 @@ type Journal struct {
 	AccountBook              []JournalDetail `json:"journaldetail" bson:"journaldetail"`
 	Amount                   float64         `json:"amount" bson:"amount"`
 	AccountDescription       string          `json:"accountdescription" bson:"accountdescription"`
+	BookCode                 string          `json:"bookcode" bson:"bookcode"`
 }
 
 type JournalDetail struct {
