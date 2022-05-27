@@ -75,3 +75,14 @@ type JournalPg struct {
 func (JournalPg) TableName() string {
 	return journalBookTableName
 }
+
+type JournalBookInfoResponse struct {
+	Success bool            `json:"success"`
+	Data    JournalBookInfo `json:"data,omitempty"`
+}
+
+type JournalBookPageResponse struct {
+	Success    bool                          `json:"success"`
+	Data       []JournalBookInfo             `json:"data,omitempty"`
+	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
+}
