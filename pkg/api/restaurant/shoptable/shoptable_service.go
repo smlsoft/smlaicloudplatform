@@ -106,6 +106,7 @@ func (svc ShopTableService) InfoShopTable(shopID string, guid string) (restauran
 
 func (svc ShopTableService) SearchShopTable(shopID string, q string, page int, limit int) ([]restaurant.ShopTableInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
+		"guidfixed",
 		"code",
 	}
 

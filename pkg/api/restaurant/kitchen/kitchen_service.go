@@ -108,6 +108,7 @@ func (svc KitchenService) InfoKitchen(shopID string, guid string) (restaurant.Ki
 
 func (svc KitchenService) SearchKitchen(shopID string, q string, page int, limit int) ([]restaurant.KitchenInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
+		"guidfixed",
 		"code",
 	}
 

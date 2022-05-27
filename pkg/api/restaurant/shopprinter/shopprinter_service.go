@@ -108,6 +108,7 @@ func (svc ShopPrinterService) InfoShopPrinter(shopID string, guid string) (resta
 
 func (svc ShopPrinterService) SearchShopPrinter(shopID string, q string, page int, limit int) ([]restaurant.PrinterTerminalInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
+		"guidfixed",
 		"code",
 	}
 

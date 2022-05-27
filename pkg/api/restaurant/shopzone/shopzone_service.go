@@ -111,6 +111,7 @@ func (svc ShopZoneService) InfoShopZone(shopID string, guid string) (restaurant.
 
 func (svc ShopZoneService) SearchShopZone(shopID string, q string, page int, limit int) ([]restaurant.ShopZoneInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
+		"guidfixed",
 		"code",
 	}
 

@@ -103,6 +103,7 @@ func (svc ZoneDesignService) InfoZoneDesign(shopID string, guid string) (models.
 func (svc ZoneDesignService) SearchZoneDesign(shopID string, q string, page int, limit int) ([]models.ZoneDesignInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
 		"guidfixed",
+		"guidfixed",
 	}
 
 	for i := range [5]bool{} {
