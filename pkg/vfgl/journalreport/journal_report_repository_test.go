@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetDataFromTrialBalanceReportRepository(t *testing.T) {
+func TestGetDataTrialBalanceReportRepository(t *testing.T) {
 
 	assert := assert.New(t)
 
@@ -29,7 +29,7 @@ func TestGetDataFromTrialBalanceReportRepository(t *testing.T) {
 	assert.NotNil(get)
 }
 
-func TestGetDataFromProfitAndLossReportRepository(t *testing.T) {
+func TestGetDataProfitAndLossReportRepository(t *testing.T) {
 	assert := assert.New(t)
 
 	pstConfig := microservice.NewPersisterConfig()
@@ -44,6 +44,24 @@ func TestGetDataFromProfitAndLossReportRepository(t *testing.T) {
 	endDate := time.Date(2022, 05, 31, 00, 00, 00, 0, time.UTC)
 
 	get, err := repo.GetDataProfitAndLoss(shopId, accGroup, startDate, endDate)
+	assert.Nil(err)
+	assert.NotNil(get)
+}
+
+func TestGetDataBalanceSheetReportRepository(t *testing.T) {
+	assert := assert.New(t)
+
+	pstConfig := microservice.NewPersisterConfig()
+	pst := microservice.NewPersister(pstConfig)
+
+	assert.NotNil(pst)
+	repo := journalreport.NewJournalReportRepository(pst)
+
+	shopId := "27dcEdktOoaSBYFmnN6G6ett4Jb"
+	accGroup := "01"
+	endDate := time.Date(2022, 05, 31, 00, 00, 00, 0, time.UTC)
+
+	get, err := repo.GetDataBalanceSheet(shopId, accGroup, endDate)
 	assert.Nil(err)
 	assert.NotNil(get)
 }

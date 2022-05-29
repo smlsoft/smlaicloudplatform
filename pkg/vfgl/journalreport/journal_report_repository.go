@@ -9,6 +9,7 @@ import (
 type IJournalReportRepository interface {
 	GetDataTrialBalance(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*vfgl.TrialBalanceSheetReport, error)
 	GetDataProfitAndLoss(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*vfgl.ProfitAndLossSheetReport, error)
+	GetDataBalanceSheet(shopId string, accountGroup string, endDate time.Time) (*vfgl.BalanceSheetReport, error)
 }
 
 type JournalReportRepository struct {
@@ -276,6 +277,97 @@ func (repo JournalReportRepository) GetDataProfitAndLoss(shopId string, accountG
 		TotalIncomeAmount:   incomeAmount,
 		TotalExpenseAmount:  expenseAmount,
 		ProfitAndLossAmount: profitAndLossAmount,
+	}
+
+	return result, nil
+}
+
+func (repo JournalReportRepository) GetDataBalanceSheet(shopId string, accountGroup string, endDate time.Time) (*vfgl.BalanceSheetReport, error) {
+	query := `
+	WITH journal_doc as (
+		select h.shopid, h.docno, h.docdate, h.accountyear, h.accountperiod, h.accountgroup
+			, d.accountcode
+			, d.debitamount ,d.creditamount
+			from journals_detail as d
+			join journals as h on h.shopid = d.shopid and h.docno = d.docno
+			where h.shopid= @shopid and h.accountgroup = @accountgroup
+		)
+		, nex as (
+			select accountcode, sum(debitamount) as debitamount, sum(creditamount) as creditamount 
+			from journal_doc where journal_doc.docdate <= @enddate
+			group by accountcode
+		)
+		, journal_sheet_sum as (
+			select chart.shopid, chart.parid
+            , chart.accountcode, chart.accountname
+			, chart.accountcategory, chart.accountbalancetype, chart.accountgroup, chart.accountlevel, chart.consolidateaccountcode
+			, case when(accountbalancetype = 1) then coalesce(nex.debitamount, 0)-coalesce(nex.creditamount, 0)
+				else coalesce(nex.creditamount, 0)-coalesce(nex.debitamount, 0)
+				end as amount		
+			from chartofaccounts as chart
+			left join nex on nex.accountcode = chart.accountcode
+			where chart.shopid= @shopid and chart.accountcategory <= 3 
+		)
+		select shopid, parid
+        , accountcode, accountname, accountcategory, accountbalancetype
+        , accountgroup, accountlevel, consolidateaccountcode
+		, amount
+		from journal_sheet_sum
+		where amount <> 0 
+		order by accountcode
+	`
+
+	var details []vfgl.BalanceSheetAccountDetail
+
+	condition := map[string]interface{}{
+		"shopid":       shopId,
+		"accountgroup": accountGroup,
+		"enddate":      endDate,
+	}
+
+	_, err := repo.pst.Raw(query, condition, &details)
+	if err != nil {
+		return nil, err
+	}
+
+	// var totalData = len(details)
+	//fmt.Printf("rows: %v", rows)
+	//fmt.Printf("details: %+v\n", details)
+	var totalAssetAmount float64 = 0
+	var totalLiabilityAmount float64 = 0
+	var totalOwnersEquityAmount float64 = 0
+	var totalLiabilityAndOwnersEquityAmount float64 = 0
+
+	var assets []vfgl.BalanceSheetAccountDetail
+	var liabilities []vfgl.BalanceSheetAccountDetail
+	var ownesEquities []vfgl.BalanceSheetAccountDetail
+
+	for _, v := range details {
+		if v.AccountCategory == 1 {
+			assets = append(assets, v)
+			totalAssetAmount += v.Amount
+		} else if v.AccountCategory == 2 {
+			liabilities = append(liabilities, v)
+			totalLiabilityAmount += v.Amount
+		} else {
+			totalOwnersEquityAmount += v.Amount
+			ownesEquities = append(ownesEquities, v)
+		}
+	}
+
+	totalLiabilityAndOwnersEquityAmount = totalLiabilityAmount + totalOwnersEquityAmount
+
+	result := &vfgl.BalanceSheetReport{
+		ReportDate:                          time.Now(),
+		EndDate:                             endDate,
+		AccountGroup:                        accountGroup,
+		Assets:                              &assets,
+		Liabilities:                         &liabilities,
+		OwnesEquities:                       &ownesEquities,
+		TotalAssetAmount:                    totalAssetAmount,
+		TotalLiabilityAmount:                totalLiabilityAmount,
+		TotalOwnersEquityAmount:             totalOwnersEquityAmount,
+		TotalLiabilityAndOwnersEquityAmount: totalLiabilityAndOwnersEquityAmount,
 	}
 
 	return result, nil
