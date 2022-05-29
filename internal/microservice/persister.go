@@ -6,6 +6,7 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"gorm.io/gorm/logger"
 )
 
@@ -20,6 +21,7 @@ type IPersister interface {
 	Update(model interface{}, where map[string]interface{}) error
 	Delete(model interface{}, where map[string]interface{}) error
 	CreateInBatch(models interface{}, bulkSize int) error
+	CreateInBatchOnConflict(models interface{}, bulkSize int) error
 	Exec(sql string, args ...interface{}) error
 	TableExists(model interface{}) (bool, error)
 	Count(model interface{}, expr string, args ...interface{}) (int64, error)
@@ -28,6 +30,7 @@ type IPersister interface {
 	AutoMigrate(dst ...interface{}) error
 	TestConnect() error
 	Transaction(funcTransaction func(*Persister) error) error
+	Raw(queryStr string, where map[string]interface{}, model interface{}) ( /*result*/ interface{}, error)
 }
 
 // IPersisterConfig is interface for persister
@@ -55,7 +58,11 @@ func NewPersister(config IPersisterConfig) *Persister {
 		config: config,
 	}
 
-	pst.getClient()
+	_, err := pst.getClient()
+	if err != nil {
+		panic(err)
+	}
+
 	return pst
 }
 
@@ -282,6 +289,13 @@ func (pst *Persister) CreateInBatch(models interface{}, bulkSize int) error {
 	return nil
 }
 
+// CreateInBatch create the objects in batch
+func (pst *Persister) CreateInBatchOnConflict(models interface{}, bulkSize int) error {
+	db := pst.db
+	db.Clauses(clause.OnConflict{DoNothing: true}).CreateInBatches(models, bulkSize)
+	return nil
+}
+
 func (pst *Persister) DropTable(table ...interface{}) error {
 	db := pst.db
 
@@ -317,4 +331,9 @@ func (pst *Persister) Transaction(funcTransaction func(*Persister) error) error 
 	})
 
 	return nil
+}
+
+func (pst *Persister) Raw(queryStr string, where map[string]interface{}, model interface{}) ( /*result*/ interface{}, error) {
+	err := pst.db.Raw(queryStr, where).Find(model).Error
+	return model, err
 }

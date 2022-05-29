@@ -8424,6 +8424,12 @@ const docTemplate = `{
                 "consolidateaccountcode": {
                     "description": "รหัสผังบัญชีกลาง",
                     "type": "string"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
                 }
             }
         },
@@ -8766,6 +8772,12 @@ const docTemplate = `{
                 "consolidateaccountcode": {
                     "description": "รหัสผังบัญชีกลาง",
                     "type": "string"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
                 }
             }
         },
@@ -8882,6 +8894,12 @@ const docTemplate = `{
                 "nextbalancedebitamount": {
                     "description": "ยอดสะสมเดบิต",
                     "type": "number"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
                 }
             }
         },

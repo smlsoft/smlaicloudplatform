@@ -12,15 +12,20 @@ type IJournalReportService interface {
 }
 
 type JournalReportService struct {
+	repo JournalReportRepository
 }
 
-func NewJournalReportService() JournalReportService {
-	return JournalReportService{}
+func NewJournalReportService(repo JournalReportRepository) JournalReportService {
+	return JournalReportService{
+		repo: repo,
+	}
 }
 
 func (svc JournalReportService) ProcessTrialBalanceSheetReport(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*vfgl.TrialBalanceSheetReport, error) {
-	mock := MockTrialBalanceSheetReport(shopId, accountGroup, startDate, endDate)
-	return mock, nil
+	// mock := MockTrialBalanceSheetReport(shopId, accountGroup, startDate, endDate)
+	// return mock, nil
+	data, err := svc.repo.GetDataTrialBalance(shopId, accountGroup, startDate, endDate)
+	return data, err
 }
 
 func (svc JournalReportService) ProcessBalanceSheetReport(shopId string, accountGroup string, endDate time.Time) (*vfgl.BalanceSheetReport, error) {

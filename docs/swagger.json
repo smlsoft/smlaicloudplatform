@@ -8418,6 +8418,12 @@
                 "consolidateaccountcode": {
                     "description": "รหัสผังบัญชีกลาง",
                     "type": "string"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
                 }
             }
         },
@@ -8760,6 +8766,12 @@
                 "consolidateaccountcode": {
                     "description": "รหัสผังบัญชีกลาง",
                     "type": "string"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
                 }
             }
         },
@@ -8876,6 +8888,12 @@
                 "nextbalancedebitamount": {
                     "description": "ยอดสะสมเดบิต",
                     "type": "number"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
                 }
             }
         },

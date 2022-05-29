@@ -82,7 +82,7 @@ func (JournalDeleteActivity) CollectionName() string {
 
 // Postgresql model
 type JournalPg struct {
-	models.Identity          `gorm:"embedded;"`
+	models.ShopIdentity      `gorm:"embedded;"`
 	models.PartitionIdentity `gorm:"embedded;"`
 	Docno                    string    `json:"docno" gorm:"column:docno;primaryKey"`
 	BatchID                  string    `json:"batchid" gorm:"column:batchid"`

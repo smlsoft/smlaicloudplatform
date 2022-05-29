@@ -175,7 +175,7 @@ func main() {
 
 		chartofaccount.MigrationChartOfAccountTable(ms, cfg)
 		chartofaccount.StartChartOfAccountConsumerCreated(ms, cfg, "00")
-		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, "00")
+		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, "11")
 	}
 
 	ms.Start()
