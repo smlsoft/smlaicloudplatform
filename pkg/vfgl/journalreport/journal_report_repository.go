@@ -8,6 +8,7 @@ import (
 
 type IJournalReportRepository interface {
 	GetDataTrialBalance(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*vfgl.TrialBalanceSheetReport, error)
+	GetDataProfitAndLoss(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*vfgl.ProfitAndLossSheetReport, error)
 }
 
 type JournalReportRepository struct {
@@ -187,6 +188,94 @@ func (repo JournalReportRepository) GetDataTrialBalance(shopId string, accountGr
 		TotalAmountCredit:      totalAmountCredit,
 		TotalNextBalanceDebit:  totalNextBalanceDebit,
 		TotalNextBalanceCredit: totalnextBalanceCredit,
+	}
+
+	return result, nil
+}
+
+func (repo JournalReportRepository) GetDataProfitAndLoss(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*vfgl.ProfitAndLossSheetReport, error) {
+
+	query := `
+	WITH journal_doc as (
+		select h.shopid, h.docno, h.docdate, h.accountyear, h.accountperiod, h.accountgroup
+			, d.accountcode
+			, d.debitamount ,d.creditamount
+			from journals_detail as d
+			join journals as h on h.shopid = d.shopid and h.docno = d.docno
+			where h.shopid= @shopid and h.accountgroup = @accountgroup
+		)
+		, prd as (
+			select accountcode, sum(debitamount) as debitamount, sum(creditamount) as creditamount 
+			from journal_doc where journal_doc.docdate between @startdate and @enddate
+			group by accountcode
+		)
+		, journal_sheet_sum as (
+			select chart.shopid, chart.parid
+            , chart.accountcode, chart.accountname
+			, chart.accountcategory, chart.accountbalancetype, chart.accountgroup, chart.accountlevel, chart.consolidateaccountcode
+			, coalesce(prd.debitamount, 0) as debitamount, coalesce(prd.creditamount, 0) as creditamount			
+			, case when(accountbalancetype = 1) then coalesce(prd.debitamount, 0)-coalesce(prd.creditamount, 0)
+				else coalesce(prd.creditamount, 0)-coalesce(prd.debitamount, 0)
+				end as amount			
+			from chartofaccounts as chart
+			left join prd on prd.accountcode = chart.accountcode
+			where chart.shopid= @shopid and chart.accountcategory in (4,5)
+		)
+		select shopid, parid
+        , accountcode, accountname, accountcategory, accountbalancetype
+        , accountgroup, accountlevel, consolidateaccountcode
+		, debitamount, creditamount, amount
+		from journal_sheet_sum
+		where amount <> 0 
+		order by accountcode
+	`
+
+	var details []vfgl.ProfitAndLossSheetAccountDetail
+
+	condition := map[string]interface{}{
+		"shopid":       shopId,
+		"accountgroup": accountGroup,
+		"startdate":    startDate,
+		"enddate":      endDate,
+	}
+
+	_, err := repo.pst.Raw(query, condition, &details)
+	if err != nil {
+		return nil, err
+	}
+
+	// var totalData = len(details)
+	//fmt.Printf("rows: %v", rows)
+	//fmt.Printf("details: %+v\n", details)
+	var incomeAmount float64 = 0
+	var expenseAmount float64 = 0
+	var profitAndLossAmount float64 = 0
+
+	var incomes []vfgl.ProfitAndLossSheetAccountDetail
+	var expenses []vfgl.ProfitAndLossSheetAccountDetail
+
+	for _, v := range details {
+		if v.AccountCategory == 4 {
+			incomes = append(incomes, v)
+			incomeAmount += v.Amount
+		} else {
+			incomes = append(incomes, v)
+			expenseAmount += v.Amount
+		}
+	}
+
+	profitAndLossAmount = incomeAmount - expenseAmount
+
+	result := &vfgl.ProfitAndLossSheetReport{
+		ReportDate:          time.Now(),
+		StartDate:           startDate,
+		EndDate:             endDate,
+		AccountGroup:        accountGroup,
+		Incomes:             &incomes,
+		Expenses:            &expenses,
+		TotalIncomeAmount:   incomeAmount,
+		TotalExpenseAmount:  expenseAmount,
+		ProfitAndLossAmount: profitAndLossAmount,
 	}
 
 	return result, nil

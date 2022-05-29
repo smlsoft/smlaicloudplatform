@@ -34,6 +34,8 @@ func (svc JournalReportService) ProcessBalanceSheetReport(shopId string, account
 }
 
 func (svc JournalReportService) ProcessProfitAndLossSheetReport(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*vfgl.ProfitAndLossSheetReport, error) {
-	mock := MockProfitAndLossSheetReport(shopId, accountGroup, startDate, endDate)
-	return mock, nil
+	// mock := MockProfitAndLossSheetReport(shopId, accountGroup, startDate, endDate)
+	// return mock, nil
+	data, err := svc.repo.GetDataProfitAndLoss(shopId, accountGroup, startDate, endDate)
+	return data, err
 }
