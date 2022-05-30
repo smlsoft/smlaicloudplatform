@@ -22,6 +22,7 @@ type IPersister interface {
 	Delete(model interface{}, where map[string]interface{}) error
 	CreateInBatch(models interface{}, bulkSize int) error
 	CreateInBatchOnConflict(models interface{}, bulkSize int) error
+	CreateInBatchClauses(models interface{}, bulkSize int, expression ...clause.Expression) error
 	Exec(sql string, args ...interface{}) error
 	TableExists(model interface{}) (bool, error)
 	Count(model interface{}, expr string, args ...interface{}) (int64, error)
@@ -293,6 +294,12 @@ func (pst *Persister) CreateInBatch(models interface{}, bulkSize int) error {
 func (pst *Persister) CreateInBatchOnConflict(models interface{}, bulkSize int) error {
 	db := pst.db
 	db.Clauses(clause.OnConflict{DoNothing: true}).CreateInBatches(models, bulkSize)
+	return nil
+}
+
+func (pst *Persister) CreateInBatchClauses(models interface{}, bulkSize int, expression ...clause.Expression) error {
+	db := pst.db
+	db.Clauses(expression...).CreateInBatches(models, bulkSize)
 	return nil
 }
 

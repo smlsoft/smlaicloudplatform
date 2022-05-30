@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"smlcloudplatform/internal/microservice"
 	"testing"
+
+	"gorm.io/gorm/clause"
 )
 
 type ConfigPostgresqlDBTest struct{}
@@ -95,5 +97,22 @@ func TestDelete(t *testing.T) {
 	pst.Delete(&User{}, map[string]interface{}{
 		"id":   3,
 		"name": "namex",
+	})
+}
+
+func TestCreateInBatchClauses(t *testing.T) {
+	pgConfig := &ConfigPostgresqlDBTest{}
+
+	uList := []User{
+		{
+			ID:   2,
+			Name: "name edited xxxx",
+		},
+	}
+
+	pst := microservice.NewPersister(pgConfig)
+	pst.CreateInBatchClauses(uList, len(uList), clause.OnConflict{
+		Columns:   []clause.Column{{Name: "id"}},
+		DoUpdates: clause.AssignmentColumns([]string{"name"}),
 	})
 }
