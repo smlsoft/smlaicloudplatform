@@ -15,7 +15,11 @@ type JournalReportHttp struct {
 }
 
 func NewJournalReportHttp(ms *microservice.Microservice, cfg microservice.IConfig) JournalReportHttp {
-	jouralReportService := NewJournalReportService()
+
+	pstConfig := microservice.NewPersisterConfig()
+	pst := microservice.NewPersister(pstConfig)
+	repo := NewJournalReportRepository(pst)
+	jouralReportService := NewJournalReportService(repo)
 	return JournalReportHttp{
 		ms:  ms,
 		cfg: cfg,

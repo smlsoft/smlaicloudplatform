@@ -117,7 +117,7 @@ func (cfg *PersisterConfig) Password() string {
 
 func (cfg *PersisterConfig) SSLMode() string {
 	sslMode := os.Getenv("POSTGRES_SSL_MODE")
-	if sslMode != "" {
+	if sslMode == "" {
 		sslMode = "disable"
 	}
 	return sslMode

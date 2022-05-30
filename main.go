@@ -99,10 +99,6 @@ func main() {
 		ms.HttpMiddleware(authService.MWFuncWithRedisMixShop(cacher, exceptShopPath, publicPath...))
 		ms.RegisterLivenessProbeEndpoint("/healthz")
 
-		//migration.StartMigrateModel(ms, cfg)
-		chartofaccount.MigrationChartOfAccountTable(ms, cfg)
-		journal.MigrationJournalTable(ms, cfg)
-
 		authHttp := authentication.NewAuthenticationHttp(ms, cfg)
 		authHttp.RouteSetup()
 
@@ -166,16 +162,20 @@ func main() {
 	}
 
 	if devApiMode == "1" || devApiMode == "2" {
+
 		inventorysearchconsumer.StartInventorySearchComsumerOnProductCreated(ms, cfg)
 		inventorysearchconsumer.StartInventorySearchComsumerOnProductUpdated(ms, cfg)
 		inventorysearchconsumer.StartInventorySearchComsumerOnProductDeleted(ms, cfg)
 
 		saleinvoice.StartSaleinvoiceComsumeCreated(ms, cfg)
 
-		journal.StartJournalComsumeCreated(ms, cfg, "99")
-		journal.StartJournalComsumeBlukCreated(ms, cfg, "11")
-		chartofaccount.StartChartOfAccountConsumerCreated(ms, cfg, "01")
-		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, "01")
+		journal.MigrationJournalTable(ms, cfg)
+		journal.StartJournalComsumeCreated(ms, cfg, "00")
+		journal.StartJournalComsumeBlukCreated(ms, cfg, "00")
+
+		chartofaccount.MigrationChartOfAccountTable(ms, cfg)
+		chartofaccount.StartChartOfAccountConsumerCreated(ms, cfg, "00")
+		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, "11")
 	}
 
 	ms.Start()

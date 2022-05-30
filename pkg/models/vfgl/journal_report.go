@@ -28,25 +28,25 @@ type TrialBalanceSheetReport struct {
 }
 
 type TrialBalanceSheetAccountDetail struct {
-	ChartOfAccount
+	ChartOfAccountPG
 	// ยอดคงเหลือ(ประจำงวด)
-	Amount float64 `json:"amount"`
+	Amount float64 `json:"amount" gorm:"column:amount"`
 	// ยอดคงเหลือยกมา
-	BalanceAmount float64 `json:"balanceamount"`
+	BalanceAmount float64 `json:"balanceamount" gorm:"column:balanceamount"`
 	// ยอดคงเหลือสะสม
-	NextBalanceAmount float64 `json:"nextbalanceamount"`
+	NextBalanceAmount float64 `json:"nextbalanceamount" gorm:"column:nextbalanceamount"`
 	// ยอดเดบิต
-	DebitAmount float64 `json:"debitamount"`
+	DebitAmount float64 `json:"debitamount" gorm:"column:debitamount"`
 	// ยอดเครดิต
-	CreditAmount float64 `json:"creditamount"`
+	CreditAmount float64 `json:"creditamount" gorm:"column:creditamount"`
 	// ยอดยกมาเดบิต
-	BalanceDebitAmount float64 `json:"balancedebitamount"`
+	BalanceDebitAmount float64 `json:"balancedebitamount" gorm:"column:balancedebitamount"`
 	// ยอดยกมาเครดิต
-	BalanceCreditAmount float64 `json:"balancecreditamount"`
+	BalanceCreditAmount float64 `json:"balancecreditamount" gorm:"column:balancecreditamount"`
 	// ยอดสะสมเดบิต
-	NextBalanceDebitAmount float64 `json:"nextbalancedebitamount"`
+	NextBalanceDebitAmount float64 `json:"nextbalancedebitamount" gorm:"column:nextbalancedebitamount"`
 	// ยอดสะสมเครดิต
-	NextBalanceCreditAmount float64 `json:"nextbalancecreditamount"`
+	NextBalanceCreditAmount float64 `json:"nextbalancecreditamount" gorm:"column:nextbalancecreditamount"`
 }
 
 type BalanceSheetReport struct {
@@ -73,7 +73,7 @@ type BalanceSheetReport struct {
 }
 
 type BalanceSheetAccountDetail struct {
-	ChartOfAccount
+	ChartOfAccountPG
 	// มูลค่า
 	Amount float64 `json:"amount"`
 }
@@ -100,7 +100,7 @@ type ProfitAndLossSheetReport struct {
 }
 
 type ProfitAndLossSheetAccountDetail struct {
-	ChartOfAccount
+	ChartOfAccountPG
 	// มูลค่า
 	Amount float64 `json:"amount"`
 }

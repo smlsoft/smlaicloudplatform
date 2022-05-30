@@ -23,7 +23,7 @@ func NewChartOfAccountPgRepository(pst microservice.IPersister) ChartOfAccountPg
 }
 
 func (repo ChartOfAccountPgRepository) CreateInBatch(docList []vfgl.ChartOfAccountPG) error {
-	err := repo.pst.CreateInBatch(docList, len(docList))
+	err := repo.pst.CreateInBatchOnConflict(docList, len(docList))
 	if err != nil {
 		return err
 	}

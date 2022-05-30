@@ -8,7 +8,7 @@ import (
 func MockTrialBalanceSheetReport(shopId string, accountGroup string, startDate time.Time, endDate time.Time) *vfgl.TrialBalanceSheetReport {
 
 	acc12101 := &vfgl.TrialBalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode:  "12101",
 			AccountName:  "เงินฝากธนาคาร บัญชี 1 (เงินล้าน)",
 			AccountGroup: "12000",
@@ -17,7 +17,7 @@ func MockTrialBalanceSheetReport(shopId string, accountGroup string, startDate t
 	}
 
 	acc13010 := &vfgl.TrialBalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode:  "13010",
 			AccountName:  "ลูกหนี้เงินกู้ - บัญชี 1 (เงินล้าน)",
 			AccountGroup: "13000",
@@ -26,7 +26,7 @@ func MockTrialBalanceSheetReport(shopId string, accountGroup string, startDate t
 	}
 
 	acc32010 := &vfgl.TrialBalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode:  "32010",
 			AccountName:  "ทุน - เงินล้าน",
 			AccountGroup: "32000",
@@ -35,7 +35,7 @@ func MockTrialBalanceSheetReport(shopId string, accountGroup string, startDate t
 	}
 
 	acc33070 := &vfgl.TrialBalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "33070",
 			AccountName: "เงินสมทบกองทุน",
 		},
@@ -43,7 +43,7 @@ func MockTrialBalanceSheetReport(shopId string, accountGroup string, startDate t
 	}
 
 	acc33060 := &vfgl.TrialBalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "33060",
 			AccountName: "เงินประกันความเส่ียง",
 		},
@@ -51,7 +51,7 @@ func MockTrialBalanceSheetReport(shopId string, accountGroup string, startDate t
 	}
 
 	acc33090 := &vfgl.TrialBalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "33090",
 			AccountName: "ค่าดำเนินงาน/ค่าบริหารจัดการ",
 		},
@@ -59,7 +59,7 @@ func MockTrialBalanceSheetReport(shopId string, accountGroup string, startDate t
 	}
 
 	acc33080 := &vfgl.TrialBalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "33080",
 			AccountName: "เงินสวัสดิการ",
 		},
@@ -67,7 +67,7 @@ func MockTrialBalanceSheetReport(shopId string, accountGroup string, startDate t
 	}
 
 	acc33050 := &vfgl.TrialBalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "33050",
 			AccountName: "สาธารณะประโยชน์",
 		},
@@ -75,7 +75,7 @@ func MockTrialBalanceSheetReport(shopId string, accountGroup string, startDate t
 	}
 
 	acc32050 := &vfgl.TrialBalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "32050",
 			AccountName: "ทุน - อื่น",
 		},
@@ -83,7 +83,7 @@ func MockTrialBalanceSheetReport(shopId string, accountGroup string, startDate t
 	}
 
 	acc34010 := &vfgl.TrialBalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "34010",
 			AccountName: "กำไรสะสม (ขาดทุน) สะสม บัญชี 1",
 		},
@@ -91,7 +91,7 @@ func MockTrialBalanceSheetReport(shopId string, accountGroup string, startDate t
 	}
 
 	acc35010 := &vfgl.TrialBalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "35010",
 			AccountName: "กำไร ( ขาดทุน ) บัญชี 1",
 		},
@@ -129,7 +129,7 @@ func MockTrialBalanceSheetReport(shopId string, accountGroup string, startDate t
 func MockBalanceSheetReport(shopId string, accountGroup string, endDate time.Time) *vfgl.BalanceSheetReport {
 
 	acc11010 := &vfgl.BalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "11010",
 			AccountName: "เงินสด - บัญชี 1",
 		},
@@ -137,7 +137,7 @@ func MockBalanceSheetReport(shopId string, accountGroup string, endDate time.Tim
 	}
 
 	acc12101 := &vfgl.BalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode:  "12101",
 			AccountName:  "เงินฝากธนาคาร บัญชี 1 (เงินล้าน)",
 			AccountGroup: "12000",
@@ -146,7 +146,7 @@ func MockBalanceSheetReport(shopId string, accountGroup string, endDate time.Tim
 	}
 
 	acc13010 := &vfgl.BalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode:  "13010",
 			AccountName:  "ลูกหนี้เงินกู้ - บัญชี 1 (เงินล้าน)",
 			AccountGroup: "13000",
@@ -159,7 +159,7 @@ func MockBalanceSheetReport(shopId string, accountGroup string, endDate time.Tim
 	assets = append(assets, *acc13010)
 
 	acc32010 := &vfgl.BalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode:  "32010",
 			AccountName:  "ทุน - เงินล้าน",
 			AccountGroup: "32000",
@@ -168,7 +168,7 @@ func MockBalanceSheetReport(shopId string, accountGroup string, endDate time.Tim
 	}
 
 	acc33070 := &vfgl.BalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "33070",
 			AccountName: "เงินสมทบกองทุน",
 		},
@@ -176,7 +176,7 @@ func MockBalanceSheetReport(shopId string, accountGroup string, endDate time.Tim
 	}
 
 	acc33060 := &vfgl.BalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "33060",
 			AccountName: "เงินประกันความเส่ียง",
 		},
@@ -184,7 +184,7 @@ func MockBalanceSheetReport(shopId string, accountGroup string, endDate time.Tim
 	}
 
 	acc33090 := &vfgl.BalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "33090",
 			AccountName: "ค่าดำเนินงาน/ค่าบริหารจัดการ",
 		},
@@ -192,7 +192,7 @@ func MockBalanceSheetReport(shopId string, accountGroup string, endDate time.Tim
 	}
 
 	acc33080 := &vfgl.BalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "33080",
 			AccountName: "เงินสวัสดิการ",
 		},
@@ -200,7 +200,7 @@ func MockBalanceSheetReport(shopId string, accountGroup string, endDate time.Tim
 	}
 
 	acc33050 := &vfgl.BalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "33050",
 			AccountName: "สาธารณะประโยชน์",
 		},
@@ -208,7 +208,7 @@ func MockBalanceSheetReport(shopId string, accountGroup string, endDate time.Tim
 	}
 
 	acc32050 := &vfgl.BalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "32050",
 			AccountName: "ทุน - อื่น",
 		},
@@ -216,7 +216,7 @@ func MockBalanceSheetReport(shopId string, accountGroup string, endDate time.Tim
 	}
 
 	acc34010 := &vfgl.BalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "34010",
 			AccountName: "กำไรสะสม (ขาดทุน) สะสม บัญชี 1",
 		},
@@ -224,7 +224,7 @@ func MockBalanceSheetReport(shopId string, accountGroup string, endDate time.Tim
 	}
 
 	acc35010 := &vfgl.BalanceSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "35010",
 			AccountName: "กำไร ( ขาดทุน ) บัญชี 1",
 		},
@@ -259,7 +259,7 @@ func MockBalanceSheetReport(shopId string, accountGroup string, endDate time.Tim
 func MockProfitAndLossSheetReport(shopId string, accountGroup string, startDate time.Time, endDate time.Time) *vfgl.ProfitAndLossSheetReport {
 
 	acc41010 := &vfgl.ProfitAndLossSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "41010",
 			AccountName: "รายได้ - ดอกเบี้ยเงินกู้ - บัญชี 1",
 		},
@@ -267,7 +267,7 @@ func MockProfitAndLossSheetReport(shopId string, accountGroup string, startDate 
 	}
 
 	acc45010 := &vfgl.ProfitAndLossSheetAccountDetail{
-		ChartOfAccount: vfgl.ChartOfAccount{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
 			AccountCode: "45010",
 			AccountName: "รายได้ - ดอกเบี้ยเงินฝากธนาคาร-บัญชี 1",
 		},

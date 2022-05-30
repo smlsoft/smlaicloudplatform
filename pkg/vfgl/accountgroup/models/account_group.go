@@ -75,3 +75,14 @@ type JournalPg struct {
 func (JournalPg) TableName() string {
 	return accountGroupTableName
 }
+
+type AccountGroupInfoResponse struct {
+	Success bool             `json:"success"`
+	Data    AccountGroupInfo `json:"data,omitempty"`
+}
+
+type AccountGroupPageResponse struct {
+	Success    bool                          `json:"success"`
+	Data       []AccountGroupInfo            `json:"data,omitempty"`
+	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
+}

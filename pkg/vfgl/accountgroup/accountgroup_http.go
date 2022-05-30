@@ -35,15 +35,25 @@ func NewAccountGroupHttp(ms *microservice.Microservice, cfg microservice.IConfig
 
 func (h AccountGroupHttp) RouteSetup() {
 
-	h.ms.POST("/gl/account-group/bulk", h.SaveBulk)
+	h.ms.POST("/gl/accountgroup/bulk", h.SaveBulk)
 
-	h.ms.GET("/gl/account-group", h.SearchAccountGroup)
-	h.ms.POST("/gl/account-group", h.CreateAccountGroup)
-	h.ms.GET("/gl/account-group/:id", h.InfoAccountGroup)
-	h.ms.PUT("/gl/account-group/:id", h.UpdateAccountGroup)
-	h.ms.DELETE("/gl/account-group/:id", h.DeleteAccountGroup)
+	h.ms.GET("/gl/accountgroup", h.SearchAccountGroup)
+	h.ms.POST("/gl/accountgroup", h.CreateAccountGroup)
+	h.ms.GET("/gl/accountgroup/:id", h.InfoAccountGroup)
+	h.ms.PUT("/gl/accountgroup/:id", h.UpdateAccountGroup)
+	h.ms.DELETE("/gl/accountgroup/:id", h.DeleteAccountGroup)
 }
 
+// Create Account Group godoc
+// @Summary		สร้างกลุ่มบัญชี
+// @Description สร้างกลุ่มบัญชี
+// @Tags		GL
+// @Param		AccountGroup  body      models.AccountGroup  true  "กลุ่มบัญชี"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /gl/accountgroup [post]
 func (h AccountGroupHttp) CreateAccountGroup(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
@@ -71,6 +81,17 @@ func (h AccountGroupHttp) CreateAccountGroup(ctx microservice.IContext) error {
 	return nil
 }
 
+// Update Account Group godoc
+// @Summary		แก้ไขกลุ่มบัญชี
+// @Description แก้ไขกลุ่มบัญชี
+// @Tags		GL
+// @Param		id  path      string  true  "ID"
+// @Param		Journal  body      models.AccountGroup  true  "กลุ่มบัญชี"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /gl/accountgroup/{id} [put]
 func (h AccountGroupHttp) UpdateAccountGroup(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -102,6 +123,16 @@ func (h AccountGroupHttp) UpdateAccountGroup(ctx microservice.IContext) error {
 	return nil
 }
 
+// Delete CAccount Group godoc
+// @Summary		ลบกลุ่มบัญชี
+// @Description ลบกลุ่มบัญชี
+// @Tags		GL
+// @Param		id  path      string  true  "ID"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /gl/accountgroup/{id} [delete]
 func (h AccountGroupHttp) DeleteAccountGroup(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -124,6 +155,16 @@ func (h AccountGroupHttp) DeleteAccountGroup(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Account Group Infomation godoc
+// @Summary		แสดงรายละเอียดกลุ่มบัญชี
+// @Description แสดงรายละเอียดกลุ่มบัญชี
+// @Tags		GL
+// @Param		id  path      string  true  "Id"
+// @Accept 		json
+// @Success		200	{object}	models.AccountGroupInfoResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /gl/accountgroup/{id} [get]
 func (h AccountGroupHttp) InfoAccountGroup(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -146,6 +187,18 @@ func (h AccountGroupHttp) InfoAccountGroup(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Account Group godoc
+// @Summary		แสดงรายการกลุ่มบัญชี
+// @Description แสดงรายการกลุ่มบัญชี
+// @Tags		GL
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Size"
+// @Accept 		json
+// @Success		200	{object}	models.AccountGroupPageResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /gl/accountgroup [get]
 func (h AccountGroupHttp) SearchAccountGroup(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -167,6 +220,16 @@ func (h AccountGroupHttp) SearchAccountGroup(ctx microservice.IContext) error {
 	return nil
 }
 
+// Create Account Group Bulk godoc
+// @Summary		นำเข้ากลุ่มบัญชี
+// @Description นำเข้ากลุ่มบัญชี
+// @Tags		GL
+// @Param		AccountGroup  body      []models.AccountGroup  true  "กลุ่มบัญชี"
+// @Accept 		json
+// @Success		201	{object}	common.BulkInsertResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /gl/chartofaccount/bulk [post]
 func (h AccountGroupHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()

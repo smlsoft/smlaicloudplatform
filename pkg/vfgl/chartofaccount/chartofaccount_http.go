@@ -121,7 +121,7 @@ func (h ChartOfAccountHttp) Create(ctx microservice.IContext) error {
 // @Tags		GL
 // @Param		id  path      string  true  "Id"
 // @Accept 		json
-// @Success		200	{object}	vfgl.ChartOfAccountInfo
+// @Success		200	{object}	vfgl.ChartOfAccountInfoResponse
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /gl/chartofaccount/{id} [get]

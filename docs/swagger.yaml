@@ -1,4 +1,60 @@
 definitions:
+  models.AccountGroup:
+    properties:
+      code:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+    required:
+    - code
+    - name1
+    type: object
+  models.AccountGroupInfo:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+    required:
+    - code
+    - name1
+    type: object
+  models.AccountGroupInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.AccountGroupInfo'
+      success:
+        type: boolean
+    type: object
+  models.AccountGroupPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.AccountGroupInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
   models.ApiResponse:
     properties:
       data: {}
@@ -64,6 +120,9 @@ definitions:
         type: integer
       parentguid:
         type: string
+    required:
+    - categoryguid
+    - name1
     type: object
   models.CategoryActivity:
     properties:
@@ -95,6 +154,9 @@ definitions:
         type: string
       updatedat:
         type: string
+    required:
+    - categoryguid
+    - name1
     type: object
   models.CategoryBulkReponse:
     properties:
@@ -161,6 +223,9 @@ definitions:
         type: integer
       parentguid:
         type: string
+    required:
+    - categoryguid
+    - name1
     type: object
   models.CategoryImportInfo:
     properties:
@@ -186,6 +251,9 @@ definitions:
         type: integer
       parentguid:
         type: string
+    required:
+    - categoryguid
+    - name1
     type: object
   models.CategoryImportPageResponse:
     properties:
@@ -220,6 +288,9 @@ definitions:
         type: integer
       parentguid:
         type: string
+    required:
+    - categoryguid
+    - name1
     type: object
   models.CategoryInfoResponse:
     properties:
@@ -818,6 +889,60 @@ definitions:
       name:
         type: string
     type: object
+  models.JournalBook:
+    properties:
+      code:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+    required:
+    - name1
+    type: object
+  models.JournalBookInfo:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+    required:
+    - name1
+    type: object
+  models.JournalBookInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.JournalBookInfo'
+      success:
+        type: boolean
+    type: object
+  models.JournalBookPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.JournalBookInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
   models.Member:
     properties:
       address:
@@ -1364,6 +1489,8 @@ definitions:
     properties:
       shopid:
         type: string
+    required:
+    - shopid
     type: object
   models.ShopUserInfo:
     properties:
@@ -1395,7 +1522,7 @@ definitions:
   models.UserLoginRequest:
     properties:
       password:
-        minLength: 6
+        minLength: 3
         type: string
       shopid:
         type: string
@@ -1411,7 +1538,11 @@ definitions:
       name:
         type: string
       username:
+        minLength: 3
         type: string
+    required:
+    - name
+    - username
     type: object
   models.UserProfileReponse:
     properties:
@@ -1425,12 +1556,13 @@ definitions:
       name:
         type: string
       password:
-        minLength: 6
+        minLength: 3
         type: string
       username:
         minLength: 3
         type: string
     required:
+    - name
     - password
     - username
     type: object
@@ -1970,6 +2102,10 @@ definitions:
       consolidateaccountcode:
         description: รหัสผังบัญชีกลาง
         type: string
+      parid:
+        type: string
+      shopid:
+        type: string
     type: object
   vfgl.BalanceSheetReport:
     properties:
@@ -2067,6 +2203,13 @@ definitions:
       guidfixed:
         type: string
     type: object
+  vfgl.ChartOfAccountInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/vfgl.ChartOfAccountInfo'
+      success:
+        type: boolean
+    type: object
   vfgl.ChartOfAccountPageResponse:
     properties:
       data:
@@ -2091,6 +2234,8 @@ definitions:
       amount:
         type: number
       batchId:
+        type: string
+      bookcode:
         type: string
       docdate:
         format: dateTime
@@ -2128,6 +2273,8 @@ definitions:
       amount:
         type: number
       batchId:
+        type: string
+      bookcode:
         type: string
       docdate:
         format: dateTime
@@ -2193,6 +2340,10 @@ definitions:
         type: number
       consolidateaccountcode:
         description: รหัสผังบัญชีกลาง
+        type: string
+      parid:
+        type: string
+      shopid:
         type: string
     type: object
   vfgl.ProfitAndLossSheetReport:
@@ -2279,6 +2430,10 @@ definitions:
       nextbalancedebitamount:
         description: ยอดสะสมเดบิต
         type: number
+      parid:
+        type: string
+      shopid:
+        type: string
     type: object
   vfgl.TrialBalanceSheetReport:
     properties:
@@ -2671,6 +2826,142 @@ paths:
       - AccessToken: []
       tags:
       - Employee
+  /gl/accountgroup:
+    get:
+      consumes:
+      - application/json
+      description: แสดงรายการกลุ่มบัญชี
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AccountGroupPageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: แสดงรายการกลุ่มบัญชี
+      tags:
+      - GL
+    post:
+      consumes:
+      - application/json
+      description: สร้างกลุ่มบัญชี
+      parameters:
+      - description: กลุ่มบัญชี
+        in: body
+        name: AccountGroup
+        required: true
+        schema:
+          $ref: '#/definitions/models.AccountGroup'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: สร้างกลุ่มบัญชี
+      tags:
+      - GL
+  /gl/accountgroup/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: ลบกลุ่มบัญชี
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: ลบกลุ่มบัญชี
+      tags:
+      - GL
+    get:
+      consumes:
+      - application/json
+      description: แสดงรายละเอียดกลุ่มบัญชี
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AccountGroupInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: แสดงรายละเอียดกลุ่มบัญชี
+      tags:
+      - GL
+    put:
+      consumes:
+      - application/json
+      description: แก้ไขกลุ่มบัญชี
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: กลุ่มบัญชี
+        in: body
+        name: Journal
+        required: true
+        schema:
+          $ref: '#/definitions/models.AccountGroup'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: แก้ไขกลุ่มบัญชี
+      tags:
+      - GL
   /gl/chartofaccount:
     get:
       consumes:
@@ -2767,7 +3058,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/vfgl.ChartOfAccountInfo'
+            $ref: '#/definitions/vfgl.ChartOfAccountInfoResponse'
         "401":
           description: Unauthorized
           schema:
@@ -2997,6 +3288,170 @@ paths:
       security:
       - AccessToken: []
       summary: นำเข้าข้อมูลรายวัน
+      tags:
+      - GL
+  /gl/journalbook:
+    get:
+      consumes:
+      - application/json
+      description: แสดงรายการสมุดรายวัน
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JournalBookPageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: แสดงรายการสมุดรายวัน
+      tags:
+      - GL
+    post:
+      consumes:
+      - application/json
+      description: สร้างสมุดรายวัน
+      parameters:
+      - description: สมุดรายวัน
+        in: body
+        name: JournalBook
+        required: true
+        schema:
+          $ref: '#/definitions/models.JournalBook'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: สร้างสมุดรายวัน
+      tags:
+      - GL
+  /gl/journalbook/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: ลบสมุดรายวัน
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: ลบสมุดรายวัน
+      tags:
+      - GL
+    get:
+      consumes:
+      - application/json
+      description: แสดงรายละเอียดสมุดรายวัน
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JournalBookInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: แสดงรายละเอียดสมุดรายวัน
+      tags:
+      - GL
+    put:
+      consumes:
+      - application/json
+      description: แก้ไขสมุดรายวัน
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: สมุดรายวัน
+        in: body
+        name: Journal
+        required: true
+        schema:
+          $ref: '#/definitions/models.JournalBook'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: แก้ไขสมุดรายวัน
+      tags:
+      - GL
+  /gl/journalbook/bulk:
+    post:
+      consumes:
+      - application/json
+      description: นำเข้าสมุดรายวัน
+      parameters:
+      - description: สมุดรายวัน
+        in: body
+        name: JournalBook
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.JournalBook'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkInsertResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: นำเข้าสมุดรายวัน
       tags:
       - GL
   /gl/report/balancesheet:

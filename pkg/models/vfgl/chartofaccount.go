@@ -84,13 +84,20 @@ type ChartOfAccountInfoResponse struct {
 type ChartOfAccountPG struct {
 	models.ShopIdentity      `gorm:"embedded;"`
 	models.PartitionIdentity `gorm:"embedded;"`
-	AccountCode              string `json:"accountcode" gorm:"column:accountcode;primaryKey"`
-	AccountName              string `json:"accountname" gorm:"column:accountname"`
-	AccountCategory          int16  `json:"accountcategory" gorm:"column:accountcategory"`
-	AccountBalanceType       int16  `json:"accountbalancetype" gorm:"column:accountbalancetype"`
-	AccountGroup             string `json:"accountgroup" gorm:"column:accountgroup"`
-	AccountLevel             int16  `json:"accountlevel" gorm:"column:accountlevel"`
-	ConsolidateAccountCode   string `json:"consolidateaccountcode" gorm:"column:consolidateaccountcode"`
+	// รหัสผังบัญชี
+	AccountCode string `json:"accountcode" gorm:"column:accountcode;primaryKey"`
+	// ชื่อบัญชี
+	AccountName string `json:"accountname" gorm:"column:accountname"`
+	// หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย
+	AccountCategory int16 `json:"accountcategory" gorm:"column:accountcategory"`
+	// ด้านบัญชี 1=เดบิต,2=เครดิต
+	AccountBalanceType int16 `json:"accountbalancetype" gorm:"column:accountbalancetype"`
+	// กลุ่มบัญชี
+	AccountGroup string `json:"accountgroup" gorm:"column:accountgroup"`
+	// ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ
+	AccountLevel int16 `json:"accountlevel" gorm:"column:accountlevel"`
+	// รหัสผังบัญชีกลาง
+	ConsolidateAccountCode string `json:"consolidateaccountcode" gorm:"column:consolidateaccountcode"`
 }
 
 func (ChartOfAccountPG) TableName() string {
