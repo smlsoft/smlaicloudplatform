@@ -889,6 +889,34 @@ definitions:
       name:
         type: string
     type: object
+  models.Journal:
+    properties:
+      accountdescription:
+        type: string
+      accountgroup:
+        type: string
+      accountperiod:
+        type: integer
+      accountyear:
+        type: integer
+      amount:
+        type: number
+      batchId:
+        type: string
+      bookcode:
+        type: string
+      docdate:
+        format: dateTime
+        type: string
+      docno:
+        type: string
+      journaldetail:
+        items:
+          $ref: '#/definitions/models.JournalDetail'
+        type: array
+      parid:
+        type: string
+    type: object
   models.JournalBook:
     properties:
       code:
@@ -937,6 +965,65 @@ definitions:
       data:
         items:
           $ref: '#/definitions/models.JournalBookInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  models.JournalDetail:
+    properties:
+      accountcode:
+        type: string
+      accountname:
+        type: string
+      creditamount:
+        type: number
+      debitamount:
+        type: number
+    type: object
+  models.JournalInfo:
+    properties:
+      accountdescription:
+        type: string
+      accountgroup:
+        type: string
+      accountperiod:
+        type: integer
+      accountyear:
+        type: integer
+      amount:
+        type: number
+      batchId:
+        type: string
+      bookcode:
+        type: string
+      docdate:
+        format: dateTime
+        type: string
+      docno:
+        type: string
+      guidfixed:
+        type: string
+      journaldetail:
+        items:
+          $ref: '#/definitions/models.JournalDetail'
+        type: array
+      parid:
+        type: string
+    type: object
+  models.JournalInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.JournalInfo'
+      success:
+        type: boolean
+    type: object
+  models.JournalPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.JournalInfo'
         type: array
       pagination:
         $ref: '#/definitions/models.PaginationDataResponse'
@@ -2221,93 +2308,6 @@ definitions:
       success:
         type: boolean
     type: object
-  vfgl.Journal:
-    properties:
-      accountdescription:
-        type: string
-      accountgroup:
-        type: string
-      accountperiod:
-        type: integer
-      accountyear:
-        type: integer
-      amount:
-        type: number
-      batchId:
-        type: string
-      bookcode:
-        type: string
-      docdate:
-        format: dateTime
-        type: string
-      docno:
-        type: string
-      journaldetail:
-        items:
-          $ref: '#/definitions/vfgl.JournalDetail'
-        type: array
-      parid:
-        type: string
-    type: object
-  vfgl.JournalDetail:
-    properties:
-      accountcode:
-        type: string
-      accountname:
-        type: string
-      creditamount:
-        type: number
-      debitamount:
-        type: number
-    type: object
-  vfgl.JournalInfo:
-    properties:
-      accountdescription:
-        type: string
-      accountgroup:
-        type: string
-      accountperiod:
-        type: integer
-      accountyear:
-        type: integer
-      amount:
-        type: number
-      batchId:
-        type: string
-      bookcode:
-        type: string
-      docdate:
-        format: dateTime
-        type: string
-      docno:
-        type: string
-      guidfixed:
-        type: string
-      journaldetail:
-        items:
-          $ref: '#/definitions/vfgl.JournalDetail'
-        type: array
-      parid:
-        type: string
-    type: object
-  vfgl.JournalInfoResponse:
-    properties:
-      data:
-        $ref: '#/definitions/vfgl.JournalInfo'
-      success:
-        type: boolean
-    type: object
-  vfgl.JournalPageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/vfgl.JournalInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
   vfgl.LostAndProfitSheetReportResponse:
     properties:
       data:
@@ -3148,7 +3148,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/vfgl.JournalPageResponse'
+            $ref: '#/definitions/models.JournalPageResponse'
         "401":
           description: Unauthorized
           schema:
@@ -3168,7 +3168,7 @@ paths:
         name: Journal
         required: true
         schema:
-          $ref: '#/definitions/vfgl.Journal'
+          $ref: '#/definitions/models.Journal'
       responses:
         "200":
           description: OK
@@ -3222,7 +3222,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/vfgl.JournalInfoResponse'
+            $ref: '#/definitions/models.JournalInfoResponse'
         "401":
           description: Unauthorized
           schema:
@@ -3247,7 +3247,7 @@ paths:
         name: Journal
         required: true
         schema:
-          $ref: '#/definitions/vfgl.Journal'
+          $ref: '#/definitions/models.Journal'
       responses:
         "200":
           description: OK
@@ -3274,7 +3274,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/vfgl.Journal'
+            $ref: '#/definitions/models.Journal'
           type: array
       responses:
         "201":

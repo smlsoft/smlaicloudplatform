@@ -1,4 +1,4 @@
-package vfgl
+package models
 
 import (
 	"smlcloudplatform/pkg/models"
