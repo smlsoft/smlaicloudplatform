@@ -2,7 +2,7 @@ package utils
 
 import "strconv"
 
-const RequestSearchMaxPage = 1
+const RequestSearchMaxPage = 2147483647
 const RequestSearchMinPage = 1
 const RequestSearchMaxLimit = 1000
 const RequestSearchMinLimit = 1
