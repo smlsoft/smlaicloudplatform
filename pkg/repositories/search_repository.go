@@ -3,6 +3,7 @@ package repositories
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models/restaurant"
+	"strings"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
@@ -32,7 +33,6 @@ func (repo SearchRepository[T]) FindPage(shopID string, colNameSearch []string, 
 	for _, colName := range colNameSearch {
 		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
 			Pattern: ".*" + q + ".*",
-			Options: "",
 		}}})
 	}
 
@@ -48,4 +48,31 @@ func (repo SearchRepository[T]) FindPage(shopID string, colNameSearch []string, 
 	}
 
 	return docList, pagination, nil
+}
+
+func (SearchRepository[T]) SearchTextFilter(colNameSearch []string, q string) primitive.M {
+	prepareText := strings.Trim(q, " ")
+	textSearchList := strings.Split(prepareText, " ")
+
+	print(textSearchList)
+
+	colFilter := []interface{}{}
+	for _, col := range colNameSearch {
+		fieldFilter := []interface{}{}
+		for _, textSearch := range textSearchList {
+			fieldFilter = append(fieldFilter, bson.M{
+				col: primitive.Regex{
+					Pattern: ".*" + textSearch + ".*",
+				},
+			})
+		}
+
+		colFilter = append(colFilter, bson.M{"$or": fieldFilter})
+
+	}
+
+	return bson.M{
+		"$and": colFilter,
+	}
+
 }
