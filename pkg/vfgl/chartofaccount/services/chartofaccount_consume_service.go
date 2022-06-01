@@ -31,8 +31,7 @@ func (svc *ChartOfAccountConsumeService) Create(doc vfgl.ChartOfAccountDoc) erro
 		return err
 	}
 
-	tmpDoc := vfgl.ChartOfAccountPG{}
-	err = json.Unmarshal([]byte(tmpJsonDoc), &tmpDoc)
+	err = json.Unmarshal([]byte(tmpJsonDoc), &pgDoc)
 	if err != nil {
 		return err
 	}
@@ -53,8 +52,7 @@ func (svc *ChartOfAccountConsumeService) Update(shopID string, accountCode strin
 		return err
 	}
 
-	tmpDoc := vfgl.ChartOfAccountPG{}
-	err = json.Unmarshal([]byte(tmpJsonDoc), &tmpDoc)
+	err = json.Unmarshal([]byte(tmpJsonDoc), &pgDoc)
 	if err != nil {
 		return err
 	}

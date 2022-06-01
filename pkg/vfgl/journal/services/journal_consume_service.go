@@ -31,8 +31,7 @@ func (svc *JournalConsumeService) Create(doc models.JournalDoc) error {
 		return err
 	}
 
-	tmpDoc := models.JournalPg{}
-	err = json.Unmarshal([]byte(tmpJsonDoc), &tmpDoc)
+	err = json.Unmarshal([]byte(tmpJsonDoc), &pgDoc)
 	if err != nil {
 		return err
 	}
@@ -53,8 +52,7 @@ func (svc *JournalConsumeService) Update(shopID string, docNo string, doc models
 		return err
 	}
 
-	tmpDoc := models.JournalPg{}
-	err = json.Unmarshal([]byte(tmpJsonDoc), &tmpDoc)
+	err = json.Unmarshal([]byte(tmpJsonDoc), &pgDoc)
 	if err != nil {
 		return err
 	}
