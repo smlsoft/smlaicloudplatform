@@ -3,10 +3,8 @@ package repositories_test
 import (
 	"database/sql"
 	"regexp"
-	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/vfgl"
-	"smlcloudplatform/pkg/vfgl/chartofaccount/repositories"
 	"testing"
 
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
@@ -14,44 +12,14 @@ import (
 	"gorm.io/gorm"
 )
 
-// var repo repositories.ChartOfAccountPgRepository
-
-// func init() {
-// 	persisterConfig := mock.NewPersisterPostgresqlConfig()
-// 	pst := microservice.NewPersister(persisterConfig)
-// 	repo = repositories.NewChartOfAccountPgRepository(pst)
-// }
-
-// func TestChartOfAccountRepositoryCreate(t *testing.T) {
-
-// 	assert := assert.New(t)
-// 	assert.NotNil(repo)
-
-// 	give := &vfgl.ChartOfAccountPG{
-// 		ShopIdentity: models.ShopIdentity{
-// 			ShopID: "SHOPTEST",
-// 		},
-// 		AccountCode: "10000",
-// 		AccountName: "เงินสด",
-// 	}
-
-// 	err := repo.Create(*give)
-// 	assert.Nil(err)
-
-// 	get, err := repo.Get("10000")
-// 	assert.NotNil(get)
-
-// }
-
-type chartOfAccountRepositoryTestSuite struct {
+type v2Suite struct {
 	db             *gorm.DB
-	repo           repositories.ChartOfAccountPgRepository
 	mock           sqlmock.Sqlmock
 	chartofaccount vfgl.ChartOfAccountPG
 }
 
-func TestChartOfAccountRepositoryCreate(t *testing.T) {
-	s := &chartOfAccountRepositoryTestSuite{}
+func TestCreateChartOfAccount(t *testing.T) {
+	s := &v2Suite{}
 	var (
 		db  *sql.DB
 		err error
@@ -72,7 +40,6 @@ func TestChartOfAccountRepositoryCreate(t *testing.T) {
 		Conn:                 db,
 		PreferSimpleProtocol: true,
 	})
-
 	s.db, err = gorm.Open(dialector, &gorm.Config{})
 	if err != nil {
 		t.Errorf("Failed to open gorm v2 db, got error: %v", err)
@@ -81,8 +48,6 @@ func TestChartOfAccountRepositoryCreate(t *testing.T) {
 	if s.db == nil {
 		t.Error("gorm db is null")
 	}
-
-	s.repo = repositories.NewChartOfAccountPgRepository(microservice.NewPersisterWithDB(s.db))
 
 	s.chartofaccount = vfgl.ChartOfAccountPG{
 		ShopIdentity: models.ShopIdentity{
@@ -123,7 +88,7 @@ func TestChartOfAccountRepositoryCreate(t *testing.T) {
 
 	s.mock.ExpectCommit()
 
-	if err = s.repo.Create(s.chartofaccount); err != nil {
+	if err = s.db.Create(&s.chartofaccount).Error; err != nil {
 		t.Errorf("Failed to insert to gorm db, got error: %v", err)
 		t.FailNow()
 	}

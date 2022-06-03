@@ -10,7 +10,7 @@ type IChartOfAccountPgRepository interface {
 	Create(doc vfgl.ChartOfAccountPG) error
 	Update(shopID string, accountCode string, doc vfgl.ChartOfAccountPG) error
 	Delete(shopID string, accountCode string) error
-	Get(accountCode string) (*vfgl.ChartOfAccountPG, error)
+	Get(shopID string, accountCode string) (*vfgl.ChartOfAccountPG, error)
 }
 
 type ChartOfAccountPgRepository struct {
@@ -63,9 +63,9 @@ func (repo ChartOfAccountPgRepository) Delete(shopID string, accountCode string)
 	return nil
 }
 
-func (repo ChartOfAccountPgRepository) Get(accountCode string) (*vfgl.ChartOfAccountPG, error) {
+func (repo ChartOfAccountPgRepository) Get(shopID string, accountCode string) (*vfgl.ChartOfAccountPG, error) {
 	var result vfgl.ChartOfAccountPG
-	_, err := repo.pst.FindOne(result, "accountcode", accountCode)
+	_, err := repo.pst.Where(result, "shopid=? AND accountcode=?", shopID, accountCode)
 	if err != nil {
 		return nil, err
 	}

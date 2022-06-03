@@ -67,6 +67,13 @@ func NewPersister(config IPersisterConfig) *Persister {
 	return pst
 }
 
+func NewPersisterWithDB(db *gorm.DB) *Persister {
+	pst := &Persister{
+		db: db,
+	}
+	return pst
+}
+
 func (pst *Persister) getConnectionString() (string, error) {
 	cfg := pst.config
 

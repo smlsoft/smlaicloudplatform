@@ -33,7 +33,7 @@ func (m *MockChartOfAccountRepository) Delete(shopID string, accountCode string)
 	return ret.Error(1)
 }
 
-func (m *MockChartOfAccountRepository) Get(accountCode string) (*vfgl.ChartOfAccountPG, error) {
+func (m *MockChartOfAccountRepository) Get(shopID string, accountCode string) (*vfgl.ChartOfAccountPG, error) {
 	var charts []vfgl.ChartOfAccountPG
 
 	charts = append(charts, vfgl.ChartOfAccountPG{})
