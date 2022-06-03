@@ -256,6 +256,57 @@ func MockBalanceSheetReport(shopId string, accountGroup string, endDate time.Tim
 	return reportMock
 }
 
+func MockBalanceSheetDetailReport() []vfgl.BalanceSheetAccountDetail {
+
+	var details []vfgl.BalanceSheetAccountDetail
+	details = append(details, vfgl.BalanceSheetAccountDetail{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
+			AccountCode:     "12101",
+			AccountName:     "เงินฝากธนาคาร บัญชี 1 (เงินล้าน)",
+			AccountCategory: 1,
+		},
+		Amount: 10000,
+	})
+
+	details = append(details, vfgl.BalanceSheetAccountDetail{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
+			AccountCode:     "32010",
+			AccountName:     "ทุน - เงินล้าน",
+			AccountCategory: 3,
+		},
+		Amount: 30000,
+	})
+
+	details = append(details, vfgl.BalanceSheetAccountDetail{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
+			AccountCode:     "13010",
+			AccountName:     "ลูกหนี้เงินกู้ - บัญชี 1 (เงินล้าน)",
+			AccountCategory: 1,
+		},
+		Amount: 20000,
+	})
+
+	details = append(details, vfgl.BalanceSheetAccountDetail{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
+			AccountCode:     "11010",
+			AccountName:     "เงินสด - บัญชี 1",
+			AccountCategory: 1,
+		},
+		Amount: 20,
+	})
+
+	details = append(details, vfgl.BalanceSheetAccountDetail{
+		ChartOfAccountPG: vfgl.ChartOfAccountPG{
+			AccountCode:     "43020",
+			AccountName:     "รายได้ - ค่าธรรมเนียม-ขอกู้",
+			AccountCategory: 4,
+		},
+		Amount: 20,
+	})
+
+	return details
+}
+
 func MockProfitAndLossSheetReport(shopId string, accountGroup string, startDate time.Time, endDate time.Time) *vfgl.ProfitAndLossSheetReport {
 
 	acc41010 := &vfgl.ProfitAndLossSheetAccountDetail{
