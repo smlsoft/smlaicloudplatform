@@ -33,11 +33,11 @@ func NewZoneDesignHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 
 func (h ZoneDesignHttp) RouteSetup() {
 
-	h.ms.GET("/zonedesign", h.SearchZoneDesign)
-	h.ms.POST("/zonedesign", h.CreateZoneDesign)
-	h.ms.GET("/zonedesign/:id", h.InfoZoneDesign)
-	h.ms.PUT("/zonedesign/:id", h.UpdateZoneDesign)
-	h.ms.DELETE("/zonedesign/:id", h.DeleteZoneDesign)
+	h.ms.GET("/zone-design", h.SearchZoneDesign)
+	h.ms.POST("/zone-design", h.CreateZoneDesign)
+	h.ms.GET("/zone-design/:id", h.InfoZoneDesign)
+	h.ms.PUT("/zone-design/:id", h.UpdateZoneDesign)
+	h.ms.DELETE("/zone-design/:id", h.DeleteZoneDesign)
 }
 
 func (h ZoneDesignHttp) CreateZoneDesign(ctx microservice.IContext) error {

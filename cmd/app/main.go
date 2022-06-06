@@ -22,6 +22,7 @@ import (
 	"smlcloudplatform/pkg/api/shop/employee"
 	"smlcloudplatform/pkg/api/syncdata"
 	"smlcloudplatform/pkg/api/tools"
+	"smlcloudplatform/pkg/shopdesign/zonedesign"
 	"smlcloudplatform/pkg/vfgl/journal"
 
 	_ "net/http/pprof"
@@ -116,6 +117,9 @@ func main() {
 
 	journalhttp := journal.NewJournalHttp(ms, cfg)
 	journalhttp.RouteSetup()
+
+	zonedesignhttp := zonedesign.NewZoneDesignHttp(ms, cfg)
+	zonedesignhttp.RouteSetup()
 
 	toolSvc := tools.NewToolsService(ms, cfg)
 
