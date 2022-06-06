@@ -4,13 +4,14 @@ import (
 	"database/sql"
 	"regexp"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/mocktest"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/vfgl"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/repositories"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -52,35 +53,43 @@ type chartOfAccountRepositoryTestSuite struct {
 
 func TestChartOfAccountRepositoryCreate(t *testing.T) {
 	s := &chartOfAccountRepositoryTestSuite{}
+
 	var (
 		db  *sql.DB
 		err error
 	)
 
-	db, s.mock, err = sqlmock.New()
+	// move to /pgk/mocktest/postgreqldb.go
+	// db, s.mock, err = sqlmock.New()
+	// if err != nil {
+	// 	t.Errorf("Failed to open mock sql db, got error: %v", err)
+	// }
+
+	// if db == nil {
+	// 	t.Error("mock db is null")
+	// }
+
+	// dialector := postgres.New(postgres.Config{
+	// 	DSN:                  "sqlmock_db_0",
+	// 	DriverName:           "postgres",
+	// 	Conn:                 db,
+	// 	PreferSimpleProtocol: true,
+	// })
+
+	// s.db, err = gorm.Open(dialector, &gorm.Config{})
+	// if err != nil {
+	// 	t.Errorf("Failed to open gorm v2 db, got error: %v", err)
+	// }
+
+	// if s.db == nil {
+	// 	t.Error("gorm db is null")
+	// }
+
+	db, s.db, s.mock, err = mocktest.MockPostgreSQL()
 	if err != nil {
 		t.Errorf("Failed to open mock sql db, got error: %v", err)
 	}
-
-	if db == nil {
-		t.Error("mock db is null")
-	}
-
-	dialector := postgres.New(postgres.Config{
-		DSN:                  "sqlmock_db_0",
-		DriverName:           "postgres",
-		Conn:                 db,
-		PreferSimpleProtocol: true,
-	})
-
-	s.db, err = gorm.Open(dialector, &gorm.Config{})
-	if err != nil {
-		t.Errorf("Failed to open gorm v2 db, got error: %v", err)
-	}
-
-	if s.db == nil {
-		t.Error("gorm db is null")
-	}
+	defer db.Close()
 
 	s.repo = repositories.NewChartOfAccountPgRepository(microservice.NewPersisterWithDB(s.db))
 
@@ -99,8 +108,6 @@ func TestChartOfAccountRepositoryCreate(t *testing.T) {
 		AccountLevel:           0,
 		ConsolidateAccountCode: "",
 	}
-
-	defer db.Close()
 
 	s.mock.MatchExpectationsInOrder(false)
 	s.mock.ExpectBegin()
@@ -125,6 +132,129 @@ func TestChartOfAccountRepositoryCreate(t *testing.T) {
 
 	if err = s.repo.Create(s.chartofaccount); err != nil {
 		t.Errorf("Failed to insert to gorm db, got error: %v", err)
+		t.FailNow()
+	}
+
+	err = s.mock.ExpectationsWereMet()
+	if err != nil {
+		t.Errorf("Failed to meet expectations, got error: %v", err)
+	}
+}
+
+func TestChartOfAccountRepositoryGetByShopIDAndAccountCode(t *testing.T) {
+	s := &chartOfAccountRepositoryTestSuite{}
+
+	var (
+		db  *sql.DB
+		err error
+	)
+	db, s.db, s.mock, err = mocktest.MockPostgreSQL()
+	if err != nil {
+		t.Errorf("Failed to open mock sql db, got error: %v", err)
+	}
+	defer db.Close()
+
+	s.repo = repositories.NewChartOfAccountPgRepository(microservice.NewPersisterWithDB(s.db))
+
+	s.chartofaccount = vfgl.ChartOfAccountPG{
+		ShopIdentity: models.ShopIdentity{
+			ShopID: "TESTSHOP",
+		},
+		PartitionIdentity: models.PartitionIdentity{
+			ParID: "",
+		},
+		AccountCode:            "0001",
+		AccountName:            "TEST",
+		AccountCategory:        0,
+		AccountBalanceType:     0,
+		AccountGroup:           "",
+		AccountLevel:           0,
+		ConsolidateAccountCode: "",
+	}
+
+	colums := []string{"shopid", "parid", "accountcode", "accountname", "accountcategory", "accountbalancetype", "accountgroup", "accountlevel", "consolidateaccountcode"}
+	rows := sqlmock.NewRows(colums).
+		AddRow(
+			s.chartofaccount.ShopIdentity.ShopID,
+			s.chartofaccount.ParID,
+			s.chartofaccount.AccountCode,
+			s.chartofaccount.AccountName,
+			s.chartofaccount.AccountCategory,
+			s.chartofaccount.AccountBalanceType,
+			s.chartofaccount.AccountGroup,
+			s.chartofaccount.AccountLevel,
+			s.chartofaccount.ConsolidateAccountCode,
+		)
+
+	s.mock.MatchExpectationsInOrder(false)
+	//s.mock.ExpectBegin()
+
+	s.mock.ExpectQuery(
+		regexp.QuoteMeta(`SELECT * FROM "chartofaccounts" WHERE shopid=$1 AND accountcode=$2`)).
+		WithArgs(s.chartofaccount.ShopID, s.chartofaccount.AccountCode).
+		WillReturnRows(rows)
+
+	get, err := s.repo.Get(s.chartofaccount.ShopID, s.chartofaccount.AccountCode)
+	if err != nil {
+		t.Errorf("Failed to insert to gorm db, got error: %v", err)
+		t.FailNow()
+	}
+
+	assert.Equal(t, get, &s.chartofaccount, "Failed get data should be equal")
+
+	err = s.mock.ExpectationsWereMet()
+	if err != nil {
+		t.Errorf("Failed to meet expectations, got error: %v", err)
+	}
+}
+
+func TestChartOfAccountRepositoryGetByShopIDAndAccountCodeAssertNotFoundData(t *testing.T) {
+	s := &chartOfAccountRepositoryTestSuite{}
+
+	var (
+		db  *sql.DB
+		err error
+	)
+	db, s.db, s.mock, err = mocktest.MockPostgreSQL()
+	if err != nil {
+		t.Errorf("Failed to open mock sql db, got error: %v", err)
+	}
+	defer db.Close()
+
+	s.repo = repositories.NewChartOfAccountPgRepository(microservice.NewPersisterWithDB(s.db))
+
+	s.chartofaccount = vfgl.ChartOfAccountPG{
+		ShopIdentity: models.ShopIdentity{
+			ShopID: "TESTSHOP",
+		},
+		PartitionIdentity: models.PartitionIdentity{
+			ParID: "",
+		},
+		AccountCode:            "0001",
+		AccountName:            "TEST",
+		AccountCategory:        0,
+		AccountBalanceType:     0,
+		AccountGroup:           "",
+		AccountLevel:           0,
+		ConsolidateAccountCode: "",
+	}
+
+	// colums := []string{"shopid", "parid", "accountcode", "accountname", "accountcategory", "accountbalancetype", "accountgroup", "accountlevel", "consolidateaccountcode"}
+	// rows := sqlmock.NewRows(colums)
+
+	s.mock.MatchExpectationsInOrder(false)
+	//s.mock.ExpectBegin()
+
+	s.mock.ExpectQuery(
+		regexp.QuoteMeta(`SELECT * FROM "chartofaccounts" WHERE shopid=$1 AND accountcode=$2`)).
+		WithArgs(s.chartofaccount.ShopID, s.chartofaccount.AccountCode).
+		WillReturnError(gorm.ErrRecordNotFound)
+		//WillReturnRows(rows)
+
+	get, err := s.repo.Get(s.chartofaccount.ShopID, s.chartofaccount.AccountCode)
+	assert.NotNil(t, err, "Failed to assert not found record")
+	if get != nil {
+		t.Errorf("Failed on Get Blank Data from gorm db, got Data: %v", get)
 		t.FailNow()
 	}
 

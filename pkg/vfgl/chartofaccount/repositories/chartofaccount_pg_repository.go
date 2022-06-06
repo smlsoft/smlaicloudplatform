@@ -65,9 +65,10 @@ func (repo ChartOfAccountPgRepository) Delete(shopID string, accountCode string)
 
 func (repo ChartOfAccountPgRepository) Get(shopID string, accountCode string) (*vfgl.ChartOfAccountPG, error) {
 	var result vfgl.ChartOfAccountPG
-	_, err := repo.pst.Where(result, "shopid=? AND accountcode=?", shopID, accountCode)
+	_, err := repo.pst.First(&result, "shopid=? AND accountcode=?", shopID, accountCode)
 	if err != nil {
 		return nil, err
 	}
+
 	return &result, nil
 }
