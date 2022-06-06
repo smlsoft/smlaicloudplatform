@@ -47,7 +47,7 @@ func StartJournalComsumeCreated(ms *microservice.Microservice, cfg microservice.
 		repo := repositories.NewJournalPgRepository(pst)
 		svc := services.NewJournalConsumeService(repo)
 
-		err = svc.Create(doc)
+		err = svc.UpSert(doc.ShopID, doc.DocNo, doc)
 
 		if err != nil {
 			ms.Logger.Errorf(moduleName, err.Error())
@@ -85,7 +85,7 @@ func StartJournalComsumeUpdated(ms *microservice.Microservice, cfg microservice.
 		repo := repositories.NewJournalPgRepository(pst)
 		svc := services.NewJournalConsumeService(repo)
 
-		err = svc.Update(doc.ShopID, doc.DocNo, doc)
+		err = svc.UpSert(doc.ShopID, doc.DocNo, doc)
 
 		if err != nil {
 			return err

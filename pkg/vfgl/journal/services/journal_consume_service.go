@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"smlcloudplatform/pkg/vfgl/journal/models"
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
+
+	"gorm.io/gorm"
 )
 
 type IJournalConsumeService interface {
@@ -11,6 +13,7 @@ type IJournalConsumeService interface {
 	Update(shopID string, docNo string, doc models.JournalDoc) error
 	Delete(shopID string, guid string) error
 	SaveInBatch(docList []models.JournalDoc) error
+	UpSert(shopID string, docNo string, doc models.JournalDoc) error
 }
 
 type JournalConsumeService struct {
@@ -93,6 +96,49 @@ func (svc *JournalConsumeService) SaveInBatch(docList []models.JournalDoc) error
 	err := svc.repo.CreateInBatch(pgDocList)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (svc *JournalConsumeService) UpSert(shopID string, docNo string, doc models.JournalDoc) error {
+
+	docPg := models.JournalPg{}
+
+	tmpJsonDoc, err := json.Marshal(doc)
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal([]byte(tmpJsonDoc), &docPg)
+	if err != nil {
+		return err
+	}
+
+	data, err := svc.repo.Get(shopID, docNo)
+	if err == gorm.ErrRecordNotFound {
+		if err = svc.Create(doc); err != nil {
+			return err
+		}
+	} else if data != nil {
+
+		data.JournalBody = doc.JournalBody
+
+		// check detail
+		for tmpIdx, tmp := range *data.AccountBook {
+			for detailIdx, detail := range *docPg.AccountBook {
+				if tmpIdx == detailIdx {
+					detail.AccountCode = tmp.AccountCode
+					detail.AccountName = tmp.AccountName
+					detail.CreditAmount = tmp.CreditAmount
+					detail.DebitAmount = tmp.CreditAmount
+					detail.ID = tmp.ID
+				}
+			}
+		}
+
+		if err = svc.repo.Update(shopID, doc.DocNo, *data); err != nil {
+			return err
+		}
 	}
 
 	return nil

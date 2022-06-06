@@ -2,6 +2,7 @@ package migration
 
 import (
 	"smlcloudplatform/internal/microservice"
+	vfgl "smlcloudplatform/pkg/vfgl/journal/models"
 )
 
 func StartMigrateModel(ms *microservice.Microservice, cfg microservice.IConfig) error {
@@ -17,22 +18,22 @@ func StartMigrateModel(ms *microservice.Microservice, cfg microservice.IConfig) 
 	// pst.DropTable(vfgl.JournalPg{}, vfgl.JournalDetailPg{})
 
 	pst.AutoMigrate(
-	// &saleinvoice.SaleInvoiceTable{},
-	// &saleinvoice.SaleInvoiceDetailTable{},
-	// &models.InventoryImage{},
-	// &models.InventoryTag{},
+		// &saleinvoice.SaleInvoiceTable{},
+		// &saleinvoice.SaleInvoiceDetailTable{},
+		// &models.InventoryImage{},
+		// &models.InventoryTag{},
 
-	// &models.CategoryData{},
+		// &models.CategoryData{},
 
-	// &models.InventoryData{},
-	// &models.InventoryOption{},
-	// &models.Option{},
-	// &models.Choice{},
-	// &models.InventoryIndex{},
-	// models.Trans{},
-	// models.TransItemDetail{},
-	// vfgl.JournalPg{},
-	// vfgl.JournalDetailPg{},
+		// &models.InventoryData{},
+		// &models.InventoryOption{},
+		// &models.Option{},
+		// &models.Choice{},
+		// &models.InventoryIndex{},
+		// models.Trans{},
+		// models.TransItemDetail{},
+		vfgl.JournalPg{},
+		vfgl.JournalDetailPg{},
 	)
 
 	// pst.AutoMigrate()

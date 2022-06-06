@@ -33,17 +33,26 @@ func (m *MockJournalRepsitory) Delete(shopID string, docNo string) error {
 	return ret.Error(0)
 }
 
+func (m *MockJournalRepsitory) Get(shopID string, docNo string) (*models.JournalPg, error) {
+	ret := m.Called(shopID, docNo)
+	return ret.Get(0).(*models.JournalPg), ret.Error(1)
+}
+
 func TestJournalConsumeServiceCreated(t *testing.T) {
 
 	get := models.JournalPg{
-		Docno: "0001",
+		JournalBody: models.JournalBody{
+			DocNo: "0001",
+		},
 	}
 
 	give := models.JournalDoc{
 		JournalData: models.JournalData{
 			JournalInfo: models.JournalInfo{
 				Journal: models.Journal{
-					DocNo: "0001",
+					JournalBody: models.JournalBody{
+						DocNo: "0001",
+					},
 				},
 			},
 		},
@@ -60,14 +69,18 @@ func TestJournalConsumeServiceCreated(t *testing.T) {
 func TestJournalConsumeServiceUpdate(t *testing.T) {
 
 	get := models.JournalPg{
-		Docno: "0001",
+		JournalBody: models.JournalBody{
+			DocNo: "0001",
+		},
 	}
 
 	give := models.JournalDoc{
 		JournalData: models.JournalData{
 			JournalInfo: models.JournalInfo{
 				Journal: models.Journal{
-					DocNo: "0001",
+					JournalBody: models.JournalBody{
+						DocNo: "0001",
+					},
 				},
 			},
 		},

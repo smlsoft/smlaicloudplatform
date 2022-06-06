@@ -65,14 +65,14 @@ func (AccountGroupDeleteActivity) CollectionName() string {
 }
 
 // Postgresql model
-type JournalPg struct {
+type AccountGroupPg struct {
 	models.Identity          `gorm:"embedded;"`
 	models.PartitionIdentity `gorm:"embedded;"`
 	Code                     string `json:"code" gorm:"column:code;primaryKey"`
 	Name1                    string `json:"name1" gorm:"column:name1"`
 }
 
-func (JournalPg) TableName() string {
+func (AccountGroup) TableName() string {
 	return accountGroupTableName
 }
 
