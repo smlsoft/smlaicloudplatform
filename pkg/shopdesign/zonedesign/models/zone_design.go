@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const zoneDesignCollectionName = "ZoneDesigns"
+const zoneDesignCollectionName = "zoneDesigns"
 
 type ZoneDesign struct {
 	Code        string        `json:"code" bson:"code"`
