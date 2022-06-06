@@ -5,22 +5,28 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 const journalCollectionName = "journals"
 
-type Journal struct {
+type JournalBody struct {
 	models.PartitionIdentity `bson:"inline"`
-	BatchID                  string          `json:"batchId" bson:"batch"`
-	DocNo                    string          `json:"docno" bson:"docno"`
-	DocDate                  time.Time       `json:"docdate" bson:"docdate" format:"dateTime"`
-	AccountPeriod            int16           `json:"accountperiod" bson:"accountperiod"`
-	AccountYear              int16           `json:"accountyear" bson:"accountyear"`
-	AccountGroup             string          `json:"accountgroup" bson:"accountgroup"`
-	AccountBook              []JournalDetail `json:"journaldetail" bson:"journaldetail"`
-	Amount                   float64         `json:"amount" bson:"amount"`
-	AccountDescription       string          `json:"accountdescription" bson:"accountdescription"`
-	BookCode                 string          `json:"bookcode" bson:"bookcode"`
+	BatchID                  string    `json:"batchId" bson:"batch" gorm:"column:batchid"`
+	DocNo                    string    `json:"docno" bson:"docno" gorm:"column:docno;primaryKey"`
+	DocDate                  time.Time `json:"docdate" bson:"docdate" format:"dateTime" gorm:"column:docdate"`
+	AccountPeriod            int16     `json:"accountperiod" bson:"accountperiod" gorm:"column:accountperiod"`
+	AccountYear              int16     `json:"accountyear" bson:"accountyear" gorm:"column:accountyear"`
+	AccountGroup             string    `json:"accountgroup" bson:"accountgroup" gorm:"column:accountgroup"`
+	Amount                   float64   `json:"amount" bson:"amount" gorm:"column:amount"`
+	AccountDescription       string    `json:"accountdescription" bson:"accountdescription" gorm:"column:accountdescription"`
+	BookCode                 string    `json:"bookcode" bson:"bookcode"`
+}
+
+type Journal struct {
+	JournalBody `bson:"inline"`
+	AccountBook []JournalDetail `json:"journaldetail" bson:"journaldetail"`
 }
 
 type JournalDetail struct {
@@ -84,14 +90,16 @@ func (JournalDeleteActivity) CollectionName() string {
 type JournalPg struct {
 	models.ShopIdentity      `gorm:"embedded;"`
 	models.PartitionIdentity `gorm:"embedded;"`
-	Docno                    string    `json:"docno" gorm:"column:docno;primaryKey"`
-	BatchID                  string    `json:"batchid" gorm:"column:batchid"`
-	DocDate                  time.Time `json:"docdate" gorm:"column:docdate"`
-	AccountPeriod            int16     `json:"accountperiod" gorm:"column:accountperiod"`
-	AccountYear              int16     `json:"accountyear" gorm:"column:accountyear"`
-	AccountGroup             string    `json:"accountgroup" gorm:"column:accountgroup"`
-	Amount                   float64   `json:"amount" gorm:"column:amount"`
-	AccountDescription       string    `json:"accountdescription" gorm:"column:accountdescription"`
+	JournalBody              `gorm:"embedded;"`
+	// Docno                    string             `json:"docno" gorm:"column:docno;primaryKey"`
+	// BatchID                  string             `json:"batchid" gorm:"column:batchid"`
+	// DocDate                  time.Time          `json:"docdate" gorm:"column:docdate"`
+	// AccountPeriod            int16              `json:"accountperiod" gorm:"column:accountperiod"`
+	// AccountYear              int16              `json:"accountyear" gorm:"column:accountyear"`
+	// AccountGroup             string             `json:"accountgroup" gorm:"column:accountgroup"`
+	// Amount                   float64            `json:"amount" gorm:"column:amount"`
+	// AccountDescription       string             `json:"accountdescription" gorm:"column:accountdescription"`
+	AccountBook *[]JournalDetailPg `json:"journaldetail" gorm:"journals_detail;foreignKey:shopid,docno"`
 }
 
 func (JournalPg) TableName() string {
@@ -99,10 +107,11 @@ func (JournalPg) TableName() string {
 }
 
 type JournalDetailPg struct {
-	models.ShopIdentity      `gorm:"embedded;"`
+	ID                       uint   `gorm:"primarykey"`
+	ShopID                   string `json:"shopid" gorm:"column:shopid"`
 	models.PartitionIdentity `gorm:"embedded;"`
-	Docno                    string  `json:"docno" gorm:"column:docno;primaryKey"`
-	AccountCode              string  `json:"accountcode" gorm:"column:accountcode;primaryKey"`
+	Docno                    string  `json:"docno" gorm:"column:docno"`
+	AccountCode              string  `json:"accountcode" gorm:"column:accountcode"`
 	AccountName              string  `json:"accountname" gorm:"column:accountname"`
 	DebitAmount              float64 `json:"debitamount" gorm:"column:debitamount"`
 	CreditAmount             float64 `json:"creditamount" gorm:"column:creditamount"`
@@ -121,4 +130,35 @@ type JournalPageResponse struct {
 	Success    bool                          `json:"success"`
 	Data       []JournalInfo                 `json:"data,omitempty"`
 	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
+}
+
+func (j *JournalPg) BeforeUpdate(tx *gorm.DB) (err error) {
+
+	// find old data
+	var details *[]JournalDetailPg
+	tx.Model(&JournalDetailPg{}).Where(" shopid=? AND docno=?", j.ShopID, j.DocNo).Find(&details)
+
+	// delete unuse data
+	for _, tmp := range *details {
+		var foundUpdate bool = false
+		for _, data := range *j.AccountBook {
+			if data.ID == tmp.ID {
+				foundUpdate = true
+			}
+		}
+		if foundUpdate == false {
+			// mark delete
+			tx.Delete(&JournalDetailPg{}, tmp.ID)
+		}
+	}
+
+	return nil
+}
+
+func (jd *JournalDetailPg) BeforeCreate(tx *gorm.DB) error {
+
+	tx.Statement.AddClause(clause.OnConflict{
+		UpdateAll: true,
+	})
+	return nil
 }

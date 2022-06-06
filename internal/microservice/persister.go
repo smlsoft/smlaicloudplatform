@@ -33,6 +33,7 @@ type IPersister interface {
 	TestConnect() error
 	Transaction(funcTransaction func(*Persister) error) error
 	Raw(queryStr string, where map[string]interface{}, model interface{}) ( /*result*/ interface{}, error)
+	DBClient() *gorm.DB
 }
 
 // IPersisterConfig is interface for persister
@@ -360,4 +361,8 @@ func (pst *Persister) Transaction(funcTransaction func(*Persister) error) error 
 func (pst *Persister) Raw(queryStr string, where map[string]interface{}, model interface{}) ( /*result*/ interface{}, error) {
 	err := pst.db.Raw(queryStr, where).Find(model).Error
 	return model, err
+}
+
+func (pst *Persister) DBClient() *gorm.DB {
+	return pst.db
 }
