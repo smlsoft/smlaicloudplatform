@@ -2,13 +2,13 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models/vfgl"
+	"smlcloudplatform/pkg/vfgl/journal/models"
 )
 
 type IJournalPgRepository interface {
-	CreateInBatch(docList []vfgl.JournalPg) error
-	Create(doc vfgl.JournalPg) error
-	Update(shopID string, accountCode string, doc vfgl.JournalPg) error
+	CreateInBatch(docList []models.JournalPg) error
+	Create(doc models.JournalPg) error
+	Update(shopID string, accountCode string, doc models.JournalPg) error
 	Delete(shopID string, accountCode string) error
 }
 
@@ -22,7 +22,7 @@ func NewJournalPgRepository(pst microservice.IPersister) JournalPgRepository {
 	}
 }
 
-func (repo JournalPgRepository) CreateInBatch(docList []vfgl.JournalPg) error {
+func (repo JournalPgRepository) CreateInBatch(docList []models.JournalPg) error {
 	err := repo.pst.CreateInBatch(docList, len(docList))
 	if err != nil {
 		return err
@@ -30,7 +30,7 @@ func (repo JournalPgRepository) CreateInBatch(docList []vfgl.JournalPg) error {
 	return nil
 }
 
-func (repo JournalPgRepository) Create(doc vfgl.JournalPg) error {
+func (repo JournalPgRepository) Create(doc models.JournalPg) error {
 	err := repo.pst.Create(doc)
 	if err != nil {
 		return err
@@ -38,7 +38,7 @@ func (repo JournalPgRepository) Create(doc vfgl.JournalPg) error {
 	return nil
 }
 
-func (repo JournalPgRepository) Update(shopID string, docNo string, doc vfgl.JournalPg) error {
+func (repo JournalPgRepository) Update(shopID string, docNo string, doc models.JournalPg) error {
 	err := repo.pst.Update(&doc, map[string]interface{}{
 		"shopid": shopID,
 		"docno":  docNo,
@@ -51,7 +51,7 @@ func (repo JournalPgRepository) Update(shopID string, docNo string, doc vfgl.Jou
 }
 
 func (repo JournalPgRepository) Delete(shopID string, docNo string) error {
-	err := repo.pst.Delete(vfgl.JournalPg{}, map[string]interface{}{
+	err := repo.pst.Delete(models.JournalPg{}, map[string]interface{}{
 		"shopid": shopID,
 		"docno":  docNo,
 	})

@@ -17,6 +17,7 @@ type IPersister interface {
 	WhereP(model interface{}, pageLimit int, page int, expr string, args ...interface{}) ( /*result*/ interface{}, error)
 	Where(model interface{}, expr string, args ...interface{}) ( /*result*/ interface{}, error)
 	FindOne(model interface{}, idColumn string, id string) ( /*result*/ interface{}, error)
+	First(model interface{}, query interface{}, args ...interface{}) ( /*result*/ interface{}, error)
 	Create(model interface{}) error
 	Update(model interface{}, where map[string]interface{}) error
 	Delete(model interface{}, where map[string]interface{}) error
@@ -64,6 +65,13 @@ func NewPersister(config IPersisterConfig) *Persister {
 		panic(err)
 	}
 
+	return pst
+}
+
+func NewPersisterWithDB(db *gorm.DB) *Persister {
+	pst := &Persister{
+		db: db,
+	}
 	return pst
 }
 
@@ -216,6 +224,15 @@ func (pst *Persister) FindOne(model interface{}, idColumn string, id string) ( /
 
 	where := fmt.Sprintf("%s = ?", idColumn)
 	if err := db.Where(where, id).First(model).Error; err != nil {
+		return nil, err
+	}
+	return model, nil
+}
+
+func (pst *Persister) First(model interface{}, query interface{}, args ...interface{}) ( /*result*/ interface{}, error) {
+
+	db := pst.db
+	if err := db.Where(query, args...).First(model).Error; err != nil {
 		return nil, err
 	}
 	return model, nil

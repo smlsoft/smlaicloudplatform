@@ -1078,7 +1078,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/vfgl.JournalPageResponse"
+                            "$ref": "#/definitions/models.JournalPageResponse"
                         }
                     },
                     "401": {
@@ -1110,7 +1110,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/vfgl.Journal"
+                            "$ref": "#/definitions/models.Journal"
                         }
                     }
                 ],
@@ -1154,7 +1154,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/vfgl.Journal"
+                                "$ref": "#/definitions/models.Journal"
                             }
                         }
                     }
@@ -1203,7 +1203,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/vfgl.JournalInfoResponse"
+                            "$ref": "#/definitions/models.JournalInfoResponse"
                         }
                     },
                     "401": {
@@ -1242,7 +1242,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/vfgl.Journal"
+                            "$ref": "#/definitions/models.Journal"
                         }
                     }
                 ],
@@ -6587,6 +6587,48 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Journal": {
+            "type": "object",
+            "properties": {
+                "accountdescription": {
+                    "type": "string"
+                },
+                "accountgroup": {
+                    "type": "string"
+                },
+                "accountperiod": {
+                    "type": "integer"
+                },
+                "accountyear": {
+                    "type": "integer"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "batchId": {
+                    "type": "string"
+                },
+                "bookcode": {
+                    "type": "string"
+                },
+                "docdate": {
+                    "type": "string",
+                    "format": "dateTime"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "journaldetail": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.JournalDetail"
+                    }
+                },
+                "parid": {
+                    "type": "string"
+                }
+            }
+        },
         "models.JournalBook": {
             "type": "object",
             "required": [
@@ -6660,6 +6702,96 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.JournalBookInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.JournalDetail": {
+            "type": "object",
+            "properties": {
+                "accountcode": {
+                    "type": "string"
+                },
+                "accountname": {
+                    "type": "string"
+                },
+                "creditamount": {
+                    "type": "number"
+                },
+                "debitamount": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.JournalInfo": {
+            "type": "object",
+            "properties": {
+                "accountdescription": {
+                    "type": "string"
+                },
+                "accountgroup": {
+                    "type": "string"
+                },
+                "accountperiod": {
+                    "type": "integer"
+                },
+                "accountyear": {
+                    "type": "integer"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "batchId": {
+                    "type": "string"
+                },
+                "bookcode": {
+                    "type": "string"
+                },
+                "docdate": {
+                    "type": "string",
+                    "format": "dateTime"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "journaldetail": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.JournalDetail"
+                    }
+                },
+                "parid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.JournalInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.JournalInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.JournalPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.JournalInfo"
                     }
                 },
                 "pagination": {
@@ -8585,138 +8717,6 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/vfgl.ChartOfAccountInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "vfgl.Journal": {
-            "type": "object",
-            "properties": {
-                "accountdescription": {
-                    "type": "string"
-                },
-                "accountgroup": {
-                    "type": "string"
-                },
-                "accountperiod": {
-                    "type": "integer"
-                },
-                "accountyear": {
-                    "type": "integer"
-                },
-                "amount": {
-                    "type": "number"
-                },
-                "batchId": {
-                    "type": "string"
-                },
-                "bookcode": {
-                    "type": "string"
-                },
-                "docdate": {
-                    "type": "string",
-                    "format": "dateTime"
-                },
-                "docno": {
-                    "type": "string"
-                },
-                "journaldetail": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/vfgl.JournalDetail"
-                    }
-                },
-                "parid": {
-                    "type": "string"
-                }
-            }
-        },
-        "vfgl.JournalDetail": {
-            "type": "object",
-            "properties": {
-                "accountcode": {
-                    "type": "string"
-                },
-                "accountname": {
-                    "type": "string"
-                },
-                "creditamount": {
-                    "type": "number"
-                },
-                "debitamount": {
-                    "type": "number"
-                }
-            }
-        },
-        "vfgl.JournalInfo": {
-            "type": "object",
-            "properties": {
-                "accountdescription": {
-                    "type": "string"
-                },
-                "accountgroup": {
-                    "type": "string"
-                },
-                "accountperiod": {
-                    "type": "integer"
-                },
-                "accountyear": {
-                    "type": "integer"
-                },
-                "amount": {
-                    "type": "number"
-                },
-                "batchId": {
-                    "type": "string"
-                },
-                "bookcode": {
-                    "type": "string"
-                },
-                "docdate": {
-                    "type": "string",
-                    "format": "dateTime"
-                },
-                "docno": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "journaldetail": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/vfgl.JournalDetail"
-                    }
-                },
-                "parid": {
-                    "type": "string"
-                }
-            }
-        },
-        "vfgl.JournalInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/vfgl.JournalInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "vfgl.JournalPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/vfgl.JournalInfo"
                     }
                 },
                 "pagination": {

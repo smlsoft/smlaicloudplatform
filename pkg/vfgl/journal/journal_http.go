@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/models/vfgl"
+	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/vfgl/journal/models"
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
 	"smlcloudplatform/pkg/vfgl/journal/services"
 )
@@ -49,10 +49,10 @@ func (h JournalHttp) RouteSetup() {
 // @Summary		บันทึกข้อมูลรายวัน
 // @Description บันทึกข้อมูลรายวัน
 // @Tags		GL
-// @Param		Journal  body      vfgl.Journal  true  "ข้อมูลรายวัน"
+// @Param		Journal  body      models.Journal  true  "ข้อมูลรายวัน"
 // @Accept 		json
-// @Success		200	{object}	models.ResponseSuccessWithID
-// @Failure		401 {object}	models.AuthResponseFailed
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /gl/journal [post]
 func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
@@ -60,7 +60,7 @@ func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &vfgl.Journal{}
+	docReq := &models.Journal{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -75,7 +75,7 @@ func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
 	})
@@ -87,10 +87,10 @@ func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
 // @Description แก้ไขข้อมูลรายวัน
 // @Tags		GL
 // @Param		id  path      string  true  "Journal ID"
-// @Param		Journal  body      vfgl.Journal  true  "ข้อมูลรายวัน"
+// @Param		Journal  body      models.Journal  true  "ข้อมูลรายวัน"
 // @Accept 		json
-// @Success		200	{object}	models.ResponseSuccessWithID
-// @Failure		401 {object}	models.AuthResponseFailed
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /gl/journal/{id} [put]
 func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
@@ -101,7 +101,7 @@ func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &vfgl.Journal{}
+	docReq := &models.Journal{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -116,7 +116,7 @@ func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      id,
 	})
@@ -130,8 +130,8 @@ func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
 // @Tags		GL
 // @Param		id  path      string  true  "Journal ID"
 // @Accept 		json
-// @Success		200	{object}	models.ResponseSuccessWithID
-// @Failure		401 {object}	models.AuthResponseFailed
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /gl/journal/{id} [delete]
 func (h JournalHttp) DeleteJournal(ctx microservice.IContext) error {
@@ -148,7 +148,7 @@ func (h JournalHttp) DeleteJournal(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusOK, models.ApiResponse{
+	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		ID:      id,
 	})
@@ -162,8 +162,8 @@ func (h JournalHttp) DeleteJournal(ctx microservice.IContext) error {
 // @Tags		GL
 // @Param		id  path      string  true  "Journal Id"
 // @Accept 		json
-// @Success		200	{object}	vfgl.JournalInfoResponse
-// @Failure		401 {object}	models.AuthResponseFailed
+// @Success		200	{object}	models.JournalInfoResponse
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /gl/journal/{id} [get]
 func (h JournalHttp) InfoJournal(ctx microservice.IContext) error {
@@ -181,7 +181,7 @@ func (h JournalHttp) InfoJournal(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusOK, models.ApiResponse{
+	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		Data:    doc,
 	})
@@ -196,8 +196,8 @@ func (h JournalHttp) InfoJournal(ctx microservice.IContext) error {
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
 // @Accept 		json
-// @Success		200	{object}	vfgl.JournalPageResponse
-// @Failure		401 {object}	models.AuthResponseFailed
+// @Success		200	{object}	models.JournalPageResponse
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /gl/journal [get]
 func (h JournalHttp) SearchJournal(ctx microservice.IContext) error {
@@ -213,7 +213,7 @@ func (h JournalHttp) SearchJournal(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusOK, models.ApiResponse{
+	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
@@ -225,10 +225,10 @@ func (h JournalHttp) SearchJournal(ctx microservice.IContext) error {
 // @Summary		นำเข้าข้อมูลรายวัน
 // @Description นำเข้าข้อมูลรายวัน
 // @Tags		GL
-// @Param		Journal  body      []vfgl.Journal  true  "ข้อมูลรายวัน"
+// @Param		Journal  body      []models.Journal  true  "ข้อมูลรายวัน"
 // @Accept 		json
-// @Success		201	{object}	models.BulkInsertResponse
-// @Failure		401 {object}	models.AuthResponseFailed
+// @Success		201	{object}	common.BulkInsertResponse
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /gl/journal/bulk [post]
 func (h JournalHttp) SaveBulk(ctx microservice.IContext) error {
@@ -239,7 +239,7 @@ func (h JournalHttp) SaveBulk(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	dataReq := []vfgl.Journal{}
+	dataReq := []models.Journal{}
 	err := json.Unmarshal([]byte(input), &dataReq)
 
 	if err != nil {
@@ -256,7 +256,7 @@ func (h JournalHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		models.BulkReponse{
+		common.BulkReponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

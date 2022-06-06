@@ -3,8 +3,8 @@ package journal
 import (
 	"encoding/json"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models/vfgl"
 	"smlcloudplatform/pkg/vfgl/journal/config"
+	"smlcloudplatform/pkg/vfgl/journal/models"
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
 	"smlcloudplatform/pkg/vfgl/journal/services"
 	"time"
@@ -13,8 +13,8 @@ import (
 func MigrationJournalTable(ms *microservice.Microservice, cfg microservice.IConfig) error {
 	pst := ms.Persister(cfg.PersisterConfig())
 	pst.AutoMigrate(
-		vfgl.JournalPg{},
-		vfgl.JournalDetailPg{},
+		models.JournalPg{},
+		models.JournalDetailPg{},
 	)
 	return nil
 }
@@ -37,7 +37,7 @@ func StartJournalComsumeCreated(ms *microservice.Microservice, cfg microservice.
 		msg := ctx.ReadInput()
 
 		ms.Logger.Debugf("Consume Journal Created : %v", msg)
-		doc := vfgl.JournalDoc{}
+		doc := models.JournalDoc{}
 		err := json.Unmarshal([]byte(msg), &doc)
 
 		if err != nil {
@@ -75,7 +75,7 @@ func StartJournalComsumeUpdated(ms *microservice.Microservice, cfg microservice.
 		msg := ctx.ReadInput()
 
 		ms.Logger.Debugf("Consume Journal Created : %v", msg)
-		doc := vfgl.JournalDoc{}
+		doc := models.JournalDoc{}
 		err := json.Unmarshal([]byte(msg), &doc)
 
 		if err != nil {
@@ -114,7 +114,7 @@ func StartJournalComsumeDeleted(ms *microservice.Microservice, cfg microservice.
 		msg := ctx.ReadInput()
 
 		ms.Logger.Debugf("Consume Journal Created : %v", msg)
-		doc := vfgl.JournalDoc{}
+		doc := models.JournalDoc{}
 		err := json.Unmarshal([]byte(msg), &doc)
 
 		if err != nil {
@@ -152,7 +152,7 @@ func StartJournalComsumeBlukCreated(ms *microservice.Microservice, cfg microserv
 		msg := ctx.ReadInput()
 
 		ms.Logger.Debugf("Consume Journal Created : %v", msg)
-		docList := []vfgl.JournalDoc{}
+		docList := []models.JournalDoc{}
 		err := json.Unmarshal([]byte(msg), &docList)
 
 		if err != nil {

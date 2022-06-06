@@ -20,8 +20,10 @@ import (
 	"smlcloudplatform/pkg/api/saleinvoice"
 	"smlcloudplatform/pkg/api/shop"
 	"smlcloudplatform/pkg/api/shop/employee"
+	"smlcloudplatform/pkg/vfgl/accountgroup"
 	"smlcloudplatform/pkg/vfgl/chartofaccount"
 	"smlcloudplatform/pkg/vfgl/journal"
+	"smlcloudplatform/pkg/vfgl/journalbook"
 	"smlcloudplatform/pkg/vfgl/journalreport"
 
 	"github.com/joho/godotenv"
@@ -159,9 +161,20 @@ func main() {
 
 		journalReportHttp := journalreport.NewJournalReportHttp(ms, cfg)
 		journalReportHttp.RouteSetup()
+
+		accountGroup := accountgroup.NewAccountGroupHttp(ms, cfg)
+		accountGroup.RouteSetup()
+
+		journalBook := journalbook.NewJournalBookHttp(ms, cfg)
+		journalBook.RouteSetup()
 	}
 
 	if devApiMode == "1" || devApiMode == "2" {
+
+		consumerGroupName := os.Getenv("CONSUMER_GROUP_NAME")
+		if consumerGroupName == "" {
+			consumerGroupName = "03"
+		}
 
 		inventorysearchconsumer.StartInventorySearchComsumerOnProductCreated(ms, cfg)
 		inventorysearchconsumer.StartInventorySearchComsumerOnProductUpdated(ms, cfg)
@@ -170,12 +183,12 @@ func main() {
 		saleinvoice.StartSaleinvoiceComsumeCreated(ms, cfg)
 
 		journal.MigrationJournalTable(ms, cfg)
-		journal.StartJournalComsumeCreated(ms, cfg, "00")
-		journal.StartJournalComsumeBlukCreated(ms, cfg, "00")
+		journal.StartJournalComsumeCreated(ms, cfg, consumerGroupName)
+		journal.StartJournalComsumeBlukCreated(ms, cfg, consumerGroupName)
 
 		chartofaccount.MigrationChartOfAccountTable(ms, cfg)
-		chartofaccount.StartChartOfAccountConsumerCreated(ms, cfg, "00")
-		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, "11")
+		chartofaccount.StartChartOfAccountConsumerCreated(ms, cfg, consumerGroupName)
+		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, consumerGroupName)
 	}
 
 	ms.Start()

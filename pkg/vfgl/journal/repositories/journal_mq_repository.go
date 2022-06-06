@@ -2,23 +2,23 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/models/vfgl"
+	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/vfgl/journal/config"
+	"smlcloudplatform/pkg/vfgl/journal/models"
 )
 
 type IJournalMqRepository interface {
-	Create(doc vfgl.JournalDoc) error
-	Update(doc vfgl.JournalDoc) error
-	Delete(doc models.Identity) error
-	CreateInBatch(docList []vfgl.JournalDoc) error
+	Create(doc models.JournalDoc) error
+	Update(doc models.JournalDoc) error
+	Delete(doc common.Identity) error
+	CreateInBatch(docList []models.JournalDoc) error
 }
 
 type JournalMqRepository struct {
 	prod  microservice.IProducer
 	mqKey string
-	repositories.KafkaRepository[vfgl.JournalDoc]
+	repositories.KafkaRepository[models.JournalDoc]
 }
 
 func NewJournalMqRepository(prod microservice.IProducer) JournalMqRepository {
@@ -28,6 +28,6 @@ func NewJournalMqRepository(prod microservice.IProducer) JournalMqRepository {
 		prod:  prod,
 		mqKey: mqKey,
 	}
-	insRepo.KafkaRepository = repositories.NewKafkaRepository[vfgl.JournalDoc](prod, config.JournalMessageQueueConfig{}, "")
+	insRepo.KafkaRepository = repositories.NewKafkaRepository[models.JournalDoc](prod, config.JournalMessageQueueConfig{}, "")
 	return insRepo
 }

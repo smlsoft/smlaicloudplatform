@@ -68,7 +68,7 @@ func (p *Producer) SendMessage(topic string, key string, message interface{}) er
 
 	prod := p.getProducer()
 	err = prod.Produce(&kafka.Message{
-		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+		TopicPartition: kafka.TopicPartition{Topic: &topic},
 		Value:          []byte(messageJSON),
 		Key:            keyBytes,
 	}, deliveryChan)

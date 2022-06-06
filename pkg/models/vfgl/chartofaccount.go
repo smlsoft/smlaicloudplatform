@@ -15,13 +15,13 @@ type ChartOfAccount struct {
 	// ชื่อบัญชี
 	AccountName string `json:"accountname" bson:"accountname"`
 	// หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย
-	AccountCategory int `json:"accountcategory" bson:"accountcategory"`
+	AccountCategory int16 `json:"accountcategory" bson:"accountcategory"`
 	// ด้านบัญชี 1=เดบิต,2=เครดิต
-	AccountBalanceType int `json:"accountbalancetype" bson:"accountbalancetype"`
+	AccountBalanceType int16 `json:"accountbalancetype" bson:"accountbalancetype"`
 	// กลุ่มบัญชี
 	AccountGroup string `json:"accountgroup" bson:"accountgroup"`
 	// ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ
-	AccountLevel int `json:"accountlevel" bson:"accountlevel"`
+	AccountLevel int16 `json:"accountlevel" bson:"accountlevel"`
 	// รหัสผังบัญชีกลาง
 	ConsolidateAccountCode string `json:"consolidateaccountcode" bson:"consolidateaccountcode"`
 }
