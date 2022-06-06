@@ -1,6 +1,9 @@
 package utils
 
-import "strconv"
+import (
+	"strconv"
+	"strings"
+)
 
 const RequestSearchMaxPage = 2147483647
 const RequestSearchMinPage = 1
@@ -43,4 +46,35 @@ func GetPaginationParam(fnGetParam func(string) string) (int, int) {
 	}
 
 	return page, limit
+}
+
+func GetSortParam(fnGetParam func(string) string) map[string]int {
+	tempSort := make(map[string]int)
+
+	sortRawText := strings.Trim(fnGetParam("sort"), " ")
+
+	if sortRawText == "" {
+		return tempSort
+	}
+
+	sortSplitArr := strings.Split(sortRawText, ",")
+
+	for _, sortFieldRaw := range sortSplitArr {
+		sortFieldRawArr := strings.Split(sortFieldRaw, ":")
+		if len(sortFieldRawArr) != 2 {
+			continue
+		}
+
+		sortKey := sortFieldRawArr[0]
+		sortValRaw := sortFieldRawArr[1]
+
+		sortVal, err := strconv.Atoi(sortValRaw)
+		if err != nil {
+			sortVal = 1
+		}
+
+		tempSort[sortKey] = sortVal
+	}
+
+	return tempSort
 }

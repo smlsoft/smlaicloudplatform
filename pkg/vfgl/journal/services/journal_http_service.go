@@ -18,7 +18,7 @@ type IJournalHttpService interface {
 	UpdateJournal(guid string, shopID string, authUsername string, doc models.Journal) error
 	DeleteJournal(guid string, shopID string, authUsername string) error
 	InfoJournal(guid string, shopID string) (models.JournalInfo, error)
-	SearchJournal(shopID string, q string, page int, limit int) ([]models.JournalInfo, mongopagination.PaginationData, error)
+	SearchJournal(shopID string, q string, page int, limit int, sort map[string]int) ([]models.JournalInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Journal) (common.BulkImport, error)
 }
 
@@ -37,6 +37,16 @@ func NewJournalHttpService(repo repositories.JournalRepository, mqRepo repositor
 
 func (svc JournalHttpService) CreateJournal(shopID string, authUsername string, doc models.Journal) (string, error) {
 
+	findDoc, err := svc.repo.FindByDocIndentiryGuid(shopID, "docno", doc.DocNo)
+
+	if err != nil {
+		return "", err
+	}
+
+	if findDoc.DocNo != "" {
+		return "", errors.New("DocNo is exists")
+	}
+
 	newGuidFixed := utils.NewGUID()
 
 	docData := models.JournalDoc{}
@@ -47,7 +57,7 @@ func (svc JournalHttpService) CreateJournal(shopID string, authUsername string, 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err := svc.repo.Create(docData)
+	_, err = svc.repo.Create(docData)
 
 	if err != nil {
 		return "", err
@@ -111,13 +121,13 @@ func (svc JournalHttpService) InfoJournal(guid string, shopID string) (models.Jo
 
 }
 
-func (svc JournalHttpService) SearchJournal(shopID string, q string, page int, limit int) ([]models.JournalInfo, mongopagination.PaginationData, error) {
+func (svc JournalHttpService) SearchJournal(shopID string, q string, page int, limit int, sort map[string]int) ([]models.JournalInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
 		"guidfixed",
 		"docno",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
+	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
 
 	if err != nil {
 		return []models.JournalInfo{}, pagination, err

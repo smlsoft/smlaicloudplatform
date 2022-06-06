@@ -19,7 +19,7 @@ type IJournalBookHttpService interface {
 	Update(guid string, shopID string, authUsername string, doc models.JournalBook) error
 	Delete(guid string, shopID string, authUsername string) error
 	Info(guid string, shopID string) (models.JournalBookInfo, error)
-	Search(shopID string, q string, page int, limit int) ([]models.JournalBookInfo, mongopagination.PaginationData, error)
+	Search(shopID string, q string, page int, limit int, sort map[string]int) ([]models.JournalBookInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.JournalBook) (common.BulkImport, error)
 }
 
@@ -112,13 +112,13 @@ func (svc JournalBookHttpService) Info(guid string, shopID string) (models.Journ
 
 }
 
-func (svc JournalBookHttpService) Search(shopID string, q string, page int, limit int) ([]models.JournalBookInfo, mongopagination.PaginationData, error) {
+func (svc JournalBookHttpService) Search(shopID string, q string, page int, limit int, sort map[string]int) ([]models.JournalBookInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
 		"guidfixed",
 		"code",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
+	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
 
 	if err != nil {
 		return []models.JournalBookInfo{}, pagination, err

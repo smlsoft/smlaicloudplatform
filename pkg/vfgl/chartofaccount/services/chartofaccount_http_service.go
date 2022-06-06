@@ -18,7 +18,7 @@ type IChartOfAccountHttpService interface {
 	Update(guid string, shopID string, authUsername string, doc vfgl.ChartOfAccount) error
 	Delete(guid string, shopID string, authUsername string) error
 	Info(guid string, shopID string) (vfgl.ChartOfAccountInfo, error)
-	Search(shopID string, q string, page int, limit int) ([]vfgl.ChartOfAccountInfo, mongopagination.PaginationData, error)
+	Search(shopID string, q string, page int, limit int, sort map[string]int) ([]vfgl.ChartOfAccountInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []vfgl.ChartOfAccount) (models.BulkImport, error)
 }
 
@@ -109,13 +109,13 @@ func (svc ChartOfAccountHttpService) Info(guid string, shopID string) (vfgl.Char
 
 }
 
-func (svc ChartOfAccountHttpService) Search(shopID string, q string, page int, limit int) ([]vfgl.ChartOfAccountInfo, mongopagination.PaginationData, error) {
+func (svc ChartOfAccountHttpService) Search(shopID string, q string, page int, limit int, sort map[string]int) ([]vfgl.ChartOfAccountInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
 		"accountcode",
 		"accountname",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
+	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
 
 	if err != nil {
 		return []vfgl.ChartOfAccountInfo{}, pagination, err

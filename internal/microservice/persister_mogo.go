@@ -19,6 +19,7 @@ type IPersisterMongo interface {
 	AggregatePage(model interface{}, limit int, page int, filter ...interface{}) (*paginate.PaginatedData, error)
 	Find(model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOptions) error
 	FindPage(model interface{}, limit int, page int, filter interface{}, decode interface{}) (paginate.PaginationData, error)
+	FindPageSort(model interface{}, limit int, page int, filter interface{}, sorts map[string]int, decode interface{}) (paginate.PaginationData, error)
 	FindOne(model interface{}, filter interface{}, decode interface{}) error
 	FindByID(model interface{}, keyName string, id interface{}, decode interface{}) error
 	Create(model interface{}, data interface{}) (primitive.ObjectID, error)
@@ -187,7 +188,44 @@ func (pst *PersisterMongo) FindPage(model interface{}, limit int, page int, filt
 	var limit64 int64 = int64(limit)
 	var page64 int64 = int64(page)
 
-	paginatedData, err := paginate.New(db.Collection(collectionName)).Context(pst.ctx).Limit(limit64).Page(page64).Filter(filter).Decode(decode).Find()
+	pagingQuery := paginate.New(db.Collection(collectionName)).Context(pst.ctx).Limit(limit64).Page(page64).Filter(filter)
+
+	paginatedData, err := pagingQuery.Decode(decode).Find()
+	if err != nil {
+		return emptyPage, err
+	}
+
+	return paginatedData.Pagination, nil
+}
+
+func (pst *PersisterMongo) FindPageSort(model interface{}, limit int, page int, filter interface{}, sorts map[string]int, decode interface{}) (paginate.PaginationData, error) {
+	db, err := pst.getClient()
+
+	emptyPage := paginate.PaginationData{}
+
+	if err != nil {
+		return emptyPage, err
+	}
+
+	collectionName, err := pst.getCollectionName(model)
+	if err != nil {
+		return emptyPage, err
+	}
+
+	var limit64 int64 = int64(limit)
+	var page64 int64 = int64(page)
+
+	pagingQuery := paginate.New(db.Collection(collectionName)).Context(pst.ctx).Limit(limit64).Page(page64).Filter(filter)
+
+	for sortKey, sortVal := range sorts {
+		tempSortVal := 1
+		if sortVal < 1 {
+			tempSortVal = -1
+		}
+		pagingQuery = pagingQuery.Sort(sortKey, tempSortVal)
+	}
+
+	paginatedData, err := pagingQuery.Decode(decode).Find()
 	if err != nil {
 		return emptyPage, err
 	}

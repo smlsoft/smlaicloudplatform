@@ -397,3 +397,26 @@ func TestMongodbAggregatePage(t *testing.T) {
 // 		t.Error(errors.New("Cannot connect Database"))
 // 	}
 // }
+
+func TestMongodbFindPageX(t *testing.T) {
+	cfg := &ConfigDBTest{}
+
+	pst := microservice.NewPersisterMongo(cfg)
+
+	products := []Product{}
+	pagination, err := pst.FindPageSort(&Product{}, 5, 1, bson.M{}, map[string]int{
+		"product_code": 5,
+	}, &products)
+
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+	fmt.Println(pagination)
+	fmt.Println(products)
+
+	if len(products) < 1 {
+		t.Error("Find not found item")
+	}
+}

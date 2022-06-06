@@ -19,7 +19,7 @@ type IAccountGroupHttpService interface {
 	Update(guid string, shopID string, authUsername string, doc models.AccountGroup) error
 	Delete(guid string, shopID string, authUsername string) error
 	Info(guid string, shopID string) (models.AccountGroupInfo, error)
-	Search(shopID string, q string, page int, limit int) ([]models.AccountGroupInfo, mongopagination.PaginationData, error)
+	Search(shopID string, q string, page int, limit int, sort map[string]int) ([]models.AccountGroupInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.AccountGroup) (common.BulkImport, error)
 }
 
@@ -112,13 +112,13 @@ func (svc AccountGroupHttpService) Info(guid string, shopID string) (models.Acco
 
 }
 
-func (svc AccountGroupHttpService) Search(shopID string, q string, page int, limit int) ([]models.AccountGroupInfo, mongopagination.PaginationData, error) {
+func (svc AccountGroupHttpService) Search(shopID string, q string, page int, limit int, sort map[string]int) ([]models.AccountGroupInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
 		"guidfixed",
 		"code",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
+	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
 
 	if err != nil {
 		return []models.AccountGroupInfo{}, pagination, err
