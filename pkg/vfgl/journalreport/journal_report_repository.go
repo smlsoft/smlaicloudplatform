@@ -120,13 +120,13 @@ func (repo JournalReportRepository) GetDataTrialBalance(shopId string, accountGr
 			, coalesce(bal.debitamount, 0) as balancedebitamount, coalesce(bal.creditamount, 0) as balancecreditamount
 			, coalesce(prd.debitamount, 0) as debitamount, coalesce(prd.creditamount, 0) as creditamount
 			, coalesce(nex.debitamount, 0) as nextbalancedebitamount, coalesce(nex.creditamount, 0) as nextbalancecreditamount
-			, case when(accountbalancetype = 1) then coalesce(bal.debitamount, 0)-coalesce(bal.creditamount, 0)
+			, case when(accountcategory = 1 or accountcategory = 5) then coalesce(bal.debitamount, 0)-coalesce(bal.creditamount, 0)
 				else coalesce(bal.creditamount, 0)-coalesce(bal.debitamount, 0)
 				end as balanceamount
-			, case when(accountbalancetype = 1) then coalesce(prd.debitamount, 0)-coalesce(prd.creditamount, 0)
+			, case when(accountcategory = 1 or accountcategory = 5) then coalesce(prd.debitamount, 0)-coalesce(prd.creditamount, 0)
 				else coalesce(prd.creditamount, 0)-coalesce(prd.debitamount, 0)
 				end as amount
-			, case when(accountbalancetype = 1) then coalesce(nex.debitamount, 0)-coalesce(nex.creditamount, 0)
+			, case when(accountcategory = 1 or accountcategory = 5) then coalesce(nex.debitamount, 0)-coalesce(nex.creditamount, 0)
 				else coalesce(nex.creditamount, 0)-coalesce(nex.debitamount, 0)
 				end as nextbalanceamount
 			from chartofaccounts as chart
@@ -183,9 +183,9 @@ func (repo JournalReportRepository) GetDataProfitAndLoss(shopId string, accountG
             , chart.accountcode, chart.accountname
 			, chart.accountcategory, chart.accountbalancetype, chart.accountgroup, chart.accountlevel, chart.consolidateaccountcode
 			, coalesce(prd.debitamount, 0) as debitamount, coalesce(prd.creditamount, 0) as creditamount			
-			, case when(accountbalancetype = 1) then coalesce(prd.debitamount, 0)-coalesce(prd.creditamount, 0)
+			, case when(accountcategory = 5) then coalesce(prd.debitamount, 0)-coalesce(prd.creditamount, 0)
 				else coalesce(prd.creditamount, 0)-coalesce(prd.debitamount, 0)
-				end as amount			
+				end as amount
 			from chartofaccounts as chart
 			left join prd on prd.accountcode = chart.accountcode
 			where chart.shopid= @shopid and chart.accountcategory in (4,5)
@@ -235,7 +235,7 @@ func (repo JournalReportRepository) GetDataBalanceSheet(shopId string, accountGr
 			select chart.shopid, chart.parid
             , chart.accountcode, chart.accountname
 			, chart.accountcategory, chart.accountbalancetype, chart.accountgroup, chart.accountlevel, chart.consolidateaccountcode
-			, case when(accountbalancetype = 1) then coalesce(nex.debitamount, 0)-coalesce(nex.creditamount, 0)
+			, case when(accountcategory = 1 or accountcategory = 5) then coalesce(nex.debitamount, 0)-coalesce(nex.creditamount, 0)
 				else coalesce(nex.creditamount, 0)-coalesce(nex.debitamount, 0)
 				end as amount		
 			from chartofaccounts as chart

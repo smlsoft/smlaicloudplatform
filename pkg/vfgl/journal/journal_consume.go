@@ -47,7 +47,7 @@ func StartJournalComsumeCreated(ms *microservice.Microservice, cfg microservice.
 		repo := repositories.NewJournalPgRepository(pst)
 		svc := services.NewJournalConsumeService(repo)
 
-		err = svc.UpSert(doc.ShopID, doc.DocNo, doc)
+		_, err = svc.UpSert(doc.ShopID, doc.DocNo, doc)
 
 		if err != nil {
 			ms.Logger.Errorf(moduleName, err.Error())
@@ -69,12 +69,12 @@ func StartJournalComsumeUpdated(ms *microservice.Microservice, cfg microservice.
 	mq.CreateTopicR(topicCreated, 5, 1, time.Hour*24*7)
 
 	ms.Consume(mqConfig.URI(), topicCreated, groupID, timeout, func(ctx microservice.IContext) error {
-		moduleName := "comsume journal created"
+		moduleName := "comsume journal update"
 
 		pst := ms.Persister(cfg.PersisterConfig())
 		msg := ctx.ReadInput()
 
-		ms.Logger.Debugf("Consume Journal Created : %v", msg)
+		ms.Logger.Debugf("Consume Journal update : %v", msg)
 		doc := models.JournalDoc{}
 		err := json.Unmarshal([]byte(msg), &doc)
 
@@ -85,10 +85,10 @@ func StartJournalComsumeUpdated(ms *microservice.Microservice, cfg microservice.
 		repo := repositories.NewJournalPgRepository(pst)
 		svc := services.NewJournalConsumeService(repo)
 
-		err = svc.UpSert(doc.ShopID, doc.DocNo, doc)
+		_, err = svc.UpSert(doc.ShopID, doc.DocNo, doc)
 
 		if err != nil {
-			return err
+			ms.Logger.Errorf(moduleName, err.Error())
 		}
 
 		return nil
@@ -127,7 +127,7 @@ func StartJournalComsumeDeleted(ms *microservice.Microservice, cfg microservice.
 		err = svc.Delete(doc.ShopID, doc.DocNo)
 
 		if err != nil {
-			return err
+			ms.Logger.Errorf(moduleName, err.Error())
 		}
 		return nil
 	})
@@ -165,7 +165,7 @@ func StartJournalComsumeBlukCreated(ms *microservice.Microservice, cfg microserv
 		err = svc.SaveInBatch(docList)
 
 		if err != nil {
-			return err
+			ms.Logger.Errorf(moduleName, err.Error())
 		}
 		return nil
 	})

@@ -12,21 +12,21 @@ import (
 const journalCollectionName = "journals"
 
 type JournalBody struct {
-	models.PartitionIdentity `bson:"inline"`
-	BatchID                  string    `json:"batchId" bson:"batch" gorm:"column:batchid"`
-	DocNo                    string    `json:"docno" bson:"docno" gorm:"column:docno;primaryKey"`
-	DocDate                  time.Time `json:"docdate" bson:"docdate" format:"dateTime" gorm:"column:docdate"`
-	AccountPeriod            int16     `json:"accountperiod" bson:"accountperiod" gorm:"column:accountperiod"`
-	AccountYear              int16     `json:"accountyear" bson:"accountyear" gorm:"column:accountyear"`
-	AccountGroup             string    `json:"accountgroup" bson:"accountgroup" gorm:"column:accountgroup"`
-	Amount                   float64   `json:"amount" bson:"amount" gorm:"column:amount"`
-	AccountDescription       string    `json:"accountdescription" bson:"accountdescription" gorm:"column:accountdescription"`
-	BookCode                 string    `json:"bookcode" bson:"bookcode"`
+	BatchID            string    `json:"batchId" bson:"batch" gorm:"column:batchid"`
+	DocNo              string    `json:"docno" bson:"docno" gorm:"column:docno;primaryKey"`
+	DocDate            time.Time `json:"docdate" bson:"docdate" format:"dateTime" gorm:"column:docdate"`
+	AccountPeriod      int16     `json:"accountperiod" bson:"accountperiod" gorm:"column:accountperiod"`
+	AccountYear        int16     `json:"accountyear" bson:"accountyear" gorm:"column:accountyear"`
+	AccountGroup       string    `json:"accountgroup" bson:"accountgroup" gorm:"column:accountgroup"`
+	Amount             float64   `json:"amount" bson:"amount" gorm:"column:amount"`
+	AccountDescription string    `json:"accountdescription" bson:"accountdescription" gorm:"column:accountdescription"`
+	BookCode           string    `json:"bookcode" bson:"bookcode"`
 }
 
 type Journal struct {
-	JournalBody `bson:"inline"`
-	AccountBook []JournalDetail `json:"journaldetail" bson:"journaldetail"`
+	JournalBody              `bson:"inline"`
+	models.PartitionIdentity `bson:"inline"`
+	AccountBook              *[]JournalDetail `json:"journaldetail" bson:"journaldetail"`
 }
 
 type JournalDetail struct {

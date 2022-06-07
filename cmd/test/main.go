@@ -7,6 +7,7 @@ import (
 	"smlcloudplatform/mock"
 	"smlcloudplatform/pkg/vfgl/journal/models"
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
+	"smlcloudplatform/pkg/vfgl/journal/services"
 )
 
 var repo repositories.JournalPgRepository
@@ -22,47 +23,64 @@ func main() {
 }
 
 func testUpdate() {
-	var journal_json string = `{
-		"id": "000000000000000000000000",
+
+	var journal_json string = `
+	{
+		"id": "628c4ee982bcbf8133668cf6",
 		"shopid": "27dcEdktOoaSBYFmnN6G6ett4Jb",
-		"guidfixed": "2ABh7CJyA7RbeZ1WmdwXWvs0GQa",
+		"guidfixed": "29asDMDazTOCwD7Qm7FDi9GDMu0",
 		"parid": "0000000",
-		"batchId": "",
-		"docno": "JO-202206067CFB22",
-		"docdate": "2022-06-06T04:11:28.56Z",
-		"accountperiod": 1,
-		"accountyear": 2022,
-		"accountgroup": "1",
+		"batchId": "1124541",
+		"docno": "JO-202205246DBB8C",
+		"docdate": "2022-05-24T03:19:33.545Z",
+		"accountperiod": 3,
+		"accountyear": 2565,
+		"accountgroup": "112",
+		"amount": 10,
+		"accountdescription": "ทดสอบ",
+		"bookcode": "",
 		"journaldetail": [
 			{
-				"accountcode": "11010",
-				"accountname": "เงินสด - บัญชี 1 (เงินล้าน) ",
-				"debitamount": 1200,
+				"accountcode": "10000",
+				"accountname": "**สินทรัพย์",
+				"debitamount": 5,
 				"creditamount": 0
 			},
 			{
-				"id" : 2,
-				"accountcode": "11",
-				"accountname": "11",
+				"accountcode": "11000",
+				"accountname": "**สินทรัพย์หมุนเวียน",
 				"debitamount": 0,
-				"creditamount": 1200
+				"creditamount": 5
+			},
+			{
+				"accountcode": "11010",
+				"accountname": "เงินสด - บัญชี 1",
+				"debitamount": 5,
+				"creditamount": 0
+			},
+			{
+				"accountcode": "10000",
+				"accountname": "**สินทรัพย์",
+				"debitamount": 0,
+				"creditamount": 5
 			}
-		],
-		"amount": 1000,
-		"accountdescription": "",
-		"bookcode": ""
+		]
 	}`
 
-	doc := models.JournalPg{}
+	doc := models.JournalDoc{}
 	err := json.Unmarshal([]byte(journal_json), &doc)
 
 	if err != nil {
 		fmt.Errorf("error %v", err)
 	}
-	err = repo.Update(doc.ShopID, doc.DocNo, doc)
+
+	journalService := services.NewJournalConsumeService(repo)
+	resp, err := journalService.UpSert(doc.ShopID, doc.DocNo, doc)
 	if err != nil {
-		fmt.Errorf("error %v", err)
+		fmt.Printf("error %s", err.Error())
 	}
+
+	fmt.Printf("%v", resp)
 }
 
 func testGetJournal() {
@@ -112,6 +130,7 @@ func testCreateJournal() {
 	if err != nil {
 		fmt.Errorf("error %v", err)
 	}
+
 	err = repo.Create(doc)
 	if err != nil {
 		fmt.Errorf("error %v", err)

@@ -184,10 +184,14 @@ func main() {
 
 		journal.MigrationJournalTable(ms, cfg)
 		journal.StartJournalComsumeCreated(ms, cfg, consumerGroupName)
+		journal.StartJournalComsumeUpdated(ms, cfg, consumerGroupName)
+		journal.StartJournalComsumeDeleted(ms, cfg, consumerGroupName)
 		journal.StartJournalComsumeBlukCreated(ms, cfg, consumerGroupName)
 
 		chartofaccount.MigrationChartOfAccountTable(ms, cfg)
 		chartofaccount.StartChartOfAccountConsumerCreated(ms, cfg, consumerGroupName)
+		chartofaccount.StartChartOfAccountConsumerUpdated(ms, cfg, consumerGroupName)
+		chartofaccount.StartChartOfAccountConsumerDeleted(ms, cfg, consumerGroupName)
 		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, consumerGroupName)
 	}
 

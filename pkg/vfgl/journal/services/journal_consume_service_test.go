@@ -1,12 +1,15 @@
 package services_test
 
 import (
+	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/vfgl/journal/models"
 	"smlcloudplatform/pkg/vfgl/journal/services"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"gorm.io/gorm"
 )
 
 type MockJournalRepsitory struct {
@@ -41,17 +44,72 @@ func (m *MockJournalRepsitory) Get(shopID string, docNo string) (*models.Journal
 func TestJournalConsumeServiceCreated(t *testing.T) {
 
 	get := models.JournalPg{
+		ShopIdentity: common.ShopIdentity{
+			ShopID: "27dcEdktOoaSBYFmnN6G6ett4Jb",
+		},
+		PartitionIdentity: common.PartitionIdentity{
+			ParID: "0000000",
+		},
 		JournalBody: models.JournalBody{
-			DocNo: "0001",
+
+			DocNo:              "JO-202206067CFB22",
+			DocDate:            time.Date(2022, 6, 6, 4, 11, 28, 56, time.UTC),
+			Amount:             1000,
+			AccountDescription: "",
+			AccountGroup:       "1",
+			AccountYear:        2022,
+			AccountPeriod:      1,
+			BatchID:            "",
+		},
+		AccountBook: &[]models.JournalDetailPg{
+			{
+				AccountCode:  "11010",
+				AccountName:  "เงินสด - บัญชี 1 (เงินล้าน) ",
+				DebitAmount:  1000,
+				CreditAmount: 0,
+			},
+			{
+				AccountCode:  "11",
+				AccountName:  "11",
+				DebitAmount:  0,
+				CreditAmount: 1000,
+			},
 		},
 	}
 
 	give := models.JournalDoc{
 		JournalData: models.JournalData{
+			ShopIdentity: common.ShopIdentity{
+				ShopID: "27dcEdktOoaSBYFmnN6G6ett4Jb",
+			},
 			JournalInfo: models.JournalInfo{
 				Journal: models.Journal{
+					PartitionIdentity: common.PartitionIdentity{
+						ParID: "0000000",
+					},
 					JournalBody: models.JournalBody{
-						DocNo: "0001",
+						DocNo:              "JO-202206067CFB22",
+						DocDate:            time.Date(2022, 6, 6, 4, 11, 28, 56, time.UTC),
+						Amount:             1000,
+						AccountDescription: "",
+						AccountGroup:       "1",
+						AccountYear:        2022,
+						AccountPeriod:      1,
+						BatchID:            "",
+					},
+					AccountBook: &[]models.JournalDetail{
+						{
+							AccountCode:  "11010",
+							AccountName:  "เงินสด - บัญชี 1 (เงินล้าน) ",
+							DebitAmount:  1000,
+							CreditAmount: 0,
+						},
+						{
+							AccountCode:  "11",
+							AccountName:  "11",
+							DebitAmount:  0,
+							CreditAmount: 1000,
+						},
 					},
 				},
 			},
@@ -62,7 +120,7 @@ func TestJournalConsumeServiceCreated(t *testing.T) {
 	mockRepo.On("Create", get).Return(nil)
 
 	journalService := services.NewJournalConsumeService(mockRepo)
-	err := journalService.Create(give)
+	_, err := journalService.Create(give)
 	assert.Nil(t, err, "Error should be nil")
 }
 
@@ -92,4 +150,128 @@ func TestJournalConsumeServiceUpdate(t *testing.T) {
 	journalService := services.NewJournalConsumeService(mockRepo)
 	err := journalService.Update("SHOPID", "0001", give)
 	assert.Nil(t, err, "Error should be nil")
+}
+
+func TestJournalConsumeServiceInsertWhenGetDataNotFound(t *testing.T) {
+
+	giveJournalMongoDB := models.JournalDoc{
+		JournalData: models.JournalData{
+			ShopIdentity: common.ShopIdentity{
+				ShopID: "SHOPID",
+			},
+			JournalInfo: models.JournalInfo{
+				Journal: models.Journal{
+					JournalBody: models.JournalBody{
+						DocNo:   "0001",
+						BatchID: "",
+						DocDate: time.Date(2022, 05, 01, 0, 0, 0, 0, time.UTC),
+					},
+				},
+			},
+		},
+	}
+
+	giveJournalPG := models.JournalPg{
+		ShopIdentity: common.ShopIdentity{
+			ShopID: "SHOPID",
+		},
+		JournalBody: giveJournalMongoDB.JournalBody,
+	}
+
+	mockRepo := new(MockJournalRepsitory)
+	mockRepo.On("Get", "SHOPID", "0001").Return(&models.JournalPg{}, gorm.ErrRecordNotFound)
+	mockRepo.On("Create", giveJournalPG).Return(nil)
+
+	journalService := services.NewJournalConsumeService(mockRepo)
+	get, err := journalService.UpSert("SHOPID", "0001", giveJournalMongoDB)
+
+	assert.Nil(t, err, "Failed Upsert Journal Comsume")
+	assert.NotNil(t, get, "Failed Upsert Data is Nil")
+	assert.Equal(t, get, &giveJournalPG, "Failed After Upsert Consume Data")
+}
+
+func TestJournalConsumeServiceUpdateWhenFoundOldData(t *testing.T) {
+	giveJournalMongoDB := models.JournalDoc{
+		JournalData: models.JournalData{
+			ShopIdentity: common.ShopIdentity{
+				ShopID: "SHOPID",
+			},
+			JournalInfo: models.JournalInfo{
+				Journal: models.Journal{
+					JournalBody: models.JournalBody{
+						DocNo:   "DOC0001",
+						BatchID: "",
+						DocDate: time.Date(2022, 05, 01, 0, 0, 0, 0, time.UTC),
+					},
+
+					AccountBook: &[]models.JournalDetail{
+						{
+							AccountCode: "1000",
+							DebitAmount: 1200,
+						},
+						{
+							AccountCode: "1200",
+							DebitAmount: 200,
+						},
+						{
+							AccountCode:  "4000",
+							CreditAmount: 1400,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	giveJournalPG := models.JournalPg{
+		ShopIdentity: common.ShopIdentity{
+			ShopID: "SHOPID",
+		},
+		JournalBody: giveJournalMongoDB.JournalBody,
+		AccountBook: &[]models.JournalDetailPg{
+			{
+				ID:          1,
+				AccountCode: "1000",
+				DebitAmount: 1000,
+			},
+			{
+				ID:           2,
+				AccountCode:  "4000",
+				CreditAmount: 1000,
+			},
+		},
+	}
+
+	want := models.JournalPg{
+		ShopIdentity: common.ShopIdentity{
+			ShopID: "SHOPID",
+		},
+		JournalBody: giveJournalMongoDB.JournalBody,
+		AccountBook: &[]models.JournalDetailPg{
+			{
+				ID:          1,
+				AccountCode: "1000",
+				DebitAmount: 1200,
+			},
+			{
+				AccountCode: "1200",
+				DebitAmount: 200,
+			},
+			{
+				AccountCode:  "4000",
+				CreditAmount: 1400,
+			},
+		},
+	}
+
+	mockRepo := new(MockJournalRepsitory)
+	mockRepo.On("Get", giveJournalMongoDB.ShopID, giveJournalMongoDB.DocNo).Return(&giveJournalPG, nil)
+	mockRepo.On("Update", giveJournalMongoDB.ShopID, giveJournalMongoDB.DocNo, want).Return(nil)
+
+	journalService := services.NewJournalConsumeService(mockRepo)
+	get, err := journalService.UpSert("SHOPID", "DOC0001", giveJournalMongoDB)
+
+	assert.Nil(t, err, "Failed Upsert Journal Comsume")
+	assert.NotNil(t, get, "Failed Upsert Data is Nil")
+	//assert.Equal(t, &get, want, "Failed After Upsert Consume Data")
 }

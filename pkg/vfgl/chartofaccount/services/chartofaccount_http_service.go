@@ -81,12 +81,30 @@ func (svc ChartOfAccountHttpService) Update(guid string, shopID string, authUser
 	if err != nil {
 		return err
 	}
+	svc.mqRepo.Update(findDoc)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (svc ChartOfAccountHttpService) Delete(guid string, shopID string, authUsername string) error {
-	err := svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
 
+	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+
+	if err != nil {
+		return err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return errors.New("document not found")
+	}
+	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	if err != nil {
+		return err
+	}
+
+	svc.mqRepo.Delete(findDoc)
 	if err != nil {
 		return err
 	}

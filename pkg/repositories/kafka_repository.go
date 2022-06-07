@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models"
 )
 
 type KafkaConfig interface {
@@ -46,7 +45,7 @@ func (repo KafkaRepository[T]) Update(doc T) error {
 	return nil
 }
 
-func (repo KafkaRepository[T]) Delete(doc models.Identity) error {
+func (repo KafkaRepository[T]) Delete(doc T) error {
 	err := repo.prod.SendMessage(repo.topic.TopicDeleted(), repo.mqKey, doc)
 
 	if err != nil {
