@@ -20,6 +20,7 @@ import (
 	"smlcloudplatform/pkg/api/saleinvoice"
 	"smlcloudplatform/pkg/api/shop"
 	"smlcloudplatform/pkg/api/shop/employee"
+	"smlcloudplatform/pkg/shopdesign/zonedesign"
 	"smlcloudplatform/pkg/vfgl/accountgroup"
 	"smlcloudplatform/pkg/vfgl/chartofaccount"
 	"smlcloudplatform/pkg/vfgl/journal"
@@ -167,6 +168,9 @@ func main() {
 
 		journalBook := journalbook.NewJournalBookHttp(ms, cfg)
 		journalBook.RouteSetup()
+
+		zoneDesignhttp := zonedesign.NewZoneDesignHttp(ms, cfg)
+		zoneDesignhttp.RouteSetup()
 	}
 
 	if devApiMode == "1" || devApiMode == "2" {
