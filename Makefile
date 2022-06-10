@@ -83,3 +83,5 @@ docker_m1_build_api_dev:
 run_test_m1:
 	PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" POSTGRES_HOST=192.168.2.209 POSTGRES_PORT=5432 POSTGRES_DB_NAME=smldev POSTGRES_USERNAME=postgres POSTGRES_PASSWORD=sml go test -v --tags dynamic ./pkg/vfgl/journalreport/journal_report_repository_test.go
 
+swago-install:
+	go install github.com/swaggo/swag/cmd/swag@latest

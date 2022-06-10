@@ -5,16 +5,18 @@ import (
 	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/saleinvoice/models"
+	"smlcloudplatform/pkg/saleinvoice/repositories"
+	"smlcloudplatform/pkg/saleinvoice/services"
 )
 
 func StartSaleinvoiceAsync(ms *microservice.Microservice, cfg microservice.IConfig) {
 
-	repo := NewSaleinvoiceRepository(ms.MongoPersister(cfg.MongoPersisterConfig()))
+	repo := repositories.NewSaleinvoiceRepository(ms.MongoPersister(cfg.MongoPersisterConfig()))
 	prod := ms.Producer(cfg.MQConfig())
 
-	mqRepo := NewSaleinvoiceMQRepository(prod)
-	service := NewSaleinvoiceService(repo, mqRepo)
+	mqRepo := repositories.NewSaleinvoiceMQRepository(prod)
+	service := services.NewSaleinvoiceService(repo, mqRepo)
 	err := ms.AsyncPOST("/trans", cfg.CacherConfig(), cfg.MQConfig(), func(ctx microservice.IContext) error {
 		userInfo := ctx.UserInfo()
 		authUsername := userInfo.Username

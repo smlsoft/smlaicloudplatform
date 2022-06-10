@@ -1,8 +1,10 @@
-package saleinvoice
+package services
 
 import (
 	"errors"
-	"smlcloudplatform/pkg/models"
+	common "smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/saleinvoice/models"
+	"smlcloudplatform/pkg/saleinvoice/repositories"
 	"smlcloudplatform/pkg/utils"
 	"time"
 
@@ -20,11 +22,11 @@ type ISaleinvoiceService interface {
 }
 
 type SaleinvoiceService struct {
-	saleinvoiceRepository ISaleinvoiceRepository
-	mqRepo                ISaleinvoiceMQRepository
+	saleinvoiceRepository repositories.ISaleinvoiceRepository
+	mqRepo                repositories.ISaleinvoiceMQRepository
 }
 
-func NewSaleinvoiceService(saleinvoiceRepository ISaleinvoiceRepository, mqRepo ISaleinvoiceMQRepository) SaleinvoiceService {
+func NewSaleinvoiceService(saleinvoiceRepository repositories.ISaleinvoiceRepository, mqRepo repositories.ISaleinvoiceMQRepository) SaleinvoiceService {
 
 	return SaleinvoiceService{
 		saleinvoiceRepository: saleinvoiceRepository,
@@ -110,7 +112,7 @@ func (svc SaleinvoiceService) DeleteSaleinvoice(shopID string, guid string, user
 		return err
 	}
 
-	docIndentity := models.Identity{
+	docIndentity := common.Identity{
 		ShopID:    shopID,
 		GuidFixed: guid,
 	}

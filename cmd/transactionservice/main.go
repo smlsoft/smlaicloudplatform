@@ -3,7 +3,7 @@ package main
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/purchase"
-	"smlcloudplatform/pkg/api/saleinvoice"
+	"smlcloudplatform/pkg/saleinvoice"
 )
 
 func main() {

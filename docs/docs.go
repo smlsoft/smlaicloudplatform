@@ -4805,7 +4805,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.SaleInvoiceListPageResponse"
+                                "$ref": "#/definitions/models.SaleinvoiceListPageResponse"
                             }
                         }
                     },
@@ -4832,8 +4832,8 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "SaleInvoice",
-                        "name": "SaleInvoice",
+                        "description": "Saleinvoice",
+                        "name": "Saleinvoice",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -7346,7 +7346,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.SaleInvoiceListPageResponse": {
+        "models.SaleinvoiceListPageResponse": {
             "type": "object",
             "properties": {
                 "data": {

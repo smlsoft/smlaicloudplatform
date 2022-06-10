@@ -1389,7 +1389,7 @@ definitions:
       success:
         type: boolean
     type: object
-  models.SaleInvoiceListPageResponse:
+  models.SaleinvoiceListPageResponse:
     properties:
       data:
         items:
@@ -5471,7 +5471,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.SaleInvoiceListPageResponse'
+              $ref: '#/definitions/models.SaleinvoiceListPageResponse'
             type: array
         "401":
           description: Unauthorized
@@ -5486,9 +5486,9 @@ paths:
       - application/json
       description: Create Inventory
       parameters:
-      - description: SaleInvoice
+      - description: Saleinvoice
         in: body
-        name: SaleInvoice
+        name: Saleinvoice
         required: true
         schema:
           $ref: '#/definitions/models.Saleinvoice'

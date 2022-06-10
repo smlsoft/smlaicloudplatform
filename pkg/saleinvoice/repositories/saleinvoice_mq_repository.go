@@ -1,14 +1,16 @@
-package saleinvoice
+package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models"
+	common "smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/saleinvoice/config"
+	"smlcloudplatform/pkg/saleinvoice/models"
 )
 
 type ISaleinvoiceMQRepository interface {
 	Create(doc models.SaleinvoiceData) error
 	Update(doc models.SaleinvoiceData) error
-	Delete(doc models.Identity) error
+	Delete(doc common.Identity) error
 }
 
 type SaleinvoiceMQRepository struct {
@@ -26,7 +28,7 @@ func NewSaleinvoiceMQRepository(prod microservice.IProducer) SaleinvoiceMQReposi
 }
 
 func (repo SaleinvoiceMQRepository) Create(doc models.SaleinvoiceData) error {
-	err := repo.prod.SendMessage(MQ_TOPIC_TRANSACTION_CREATED, repo.mqKey, doc)
+	err := repo.prod.SendMessage(config.MQ_TOPIC_SALEINVOICE_CREATED, repo.mqKey, doc)
 
 	if err != nil {
 		return err
@@ -35,7 +37,7 @@ func (repo SaleinvoiceMQRepository) Create(doc models.SaleinvoiceData) error {
 	return nil
 }
 func (repo SaleinvoiceMQRepository) Update(doc models.SaleinvoiceData) error {
-	err := repo.prod.SendMessage(MQ_TOPIC_TRANSACTION_UPDATED, repo.mqKey, doc)
+	err := repo.prod.SendMessage(config.MQ_TOPIC_SALEINVOICE_UPDATED, repo.mqKey, doc)
 
 	if err != nil {
 		return err
@@ -44,8 +46,8 @@ func (repo SaleinvoiceMQRepository) Update(doc models.SaleinvoiceData) error {
 	return nil
 }
 
-func (repo SaleinvoiceMQRepository) Delete(doc models.Identity) error {
-	err := repo.prod.SendMessage(MQ_TOPIC_TRANSACTION_DELETED, repo.mqKey, doc)
+func (repo SaleinvoiceMQRepository) Delete(doc common.Identity) error {
+	err := repo.prod.SendMessage(config.MQ_TOPIC_SALEINVOICE_DELETED, repo.mqKey, doc)
 
 	if err != nil {
 		return err

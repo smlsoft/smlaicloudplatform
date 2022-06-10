@@ -17,9 +17,9 @@ import (
 	"smlcloudplatform/pkg/api/restaurant/shopprinter"
 	"smlcloudplatform/pkg/api/restaurant/shoptable"
 	"smlcloudplatform/pkg/api/restaurant/shopzone"
-	"smlcloudplatform/pkg/api/saleinvoice"
 	"smlcloudplatform/pkg/api/shop"
 	"smlcloudplatform/pkg/api/shop/employee"
+	"smlcloudplatform/pkg/saleinvoice"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
 	"smlcloudplatform/pkg/vfgl/accountgroup"
 	"smlcloudplatform/pkg/vfgl/chartofaccount"
@@ -184,7 +184,7 @@ func main() {
 		inventorysearchconsumer.StartInventorySearchComsumerOnProductUpdated(ms, cfg)
 		inventorysearchconsumer.StartInventorySearchComsumerOnProductDeleted(ms, cfg)
 
-		saleinvoice.StartSaleinvoiceComsumeCreated(ms, cfg)
+		saleinvoice.StartSaleinvoiceComsumeCreated(ms, cfg, consumerGroupName)
 
 		journal.MigrationJournalTable(ms, cfg)
 		journal.StartJournalComsumeCreated(ms, cfg, consumerGroupName)

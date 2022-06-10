@@ -1,10 +1,11 @@
-package saleinvoice_test
+package repositories_test
 
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
-	"smlcloudplatform/pkg/api/saleinvoice"
-	"smlcloudplatform/pkg/models"
+	common "smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/saleinvoice/models"
+	"smlcloudplatform/pkg/saleinvoice/repositories"
 	"testing"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -13,9 +14,9 @@ import (
 func TestCreateSaleinvoice(t *testing.T) {
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
-	repo := saleinvoice.NewSaleinvoiceRepository(mongoPersister)
+	repo := repositories.NewSaleinvoiceRepository(mongoPersister)
 
-	inv := models.Inventory{
+	inv := common.Inventory{
 		ItemSku:      "sku01",
 		CategoryGuid: "xxx",
 	}
@@ -26,7 +27,7 @@ func TestCreateSaleinvoice(t *testing.T) {
 	give.GuidFixed = "fx01"
 	give.Items = &[]models.SaleinvoiceDetail{
 		{
-			InventoryInfo: models.InventoryInfo{
+			InventoryInfo: common.InventoryInfo{
 				Inventory: inv,
 			},
 		},
@@ -51,10 +52,10 @@ func TestCreateSaleinvoice(t *testing.T) {
 func TestUpdateSaleinvoice(t *testing.T) {
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
-	repo := saleinvoice.NewSaleinvoiceRepository(mongoPersister)
+	repo := repositories.NewSaleinvoiceRepository(mongoPersister)
 
-	invInfo := models.InventoryInfo{
-		Inventory: models.Inventory{
+	invInfo := common.InventoryInfo{
+		Inventory: common.Inventory{
 			ItemSku:      "sku01",
 			CategoryGuid: "xxx",
 		},
@@ -70,15 +71,15 @@ func TestUpdateSaleinvoice(t *testing.T) {
 		},
 	}
 
-	invGive1 := models.InventoryInfo{
-		Inventory: models.Inventory{
+	invGive1 := common.InventoryInfo{
+		Inventory: common.Inventory{
 			ItemSku:      "sku01",
 			CategoryGuid: "xxx",
 		},
 	}
 
-	invGive2 := models.InventoryInfo{
-		Inventory: models.Inventory{
+	invGive2 := common.InventoryInfo{
+		Inventory: common.Inventory{
 			ItemSku:      "sku01",
 			CategoryGuid: "xxx",
 		},
@@ -134,12 +135,12 @@ func TestUpdateSaleinvoice(t *testing.T) {
 func TestDeleteSaleinvoice(t *testing.T) {
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
-	repo := saleinvoice.NewSaleinvoiceRepository(mongoPersister)
+	repo := repositories.NewSaleinvoiceRepository(mongoPersister)
 
 	give := models.SaleinvoiceDoc{}
 
-	invGive1 := models.InventoryInfo{
-		Inventory: models.Inventory{
+	invGive1 := common.InventoryInfo{
+		Inventory: common.Inventory{
 			ItemSku:      "sku01",
 			CategoryGuid: "xxx",
 		},
@@ -190,7 +191,7 @@ func TestDeleteSaleinvoice(t *testing.T) {
 func TestFindSaleinvoice(t *testing.T) {
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
-	repo := saleinvoice.NewSaleinvoiceRepository(mongoPersister)
+	repo := repositories.NewSaleinvoiceRepository(mongoPersister)
 
 	shopID := "mx01"
 	give := "fx01"
@@ -212,7 +213,7 @@ func TestFindSaleinvoice(t *testing.T) {
 func TestFindPageSaleinvoice(t *testing.T) {
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
-	repo := saleinvoice.NewSaleinvoiceRepository(mongoPersister)
+	repo := repositories.NewSaleinvoiceRepository(mongoPersister)
 
 	shopID := "mx01"
 	// give := "fx01"

@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models"
+	common "smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/saleinvoice/models"
+	"smlcloudplatform/pkg/saleinvoice/repositories"
+	"smlcloudplatform/pkg/saleinvoice/services"
 	"smlcloudplatform/pkg/utils"
 )
 
@@ -21,7 +24,7 @@ type ISaleinvoiceHttp interface {
 type SaleinvoiceHttp struct {
 	ms      *microservice.Microservice
 	cfg     microservice.IConfig
-	service ISaleinvoiceService
+	service services.ISaleinvoiceService
 }
 
 func NewSaleinvoiceHttp(ms *microservice.Microservice, cfg microservice.IConfig) SaleinvoiceHttp {
@@ -29,10 +32,10 @@ func NewSaleinvoiceHttp(ms *microservice.Microservice, cfg microservice.IConfig)
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
 
-	transRepo := NewSaleinvoiceRepository(pst)
-	mqRepo := NewSaleinvoiceMQRepository(prod)
+	transRepo := repositories.NewSaleinvoiceRepository(pst)
+	mqRepo := repositories.NewSaleinvoiceMQRepository(prod)
 
-	service := NewSaleinvoiceService(transRepo, mqRepo)
+	service := services.NewSaleinvoiceService(transRepo, mqRepo)
 	return SaleinvoiceHttp{
 		ms:      ms,
 		cfg:     cfg,
@@ -54,10 +57,10 @@ func (h SaleinvoiceHttp) RouteSetup() {
 // Create Sale Invoice godoc
 // @Description Create Inventory
 // @Tags		Sale Invoice
-// @Param		SaleInvoice  body      models.Saleinvoice  true  "SaleInvoice"
+// @Param		Saleinvoice  body      models.Saleinvoice  true  "Saleinvoice"
 // @Accept 		json
 // @Success		201	{object}	models.ResponseSuccessWithID
-// @Failure		401 {object}	models.AuthResponseFailed
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /saleinvoice [post]
 func (h SaleinvoiceHttp) CreateSaleinvoice(ctx microservice.IContext) error {
@@ -81,7 +84,7 @@ func (h SaleinvoiceHttp) CreateSaleinvoice(ctx microservice.IContext) error {
 		ctx.ResponseError(400, err.Error())
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
 	})
@@ -96,7 +99,7 @@ func (h SaleinvoiceHttp) CreateSaleinvoice(ctx microservice.IContext) error {
 // @Param		Invoice  body      models.Saleinvoice  true  "Body"
 // @Accept 		json
 // @Success		201	{object}	models.ResponseSuccessWithID
-// @Failure		401 {object}	models.AuthResponseFailed
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /saleinvoice/{id} [put]
 func (h SaleinvoiceHttp) UpdateSaleinvoice(ctx microservice.IContext) error {
@@ -122,7 +125,7 @@ func (h SaleinvoiceHttp) UpdateSaleinvoice(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusOK, models.ApiResponse{
+	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 	})
 	return nil
@@ -134,7 +137,7 @@ func (h SaleinvoiceHttp) UpdateSaleinvoice(ctx microservice.IContext) error {
 // @Param		id  path      string  true  "Document ID"
 // @Accept 		json
 // @Success		200	{object}	models.ResponseSuccessWithID
-// @Failure		401 {object}	models.AuthResponseFailed
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /saleinvoice/{id} [delete]
 func (h SaleinvoiceHttp) DeleteSaleinvoice(ctx microservice.IContext) error {
@@ -151,7 +154,7 @@ func (h SaleinvoiceHttp) DeleteSaleinvoice(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusOK, models.ApiResponse{
+	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 	})
 	return nil
@@ -163,7 +166,7 @@ func (h SaleinvoiceHttp) DeleteSaleinvoice(ctx microservice.IContext) error {
 // @Param		id  path      string  true  "Inventory ID"
 // @Accept 		json
 // @Success		200	{object}	models.SaleinvoiceInfo
-// @Failure		401 {object}	models.AuthResponseFailed
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /saleinvoice/{id} [get]
 func (h SaleinvoiceHttp) InfoSaleinvoice(ctx microservice.IContext) error {
@@ -180,7 +183,7 @@ func (h SaleinvoiceHttp) InfoSaleinvoice(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusOK, models.ApiResponse{
+	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		Data:    trans,
 	})
@@ -194,8 +197,8 @@ func (h SaleinvoiceHttp) InfoSaleinvoice(ctx microservice.IContext) error {
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
 // @Accept 		json
-// @Success		200	{array}	models.SaleInvoiceListPageResponse
-// @Failure		401 {object}	models.AuthResponseFailed
+// @Success		200	{array}	models.SaleinvoiceListPageResponse
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /saleinvoice [get]
 func (h SaleinvoiceHttp) SearchSaleinvoice(ctx microservice.IContext) error {
@@ -215,7 +218,7 @@ func (h SaleinvoiceHttp) SearchSaleinvoice(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusOK,
-		models.ApiResponse{
+		common.ApiResponse{
 			Success:    true,
 			Data:       docList,
 			Pagination: pagination,
@@ -243,7 +246,7 @@ func (h SaleinvoiceHttp) SearchSaleinvoiceItems(ctx microservice.IContext) error
 
 	ctx.Response(
 		http.StatusOK,
-		models.ApiResponse{
+		common.ApiResponse{
 			Success:    true,
 			Data:       docList,
 			Pagination: pagination,

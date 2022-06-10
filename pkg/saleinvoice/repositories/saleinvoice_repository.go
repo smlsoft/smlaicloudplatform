@@ -1,8 +1,8 @@
-package saleinvoice
+package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/saleinvoice/models"
 
 	paginate "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"

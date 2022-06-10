@@ -18,8 +18,8 @@ func StartMigrateModel(ms *microservice.Microservice, cfg microservice.IConfig) 
 	// pst.DropTable(vfgl.JournalPg{}, vfgl.JournalDetailPg{})
 
 	pst.AutoMigrate(
-		// &saleinvoice.SaleInvoiceTable{},
-		// &saleinvoice.SaleInvoiceDetailTable{},
+		// &saleinvoice.SaleinvoiceTable{},
+		// &saleinvoice.SaleinvoiceDetailTable{},
 		// &models.InventoryImage{},
 		// &models.InventoryTag{},
 
