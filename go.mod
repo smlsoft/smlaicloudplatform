@@ -13,8 +13,11 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/opensearch-project/opensearch-go v1.1.0
 	github.com/pkg/errors v0.9.1
+	github.com/stretchr/testify v1.7.1
 	github.com/swaggo/echo-swagger v1.3.0
 	github.com/swaggo/swag v1.7.9
+	github.com/tj/assert v0.0.3
+	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0
 	gorm.io/driver/postgres v1.3.3
 	gorm.io/gorm v1.23.4
 )
@@ -38,6 +41,7 @@ require (
 	github.com/go-openapi/swag v0.19.15 // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
+	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
@@ -45,7 +49,6 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.2.0 // indirect
-	github.com/stretchr/testify v1.7.1 // indirect
 	github.com/ttacon/chalk v0.0.0-20160626202418-22c06c80ed31 // indirect
 	github.com/valyala/fasthttp v1.30.0 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
@@ -55,7 +58,6 @@ require (
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/time v0.0.0-20201208040808-7e3f01d25324 // indirect
 	golang.org/x/tools v0.1.9 // indirect
-	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )

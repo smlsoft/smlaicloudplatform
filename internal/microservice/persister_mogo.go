@@ -70,6 +70,14 @@ func NewPersisterMongo(config IPersisterMongoConfig) *PersisterMongo {
 	}
 }
 
+func NewPersisterMongoWithDBContext(db *mongo.Database) *PersisterMongo {
+	ctx := context.Background()
+	return &PersisterMongo{
+		db:  db,
+		ctx: ctx,
+	}
+}
+
 func (pst *PersisterMongo) getConnectionString() (string, error) {
 	cfg := pst.config
 

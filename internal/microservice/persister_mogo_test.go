@@ -12,7 +12,7 @@ import (
 type ConfigDBTest struct{}
 
 func (c *ConfigDBTest) MongodbURI() string {
-	return "mongodb://root:rootx@localhost:27017/"
+	return "mongodb://192.168.2.209:27017/"
 }
 
 func (c *ConfigDBTest) DB() string {

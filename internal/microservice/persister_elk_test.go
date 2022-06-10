@@ -1,10 +1,5 @@
 package microservice_test
 
-import (
-	"smlcloudplatform/internal/microservice"
-	"testing"
-)
-
 type ConfigElkTest struct{}
 
 func (c *ConfigElkTest) ElkAddress() []string {
@@ -31,38 +26,38 @@ func (*TestElkModel) IndexName() string {
 	return "test"
 }
 
-func TestElkCreate(t *testing.T) {
-	pst := microservice.NewPersisterElk(&ConfigElkTest{})
-	err := pst.Create(&TestElkModel{
-		Title:       "test title",
-		Description: "test description",
-	})
+// func TestElkCreate(t *testing.T) {
+// 	pst := microservice.NewPersisterElk(&ConfigElkTest{})
+// 	err := pst.Create(&TestElkModel{
+// 		Title:       "test title",
+// 		Description: "test description",
+// 	})
 
-	if err != nil {
-		t.Error(err)
-		return
-	}
-}
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// }
 
-func TestElkUpdate(t *testing.T) {
-	pst := microservice.NewPersisterElk(&ConfigElkTest{})
-	err := pst.Update("eN9AU38BxwH1fQnY_Kq8", &TestElkModel{
-		Title:       "test title",
-		Description: "test description",
-	})
+// func TestElkUpdate(t *testing.T) {
+// 	pst := microservice.NewPersisterElk(&ConfigElkTest{})
+// 	err := pst.Update("eN9AU38BxwH1fQnY_Kq8", &TestElkModel{
+// 		Title:       "test title",
+// 		Description: "test description",
+// 	})
 
-	if err != nil {
-		t.Error(err)
-		return
-	}
-}
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// }
 
-func TestElkDelete(t *testing.T) {
-	pst := microservice.NewPersisterElk(&ConfigElkTest{})
-	err := pst.Delete("9-DSU38BxwH1fQnY-VzD", &TestElkModel{})
+// func TestElkDelete(t *testing.T) {
+// 	pst := microservice.NewPersisterElk(&ConfigElkTest{})
+// 	err := pst.Delete("9-DSU38BxwH1fQnY-VzD", &TestElkModel{})
 
-	if err != nil {
-		t.Error(err)
-		return
-	}
-}
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// }
