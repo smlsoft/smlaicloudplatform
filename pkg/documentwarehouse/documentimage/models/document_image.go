@@ -13,6 +13,7 @@ type DocumentImage struct {
 	DocumentRef string    `json:"documentref" bson:"documentref"`
 	ImageUri    string    `json:"imageuri" bson:"imageuri"`
 	Module      string    `json:"module" bson:"module"`
+	DocGUIDRef  string    `json:"docguidref" bson:"docguidref"`
 	UploadedBy  string    `json:"uploadedby" bson:"uploadedby"`
 	UploadedAt  time.Time `json:"uploadedat" bson:"uploadedat"`
 }
@@ -40,4 +41,15 @@ type DocumentImageDoc struct {
 
 func (DocumentImageDoc) CollectionName() string {
 	return documentImageCollectionName
+}
+
+type DocumentImageInfoResponse struct {
+	Success bool              `json:"success"`
+	Data    DocumentImageInfo `json:"data,omitempty"`
+}
+
+type DocumentImagePageResponse struct {
+	Success    bool                          `json:"success"`
+	Data       []DocumentImageInfo           `json:"data,omitempty"`
+	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
 }

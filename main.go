@@ -19,6 +19,7 @@ import (
 	"smlcloudplatform/pkg/api/restaurant/shopzone"
 	"smlcloudplatform/pkg/api/shop"
 	"smlcloudplatform/pkg/api/shop/employee"
+	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/saleinvoice"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
 	"smlcloudplatform/pkg/vfgl/accountgroup"
@@ -171,6 +172,9 @@ func main() {
 
 		zoneDesignhttp := zonedesign.NewZoneDesignHttp(ms, cfg)
 		zoneDesignhttp.RouteSetup()
+
+		documentImageHttp := documentimage.NewDocumentImageHttp(ms, cfg)
+		documentImageHttp.RouteSetup()
 	}
 
 	if devApiMode == "1" || devApiMode == "2" {

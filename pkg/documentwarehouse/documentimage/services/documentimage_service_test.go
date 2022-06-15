@@ -1,0 +1,165 @@
+package services_test
+
+import (
+	"fmt"
+	"image"
+	"image/color"
+	"image/png"
+	"mime/multipart"
+	"os"
+	"smlcloudplatform/pkg/documentwarehouse/documentimage/models"
+	"smlcloudplatform/pkg/documentwarehouse/documentimage/services"
+	"smlcloudplatform/pkg/utils"
+	"testing"
+	"time"
+
+	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+
+	common "smlcloudplatform/pkg/models"
+)
+
+type MockDocumentImageRepository struct {
+	mock.Mock
+}
+
+func (m *MockDocumentImageRepository) Create(doc models.DocumentImageDoc) (string, error) {
+	args := m.Called(doc)
+	return args.String(0), args.Error(1)
+}
+
+func (m *MockDocumentImageRepository) Update(shopID string, guid string, doc models.DocumentImageDoc) error {
+	args := m.Called(shopID, guid, doc)
+	return args.Error(0)
+}
+
+func (m *MockDocumentImageRepository) DeleteByGuidfixed(shopID string, guid string, username string) error {
+	args := m.Called(shopID, guid, username)
+	return args.Error(0)
+}
+
+func (m *MockDocumentImageRepository) FindOne(shopID string, filters map[string]interface{}) (models.DocumentImageDoc, error) {
+	args := m.Called(shopID, filters)
+	return args.Get(0).(models.DocumentImageDoc), args.Error(1)
+}
+
+func (m *MockDocumentImageRepository) FindByGuid(shopID string, guid string) (models.DocumentImageDoc, error) {
+	args := m.Called(shopID, guid)
+	return args.Get(0).(models.DocumentImageDoc), args.Error(1)
+}
+
+func (m *MockDocumentImageRepository) FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error) {
+	args := m.Called(shopID, colNameSearch, q, page, limit)
+	return args.Get(0).([]models.DocumentImageInfo), args.Get(1).(mongopagination.PaginationData), args.Error(2)
+}
+
+type MockDocumentImageFilePersister struct {
+	mock.Mock
+}
+
+func (m *MockDocumentImageFilePersister) Save(fh *multipart.FileHeader, fileName string, fileExtension string) (string, error) {
+	args := m.Called(fh, fileName, fileExtension)
+	return args.String(0), args.Error(1)
+}
+
+func CreateImage() *image.RGBA {
+	width := 200
+	height := 100
+
+	upLeft := image.Point{0, 0}
+	lowRight := image.Point{width, height}
+
+	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
+
+	// Colors are defined by Red, Green, Blue, Alpha uint8 values.
+	cyan := color.RGBA{100, 200, 200, 0xff}
+
+	// Set color for each pixel.
+	for x := 0; x < width; x++ {
+		for y := 0; y < height; y++ {
+			switch {
+			case x < width/2 && y < height/2: // upper left quadrant
+				img.Set(x, y, cyan)
+			case x >= width/2 && y >= height/2: // lower right quadrant
+				img.Set(x, y, color.White)
+			default:
+				// Use zero value.
+			}
+		}
+	}
+
+	// Encode as PNG.
+	f, _ := os.Create("image.png")
+	png.Encode(f, img)
+
+	return img
+}
+
+func TestDocumentImageUploadService(t *testing.T) {
+
+	giveShopId := "TESTSHOP"
+	giveUserId := "TESTUSER"
+	giveModuleName := "TESTMODULE"
+
+	giveImageUploadExtension := "png"
+	giveImageUploadSuccessUri := "http:/xxxxxx"
+	activityTime := time.Now()
+	giveNewGuid := utils.NewGUID()
+	wantCreateDocumentImage := models.DocumentImageDoc{
+		DocumentImageData: models.DocumentImageData{
+			ShopIdentity: common.ShopIdentity{
+				ShopID: giveShopId,
+			},
+			DocumentImageInfo: models.DocumentImageInfo{
+				DocIdentity: common.DocIdentity{
+					GuidFixed: giveNewGuid,
+				},
+				DocumentImage: models.DocumentImage{
+					UploadedBy:  giveUserId,
+					UploadedAt:  activityTime,
+					ImageUri:    giveImageUploadSuccessUri,
+					Module:      giveModuleName,
+					DocumentRef: giveNewGuid,
+				},
+			},
+		},
+		ActivityDoc: common.ActivityDoc{
+			CreatedAt: activityTime,
+			CreatedBy: giveUserId,
+		},
+	}
+
+	giveImageUploadFileNameWithShop := fmt.Sprintf("%s/%s", giveShopId, giveNewGuid)
+
+	// body := new(bytes.Buffer)
+	// writer := multipart.NewWriter(body)
+	// writer.WriteField("module", giveModuleName)
+	// part, _ := writer.CreateFormFile("file", "image.png")
+	// err := png.Encode(part, CreateImage())
+	// assert.Nil(t, err, "Failed On Give File to Process Test")
+	// writer.Close()
+	giveFileHeader := &multipart.FileHeader{
+		Filename: "image.png",
+	}
+
+	mockRepo := new(MockDocumentImageRepository)
+	mockRepo.On("Create", wantCreateDocumentImage).Return(wantCreateDocumentImage.GuidFixed, nil)
+
+	mockFilePersister := new(MockDocumentImageFilePersister)
+	mockFilePersister.On("Save", giveFileHeader, giveImageUploadFileNameWithShop, giveImageUploadExtension).Return(giveImageUploadSuccessUri, nil)
+
+	svc := services.DocumentImageService{
+		Repo:          mockRepo,
+		FilePersister: mockFilePersister,
+		NowFn: func() time.Time {
+			return activityTime
+		},
+		NewGUIDFn: func() string {
+			return giveNewGuid
+		},
+	}
+	get, err := svc.UploadDocumentImage(giveShopId, giveUserId, giveModuleName, giveFileHeader)
+	assert.Nil(t, err, fmt.Sprintf("Failed After Service Upload Document Image"))
+	assert.Equal(t, get, &wantCreateDocumentImage.DocumentImageInfo, "Failed After Service Upload Document Image Are Not Equal Given Test Data.")
+}

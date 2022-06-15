@@ -114,8 +114,9 @@ func (svc ImagesHttp) GetProductImage(ctx microservice.IContext) error {
 // @Router /upload/images [post]
 func (svc ImagesHttp) UploadImage(ctx microservice.IContext) error {
 
+	shopId := ctx.Param("shopid")
 	fileHeader, _ := ctx.FormFile("file")
-	image, err := svc.service.UploadImage(fileHeader)
+	image, err := svc.service.UploadImage(shopId, fileHeader)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, &models.ApiResponse{

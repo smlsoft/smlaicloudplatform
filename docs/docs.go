@@ -330,6 +330,283 @@ const docTemplate = `{
                 }
             }
         },
+        "/documentimage": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "List Document Image",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImage"
+                ],
+                "summary": "List Document Image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.DocumentImagePageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Document Image",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImage"
+                ],
+                "summary": "Create Document Image",
+                "parameters": [
+                    {
+                        "description": "DocumentImage",
+                        "name": "DocumentImage",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DocumentImage"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimage/upload": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Upload Document Image",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImage"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Module",
+                        "name": "module",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Image",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DocumentImageInfoResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimage/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Document Image Infomation",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImage"
+                ],
+                "summary": "Get Document Image Infomation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.DocumentImageInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Document Image",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImage"
+                ],
+                "summary": "Update Document Image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "DocumentImage",
+                        "name": "DocumentImage",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DocumentImage"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Document Image",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "Delete Document Image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/employee": {
             "get": {
                 "security": [
@@ -5795,6 +6072,83 @@ const docTemplate = `{
                 }
             }
         },
+        "models.DocumentImage": {
+            "type": "object",
+            "properties": {
+                "docguidref": {
+                    "type": "string"
+                },
+                "documentref": {
+                    "type": "string"
+                },
+                "imageuri": {
+                    "type": "string"
+                },
+                "module": {
+                    "type": "string"
+                },
+                "uploadedat": {
+                    "type": "string"
+                },
+                "uploadedby": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DocumentImageInfo": {
+            "type": "object",
+            "properties": {
+                "docguidref": {
+                    "type": "string"
+                },
+                "documentref": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "imageuri": {
+                    "type": "string"
+                },
+                "module": {
+                    "type": "string"
+                },
+                "uploadedat": {
+                    "type": "string"
+                },
+                "uploadedby": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DocumentImageInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.DocumentImageInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.DocumentImagePageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DocumentImageInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "models.Employee": {
             "type": "object",
             "properties": {
@@ -7346,23 +7700,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.SaleinvoiceListPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.SaleinvoiceInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
         "models.Saleinvoice": {
             "type": "object",
             "properties": {
@@ -7592,6 +7929,23 @@ const docTemplate = `{
                 },
                 "totalamount": {
                     "type": "number"
+                }
+            }
+        },
+        "models.SaleinvoiceListPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SaleinvoiceInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },

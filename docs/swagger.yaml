@@ -363,6 +363,56 @@ definitions:
       remark:
         type: string
     type: object
+  models.DocumentImage:
+    properties:
+      docguidref:
+        type: string
+      documentref:
+        type: string
+      imageuri:
+        type: string
+      module:
+        type: string
+      uploadedat:
+        type: string
+      uploadedby:
+        type: string
+    type: object
+  models.DocumentImageInfo:
+    properties:
+      docguidref:
+        type: string
+      documentref:
+        type: string
+      guidfixed:
+        type: string
+      imageuri:
+        type: string
+      module:
+        type: string
+      uploadedat:
+        type: string
+      uploadedby:
+        type: string
+    type: object
+  models.DocumentImageInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.DocumentImageInfo'
+      success:
+        type: boolean
+    type: object
+  models.DocumentImagePageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.DocumentImageInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
   models.Employee:
     properties:
       name:
@@ -1389,17 +1439,6 @@ definitions:
       success:
         type: boolean
     type: object
-  models.SaleinvoiceListPageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/models.SaleinvoiceInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
   models.Saleinvoice:
     properties:
       discountamount:
@@ -1555,6 +1594,17 @@ definitions:
         type: number
       totalamount:
         type: number
+    type: object
+  models.SaleinvoiceListPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.SaleinvoiceInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
     type: object
   models.Shop:
     properties:
@@ -2681,6 +2731,181 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
+  /documentimage:
+    get:
+      consumes:
+      - application/json
+      description: List Document Image
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.DocumentImagePageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: List Document Image
+      tags:
+      - DocumentImage
+    post:
+      consumes:
+      - application/json
+      description: Create Document Image
+      parameters:
+      - description: DocumentImage
+        in: body
+        name: DocumentImage
+        required: true
+        schema:
+          $ref: '#/definitions/models.DocumentImage'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: Create Document Image
+      tags:
+      - DocumentImage
+  /documentimage/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Document Image
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: Delete Document Image
+      tags:
+      - GL
+    get:
+      consumes:
+      - application/json
+      description: Get Document Image Infomation
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.DocumentImageInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: Get Document Image Infomation
+      tags:
+      - DocumentImage
+    put:
+      consumes:
+      - application/json
+      description: Update Document Image
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: DocumentImage
+        in: body
+        name: DocumentImage
+        required: true
+        schema:
+          $ref: '#/definitions/models.DocumentImage'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: Update Document Image
+      tags:
+      - DocumentImage
+  /documentimage/upload:
+    post:
+      consumes:
+      - application/json
+      description: Upload Document Image
+      parameters:
+      - description: Module
+        in: query
+        name: module
+        required: true
+        type: string
+      - description: Image
+        in: formData
+        name: file
+        required: true
+        type: file
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.DocumentImageInfoResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentImage
   /employee:
     get:
       consumes:

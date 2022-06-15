@@ -11,7 +11,7 @@ import (
 )
 
 type IImagesService interface {
-	UploadImage(fh *multipart.FileHeader) (*models.Image, error)
+	UploadImage(shopId string, fh *multipart.FileHeader) (*models.Image, error)
 	UploadImageToProduct(shopID string, fh *multipart.FileHeader) error
 	GetImageByProductCode(shopid string, itemguid string, index int) (string, error)
 	GetStoragePath() string
@@ -34,9 +34,13 @@ func NewImageService(persisterImage *microservice.PersisterImage,
 	}
 }
 
-func (svc ImagesService) UploadImage(fh *multipart.FileHeader) (*models.Image, error) {
+func (svc ImagesService) UploadImage(shopId string, fh *multipart.FileHeader) (*models.Image, error) {
 
-	fileName, err := svc.persisterImage.Upload(fh)
+	fileUploadMetadataSlice := strings.Split(fh.Filename, ".")
+	fileName := fileUploadMetadataSlice[0]
+	fileExtension := fileUploadMetadataSlice[1]
+
+	fileName, err := svc.persisterImage.Upload(fh, shopId+"/"+fileName, fileExtension)
 
 	if err != nil {
 		return nil, err
@@ -55,14 +59,14 @@ func (svc ImagesService) UploadImageToProduct(shopID string, fh *multipart.FileH
 
 	// find product by code
 	fileName := fileUploadMetadataSlice[0]
-	// fileExtension := fileUploadMetadataSlice[1]
+	fileExtension := fileUploadMetadataSlice[1]
 
 	findDoc, err := svc.invRepo.FindByItemBarcode(shopID, fileName)
 	if err != nil {
 		return err
 	}
 
-	uploadFileName, err := svc.persisterImage.Upload(fh)
+	uploadFileName, err := svc.persisterImage.Upload(fh, shopID+"/"+fileName, fileExtension)
 	if err != nil {
 		return err
 	}

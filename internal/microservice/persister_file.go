@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"io/ioutil"
 	"mime/multipart"
+	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 )
 
 type IPersisterFile interface {
-	Save(file File, fileName string) error
+	Save(file *multipart.FileHeader, fileName string, fileExtension string) (string, error)
 }
 
 type PersisterFile struct {
@@ -31,25 +33,30 @@ func NewPersisterFile(cfg *StorageFileConfig) *PersisterFile {
 	}
 }
 
-func (pst *PersisterFile) Save(fh *multipart.FileHeader, fileName string, fileExtension string) error {
+func (pst *PersisterFile) Save(fh *multipart.FileHeader, fileName string, fileExtension string) (string, error) {
+
+	u, err := url.Parse(pst.StoreDataUri)
+	if err != nil {
+		return "", err
+	}
 
 	imageFileName := fmt.Sprintf("%s.%s", fileName, fileExtension)
 	file, err := fh.Open()
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer file.Close()
 
 	// upload Now
 	tempFile, err := ioutil.TempFile(pst.StoreFilePath, "upload-*."+fileExtension)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer tempFile.Close()
 
 	fileBytes, err := ioutil.ReadAll(file)
 	if err != nil {
-		return err
+		return "", err
 	}
 	// write this byte array to our temporary file
 	tempFile.Write(fileBytes)
@@ -70,7 +77,10 @@ func (pst *PersisterFile) Save(fh *multipart.FileHeader, fileName string, fileEx
 		fileName = uploadFileName
 	}
 
-	return nil
+	u.Path = path.Join(u.Path, imageFileName)
+	imageUri := u.String()
+
+	return imageUri, nil
 
 	//storeFilePath := filepath.Join(pst.StoreFilePath, fileName)
 	//return ioutil.WriteFile(storeFilePath, file.Data, 0600)
