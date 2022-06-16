@@ -104,6 +104,8 @@ definitions:
     properties:
       categoryguid:
         type: string
+      code:
+        type: string
       image:
         type: string
       name1:
@@ -127,6 +129,8 @@ definitions:
   models.CategoryActivity:
     properties:
       categoryguid:
+        type: string
+      code:
         type: string
       createdat:
         type: string
@@ -269,6 +273,8 @@ definitions:
   models.CategoryInfo:
     properties:
       categoryguid:
+        type: string
+      code:
         type: string
       guidfixed:
         type: string

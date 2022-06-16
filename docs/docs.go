@@ -5683,6 +5683,9 @@ const docTemplate = `{
                 "categoryguid": {
                     "type": "string"
                 },
+                "code": {
+                    "type": "string"
+                },
                 "image": {
                     "type": "string"
                 },
@@ -5717,6 +5720,9 @@ const docTemplate = `{
             ],
             "properties": {
                 "categoryguid": {
+                    "type": "string"
+                },
+                "code": {
                     "type": "string"
                 },
                 "createdat": {
@@ -5932,6 +5938,9 @@ const docTemplate = `{
             ],
             "properties": {
                 "categoryguid": {
+                    "type": "string"
+                },
+                "code": {
                     "type": "string"
                 },
                 "guidfixed": {

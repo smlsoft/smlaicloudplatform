@@ -1,10 +1,13 @@
 package images
 
 import (
+	"bytes"
 	"mime/multipart"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/inventory"
-	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/images/models"
+	common "smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/utils"
 	"strings"
 
 	"errors"
@@ -13,13 +16,13 @@ import (
 type IImagesService interface {
 	UploadImage(shopId string, fh *multipart.FileHeader) (*models.Image, error)
 	UploadImageToProduct(shopID string, fh *multipart.FileHeader) error
-	GetImageByProductCode(shopid string, itemguid string, index int) (string, error)
-	GetStoragePath() string
+	GetImageByProductCode(shopid string, itemguid string, index int) (string, *bytes.Buffer, error)
 }
 
 type ImagesService struct {
 	persisterImage *microservice.PersisterImage
 	invRepo        inventory.IInventoryRepository
+	NewGUIDFn      func() string
 }
 
 func NewImageService(persisterImage *microservice.PersisterImage,
@@ -31,13 +34,14 @@ func NewImageService(persisterImage *microservice.PersisterImage,
 	return &ImagesService{
 		persisterImage: persisterImage,
 		invRepo:        inventoryRepo,
+		NewGUIDFn:      func() string { return utils.NewGUID() },
 	}
 }
 
 func (svc ImagesService) UploadImage(shopId string, fh *multipart.FileHeader) (*models.Image, error) {
 
 	fileUploadMetadataSlice := strings.Split(fh.Filename, ".")
-	fileName := fileUploadMetadataSlice[0]
+	fileName := svc.NewGUIDFn() //fileUploadMetadataSlice[0]
 	fileExtension := fileUploadMetadataSlice[1]
 
 	fileName, err := svc.persisterImage.Upload(fh, shopId+"/"+fileName, fileExtension)
@@ -71,13 +75,13 @@ func (svc ImagesService) UploadImageToProduct(shopID string, fh *multipart.FileH
 		return err
 	}
 
-	var imageSlice []models.InventoryImage
+	var imageSlice []common.InventoryImage
 	if findDoc.Images != nil {
 		//imageSlice = make([]models.InventoryImage, 1)
 		//} else {
 		imageSlice = *findDoc.Images
 	}
-	productImage := models.InventoryImage{
+	productImage := common.InventoryImage{
 		Uri: uploadFileName,
 	}
 	// push image
@@ -90,35 +94,30 @@ func (svc ImagesService) UploadImageToProduct(shopID string, fh *multipart.FileH
 	return err
 }
 
-func (svc ImagesService) GetImageByProductCode(shopid string, itemguid string, index int) (string, error) {
+func (svc ImagesService) GetImageByProductCode(shopid string, itemguid string, index int) (string, *bytes.Buffer, error) {
 
 	findDoc, err := svc.invRepo.FindByItemGuid(shopid, itemguid)
 
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 
 	if findDoc.Images == nil {
-		return "", errors.New("No Image")
+		return "", nil, errors.New("No Image")
 	}
 
 	productImage := *findDoc.Images
 	inventoryImageLength := len(productImage)
 	if inventoryImageLength < index {
-		return "", errors.New("Not Found Image")
+		return "", nil, errors.New("Not Found Image")
 	}
 
 	imgFileUrl := productImage[index-1].Uri
 
-	storageCfg := microservice.NewStorageFileConfig()
+	imageUri, buffer, err := svc.persisterImage.FilePersister.LoadFile(imgFileUrl)
+	if err != nil {
+		return "", buffer, err
+	}
 
-	imgFileName := strings.Replace(imgFileUrl, storageCfg.StorageUriAtlas(), "", -1)
-
-	return imgFileName, nil
-}
-
-func (svc ImagesService) GetStoragePath() string {
-
-	storageCfg := microservice.NewStorageFileConfig()
-	return storageCfg.StorageDataPath()
+	return imageUri, buffer, nil
 }

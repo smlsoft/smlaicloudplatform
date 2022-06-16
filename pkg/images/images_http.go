@@ -2,10 +2,9 @@ package images
 
 import (
 	"net/http"
-	"path/filepath"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/inventory"
-	"smlcloudplatform/pkg/models"
+	common "smlcloudplatform/pkg/models"
 	"strconv"
 )
 
@@ -57,7 +56,7 @@ func (svc ImagesHttp) GetProductImage(ctx microservice.IContext) error {
 	// queryParams := strings.Split(ctx.Param("id"), "-")
 
 	// if len(queryParams) < 2 {
-	// 	ctx.Response(http.StatusBadRequest, &models.ApiResponse{
+	// 	ctx.Response(http.StatusBadRequest, &common.ApiResponse{
 	// 		Success: false,
 	// 		Message: "Invalid Payload",
 	// 	})
@@ -75,7 +74,7 @@ func (svc ImagesHttp) GetProductImage(ctx microservice.IContext) error {
 	// index, err := strconv.Atoi(queryParams[2])
 	index, err := strconv.Atoi(imageIndex)
 	if err != nil {
-		ctx.Response(http.StatusBadRequest, &models.ApiResponse{
+		ctx.Response(http.StatusBadRequest, &common.ApiResponse{
 			Success: false,
 			Message: err.Error(),
 		})
@@ -86,19 +85,37 @@ func (svc ImagesHttp) GetProductImage(ctx microservice.IContext) error {
 		index = 1
 	}
 
-	fileName, err := svc.service.GetImageByProductCode(shopId, itemguid, index)
+	fileName, buffer, err := svc.service.GetImageByProductCode(shopId, itemguid, index)
 
 	if err != nil {
-		ctx.Response(http.StatusBadRequest, &models.ApiResponse{
+		ctx.Response(http.StatusBadRequest, &common.ApiResponse{
 			Success: false,
 			Message: err.Error(),
 		})
 		return nil
 	}
 
-	storateFileName := filepath.Join(svc.service.GetStoragePath(), fileName)
+	// if strings.HasPrefix(fileName, "http") {
+	// resp, err := http.Get(fileName)
+	// if err != nil {
+	// 	ctx.Response(http.StatusBadRequest, &common.ApiResponse{
+	// 		Success: false,
+	// 		Message: err.Error(),
+	// 	})
+	// 	return nil
+	// }
+	// defer resp.Body.Close()
 
-	return ctx.EchoContext().File(storateFileName)
+	// downloadedData := &bytes.Buffer{}
+	// downloadedData.ReadFrom(resp.Body)
+
+	// return ctx.EchoContext().Blob(http.StatusOK, "", downloadedData.Bytes())
+	// }
+	if buffer != nil {
+		return ctx.EchoContext().Blob(http.StatusOK, "", buffer.Bytes())
+	}
+
+	return ctx.EchoContext().File(fileName)
 }
 
 // Upload Image
@@ -107,26 +124,27 @@ func (svc ImagesHttp) GetProductImage(ctx microservice.IContext) error {
 // @Accept 		json
 // @Param		file  formData      file  true  "Image"
 // @Success		200	{array}	models.Image
-// @Failure		401 {object}	models.AuthResponseFailed
-// @Failure		400	{object}	models.AuthResponseFailed
-// @Failure		500	{object}	models.AuthResponseFailed
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Failure		400	{object}	common.AuthResponseFailed
+// @Failure		500	{object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /upload/images [post]
 func (svc ImagesHttp) UploadImage(ctx microservice.IContext) error {
 
-	shopId := ctx.Param("shopid")
+	userInfo := ctx.UserInfo()
+	shopId := userInfo.ShopID
 	fileHeader, _ := ctx.FormFile("file")
 	image, err := svc.service.UploadImage(shopId, fileHeader)
 
 	if err != nil {
-		ctx.Response(http.StatusBadRequest, &models.ApiResponse{
+		ctx.Response(http.StatusBadRequest, &common.ApiResponse{
 			Success: false,
 			Message: err.Error(),
 		})
 		return nil
 	}
 
-	ctx.Response(http.StatusOK, &models.ApiResponse{
+	ctx.Response(http.StatusOK, &common.ApiResponse{
 		Success: true,
 		Data:    image,
 	})
@@ -139,9 +157,9 @@ func (svc ImagesHttp) UploadImage(ctx microservice.IContext) error {
 // @Accept 		json
 // @Param		file  formData      file  true  "Image"
 // @Success		200	{array}	models.Image
-// @Failure		401 {object}	models.AuthResponseFailed
-// @Failure		400	{object}	models.AuthResponseFailed
-// @Failure		500	{object}	models.AuthResponseFailed
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Failure		400	{object}	common.AuthResponseFailed
+// @Failure		500	{object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /upload/productimage [post]
 func (svc ImagesHttp) UploadImageToProduct(ctx microservice.IContext) error {
@@ -153,14 +171,14 @@ func (svc ImagesHttp) UploadImageToProduct(ctx microservice.IContext) error {
 	err := svc.service.UploadImageToProduct(shopID, fileHeader)
 
 	if err != nil {
-		ctx.Response(http.StatusBadRequest, &models.ApiResponse{
+		ctx.Response(http.StatusBadRequest, &common.ApiResponse{
 			Success: false,
 			Message: err.Error(),
 		})
 		return nil
 	}
 
-	ctx.Response(http.StatusOK, &models.ApiResponse{
+	ctx.Response(http.StatusOK, &common.ApiResponse{
 		Success: true,
 	})
 	return nil

@@ -1,6 +1,7 @@
 package microservice
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"mime/multipart"
@@ -8,10 +9,12 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
 type IPersisterFile interface {
 	Save(file *multipart.FileHeader, fileName string, fileExtension string) (string, error)
+	LoadFile(fileName string) (string, *bytes.Buffer, error)
 }
 
 type PersisterFile struct {
@@ -84,4 +87,12 @@ func (pst *PersisterFile) Save(fh *multipart.FileHeader, fileName string, fileEx
 
 	//storeFilePath := filepath.Join(pst.StoreFilePath, fileName)
 	//return ioutil.WriteFile(storeFilePath, file.Data, 0600)
+}
+
+func (pst *PersisterFile) LoadFile(fileName string) (string, *bytes.Buffer, error) {
+
+	imgFileName := strings.Replace(fileName, pst.StoreDataUri, "", -1)
+	storateFileName := filepath.Join(pst.StoreFilePath, imgFileName)
+
+	return storateFileName, nil, nil
 }

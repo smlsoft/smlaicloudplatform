@@ -7,7 +7,6 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/authentication"
 	"smlcloudplatform/pkg/api/category"
-	"smlcloudplatform/pkg/api/images"
 	"smlcloudplatform/pkg/api/inventory"
 	"smlcloudplatform/pkg/api/inventoryimport"
 	"smlcloudplatform/pkg/api/inventorysearchconsumer"
@@ -20,6 +19,7 @@ import (
 	"smlcloudplatform/pkg/api/shop"
 	"smlcloudplatform/pkg/api/shop/employee"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
+	"smlcloudplatform/pkg/images"
 	"smlcloudplatform/pkg/saleinvoice"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
 	"smlcloudplatform/pkg/vfgl/accountgroup"
@@ -130,10 +130,10 @@ func main() {
 		catImp := inventoryimport.NewCategoryImportHttp(ms, cfg)
 		catImp.RouteSetup()
 
-		filePersister := microservice.NewPersisterFile(microservice.NewStorageFileConfig())
-		imagePersister := microservice.NewPersisterImage(filePersister)
+		//filePersister := microservice.NewPersisterFile(microservice.NewStorageFileConfig())
+		azureFileBlob := microservice.NewPersisterAzureBlob()
+		imagePersister := microservice.NewPersisterImage(azureFileBlob)
 
-		ms.Logger.Debugf("Store File Path %v", filePersister.StoreFilePath)
 		imageHttp := images.NewImagesHttp(ms, cfg, imagePersister)
 		imageHttp.RouteSetup()
 

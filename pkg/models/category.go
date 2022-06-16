@@ -18,6 +18,7 @@ type Category struct {
 	Name5        string `json:"name5,omitempty" bson:"name5,omitempty"`
 	Image        string `json:"image" bson:"image,omitempty"`
 	Order        int8   `json:"order" bson:"order,omitempty"`
+	Code         string `json:"code" bson:"code"`
 }
 
 type CategoryInfo struct {
