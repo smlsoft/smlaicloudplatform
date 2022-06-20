@@ -10,7 +10,7 @@ const zoneDesignCollectionName = "zoneDesigns"
 
 type ZoneDesign struct {
 	Code        string        `json:"code" bson:"code"`
-	Order       int           `json:"order" bson:"order"`
+	XOrder      int           `json:"xorder" bson:"xorder"`
 	Tables      []TableDesign `json:"tables" bson:"tables"`
 	Props       []PropDesign  `json:"props" bson:"props"`
 	models.Name `bson:"inline"`
