@@ -20,6 +20,7 @@ import (
 	"smlcloudplatform/pkg/api/shop/employee"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/images"
+	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/saleinvoice"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
 	"smlcloudplatform/pkg/vfgl/accountgroup"
@@ -175,6 +176,9 @@ func main() {
 
 		documentImageHttp := documentimage.NewDocumentImageHttp(ms, cfg)
 		documentImageHttp.RouteSetup()
+
+		masterSync := mastersync.NewMasterSyncHttp(ms, cfg)
+		masterSync.RouteSetup()
 	}
 
 	if devApiMode == "1" || devApiMode == "2" {

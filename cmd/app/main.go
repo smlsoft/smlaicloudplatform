@@ -21,6 +21,7 @@ import (
 	"smlcloudplatform/pkg/api/shop/employee"
 	"smlcloudplatform/pkg/api/syncdata"
 	"smlcloudplatform/pkg/api/tools"
+	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/saleinvoice"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
 	"smlcloudplatform/pkg/vfgl/accountgroup"
@@ -127,6 +128,9 @@ func main() {
 	journalBookhttp.RouteSetup()
 	zonedesignhttp := zonedesign.NewZoneDesignHttp(ms, cfg)
 	zonedesignhttp.RouteSetup()
+
+	mastersync := mastersync.NewMasterSyncHttp(ms, cfg)
+	mastersync.RouteSetup()
 
 	toolSvc := tools.NewToolsService(ms, cfg)
 
