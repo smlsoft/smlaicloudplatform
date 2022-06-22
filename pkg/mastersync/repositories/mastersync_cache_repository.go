@@ -33,7 +33,7 @@ func (repo MasterSyncCacheRepository) Save(shopID string) error {
 }
 
 func (repo MasterSyncCacheRepository) SaveWithModule(shopID string, moduleName string) error {
-	changeTime := time.Now()
+	changeTime := time.Now().Format(time.RFC3339)
 	cacheModuleKey := repo.getCacheModuleKeyWithModule(shopID, moduleName)
 	cacheModuleAllMasterKey := repo.getCacheModuleKeyWithModule(shopID, repo.allMasterKey)
 
