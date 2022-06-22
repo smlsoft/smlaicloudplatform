@@ -3,6 +3,7 @@ package shopzone
 import (
 	"errors"
 	"fmt"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/restaurant"
 	"smlcloudplatform/pkg/utils"
@@ -26,12 +27,14 @@ type IShopZoneService interface {
 }
 
 type ShopZoneService struct {
-	repo IShopZoneRepository
+	repo      IShopZoneRepository
+	cacheRepo mastersync.IMasterSyncCacheRepository
 }
 
-func NewShopZoneService(repo IShopZoneRepository) ShopZoneService {
+func NewShopZoneService(repo IShopZoneRepository, cacheRepo mastersync.IMasterSyncCacheRepository) ShopZoneService {
 	return ShopZoneService{
-		repo: repo,
+		repo:      repo,
+		cacheRepo: cacheRepo,
 	}
 }
 
@@ -54,6 +57,9 @@ func (svc ShopZoneService) CreateShopZone(shopID string, authUsername string, do
 	if err != nil {
 		return "", err
 	}
+
+	svc.saveMasterSync(shopID)
+
 	return newGuidFixed, nil
 }
 
@@ -81,6 +87,9 @@ func (svc ShopZoneService) UpdateShopZone(shopID string, guid string, authUserna
 	if err != nil {
 		return err
 	}
+
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -90,6 +99,9 @@ func (svc ShopZoneService) DeleteShopZone(shopID string, guid string, authUserna
 	if err != nil {
 		return err
 	}
+
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -177,8 +189,8 @@ func (svc ShopZoneService) LastActivity(shopID string, lastUpdatedDate time.Time
 
 func (svc ShopZoneService) SaveInBatch(shopID string, authUsername string, dataList []restaurant.ShopZone) (models.BulkImport, error) {
 
-	createDataList := []restaurant.ShopZoneDoc{}
-	duplicateDataList := []restaurant.ShopZone{}
+	// createDataList := []restaurant.ShopZoneDoc{}
+	// duplicateDataList := []restaurant.ShopZone{}
 
 	payloadCategoryList, payloadDuplicateCategoryList := importdata.FilterDuplicate[restaurant.ShopZone](dataList, svc.getDocIDKey)
 
@@ -198,7 +210,7 @@ func (svc ShopZoneService) SaveInBatch(shopID string, authUsername string, dataL
 		foundItemGuidList = append(foundItemGuidList, doc.Code)
 	}
 
-	duplicateDataList, createDataList = importdata.PreparePayloadData[restaurant.ShopZone, restaurant.ShopZoneDoc](
+	duplicateDataList, createDataList := importdata.PreparePayloadData[restaurant.ShopZone, restaurant.ShopZoneDoc](
 		shopID,
 		authUsername,
 		foundItemGuidList,
@@ -266,6 +278,8 @@ func (svc ShopZoneService) SaveInBatch(shopID string, authUsername string, dataL
 		updateFailDataKey = append(updateFailDataKey, doc.Code)
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return models.BulkImport{
 		Created:          createDataKey,
 		Updated:          updateDataKey,
@@ -276,4 +290,12 @@ func (svc ShopZoneService) SaveInBatch(shopID string, authUsername string, dataL
 
 func (svc ShopZoneService) getDocIDKey(doc restaurant.ShopZone) string {
 	return doc.Code
+}
+
+func (svc ShopZoneService) saveMasterSync(shopID string) {
+	err := svc.cacheRepo.Save(shopID)
+
+	if err != nil {
+		fmt.Println("save shop zone master cache error :: " + err.Error())
+	}
 }

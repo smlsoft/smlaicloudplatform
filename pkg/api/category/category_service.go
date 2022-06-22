@@ -3,6 +3,7 @@ package category
 import (
 	"errors"
 	"fmt"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
@@ -24,12 +25,14 @@ type ICategoryService interface {
 }
 
 type CategoryService struct {
-	repo ICategoryRepository
+	repo      ICategoryRepository
+	cacheRepo mastersync.IMasterSyncCacheRepository
 }
 
-func NewCategoryService(categoryRepository ICategoryRepository) CategoryService {
+func NewCategoryService(categoryRepository ICategoryRepository, cacheRepo mastersync.IMasterSyncCacheRepository) CategoryService {
 	return CategoryService{
-		repo: categoryRepository,
+		repo:      categoryRepository,
+		cacheRepo: cacheRepo,
 	}
 }
 
@@ -62,6 +65,9 @@ func (svc CategoryService) CreateCategory(shopID string, authUsername string, ca
 	if err != nil {
 		return "", err
 	}
+
+	svc.saveMasterSync(shopID)
+
 	return newGuidFixed, nil
 }
 
@@ -87,6 +93,9 @@ func (svc CategoryService) UpdateCategory(shopID string, guid string, authUserna
 	if err != nil {
 		return err
 	}
+
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -96,6 +105,9 @@ func (svc CategoryService) DeleteCategory(shopID string, guid string, authUserna
 	if err != nil {
 		return err
 	}
+
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -281,4 +293,12 @@ func (svc CategoryService) SaveInBatch(shopID string, authUsername string, dataL
 
 func (svc CategoryService) getDocIDKey(doc models.Category) string {
 	return doc.CategoryGuid
+}
+
+func (svc CategoryService) saveMasterSync(shopID string) {
+	err := svc.cacheRepo.Save(shopID)
+
+	if err != nil {
+		fmt.Println("save category master cache error :: " + err.Error())
+	}
 }

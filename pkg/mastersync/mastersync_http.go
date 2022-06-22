@@ -15,6 +15,9 @@ import (
 	"smlcloudplatform/pkg/api/restaurant/shopprinter"
 	"smlcloudplatform/pkg/api/restaurant/shoptable"
 	"smlcloudplatform/pkg/api/restaurant/shopzone"
+	"smlcloudplatform/pkg/mastersync/services"
+
+	"smlcloudplatform/pkg/mastersync/repositories"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 )
@@ -22,6 +25,7 @@ import (
 type MasterSyncHttp struct {
 	ms             *microservice.Microservice
 	cfg            microservice.IConfig
+	svcMasterSync  services.IMasterSyncService
 	svcCategory    category.ICategoryService
 	svcMember      member.IMemberService
 	svcInventory   inventory.IInventoryService
@@ -35,40 +39,52 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	pstPg := ms.Persister(cfg.PersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
 	// Category
 	repoCategory := category.NewCategoryRepository(pst)
-	svcCategory := category.NewCategoryService(repoCategory)
+	repoCacheSyncCategory := repositories.NewMasterSyncCacheRepository(cache, "category")
+	svcCategory := category.NewCategoryService(repoCategory, repoCacheSyncCategory)
 
 	// Member
 	repoMember := member.NewMemberRepository(pst)
 	pgRepoMember := member.NewMemberPGRepository(pstPg)
-	svcMember := member.NewMemberService(repoMember, pgRepoMember)
+	repoCacheSyncMember := repositories.NewMasterSyncCacheRepository(cache, "member")
+	svcMember := member.NewMemberService(repoMember, pgRepoMember, repoCacheSyncMember)
 
 	// Inventory
 	repoInv := inventory.NewInventoryRepository(pst)
 	mqRepoInv := inventory.NewInventoryMQRepository(prod)
-	svcInventory := inventory.NewInventoryService(repoInv, mqRepoInv)
+	invCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "inventory")
+	svcInventory := inventory.NewInventoryService(repoInv, mqRepoInv, invCacheSyncRepo)
 
 	// Kitchen
 	repoKitchen := kitchen.NewKitchenRepository(pst)
-	svcKitchen := kitchen.NewKitchenService(repoKitchen)
+	kitchenCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "kitchen")
+	svcKitchen := kitchen.NewKitchenService(repoKitchen, kitchenCacheSyncRepo)
 
 	// Shop Printer
 	repoShopPrinter := shopprinter.NewShopPrinterRepository(pst)
-	svcShopPrinter := shopprinter.NewShopPrinterService(repoShopPrinter)
+	shopPrinterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "shopprinter")
+	svcShopPrinter := shopprinter.NewShopPrinterService(repoShopPrinter, shopPrinterCacheSyncRepo)
 
 	// Shop Table
 	repoShopTable := shoptable.NewShopTableRepository(pst)
-	svcShopTable := shoptable.NewShopTableService(repoShopTable)
+	shopTableCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "shoptable")
+	svcShopTable := shoptable.NewShopTableService(repoShopTable, shopTableCacheSyncRepo)
 
 	// Shop Zone
 	repoShopZone := shopzone.NewShopZoneRepository(pst)
-	svcShopZone := shopzone.NewShopZoneService(repoShopZone)
+	shopZoneCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "shopzone")
+	svcShopZone := shopzone.NewShopZoneService(repoShopZone, shopZoneCacheSyncRepo)
+
+	masterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "mastersync")
+	svcMasterSync := services.NewMasterSyncService(masterCacheSyncRepo)
 
 	return MasterSyncHttp{
 		ms:             ms,
 		cfg:            cfg,
+		svcMasterSync:  svcMasterSync,
 		svcCategory:    svcCategory,
 		svcInventory:   svcInventory,
 		svcMember:      svcMember,
@@ -81,6 +97,20 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 
 func (h MasterSyncHttp) RouteSetup() {
 	h.ms.GET("/master-sync", h.LastActivityCategory)
+	h.ms.GET("/master-sync/status", h.SyncStatus)
+}
+
+func (h MasterSyncHttp) SyncStatus(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	status, _ := h.svcMasterSync.GetStatus(shopID)
+
+	ctx.Response(
+		http.StatusOK,
+		status,
+	)
+
+	return nil
 }
 
 func (h MasterSyncHttp) LastActivityCategory(ctx microservice.IContext) error {

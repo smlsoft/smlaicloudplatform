@@ -3,6 +3,7 @@ package kitchen
 import (
 	"errors"
 	"fmt"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/restaurant"
 	"smlcloudplatform/pkg/utils"
@@ -26,13 +27,15 @@ type IKitchenService interface {
 }
 
 type KitchenService struct {
-	repo KitchenRepository
+	repo      KitchenRepository
+	cacheRepo mastersync.IMasterSyncCacheRepository
 }
 
-func NewKitchenService(repo KitchenRepository) KitchenService {
+func NewKitchenService(repo KitchenRepository, cacheRepo mastersync.IMasterSyncCacheRepository) KitchenService {
 
 	return KitchenService{
-		repo: repo,
+		repo:      repo,
+		cacheRepo: cacheRepo,
 	}
 }
 
@@ -52,7 +55,11 @@ func (svc KitchenService) CreateKitchen(shopID string, authUsername string, doc 
 
 	if err != nil {
 		return "", err
+
 	}
+
+	svc.saveMasterSync(shopID)
+
 	return newGuidFixed, nil
 }
 
@@ -78,6 +85,9 @@ func (svc KitchenService) UpdateKitchen(shopID string, guid string, authUsername
 	if err != nil {
 		return err
 	}
+
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -87,6 +97,9 @@ func (svc KitchenService) DeleteKitchen(shopID string, guid string, authUsername
 	if err != nil {
 		return err
 	}
+
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -174,8 +187,8 @@ func (svc KitchenService) LastActivity(shopID string, lastUpdatedDate time.Time,
 
 func (svc KitchenService) SaveInBatch(shopID string, authUsername string, dataList []restaurant.Kitchen) (models.BulkImport, error) {
 
-	createDataList := []restaurant.KitchenDoc{}
-	duplicateDataList := []restaurant.Kitchen{}
+	// createDataList := []restaurant.KitchenDoc{}
+	// duplicateDataList := []restaurant.Kitchen{}
 
 	payloadCategoryList, payloadDuplicateCategoryList := importdata.FilterDuplicate[restaurant.Kitchen](dataList, svc.getDocIDKey)
 
@@ -195,7 +208,7 @@ func (svc KitchenService) SaveInBatch(shopID string, authUsername string, dataLi
 		foundItemGuidList = append(foundItemGuidList, doc.Code)
 	}
 
-	duplicateDataList, createDataList = importdata.PreparePayloadData[restaurant.Kitchen, restaurant.KitchenDoc](
+	duplicateDataList, createDataList := importdata.PreparePayloadData[restaurant.Kitchen, restaurant.KitchenDoc](
 		shopID,
 		authUsername,
 		foundItemGuidList,
@@ -263,6 +276,8 @@ func (svc KitchenService) SaveInBatch(shopID string, authUsername string, dataLi
 		updateFailDataKey = append(updateFailDataKey, doc.Code)
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return models.BulkImport{
 		Created:          createDataKey,
 		Updated:          updateDataKey,
@@ -273,4 +288,12 @@ func (svc KitchenService) SaveInBatch(shopID string, authUsername string, dataLi
 
 func (svc KitchenService) getDocIDKey(doc restaurant.Kitchen) string {
 	return doc.Code
+}
+
+func (svc KitchenService) saveMasterSync(shopID string) {
+	err := svc.cacheRepo.Save(shopID)
+
+	if err != nil {
+		fmt.Println("save kitchen master cache error :: " + err.Error())
+	}
 }

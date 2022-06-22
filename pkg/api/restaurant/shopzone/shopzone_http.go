@@ -9,6 +9,8 @@ import (
 	"smlcloudplatform/pkg/utils"
 	"strings"
 	"time"
+
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 )
 
 type IShopZoneHttp interface{}
@@ -21,9 +23,11 @@ type ShopZoneHttp struct {
 
 func NewShopZoneHttp(ms *microservice.Microservice, cfg microservice.IConfig) ShopZoneHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := NewShopZoneRepository(pst)
-	svc := NewShopZoneService(repo)
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "shopzone")
+	svc := NewShopZoneService(repo, masterSyncCacheRepo)
 
 	return ShopZoneHttp{
 		ms:  ms,

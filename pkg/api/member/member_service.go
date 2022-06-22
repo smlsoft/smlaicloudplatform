@@ -2,6 +2,8 @@ package member
 
 import (
 	"errors"
+	"fmt"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"sync"
@@ -26,12 +28,14 @@ type IMemberService interface {
 type MemberService struct {
 	memberRepo   IMemberRepository
 	memberPgRepo IMemberPGRepository
+	cacheRepo    mastersync.IMasterSyncCacheRepository
 }
 
-func NewMemberService(memberRepo IMemberRepository, memberPgRepo IMemberPGRepository) MemberService {
+func NewMemberService(memberRepo IMemberRepository, memberPgRepo IMemberPGRepository, cacheRepo mastersync.IMasterSyncCacheRepository) MemberService {
 	return MemberService{
 		memberRepo:   memberRepo,
 		memberPgRepo: memberPgRepo,
+		cacheRepo:    cacheRepo,
 	}
 }
 
@@ -103,6 +107,8 @@ func (svc MemberService) Create(shopID string, username string, doc models.Membe
 		return "", err
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return newGuid, nil
 }
 
@@ -130,6 +136,8 @@ func (svc MemberService) Update(shopID string, guid string, username string, doc
 		return err
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -139,6 +147,8 @@ func (svc MemberService) Delete(shopID string, guid string, username string) err
 	if err != nil {
 		return err
 	}
+
+	svc.saveMasterSync(shopID)
 
 	return nil
 }
@@ -208,4 +218,12 @@ func (svc MemberService) LastActivityCategory(shopID string, lastUpdatedDate tim
 	}
 
 	return lastActivity, pagination, nil
+}
+
+func (svc MemberService) saveMasterSync(shopID string) {
+	err := svc.cacheRepo.Save(shopID)
+
+	if err != nil {
+		fmt.Println("save member master cache error :: " + err.Error())
+	}
 }

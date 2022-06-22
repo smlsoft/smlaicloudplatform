@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"strings"
@@ -29,11 +30,12 @@ func NewMemberHttp(ms *microservice.Microservice, cfg microservice.IConfig) Memb
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	pstPg := ms.Persister(cfg.PersisterConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
 	memberRepo := NewMemberRepository(pst)
 	memberPgRepo := NewMemberPGRepository(pstPg)
-
-	service := NewMemberService(memberRepo, memberPgRepo)
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "member")
+	service := NewMemberService(memberRepo, memberPgRepo, masterSyncCacheRepo)
 
 	return MemberHttp{
 		ms:      ms,

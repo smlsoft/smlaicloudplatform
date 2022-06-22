@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/models"
 )
 
@@ -12,10 +13,12 @@ func StartInventoryAsync(ms *microservice.Microservice, cfg microservice.IConfig
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
 	invRepo := NewInventoryRepository(pst)
 	invMqRepo := NewInventoryMQRepository(prod)
-	invService := NewInventoryService(invRepo, invMqRepo)
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "inventory")
+	invService := NewInventoryService(invRepo, invMqRepo, masterSyncCacheRepo)
 
 	err := ms.AsyncPOST("/inv", cfg.CacherConfig(), cfg.MQConfig(), func(ctx microservice.IContext) error {
 		userInfo := ctx.UserInfo()

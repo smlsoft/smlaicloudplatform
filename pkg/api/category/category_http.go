@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"strings"
@@ -20,9 +21,11 @@ type CategoryHttp struct {
 
 func NewCategoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) CategoryHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
 	cateRepo := NewCategoryRepository(pst)
-	cateService := NewCategoryService(cateRepo)
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "category")
+	cateService := NewCategoryService(cateRepo, masterSyncCacheRepo)
 
 	return CategoryHttp{
 		ms:          ms,

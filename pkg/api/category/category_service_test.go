@@ -23,7 +23,7 @@ func init() {
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister = microservice.NewPersisterMongo(mongoPersisterConfig)
 	repoMock = category.NewCategoryRepository(mongoPersister)
-	serviceMock = category.NewCategoryService(repoMock)
+	serviceMock = category.NewCategoryService(repoMock, nil)
 }
 
 func TestCreateCategory(t *testing.T) {

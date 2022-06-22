@@ -3,6 +3,7 @@ package shoptable
 import (
 	"errors"
 	"fmt"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/restaurant"
 	"smlcloudplatform/pkg/utils"
@@ -25,12 +26,14 @@ type IShopTableService interface {
 }
 
 type ShopTableService struct {
-	repo ShopTableRepository
+	repo      ShopTableRepository
+	cacheRepo mastersync.IMasterSyncCacheRepository
 }
 
-func NewShopTableService(repo ShopTableRepository) ShopTableService {
+func NewShopTableService(repo ShopTableRepository, cacheRepo mastersync.IMasterSyncCacheRepository) ShopTableService {
 	return ShopTableService{
-		repo: repo,
+		repo:      repo,
+		cacheRepo: cacheRepo,
 	}
 }
 
@@ -51,6 +54,9 @@ func (svc ShopTableService) CreateShopTable(shopID string, authUsername string, 
 	if err != nil {
 		return "", err
 	}
+
+	svc.saveMasterSync(shopID)
+
 	return newGuidFixed, nil
 }
 
@@ -76,6 +82,9 @@ func (svc ShopTableService) UpdateShopTable(shopID string, guid string, authUser
 	if err != nil {
 		return err
 	}
+
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -85,6 +94,9 @@ func (svc ShopTableService) DeleteShopTable(shopID string, guid string, authUser
 	if err != nil {
 		return err
 	}
+
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -172,8 +184,8 @@ func (svc ShopTableService) LastActivity(shopID string, lastUpdatedDate time.Tim
 
 func (svc ShopTableService) SaveInBatch(shopID string, authUsername string, dataList []restaurant.ShopTable) (models.BulkImport, error) {
 
-	createDataList := []restaurant.ShopTableDoc{}
-	duplicateDataList := []restaurant.ShopTable{}
+	// createDataList := []restaurant.ShopTableDoc{}
+	// duplicateDataList := []restaurant.ShopTable{}
 
 	payloadCategoryList, payloadDuplicateCategoryList := importdata.FilterDuplicate[restaurant.ShopTable](dataList, svc.getDocIDKey)
 
@@ -193,7 +205,7 @@ func (svc ShopTableService) SaveInBatch(shopID string, authUsername string, data
 		foundItemGuidList = append(foundItemGuidList, doc.Code)
 	}
 
-	duplicateDataList, createDataList = importdata.PreparePayloadData[restaurant.ShopTable, restaurant.ShopTableDoc](
+	duplicateDataList, createDataList := importdata.PreparePayloadData[restaurant.ShopTable, restaurant.ShopTableDoc](
 		shopID,
 		authUsername,
 		foundItemGuidList,
@@ -261,6 +273,8 @@ func (svc ShopTableService) SaveInBatch(shopID string, authUsername string, data
 		updateFailDataKey = append(updateFailDataKey, doc.Number)
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return models.BulkImport{
 		Created:          createDataKey,
 		Updated:          updateDataKey,
@@ -271,4 +285,12 @@ func (svc ShopTableService) SaveInBatch(shopID string, authUsername string, data
 
 func (svc ShopTableService) getDocIDKey(doc restaurant.ShopTable) string {
 	return doc.Number
+}
+
+func (svc ShopTableService) saveMasterSync(shopID string) {
+	err := svc.cacheRepo.Save(shopID)
+
+	if err != nil {
+		fmt.Println("save shop table master cache error :: " + err.Error())
+	}
 }

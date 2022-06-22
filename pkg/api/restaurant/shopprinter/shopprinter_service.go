@@ -3,6 +3,7 @@ package shopprinter
 import (
 	"errors"
 	"fmt"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/restaurant"
 	"smlcloudplatform/pkg/utils"
@@ -26,13 +27,15 @@ type IShopPrinterService interface {
 }
 
 type ShopPrinterService struct {
-	repo ShopPrinterRepository
+	repo      ShopPrinterRepository
+	cacheRepo mastersync.IMasterSyncCacheRepository
 }
 
-func NewShopPrinterService(repo ShopPrinterRepository) ShopPrinterService {
+func NewShopPrinterService(repo ShopPrinterRepository, cacheRepo mastersync.IMasterSyncCacheRepository) ShopPrinterService {
 
 	return ShopPrinterService{
-		repo: repo,
+		repo:      repo,
+		cacheRepo: cacheRepo,
 	}
 }
 
@@ -53,6 +56,9 @@ func (svc ShopPrinterService) CreateShopPrinter(shopID string, authUsername stri
 	if err != nil {
 		return "", err
 	}
+
+	svc.saveMasterSync(shopID)
+
 	return newGuidFixed, nil
 }
 
@@ -78,6 +84,9 @@ func (svc ShopPrinterService) UpdateShopPrinter(shopID string, guid string, auth
 	if err != nil {
 		return err
 	}
+
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -87,6 +96,9 @@ func (svc ShopPrinterService) DeleteShopPrinter(shopID string, guid string, auth
 	if err != nil {
 		return err
 	}
+
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -174,8 +186,8 @@ func (svc ShopPrinterService) LastActivity(shopID string, lastUpdatedDate time.T
 
 func (svc ShopPrinterService) SaveInBatch(shopID string, authUsername string, dataList []restaurant.PrinterTerminal) (models.BulkImport, error) {
 
-	createDataList := []restaurant.PrinterTerminalDoc{}
-	duplicateDataList := []restaurant.PrinterTerminal{}
+	// createDataList := []restaurant.PrinterTerminalDoc{}
+	// duplicateDataList := []restaurant.PrinterTerminal{}
 
 	payloadCategoryList, payloadDuplicateCategoryList := importdata.FilterDuplicate[restaurant.PrinterTerminal](dataList, svc.getDocIDKey)
 
@@ -195,7 +207,7 @@ func (svc ShopPrinterService) SaveInBatch(shopID string, authUsername string, da
 		foundItemGuidList = append(foundItemGuidList, doc.Code)
 	}
 
-	duplicateDataList, createDataList = importdata.PreparePayloadData[restaurant.PrinterTerminal, restaurant.PrinterTerminalDoc](
+	duplicateDataList, createDataList := importdata.PreparePayloadData[restaurant.PrinterTerminal, restaurant.PrinterTerminalDoc](
 		shopID,
 		authUsername,
 		foundItemGuidList,
@@ -263,6 +275,8 @@ func (svc ShopPrinterService) SaveInBatch(shopID string, authUsername string, da
 		updateFailDataKey = append(updateFailDataKey, doc.Code)
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return models.BulkImport{
 		Created:          createDataKey,
 		Updated:          updateDataKey,
@@ -273,4 +287,12 @@ func (svc ShopPrinterService) SaveInBatch(shopID string, authUsername string, da
 
 func (svc ShopPrinterService) getDocIDKey(doc restaurant.PrinterTerminal) string {
 	return doc.Code
+}
+
+func (svc ShopPrinterService) saveMasterSync(shopID string) {
+	err := svc.cacheRepo.Save(shopID)
+
+	if err != nil {
+		fmt.Println("save shop printer master cache error :: " + err.Error())
+	}
 }

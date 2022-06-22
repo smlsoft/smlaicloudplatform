@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/restaurant"
 	"smlcloudplatform/pkg/utils"
@@ -21,9 +22,11 @@ type ShopPrinterHttp struct {
 
 func NewShopPrinterHttp(ms *microservice.Microservice, cfg microservice.IConfig) ShopPrinterHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := NewShopPrinterRepository(pst)
-	svc := NewShopPrinterService(repo)
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "shopprinter")
+	svc := NewShopPrinterService(repo, masterSyncCacheRepo)
 
 	return ShopPrinterHttp{
 		ms:  ms,

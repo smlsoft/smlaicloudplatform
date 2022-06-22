@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/models/restaurant"
 	"smlcloudplatform/pkg/utils"
@@ -21,10 +22,12 @@ type ShopTableHttp struct {
 
 func NewShopTableHttp(ms *microservice.Microservice, cfg microservice.IConfig) ShopTableHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := NewShopTableRepository(pst)
 
-	svc := NewShopTableService(repo)
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "shoptable")
+	svc := NewShopTableService(repo, masterSyncCacheRepo)
 
 	return ShopTableHttp{
 		ms:  ms,

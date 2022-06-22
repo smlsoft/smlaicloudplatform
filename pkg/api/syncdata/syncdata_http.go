@@ -7,6 +7,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/inventory"
 	"smlcloudplatform/pkg/api/member"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/models"
 
 	micro "smlcloudplatform/internal/microservice/models"
@@ -24,14 +25,17 @@ func NewSyncDataHttp(ms *microservice.Microservice, cfg microservice.IConfig) Sy
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	pstPg := ms.Persister(cfg.PersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
 	invRepo := inventory.NewInventoryRepository(pst)
 	invMqRepo := inventory.NewInventoryMQRepository(prod)
-	invService := inventory.NewInventoryService(invRepo, invMqRepo)
+	invSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "inventory")
+	invService := inventory.NewInventoryService(invRepo, invMqRepo, invSyncCacheRepo)
 
 	memberRepo := member.NewMemberRepository(pst)
 	memberPgRepo := member.NewMemberPGRepository(pstPg)
-	memberService := member.NewMemberService(memberRepo, memberPgRepo)
+	memberSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "member")
+	memberService := member.NewMemberService(memberRepo, memberPgRepo, memberSyncCacheRepo)
 
 	return SyncDataHttp{
 		ms:               ms,

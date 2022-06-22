@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/category"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"strings"
@@ -39,10 +40,12 @@ func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) I
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
 	invRepo := NewInventoryRepository(pst)
 	invMqRepo := NewInventoryMQRepository(prod)
-	invService := NewInventoryService(invRepo, invMqRepo)
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "inventory")
+	invService := NewInventoryService(invRepo, invMqRepo, masterSyncCacheRepo)
 
 	invOptRepo := NewInventoryOptionMainRepository(pst)
 	invOptService := NewInventoryOptionMainService(invOptRepo)

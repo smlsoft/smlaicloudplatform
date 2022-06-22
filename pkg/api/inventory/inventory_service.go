@@ -3,6 +3,7 @@ package inventory
 import (
 	"errors"
 	"fmt"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"sync"
@@ -29,12 +30,14 @@ type IInventoryService interface {
 type InventoryService struct {
 	invRepo   IInventoryRepository
 	invMqRepo IInventoryMQRepository
+	cacheRepo mastersync.IMasterSyncCacheRepository
 }
 
-func NewInventoryService(inventoryRepo IInventoryRepository, inventoryMqRepo IInventoryMQRepository) InventoryService {
+func NewInventoryService(inventoryRepo IInventoryRepository, inventoryMqRepo IInventoryMQRepository, cacheRepo mastersync.IMasterSyncCacheRepository) InventoryService {
 	return InventoryService{
 		invRepo:   inventoryRepo,
 		invMqRepo: inventoryMqRepo,
+		cacheRepo: cacheRepo,
 	}
 }
 
@@ -119,6 +122,8 @@ func (svc InventoryService) CreateInBatch(shopID string, authUsername string, in
 	for _, inv := range updateFailDataList {
 		updateFailDataKey = append(updateFailDataKey, inv.ItemGuid)
 	}
+
+	svc.saveMasterSync(shopID)
 
 	return models.InventoryBulkImport{
 		Created:          createDataKey,
@@ -234,6 +239,8 @@ func (svc InventoryService) CreateWithGuid(shopID string, authUsername string, g
 		}
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return mongoIdx, nil
 }
 
@@ -310,6 +317,8 @@ func (svc InventoryService) UpdateInventory(shopID string, guid string, authUser
 		return err
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -331,6 +340,8 @@ func (svc InventoryService) DeleteInventory(shopID string, guid string, username
 	if err != nil {
 		return err
 	}
+
+	svc.saveMasterSync(shopID)
 
 	return nil
 }
@@ -454,5 +465,18 @@ func (svc InventoryService) UpdateProductCategory(shopID string, authUsername st
 			return err
 		}
 	}
+
+	if len(guids) > 0 {
+		svc.saveMasterSync(shopID)
+	}
+
 	return nil
+}
+
+func (svc InventoryService) saveMasterSync(shopID string) {
+	err := svc.cacheRepo.Save(shopID)
+
+	if err != nil {
+		fmt.Println("save inventory master cache error :: " + err.Error())
+	}
 }
