@@ -1,6 +1,7 @@
 package mastersync
 
 import (
+	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/category"
@@ -135,90 +136,97 @@ func (h MasterSyncHttp) LastActivityCategory(ctx microservice.IContext) error {
 
 	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 
-	// Category
-	categoryDocList, categoryPagination, err := h.svcCategory.LastActivity(shopID, lastUpdate, page, limit)
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
+	moduleParam := strings.Trim(ctx.QueryParam("module"), " ")
 
-	// Member
-	memberDocList, memberPagination, err := h.svcMember.LastActivityCategory(shopID, lastUpdate, page, limit)
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
+	moduleSelectList := []string{}
+	keySelectList := map[string]bool{}
 
-	// Inventory
-	invDocList, invPagination, err := h.svcInventory.LastActivityInventory(shopID, lastUpdate, page, limit)
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	// Kitchen
-	kitchenDocList, kitchenPagination, err := h.svcKitchen.LastActivity(shopID, lastUpdate, page, limit)
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	// Shop Printer
-	shopPrinterDocList, shopPrinterPagination, err := h.svcShopPrinter.LastActivity(shopID, lastUpdate, page, limit)
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	// Shop Table
-	shopTableDocList, shopTablePagination, err := h.svcShopTable.LastActivity(shopID, lastUpdate, page, limit)
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	// Shop Zone
-	shopZoneDocList, shopZonePagination, err := h.svcShopZone.LastActivity(shopID, lastUpdate, page, limit)
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	maxPagination := mongopagination.PaginationData{}
-	paginateList := []mongopagination.PaginationData{}
-
-	paginateList = append(paginateList, categoryPagination)
-	paginateList = append(paginateList, memberPagination)
-	paginateList = append(paginateList, invPagination)
-	paginateList = append(paginateList, kitchenPagination)
-	paginateList = append(paginateList, shopPrinterPagination)
-	paginateList = append(paginateList, shopTablePagination)
-	paginateList = append(paginateList, shopZonePagination)
-
-	maxPagination = paginateList[0]
-	for idx, tempPagination := range paginateList {
-		if idx != 0 {
-			if tempPagination.Total > maxPagination.Total {
-				maxPagination = tempPagination
-			}
+	if moduleParam != "" {
+		moduleSelectList = strings.Split(moduleParam, ",")
+		for _, module := range moduleSelectList {
+			module = strings.ToLower(module)
+			keySelectList[module] = true
 		}
+	}
+
+	isSelectAll := false
+
+	if len(moduleSelectList) < 1 {
+		isSelectAll = true
+	} else if strings.ToLower(moduleSelectList[0]) == "all" {
+		isSelectAll = true
+	}
+
+	moduleList := map[string]ActivityModule{}
+
+	moduleList["category"] = h.svcCategory
+	moduleList["member"] = h.svcMember
+	moduleList["inventory"] = h.svcInventory
+	moduleList["kitchen"] = h.svcKitchen
+	moduleList["shopprinter"] = h.svcShopPrinter
+	moduleList["shoptable"] = h.svcShopTable
+	moduleList["shopzone"] = h.svcShopZone
+
+	result, pagination, err := runModule(moduleList, isSelectAll, keySelectList, ActivityParam{
+		ShopID:     shopID,
+		LastUpdate: lastUpdate,
+		Page:       page,
+		Limit:      limit,
+	})
+
+	if err != nil {
+		fmt.Println(err)
 	}
 
 	ctx.Response(
 		http.StatusOK,
 		models.ApiResponse{
-			Success: true,
-			Data: map[string]interface{}{
-				"category":    categoryDocList,
-				"member":      memberDocList,
-				"inventory":   invDocList,
-				"kitchen":     kitchenDocList,
-				"shopprinter": shopPrinterDocList,
-				"shoptable":   shopTableDocList,
-				"shopzone":    shopZoneDocList,
-			},
-			Pagination: maxPagination,
+			Success:    true,
+			Data:       result,
+			Pagination: pagination,
 		})
 
 	return nil
+}
+
+type ActivityModule interface {
+	LastActivity(string, time.Time, int, int) (models.LastActivity, mongopagination.PaginationData, error)
+}
+
+type ActivityParam struct {
+	ShopID     string
+	LastUpdate time.Time
+	Page       int
+	Limit      int
+}
+
+func runModule(appModules map[string]ActivityModule, isSelectAll bool, keySelectList map[string]bool, param ActivityParam) (map[string]interface{}, mongopagination.PaginationData, error) {
+
+	result := map[string]interface{}{}
+
+	resultPagination := mongopagination.PaginationData{}
+	for moduleName, appModule := range appModules {
+		if isSelectAll || isSelect(keySelectList, moduleName) {
+			docList, pagination, err := appModule.LastActivity(param.ShopID, param.LastUpdate, param.Page, param.Limit)
+
+			if err != nil {
+				return map[string]interface{}{}, mongopagination.PaginationData{}, err
+			}
+
+			result[moduleName] = docList
+
+			if pagination.Total > resultPagination.Total {
+				resultPagination = pagination
+			}
+		}
+	}
+
+	return result, resultPagination, nil
+}
+
+func isSelect(keyList map[string]bool, key string) bool {
+	if _, ok := keyList[key]; ok {
+		return true
+	}
+	return false
 }

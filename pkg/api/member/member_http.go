@@ -267,7 +267,7 @@ func (h MemberHttp) LastActivityMember(ctx microservice.IContext) error {
 
 	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 
-	docList, pagination, err := h.service.LastActivityCategory(shopID, lastUpdate, page, limit)
+	docList, pagination, err := h.service.LastActivity(shopID, lastUpdate, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

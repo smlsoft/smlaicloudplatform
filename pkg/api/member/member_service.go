@@ -22,7 +22,7 @@ type IMemberService interface {
 	Delete(shopID string, guid string, username string) error
 	Info(shopID string, guid string) (models.MemberInfo, error)
 	Search(shopID string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error)
-	LastActivityCategory(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, paginate.PaginationData, error)
+	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, paginate.PaginationData, error)
 }
 
 type MemberService struct {
@@ -173,7 +173,7 @@ func (svc MemberService) Search(shopID string, q string, page int, limit int) ([
 	return docList, pagination, nil
 }
 
-func (svc MemberService) LastActivityCategory(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, paginate.PaginationData, error) {
+func (svc MemberService) LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, paginate.PaginationData, error) {
 	var wg sync.WaitGroup
 
 	wg.Add(1)

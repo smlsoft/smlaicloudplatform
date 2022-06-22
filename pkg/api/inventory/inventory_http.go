@@ -386,7 +386,7 @@ func (h InventoryHttp) LastActivityInventory(ctx microservice.IContext) error {
 
 	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 
-	docList, pagination, err := h.invService.LastActivityInventory(shopID, lastUpdate, page, limit)
+	docList, pagination, err := h.invService.LastActivity(shopID, lastUpdate, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

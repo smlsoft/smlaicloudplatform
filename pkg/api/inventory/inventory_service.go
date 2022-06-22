@@ -23,7 +23,7 @@ type IInventoryService interface {
 	InfoInventory(shopID string, guid string) (models.InventoryInfo, error)
 	InfoMongoInventory(id string) (models.InventoryInfo, error)
 	SearchInventory(shopID string, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
-	LastActivityInventory(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, paginate.PaginationData, error)
+	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, paginate.PaginationData, error)
 	UpdateProductCategory(shopID string, authUsername string, catId string, guid []string) error
 }
 
@@ -387,7 +387,7 @@ func (svc InventoryService) SearchInventory(shopID string, q string, page int, l
 	return docList, pagination, nil
 }
 
-func (svc InventoryService) LastActivityInventory(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, paginate.PaginationData, error) {
+func (svc InventoryService) LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, paginate.PaginationData, error) {
 
 	var wg sync.WaitGroup
 
