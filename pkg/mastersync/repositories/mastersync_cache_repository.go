@@ -57,7 +57,7 @@ func (repo MasterSyncCacheRepository) GetWithModule(shopID string, moduleName st
 	strTime = strings.ReplaceAll(strTime, "\"", "")
 
 	fmt.Println(strTime)
-	valTime, err := time.Parse(time.RFC3339Nano, strTime)
+	valTime, err := time.Parse(time.RFC3339, strTime)
 	if err != nil {
 		fmt.Println(err.Error())
 		return time.Time{}, nil
