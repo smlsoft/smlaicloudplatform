@@ -131,7 +131,19 @@ func (ms *Microservice) CheckReadyToStart() error {
 	// redis
 	redis_clsuter_uri := ms.config.CacherConfig().Endpoint()
 	if redis_clsuter_uri != "" {
-		ms.Logger.Debug("[REDIS]Test Connection.")
+		ms.Logger.Debug("[REDIS_CACHER]Test Connection.")
+
+		cacher, ok := ms.cachers[redis_clsuter_uri]
+		if !ok {
+			cacher = NewCacher(ms.config.CacherConfig())
+			ms.cachers[redis_clsuter_uri] = cacher
+		}
+		err := cacher.Healthcheck()
+		if err != nil {
+			ms.Logger.WithError(err).Error("[REDIS_CACHER]Connection Failed.")
+			return err
+		}
+		ms.Logger.Debug("[REDIS_CACHER]Connection Success.")
 	}
 
 	// postgresql

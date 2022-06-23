@@ -55,7 +55,7 @@ type Inventory struct {
 	Images   *[]InventoryImage `json:"images,omitempty" bson:"images,omitempty" gorm:"images;foreignKey:DocID"`
 	Tags     *[]InventoryTag   `json:"tags,omitempty" bson:"tags" gorm:"tags;foreignKey:DocID"`
 	Category *Category         `json:"category,omitempty" bson:"category,omitempty"`
-
+	XOrder   int8              `json:"xorder" bson:"xorder" gorm:"xorder"`
 	// WaitType         int             `json:"-" bson:"waitType"`                // ประเภทการรอ (สินค้าหมด)
 	// WaitUntil        time.Time       `json:"-" bson:"waitUntil"`               // ระยะเวลาที่รอ
 	// MultipleUnits    bool            `json:"-" bson:"multipleuUits" `          // สินค้าหลายหน่วยนับ

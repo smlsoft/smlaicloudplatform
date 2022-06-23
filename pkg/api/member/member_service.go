@@ -15,7 +15,7 @@ import (
 
 type IMemberService interface {
 	IsExistsGuid(shopID string, guidFixed string) (bool, error)
-	CreateIndex(doc models.MemberIndex) error
+	//CreateIndex(doc models.MemberIndex) error
 	CreateWithGuid(shopID string, username string, guid string, doc models.Member) (string, error)
 	Create(shopID string, username string, doc models.Member) (string, error)
 	Update(shopID string, guid string, username string, doc models.Member) error
@@ -55,16 +55,16 @@ func (svc MemberService) IsExistsGuid(shopID string, guidFixed string) (bool, er
 
 }
 
-func (svc MemberService) CreateIndex(doc models.MemberIndex) error {
+// func (svc MemberService) CreateIndex(doc models.MemberIndex) error {
 
-	err := svc.memberPgRepo.Create(doc)
-	if err != nil {
-		return err
-	}
+// 	err := svc.memberPgRepo.Create(doc)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	return nil
+// 	return nil
 
-}
+// }
 
 func (svc MemberService) CreateWithGuid(shopID string, username string, guid string, doc models.Member) (string, error) {
 	dataDoc := models.MemberDoc{}

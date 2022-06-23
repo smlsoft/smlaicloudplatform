@@ -1,6 +1,23 @@
 
 # SMLCLoudPlatForm
 
+## Environment Variable
+
+### MongoDB
+| Name        | Description            | Value |
+|-------------|------------------------|-------|
+| MONGODB_URI | Mongodb Connection URI | ''    |
+| MONGODB_DB  | Mongodb Database Name  | ''    |
+
+
+### Redis
+
+| Name                 | Description          | Value |
+|----------------------|----------------------|-------|
+| REDIS_CACHE_URI      | Redis connection uri | ''    |
+| REDIS_CACHE_PASSWORD | Redis Password       | ''    |
+
+
 ## For wsl(ubuntu) Please Read
 
 Install Kafkalib , Gcc
@@ -83,3 +100,4 @@ go build --tags dynamic main.go
 docker buildx create --use
 docker buildx build --platform linux/amd64 --push -t <tag_to_push> .
 ```
+

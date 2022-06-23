@@ -89,85 +89,8 @@ func (*Config) JwtSecretKey() string {
 	return getEnv("JWT_SECRET_KEY", "54cfcbf5437a029d48a9f67552eeb04b48a65703")
 }
 
-type PersisterConfig struct{}
-
-func NewPersisterConfig() *PersisterConfig {
-	return &PersisterConfig{}
-}
-
-func (cfg *PersisterConfig) Host() string {
-	return os.Getenv("POSTGRES_HOST")
-}
-
-func (cfg *PersisterConfig) Port() string {
-	return os.Getenv("POSTGRES_PORT")
-}
-
-func (cfg *PersisterConfig) DB() string {
-	return os.Getenv("POSTGRES_DB_NAME")
-}
-
-func (cfg *PersisterConfig) Username() string {
-	return os.Getenv("POSTGRES_USERNAME")
-}
-
-func (cfg *PersisterConfig) Password() string {
-	return os.Getenv("POSTGRES_PASSWORD")
-}
-
-func (cfg *PersisterConfig) SSLMode() string {
-	sslMode := os.Getenv("POSTGRES_SSL_MODE")
-	if sslMode == "" {
-		sslMode = "disable"
-	}
-	return sslMode
-}
-
-func (cfg *PersisterConfig) TimeZone() string {
-	return getEnv("POSTGRES_TIMEZONE", "Asia/Bangkok")
-}
-
-func (cfg *PersisterConfig) LoggerLevel() string {
-	loggerLevel := getEnv("POSTGRES_LOGGER_LEVEL", "")
-	return loggerLevel
-}
-
-type MongoPersisterConfig struct{}
-
-func NewMongoPersisterConfig() *MongoPersisterConfig {
-	return &MongoPersisterConfig{}
-}
-func (cfg *MongoPersisterConfig) MongodbURI() string {
-	return getEnv("MONGODB_URI", "") // mongodb://root:rootx@localhost:27017/
-}
-
-func (cfg *MongoPersisterConfig) DB() string {
-	return getEnv("MONGODB_DB", "smldev")
-}
-
 func (cfg *Config) ElkPersisterConfig() IPersisterElkConfig {
 	return NewPersisterElkConfig()
-}
-
-type PersisterElkConfig struct{}
-
-func NewPersisterElkConfig() *PersisterElkConfig {
-	return &PersisterElkConfig{}
-}
-
-func (c *PersisterElkConfig) ElkAddress() []string {
-
-	return []string{
-		getEnv("ELK_ADDRESS", "http://192.168.2.204:9200"),
-	}
-}
-
-func (c *PersisterElkConfig) Username() string {
-	return getEnv("ELK_USERNAME", "elastic")
-}
-
-func (c *PersisterElkConfig) Password() string {
-	return getEnv("ELK_PASSWORD", "smlSoft2021")
 }
 
 //
@@ -175,65 +98,8 @@ func (cfg *Config) OpenSearchPersisterConfig() IPersisterOpenSearchConfig {
 	return NewPersisterOpenSearchConfig()
 }
 
-type PersisterOpenSearchConfig struct{}
-
-func NewPersisterOpenSearchConfig() *PersisterOpenSearchConfig {
-	return &PersisterOpenSearchConfig{}
-}
-
-func (c *PersisterOpenSearchConfig) Address() []string {
-
-	return []string{
-		getEnv("OPEN_SEARCH_ADDRESS", "http://192.168.2.204:9200"),
-	}
-}
-
-func (c *PersisterOpenSearchConfig) Username() string {
-	return getEnv("OPEN_SEARCH_USERNAME", "elastic")
-}
-
-func (c *PersisterOpenSearchConfig) Password() string {
-	return getEnv("OPEN_SEARCH_PASSWORD", "smlSoft2021")
-}
-
 ///
 
 func (cfg *Config) CacherConfig() ICacherConfig {
 	return NewCacherConfig()
-}
-
-type CacherConfig struct{}
-
-func NewCacherConfig() *CacherConfig {
-	return &CacherConfig{}
-}
-
-func (cfg *CacherConfig) Endpoint() string {
-	return getEnv("REDIS_CACHE_URI", "127.0.0.1:6379")
-}
-
-func (cfg *CacherConfig) Password() string {
-	return ""
-}
-
-func (cfg *CacherConfig) DB() int {
-	return 0
-}
-
-func (cfg *CacherConfig) ConnectionSettings() ICacherConnectionSettings {
-	return NewDefaultCacherConnectionSettings()
-}
-
-type StorageFileConfig struct{}
-
-func NewStorageFileConfig() *StorageFileConfig {
-	return &StorageFileConfig{}
-}
-
-func (cfg *StorageFileConfig) StorageDataPath() string {
-	return getEnv("STORAGE_DATA_PATH", "")
-}
-
-func (cfg *StorageFileConfig) StorageUriAtlas() string {
-	return getEnv("STORAGE_DATA_URI", "")
 }

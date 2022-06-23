@@ -5704,11 +5704,11 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
-                "order": {
-                    "type": "integer"
-                },
                 "parentguid": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -5752,9 +5752,6 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
-                "order": {
-                    "type": "integer"
-                },
                 "parentguid": {
                     "type": "string"
                 },
@@ -5763,6 +5760,9 @@ const docTemplate = `{
                 },
                 "updatedat": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -5863,11 +5863,11 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
-                "order": {
-                    "type": "integer"
-                },
                 "parentguid": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -5905,11 +5905,11 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
-                "order": {
-                    "type": "integer"
-                },
                 "parentguid": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -5964,11 +5964,11 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
-                "order": {
-                    "type": "integer"
-                },
                 "parentguid": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -6378,6 +6378,9 @@ const docTemplate = `{
                 },
                 "unitname5": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -6509,6 +6512,9 @@ const docTemplate = `{
                 },
                 "updatedat": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -6702,6 +6708,9 @@ const docTemplate = `{
                 },
                 "unitname5": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -6801,11 +6810,11 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
-                "order": {
-                    "type": "integer"
-                },
                 "required": {
                     "type": "boolean"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -6842,11 +6851,11 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
-                "order": {
-                    "type": "integer"
-                },
                 "required": {
                     "type": "boolean"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -6886,11 +6895,11 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
-                "order": {
-                    "type": "integer"
-                },
                 "required": {
                     "type": "boolean"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -7400,11 +7409,11 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
-                "order": {
-                    "type": "integer"
-                },
                 "required": {
                     "type": "boolean"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -7628,6 +7637,9 @@ const docTemplate = `{
                 },
                 "unitname5": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -7887,6 +7899,9 @@ const docTemplate = `{
                 },
                 "unitname5": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },

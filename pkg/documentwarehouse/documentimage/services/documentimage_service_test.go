@@ -1,6 +1,7 @@
 package services_test
 
 import (
+	"bytes"
 	"fmt"
 	"image"
 	"image/color"
@@ -61,6 +62,11 @@ type MockDocumentImageFilePersister struct {
 func (m *MockDocumentImageFilePersister) Save(fh *multipart.FileHeader, fileName string, fileExtension string) (string, error) {
 	args := m.Called(fh, fileName, fileExtension)
 	return args.String(0), args.Error(1)
+}
+
+func (m *MockDocumentImageFilePersister) LoadFile(fileName string) (string, *bytes.Buffer, error) {
+	args := m.Called(fileName)
+	return args.String(0), args.Get(0).(*bytes.Buffer), args.Error(2)
 }
 
 func CreateImage() *image.RGBA {
