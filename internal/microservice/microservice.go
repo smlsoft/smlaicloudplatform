@@ -17,6 +17,7 @@ import (
 	"github.com/apex/log"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/go-playground/validator/v10"
+	"github.com/labstack/echo-contrib/prometheus"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -321,6 +322,17 @@ func (ms *Microservice) Producer(cfg IMQConfig) IProducer {
 
 func (ms *Microservice) HttpMiddleware(middleware ...echo.MiddlewareFunc) {
 	ms.echo.Use(middleware...)
+}
+
+func (ms *Microservice) HttpPreRemoveTrailingSlash() {
+	ms.echo.Pre(middleware.RemoveTrailingSlash())
+	ms.Logger.Info("Use remove trailing")
+}
+
+func (ms *Microservice) HttpUsePrometheus() {
+	ms.Logger.Info("Start Prometheus.")
+	p := prometheus.NewPrometheus("smlcloudplatform", nil)
+	p.Use(ms.echo)
 }
 
 // newKafkaConsumer create new Kafka consumer

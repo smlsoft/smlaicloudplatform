@@ -57,7 +57,11 @@ func main() {
 		"/create-shop",
 		"/employee/login",
 		"/healthz",
+		"/metrics",
 	}
+
+	ms.HttpPreRemoveTrailingSlash()
+	ms.HttpUsePrometheus()
 
 	ms.HttpMiddleware(authService.MWFuncWithRedis(cacher, publicPath...))
 
