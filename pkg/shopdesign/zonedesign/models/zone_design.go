@@ -11,6 +11,8 @@ const zoneDesignCollectionName = "zoneDesigns"
 type ZoneDesign struct {
 	Code        string        `json:"code" bson:"code"`
 	XOrder      int           `json:"xorder" bson:"xorder"`
+	Width       float64       `json:"width" bson:"width"`
+	Height      float64       `json:"height" bson:"height"`
 	Tables      []TableDesign `json:"tables" bson:"tables"`
 	Props       []PropDesign  `json:"props" bson:"props"`
 	models.Name `bson:"inline"`
