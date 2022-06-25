@@ -65,7 +65,7 @@ func (ms *Microservice) RegisterLivenessProbeEndpoint(path string) {
 	ms.echo.GET(path, func(c echo.Context) error {
 		ok, reason := ms.isAlive()
 		if !ok {
-			ms.Logger.Errorf("Failed Check Liveness", reason)
+			ms.Logger.Errorf("Failed Check Liveness : %s", reason)
 			ms.responseProbeFailed(c.Response(), reason)
 			return nil
 		}
