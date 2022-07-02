@@ -5,6 +5,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
 	"smlcloudplatform/pkg/api/inventory"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/models"
 	"sync"
 	"time"
@@ -26,7 +27,9 @@ func main() {
 
 	invRepo := inventory.NewInventoryRepository(pst)
 	invMqRepo := inventory.NewInventoryMQRepository(prod)
-	invService := inventory.NewInventoryService(invRepo, invMqRepo)
+	cache := microservice.NewCacher(mock.NewCacherConfig())
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "inventory")
+	invService := inventory.NewInventoryService(invRepo, invMqRepo, masterSyncCacheRepo)
 
 	shopID := "shoptest"
 	authUser := "devtest"

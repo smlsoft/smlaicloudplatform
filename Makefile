@@ -85,3 +85,6 @@ run_test_m1:
 
 swago-install:
 	go install github.com/swaggo/swag/cmd/swag@latest
+
+run_m1_test_all:
+	PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" go test --tags dynamic ./...
