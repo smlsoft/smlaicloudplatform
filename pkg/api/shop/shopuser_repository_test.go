@@ -2,6 +2,7 @@ package shop_test
 
 import (
 	"fmt"
+	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
 	"smlcloudplatform/pkg/api/shop"
@@ -9,6 +10,10 @@ import (
 )
 
 func TestCreateShopUser(t *testing.T) {
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
+
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := shop.NewShopUserRepository(mongoPersister)
@@ -36,6 +41,10 @@ func TestCreateShopUser(t *testing.T) {
 }
 
 func TestFindByUsernamePage(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	t.Log(mongoPersisterConfig.DB())
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)

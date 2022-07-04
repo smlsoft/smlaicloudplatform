@@ -3,6 +3,7 @@ package repositories_test
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
 	"smlcloudplatform/pkg/mastersync/repositories"
@@ -23,6 +24,10 @@ func init() {
 }
 
 func TestSetCache(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	err := repoCacheMock.Save(MockShopID)
 
 	if err != nil {
@@ -30,6 +35,10 @@ func TestSetCache(t *testing.T) {
 	}
 }
 func TestGetCache(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	val, err := repoCacheMock.Get(MockShopID)
 
 	if err != nil {
@@ -41,6 +50,10 @@ func TestGetCache(t *testing.T) {
 }
 
 func TestSetCacheWithModule(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	err := repoCacheMock.SaveWithModule(MockShopID, "XTEST")
 
 	if err != nil {
@@ -49,6 +62,10 @@ func TestSetCacheWithModule(t *testing.T) {
 }
 
 func TestGetCacheWithModule(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	val, err := repoCacheMock.GetWithModule(MockShopID, "XTEST")
 
 	if err != nil {
@@ -59,6 +76,10 @@ func TestGetCacheWithModule(t *testing.T) {
 }
 
 func TestTimeStr(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	value := time.Now()
 	fmt.Println("xxxx")
 

@@ -1,6 +1,7 @@
 package inventory_test
 
 import (
+	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
 	"smlcloudplatform/pkg/api/inventory"
@@ -16,6 +17,10 @@ func getInventoryOptionMainRepo() inventory.InventoryOptionMainRepository {
 }
 
 func TestCreateInventoryOptionMain(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	repo := getInventoryOptionMainRepo()
 
 	give := models.InventoryOptionMainDoc{}

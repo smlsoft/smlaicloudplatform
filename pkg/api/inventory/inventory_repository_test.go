@@ -1,6 +1,7 @@
 package inventory_test
 
 import (
+	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
 	"smlcloudplatform/pkg/api/inventory"
@@ -18,6 +19,10 @@ func init() {
 }
 
 func TestFindByID(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 
 	idx, _ := primitive.ObjectIDFromHex("62398ea81e4743ecba54da23")
 
@@ -37,6 +42,9 @@ func TestFindByID(t *testing.T) {
 
 func TestFindByItemGuid(t *testing.T) {
 
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	doc, err := repoMock.FindByItemGuid("27daMDw274R5hHejrjkHDuI91ag", "ix001x")
 
 	if err != nil {

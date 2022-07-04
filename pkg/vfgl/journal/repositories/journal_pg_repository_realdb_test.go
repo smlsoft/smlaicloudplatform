@@ -2,6 +2,7 @@ package repositories_test
 
 import (
 	"encoding/json"
+	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
 	"smlcloudplatform/pkg/vfgl/journal/models"
@@ -50,6 +51,10 @@ func init() {
 }
 
 func TestJournalRepositoryRealDBCreate(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	assert.NotNil(t, repo, "Failed to Init Repo")
 	doc := models.JournalPg{}
 	err := json.Unmarshal([]byte(journal_json), &doc)
@@ -62,6 +67,10 @@ func TestJournalRepositoryRealDBCreate(t *testing.T) {
 }
 
 func TestJournalRepositoryRealDBGetAssertErrNotFound(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	assert.NotNil(t, repo, "Failed to Init Repo")
 
 	_, err := repo.Get("TESTSHOP", "DOC01")

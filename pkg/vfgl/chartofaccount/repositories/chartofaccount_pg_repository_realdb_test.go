@@ -1,6 +1,7 @@
 package repositories_test
 
 import (
+	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/repositories"
@@ -20,6 +21,9 @@ func init() {
 
 func TestChartOfAccountRepositoryCreateInRealDB(t *testing.T) {
 
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	assert := assert.New(t)
 	assert.NotNil(repo)
 
@@ -42,6 +46,9 @@ func TestChartOfAccountRepositoryCreateInRealDB(t *testing.T) {
 
 func TestChartOfAccountRepositoryGetDataInRealDBFirstAssertErrorNotFound(t *testing.T) {
 
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	assert := assert.New(t)
 	assert.NotNil(repo)
 
