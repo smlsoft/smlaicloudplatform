@@ -1,14 +1,17 @@
-package category
+package services
 
 import (
 	"errors"
 	"fmt"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
-	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/product/category/models"
+	"smlcloudplatform/pkg/product/category/repositories"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
 	"sync"
 	"time"
+
+	common "smlcloudplatform/pkg/models"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -20,16 +23,16 @@ type ICategoryService interface {
 	DeleteCategory(shopID string, guid string, authUsername string) error
 	InfoCategory(shopID string, guid string) (models.CategoryInfo, error)
 	SearchCategory(shopID string, q string, page int, limit int) ([]models.CategoryInfo, mongopagination.PaginationData, error)
-	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, mongopagination.PaginationData, error)
-	SaveInBatch(shopID string, authUsername string, categories []models.Category) (models.BulkImport, error)
+	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error)
+	SaveInBatch(shopID string, authUsername string, categories []models.Category) (common.BulkImport, error)
 }
 
 type CategoryService struct {
-	repo      ICategoryRepository
+	repo      repositories.ICategoryRepository
 	cacheRepo mastersync.IMasterSyncCacheRepository
 }
 
-func NewCategoryService(categoryRepository ICategoryRepository, cacheRepo mastersync.IMasterSyncCacheRepository) CategoryService {
+func NewCategoryService(categoryRepository repositories.ICategoryRepository, cacheRepo mastersync.IMasterSyncCacheRepository) CategoryService {
 	return CategoryService{
 		repo:      categoryRepository,
 		cacheRepo: cacheRepo,
@@ -145,7 +148,7 @@ func (svc CategoryService) SearchCategory(shopID string, q string, page int, lim
 	return docList, pagination, nil
 }
 
-func (svc CategoryService) LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (models.LastActivity, mongopagination.PaginationData, error) {
+func (svc CategoryService) LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error) {
 	var wg sync.WaitGroup
 
 	wg.Add(1)
@@ -171,14 +174,14 @@ func (svc CategoryService) LastActivity(shopID string, lastUpdatedDate time.Time
 	wg.Wait()
 
 	if err1 != nil {
-		return models.LastActivity{}, pagination1, err1
+		return common.LastActivity{}, pagination1, err1
 	}
 
 	if err2 != nil {
-		return models.LastActivity{}, pagination2, err2
+		return common.LastActivity{}, pagination2, err2
 	}
 
-	lastActivity := models.LastActivity{}
+	lastActivity := common.LastActivity{}
 
 	lastActivity.Remove = &deleteDocList
 	lastActivity.New = &createAndUpdateDocList
@@ -192,7 +195,7 @@ func (svc CategoryService) LastActivity(shopID string, lastUpdatedDate time.Time
 	return lastActivity, pagination, nil
 }
 
-func (svc CategoryService) SaveInBatch(shopID string, authUsername string, dataList []models.Category) (models.BulkImport, error) {
+func (svc CategoryService) SaveInBatch(shopID string, authUsername string, dataList []models.Category) (common.BulkImport, error) {
 
 	createDataList := []models.CategoryDoc{}
 	duplicateDataList := []models.Category{}
@@ -207,7 +210,7 @@ func (svc CategoryService) SaveInBatch(shopID string, authUsername string, dataL
 	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "code", itemCodeGuidList)
 
 	if err != nil {
-		return models.BulkImport{}, err
+		return common.BulkImport{}, err
 	}
 
 	foundItemGuidList := []string{}
@@ -259,7 +262,7 @@ func (svc CategoryService) SaveInBatch(shopID string, authUsername string, dataL
 		err = svc.repo.CreateInBatch(createDataList)
 
 		if err != nil {
-			return models.BulkImport{}, err
+			return common.BulkImport{}, err
 		}
 	}
 	createDataKey := []string{}
@@ -283,7 +286,7 @@ func (svc CategoryService) SaveInBatch(shopID string, authUsername string, dataL
 		updateFailDataKey = append(updateFailDataKey, doc.CategoryGuid)
 	}
 
-	return models.BulkImport{
+	return common.BulkImport{
 		Created:          createDataKey,
 		Updated:          updateDataKey,
 		UpdateFailed:     updateFailDataKey,

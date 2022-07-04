@@ -1,8 +1,8 @@
-package category
+package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/product/category/models"
 	"smlcloudplatform/pkg/repositories"
 	"time"
 

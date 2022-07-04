@@ -1,6 +1,7 @@
 package models
 
 import (
+	"smlcloudplatform/pkg/models"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -22,8 +23,8 @@ type Category struct {
 }
 
 type CategoryInfo struct {
-	DocIdentity `bson:"inline"`
-	Category    `bson:"inline"`
+	models.DocIdentity `bson:"inline"`
+	Category           `bson:"inline"`
 }
 
 func (CategoryInfo) CollectionName() string {
@@ -31,15 +32,15 @@ func (CategoryInfo) CollectionName() string {
 }
 
 type CategoryData struct {
-	ShopIdentity `bson:"inline"`
-	CategoryInfo `bson:"inline"`
+	models.ShopIdentity `bson:"inline"`
+	CategoryInfo        `bson:"inline"`
 }
 
 type CategoryDoc struct {
-	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	CategoryData `bson:"inline"`
-	ActivityDoc  `bson:"inline"`
-	LastUpdate   `bson:"inline"`
+	ID                 primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	CategoryData       `bson:"inline"`
+	models.ActivityDoc `bson:"inline"`
+	models.LastUpdate  `bson:"inline"`
 }
 
 func (CategoryDoc) CollectionName() string {
@@ -58,10 +59,10 @@ func (CategoryActivity) CollectionName() string {
 }
 
 type CategoryDeleteActivity struct {
-	Identity  `bson:"inline"`
-	CreatedAt *time.Time `json:"createdat,omitempty" bson:"createdat,omitempty"`
-	UpdatedAt *time.Time `json:"updatedat,omitempty" bson:"updatedat,omitempty"`
-	DeletedAt *time.Time `json:"deletedat,omitempty" bson:"deletedat,omitempty"`
+	models.Identity `bson:"inline"`
+	CreatedAt       *time.Time `json:"createdat,omitempty" bson:"createdat,omitempty"`
+	UpdatedAt       *time.Time `json:"updatedat,omitempty" bson:"updatedat,omitempty"`
+	DeletedAt       *time.Time `json:"deletedat,omitempty" bson:"deletedat,omitempty"`
 }
 
 func (CategoryDeleteActivity) CollectionName() string {
@@ -96,15 +97,15 @@ type CategoryLastActivityResponse struct {
 }
 
 type CategoryFetchUpdateResponse struct {
-	Success    bool                         `json:"success"`
-	Data       CategoryLastActivityResponse `json:"data,omitempty"`
-	Pagination PaginationDataResponse       `json:"pagination,omitempty"`
+	Success    bool                          `json:"success"`
+	Data       CategoryLastActivityResponse  `json:"data,omitempty"`
+	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
 }
 
 type CategoryPageResponse struct {
-	Success    bool                   `json:"success"`
-	Data       []CategoryInfo         `json:"data,omitempty"`
-	Pagination PaginationDataResponse `json:"pagination,omitempty"`
+	Success    bool                          `json:"success"`
+	Data       []CategoryInfo                `json:"data,omitempty"`
+	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
 }
 
 type CategoryInfoResponse struct {

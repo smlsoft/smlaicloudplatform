@@ -5,10 +5,14 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
-	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/product/category/models"
+	"smlcloudplatform/pkg/product/category/repositories"
+	"smlcloudplatform/pkg/product/category/services"
 	"smlcloudplatform/pkg/utils"
 	"strings"
 	"time"
+
+	common "smlcloudplatform/pkg/models"
 )
 
 type ICategoryHttp interface{}
@@ -16,16 +20,16 @@ type ICategoryHttp interface{}
 type CategoryHttp struct {
 	ms          *microservice.Microservice
 	cfg         microservice.IConfig
-	cateService ICategoryService
+	cateService services.ICategoryService
 }
 
 func NewCategoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) CategoryHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
-	cateRepo := NewCategoryRepository(pst)
+	cateRepo := repositories.NewCategoryRepository(pst)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "category")
-	cateService := NewCategoryService(cateRepo, masterSyncCacheRepo)
+	cateService := services.NewCategoryService(cateRepo, masterSyncCacheRepo)
 
 	return CategoryHttp{
 		ms:          ms,
@@ -79,7 +83,7 @@ func (h CategoryHttp) CreateCategory(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
 	})
@@ -124,7 +128,7 @@ func (h CategoryHttp) UpdateCategory(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      id,
 	})
@@ -155,7 +159,7 @@ func (h CategoryHttp) DeleteCategory(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusOK, models.ApiResponse{
+	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		ID:      id,
 	})
@@ -187,7 +191,7 @@ func (h CategoryHttp) InfoCategory(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusOK, models.ApiResponse{
+	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		Data:    doc,
 	})
@@ -222,7 +226,7 @@ func (h CategoryHttp) SearchCategory(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusOK, models.ApiResponse{
+	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
@@ -270,7 +274,7 @@ func (h CategoryHttp) LastActivityCategory(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusOK,
-		models.ApiResponse{
+		common.ApiResponse{
 			Success:    true,
 			Data:       docList,
 			Pagination: pagination,
@@ -318,7 +322,7 @@ func (h CategoryHttp) CreateInBatchCategory(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		models.BulkReponse{
+		common.BulkReponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

@@ -1,10 +1,11 @@
-package category_test
+package services_test
 
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
-	"smlcloudplatform/pkg/api/category"
-	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/product/category/models"
+	"smlcloudplatform/pkg/product/category/repositories"
+	"smlcloudplatform/pkg/product/category/services"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -16,14 +17,14 @@ const shopIDMock = "TEST_SHOP"
 const authUserMock = "TEST_USER"
 
 var mongoPersister *microservice.PersisterMongo
-var serviceMock category.CategoryService
-var repoMock category.CategoryRepository
+var serviceMock services.CategoryService
+var repoMock repositories.CategoryRepository
 
 func init() {
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister = microservice.NewPersisterMongo(mongoPersisterConfig)
-	repoMock = category.NewCategoryRepository(mongoPersister)
-	serviceMock = category.NewCategoryService(repoMock, nil)
+	repoMock = repositories.NewCategoryRepository(mongoPersister)
+	serviceMock = services.NewCategoryService(repoMock, nil)
 }
 
 func TestCreateCategory(t *testing.T) {
