@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/models/vfgl"
+	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/vfgl/chartofaccount/models"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/repositories"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/services"
 )
@@ -71,7 +71,7 @@ func (h ChartOfAccountHttp) Search(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusOK, models.ApiResponse{
+	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
@@ -85,8 +85,8 @@ func (h ChartOfAccountHttp) Search(ctx microservice.IContext) error {
 // @Tags		GL
 // @Param		ChartOfAccount  body      vfgl.ChartOfAccount  true  "ChartOfAccount"
 // @Accept 		json
-// @Success		200	{object}	models.ResponseSuccessWithID
-// @Failure		401 {object}	models.AuthResponseFailed
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /gl/chartofaccount [post]
 func (h ChartOfAccountHttp) Create(ctx microservice.IContext) error {
@@ -94,7 +94,7 @@ func (h ChartOfAccountHttp) Create(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &vfgl.ChartOfAccount{}
+	docReq := &models.ChartOfAccount{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -109,7 +109,7 @@ func (h ChartOfAccountHttp) Create(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
 	})
@@ -122,8 +122,8 @@ func (h ChartOfAccountHttp) Create(ctx microservice.IContext) error {
 // @Tags		GL
 // @Param		id  path      string  true  "Id"
 // @Accept 		json
-// @Success		200	{object}	vfgl.ChartOfAccountInfoResponse
-// @Failure		401 {object}	models.AuthResponseFailed
+// @Success		200	{object}	models.ChartOfAccountInfoResponse
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /gl/chartofaccount/{id} [get]
 func (h ChartOfAccountHttp) Info(ctx microservice.IContext) error {
@@ -141,7 +141,7 @@ func (h ChartOfAccountHttp) Info(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusOK, models.ApiResponse{
+	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		Data:    doc,
 	})
@@ -153,10 +153,10 @@ func (h ChartOfAccountHttp) Info(ctx microservice.IContext) error {
 // @Description แก้ไขผังบัญชี
 // @Tags		GL
 // @Param		id  path      string  true  "ID"
-// @Param		ChartOfAccount  body      vfgl.ChartOfAccount  true  "ChartOfAccount"
+// @Param		ChartOfAccount  body      models.ChartOfAccount  true  "ChartOfAccount"
 // @Accept 		json
-// @Success		200	{object}	models.ResponseSuccessWithID
-// @Failure		401 {object}	models.AuthResponseFailed
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /gl/chartofaccount/{id} [put]
 func (h ChartOfAccountHttp) Update(ctx microservice.IContext) error {
@@ -167,7 +167,7 @@ func (h ChartOfAccountHttp) Update(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &vfgl.ChartOfAccount{}
+	docReq := &models.ChartOfAccount{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -182,7 +182,7 @@ func (h ChartOfAccountHttp) Update(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      id,
 	})
@@ -196,8 +196,8 @@ func (h ChartOfAccountHttp) Update(ctx microservice.IContext) error {
 // @Tags		GL
 // @Param		id  path      string  true  "ID"
 // @Accept 		json
-// @Success		200	{object}	models.ResponseSuccessWithID
-// @Failure		401 {object}	models.AuthResponseFailed
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /gl/chartofaccount/{id} [delete]
 func (h ChartOfAccountHttp) Delete(ctx microservice.IContext) error {
@@ -214,7 +214,7 @@ func (h ChartOfAccountHttp) Delete(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusOK, models.ApiResponse{
+	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		ID:      id,
 	})
@@ -226,10 +226,10 @@ func (h ChartOfAccountHttp) Delete(ctx microservice.IContext) error {
 // @Summary		นำเข้าผังบัญชี
 // @Description นำเข้าผังบัญชี
 // @Tags		GL
-// @Param		ChartOfAccount  body      []vfgl.ChartOfAccount  true  "ChartOfAccount"
+// @Param		ChartOfAccount  body      []models.ChartOfAccount  true  "ChartOfAccount"
 // @Accept 		json
-// @Success		201	{object}	models.BulkInsertResponse
-// @Failure		401 {object}	models.AuthResponseFailed
+// @Success		201	{object}	common.BulkInsertResponse
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /gl/chartofaccount/bulk [post]
 func (h ChartOfAccountHttp) SaveBulk(ctx microservice.IContext) error {
@@ -240,7 +240,7 @@ func (h ChartOfAccountHttp) SaveBulk(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	dataReq := []vfgl.ChartOfAccount{}
+	dataReq := []models.ChartOfAccount{}
 	err := json.Unmarshal([]byte(input), &dataReq)
 
 	if err != nil {
@@ -257,7 +257,7 @@ func (h ChartOfAccountHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		models.BulkReponse{
+		common.BulkReponse{
 			Success:    true,
 			BulkImport: bulkResponse,
 		},

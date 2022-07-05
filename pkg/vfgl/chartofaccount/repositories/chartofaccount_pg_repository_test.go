@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/mocktest"
-	"smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/models/vfgl"
+	common "smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/vfgl/chartofaccount/models"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/repositories"
 	"testing"
 
@@ -28,7 +28,7 @@ import (
 // 	assert := assert.New(t)
 // 	assert.NotNil(repo)
 
-// 	give := &vfgl.ChartOfAccountPG{
+// 	give := &models.ChartOfAccountPG{
 // 		ShopIdentity: models.ShopIdentity{
 // 			ShopID: "SHOPTEST",
 // 		},
@@ -48,7 +48,7 @@ type chartOfAccountRepositoryTestSuite struct {
 	db             *gorm.DB
 	repo           repositories.ChartOfAccountPgRepository
 	mock           sqlmock.Sqlmock
-	chartofaccount vfgl.ChartOfAccountPG
+	chartofaccount models.ChartOfAccountPG
 }
 
 func TestChartOfAccountRepositoryCreate(t *testing.T) {
@@ -93,11 +93,11 @@ func TestChartOfAccountRepositoryCreate(t *testing.T) {
 
 	s.repo = repositories.NewChartOfAccountPgRepository(microservice.NewPersisterWithDB(s.db))
 
-	s.chartofaccount = vfgl.ChartOfAccountPG{
-		ShopIdentity: models.ShopIdentity{
+	s.chartofaccount = models.ChartOfAccountPG{
+		ShopIdentity: common.ShopIdentity{
 			ShopID: "TESTSHOP",
 		},
-		PartitionIdentity: models.PartitionIdentity{
+		PartitionIdentity: common.PartitionIdentity{
 			ParID: "",
 		},
 		AccountCode:            "0001",
@@ -156,11 +156,11 @@ func TestChartOfAccountRepositoryGetByShopIDAndAccountCode(t *testing.T) {
 
 	s.repo = repositories.NewChartOfAccountPgRepository(microservice.NewPersisterWithDB(s.db))
 
-	s.chartofaccount = vfgl.ChartOfAccountPG{
-		ShopIdentity: models.ShopIdentity{
+	s.chartofaccount = models.ChartOfAccountPG{
+		ShopIdentity: common.ShopIdentity{
 			ShopID: "TESTSHOP",
 		},
-		PartitionIdentity: models.PartitionIdentity{
+		PartitionIdentity: common.PartitionIdentity{
 			ParID: "",
 		},
 		AccountCode:            "0001",
@@ -223,11 +223,11 @@ func TestChartOfAccountRepositoryGetByShopIDAndAccountCodeAssertNotFoundData(t *
 
 	s.repo = repositories.NewChartOfAccountPgRepository(microservice.NewPersisterWithDB(s.db))
 
-	s.chartofaccount = vfgl.ChartOfAccountPG{
-		ShopIdentity: models.ShopIdentity{
+	s.chartofaccount = models.ChartOfAccountPG{
+		ShopIdentity: common.ShopIdentity{
 			ShopID: "TESTSHOP",
 		},
-		PartitionIdentity: models.PartitionIdentity{
+		PartitionIdentity: common.PartitionIdentity{
 			ParID: "",
 		},
 		AccountCode:            "0001",

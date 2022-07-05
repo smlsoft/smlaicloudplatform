@@ -2,9 +2,9 @@ package main
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/category"
-	"smlcloudplatform/pkg/api/inventory"
-	"smlcloudplatform/pkg/api/member"
+	"smlcloudplatform/pkg/member"
+	"smlcloudplatform/pkg/product/category"
+	"smlcloudplatform/pkg/product/inventory"
 )
 
 func main() {

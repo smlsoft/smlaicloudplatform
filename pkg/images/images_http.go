@@ -3,8 +3,8 @@ package images
 import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/inventory"
 	common "smlcloudplatform/pkg/models"
+	inventoryRepo "smlcloudplatform/pkg/product/inventory/repositories"
 	"strconv"
 )
 
@@ -26,7 +26,7 @@ func NewImagesHttp(
 ) ImagesHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
-	inventoryRepo := inventory.NewInventoryRepository(pst)
+	inventoryRepo := inventoryRepo.NewInventoryRepository(pst)
 	imgSrv := NewImageService(persisterImage, inventoryRepo)
 	return ImagesHttp{
 		ms:      ms,

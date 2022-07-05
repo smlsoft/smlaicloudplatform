@@ -2,7 +2,7 @@ package main
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/authentication"
+	"smlcloudplatform/pkg/authentication"
 )
 
 func main() {

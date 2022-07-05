@@ -2,23 +2,23 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/models/vfgl"
+	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/config"
+	"smlcloudplatform/pkg/vfgl/chartofaccount/models"
 )
 
 type IChartOfAccountMQRepository interface {
-	Create(doc vfgl.ChartOfAccountDoc) error
-	Update(doc vfgl.ChartOfAccountDoc) error
-	Delete(doc models.Identity) error
-	CreateInBatch(docList []vfgl.ChartOfAccountDoc) error
+	Create(doc models.ChartOfAccountDoc) error
+	Update(doc models.ChartOfAccountDoc) error
+	Delete(doc common.Identity) error
+	CreateInBatch(docList []models.ChartOfAccountDoc) error
 }
 
 type ChartOfAccountMQRepository struct {
 	prod  microservice.IProducer
 	mqKey string
-	repositories.KafkaRepository[vfgl.ChartOfAccountDoc]
+	repositories.KafkaRepository[models.ChartOfAccountDoc]
 }
 
 func NewChartOfAccountMQRepository(prod microservice.IProducer) ChartOfAccountMQRepository {
@@ -28,6 +28,6 @@ func NewChartOfAccountMQRepository(prod microservice.IProducer) ChartOfAccountMQ
 		prod:  prod,
 		mqKey: mqKey,
 	}
-	repo.KafkaRepository = repositories.NewKafkaRepository[vfgl.ChartOfAccountDoc](prod, config.ChartOfAccountMessageQueueConfig{}, "")
+	repo.KafkaRepository = repositories.NewKafkaRepository[models.ChartOfAccountDoc](prod, config.ChartOfAccountMessageQueueConfig{}, "")
 	return repo
 }

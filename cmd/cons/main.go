@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/purchase"
-	"smlcloudplatform/pkg/saleinvoice"
+	"smlcloudplatform/pkg/transaction/purchase"
+	"smlcloudplatform/pkg/transaction/saleinvoice"
 
 	"github.com/joho/godotenv"
 )

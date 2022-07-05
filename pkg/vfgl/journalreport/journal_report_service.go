@@ -1,14 +1,15 @@
 package journalreport
 
 import (
-	"smlcloudplatform/pkg/models/vfgl"
+	chartofaccountModel "smlcloudplatform/pkg/vfgl/chartofaccount/models"
+	"smlcloudplatform/pkg/vfgl/journalreport/models"
 	"time"
 )
 
 type IJournalReportService interface {
-	ProcessTrialBalanceSheetReport(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*vfgl.TrialBalanceSheetReport, error)
-	ProcessProfitAndLossSheetReport(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*vfgl.ProfitAndLossSheetReport, error)
-	ProcessBalanceSheetReport(shopId string, accountGroup string, endDate time.Time) (*vfgl.BalanceSheetReport, error)
+	ProcessTrialBalanceSheetReport(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*models.TrialBalanceSheetReport, error)
+	ProcessProfitAndLossSheetReport(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*models.ProfitAndLossSheetReport, error)
+	ProcessBalanceSheetReport(shopId string, accountGroup string, endDate time.Time) (*models.BalanceSheetReport, error)
 }
 
 type JournalReportService struct {
@@ -21,7 +22,7 @@ func NewJournalReportService(repo IJournalReportRepository) JournalReportService
 	}
 }
 
-func (svc JournalReportService) ProcessTrialBalanceSheetReport(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*vfgl.TrialBalanceSheetReport, error) {
+func (svc JournalReportService) ProcessTrialBalanceSheetReport(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*models.TrialBalanceSheetReport, error) {
 	// mock := MockTrialBalanceSheetReport(shopId, accountGroup, startDate, endDate)
 	// return mock, nil
 	details, err := svc.repo.GetDataTrialBalance(shopId, accountGroup, startDate, endDate)
@@ -42,7 +43,7 @@ func (svc JournalReportService) ProcessTrialBalanceSheetReport(shopId string, ac
 		totalnextBalanceCredit += v.NextBalanceCreditAmount
 	}
 
-	result := &vfgl.TrialBalanceSheetReport{
+	result := &models.TrialBalanceSheetReport{
 		ReportDate:             time.Now(),
 		StartDate:              startDate,
 		EndDate:                endDate,
@@ -58,7 +59,7 @@ func (svc JournalReportService) ProcessTrialBalanceSheetReport(shopId string, ac
 	return result, err
 }
 
-func (svc JournalReportService) ProcessProfitAndLossSheetReport(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*vfgl.ProfitAndLossSheetReport, error) {
+func (svc JournalReportService) ProcessProfitAndLossSheetReport(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*models.ProfitAndLossSheetReport, error) {
 	// mock := MockProfitAndLossSheetReport(shopId, accountGroup, startDate, endDate)
 	// return mock, nil
 	details, err := svc.repo.GetDataProfitAndLoss(shopId, accountGroup, startDate, endDate)
@@ -73,8 +74,8 @@ func (svc JournalReportService) ProcessProfitAndLossSheetReport(shopId string, a
 	var expenseAmount float64 = 0
 	var profitAndLossAmount float64 = 0
 
-	var incomes []vfgl.ProfitAndLossSheetAccountDetail
-	var expenses []vfgl.ProfitAndLossSheetAccountDetail
+	var incomes []models.ProfitAndLossSheetAccountDetail
+	var expenses []models.ProfitAndLossSheetAccountDetail
 
 	for _, v := range details {
 		if v.AccountCategory == 4 {
@@ -88,7 +89,7 @@ func (svc JournalReportService) ProcessProfitAndLossSheetReport(shopId string, a
 
 	profitAndLossAmount = incomeAmount - expenseAmount
 
-	result := &vfgl.ProfitAndLossSheetReport{
+	result := &models.ProfitAndLossSheetReport{
 		ReportDate:          time.Now(),
 		StartDate:           startDate,
 		EndDate:             endDate,
@@ -103,7 +104,7 @@ func (svc JournalReportService) ProcessProfitAndLossSheetReport(shopId string, a
 	return result, nil
 }
 
-func (svc JournalReportService) ProcessBalanceSheetReport(shopId string, accountGroup string, endDate time.Time) (*vfgl.BalanceSheetReport, error) {
+func (svc JournalReportService) ProcessBalanceSheetReport(shopId string, accountGroup string, endDate time.Time) (*models.BalanceSheetReport, error) {
 	// mock := MockBalanceSheetReport(shopId, accountGroup, endDate)
 	// return mock, nil
 	details, err := svc.repo.GetDataBalanceSheet(shopId, accountGroup, endDate)
@@ -123,9 +124,9 @@ func (svc JournalReportService) ProcessBalanceSheetReport(shopId string, account
 	var totalExpense float64 = 0
 	var totalProfitAndLoss float64 = 0
 
-	var assets []vfgl.BalanceSheetAccountDetail
-	var liabilities []vfgl.BalanceSheetAccountDetail
-	var ownesEquities []vfgl.BalanceSheetAccountDetail
+	var assets []models.BalanceSheetAccountDetail
+	var liabilities []models.BalanceSheetAccountDetail
+	var ownesEquities []models.BalanceSheetAccountDetail
 
 	for _, v := range details {
 
@@ -152,8 +153,8 @@ func (svc JournalReportService) ProcessBalanceSheetReport(shopId string, account
 	totalProfitAndLoss = totalIncome - totalExpense
 	if totalProfitAndLoss != 0 {
 		totalOwnersEquityAmount += totalProfitAndLoss
-		ownesEquities = append(ownesEquities, vfgl.BalanceSheetAccountDetail{
-			ChartOfAccountPG: vfgl.ChartOfAccountPG{
+		ownesEquities = append(ownesEquities, models.BalanceSheetAccountDetail{
+			ChartOfAccountPG: chartofaccountModel.ChartOfAccountPG{
 				AccountName:     "กำไร (ขาดทุน) สุทธิ",
 				AccountCategory: 3,
 			},
@@ -162,7 +163,7 @@ func (svc JournalReportService) ProcessBalanceSheetReport(shopId string, account
 	}
 	totalLiabilityAndOwnersEquityAmount = totalLiabilityAmount + totalOwnersEquityAmount
 
-	result := &vfgl.BalanceSheetReport{
+	result := &models.BalanceSheetReport{
 		ReportDate:                          time.Now(),
 		EndDate:                             endDate,
 		AccountGroup:                        accountGroup,
