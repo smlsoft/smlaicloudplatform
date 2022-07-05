@@ -21,6 +21,8 @@ type JournalBody struct {
 	Amount             float64   `json:"amount" bson:"amount" gorm:"column:amount"`
 	AccountDescription string    `json:"accountdescription" bson:"accountdescription" gorm:"column:accountdescription"`
 	BookCode           string    `json:"bookcode" bson:"bookcode"`
+	Vats               []Vat     `json:"vats" bson:"vats"`
+	//Taxes              []Tax     `json:"taxes" bson:"taxes"`
 }
 
 type Journal struct {
@@ -84,6 +86,43 @@ type JournalDeleteActivity struct {
 
 func (JournalDeleteActivity) CollectionName() string {
 	return journalCollectionName
+}
+
+type Vat struct {
+	VatNo             string    `json:"vatno" bson:"vatno"`
+	VatType           int8      `json:"vattype" bson:"vattype"`
+	VatMode           int8      `json:"vatmode" bson:"vatmode"`
+	VatDate           time.Time `json:"vatdate" bson:"vatdate"`
+	VatPeriod         int8      `json:"vatperiod" bson:"vatperiod"`
+	VatYear           int16     `json:"vatyear" bson:"vatyear" `
+	VatBase           float64   `json:"vatbase" bson:"vatbase"`
+	VatRate           float64   `json:"vatrate" bson:"vatrate"`
+	VatAmount         float64   `json:"vatamount" bson:"vatamount"`
+	VatExemption      float64   `json:"vatexemption" bson:"vatexemption"`
+	VatSubmit         bool      `json:"vatsubmit" bson:"vatsubmit"`
+	CustCode          string    `json:"custcode" bson:"custcode"`
+	VatIdentification string    `json:"vatidentification" bson:"vatidentification"`
+	Organization      int8      `json:"organization" bson:"organization"`
+	BranchCode        string    `json:"branchcode" bson:"branchcode"`
+	Remark            string    `json:"remark" bson:"remark"`
+}
+
+type Tax struct {
+	DocNo       string       `json:"docno" bson:"docno"`
+	DocDate     time.Time    `json:"docdate" gorm:"column:docdate"`
+	CustCode    string       `json:"custcode" bson:"custcode"`
+	CustName    string       `json:"custname" bson:"custname"`
+	CustType    string       `json:"custtype" bson:"custtype"`
+	CustTaxCode string       `json:"custtaxcode" bson:"custtaxcode"`
+	TaxType     int8         `json:"taxtype" bson:"taxtype"`
+	Details     *[]TaxDetail `json:"details" bson:"details"`
+}
+
+type TaxDetail struct {
+	TaxBase     float64 `json:"taxbase" bson:"taxbase"`
+	TaxRate     float64 `json:"taxrate" bson:"taxrate"`
+	TaxAmount   float64 `json:"taxamount" bson:"taxamount"`
+	Description string  `json:"description" bson:"description"`
 }
 
 // Postgresql model
