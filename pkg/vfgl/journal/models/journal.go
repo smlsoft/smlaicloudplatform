@@ -108,14 +108,13 @@ type Vat struct {
 }
 
 type Tax struct {
-	DocNo       string       `json:"docno" bson:"docno"`
-	DocDate     time.Time    `json:"docdate" gorm:"column:docdate"`
-	CustCode    string       `json:"custcode" bson:"custcode"`
-	CustName    string       `json:"custname" bson:"custname"`
-	CustType    string       `json:"custtype" bson:"custtype"`
-	CustTaxCode string       `json:"custtaxcode" bson:"custtaxcode"`
-	TaxType     int8         `json:"taxtype" bson:"taxtype"`
-	Details     *[]TaxDetail `json:"details" bson:"details"`
+	DocNo     string       `json:"docno" bson:"docno"`
+	DocDate   time.Time    `json:"docdate" gorm:"column:docdate"`
+	CustName  string       `json:"custname" bson:"custname"`
+	CustType  string       `json:"custtype" bson:"custtype"`
+	CustTaxID string       `json:"custtaxid" bson:"custtaxid"`
+	TaxType   int8         `json:"taxtype" bson:"taxtype"`
+	Details   *[]TaxDetail `json:"details" bson:"details"`
 }
 
 type TaxDetail struct {
