@@ -1,6 +1,7 @@
 package shop_test
 
 import (
+	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/api/shop"
 	"smlcloudplatform/pkg/models"
@@ -26,6 +27,10 @@ func setup() {
 }
 
 func TestShopMemberSave(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	setup()
 
 	err := shopUserRepo.Save("mx1", "ux3", models.ROLE_OWNER)
@@ -36,6 +41,9 @@ func TestShopMemberSave(t *testing.T) {
 }
 
 func TestShopMemberFindRole(t *testing.T) {
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	setup()
 
 	role, err := shopUserRepo.FindRole("mx1", "ux3")
@@ -48,6 +56,9 @@ func TestShopMemberFindRole(t *testing.T) {
 }
 
 func TestShopMemberFindByShop(t *testing.T) {
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	setup()
 
 	members, err := shopUserRepo.FindByShopID("mx1")
@@ -61,6 +72,9 @@ func TestShopMemberFindByShop(t *testing.T) {
 }
 
 func TestShopMemberFindByUsername(t *testing.T) {
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	setup()
 
 	members, err := shopUserRepo.FindByUsername("ux1")

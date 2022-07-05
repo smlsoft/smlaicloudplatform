@@ -2,6 +2,7 @@ package shop_test
 
 import (
 	"errors"
+	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
 	"smlcloudplatform/pkg/api/shop"
@@ -13,6 +14,9 @@ import (
 
 func TestFindShop(t *testing.T) {
 
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	// os.Setenv("MONGODB_URI", "mongodb://root:rootx@localhost:27017/")
 	// defer os.Unsetenv("MONGODB_URI")
 

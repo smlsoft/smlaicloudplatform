@@ -1,6 +1,7 @@
 package category_test
 
 import (
+	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
 	"smlcloudplatform/pkg/api/category"
@@ -28,6 +29,9 @@ func init() {
 
 func TestCreateCategory(t *testing.T) {
 
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	cateReq1 := models.Category{}
 	cateReq1.CategoryGuid = "cate001"
 	cateReq1.Name1 = "cate name 1"
@@ -88,6 +92,10 @@ func TestCreateCategory(t *testing.T) {
 }
 
 func TestInfoCategory(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 
 	cateWant1 := models.CategoryInfo{}
 
@@ -150,6 +158,9 @@ func TestInfoCategory(t *testing.T) {
 
 func TestUpdateCategory(t *testing.T) {
 
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	//clear mock data
 	mongoPersister.Delete(models.CategoryDoc{}, bson.M{"shopid": shopIDMock})
 
@@ -180,6 +191,9 @@ func TestUpdateCategory(t *testing.T) {
 
 func TestDeleteCategory(t *testing.T) {
 
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	//clear mock data
 	err := mongoPersister.Delete(models.CategoryDoc{}, bson.M{"shopid": shopIDMock})
 

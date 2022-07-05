@@ -11,6 +11,7 @@ RUN apk add build-base
 
 WORKDIR /go/app
 
+ENV SERVERLESS=serverless
 COPY go.mod /go/app
 COPY go.sum /go/app
 RUN go mod download

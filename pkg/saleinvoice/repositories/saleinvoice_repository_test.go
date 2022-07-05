@@ -1,6 +1,7 @@
 package repositories_test
 
 import (
+	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
 	common "smlcloudplatform/pkg/models"
@@ -12,6 +13,10 @@ import (
 )
 
 func TestCreateSaleinvoice(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := repositories.NewSaleinvoiceRepository(mongoPersister)
@@ -50,6 +55,10 @@ func TestCreateSaleinvoice(t *testing.T) {
 }
 
 func TestUpdateSaleinvoice(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := repositories.NewSaleinvoiceRepository(mongoPersister)
@@ -133,6 +142,11 @@ func TestUpdateSaleinvoice(t *testing.T) {
 }
 
 func TestDeleteSaleinvoice(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
+
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := repositories.NewSaleinvoiceRepository(mongoPersister)
@@ -189,6 +203,10 @@ func TestDeleteSaleinvoice(t *testing.T) {
 }
 
 func TestFindSaleinvoice(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := repositories.NewSaleinvoiceRepository(mongoPersister)
@@ -211,6 +229,10 @@ func TestFindSaleinvoice(t *testing.T) {
 }
 
 func TestFindPageSaleinvoice(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	mongoPersisterConfig := mock.NewPersisterMongoConfig()
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := repositories.NewSaleinvoiceRepository(mongoPersister)

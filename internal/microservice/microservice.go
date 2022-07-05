@@ -10,6 +10,7 @@ import (
 	"sync"
 	"syscall"
 
+	"smlcloudplatform/internal/microservice/models"
 	msValidator "smlcloudplatform/internal/validator"
 
 	_ "smlcloudplatform/logger"
@@ -126,6 +127,9 @@ func (ms *Microservice) CheckReadyToStart() error {
 			ms.Logger.WithError(err).Error("[KAFKA]Connection Failed.")
 			return err
 		}
+
+		testInfo := models.UserInfo{}
+		producer.SendMessage("TEST-CONNECT", "", testInfo)
 		ms.Logger.Debug("[KAFKA]Connection Success.")
 	}
 

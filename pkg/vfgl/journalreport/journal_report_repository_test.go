@@ -1,6 +1,7 @@
 package journalreport_test
 
 import (
+	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/vfgl/journalreport"
 	"testing"
@@ -11,6 +12,9 @@ import (
 
 func TestGetDataTrialBalanceReportRepository(t *testing.T) {
 
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	assert := assert.New(t)
 
 	pstConfig := microservice.NewPersisterConfig()
@@ -30,6 +34,9 @@ func TestGetDataTrialBalanceReportRepository(t *testing.T) {
 }
 
 func TestGetDataProfitAndLossReportRepository(t *testing.T) {
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	assert := assert.New(t)
 
 	pstConfig := microservice.NewPersisterConfig()
@@ -49,6 +56,9 @@ func TestGetDataProfitAndLossReportRepository(t *testing.T) {
 }
 
 func TestGetDataBalanceSheetReportRepository(t *testing.T) {
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	assert := assert.New(t)
 
 	pstConfig := microservice.NewPersisterConfig()

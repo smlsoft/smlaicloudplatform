@@ -2,6 +2,7 @@ package repositories_test
 
 import (
 	"database/sql"
+	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/mocktest"
 	common "smlcloudplatform/pkg/models"
@@ -22,6 +23,11 @@ type journalRepositoryTestSuite struct {
 }
 
 func TestJournalRepositoryCreate(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
+
 	s := &journalRepositoryTestSuite{}
 	var (
 		db  *sql.DB

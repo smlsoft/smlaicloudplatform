@@ -1,6 +1,7 @@
 package authentication_test
 
 import (
+	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
 	"smlcloudplatform/pkg/api/authentication"
@@ -22,7 +23,13 @@ func init() {
 	repoMock = authentication.NewAuthenticationRepository(mongoPersister)
 }
 
+// mock Persister
+
 func TestFindUser(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	password, _ := utils.HashPassword("test")
 
 	username := models.UsernameCode{

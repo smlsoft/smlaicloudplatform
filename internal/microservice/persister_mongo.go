@@ -161,12 +161,17 @@ func (pst *PersisterMongo) toDoc(v interface{}) (doc *bson.D, err error) {
 }
 
 func (pst *PersisterMongo) Count(model interface{}, filter interface{}) (int, error) {
-	db, err := pst.getClient()
+
+	collectionName, err := pst.getCollectionName(model)
 	if err != nil {
 		return 0, err
 	}
+	return pst.PersisterCount(collectionName, filter)
+}
 
-	collectionName, err := pst.getCollectionName(model)
+func (pst *PersisterMongo) PersisterCount(collectionName string, filter interface{}) (int, error) {
+
+	db, err := pst.getClient()
 	if err != nil {
 		return 0, err
 	}
@@ -176,7 +181,6 @@ func (pst *PersisterMongo) Count(model interface{}, filter interface{}) (int, er
 		return 0, err
 	}
 	return int(count), nil
-
 }
 
 func (pst *PersisterMongo) FindPage(model interface{}, limit int, page int, filter interface{}, decode interface{}) (paginate.PaginationData, error) {
@@ -303,18 +307,22 @@ func (pst *PersisterMongo) FindByID(model interface{}, keyName string, id interf
 }
 
 func (pst *PersisterMongo) Create(model interface{}, data interface{}) (primitive.ObjectID, error) {
-	db, err := pst.getClient()
-	if err != nil {
-		return primitive.NilObjectID, err
-	}
 
 	collectionName, err := pst.getCollectionName(model)
 	if err != nil {
 		return primitive.NilObjectID, err
 	}
+	return pst.PersisterCreate(collectionName, data)
+}
+
+func (pst *PersisterMongo) PersisterCreate(collectionName string, data interface{}) (primitive.ObjectID, error) {
+
+	db, err := pst.getClient()
+	if err != nil {
+		return primitive.NilObjectID, err
+	}
 
 	result, err := db.Collection(collectionName).InsertOne(pst.ctx, &data)
-
 	if err != nil {
 		return primitive.NilObjectID, err
 	}

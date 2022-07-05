@@ -18,6 +18,10 @@ func (cfg *MongoPersisterConfig) MongodbURI() string {
 		return uri
 	}
 
+	if cfg.MongodbServer() == "" {
+		return ""
+	}
+
 	userNamePassword := fmt.Sprintf("%s:%s@", cfg.MongodbUserName(), cfg.MongodbPassWord())
 	if userNamePassword == ":@" {
 		userNamePassword = ""

@@ -1,6 +1,7 @@
 package member_test
 
 import (
+	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
 	"smlcloudplatform/pkg/api/member"
@@ -16,6 +17,9 @@ func newPgRepo() member.MemberPGRepository {
 }
 
 func TestCreate(t *testing.T) {
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	repo := newPgRepo()
 
 	idx := models.MemberIndex{}
@@ -30,6 +34,10 @@ func TestCreate(t *testing.T) {
 }
 
 func TestCount(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	repo := newPgRepo()
 
 	count, err := repo.Count("shopidx001", "fixguid")
@@ -42,6 +50,10 @@ func TestCount(t *testing.T) {
 }
 
 func TestFindByGuid(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	repo := newPgRepo()
 	inv, err := repo.FindByGuid("shopidx001", "fixguid")
 
@@ -53,6 +65,10 @@ func TestFindByGuid(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
 	repo := newPgRepo()
 
 	err := repo.Delete("shopidx001", "fixguid")

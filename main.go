@@ -186,6 +186,8 @@ func main() {
 
 	if devApiMode == "1" || devApiMode == "2" {
 
+		ms.RegisterLivenessProbeEndpoint("/healthz")
+
 		consumerGroupName := os.Getenv("CONSUMER_GROUP_NAME")
 		if consumerGroupName == "" {
 			consumerGroupName = "03"
