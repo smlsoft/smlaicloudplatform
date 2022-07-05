@@ -2,18 +2,18 @@ package services
 
 import (
 	"encoding/json"
-	"smlcloudplatform/pkg/models/vfgl"
+	"smlcloudplatform/pkg/vfgl/chartofaccount/models"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/repositories"
 
 	"gorm.io/gorm"
 )
 
 type IChartOfAccountConsumeService interface {
-	Create(doc vfgl.ChartOfAccountDoc) error
-	Update(shopID string, accountCode string, doc vfgl.ChartOfAccountDoc) error
+	Create(doc models.ChartOfAccountDoc) error
+	Update(shopID string, accountCode string, doc models.ChartOfAccountDoc) error
 	Delete(shopID string, guid string) error
-	SaveInBatch(docList []vfgl.ChartOfAccountDoc) error
-	Upsert(vfgl.ChartOfAccountDoc) (*vfgl.ChartOfAccountPG, error)
+	SaveInBatch(docList []models.ChartOfAccountDoc) error
+	Upsert(models.ChartOfAccountDoc) (*models.ChartOfAccountPG, error)
 }
 
 type ChartOfAccountConsumeService struct {
@@ -26,8 +26,8 @@ func NewChartOfAccountConsumeService(repo repositories.IChartOfAccountPgReposito
 	}
 }
 
-func (svc *ChartOfAccountConsumeService) Create(doc vfgl.ChartOfAccountDoc) (*vfgl.ChartOfAccountPG, error) {
-	pgDoc := vfgl.ChartOfAccountPG{}
+func (svc *ChartOfAccountConsumeService) Create(doc models.ChartOfAccountDoc) (*models.ChartOfAccountPG, error) {
+	pgDoc := models.ChartOfAccountPG{}
 
 	tmpJsonDoc, err := json.Marshal(doc)
 	if err != nil {
@@ -47,8 +47,8 @@ func (svc *ChartOfAccountConsumeService) Create(doc vfgl.ChartOfAccountDoc) (*vf
 	return &pgDoc, nil
 }
 
-func (svc *ChartOfAccountConsumeService) Update(shopID string, accountCode string, doc vfgl.ChartOfAccountDoc) error {
-	pgDoc := vfgl.ChartOfAccountPG{}
+func (svc *ChartOfAccountConsumeService) Update(shopID string, accountCode string, doc models.ChartOfAccountDoc) error {
+	pgDoc := models.ChartOfAccountPG{}
 
 	tmpJsonDoc, err := json.Marshal(doc)
 	if err != nil {
@@ -77,15 +77,15 @@ func (svc *ChartOfAccountConsumeService) Delete(shopID string, accountCode strin
 	return nil
 }
 
-func (svc *ChartOfAccountConsumeService) SaveInBatch(docList []vfgl.ChartOfAccountDoc) error {
-	pgDocList := []vfgl.ChartOfAccountPG{}
+func (svc *ChartOfAccountConsumeService) SaveInBatch(docList []models.ChartOfAccountDoc) error {
+	pgDocList := []models.ChartOfAccountPG{}
 
 	for _, doc := range docList {
 		tmpJsonDoc, err := json.Marshal(doc)
 		if err != nil {
 			return err
 		}
-		tmpDoc := vfgl.ChartOfAccountPG{}
+		tmpDoc := models.ChartOfAccountPG{}
 		err = json.Unmarshal([]byte(tmpJsonDoc), &tmpDoc)
 		if err != nil {
 			return err
@@ -101,7 +101,7 @@ func (svc *ChartOfAccountConsumeService) SaveInBatch(docList []vfgl.ChartOfAccou
 	return nil
 }
 
-func (svc *ChartOfAccountConsumeService) Upsert(shopID string, doc vfgl.ChartOfAccountDoc) (*vfgl.ChartOfAccountPG, error) {
+func (svc *ChartOfAccountConsumeService) Upsert(shopID string, doc models.ChartOfAccountDoc) (*models.ChartOfAccountPG, error) {
 
 	// get
 	data, err := svc.repo.Get(shopID, doc.AccountCode)

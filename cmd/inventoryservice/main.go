@@ -8,8 +8,8 @@ import (
 	// "smlcloudplatform/pkg/models"
 
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/category"
-	"smlcloudplatform/pkg/api/inventory"
+	"smlcloudplatform/pkg/product/category"
+	"smlcloudplatform/pkg/product/inventory"
 )
 
 func main() {

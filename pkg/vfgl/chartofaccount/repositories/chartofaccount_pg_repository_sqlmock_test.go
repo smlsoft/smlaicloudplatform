@@ -3,8 +3,8 @@ package repositories_test
 import (
 	"database/sql"
 	"regexp"
-	"smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/models/vfgl"
+	common "smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/vfgl/chartofaccount/models"
 	"testing"
 
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
@@ -15,7 +15,7 @@ import (
 type v2Suite struct {
 	db             *gorm.DB
 	mock           sqlmock.Sqlmock
-	chartofaccount vfgl.ChartOfAccountPG
+	chartofaccount models.ChartOfAccountPG
 }
 
 func TestCreateChartOfAccount(t *testing.T) {
@@ -49,11 +49,11 @@ func TestCreateChartOfAccount(t *testing.T) {
 		t.Error("gorm db is null")
 	}
 
-	s.chartofaccount = vfgl.ChartOfAccountPG{
-		ShopIdentity: models.ShopIdentity{
+	s.chartofaccount = models.ChartOfAccountPG{
+		ShopIdentity: common.ShopIdentity{
 			ShopID: "TESTSHOP",
 		},
-		PartitionIdentity: models.PartitionIdentity{
+		PartitionIdentity: common.PartitionIdentity{
 			ParID: "",
 		},
 		AccountCode:            "0001",

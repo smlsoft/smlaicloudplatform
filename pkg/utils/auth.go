@@ -3,7 +3,7 @@ package utils
 import (
 	"fmt"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/shop/models"
 
 	"go.mongodb.org/mongo-driver/bson"
 )

@@ -2,15 +2,15 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models/vfgl"
+	"smlcloudplatform/pkg/vfgl/chartofaccount/models"
 )
 
 type IChartOfAccountPgRepository interface {
-	CreateInBatch(docList []vfgl.ChartOfAccountPG) error
-	Create(doc vfgl.ChartOfAccountPG) error
-	Update(shopID string, accountCode string, doc vfgl.ChartOfAccountPG) error
+	CreateInBatch(docList []models.ChartOfAccountPG) error
+	Create(doc models.ChartOfAccountPG) error
+	Update(shopID string, accountCode string, doc models.ChartOfAccountPG) error
 	Delete(shopID string, accountCode string) error
-	Get(shopID string, accountCode string) (*vfgl.ChartOfAccountPG, error)
+	Get(shopID string, accountCode string) (*models.ChartOfAccountPG, error)
 }
 
 type ChartOfAccountPgRepository struct {
@@ -23,7 +23,7 @@ func NewChartOfAccountPgRepository(pst microservice.IPersister) ChartOfAccountPg
 	}
 }
 
-func (repo ChartOfAccountPgRepository) CreateInBatch(docList []vfgl.ChartOfAccountPG) error {
+func (repo ChartOfAccountPgRepository) CreateInBatch(docList []models.ChartOfAccountPG) error {
 	err := repo.pst.CreateInBatchOnConflict(docList, len(docList))
 	if err != nil {
 		return err
@@ -31,7 +31,7 @@ func (repo ChartOfAccountPgRepository) CreateInBatch(docList []vfgl.ChartOfAccou
 	return nil
 }
 
-func (repo ChartOfAccountPgRepository) Create(doc vfgl.ChartOfAccountPG) error {
+func (repo ChartOfAccountPgRepository) Create(doc models.ChartOfAccountPG) error {
 	err := repo.pst.Create(doc)
 	if err != nil {
 		return err
@@ -39,7 +39,7 @@ func (repo ChartOfAccountPgRepository) Create(doc vfgl.ChartOfAccountPG) error {
 	return nil
 }
 
-func (repo ChartOfAccountPgRepository) Update(shopID string, accountCode string, doc vfgl.ChartOfAccountPG) error {
+func (repo ChartOfAccountPgRepository) Update(shopID string, accountCode string, doc models.ChartOfAccountPG) error {
 	err := repo.pst.Update(&doc, map[string]interface{}{
 		"shopid":      shopID,
 		"accountcode": accountCode,
@@ -52,7 +52,7 @@ func (repo ChartOfAccountPgRepository) Update(shopID string, accountCode string,
 }
 
 func (repo ChartOfAccountPgRepository) Delete(shopID string, accountCode string) error {
-	err := repo.pst.Delete(vfgl.ChartOfAccountPG{}, map[string]interface{}{
+	err := repo.pst.Delete(models.ChartOfAccountPG{}, map[string]interface{}{
 		"shopid":      shopID,
 		"accountcode": accountCode,
 	})
@@ -63,8 +63,8 @@ func (repo ChartOfAccountPgRepository) Delete(shopID string, accountCode string)
 	return nil
 }
 
-func (repo ChartOfAccountPgRepository) Get(shopID string, accountCode string) (*vfgl.ChartOfAccountPG, error) {
-	var result vfgl.ChartOfAccountPG
+func (repo ChartOfAccountPgRepository) Get(shopID string, accountCode string) (*models.ChartOfAccountPG, error) {
+	var result models.ChartOfAccountPG
 	_, err := repo.pst.First(&result, "shopid=? AND accountcode=?", shopID, accountCode)
 	if err != nil {
 		return nil, err

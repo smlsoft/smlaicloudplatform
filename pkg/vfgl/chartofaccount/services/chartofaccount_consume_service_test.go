@@ -1,8 +1,8 @@
 package services_test
 
 import (
-	"smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/models/vfgl"
+	common "smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/vfgl/chartofaccount/models"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/services"
 	"testing"
 
@@ -15,17 +15,17 @@ type MockChartOfAccountRepository struct {
 	mock.Mock
 }
 
-func (m *MockChartOfAccountRepository) CreateInBatch(docList []vfgl.ChartOfAccountPG) error {
+func (m *MockChartOfAccountRepository) CreateInBatch(docList []models.ChartOfAccountPG) error {
 	ret := m.Called(docList)
 	return ret.Error(1)
 }
 
-func (m *MockChartOfAccountRepository) Create(doc vfgl.ChartOfAccountPG) error {
+func (m *MockChartOfAccountRepository) Create(doc models.ChartOfAccountPG) error {
 	ret := m.Called(doc)
 	return ret.Error(0)
 }
 
-func (m *MockChartOfAccountRepository) Update(shopID string, accountCode string, doc vfgl.ChartOfAccountPG) error {
+func (m *MockChartOfAccountRepository) Update(shopID string, accountCode string, doc models.ChartOfAccountPG) error {
 	ret := m.Called(shopID, accountCode, doc)
 	return ret.Error(0)
 }
@@ -35,42 +35,42 @@ func (m *MockChartOfAccountRepository) Delete(shopID string, accountCode string)
 	return ret.Error(1)
 }
 
-func (m *MockChartOfAccountRepository) Get(shopID string, accountCode string) (*vfgl.ChartOfAccountPG, error) {
-	var charts []vfgl.ChartOfAccountPG
+func (m *MockChartOfAccountRepository) Get(shopID string, accountCode string) (*models.ChartOfAccountPG, error) {
+	var charts []models.ChartOfAccountPG
 
-	charts = append(charts, vfgl.ChartOfAccountPG{})
+	charts = append(charts, models.ChartOfAccountPG{})
 	ret := m.Called(shopID, accountCode)
-	return ret.Get(0).(*vfgl.ChartOfAccountPG), ret.Error(1)
+	return ret.Get(0).(*models.ChartOfAccountPG), ret.Error(1)
 }
 
-func ListChartOfAccountPG() []vfgl.ChartOfAccountPG {
+func ListChartOfAccountPG() []models.ChartOfAccountPG {
 
-	var charts []vfgl.ChartOfAccountPG
+	var charts []models.ChartOfAccountPG
 
-	charts = append(charts, vfgl.ChartOfAccountPG{})
-	charts = append(charts, vfgl.ChartOfAccountPG{})
-	charts = append(charts, vfgl.ChartOfAccountPG{})
+	charts = append(charts, models.ChartOfAccountPG{})
+	charts = append(charts, models.ChartOfAccountPG{})
+	charts = append(charts, models.ChartOfAccountPG{})
 	return charts
 }
 
 func TestChartOfAccountServiceCreate(t *testing.T) {
 
-	want := vfgl.ChartOfAccountPG{
+	want := models.ChartOfAccountPG{
 		AccountCode:        "99999",
 		AccountName:        "999999",
 		AccountCategory:    5,
 		AccountBalanceType: 2,
 		AccountGroup:       "99999",
 		AccountLevel:       9999,
-		ShopIdentity: models.ShopIdentity{
+		ShopIdentity: common.ShopIdentity{
 			ShopID: "27dcEdktOoaSBYFmnN6G6ett4Jb",
 		},
 	}
 
-	give := vfgl.ChartOfAccountDoc{
-		ChartOfAccountData: vfgl.ChartOfAccountData{
-			ChartOfAccountInfo: vfgl.ChartOfAccountInfo{
-				ChartOfAccount: vfgl.ChartOfAccount{
+	give := models.ChartOfAccountDoc{
+		ChartOfAccountData: models.ChartOfAccountData{
+			ChartOfAccountInfo: models.ChartOfAccountInfo{
+				ChartOfAccount: models.ChartOfAccount{
 					AccountCode:        "99999",
 					AccountName:        "999999",
 					AccountCategory:    5,
@@ -79,7 +79,7 @@ func TestChartOfAccountServiceCreate(t *testing.T) {
 					AccountLevel:       9999,
 				},
 			},
-			ShopIdentity: models.ShopIdentity{
+			ShopIdentity: common.ShopIdentity{
 				ShopID: "27dcEdktOoaSBYFmnN6G6ett4Jb",
 			},
 		},
@@ -97,14 +97,14 @@ func TestChartOfAccountServiceCreate(t *testing.T) {
 
 func TestChartOfAccountServiceUpdate(t *testing.T) {
 
-	get := vfgl.ChartOfAccountPG{
+	get := models.ChartOfAccountPG{
 		AccountCode: "0001",
 	}
 
-	give := vfgl.ChartOfAccountDoc{
-		ChartOfAccountData: vfgl.ChartOfAccountData{
-			ChartOfAccountInfo: vfgl.ChartOfAccountInfo{
-				ChartOfAccount: vfgl.ChartOfAccount{
+	give := models.ChartOfAccountDoc{
+		ChartOfAccountData: models.ChartOfAccountData{
+			ChartOfAccountInfo: models.ChartOfAccountInfo{
+				ChartOfAccount: models.ChartOfAccount{
 					AccountCode: "0001",
 				},
 			},
@@ -121,10 +121,10 @@ func TestChartOfAccountServiceUpdate(t *testing.T) {
 }
 
 func TestChartOfAccountConsumeServiceUpsertWhenNotFoundDataInsertNew(t *testing.T) {
-	give := vfgl.ChartOfAccountDoc{
-		ChartOfAccountData: vfgl.ChartOfAccountData{
-			ChartOfAccountInfo: vfgl.ChartOfAccountInfo{
-				ChartOfAccount: vfgl.ChartOfAccount{
+	give := models.ChartOfAccountDoc{
+		ChartOfAccountData: models.ChartOfAccountData{
+			ChartOfAccountInfo: models.ChartOfAccountInfo{
+				ChartOfAccount: models.ChartOfAccount{
 					AccountCode:        "99999",
 					AccountName:        "999999",
 					AccountCategory:    5,
@@ -133,26 +133,26 @@ func TestChartOfAccountConsumeServiceUpsertWhenNotFoundDataInsertNew(t *testing.
 					AccountLevel:       9999,
 				},
 			},
-			ShopIdentity: models.ShopIdentity{
+			ShopIdentity: common.ShopIdentity{
 				ShopID: "27dcEdktOoaSBYFmnN6G6ett4Jb",
 			},
 		},
 	}
 
-	want := vfgl.ChartOfAccountPG{
+	want := models.ChartOfAccountPG{
 		AccountCode:        "99999",
 		AccountName:        "999999",
 		AccountCategory:    5,
 		AccountBalanceType: 2,
 		AccountGroup:       "99999",
 		AccountLevel:       9999,
-		ShopIdentity: models.ShopIdentity{
+		ShopIdentity: common.ShopIdentity{
 			ShopID: "27dcEdktOoaSBYFmnN6G6ett4Jb",
 		},
 	}
 
 	mockRepo := new(MockChartOfAccountRepository)
-	mockRepo.On("Get", give.ShopID, give.AccountCode).Return(&vfgl.ChartOfAccountPG{}, gorm.ErrRecordNotFound)
+	mockRepo.On("Get", give.ShopID, give.AccountCode).Return(&models.ChartOfAccountPG{}, gorm.ErrRecordNotFound)
 	mockRepo.On("Create", want).Return(nil)
 	// mockRepo.On("Update", give.ShopID, give.AccountCode, give).Return(nil)
 
@@ -164,10 +164,10 @@ func TestChartOfAccountConsumeServiceUpsertWhenNotFoundDataInsertNew(t *testing.
 }
 
 func TestChartOfAccountConsumeServiceUpsertWhenFoundDataUpdateOld(t *testing.T) {
-	give := vfgl.ChartOfAccountDoc{
-		ChartOfAccountData: vfgl.ChartOfAccountData{
-			ChartOfAccountInfo: vfgl.ChartOfAccountInfo{
-				ChartOfAccount: vfgl.ChartOfAccount{
+	give := models.ChartOfAccountDoc{
+		ChartOfAccountData: models.ChartOfAccountData{
+			ChartOfAccountInfo: models.ChartOfAccountInfo{
+				ChartOfAccount: models.ChartOfAccount{
 					AccountCode:        "99999",
 					AccountName:        "999999",
 					AccountCategory:    5,
@@ -176,32 +176,32 @@ func TestChartOfAccountConsumeServiceUpsertWhenFoundDataUpdateOld(t *testing.T) 
 					AccountLevel:       9999,
 				},
 			},
-			ShopIdentity: models.ShopIdentity{
+			ShopIdentity: common.ShopIdentity{
 				ShopID: "27dcEdktOoaSBYFmnN6G6ett4Jb",
 			},
 		},
 	}
 
-	giveGetFromRepository := vfgl.ChartOfAccountPG{
+	giveGetFromRepository := models.ChartOfAccountPG{
 		AccountCode:        "99999",
 		AccountName:        "",
 		AccountCategory:    0,
 		AccountBalanceType: 0,
 		AccountGroup:       "",
 		AccountLevel:       0,
-		ShopIdentity: models.ShopIdentity{
+		ShopIdentity: common.ShopIdentity{
 			ShopID: "27dcEdktOoaSBYFmnN6G6ett4Jb",
 		},
 	}
 
-	want := vfgl.ChartOfAccountPG{
+	want := models.ChartOfAccountPG{
 		AccountCode:        "99999",
 		AccountName:        "999999",
 		AccountCategory:    5,
 		AccountBalanceType: 2,
 		AccountGroup:       "99999",
 		AccountLevel:       9999,
-		ShopIdentity: models.ShopIdentity{
+		ShopIdentity: common.ShopIdentity{
 			ShopID: "27dcEdktOoaSBYFmnN6G6ett4Jb",
 		},
 	}

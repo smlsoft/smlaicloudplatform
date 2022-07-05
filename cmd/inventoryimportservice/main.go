@@ -2,7 +2,7 @@ package main
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/inventoryimport"
+	"smlcloudplatform/pkg/product/inventoryimport"
 )
 
 func main() {

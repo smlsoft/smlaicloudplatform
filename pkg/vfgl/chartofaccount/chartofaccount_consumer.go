@@ -3,8 +3,8 @@ package chartofaccount
 import (
 	"encoding/json"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models/vfgl"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/config"
+	"smlcloudplatform/pkg/vfgl/chartofaccount/models"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/repositories"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/services"
 	"time"
@@ -13,7 +13,7 @@ import (
 func MigrationChartOfAccountTable(ms *microservice.Microservice, cfg microservice.IConfig) error {
 	pst := ms.Persister(cfg.PersisterConfig())
 	pst.AutoMigrate(
-		vfgl.ChartOfAccountPG{},
+		models.ChartOfAccountPG{},
 	)
 	return nil
 }
@@ -32,7 +32,7 @@ func StartChartOfAccountConsumerCreated(ms *microservice.Microservice, cfg micro
 		msg := ctx.ReadInput()
 
 		ms.Logger.Debugf("Consume Journal Created : %v", msg)
-		doc := vfgl.ChartOfAccountDoc{}
+		doc := models.ChartOfAccountDoc{}
 		err := json.Unmarshal([]byte(msg), &doc)
 
 		if err != nil {
@@ -65,7 +65,7 @@ func StartChartOfAccountConsumerUpdated(ms *microservice.Microservice, cfg micro
 		msg := ctx.ReadInput()
 
 		ms.Logger.Debugf("Consume Journal Updated : %v", msg)
-		doc := vfgl.ChartOfAccountDoc{}
+		doc := models.ChartOfAccountDoc{}
 		err := json.Unmarshal([]byte(msg), &doc)
 
 		if err != nil {
@@ -98,7 +98,7 @@ func StartChartOfAccountConsumerDeleted(ms *microservice.Microservice, cfg micro
 		msg := ctx.ReadInput()
 
 		ms.Logger.Debugf("Consume Journal Deleted : %v", msg)
-		doc := vfgl.ChartOfAccountDoc{}
+		doc := models.ChartOfAccountDoc{}
 		err := json.Unmarshal([]byte(msg), &doc)
 
 		if err != nil {
@@ -131,7 +131,7 @@ func StartChartOfAccountConsumerBlukCreated(ms *microservice.Microservice, cfg m
 		msg := ctx.ReadInput()
 		ms.Logger.Debugf("Consume Journal Bulk Created : %v", msg)
 
-		docList := []vfgl.ChartOfAccountDoc{}
+		docList := []models.ChartOfAccountDoc{}
 		err := json.Unmarshal([]byte(msg), &docList)
 		if err != nil {
 			ms.Logger.Errorf(moduleName, err.Error())

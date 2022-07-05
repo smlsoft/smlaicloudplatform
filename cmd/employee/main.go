@@ -2,8 +2,8 @@ package main
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/migration"
-	"smlcloudplatform/pkg/api/shop/employee"
+	"smlcloudplatform/pkg/migration"
+	"smlcloudplatform/pkg/shop/employee"
 )
 
 func main() {

@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"mime/multipart"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/inventory"
 	"smlcloudplatform/pkg/images/models"
-	common "smlcloudplatform/pkg/models"
+	inventoryModel "smlcloudplatform/pkg/product/inventory/models"
+	inventoryRepo "smlcloudplatform/pkg/product/inventory/repositories"
 	"smlcloudplatform/pkg/utils"
 	"strings"
 
@@ -21,12 +21,12 @@ type IImagesService interface {
 
 type ImagesService struct {
 	persisterImage *microservice.PersisterImage
-	invRepo        inventory.IInventoryRepository
+	invRepo        inventoryRepo.IInventoryRepository
 	NewGUIDFn      func() string
 }
 
 func NewImageService(persisterImage *microservice.PersisterImage,
-	inventoryRepo inventory.IInventoryRepository,
+	inventoryRepo inventoryRepo.IInventoryRepository,
 ) *ImagesService {
 
 	// check config storage location
@@ -75,13 +75,13 @@ func (svc ImagesService) UploadImageToProduct(shopID string, fh *multipart.FileH
 		return err
 	}
 
-	var imageSlice []common.InventoryImage
+	var imageSlice []inventoryModel.InventoryImage
 	if findDoc.Images != nil {
 		//imageSlice = make([]models.InventoryImage, 1)
 		//} else {
 		imageSlice = *findDoc.Images
 	}
-	productImage := common.InventoryImage{
+	productImage := inventoryModel.InventoryImage{
 		Uri: uploadFileName,
 	}
 	// push image

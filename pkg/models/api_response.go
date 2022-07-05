@@ -32,10 +32,10 @@ type PaginationDataResponse struct {
 	TotalPage int64 `json:"totalPage"`
 }
 
-type UserProfileReponse struct {
-	Success bool        `json:"success"`
-	Data    UserProfile `json:"data"`
-}
+// type UserProfileReponse struct {
+// 	Success bool                  `json:"success"`
+// 	Data    UserProfile `json:"data"`
+// }
 
 type ResponseSuccess struct {
 	Success bool `json:"success"`

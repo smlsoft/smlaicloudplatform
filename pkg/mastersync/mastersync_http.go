@@ -4,19 +4,22 @@ import (
 	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/category"
-	"smlcloudplatform/pkg/api/member"
+	"smlcloudplatform/pkg/member"
 	"smlcloudplatform/pkg/models"
+	categoryRepo "smlcloudplatform/pkg/product/category/repositories"
+	categoryService "smlcloudplatform/pkg/product/category/services"
 	"smlcloudplatform/pkg/utils"
 	"strings"
 	"time"
 
-	"smlcloudplatform/pkg/api/inventory"
-	"smlcloudplatform/pkg/api/restaurant/kitchen"
-	"smlcloudplatform/pkg/api/restaurant/shopprinter"
-	"smlcloudplatform/pkg/api/restaurant/shoptable"
-	"smlcloudplatform/pkg/api/restaurant/shopzone"
+	"smlcloudplatform/pkg/restaurant/kitchen"
+	"smlcloudplatform/pkg/restaurant/shopprinter"
+	"smlcloudplatform/pkg/restaurant/shoptable"
+	"smlcloudplatform/pkg/restaurant/shopzone"
+
 	"smlcloudplatform/pkg/mastersync/services"
+	inventoryRepo "smlcloudplatform/pkg/product/inventory/repositories"
+	inventoryService "smlcloudplatform/pkg/product/inventory/services"
 
 	"smlcloudplatform/pkg/mastersync/repositories"
 
@@ -27,9 +30,9 @@ type MasterSyncHttp struct {
 	ms             *microservice.Microservice
 	cfg            microservice.IConfig
 	svcMasterSync  services.IMasterSyncService
-	svcCategory    category.ICategoryService
+	svcCategory    categoryService.ICategoryService
 	svcMember      member.IMemberService
-	svcInventory   inventory.IInventoryService
+	svcInventory   inventoryService.IInventoryService
 	svcKitchen     kitchen.IKitchenService
 	svcShopPrinter shopprinter.IShopPrinterService
 	svcShopTable   shoptable.ShopTableService
@@ -43,9 +46,9 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	// Category
-	repoCategory := category.NewCategoryRepository(pst)
+	repoCategory := categoryRepo.NewCategoryRepository(pst)
 	repoCacheSyncCategory := repositories.NewMasterSyncCacheRepository(cache, "category")
-	svcCategory := category.NewCategoryService(repoCategory, repoCacheSyncCategory)
+	svcCategory := categoryService.NewCategoryService(repoCategory, repoCacheSyncCategory)
 
 	// Member
 	repoMember := member.NewMemberRepository(pst)
@@ -54,10 +57,10 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	svcMember := member.NewMemberService(repoMember, pgRepoMember, repoCacheSyncMember)
 
 	// Inventory
-	repoInv := inventory.NewInventoryRepository(pst)
-	mqRepoInv := inventory.NewInventoryMQRepository(prod)
+	repoInv := inventoryRepo.NewInventoryRepository(pst)
+	mqRepoInv := inventoryRepo.NewInventoryMQRepository(prod)
 	invCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "inventory")
-	svcInventory := inventory.NewInventoryService(repoInv, mqRepoInv, invCacheSyncRepo)
+	svcInventory := inventoryService.NewInventoryService(repoInv, mqRepoInv, invCacheSyncRepo)
 
 	// Kitchen
 	repoKitchen := kitchen.NewKitchenRepository(pst)

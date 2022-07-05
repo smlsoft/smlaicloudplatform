@@ -2,14 +2,14 @@ package journalreport
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models/vfgl"
+	"smlcloudplatform/pkg/vfgl/journalreport/models"
 	"time"
 )
 
 type IJournalReportRepository interface {
-	GetDataTrialBalance(shopId string, accountGroup string, startDate time.Time, endDate time.Time) ([]vfgl.TrialBalanceSheetAccountDetail, error)
-	GetDataProfitAndLoss(shopId string, accountGroup string, startDate time.Time, endDate time.Time) ([]vfgl.ProfitAndLossSheetAccountDetail, error)
-	GetDataBalanceSheet(shopId string, accountGroup string, endDate time.Time) ([]vfgl.BalanceSheetAccountDetail, error)
+	GetDataTrialBalance(shopId string, accountGroup string, startDate time.Time, endDate time.Time) ([]models.TrialBalanceSheetAccountDetail, error)
+	GetDataProfitAndLoss(shopId string, accountGroup string, startDate time.Time, endDate time.Time) ([]models.ProfitAndLossSheetAccountDetail, error)
+	GetDataBalanceSheet(shopId string, accountGroup string, endDate time.Time) ([]models.BalanceSheetAccountDetail, error)
 }
 
 type JournalReportRepository struct {
@@ -85,7 +85,7 @@ WITH journal_doc as (
 
 */
 
-func (repo JournalReportRepository) GetDataTrialBalance(shopId string, accountGroup string, startDate time.Time, endDate time.Time) ([]vfgl.TrialBalanceSheetAccountDetail, error) {
+func (repo JournalReportRepository) GetDataTrialBalance(shopId string, accountGroup string, startDate time.Time, endDate time.Time) ([]models.TrialBalanceSheetAccountDetail, error) {
 
 	query := `
 	WITH journal_doc as (
@@ -145,7 +145,7 @@ func (repo JournalReportRepository) GetDataTrialBalance(shopId string, accountGr
 		order by accountcode
 	`
 
-	var details []vfgl.TrialBalanceSheetAccountDetail
+	var details []models.TrialBalanceSheetAccountDetail
 
 	condition := map[string]interface{}{
 		"shopid":       shopId,
@@ -162,7 +162,7 @@ func (repo JournalReportRepository) GetDataTrialBalance(shopId string, accountGr
 	return details, nil
 }
 
-func (repo JournalReportRepository) GetDataProfitAndLoss(shopId string, accountGroup string, startDate time.Time, endDate time.Time) ([]vfgl.ProfitAndLossSheetAccountDetail, error) {
+func (repo JournalReportRepository) GetDataProfitAndLoss(shopId string, accountGroup string, startDate time.Time, endDate time.Time) ([]models.ProfitAndLossSheetAccountDetail, error) {
 
 	query := `
 	WITH journal_doc as (
@@ -199,7 +199,7 @@ func (repo JournalReportRepository) GetDataProfitAndLoss(shopId string, accountG
 		order by accountcode
 	`
 
-	var details []vfgl.ProfitAndLossSheetAccountDetail
+	var details []models.ProfitAndLossSheetAccountDetail
 
 	condition := map[string]interface{}{
 		"shopid":       shopId,
@@ -216,7 +216,7 @@ func (repo JournalReportRepository) GetDataProfitAndLoss(shopId string, accountG
 	return details, nil
 }
 
-func (repo JournalReportRepository) GetDataBalanceSheet(shopId string, accountGroup string, endDate time.Time) ([]vfgl.BalanceSheetAccountDetail, error) {
+func (repo JournalReportRepository) GetDataBalanceSheet(shopId string, accountGroup string, endDate time.Time) ([]models.BalanceSheetAccountDetail, error) {
 	query := `
 	WITH journal_doc as (
 		select h.shopid, h.docno, h.docdate, h.accountyear, h.accountperiod, h.accountgroup
@@ -251,7 +251,7 @@ func (repo JournalReportRepository) GetDataBalanceSheet(shopId string, accountGr
 		order by accountcode
 	`
 
-	var details []vfgl.BalanceSheetAccountDetail
+	var details []models.BalanceSheetAccountDetail
 
 	condition := map[string]interface{}{
 		"shopid":       shopId,
