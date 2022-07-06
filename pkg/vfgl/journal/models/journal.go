@@ -89,27 +89,26 @@ func (JournalDeleteActivity) CollectionName() string {
 }
 
 type Vat struct {
-	VatNo             string    `json:"vatno" bson:"vatno"`
-	VatType           int8      `json:"vattype" bson:"vattype"`
-	VatMode           int8      `json:"vatmode" bson:"vatmode"`
-	VatDate           time.Time `json:"vatdate" bson:"vatdate"`
-	VatPeriod         int8      `json:"vatperiod" bson:"vatperiod"`
-	VatYear           int16     `json:"vatyear" bson:"vatyear" `
-	VatBase           float64   `json:"vatbase" bson:"vatbase"`
-	VatRate           float64   `json:"vatrate" bson:"vatrate"`
-	VatAmount         float64   `json:"vatamount" bson:"vatamount"`
-	VatExemption      float64   `json:"vatexemption" bson:"vatexemption"`
-	VatSubmit         bool      `json:"vatsubmit" bson:"vatsubmit"`
-	CustCode          string    `json:"custcode" bson:"custcode"`
-	VatIdentification string    `json:"vatidentification" bson:"vatidentification"`
-	Organization      int8      `json:"organization" bson:"organization"`
-	BranchCode        string    `json:"branchcode" bson:"branchcode"`
-	Remark            string    `json:"remark" bson:"remark"`
+	VatDocNo     string    `json:"vatdocno" bson:"vatdocno"`
+	VatDate      time.Time `json:"vatdate" bson:"vatdate"`
+	VatType      int8      `json:"vattype" bson:"vattype"`
+	VatMode      int8      `json:"vatmode" bson:"vatmode"`
+	VatPeriod    int8      `json:"vatperiod" bson:"vatperiod"`
+	VatYear      int16     `json:"vatyear" bson:"vatyear" `
+	VatBase      float64   `json:"vatbase" bson:"vatbase"`
+	VatRate      float64   `json:"vatrate" bson:"vatrate"`
+	VatAmount    float64   `json:"vatamount" bson:"vatamount"`
+	ExceptVat    float64   `json:"exceptvat" bson:"exceptvat"`
+	VatSubmit    bool      `json:"vatsubmit" bson:"vatsubmit"`
+	CustTaxID    string    `json:"custtaxid" bson:"custtaxid"`
+	Organization int8      `json:"organization" bson:"organization"`
+	BranchCode   string    `json:"branchcode" bson:"branchcode"`
+	Remark       string    `json:"remark" bson:"remark"`
 }
 
 type Tax struct {
-	DocNo     string       `json:"docno" bson:"docno"`
-	DocDate   time.Time    `json:"docdate" gorm:"column:docdate"`
+	TaxDocNo  string       `json:"taxdocno" bson:"taxdocno"`
+	TaxDate   time.Time    `json:"taxdate" gorm:"column:taxdate"`
 	CustName  string       `json:"custname" bson:"custname"`
 	CustType  string       `json:"custtype" bson:"custtype"`
 	CustTaxID string       `json:"custtaxid" bson:"custtaxid"`
