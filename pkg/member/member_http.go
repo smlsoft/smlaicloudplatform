@@ -59,7 +59,7 @@ func (h MemberHttp) RouteSetup() {
 // Create Member godoc
 // @Description Create Member
 // @Tags		Member
-// @Param		Member  body      common.Member  true  "Member"
+// @Param		Member  body      models.Member  true  "Member"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -98,7 +98,7 @@ func (h MemberHttp) CreateMember(ctx microservice.IContext) error {
 // @Description Update Member
 // @Tags		Member
 // @Param		id  path      string  true  "Member ID"
-// @Param		Member  body      common.Member  true  "Member"
+// @Param		Member  body      models.Member  true  "Member"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -167,7 +167,7 @@ func (h MemberHttp) DeleteMember(ctx microservice.IContext) error {
 // @Tags		Member
 // @Param		id  path      string  true  "Member Id"
 // @Accept 		json
-// @Success		200	{object}	common.MemberInfoResponse
+// @Success		200	{object}	models.MemberInfoResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /member/{id} [get]
@@ -207,7 +207,7 @@ func (h MemberHttp) InfoMember(ctx microservice.IContext) error {
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
 // @Accept 		json
-// @Success		200	{object}	common.MemberPageResponse
+// @Success		200	{object}	models.MemberPageResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /member [get]
@@ -242,7 +242,7 @@ func (h MemberHttp) SearchMember(ctx microservice.IContext) error {
 // @Tags		Member
 // @Param		lastUpdate query string true "DateTime"
 // @Accept		json
-// @Success		200 {object} common.MemberFetchUpdateResponse
+// @Success		200 {object} models.MemberFetchUpdateResponse
 // @Failure		401 {object} common.AuthResponseFailed
 // @Security	AccessToken
 // @Router		/member/fetchupdate [get]

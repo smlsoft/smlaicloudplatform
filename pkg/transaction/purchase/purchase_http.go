@@ -163,7 +163,7 @@ func (h PurchaseHttp) DeletePurchase(ctx microservice.IContext) error {
 // @Tags		Purchase
 // @Param		id  path      string  true  "Document ID"
 // @Accept 		json
-// @Success		200	{object}	common.PurchaseInfo
+// @Success		200	{object}	models.PurchaseInfo
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /purchase/{id} [get]

@@ -273,7 +273,7 @@ func (h ShopPrinterHttp) FetchUpdate(ctx microservice.IContext) error {
 // Create Printer Bulk godoc
 // @Description Printer ShopZone
 // @Tags		Restaurant
-// @Param		Printer  body      []restaurant.PrinterTerminal  true  "Printer"
+// @Param		Printer  body      []models.PrinterTerminal  true  "Printer"
 // @Accept 		json
 // @Success		201	{object}	common.BulkInsertResponse
 // @Failure		401 {object}	common.AuthResponseFailed

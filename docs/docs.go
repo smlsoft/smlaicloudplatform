@@ -1094,7 +1094,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/vfgl.ChartOfAccountPageResponse"
+                            "$ref": "#/definitions/models.ChartOfAccountPageResponse"
                         }
                     },
                     "401": {
@@ -1126,7 +1126,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/vfgl.ChartOfAccount"
+                            "$ref": "#/definitions/models.ChartOfAccount"
                         }
                     }
                 ],
@@ -1170,7 +1170,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/vfgl.ChartOfAccount"
+                                "$ref": "#/definitions/models.ChartOfAccount"
                             }
                         }
                     }
@@ -1219,7 +1219,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/vfgl.ChartOfAccountInfoResponse"
+                            "$ref": "#/definitions/models.ChartOfAccountInfoResponse"
                         }
                     },
                     "401": {
@@ -1258,7 +1258,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/vfgl.ChartOfAccount"
+                            "$ref": "#/definitions/models.ChartOfAccount"
                         }
                     }
                 ],
@@ -1873,7 +1873,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/vfgl.BalanceSheetReportResponse"
+                            "$ref": "#/definitions/models.BalanceSheetReportResponse"
                         }
                     },
                     "400": {
@@ -1933,7 +1933,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/vfgl.LostAndProfitSheetReportResponse"
+                            "$ref": "#/definitions/models.LostAndProfitSheetReportResponse"
                         }
                     },
                     "400": {
@@ -1993,7 +1993,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/vfgl.TrialBalanceSheetReportResponse"
+                            "$ref": "#/definitions/models.TrialBalanceSheetReportResponse"
                         }
                     },
                     "400": {
@@ -3856,7 +3856,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.KitchenPageResponse"
+                            "$ref": "#/definitions/models.KitchenPageResponse"
                         }
                     },
                     "401": {
@@ -3887,7 +3887,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/restaurant.Kitchen"
+                            "$ref": "#/definitions/models.Kitchen"
                         }
                     }
                 ],
@@ -3930,7 +3930,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/restaurant.Kitchen"
+                                "$ref": "#/definitions/models.Kitchen"
                             }
                         }
                     }
@@ -3990,7 +3990,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.KitchenFetchUpdateResponse"
+                            "$ref": "#/definitions/models.KitchenFetchUpdateResponse"
                         }
                     },
                     "401": {
@@ -4029,7 +4029,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.KitchenInfoResponse"
+                            "$ref": "#/definitions/models.KitchenInfoResponse"
                         }
                     },
                     "401": {
@@ -4067,7 +4067,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/restaurant.Kitchen"
+                            "$ref": "#/definitions/models.Kitchen"
                         }
                     }
                 ],
@@ -4162,7 +4162,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.PrinterTerminalPageResponse"
+                            "$ref": "#/definitions/models.PrinterTerminalPageResponse"
                         }
                     },
                     "401": {
@@ -4193,7 +4193,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/restaurant.PrinterTerminal"
+                            "$ref": "#/definitions/models.PrinterTerminal"
                         }
                     }
                 ],
@@ -4236,7 +4236,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/restaurant.PrinterTerminal"
+                                "$ref": "#/definitions/models.PrinterTerminal"
                             }
                         }
                     }
@@ -4296,7 +4296,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.PrinterTerminalFetchUpdateResponse"
+                            "$ref": "#/definitions/models.PrinterTerminalFetchUpdateResponse"
                         }
                     },
                     "401": {
@@ -4335,7 +4335,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.PrinterTerminalInfoResponse"
+                            "$ref": "#/definitions/models.PrinterTerminalInfoResponse"
                         }
                     },
                     "401": {
@@ -4373,7 +4373,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/restaurant.PrinterTerminal"
+                            "$ref": "#/definitions/models.PrinterTerminal"
                         }
                     }
                 ],
@@ -4468,7 +4468,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopTablePageResponse"
+                            "$ref": "#/definitions/models.ShopTablePageResponse"
                         }
                     },
                     "401": {
@@ -4499,7 +4499,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopTable"
+                            "$ref": "#/definitions/models.ShopTable"
                         }
                     }
                 ],
@@ -4542,7 +4542,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/restaurant.ShopTable"
+                                "$ref": "#/definitions/models.ShopTable"
                             }
                         }
                     }
@@ -4602,7 +4602,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopTableFetchUpdateResponse"
+                            "$ref": "#/definitions/models.ShopTableFetchUpdateResponse"
                         }
                     },
                     "401": {
@@ -4641,7 +4641,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopTableInfoResponse"
+                            "$ref": "#/definitions/models.ShopTableInfoResponse"
                         }
                     },
                     "401": {
@@ -4679,7 +4679,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopTable"
+                            "$ref": "#/definitions/models.ShopTable"
                         }
                     }
                 ],
@@ -4774,7 +4774,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopZonePageResponse"
+                            "$ref": "#/definitions/models.ShopZonePageResponse"
                         }
                     },
                     "401": {
@@ -4805,7 +4805,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopZone"
+                            "$ref": "#/definitions/models.ShopZone"
                         }
                     }
                 ],
@@ -4848,7 +4848,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/restaurant.ShopZone"
+                                "$ref": "#/definitions/models.ShopZone"
                             }
                         }
                     }
@@ -4908,7 +4908,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopZoneFetchUpdateResponse"
+                            "$ref": "#/definitions/models.ShopZoneFetchUpdateResponse"
                         }
                     },
                     "401": {
@@ -4947,7 +4947,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopZoneInfoResponse"
+                            "$ref": "#/definitions/models.ShopZoneInfoResponse"
                         }
                     },
                     "401": {
@@ -4985,7 +4985,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopZone"
+                            "$ref": "#/definitions/models.ShopZone"
                         }
                     }
                 ],
@@ -5641,6 +5641,114 @@ const docTemplate = `{
                 }
             }
         },
+        "models.BalanceSheetAccountDetail": {
+            "type": "object",
+            "properties": {
+                "accountbalancetype": {
+                    "description": "ด้านบัญชี 1=เดบิต,2=เครดิต",
+                    "type": "integer"
+                },
+                "accountcategory": {
+                    "description": "หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย",
+                    "type": "integer"
+                },
+                "accountcode": {
+                    "description": "รหัสผังบัญชี",
+                    "type": "string"
+                },
+                "accountgroup": {
+                    "description": "กลุ่มบัญชี",
+                    "type": "string"
+                },
+                "accountlevel": {
+                    "description": "ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ",
+                    "type": "integer"
+                },
+                "accountname": {
+                    "description": "ชื่อบัญชี",
+                    "type": "string"
+                },
+                "amount": {
+                    "description": "มูลค่า",
+                    "type": "number"
+                },
+                "consolidateaccountcode": {
+                    "description": "รหัสผังบัญชีกลาง",
+                    "type": "string"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.BalanceSheetReport": {
+            "type": "object",
+            "properties": {
+                "accountgroup": {
+                    "description": "เล่มบัญชี",
+                    "type": "string"
+                },
+                "assets": {
+                    "description": "สินทรัพย์",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.BalanceSheetAccountDetail"
+                    }
+                },
+                "enddate": {
+                    "description": "วันที่สิ้นสุด",
+                    "type": "string"
+                },
+                "liabilities": {
+                    "description": "หนี้สิน",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.BalanceSheetAccountDetail"
+                    }
+                },
+                "ownesequities": {
+                    "description": "ทุนและส่วนของเจ้าของ",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.BalanceSheetAccountDetail"
+                    }
+                },
+                "reportdate": {
+                    "description": "วันที่ทำรายการ",
+                    "type": "string"
+                },
+                "totalassetamount": {
+                    "description": "รวมสินทรัพย์",
+                    "type": "number"
+                },
+                "totalliabilityamount": {
+                    "description": "รวมหนี้สิน",
+                    "type": "number"
+                },
+                "totalliabilityandownersequityamount": {
+                    "description": "รวมหนี้สิน ทุน และส่วนของเจ้าของ",
+                    "type": "number"
+                },
+                "totalownersequityamount": {
+                    "description": "รวมทุนและส่วนของเจ้าของ",
+                    "type": "number"
+                }
+            }
+        },
+        "models.BalanceSheetReportResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.BalanceSheetReport"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "models.BulkInsertResponse": {
             "type": "object",
             "properties": {
@@ -6007,6 +6115,103 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.CategoryInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.ChartOfAccount": {
+            "type": "object",
+            "properties": {
+                "accountbalancetype": {
+                    "description": "ด้านบัญชี 1=เดบิต,2=เครดิต",
+                    "type": "integer"
+                },
+                "accountcategory": {
+                    "description": "หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย",
+                    "type": "integer"
+                },
+                "accountcode": {
+                    "description": "รหัสผังบัญชี",
+                    "type": "string"
+                },
+                "accountgroup": {
+                    "description": "กลุ่มบัญชี",
+                    "type": "string"
+                },
+                "accountlevel": {
+                    "description": "ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ",
+                    "type": "integer"
+                },
+                "accountname": {
+                    "description": "ชื่อบัญชี",
+                    "type": "string"
+                },
+                "consolidateaccountcode": {
+                    "description": "รหัสผังบัญชีกลาง",
+                    "type": "string"
+                }
+            }
+        },
+        "models.ChartOfAccountInfo": {
+            "type": "object",
+            "properties": {
+                "accountbalancetype": {
+                    "description": "ด้านบัญชี 1=เดบิต,2=เครดิต",
+                    "type": "integer"
+                },
+                "accountcategory": {
+                    "description": "หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย",
+                    "type": "integer"
+                },
+                "accountcode": {
+                    "description": "รหัสผังบัญชี",
+                    "type": "string"
+                },
+                "accountgroup": {
+                    "description": "กลุ่มบัญชี",
+                    "type": "string"
+                },
+                "accountlevel": {
+                    "description": "ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ",
+                    "type": "integer"
+                },
+                "accountname": {
+                    "description": "ชื่อบัญชี",
+                    "type": "string"
+                },
+                "consolidateaccountcode": {
+                    "description": "รหัสผังบัญชีกลาง",
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ChartOfAccountInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.ChartOfAccountInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.ChartOfAccountPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ChartOfAccountInfo"
                     }
                 },
                 "pagination": {
@@ -6748,7 +6953,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.InventoryOptonGroupDetail"
+                        "$ref": "#/definitions/models.InventoryOptionGroupDetail"
                     }
                 },
                 "guidfixed": {
@@ -6773,6 +6978,20 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "shopid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.InventoryOptionGroupDetail": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "detailname1": {
+                    "type": "string"
+                },
+                "guidfixed": {
                     "type": "string"
                 }
             }
@@ -6920,20 +7139,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.InventoryOptonGroupDetail": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "number"
-                },
-                "detailname1": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                }
-            }
-        },
         "models.InventoryPageResponse": {
             "type": "object",
             "properties": {
@@ -6998,6 +7203,18 @@ const docTemplate = `{
                 },
                 "parid": {
                     "type": "string"
+                },
+                "taxes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Tax"
+                    }
+                },
+                "vats": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Vat"
+                    }
                 }
             }
         },
@@ -7143,6 +7360,18 @@ const docTemplate = `{
                 },
                 "parid": {
                     "type": "string"
+                },
+                "taxes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Tax"
+                    }
+                },
+                "vats": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Vat"
+                    }
                 }
             }
         },
@@ -7168,6 +7397,255 @@ const docTemplate = `{
                 },
                 "pagination": {
                     "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.Kitchen": {
+            "type": "object",
+            "properties": {
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Category"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "printers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PrinterTerminal"
+                    }
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Inventory"
+                    }
+                },
+                "zones": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ShopZone"
+                    }
+                }
+            }
+        },
+        "models.KitchenActivity": {
+            "type": "object",
+            "properties": {
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Category"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "printers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PrinterTerminal"
+                    }
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Inventory"
+                    }
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                },
+                "zones": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ShopZone"
+                    }
+                }
+            }
+        },
+        "models.KitchenDeleteActivity": {
+            "type": "object",
+            "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.KitchenFetchUpdateResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.KitchenLastActivityResponse"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.KitchenInfo": {
+            "type": "object",
+            "properties": {
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Category"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "printers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PrinterTerminal"
+                    }
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Inventory"
+                    }
+                },
+                "zones": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ShopZone"
+                    }
+                }
+            }
+        },
+        "models.KitchenInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.KitchenInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.KitchenLastActivityResponse": {
+            "type": "object",
+            "properties": {
+                "new": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.KitchenActivity"
+                    }
+                },
+                "remove": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.KitchenDeleteActivity"
+                    }
+                }
+            }
+        },
+        "models.KitchenPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.KitchenInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.LostAndProfitSheetReportResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.ProfitAndLossSheetReport"
                 },
                 "success": {
                     "type": "boolean"
@@ -7463,6 +7941,280 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.TransferPayment"
                     }
+                }
+            }
+        },
+        "models.PrinterTerminal": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.PrinterTerminalActivity": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.PrinterTerminalDeleteActivity": {
+            "type": "object",
+            "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.PrinterTerminalFetchUpdateResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.PrinterTerminalLastActivityResponse"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.PrinterTerminalInfo": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.PrinterTerminalInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.PrinterTerminalInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.PrinterTerminalLastActivityResponse": {
+            "type": "object",
+            "properties": {
+                "new": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PrinterTerminalActivity"
+                    }
+                },
+                "remove": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PrinterTerminalDeleteActivity"
+                    }
+                }
+            }
+        },
+        "models.PrinterTerminalPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PrinterTerminalInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.ProfitAndLossSheetAccountDetail": {
+            "type": "object",
+            "properties": {
+                "accountbalancetype": {
+                    "description": "ด้านบัญชี 1=เดบิต,2=เครดิต",
+                    "type": "integer"
+                },
+                "accountcategory": {
+                    "description": "หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย",
+                    "type": "integer"
+                },
+                "accountcode": {
+                    "description": "รหัสผังบัญชี",
+                    "type": "string"
+                },
+                "accountgroup": {
+                    "description": "กลุ่มบัญชี",
+                    "type": "string"
+                },
+                "accountlevel": {
+                    "description": "ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ",
+                    "type": "integer"
+                },
+                "accountname": {
+                    "description": "ชื่อบัญชี",
+                    "type": "string"
+                },
+                "amount": {
+                    "description": "มูลค่า",
+                    "type": "number"
+                },
+                "consolidateaccountcode": {
+                    "description": "รหัสผังบัญชีกลาง",
+                    "type": "string"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ProfitAndLossSheetReport": {
+            "type": "object",
+            "properties": {
+                "accountgroup": {
+                    "description": "เล่มบัญชี",
+                    "type": "string"
+                },
+                "enddate": {
+                    "description": "วันที่สิ้นสุด",
+                    "type": "string"
+                },
+                "expenses": {
+                    "description": "รายการค่าใช้จ่าย",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProfitAndLossSheetAccountDetail"
+                    }
+                },
+                "incomes": {
+                    "description": "รายการรายได้",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProfitAndLossSheetAccountDetail"
+                    }
+                },
+                "profitandlossamount": {
+                    "description": "กำไรขาดทุน",
+                    "type": "number"
+                },
+                "reportdate": {
+                    "description": "วันที่ทำรายการ",
+                    "type": "string"
+                },
+                "startdate": {
+                    "description": "วันที่เริ่มต้น",
+                    "type": "string"
+                },
+                "totalexpenseamount": {
+                    "description": "รวมค่าใช้จ่าย",
+                    "type": "number"
+                },
+                "totalincomeamount": {
+                    "description": "รวมรายได้",
+                    "type": "number"
                 }
             }
         },
@@ -8009,6 +8761,190 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ShopTable": {
+            "type": "object",
+            "properties": {
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "seat": {
+                    "type": "integer"
+                },
+                "zone": {
+                    "$ref": "#/definitions/models.ShopZone"
+                }
+            }
+        },
+        "models.ShopTableActivity": {
+            "type": "object",
+            "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "seat": {
+                    "type": "integer"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                },
+                "zone": {
+                    "$ref": "#/definitions/models.ShopZone"
+                }
+            }
+        },
+        "models.ShopTableDeleteActivity": {
+            "type": "object",
+            "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ShopTableFetchUpdateResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.ShopTableLastActivityResponse"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.ShopTableInfo": {
+            "type": "object",
+            "properties": {
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "seat": {
+                    "type": "integer"
+                },
+                "zone": {
+                    "$ref": "#/definitions/models.ShopZone"
+                }
+            }
+        },
+        "models.ShopTableInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.ShopTableInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.ShopTableLastActivityResponse": {
+            "type": "object",
+            "properties": {
+                "new": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ShopTableActivity"
+                    }
+                },
+                "remove": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ShopTableDeleteActivity"
+                    }
+                }
+            }
+        },
+        "models.ShopTablePageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ShopTableInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "models.ShopUserInfo": {
             "type": "object",
             "properties": {
@@ -8020,6 +8956,181 @@ const docTemplate = `{
                 },
                 "shopid": {
                     "type": "string"
+                }
+            }
+        },
+        "models.ShopZone": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "printer": {
+                    "$ref": "#/definitions/models.PrinterTerminal"
+                }
+            }
+        },
+        "models.ShopZoneActivity": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "printer": {
+                    "$ref": "#/definitions/models.PrinterTerminal"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ShopZoneDeleteActivity": {
+            "type": "object",
+            "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ShopZoneFetchUpdateResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.ShopZoneLastActivityResponse"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.ShopZoneInfo": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "printer": {
+                    "$ref": "#/definitions/models.PrinterTerminal"
+                }
+            }
+        },
+        "models.ShopZoneInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.ShopZoneInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.ShopZoneLastActivityResponse": {
+            "type": "object",
+            "properties": {
+                "new": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ShopZoneActivity"
+                    }
+                },
+                "remove": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ShopZoneDeleteActivity"
+                    }
+                }
+            }
+        },
+        "models.ShopZonePageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ShopZoneInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },
@@ -8040,6 +9151,52 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Tax": {
+            "type": "object",
+            "properties": {
+                "custname": {
+                    "type": "string"
+                },
+                "custtaxid": {
+                    "type": "string"
+                },
+                "custtype": {
+                    "type": "string"
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TaxDetail"
+                    }
+                },
+                "taxdate": {
+                    "type": "string"
+                },
+                "taxdocno": {
+                    "type": "string"
+                },
+                "taxtype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.TaxDetail": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "taxamount": {
+                    "type": "number"
+                },
+                "taxbase": {
+                    "type": "number"
+                },
+                "taxrate": {
+                    "type": "number"
+                }
+            }
+        },
         "models.TransferPayment": {
             "type": "object",
             "properties": {
@@ -8051,1162 +9208,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.UserLoginRequest": {
-            "type": "object",
-            "required": [
-                "password",
-                "username"
-            ],
-            "properties": {
-                "password": {
-                    "type": "string",
-                    "minLength": 3
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string",
-                    "minLength": 3
-                }
-            }
-        },
-        "models.UserProfile": {
-            "type": "object",
-            "required": [
-                "name",
-                "username"
-            ],
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string",
-                    "minLength": 3
-                }
-            }
-        },
-        "models.UserProfileReponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.UserProfile"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.UserRequest": {
-            "type": "object",
-            "required": [
-                "name",
-                "password",
-                "username"
-            ],
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string",
-                    "minLength": 3
-                },
-                "username": {
-                    "type": "string",
-                    "minLength": 3
-                }
-            }
-        },
-        "restaurant.Kitchen": {
-            "type": "object",
-            "properties": {
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Category"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "printers": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.PrinterTerminal"
-                    }
-                },
-                "products": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Inventory"
-                    }
-                },
-                "zones": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.ShopZone"
-                    }
-                }
-            }
-        },
-        "restaurant.KitchenActivity": {
-            "type": "object",
-            "properties": {
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Category"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "printers": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.PrinterTerminal"
-                    }
-                },
-                "products": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Inventory"
-                    }
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                },
-                "zones": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.ShopZone"
-                    }
-                }
-            }
-        },
-        "restaurant.KitchenDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "restaurant.KitchenFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/restaurant.KitchenLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.KitchenInfo": {
-            "type": "object",
-            "properties": {
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Category"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "printers": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.PrinterTerminal"
-                    }
-                },
-                "products": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Inventory"
-                    }
-                },
-                "zones": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.ShopZone"
-                    }
-                }
-            }
-        },
-        "restaurant.KitchenInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/restaurant.KitchenInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.KitchenLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.KitchenActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.KitchenDeleteActivity"
-                    }
-                }
-            }
-        },
-        "restaurant.KitchenPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.KitchenInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.PrinterTerminal": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "integer"
-                }
-            }
-        },
-        "restaurant.PrinterTerminalActivity": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "integer"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "restaurant.PrinterTerminalDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "restaurant.PrinterTerminalFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/restaurant.PrinterTerminalLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.PrinterTerminalInfo": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "integer"
-                }
-            }
-        },
-        "restaurant.PrinterTerminalInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/restaurant.PrinterTerminalInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.PrinterTerminalLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.PrinterTerminalActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.PrinterTerminalDeleteActivity"
-                    }
-                }
-            }
-        },
-        "restaurant.PrinterTerminalPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.PrinterTerminalInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.ShopTable": {
-            "type": "object",
-            "properties": {
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "number": {
-                    "type": "string"
-                },
-                "seat": {
-                    "type": "integer"
-                },
-                "zone": {
-                    "$ref": "#/definitions/restaurant.ShopZone"
-                }
-            }
-        },
-        "restaurant.ShopTableActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "number": {
-                    "type": "string"
-                },
-                "seat": {
-                    "type": "integer"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                },
-                "zone": {
-                    "$ref": "#/definitions/restaurant.ShopZone"
-                }
-            }
-        },
-        "restaurant.ShopTableDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "restaurant.ShopTableFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/restaurant.ShopTableLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.ShopTableInfo": {
-            "type": "object",
-            "properties": {
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "number": {
-                    "type": "string"
-                },
-                "seat": {
-                    "type": "integer"
-                },
-                "zone": {
-                    "$ref": "#/definitions/restaurant.ShopZone"
-                }
-            }
-        },
-        "restaurant.ShopTableInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/restaurant.ShopTableInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.ShopTableLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.ShopTableActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.ShopTableDeleteActivity"
-                    }
-                }
-            }
-        },
-        "restaurant.ShopTablePageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.ShopTableInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.ShopZone": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "printer": {
-                    "$ref": "#/definitions/restaurant.PrinterTerminal"
-                }
-            }
-        },
-        "restaurant.ShopZoneActivity": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "printer": {
-                    "$ref": "#/definitions/restaurant.PrinterTerminal"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "restaurant.ShopZoneDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "restaurant.ShopZoneFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/restaurant.ShopZoneLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.ShopZoneInfo": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "printer": {
-                    "$ref": "#/definitions/restaurant.PrinterTerminal"
-                }
-            }
-        },
-        "restaurant.ShopZoneInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/restaurant.ShopZoneInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.ShopZoneLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.ShopZoneActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.ShopZoneDeleteActivity"
-                    }
-                }
-            }
-        },
-        "restaurant.ShopZonePageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.ShopZoneInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "vfgl.BalanceSheetAccountDetail": {
-            "type": "object",
-            "properties": {
-                "accountbalancetype": {
-                    "description": "ด้านบัญชี 1=เดบิต,2=เครดิต",
-                    "type": "integer"
-                },
-                "accountcategory": {
-                    "description": "หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย",
-                    "type": "integer"
-                },
-                "accountcode": {
-                    "description": "รหัสผังบัญชี",
-                    "type": "string"
-                },
-                "accountgroup": {
-                    "description": "กลุ่มบัญชี",
-                    "type": "string"
-                },
-                "accountlevel": {
-                    "description": "ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ",
-                    "type": "integer"
-                },
-                "accountname": {
-                    "description": "ชื่อบัญชี",
-                    "type": "string"
-                },
-                "amount": {
-                    "description": "มูลค่า",
-                    "type": "number"
-                },
-                "consolidateaccountcode": {
-                    "description": "รหัสผังบัญชีกลาง",
-                    "type": "string"
-                },
-                "parid": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                }
-            }
-        },
-        "vfgl.BalanceSheetReport": {
-            "type": "object",
-            "properties": {
-                "accountgroup": {
-                    "description": "เล่มบัญชี",
-                    "type": "string"
-                },
-                "assets": {
-                    "description": "สินทรัพย์",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/vfgl.BalanceSheetAccountDetail"
-                    }
-                },
-                "enddate": {
-                    "description": "วันที่สิ้นสุด",
-                    "type": "string"
-                },
-                "liabilities": {
-                    "description": "หนี้สิน",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/vfgl.BalanceSheetAccountDetail"
-                    }
-                },
-                "ownesequities": {
-                    "description": "ทุนและส่วนของเจ้าของ",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/vfgl.BalanceSheetAccountDetail"
-                    }
-                },
-                "reportdate": {
-                    "description": "วันที่ทำรายการ",
-                    "type": "string"
-                },
-                "totalassetamount": {
-                    "description": "รวมสินทรัพย์",
-                    "type": "number"
-                },
-                "totalliabilityamount": {
-                    "description": "รวมหนี้สิน",
-                    "type": "number"
-                },
-                "totalliabilityandownersequityamount": {
-                    "description": "รวมหนี้สิน ทุน และส่วนของเจ้าของ",
-                    "type": "number"
-                },
-                "totalownersequityamount": {
-                    "description": "รวมทุนและส่วนของเจ้าของ",
-                    "type": "number"
-                }
-            }
-        },
-        "vfgl.BalanceSheetReportResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/vfgl.BalanceSheetReport"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "vfgl.ChartOfAccount": {
-            "type": "object",
-            "properties": {
-                "accountbalancetype": {
-                    "description": "ด้านบัญชี 1=เดบิต,2=เครดิต",
-                    "type": "integer"
-                },
-                "accountcategory": {
-                    "description": "หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย",
-                    "type": "integer"
-                },
-                "accountcode": {
-                    "description": "รหัสผังบัญชี",
-                    "type": "string"
-                },
-                "accountgroup": {
-                    "description": "กลุ่มบัญชี",
-                    "type": "string"
-                },
-                "accountlevel": {
-                    "description": "ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ",
-                    "type": "integer"
-                },
-                "accountname": {
-                    "description": "ชื่อบัญชี",
-                    "type": "string"
-                },
-                "consolidateaccountcode": {
-                    "description": "รหัสผังบัญชีกลาง",
-                    "type": "string"
-                }
-            }
-        },
-        "vfgl.ChartOfAccountInfo": {
-            "type": "object",
-            "properties": {
-                "accountbalancetype": {
-                    "description": "ด้านบัญชี 1=เดบิต,2=เครดิต",
-                    "type": "integer"
-                },
-                "accountcategory": {
-                    "description": "หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย",
-                    "type": "integer"
-                },
-                "accountcode": {
-                    "description": "รหัสผังบัญชี",
-                    "type": "string"
-                },
-                "accountgroup": {
-                    "description": "กลุ่มบัญชี",
-                    "type": "string"
-                },
-                "accountlevel": {
-                    "description": "ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ",
-                    "type": "integer"
-                },
-                "accountname": {
-                    "description": "ชื่อบัญชี",
-                    "type": "string"
-                },
-                "consolidateaccountcode": {
-                    "description": "รหัสผังบัญชีกลาง",
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                }
-            }
-        },
-        "vfgl.ChartOfAccountInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/vfgl.ChartOfAccountInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "vfgl.ChartOfAccountPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/vfgl.ChartOfAccountInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "vfgl.LostAndProfitSheetReportResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/vfgl.ProfitAndLossSheetReport"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "vfgl.ProfitAndLossSheetAccountDetail": {
-            "type": "object",
-            "properties": {
-                "accountbalancetype": {
-                    "description": "ด้านบัญชี 1=เดบิต,2=เครดิต",
-                    "type": "integer"
-                },
-                "accountcategory": {
-                    "description": "หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย",
-                    "type": "integer"
-                },
-                "accountcode": {
-                    "description": "รหัสผังบัญชี",
-                    "type": "string"
-                },
-                "accountgroup": {
-                    "description": "กลุ่มบัญชี",
-                    "type": "string"
-                },
-                "accountlevel": {
-                    "description": "ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ",
-                    "type": "integer"
-                },
-                "accountname": {
-                    "description": "ชื่อบัญชี",
-                    "type": "string"
-                },
-                "amount": {
-                    "description": "มูลค่า",
-                    "type": "number"
-                },
-                "consolidateaccountcode": {
-                    "description": "รหัสผังบัญชีกลาง",
-                    "type": "string"
-                },
-                "parid": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                }
-            }
-        },
-        "vfgl.ProfitAndLossSheetReport": {
-            "type": "object",
-            "properties": {
-                "accountgroup": {
-                    "description": "เล่มบัญชี",
-                    "type": "string"
-                },
-                "enddate": {
-                    "description": "วันที่สิ้นสุด",
-                    "type": "string"
-                },
-                "expenses": {
-                    "description": "รายการค่าใช้จ่าย",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/vfgl.ProfitAndLossSheetAccountDetail"
-                    }
-                },
-                "incomes": {
-                    "description": "รายการรายได้",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/vfgl.ProfitAndLossSheetAccountDetail"
-                    }
-                },
-                "profitandlossamount": {
-                    "description": "กำไรขาดทุน",
-                    "type": "number"
-                },
-                "reportdate": {
-                    "description": "วันที่ทำรายการ",
-                    "type": "string"
-                },
-                "startdate": {
-                    "description": "วันที่เริ่มต้น",
-                    "type": "string"
-                },
-                "totalexpenseamount": {
-                    "description": "รวมค่าใช้จ่าย",
-                    "type": "number"
-                },
-                "totalincomeamount": {
-                    "description": "รวมรายได้",
-                    "type": "number"
-                }
-            }
-        },
-        "vfgl.TrialBalanceSheetAccountDetail": {
+        "models.TrialBalanceSheetAccountDetail": {
             "type": "object",
             "properties": {
                 "accountbalancetype": {
@@ -9281,14 +9283,14 @@ const docTemplate = `{
                 }
             }
         },
-        "vfgl.TrialBalanceSheetReport": {
+        "models.TrialBalanceSheetReport": {
             "type": "object",
             "properties": {
                 "accountdetails": {
                     "description": "รายละเอียดบัญชี",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/vfgl.TrialBalanceSheetAccountDetail"
+                        "$ref": "#/definitions/models.TrialBalanceSheetAccountDetail"
                     }
                 },
                 "accountgroup": {
@@ -9333,14 +9335,132 @@ const docTemplate = `{
                 }
             }
         },
-        "vfgl.TrialBalanceSheetReportResponse": {
+        "models.TrialBalanceSheetReportResponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/vfgl.TrialBalanceSheetReport"
+                    "$ref": "#/definitions/models.TrialBalanceSheetReport"
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.UserLoginRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "minLength": 3
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string",
+                    "minLength": 3
+                }
+            }
+        },
+        "models.UserProfile": {
+            "type": "object",
+            "required": [
+                "name",
+                "username"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string",
+                    "minLength": 3
+                }
+            }
+        },
+        "models.UserProfileReponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.UserProfile"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.UserRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 3
+                },
+                "username": {
+                    "type": "string",
+                    "minLength": 3
+                }
+            }
+        },
+        "models.Vat": {
+            "type": "object",
+            "properties": {
+                "branchcode": {
+                    "type": "string"
+                },
+                "custtaxid": {
+                    "type": "string"
+                },
+                "exceptvat": {
+                    "type": "number"
+                },
+                "organization": {
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "vatamount": {
+                    "type": "number"
+                },
+                "vatbase": {
+                    "type": "number"
+                },
+                "vatdate": {
+                    "type": "string"
+                },
+                "vatdocno": {
+                    "type": "string"
+                },
+                "vatmode": {
+                    "type": "integer"
+                },
+                "vatperiod": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "number"
+                },
+                "vatsubmit": {
+                    "type": "boolean"
+                },
+                "vattype": {
+                    "type": "integer"
+                },
+                "vatyear": {
+                    "type": "integer"
                 }
             }
         }

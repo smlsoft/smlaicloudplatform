@@ -53,7 +53,7 @@ func (h ChartOfAccountHttp) RouteSetup() {
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
 // @Accept 		json
-// @Success		200	{object}	vfgl.ChartOfAccountPageResponse
+// @Success		200	{object}	models.ChartOfAccountPageResponse
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
 // @Router /gl/chartofaccount [get]
@@ -83,7 +83,7 @@ func (h ChartOfAccountHttp) Search(ctx microservice.IContext) error {
 // @Summary		สร้างผังบัญชี
 // @Description สร้างผังบัญชี
 // @Tags		GL
-// @Param		ChartOfAccount  body      vfgl.ChartOfAccount  true  "ChartOfAccount"
+// @Param		ChartOfAccount  body      models.ChartOfAccount  true  "ChartOfAccount"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed

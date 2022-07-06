@@ -128,7 +128,7 @@ func (h InventoryHttp) CreateInventory(ctx microservice.IContext) error {
 // @Tags		Inventory
 // @Param		Inventory  body      []models.Inventory  true  "Inventory"
 // @Accept 		json
-// @Success		201	{object}	common.InventoryBulkInsertResponse
+// @Success		201	{object}	models.InventoryBulkInsertResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /inventory/bulk [post]
@@ -247,7 +247,7 @@ func (h InventoryHttp) DeleteInventory(ctx microservice.IContext) error {
 // @Tags		Inventory
 // @Param		id  path      string  true  "Inventory ID"
 // @Accept 		json
-// @Success		200	{object}	common.InventoryInfoResponse
+// @Success		200	{object}	models.InventoryInfoResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /inventory/{id} [get]

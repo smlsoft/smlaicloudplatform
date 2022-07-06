@@ -79,6 +79,83 @@ definitions:
       success:
         type: boolean
     type: object
+  models.BalanceSheetAccountDetail:
+    properties:
+      accountbalancetype:
+        description: ด้านบัญชี 1=เดบิต,2=เครดิต
+        type: integer
+      accountcategory:
+        description: หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย
+        type: integer
+      accountcode:
+        description: รหัสผังบัญชี
+        type: string
+      accountgroup:
+        description: กลุ่มบัญชี
+        type: string
+      accountlevel:
+        description: ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ
+        type: integer
+      accountname:
+        description: ชื่อบัญชี
+        type: string
+      amount:
+        description: มูลค่า
+        type: number
+      consolidateaccountcode:
+        description: รหัสผังบัญชีกลาง
+        type: string
+      parid:
+        type: string
+      shopid:
+        type: string
+    type: object
+  models.BalanceSheetReport:
+    properties:
+      accountgroup:
+        description: เล่มบัญชี
+        type: string
+      assets:
+        description: สินทรัพย์
+        items:
+          $ref: '#/definitions/models.BalanceSheetAccountDetail'
+        type: array
+      enddate:
+        description: วันที่สิ้นสุด
+        type: string
+      liabilities:
+        description: หนี้สิน
+        items:
+          $ref: '#/definitions/models.BalanceSheetAccountDetail'
+        type: array
+      ownesequities:
+        description: ทุนและส่วนของเจ้าของ
+        items:
+          $ref: '#/definitions/models.BalanceSheetAccountDetail'
+        type: array
+      reportdate:
+        description: วันที่ทำรายการ
+        type: string
+      totalassetamount:
+        description: รวมสินทรัพย์
+        type: number
+      totalliabilityamount:
+        description: รวมหนี้สิน
+        type: number
+      totalliabilityandownersequityamount:
+        description: รวมหนี้สิน ทุน และส่วนของเจ้าของ
+        type: number
+      totalownersequityamount:
+        description: รวมทุนและส่วนของเจ้าของ
+        type: number
+    type: object
+  models.BalanceSheetReportResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.BalanceSheetReport'
+      success:
+        type: boolean
+    type: object
   models.BulkInsertResponse:
     properties:
       created:
@@ -321,6 +398,74 @@ definitions:
       data:
         items:
           $ref: '#/definitions/models.CategoryInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  models.ChartOfAccount:
+    properties:
+      accountbalancetype:
+        description: ด้านบัญชี 1=เดบิต,2=เครดิต
+        type: integer
+      accountcategory:
+        description: หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย
+        type: integer
+      accountcode:
+        description: รหัสผังบัญชี
+        type: string
+      accountgroup:
+        description: กลุ่มบัญชี
+        type: string
+      accountlevel:
+        description: ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ
+        type: integer
+      accountname:
+        description: ชื่อบัญชี
+        type: string
+      consolidateaccountcode:
+        description: รหัสผังบัญชีกลาง
+        type: string
+    type: object
+  models.ChartOfAccountInfo:
+    properties:
+      accountbalancetype:
+        description: ด้านบัญชี 1=เดบิต,2=เครดิต
+        type: integer
+      accountcategory:
+        description: หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย
+        type: integer
+      accountcode:
+        description: รหัสผังบัญชี
+        type: string
+      accountgroup:
+        description: กลุ่มบัญชี
+        type: string
+      accountlevel:
+        description: ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ
+        type: integer
+      accountname:
+        description: ชื่อบัญชี
+        type: string
+      consolidateaccountcode:
+        description: รหัสผังบัญชีกลาง
+        type: string
+      guidfixed:
+        type: string
+    type: object
+  models.ChartOfAccountInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.ChartOfAccountInfo'
+      success:
+        type: boolean
+    type: object
+  models.ChartOfAccountPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.ChartOfAccountInfo'
         type: array
       pagination:
         $ref: '#/definitions/models.PaginationDataResponse'
@@ -813,7 +958,7 @@ definitions:
     properties:
       details:
         items:
-          $ref: '#/definitions/models.InventoryOptonGroupDetail'
+          $ref: '#/definitions/models.InventoryOptionGroupDetail'
         type: array
       guidfixed:
         type: string
@@ -830,6 +975,15 @@ definitions:
       productselectoptionmin:
         type: integer
       shopid:
+        type: string
+    type: object
+  models.InventoryOptionGroupDetail:
+    properties:
+      amount:
+        type: number
+      detailname1:
+        type: string
+      guidfixed:
         type: string
     type: object
   models.InventoryOptionMain:
@@ -926,15 +1080,6 @@ definitions:
       success:
         type: boolean
     type: object
-  models.InventoryOptonGroupDetail:
-    properties:
-      amount:
-        type: number
-      detailname1:
-        type: string
-      guidfixed:
-        type: string
-    type: object
   models.InventoryPageResponse:
     properties:
       data:
@@ -978,6 +1123,14 @@ definitions:
         type: array
       parid:
         type: string
+      taxes:
+        items:
+          $ref: '#/definitions/models.Tax'
+        type: array
+      vats:
+        items:
+          $ref: '#/definitions/models.Vat'
+        type: array
     type: object
   models.JournalBook:
     properties:
@@ -1073,6 +1226,14 @@ definitions:
         type: array
       parid:
         type: string
+      taxes:
+        items:
+          $ref: '#/definitions/models.Tax'
+        type: array
+      vats:
+        items:
+          $ref: '#/definitions/models.Vat'
+        type: array
     type: object
   models.JournalInfoResponse:
     properties:
@@ -1089,6 +1250,169 @@ definitions:
         type: array
       pagination:
         $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  models.Kitchen:
+    properties:
+      categories:
+        items:
+          $ref: '#/definitions/models.Category'
+        type: array
+      code:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      printers:
+        items:
+          $ref: '#/definitions/models.PrinterTerminal'
+        type: array
+      products:
+        items:
+          $ref: '#/definitions/models.Inventory'
+        type: array
+      zones:
+        items:
+          $ref: '#/definitions/models.ShopZone'
+        type: array
+    type: object
+  models.KitchenActivity:
+    properties:
+      categories:
+        items:
+          $ref: '#/definitions/models.Category'
+        type: array
+      code:
+        type: string
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      printers:
+        items:
+          $ref: '#/definitions/models.PrinterTerminal'
+        type: array
+      products:
+        items:
+          $ref: '#/definitions/models.Inventory'
+        type: array
+      shopid:
+        type: string
+      updatedat:
+        type: string
+      zones:
+        items:
+          $ref: '#/definitions/models.ShopZone'
+        type: array
+    type: object
+  models.KitchenDeleteActivity:
+    properties:
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      shopid:
+        type: string
+      updatedat:
+        type: string
+    type: object
+  models.KitchenFetchUpdateResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.KitchenLastActivityResponse'
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  models.KitchenInfo:
+    properties:
+      categories:
+        items:
+          $ref: '#/definitions/models.Category'
+        type: array
+      code:
+        type: string
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      printers:
+        items:
+          $ref: '#/definitions/models.PrinterTerminal'
+        type: array
+      products:
+        items:
+          $ref: '#/definitions/models.Inventory'
+        type: array
+      zones:
+        items:
+          $ref: '#/definitions/models.ShopZone'
+        type: array
+    type: object
+  models.KitchenInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.KitchenInfo'
+      success:
+        type: boolean
+    type: object
+  models.KitchenLastActivityResponse:
+    properties:
+      new:
+        items:
+          $ref: '#/definitions/models.KitchenActivity'
+        type: array
+      remove:
+        items:
+          $ref: '#/definitions/models.KitchenDeleteActivity'
+        type: array
+    type: object
+  models.KitchenPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.KitchenInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  models.LostAndProfitSheetReportResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.ProfitAndLossSheetReport'
       success:
         type: boolean
     type: object
@@ -1282,6 +1606,191 @@ definitions:
         items:
           $ref: '#/definitions/models.TransferPayment'
         type: array
+    type: object
+  models.PrinterTerminal:
+    properties:
+      address:
+        type: string
+      code:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      type:
+        type: integer
+    type: object
+  models.PrinterTerminalActivity:
+    properties:
+      address:
+        type: string
+      code:
+        type: string
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      shopid:
+        type: string
+      type:
+        type: integer
+      updatedat:
+        type: string
+    type: object
+  models.PrinterTerminalDeleteActivity:
+    properties:
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      shopid:
+        type: string
+      updatedat:
+        type: string
+    type: object
+  models.PrinterTerminalFetchUpdateResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.PrinterTerminalLastActivityResponse'
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  models.PrinterTerminalInfo:
+    properties:
+      address:
+        type: string
+      code:
+        type: string
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      type:
+        type: integer
+    type: object
+  models.PrinterTerminalInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.PrinterTerminalInfo'
+      success:
+        type: boolean
+    type: object
+  models.PrinterTerminalLastActivityResponse:
+    properties:
+      new:
+        items:
+          $ref: '#/definitions/models.PrinterTerminalActivity'
+        type: array
+      remove:
+        items:
+          $ref: '#/definitions/models.PrinterTerminalDeleteActivity'
+        type: array
+    type: object
+  models.PrinterTerminalPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.PrinterTerminalInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  models.ProfitAndLossSheetAccountDetail:
+    properties:
+      accountbalancetype:
+        description: ด้านบัญชี 1=เดบิต,2=เครดิต
+        type: integer
+      accountcategory:
+        description: หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย
+        type: integer
+      accountcode:
+        description: รหัสผังบัญชี
+        type: string
+      accountgroup:
+        description: กลุ่มบัญชี
+        type: string
+      accountlevel:
+        description: ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ
+        type: integer
+      accountname:
+        description: ชื่อบัญชี
+        type: string
+      amount:
+        description: มูลค่า
+        type: number
+      consolidateaccountcode:
+        description: รหัสผังบัญชีกลาง
+        type: string
+      parid:
+        type: string
+      shopid:
+        type: string
+    type: object
+  models.ProfitAndLossSheetReport:
+    properties:
+      accountgroup:
+        description: เล่มบัญชี
+        type: string
+      enddate:
+        description: วันที่สิ้นสุด
+        type: string
+      expenses:
+        description: รายการค่าใช้จ่าย
+        items:
+          $ref: '#/definitions/models.ProfitAndLossSheetAccountDetail'
+        type: array
+      incomes:
+        description: รายการรายได้
+        items:
+          $ref: '#/definitions/models.ProfitAndLossSheetAccountDetail'
+        type: array
+      profitandlossamount:
+        description: กำไรขาดทุน
+        type: number
+      reportdate:
+        description: วันที่ทำรายการ
+        type: string
+      startdate:
+        description: วันที่เริ่มต้น
+        type: string
+      totalexpenseamount:
+        description: รวมค่าใช้จ่าย
+        type: number
+      totalincomeamount:
+        description: รวมรายได้
+        type: number
     type: object
   models.Purchase:
     properties:
@@ -1645,6 +2154,126 @@ definitions:
     required:
     - shopid
     type: object
+  models.ShopTable:
+    properties:
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      number:
+        type: string
+      seat:
+        type: integer
+      zone:
+        $ref: '#/definitions/models.ShopZone'
+    type: object
+  models.ShopTableActivity:
+    properties:
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      number:
+        type: string
+      seat:
+        type: integer
+      shopid:
+        type: string
+      updatedat:
+        type: string
+      zone:
+        $ref: '#/definitions/models.ShopZone'
+    type: object
+  models.ShopTableDeleteActivity:
+    properties:
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      shopid:
+        type: string
+      updatedat:
+        type: string
+    type: object
+  models.ShopTableFetchUpdateResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.ShopTableLastActivityResponse'
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  models.ShopTableInfo:
+    properties:
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      number:
+        type: string
+      seat:
+        type: integer
+      zone:
+        $ref: '#/definitions/models.ShopZone'
+    type: object
+  models.ShopTableInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.ShopTableInfo'
+      success:
+        type: boolean
+    type: object
+  models.ShopTableLastActivityResponse:
+    properties:
+      new:
+        items:
+          $ref: '#/definitions/models.ShopTableActivity'
+        type: array
+      remove:
+        items:
+          $ref: '#/definitions/models.ShopTableDeleteActivity'
+        type: array
+    type: object
+  models.ShopTablePageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.ShopTableInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
   models.ShopUserInfo:
     properties:
       name:
@@ -1653,6 +2282,120 @@ definitions:
         type: string
       shopid:
         type: string
+    type: object
+  models.ShopZone:
+    properties:
+      code:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      printer:
+        $ref: '#/definitions/models.PrinterTerminal'
+    type: object
+  models.ShopZoneActivity:
+    properties:
+      code:
+        type: string
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      printer:
+        $ref: '#/definitions/models.PrinterTerminal'
+      shopid:
+        type: string
+      updatedat:
+        type: string
+    type: object
+  models.ShopZoneDeleteActivity:
+    properties:
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      shopid:
+        type: string
+      updatedat:
+        type: string
+    type: object
+  models.ShopZoneFetchUpdateResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.ShopZoneLastActivityResponse'
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  models.ShopZoneInfo:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      printer:
+        $ref: '#/definitions/models.PrinterTerminal'
+    type: object
+  models.ShopZoneInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.ShopZoneInfo'
+      success:
+        type: boolean
+    type: object
+  models.ShopZoneLastActivityResponse:
+    properties:
+      new:
+        items:
+          $ref: '#/definitions/models.ShopZoneActivity'
+        type: array
+      remove:
+        items:
+          $ref: '#/definitions/models.ShopZoneDeleteActivity'
+        type: array
+    type: object
+  models.ShopZonePageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.ShopZoneInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
     type: object
   models.SyncInventoryData:
     properties:
@@ -1665,6 +2408,36 @@ definitions:
       tablecode:
         type: string
     type: object
+  models.Tax:
+    properties:
+      custname:
+        type: string
+      custtaxid:
+        type: string
+      custtype:
+        type: string
+      details:
+        items:
+          $ref: '#/definitions/models.TaxDetail'
+        type: array
+      taxdate:
+        type: string
+      taxdocno:
+        type: string
+      taxtype:
+        type: integer
+    type: object
+  models.TaxDetail:
+    properties:
+      description:
+        type: string
+      taxamount:
+        type: number
+      taxbase:
+        type: number
+      taxrate:
+        type: number
+    type: object
   models.TransferPayment:
     properties:
       amount:
@@ -1672,781 +2445,7 @@ definitions:
       bankcode:
         type: string
     type: object
-  models.UserLoginRequest:
-    properties:
-      password:
-        minLength: 3
-        type: string
-      shopid:
-        type: string
-      username:
-        minLength: 3
-        type: string
-    required:
-    - password
-    - username
-    type: object
-  models.UserProfile:
-    properties:
-      name:
-        type: string
-      username:
-        minLength: 3
-        type: string
-    required:
-    - name
-    - username
-    type: object
-  models.UserProfileReponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.UserProfile'
-      success:
-        type: boolean
-    type: object
-  models.UserRequest:
-    properties:
-      name:
-        type: string
-      password:
-        minLength: 3
-        type: string
-      username:
-        minLength: 3
-        type: string
-    required:
-    - name
-    - password
-    - username
-    type: object
-  restaurant.Kitchen:
-    properties:
-      categories:
-        items:
-          $ref: '#/definitions/models.Category'
-        type: array
-      code:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      printers:
-        items:
-          $ref: '#/definitions/restaurant.PrinterTerminal'
-        type: array
-      products:
-        items:
-          $ref: '#/definitions/models.Inventory'
-        type: array
-      zones:
-        items:
-          $ref: '#/definitions/restaurant.ShopZone'
-        type: array
-    type: object
-  restaurant.KitchenActivity:
-    properties:
-      categories:
-        items:
-          $ref: '#/definitions/models.Category'
-        type: array
-      code:
-        type: string
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      printers:
-        items:
-          $ref: '#/definitions/restaurant.PrinterTerminal'
-        type: array
-      products:
-        items:
-          $ref: '#/definitions/models.Inventory'
-        type: array
-      shopid:
-        type: string
-      updatedat:
-        type: string
-      zones:
-        items:
-          $ref: '#/definitions/restaurant.ShopZone'
-        type: array
-    type: object
-  restaurant.KitchenDeleteActivity:
-    properties:
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      shopid:
-        type: string
-      updatedat:
-        type: string
-    type: object
-  restaurant.KitchenFetchUpdateResponse:
-    properties:
-      data:
-        $ref: '#/definitions/restaurant.KitchenLastActivityResponse'
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
-  restaurant.KitchenInfo:
-    properties:
-      categories:
-        items:
-          $ref: '#/definitions/models.Category'
-        type: array
-      code:
-        type: string
-      guidfixed:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      printers:
-        items:
-          $ref: '#/definitions/restaurant.PrinterTerminal'
-        type: array
-      products:
-        items:
-          $ref: '#/definitions/models.Inventory'
-        type: array
-      zones:
-        items:
-          $ref: '#/definitions/restaurant.ShopZone'
-        type: array
-    type: object
-  restaurant.KitchenInfoResponse:
-    properties:
-      data:
-        $ref: '#/definitions/restaurant.KitchenInfo'
-      success:
-        type: boolean
-    type: object
-  restaurant.KitchenLastActivityResponse:
-    properties:
-      new:
-        items:
-          $ref: '#/definitions/restaurant.KitchenActivity'
-        type: array
-      remove:
-        items:
-          $ref: '#/definitions/restaurant.KitchenDeleteActivity'
-        type: array
-    type: object
-  restaurant.KitchenPageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/restaurant.KitchenInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
-  restaurant.PrinterTerminal:
-    properties:
-      address:
-        type: string
-      code:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      type:
-        type: integer
-    type: object
-  restaurant.PrinterTerminalActivity:
-    properties:
-      address:
-        type: string
-      code:
-        type: string
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      shopid:
-        type: string
-      type:
-        type: integer
-      updatedat:
-        type: string
-    type: object
-  restaurant.PrinterTerminalDeleteActivity:
-    properties:
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      shopid:
-        type: string
-      updatedat:
-        type: string
-    type: object
-  restaurant.PrinterTerminalFetchUpdateResponse:
-    properties:
-      data:
-        $ref: '#/definitions/restaurant.PrinterTerminalLastActivityResponse'
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
-  restaurant.PrinterTerminalInfo:
-    properties:
-      address:
-        type: string
-      code:
-        type: string
-      guidfixed:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      type:
-        type: integer
-    type: object
-  restaurant.PrinterTerminalInfoResponse:
-    properties:
-      data:
-        $ref: '#/definitions/restaurant.PrinterTerminalInfo'
-      success:
-        type: boolean
-    type: object
-  restaurant.PrinterTerminalLastActivityResponse:
-    properties:
-      new:
-        items:
-          $ref: '#/definitions/restaurant.PrinterTerminalActivity'
-        type: array
-      remove:
-        items:
-          $ref: '#/definitions/restaurant.PrinterTerminalDeleteActivity'
-        type: array
-    type: object
-  restaurant.PrinterTerminalPageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/restaurant.PrinterTerminalInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
-  restaurant.ShopTable:
-    properties:
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      number:
-        type: string
-      seat:
-        type: integer
-      zone:
-        $ref: '#/definitions/restaurant.ShopZone'
-    type: object
-  restaurant.ShopTableActivity:
-    properties:
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      number:
-        type: string
-      seat:
-        type: integer
-      shopid:
-        type: string
-      updatedat:
-        type: string
-      zone:
-        $ref: '#/definitions/restaurant.ShopZone'
-    type: object
-  restaurant.ShopTableDeleteActivity:
-    properties:
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      shopid:
-        type: string
-      updatedat:
-        type: string
-    type: object
-  restaurant.ShopTableFetchUpdateResponse:
-    properties:
-      data:
-        $ref: '#/definitions/restaurant.ShopTableLastActivityResponse'
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
-  restaurant.ShopTableInfo:
-    properties:
-      guidfixed:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      number:
-        type: string
-      seat:
-        type: integer
-      zone:
-        $ref: '#/definitions/restaurant.ShopZone'
-    type: object
-  restaurant.ShopTableInfoResponse:
-    properties:
-      data:
-        $ref: '#/definitions/restaurant.ShopTableInfo'
-      success:
-        type: boolean
-    type: object
-  restaurant.ShopTableLastActivityResponse:
-    properties:
-      new:
-        items:
-          $ref: '#/definitions/restaurant.ShopTableActivity'
-        type: array
-      remove:
-        items:
-          $ref: '#/definitions/restaurant.ShopTableDeleteActivity'
-        type: array
-    type: object
-  restaurant.ShopTablePageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/restaurant.ShopTableInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
-  restaurant.ShopZone:
-    properties:
-      code:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      printer:
-        $ref: '#/definitions/restaurant.PrinterTerminal'
-    type: object
-  restaurant.ShopZoneActivity:
-    properties:
-      code:
-        type: string
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      printer:
-        $ref: '#/definitions/restaurant.PrinterTerminal'
-      shopid:
-        type: string
-      updatedat:
-        type: string
-    type: object
-  restaurant.ShopZoneDeleteActivity:
-    properties:
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      shopid:
-        type: string
-      updatedat:
-        type: string
-    type: object
-  restaurant.ShopZoneFetchUpdateResponse:
-    properties:
-      data:
-        $ref: '#/definitions/restaurant.ShopZoneLastActivityResponse'
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
-  restaurant.ShopZoneInfo:
-    properties:
-      code:
-        type: string
-      guidfixed:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      printer:
-        $ref: '#/definitions/restaurant.PrinterTerminal'
-    type: object
-  restaurant.ShopZoneInfoResponse:
-    properties:
-      data:
-        $ref: '#/definitions/restaurant.ShopZoneInfo'
-      success:
-        type: boolean
-    type: object
-  restaurant.ShopZoneLastActivityResponse:
-    properties:
-      new:
-        items:
-          $ref: '#/definitions/restaurant.ShopZoneActivity'
-        type: array
-      remove:
-        items:
-          $ref: '#/definitions/restaurant.ShopZoneDeleteActivity'
-        type: array
-    type: object
-  restaurant.ShopZonePageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/restaurant.ShopZoneInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
-  vfgl.BalanceSheetAccountDetail:
-    properties:
-      accountbalancetype:
-        description: ด้านบัญชี 1=เดบิต,2=เครดิต
-        type: integer
-      accountcategory:
-        description: หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย
-        type: integer
-      accountcode:
-        description: รหัสผังบัญชี
-        type: string
-      accountgroup:
-        description: กลุ่มบัญชี
-        type: string
-      accountlevel:
-        description: ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ
-        type: integer
-      accountname:
-        description: ชื่อบัญชี
-        type: string
-      amount:
-        description: มูลค่า
-        type: number
-      consolidateaccountcode:
-        description: รหัสผังบัญชีกลาง
-        type: string
-      parid:
-        type: string
-      shopid:
-        type: string
-    type: object
-  vfgl.BalanceSheetReport:
-    properties:
-      accountgroup:
-        description: เล่มบัญชี
-        type: string
-      assets:
-        description: สินทรัพย์
-        items:
-          $ref: '#/definitions/vfgl.BalanceSheetAccountDetail'
-        type: array
-      enddate:
-        description: วันที่สิ้นสุด
-        type: string
-      liabilities:
-        description: หนี้สิน
-        items:
-          $ref: '#/definitions/vfgl.BalanceSheetAccountDetail'
-        type: array
-      ownesequities:
-        description: ทุนและส่วนของเจ้าของ
-        items:
-          $ref: '#/definitions/vfgl.BalanceSheetAccountDetail'
-        type: array
-      reportdate:
-        description: วันที่ทำรายการ
-        type: string
-      totalassetamount:
-        description: รวมสินทรัพย์
-        type: number
-      totalliabilityamount:
-        description: รวมหนี้สิน
-        type: number
-      totalliabilityandownersequityamount:
-        description: รวมหนี้สิน ทุน และส่วนของเจ้าของ
-        type: number
-      totalownersequityamount:
-        description: รวมทุนและส่วนของเจ้าของ
-        type: number
-    type: object
-  vfgl.BalanceSheetReportResponse:
-    properties:
-      data:
-        $ref: '#/definitions/vfgl.BalanceSheetReport'
-      success:
-        type: boolean
-    type: object
-  vfgl.ChartOfAccount:
-    properties:
-      accountbalancetype:
-        description: ด้านบัญชี 1=เดบิต,2=เครดิต
-        type: integer
-      accountcategory:
-        description: หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย
-        type: integer
-      accountcode:
-        description: รหัสผังบัญชี
-        type: string
-      accountgroup:
-        description: กลุ่มบัญชี
-        type: string
-      accountlevel:
-        description: ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ
-        type: integer
-      accountname:
-        description: ชื่อบัญชี
-        type: string
-      consolidateaccountcode:
-        description: รหัสผังบัญชีกลาง
-        type: string
-    type: object
-  vfgl.ChartOfAccountInfo:
-    properties:
-      accountbalancetype:
-        description: ด้านบัญชี 1=เดบิต,2=เครดิต
-        type: integer
-      accountcategory:
-        description: หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย
-        type: integer
-      accountcode:
-        description: รหัสผังบัญชี
-        type: string
-      accountgroup:
-        description: กลุ่มบัญชี
-        type: string
-      accountlevel:
-        description: ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ
-        type: integer
-      accountname:
-        description: ชื่อบัญชี
-        type: string
-      consolidateaccountcode:
-        description: รหัสผังบัญชีกลาง
-        type: string
-      guidfixed:
-        type: string
-    type: object
-  vfgl.ChartOfAccountInfoResponse:
-    properties:
-      data:
-        $ref: '#/definitions/vfgl.ChartOfAccountInfo'
-      success:
-        type: boolean
-    type: object
-  vfgl.ChartOfAccountPageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/vfgl.ChartOfAccountInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
-  vfgl.LostAndProfitSheetReportResponse:
-    properties:
-      data:
-        $ref: '#/definitions/vfgl.ProfitAndLossSheetReport'
-      success:
-        type: boolean
-    type: object
-  vfgl.ProfitAndLossSheetAccountDetail:
-    properties:
-      accountbalancetype:
-        description: ด้านบัญชี 1=เดบิต,2=เครดิต
-        type: integer
-      accountcategory:
-        description: หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย
-        type: integer
-      accountcode:
-        description: รหัสผังบัญชี
-        type: string
-      accountgroup:
-        description: กลุ่มบัญชี
-        type: string
-      accountlevel:
-        description: ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ
-        type: integer
-      accountname:
-        description: ชื่อบัญชี
-        type: string
-      amount:
-        description: มูลค่า
-        type: number
-      consolidateaccountcode:
-        description: รหัสผังบัญชีกลาง
-        type: string
-      parid:
-        type: string
-      shopid:
-        type: string
-    type: object
-  vfgl.ProfitAndLossSheetReport:
-    properties:
-      accountgroup:
-        description: เล่มบัญชี
-        type: string
-      enddate:
-        description: วันที่สิ้นสุด
-        type: string
-      expenses:
-        description: รายการค่าใช้จ่าย
-        items:
-          $ref: '#/definitions/vfgl.ProfitAndLossSheetAccountDetail'
-        type: array
-      incomes:
-        description: รายการรายได้
-        items:
-          $ref: '#/definitions/vfgl.ProfitAndLossSheetAccountDetail'
-        type: array
-      profitandlossamount:
-        description: กำไรขาดทุน
-        type: number
-      reportdate:
-        description: วันที่ทำรายการ
-        type: string
-      startdate:
-        description: วันที่เริ่มต้น
-        type: string
-      totalexpenseamount:
-        description: รวมค่าใช้จ่าย
-        type: number
-      totalincomeamount:
-        description: รวมรายได้
-        type: number
-    type: object
-  vfgl.TrialBalanceSheetAccountDetail:
+  models.TrialBalanceSheetAccountDetail:
     properties:
       accountbalancetype:
         description: ด้านบัญชี 1=เดบิต,2=เครดิต
@@ -2501,12 +2500,12 @@ definitions:
       shopid:
         type: string
     type: object
-  vfgl.TrialBalanceSheetReport:
+  models.TrialBalanceSheetReport:
     properties:
       accountdetails:
         description: รายละเอียดบัญชี
         items:
-          $ref: '#/definitions/vfgl.TrialBalanceSheetAccountDetail'
+          $ref: '#/definitions/models.TrialBalanceSheetAccountDetail'
         type: array
       accountgroup:
         description: เล่มบัญชี
@@ -2539,12 +2538,92 @@ definitions:
         description: รวมยอดสะสมเดบิต
         type: number
     type: object
-  vfgl.TrialBalanceSheetReportResponse:
+  models.TrialBalanceSheetReportResponse:
     properties:
       data:
-        $ref: '#/definitions/vfgl.TrialBalanceSheetReport'
+        $ref: '#/definitions/models.TrialBalanceSheetReport'
       success:
         type: boolean
+    type: object
+  models.UserLoginRequest:
+    properties:
+      password:
+        minLength: 3
+        type: string
+      shopid:
+        type: string
+      username:
+        minLength: 3
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  models.UserProfile:
+    properties:
+      name:
+        type: string
+      username:
+        minLength: 3
+        type: string
+    required:
+    - name
+    - username
+    type: object
+  models.UserProfileReponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.UserProfile'
+      success:
+        type: boolean
+    type: object
+  models.UserRequest:
+    properties:
+      name:
+        type: string
+      password:
+        minLength: 3
+        type: string
+      username:
+        minLength: 3
+        type: string
+    required:
+    - name
+    - password
+    - username
+    type: object
+  models.Vat:
+    properties:
+      branchcode:
+        type: string
+      custtaxid:
+        type: string
+      exceptvat:
+        type: number
+      organization:
+        type: integer
+      remark:
+        type: string
+      vatamount:
+        type: number
+      vatbase:
+        type: number
+      vatdate:
+        type: string
+      vatdocno:
+        type: string
+      vatmode:
+        type: integer
+      vatperiod:
+        type: integer
+      vatrate:
+        type: number
+      vatsubmit:
+        type: boolean
+      vattype:
+        type: integer
+      vatyear:
+        type: integer
     type: object
 info:
   contact:
@@ -3225,7 +3304,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/vfgl.ChartOfAccountPageResponse'
+            $ref: '#/definitions/models.ChartOfAccountPageResponse'
         "401":
           description: Unauthorized
           schema:
@@ -3245,7 +3324,7 @@ paths:
         name: ChartOfAccount
         required: true
         schema:
-          $ref: '#/definitions/vfgl.ChartOfAccount'
+          $ref: '#/definitions/models.ChartOfAccount'
       responses:
         "200":
           description: OK
@@ -3299,7 +3378,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/vfgl.ChartOfAccountInfoResponse'
+            $ref: '#/definitions/models.ChartOfAccountInfoResponse'
         "401":
           description: Unauthorized
           schema:
@@ -3324,7 +3403,7 @@ paths:
         name: ChartOfAccount
         required: true
         schema:
-          $ref: '#/definitions/vfgl.ChartOfAccount'
+          $ref: '#/definitions/models.ChartOfAccount'
       responses:
         "200":
           description: OK
@@ -3351,7 +3430,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/vfgl.ChartOfAccount'
+            $ref: '#/definitions/models.ChartOfAccount'
           type: array
       responses:
         "201":
@@ -3715,7 +3794,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/vfgl.BalanceSheetReportResponse'
+            $ref: '#/definitions/models.BalanceSheetReportResponse'
         "400":
           description: Bad Request
           schema:
@@ -3754,7 +3833,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/vfgl.LostAndProfitSheetReportResponse'
+            $ref: '#/definitions/models.LostAndProfitSheetReportResponse'
         "400":
           description: Bad Request
           schema:
@@ -3793,7 +3872,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/vfgl.TrialBalanceSheetReportResponse'
+            $ref: '#/definitions/models.TrialBalanceSheetReportResponse'
         "400":
           description: Bad Request
           schema:
@@ -4951,7 +5030,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/restaurant.KitchenPageResponse'
+            $ref: '#/definitions/models.KitchenPageResponse'
         "401":
           description: Unauthorized
           schema:
@@ -4970,7 +5049,7 @@ paths:
         name: Kitchen
         required: true
         schema:
-          $ref: '#/definitions/restaurant.Kitchen'
+          $ref: '#/definitions/models.Kitchen'
       responses:
         "200":
           description: OK
@@ -5022,7 +5101,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/restaurant.KitchenInfoResponse'
+            $ref: '#/definitions/models.KitchenInfoResponse'
         "401":
           description: Unauthorized
           schema:
@@ -5046,7 +5125,7 @@ paths:
         name: Kitchen
         required: true
         schema:
-          $ref: '#/definitions/restaurant.Kitchen'
+          $ref: '#/definitions/models.Kitchen'
       responses:
         "200":
           description: OK
@@ -5072,7 +5151,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/restaurant.Kitchen'
+            $ref: '#/definitions/models.Kitchen'
           type: array
       responses:
         "201":
@@ -5110,7 +5189,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/restaurant.KitchenFetchUpdateResponse'
+            $ref: '#/definitions/models.KitchenFetchUpdateResponse'
         "401":
           description: Unauthorized
           schema:
@@ -5141,7 +5220,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/restaurant.PrinterTerminalPageResponse'
+            $ref: '#/definitions/models.PrinterTerminalPageResponse'
         "401":
           description: Unauthorized
           schema:
@@ -5160,7 +5239,7 @@ paths:
         name: Printer
         required: true
         schema:
-          $ref: '#/definitions/restaurant.PrinterTerminal'
+          $ref: '#/definitions/models.PrinterTerminal'
       responses:
         "200":
           description: OK
@@ -5212,7 +5291,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/restaurant.PrinterTerminalInfoResponse'
+            $ref: '#/definitions/models.PrinterTerminalInfoResponse'
         "401":
           description: Unauthorized
           schema:
@@ -5236,7 +5315,7 @@ paths:
         name: Printer
         required: true
         schema:
-          $ref: '#/definitions/restaurant.PrinterTerminal'
+          $ref: '#/definitions/models.PrinterTerminal'
       responses:
         "200":
           description: OK
@@ -5262,7 +5341,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/restaurant.PrinterTerminal'
+            $ref: '#/definitions/models.PrinterTerminal'
           type: array
       responses:
         "201":
@@ -5300,7 +5379,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/restaurant.PrinterTerminalFetchUpdateResponse'
+            $ref: '#/definitions/models.PrinterTerminalFetchUpdateResponse'
         "401":
           description: Unauthorized
           schema:
@@ -5331,7 +5410,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/restaurant.ShopTablePageResponse'
+            $ref: '#/definitions/models.ShopTablePageResponse'
         "401":
           description: Unauthorized
           schema:
@@ -5350,7 +5429,7 @@ paths:
         name: Table
         required: true
         schema:
-          $ref: '#/definitions/restaurant.ShopTable'
+          $ref: '#/definitions/models.ShopTable'
       responses:
         "200":
           description: OK
@@ -5402,7 +5481,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/restaurant.ShopTableInfoResponse'
+            $ref: '#/definitions/models.ShopTableInfoResponse'
         "401":
           description: Unauthorized
           schema:
@@ -5426,7 +5505,7 @@ paths:
         name: Table
         required: true
         schema:
-          $ref: '#/definitions/restaurant.ShopTable'
+          $ref: '#/definitions/models.ShopTable'
       responses:
         "200":
           description: OK
@@ -5452,7 +5531,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/restaurant.ShopTable'
+            $ref: '#/definitions/models.ShopTable'
           type: array
       responses:
         "201":
@@ -5490,7 +5569,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/restaurant.ShopTableFetchUpdateResponse'
+            $ref: '#/definitions/models.ShopTableFetchUpdateResponse'
         "401":
           description: Unauthorized
           schema:
@@ -5521,7 +5600,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/restaurant.ShopZonePageResponse'
+            $ref: '#/definitions/models.ShopZonePageResponse'
         "401":
           description: Unauthorized
           schema:
@@ -5540,7 +5619,7 @@ paths:
         name: Zone
         required: true
         schema:
-          $ref: '#/definitions/restaurant.ShopZone'
+          $ref: '#/definitions/models.ShopZone'
       responses:
         "200":
           description: OK
@@ -5592,7 +5671,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/restaurant.ShopZoneInfoResponse'
+            $ref: '#/definitions/models.ShopZoneInfoResponse'
         "401":
           description: Unauthorized
           schema:
@@ -5616,7 +5695,7 @@ paths:
         name: Zone
         required: true
         schema:
-          $ref: '#/definitions/restaurant.ShopZone'
+          $ref: '#/definitions/models.ShopZone'
       responses:
         "200":
           description: OK
@@ -5642,7 +5721,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/restaurant.ShopZone'
+            $ref: '#/definitions/models.ShopZone'
           type: array
       responses:
         "201":
@@ -5680,7 +5759,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/restaurant.ShopZoneFetchUpdateResponse'
+            $ref: '#/definitions/models.ShopZoneFetchUpdateResponse'
         "401":
           description: Unauthorized
           schema:

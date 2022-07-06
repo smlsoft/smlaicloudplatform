@@ -6,7 +6,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/shop"
-	"smlcloudplatform/pkg/shop/models"
+	shopmodel "smlcloudplatform/pkg/shop/models"
 	"strconv"
 )
 
@@ -68,7 +68,7 @@ func (h AuthenticationHttp) RouteSetup() {
 // Login login
 // @Description get struct array by ID
 // @Tags		Authentication
-// @Param		User  body      models.UserLoginRequest  true  "User Account"
+// @Param		User  body      shopmodel.UserLoginRequest  true  "User Account"
 // @Accept 		json
 // @Success		200	{object}	common.AuthResponse
 // @Failure		400 {object}	common.AuthResponseFailed
@@ -77,7 +77,7 @@ func (h AuthenticationHttp) Login(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	userReq := &models.UserLoginRequest{}
+	userReq := &shopmodel.UserLoginRequest{}
 	err := json.Unmarshal([]byte(input), &userReq)
 
 	if err != nil {
@@ -109,7 +109,7 @@ func (h AuthenticationHttp) Login(ctx microservice.IContext) error {
 // @Summary		Register An Account
 // @Description	For User Register Application
 // @Tags		Authentication
-// @Param		User  body      models.UserRequest  true  "Register account"
+// @Param		User  body      shopmodel.UserRequest  true  "Register account"
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		400 {object}	common.AuthResponseFailed
 // @Accept 		json
@@ -118,7 +118,7 @@ func (h AuthenticationHttp) Register(ctx microservice.IContext) error {
 	h.ms.Logger.Debug("Receive Register Data")
 	input := ctx.ReadInput()
 
-	userReq := models.UserRequest{}
+	userReq := shopmodel.UserRequest{}
 	err := json.Unmarshal([]byte(input), &userReq)
 
 	if err != nil {
@@ -153,7 +153,7 @@ func (h AuthenticationHttp) Update(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	input := ctx.ReadInput()
 
-	userReq := models.UserProfileRequest{}
+	userReq := shopmodel.UserProfileRequest{}
 	err := json.Unmarshal([]byte(input), &userReq)
 
 	if err != nil {
@@ -187,7 +187,7 @@ func (h AuthenticationHttp) UpdatePassword(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	input := ctx.ReadInput()
 
-	userPwdReq := models.UserPasswordRequest{}
+	userPwdReq := shopmodel.UserPasswordRequest{}
 	err := json.Unmarshal([]byte(input), &userPwdReq)
 
 	if err != nil {
@@ -242,7 +242,7 @@ func (h AuthenticationHttp) Logout(ctx microservice.IContext) error {
 // @Description Get Current Profile
 // @Tags		Authentication
 // @Accept 		json
-// @Success		200	{array}	models.UserProfileReponse
+// @Success		200	{array}	shopmodel.UserProfileReponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /profile [get]
@@ -271,7 +271,7 @@ func (h AuthenticationHttp) ListShop(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	shopSelectReq := &models.ShopSelectRequest{}
+	shopSelectReq := &shopmodel.ShopSelectRequest{}
 	err := json.Unmarshal([]byte(input), &shopSelectReq)
 
 	if err != nil {
@@ -302,7 +302,7 @@ func (h AuthenticationHttp) ListShop(ctx microservice.IContext) error {
 // Access Shop godoc
 // @Description Access to Shop
 // @Tags		Authentication
-// @Param		User  body      models.ShopSelectRequest  true  "Shop"
+// @Param		User  body      shopmodel.ShopSelectRequest  true  "Shop"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.ApiResponse
@@ -314,7 +314,7 @@ func (h AuthenticationHttp) SelectShop(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	shopSelectReq := &models.ShopSelectRequest{}
+	shopSelectReq := &shopmodel.ShopSelectRequest{}
 	err := json.Unmarshal([]byte(input), &shopSelectReq)
 
 	if err != nil {
@@ -346,7 +346,7 @@ func (h AuthenticationHttp) SelectShop(ctx microservice.IContext) error {
 // @Description List Merchant In My Account
 // @Tags		Authentication
 // @Accept 		json
-// @Success		200	{array}	models.ShopUserInfo
+// @Success		200	{array}	shopmodel.ShopUserInfo
 // @Failure		401 {object}	common.ApiResponse
 // @Security     AccessToken
 // @Router /list-shop [get]
