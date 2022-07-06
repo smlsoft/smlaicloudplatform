@@ -22,7 +22,7 @@ type JournalBody struct {
 	AccountDescription string    `json:"accountdescription" bson:"accountdescription" gorm:"column:accountdescription"`
 	BookCode           string    `json:"bookcode" bson:"bookcode"`
 	Vats               []Vat     `json:"vats" bson:"vats"`
-	//Taxes              []Tax     `json:"taxes" bson:"taxes"`
+	Taxes              []Tax     `json:"taxes" bson:"taxes"`
 }
 
 type Journal struct {
