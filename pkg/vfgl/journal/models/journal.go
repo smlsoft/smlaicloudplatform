@@ -88,32 +88,37 @@ func (JournalDeleteActivity) CollectionName() string {
 	return journalCollectionName
 }
 
+type TaxVatCustomer struct {
+	CustTaxID    string `json:"custtaxid" bson:"custtaxid"`
+	CustName     string `json:"custname" bson:"custname"`
+	CustType     int8   `json:"custtype" bson:"custtype"`
+	Organization int8   `json:"organization" bson:"organization"`
+	BranchCode   string `json:"branchcode" bson:"branchcode"`
+	Address      string `json:"address" bson:"address"`
+}
+
 type Vat struct {
-	VatDocNo     string    `json:"vatdocno" bson:"vatdocno"`
-	VatDate      time.Time `json:"vatdate" bson:"vatdate"`
-	VatType      int8      `json:"vattype" bson:"vattype"`
-	VatMode      int8      `json:"vatmode" bson:"vatmode"`
-	VatPeriod    int8      `json:"vatperiod" bson:"vatperiod"`
-	VatYear      int16     `json:"vatyear" bson:"vatyear" `
-	VatBase      float64   `json:"vatbase" bson:"vatbase"`
-	VatRate      float64   `json:"vatrate" bson:"vatrate"`
-	VatAmount    float64   `json:"vatamount" bson:"vatamount"`
-	ExceptVat    float64   `json:"exceptvat" bson:"exceptvat"`
-	VatSubmit    bool      `json:"vatsubmit" bson:"vatsubmit"`
-	CustTaxID    string    `json:"custtaxid" bson:"custtaxid"`
-	Organization int8      `json:"organization" bson:"organization"`
-	BranchCode   string    `json:"branchcode" bson:"branchcode"`
-	Remark       string    `json:"remark" bson:"remark"`
+	VatDocNo       string    `json:"vatdocno" bson:"vatdocno"`
+	VatDate        time.Time `json:"vatdate" bson:"vatdate"`
+	VatType        int8      `json:"vattype" bson:"vattype"`
+	VatMode        int8      `json:"vatmode" bson:"vatmode"`
+	VatPeriod      int8      `json:"vatperiod" bson:"vatperiod"`
+	VatYear        int16     `json:"vatyear" bson:"vatyear" `
+	VatBase        float64   `json:"vatbase" bson:"vatbase"`
+	VatRate        float64   `json:"vatrate" bson:"vatrate"`
+	VatAmount      float64   `json:"vatamount" bson:"vatamount"`
+	ExceptVat      float64   `json:"exceptvat" bson:"exceptvat"`
+	VatSubmit      bool      `json:"vatsubmit" bson:"vatsubmit"`
+	Remark         string    `json:"remark" bson:"remark"`
+	TaxVatCustomer `bson:"inline"`
 }
 
 type Tax struct {
-	TaxDocNo  string       `json:"taxdocno" bson:"taxdocno"`
-	TaxDate   time.Time    `json:"taxdate" gorm:"column:taxdate"`
-	CustName  string       `json:"custname" bson:"custname"`
-	CustType  string       `json:"custtype" bson:"custtype"`
-	CustTaxID string       `json:"custtaxid" bson:"custtaxid"`
-	TaxType   int8         `json:"taxtype" bson:"taxtype"`
-	Details   *[]TaxDetail `json:"details" bson:"details"`
+	TaxDocNo       string    `json:"taxdocno" bson:"taxdocno"`
+	TaxDate        time.Time `json:"taxdate" gorm:"column:taxdate"`
+	TaxType        int8      `json:"taxtype" bson:"taxtype"`
+	TaxVatCustomer `bson:"inline"`
+	Details        *[]TaxDetail `json:"details" bson:"details"`
 }
 
 type TaxDetail struct {
