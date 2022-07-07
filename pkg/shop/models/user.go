@@ -64,6 +64,11 @@ type UserPasswordRequest struct {
 	NewPassword     string `json:"newpassword" bson:"newpassword" validate:"required,gte=3"`
 }
 
+type UserProfileReponse struct {
+	Success bool        `json:"success"`
+	Data    UserProfile `json:"data"`
+}
+
 type ShopSelectRequest struct {
 	ShopID string `json:"shopid" validate:"required"`
 }

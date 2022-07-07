@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/models"
+	common "smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/vfgl/journalreport/models"
 	"time"
 )
 
@@ -41,9 +42,9 @@ func (h JournalReportHttp) RouteSetup() {
 // @Param		startdate query string true "จากวันที่ (Date Format: YYYY-MM-DD)"
 // @Param		enddate query string true "ถึงวันที่ (Date Format: YYYY-MM-DD)"
 // @Accept		json
-// @Success		200 {object} vfgl.TrialBalanceSheetReportResponse
-// @Failure		400 {object} models.AuthResponseFailed
-// @Failure		401 {object} models.AuthResponseFailed
+// @Success		200 {object} models.TrialBalanceSheetReportResponse
+// @Failure		400 {object} common.AuthResponseFailed
+// @Failure		401 {object} common.AuthResponseFailed
 // @Security	AccessToken
 // @Router		/gl/report/trialbalancesheet [get]
 func (r JournalReportHttp) ProcessReportTrialBalanceSheet(ctx microservice.IContext) error {
@@ -84,9 +85,9 @@ func (r JournalReportHttp) ProcessReportTrialBalanceSheet(ctx microservice.ICont
 
 	ctx.Response(
 		http.StatusOK,
-		models.ApiResponse{
+		models.TrialBalanceSheetReportResponse{
 			Success: true,
-			Data:    reportData,
+			Data:    *reportData,
 		})
 	return nil
 }
@@ -98,9 +99,9 @@ func (r JournalReportHttp) ProcessReportTrialBalanceSheet(ctx microservice.ICont
 // @Param		accountgroup query string true "กลุ่มบัญชี"
 // @Param		enddate query string true "ณ วันที่ (Date Format: YYYY-MM-DD)"
 // @Accept		json
-// @Success		200 {object} vfgl.BalanceSheetReportResponse
-// @Failure		400 {object} models.AuthResponseFailed
-// @Failure		401 {object} models.AuthResponseFailed
+// @Success		200 {object} models.BalanceSheetReportResponse
+// @Failure		400 {object} common.AuthResponseFailed
+// @Failure		401 {object} common.AuthResponseFailed
 // @Security	AccessToken
 // @Router		/gl/report/balancesheet [get]
 func (r JournalReportHttp) ProcessBalanceSheetReport(ctx microservice.IContext) error {
@@ -133,7 +134,7 @@ func (r JournalReportHttp) ProcessBalanceSheetReport(ctx microservice.IContext) 
 
 	ctx.Response(
 		http.StatusOK,
-		models.ApiResponse{
+		common.ApiResponse{
 			Success: true,
 			Data:    reportData,
 		})
@@ -148,9 +149,9 @@ func (r JournalReportHttp) ProcessBalanceSheetReport(ctx microservice.IContext) 
 // @Param		startdate query string true "จากวันที่ (Date Format: YYYY-MM-DD)"
 // @Param		enddate query string true "ถึงวันที่ (Date Format: YYYY-MM-DD)"
 // @Accept		json
-// @Success		200 {object} vfgl.LostAndProfitSheetReportResponse
-// @Failure		400 {object} models.AuthResponseFailed
-// @Failure		401 {object} models.AuthResponseFailed
+// @Success		200 {object} models.LostAndProfitSheetReportResponse
+// @Failure		400 {object} common.AuthResponseFailed
+// @Failure		401 {object} common.AuthResponseFailed
 // @Security	AccessToken
 // @Router		/gl/report/profitandloss [get]
 func (r JournalReportHttp) ProcessProfitAndLossReport(ctx microservice.IContext) error {
@@ -190,7 +191,7 @@ func (r JournalReportHttp) ProcessProfitAndLossReport(ctx microservice.IContext)
 
 	ctx.Response(
 		http.StatusOK,
-		models.ApiResponse{
+		common.ApiResponse{
 			Success: true,
 			Data:    reportData,
 		})

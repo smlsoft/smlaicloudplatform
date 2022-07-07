@@ -2,6 +2,7 @@ package microservice
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"runtime"
@@ -64,28 +65,6 @@ type ICacher interface {
 
 	RPush(key string, value interface{}) error
 	LRange(key string) ([]string, error)
-}
-
-// ICacherConfig is cacher configuration interface
-type ICacherConfig interface {
-	Endpoint() string
-	Password() string
-	DB() int
-	ConnectionSettings() ICacherConnectionSettings
-}
-
-// ICacherConnectionSettings is connection settings for cacher
-type ICacherConnectionSettings interface {
-	PoolSize() int
-	MinIdleConns() int
-	MaxRetries() int
-	MinRetryBackoff() time.Duration
-	MaxRetryBackoff() time.Duration
-	IdleTimeout() time.Duration
-	IdleCheckFrequency() time.Duration
-	PoolTimeout() time.Duration
-	ReadTimeout() time.Duration
-	WriteTimeout() time.Duration
 }
 
 // DefaultCacherConnectionSettings contains default connection settings, this intend to use as embed struct
@@ -159,8 +138,10 @@ func NewCacher(config ICacherConfig) *Cacher {
 func (cache *Cacher) newClient() *redis.Client {
 	cfg := cache.config
 	settings := cfg.ConnectionSettings()
-	return redis.NewClient(&redis.Options{
+
+	option := &redis.Options{
 		Addr:               cfg.Endpoint(),
+		Username:           cfg.UserName(),
 		Password:           cfg.Password(),
 		DB:                 cfg.DB(),
 		PoolSize:           settings.PoolSize(),
@@ -173,7 +154,15 @@ func (cache *Cacher) newClient() *redis.Client {
 		PoolTimeout:        settings.PoolTimeout(),
 		ReadTimeout:        settings.ReadTimeout(),
 		WriteTimeout:       settings.WriteTimeout(),
-	})
+	}
+
+	if cfg.TLS() {
+		option.TLSConfig = &tls.Config{
+			MinVersion: tls.VersionTLS12,
+		}
+	}
+
+	return redis.NewClient(option)
 }
 
 func (cache *Cacher) getClient() (*redis.Client, error) {
