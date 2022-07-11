@@ -117,6 +117,7 @@ type Tax struct {
 	TaxDocNo       string    `json:"taxdocno" bson:"taxdocno"`
 	TaxDate        time.Time `json:"taxdate" gorm:"column:taxdate"`
 	TaxType        int8      `json:"taxtype" bson:"taxtype"`
+	TaxAmount      float64   `json:"taxamount" bson:"taxamount"`
 	TaxVatCustomer `bson:"inline"`
 	Details        *[]TaxDetail `json:"details" bson:"details"`
 }
