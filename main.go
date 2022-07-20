@@ -93,6 +93,7 @@ func main() {
 			"/productimage",
 
 			"/healthz",
+			"/ws",
 		}
 
 		exceptShopPath := []string{

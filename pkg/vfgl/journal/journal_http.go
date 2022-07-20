@@ -2,6 +2,7 @@ package journal
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	common "smlcloudplatform/pkg/models"
@@ -9,6 +10,7 @@ import (
 	"smlcloudplatform/pkg/vfgl/journal/models"
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
 	"smlcloudplatform/pkg/vfgl/journal/services"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -53,6 +55,7 @@ func (h JournalHttp) RouteSetup() {
 	h.ms.DELETE("/gl/journal/:id", h.DeleteJournal)
 	h.ms.GET("/gl/journal/ws/image", h.WebsocketImage)
 	h.ms.GET("/gl/journal/ws/form", h.WebsocketForm)
+	h.ms.GET("/ws", h.WebsocketDev)
 	h.ms.GET("/pubx", h.Pub)
 	h.ms.GET("/checkx", h.Check)
 }
@@ -480,6 +483,37 @@ func (h JournalHttp) WebsocketForm(ctx microservice.IContext) error {
 				return err
 			}
 		}
+	}
+
+}
+
+func (h JournalHttp) WebsocketDev(ctx microservice.IContext) error {
+
+	socketID := utils.NewID()
+
+	ws, err := h.ms.Websocket(socketID, ctx.ResponseWriter(), ctx.Request())
+
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		h.ms.WebsocketClose(socketID)
+	}()
+
+	for {
+		// Write
+		err := ws.WriteMessage(websocket.TextMessage, []byte("Hello :: "+time.Now().String()))
+		if err != nil {
+			h.ms.Logger.Error(err.Error())
+		}
+
+		// Read
+		_, msg, err := ws.ReadMessage()
+		if err != nil {
+			h.ms.Logger.Error(err.Error())
+		}
+		fmt.Printf("%s\n", msg)
 	}
 
 }
