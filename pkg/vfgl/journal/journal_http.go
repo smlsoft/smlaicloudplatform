@@ -9,28 +9,36 @@ import (
 	"smlcloudplatform/pkg/vfgl/journal/models"
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
 	"smlcloudplatform/pkg/vfgl/journal/services"
+
+	"github.com/gorilla/websocket"
 )
 
 type IJournalHttp interface{}
 
 type JournalHttp struct {
-	ms  *microservice.Microservice
-	cfg microservice.IConfig
-	svc services.IJournalHttpService
+	ms           *microservice.Microservice
+	cfg          microservice.IConfig
+	svc          services.IJournalHttpService
+	svcWebsocket services.IJournalWebsocketService
 }
 
 func NewJournalHttp(ms *microservice.Microservice, cfg microservice.IConfig) JournalHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := repositories.NewJournalRepository(pst)
 	mqRepo := repositories.NewJournalMqRepository(prod)
 	svc := services.NewJournalHttpService(repo, mqRepo)
 
+	cacheRepo := repositories.NewJournalCacheRepository(cache)
+	svcWebsocket := services.NewJournalWebsocketService(cacheRepo)
+
 	return JournalHttp{
-		ms:  ms,
-		cfg: cfg,
-		svc: svc,
+		ms:           ms,
+		cfg:          cfg,
+		svc:          svc,
+		svcWebsocket: svcWebsocket,
 	}
 }
 
@@ -43,6 +51,10 @@ func (h JournalHttp) RouteSetup() {
 	h.ms.GET("/gl/journal/:id", h.InfoJournal)
 	h.ms.PUT("/gl/journal/:id", h.UpdateJournal)
 	h.ms.DELETE("/gl/journal/:id", h.DeleteJournal)
+	h.ms.GET("/gl/journal/ws/image", h.WebsocketImage)
+	h.ms.GET("/gl/journal/ws/form", h.WebsocketForm)
+	h.ms.GET("/pubx", h.Pub)
+	h.ms.GET("/checkx", h.Check)
 }
 
 // Create Journal godoc
@@ -262,6 +274,219 @@ func (h JournalHttp) SaveBulk(ctx microservice.IContext) error {
 			BulkImport: bulkResponse,
 		},
 	)
+
+	return nil
+}
+
+func (h JournalHttp) Pub(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	docID := userInfo.Username
+	q := ctx.QueryParam("q")
+
+	if docID == "" {
+		ctx.Response(http.StatusBadRequest, "doc parameter missing")
+		return nil
+	}
+
+	journalRef := models.JournalRef{
+		DocRef: q,
+	}
+
+	// journalRef := "send ok " + q
+
+	tempx, _ := json.Marshal(journalRef)
+
+	h.svcWebsocket.Pub(shopID, docID, "image", tempx)
+
+	ctx.Response(http.StatusOK, docID)
+
+	return nil
+}
+
+func (h JournalHttp) WebsocketImage(ctx microservice.IContext) error {
+
+	screenName := "image"
+	sendScreenName := "form"
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	processID := userInfo.Username
+
+	if processID == "" {
+		ctx.Response(http.StatusBadRequest, "processID parameter missing")
+		return nil
+	}
+
+	socketID := utils.NewGUID()
+
+	ws, err := h.ms.Websocket(socketID, ctx.ResponseWriter(), ctx.Request())
+
+	if err != nil {
+		return err
+	}
+
+	defer ws.Close()
+
+	err = h.svcWebsocket.SetWebsocket(shopID, processID, screenName, socketID)
+
+	if err != nil {
+		return err
+	}
+
+	cacheMsg, subID, err := h.svcWebsocket.Sub(shopID, processID, screenName)
+
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		h.ms.WebsocketClose(socketID)
+		h.svcWebsocket.UnSub(subID)
+		h.svcWebsocket.DelWebsocket(shopID, processID, screenName, socketID)
+
+	}()
+
+	// Receive
+	go func(ws *websocket.Conn) {
+		for {
+			journalRef := models.JournalRef{}
+			err := ws.ReadJSON(&journalRef)
+
+			if err != nil {
+				return
+			}
+
+			tempRef, _ := json.Marshal(journalRef)
+			h.svcWebsocket.Pub(shopID, processID, sendScreenName, tempRef)
+
+		}
+	}(ws)
+
+	// Send
+	lastMessage, err := h.svcWebsocket.GetLastMessage(shopID, processID, screenName)
+	if err != nil {
+		h.ms.Logger.Error(err.Error())
+	}
+
+	if lastMessage != "" {
+		err = ws.WriteMessage(websocket.TextMessage, []byte(lastMessage))
+
+		if err != nil {
+			h.ms.Logger.Error(err.Error())
+		}
+	}
+
+	for {
+		temp := <-cacheMsg
+		if temp != nil {
+			err := h.svcWebsocket.SaveLastMessage(shopID, processID, screenName, temp.Payload)
+			if err != nil {
+				h.ms.Logger.Error(err.Error())
+			}
+
+			err = ws.WriteMessage(websocket.TextMessage, []byte(temp.Payload))
+			if err != nil {
+				return err
+			}
+
+		}
+	}
+
+}
+
+func (h JournalHttp) WebsocketForm(ctx microservice.IContext) error {
+
+	screenName := "form"
+	sendScreenName := "image"
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	processID := userInfo.Username
+
+	if processID == "" {
+		ctx.Response(http.StatusBadRequest, "processID parameter missing")
+		return nil
+	}
+
+	socketID := utils.NewID()
+
+	ws, err := h.ms.Websocket(socketID, ctx.ResponseWriter(), ctx.Request())
+
+	if err != nil {
+		return err
+	}
+
+	defer ws.Close()
+
+	err = h.svcWebsocket.SetWebsocket(shopID, processID, screenName, socketID)
+
+	if err != nil {
+		return err
+	}
+
+	cacheMsg, subID, err := h.svcWebsocket.Sub(shopID, processID, screenName)
+
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		h.ms.WebsocketClose(socketID)
+		h.svcWebsocket.UnSub(subID)
+		h.svcWebsocket.DelWebsocket(shopID, processID, screenName, socketID)
+	}()
+
+	// Receive
+	go func(ws *websocket.Conn) {
+		for {
+			journalRef := models.JournalRef{}
+			err := ws.ReadJSON(&journalRef)
+
+			if err != nil {
+				return
+			}
+
+			tempRef, _ := json.Marshal(journalRef)
+			h.svcWebsocket.Pub(shopID, processID, sendScreenName, tempRef)
+		}
+	}(ws)
+
+	// Send
+	lastMessage, err := h.svcWebsocket.GetLastMessage(shopID, processID, screenName)
+	if err != nil {
+		h.ms.Logger.Error(err.Error())
+	}
+
+	if lastMessage != "" {
+		err = ws.WriteMessage(websocket.TextMessage, []byte(lastMessage))
+
+		if err != nil {
+			h.ms.Logger.Error(err.Error())
+		}
+	}
+
+	for {
+		temp := <-cacheMsg
+		if temp != nil {
+			err := h.svcWebsocket.SaveLastMessage(shopID, processID, screenName, temp.Payload)
+			if err != nil {
+				h.ms.Logger.Error(err.Error())
+			}
+
+			err = ws.WriteMessage(websocket.TextMessage, []byte(temp.Payload))
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+}
+
+func (h JournalHttp) Check(ctx microservice.IContext) error {
+
+	ctx.Response(http.StatusOK, h.ms.WebsocketCount())
 
 	return nil
 }

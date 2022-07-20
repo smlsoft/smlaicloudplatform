@@ -2,7 +2,7 @@ package run_test
 
 import (
 	"context"
-	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/shop/models"
 	"testing"
 
 	"github.com/tj/assert"

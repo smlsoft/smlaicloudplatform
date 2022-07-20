@@ -32,6 +32,7 @@ type ICacher interface {
 	HDecr(key string, field string) (int, error)
 	HMSet(key string, fieldValues map[string]interface{}) error
 	HGet(key string, field string) (string, error)
+	HGetAll(key string) (map[string]string, error)
 	HMGet(key string, fields []string) ([]interface{}, error)
 	HDel(key string, fields ...string) error
 	HExists(key string, field string) (bool, error)
@@ -834,6 +835,24 @@ func (cache *Cacher) HMGet(key string, fields []string) ([]interface{}, error) {
 	}
 
 	vals, err := c.HMGet(context.Background(), key, fields...).Result()
+	if err == redis.Nil {
+		// Key does not exists
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	return vals, nil
+}
+
+func (cache *Cacher) HGetAll(key string) (map[string]string, error) {
+
+	c, err := cache.getClient()
+	if err != nil {
+		return nil, err
+	}
+
+	vals, err := c.HGetAll(context.Background(), key).Result()
 	if err == redis.Nil {
 		// Key does not exists
 		return nil, nil

@@ -2,6 +2,7 @@ package microservice
 
 import (
 	"mime/multipart"
+	"net/http"
 	"smlcloudplatform/internal/microservice/models"
 
 	"github.com/labstack/echo/v4"
@@ -15,10 +16,11 @@ type IContext interface {
 	QueryParam(name string) string
 	ReadInput() string
 	Response(responseCode int, responseData interface{})
-	ResponseS(responseCode int, responseData string)
 	ResponseError(responseCode int, errorMessage string)
 	Validate(model interface{}) error
 	FormFile(field string) (*multipart.FileHeader, error)
+	ResponseWriter() http.ResponseWriter
+	Request() *http.Request
 
 	Persister(cfg IPersisterConfig) IPersister
 	Cacher(cacherConfig ICacherConfig) ICacher

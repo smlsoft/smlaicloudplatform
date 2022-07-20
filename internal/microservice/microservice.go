@@ -2,6 +2,7 @@ package microservice
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
 	"runtime"
@@ -18,6 +19,7 @@ import (
 	"github.com/apex/log"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/go-playground/validator/v10"
+	"github.com/gorilla/websocket"
 	"github.com/labstack/echo-contrib/prometheus"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -55,6 +57,7 @@ type Microservice struct {
 	persistersOpenSearchMutex sync.Mutex
 	prods                     map[string]IProducer
 	prodMutex                 sync.Mutex
+	websocketPool             *WebsocketPool
 	pathPrefix                string
 	config                    IConfig
 	Logger                    *log.Entry
@@ -78,6 +81,17 @@ func NewMicroservice(config IConfig) (*Microservice, error) {
 		"name": config.ApplicationName(),
 	})
 
+	websocketPool := WebsocketPool{
+		Handler: websocket.Upgrader{
+			ReadBufferSize:  1024,
+			WriteBufferSize: 1024,
+			CheckOrigin: func(r *http.Request) bool {
+				return true
+			},
+		},
+		Connections: map[string]*websocket.Conn{},
+	}
+
 	m := &Microservice{
 		echo:            e,
 		cachers:         map[string]ICacher{},
@@ -89,6 +103,7 @@ func NewMicroservice(config IConfig) (*Microservice, error) {
 		config:          config,
 		Logger:          logctx,
 		Mode:            os.Getenv("MODE"),
+		websocketPool:   &websocketPool,
 	}
 
 	m.Logger.Info("Initial Microservice.")
@@ -334,6 +349,35 @@ func (ms *Microservice) Producer(cfg IMQConfig) IProducer {
 		ms.prodMutex.Unlock()
 	}
 	return prod
+}
+
+func (ms *Microservice) Websocket(id string, response http.ResponseWriter, request *http.Request) (*websocket.Conn, error) {
+	ws, err := ms.websocketPool.Handler.Upgrade(response, request, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	ms.websocketPool.Lock()
+	ms.websocketPool.Connections[id] = ws
+	ms.websocketPool.Unlock()
+
+	return ws, nil
+}
+
+func (ms *Microservice) WebsocketClose(id string) {
+	ms.websocketPool.Lock()
+	ms.websocketPool.Connections[id].Close()
+	delete(ms.websocketPool.Connections, id)
+	ms.websocketPool.Unlock()
+}
+
+func (ms *Microservice) WebsocketCount() int {
+	ms.websocketPool.Lock()
+
+	defer ms.websocketPool.Unlock()
+
+	return len(ms.websocketPool.Connections)
 }
 
 func (ms *Microservice) HttpMiddleware(middleware ...echo.MiddlewareFunc) {

@@ -19,6 +19,14 @@ func (cfg *CacherConfig) Endpoint() string {
 	return os.Getenv("REDIS_CACHE_URI")
 }
 
+func (cfg *CacherConfig) TLS() bool {
+	return false
+}
+
+func (cfg *CacherConfig) UserName() string {
+	return ""
+}
+
 func (cfg *CacherConfig) Password() string {
 	return ""
 }

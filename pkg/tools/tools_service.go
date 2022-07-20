@@ -29,7 +29,7 @@ func (svc *ToolsService) CheckMongodbConnect(ctx microservice.IContext) error {
 
 	repStr = repStr + " \n " + mongoCfg.DB()
 
-	ctx.ResponseS(200, repStr)
+	ctx.Response(200, repStr)
 
 	return nil
 }

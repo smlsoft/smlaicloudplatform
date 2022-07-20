@@ -77,6 +77,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/gobeam/mongo-go-pagination v0.0.8
 	github.com/golang-jwt/jwt/v4 v4.4.2
+	github.com/gorilla/websocket v1.5.0
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.12.1 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
@@ -95,6 +96,7 @@ require (
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/rs/xid v1.4.0
+	github.com/segmentio/fasthash v1.0.3
 	github.com/segmentio/ksuid v1.0.4
 	github.com/swaggo/files v0.0.0-20220610200504-28940afbdbfe
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
