@@ -58,7 +58,6 @@ func main() {
 		"/employee/login",
 		"/healthz",
 		"/metrics",
-		"/ws",
 	}
 
 	ms.HttpPreRemoveTrailingSlash()

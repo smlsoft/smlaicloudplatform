@@ -106,7 +106,10 @@ func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...st
 
 			tokenStr, err := authService.GetTokenFromContext(c)
 
-			if err != nil {
+			// socket
+			if c.IsWebSocket() {
+				tokenStr = c.QueryParam("apikey")
+			} else if err != nil {
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
 			}
 
