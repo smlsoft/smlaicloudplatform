@@ -105,11 +105,7 @@ func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...st
 			}
 
 			tokenStr, err := authService.GetTokenFromContext(c)
-
-			// socket
-			if c.IsWebSocket() {
-				tokenStr = c.QueryParam("apikey")
-			} else if err != nil {
+			if err != nil {
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
 			}
 
@@ -193,17 +189,24 @@ func (authService *AuthService) GetPrefixCacheKey() string {
 }
 
 func (authService *AuthService) GetTokenFromContext(c echo.Context) (string, error) {
-	tokenString := c.Request().Header.Get("Authorization")
-	if tokenString == "" {
-		return "", fmt.Errorf("missing authorization header")
-	}
 
-	parts := strings.SplitN(tokenString, " ", 2)
-	if !(len(parts) == 2 && parts[0] == authService.prefixAuthorization) {
-		return "", fmt.Errorf("missing authorization bearer")
-	}
+	// socket
+	if c.IsWebSocket() {
+		return c.QueryParam("apikey"), nil
+	} else {
 
-	return parts[1], nil
+		tokenString := c.Request().Header.Get("Authorization")
+		if tokenString == "" {
+			return "", fmt.Errorf("missing authorization header")
+		}
+
+		parts := strings.SplitN(tokenString, " ", 2)
+		if !(len(parts) == 2 && parts[0] == authService.prefixAuthorization) {
+			return "", fmt.Errorf("missing authorization bearer")
+		}
+
+		return parts[1], nil
+	}
 }
 
 func (authService *AuthService) GetTokenFromAuthorizationHeader(tokenAuthorization string) (string, error) {
