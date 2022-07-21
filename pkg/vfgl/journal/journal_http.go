@@ -58,8 +58,8 @@ func (h JournalHttp) RouteSetup() {
 
 	h.ms.GET("/gl/journal/ws/docref", h.WebsocketDocRefPool)
 	h.ms.GET("/gl/journal/img/select-all", h.GetAllDocRefPool)
-	h.ms.GET("/gl/journal/img/select", h.SelectDocRefPool)
-	h.ms.GET("/gl/journal/img/unselect", h.UnSelectDocRefPool)
+	h.ms.POST("/gl/journal/img/select", h.SelectDocRefPool)
+	h.ms.POST("/gl/journal/img/unselect", h.UnSelectDocRefPool)
 
 	h.ms.GET("/checkx", h.Check)
 }
@@ -540,9 +540,17 @@ func (h JournalHttp) SelectDocRefPool(ctx microservice.IContext) error {
 	shopID := userInfo.ShopID
 	username := userInfo.Username
 
-	docRef := ctx.QueryParam("docref")
+	input := ctx.ReadInput()
 
-	result, err := h.svcWebsocket.DocRefSelect(shopID, username, docRef)
+	docReq := &models.JournalRef{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	result, err := h.svcWebsocket.DocRefSelect(shopID, username, docReq.DocRef)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -561,9 +569,17 @@ func (h JournalHttp) UnSelectDocRefPool(ctx microservice.IContext) error {
 	shopID := userInfo.ShopID
 	username := userInfo.Username
 
-	docRef := ctx.QueryParam("docref")
+	input := ctx.ReadInput()
 
-	result, err := h.svcWebsocket.DocRefUnSelect(shopID, username, docRef)
+	docReq := &models.JournalRef{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	result, err := h.svcWebsocket.DocRefUnSelect(shopID, username, docReq.DocRef)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
