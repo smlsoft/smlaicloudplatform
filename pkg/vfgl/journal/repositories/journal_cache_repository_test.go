@@ -25,12 +25,13 @@ func TestMSet(t *testing.T) {
 		"ws:s1": "mdata1",
 		"ws:s2": "mdata2",
 	}
-	repoCacheMock.HSet("sh1", "p1", prefixName, data)
+	cacheKey := prefixName + "-sh1p1"
+	repoCacheMock.HSet(cacheKey, data)
 }
 
 func TestMGet(t *testing.T) {
-
-	result, err := repoCacheMock.HGet("sh1", "p1", prefixName, "m1")
+	cacheKey := prefixName + "-sh1p1"
+	result, err := repoCacheMock.HGet(cacheKey, "m1")
 
 	if err != nil {
 		t.Error(err)
@@ -41,8 +42,8 @@ func TestMGet(t *testing.T) {
 }
 
 func TestHGetAll(t *testing.T) {
-
-	result, err := repoCacheMock.HFields("sh1", "p1", prefixName, "ws:*")
+	cacheKey := prefixName + "-sh1p1"
+	result, err := repoCacheMock.HFields(cacheKey, "ws:*")
 
 	if err != nil {
 		t.Error(err)

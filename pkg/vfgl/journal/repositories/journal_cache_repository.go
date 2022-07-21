@@ -1,22 +1,24 @@
 package repositories
 
 import (
-	"fmt"
 	"smlcloudplatform/internal/microservice"
 
 	"github.com/go-redis/redis/v8"
 )
 
 type IJournalCacheRepository interface {
-	Pub(shopID string, processID string, prefix string, screen string, message interface{}) error
-	Sub(shopID string, processID string, prefix string, screen string) (<-chan *redis.Message, string, error)
+	Pub(channel string, message interface{}) error
+	Sub(channel string) (<-chan *redis.Message, string, error)
 	Unsub(subID string) error
 
-	HSet(shopID string, processID string, prefix string, data map[string]interface{}) error
-	HGet(shopID string, processID string, prefix string, field string) (string, error)
-	HFields(shopID string, processID string, prefix string, pattern string) ([]string, error)
-	HDel(shopID string, processID string, prefix string, fields ...string) error
-	Del(shopID string, processID string, prefix string) error
+	HSet(key string, data map[string]interface{}) error
+	HGet(key string, field string) (string, error)
+	HGetAll(key string) (map[string]string, error)
+	HFields(key string, pattern string) ([]string, error)
+	HDel(key string, fields ...string) error
+	HExists(key string, field string) (bool, error)
+	Exists(key string) (bool, error)
+	Del(key ...string) error
 }
 
 type JournalCacheRepository struct {
@@ -27,52 +29,47 @@ func NewJournalCacheRepository(cache microservice.ICacher) *JournalCacheReposito
 	return &JournalCacheRepository{cache: cache}
 }
 
-func (repo JournalCacheRepository) Pub(shopID string, processID string, prefix string, screen string, message interface{}) error {
-	channelName := repo.getChannelName(shopID, processID, prefix, screen)
-	return repo.cache.Pub(channelName, message)
+func (repo JournalCacheRepository) Pub(channel string, message interface{}) error {
+	return repo.cache.Pub(channel, message)
 }
 
-func (repo JournalCacheRepository) Sub(shopID string, processID string, prefix string, screen string) (<-chan *redis.Message, string, error) {
-	channelName := repo.getChannelName(shopID, processID, prefix, screen)
-	return repo.cache.Sub(channelName)
+func (repo JournalCacheRepository) Sub(channel string) (<-chan *redis.Message, string, error) {
+	return repo.cache.Sub(channel)
 }
 
 func (repo JournalCacheRepository) Unsub(subID string) error {
 	return repo.cache.Unsub(subID)
 }
 
-func (repo JournalCacheRepository) HSet(shopID string, processID string, prefix string, data map[string]interface{}) error {
-	cacheKeyName := repo.getTagID(shopID, processID, prefix)
-	return repo.cache.HMSet(cacheKeyName, data)
+func (repo JournalCacheRepository) HSet(key string, data map[string]interface{}) error {
+
+	return repo.cache.HMSet(key, data)
 }
 
-func (repo JournalCacheRepository) HGet(shopID string, processID string, prefix string, field string) (string, error) {
-	cacheKeyName := repo.getTagID(shopID, processID, prefix)
-	return repo.cache.HGet(cacheKeyName, field)
+func (repo JournalCacheRepository) HGet(key string, field string) (string, error) {
+	return repo.cache.HGet(key, field)
 }
 
-func (repo JournalCacheRepository) HFields(shopID string, processID string, prefix string, pattern string) ([]string, error) {
-	cacheKeyName := repo.getTagID(shopID, processID, prefix)
-	return repo.cache.HFields(cacheKeyName, pattern)
+func (repo JournalCacheRepository) HGetAll(key string) (map[string]string, error) {
+	return repo.cache.HGetAll(key)
 }
 
-func (repo JournalCacheRepository) HDel(shopID string, processID string, prefix string, fields ...string) error {
-	cacheKeyName := repo.getTagID(shopID, processID, prefix)
-	return repo.cache.HDel(cacheKeyName, fields...)
+func (repo JournalCacheRepository) HFields(key string, pattern string) ([]string, error) {
+	return repo.cache.HFields(key, pattern)
 }
 
-func (repo JournalCacheRepository) Del(shopID string, processID string, prefix string) error {
-	cacheKeyName := repo.getTagID(shopID, processID, prefix)
-	return repo.cache.Del(cacheKeyName)
+func (repo JournalCacheRepository) HExists(key string, field string) (bool, error) {
+	return repo.cache.HExists(key, field)
 }
 
-func (repo JournalCacheRepository) getChannelName(shopID string, processID string, prefix string, screen string) string {
-	tempID := repo.getTagID(shopID, processID, prefix)
-	return fmt.Sprintf("%s:%s", tempID, screen)
+func (repo JournalCacheRepository) Exists(key string) (bool, error) {
+	return repo.cache.Exists(key)
 }
 
-func (repo JournalCacheRepository) getTagID(shopID string, processID string, prefix string) string {
-	// tempID := utils.FastHash(fmt.Sprintf("%s%s", shopID, processID))
-	tempID := fmt.Sprintf("%s-%s%s", prefix, shopID, processID)
-	return tempID
+func (repo JournalCacheRepository) HDel(key string, fields ...string) error {
+	return repo.cache.HDel(key, fields...)
+}
+
+func (repo JournalCacheRepository) Del(key ...string) error {
+	return repo.cache.Del(key...)
 }

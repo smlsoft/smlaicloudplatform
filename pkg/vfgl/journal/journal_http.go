@@ -10,7 +10,6 @@ import (
 	"smlcloudplatform/pkg/vfgl/journal/models"
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
 	"smlcloudplatform/pkg/vfgl/journal/services"
-	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -53,10 +52,15 @@ func (h JournalHttp) RouteSetup() {
 	h.ms.GET("/gl/journal/:id", h.InfoJournal)
 	h.ms.PUT("/gl/journal/:id", h.UpdateJournal)
 	h.ms.DELETE("/gl/journal/:id", h.DeleteJournal)
+
 	h.ms.GET("/gl/journal/ws/image", h.WebsocketImage)
 	h.ms.GET("/gl/journal/ws/form", h.WebsocketForm)
-	h.ms.GET("/ws", h.WebsocketDev)
-	h.ms.GET("/pubx", h.Pub)
+
+	h.ms.GET("/gl/journal/ws/docref", h.WebsocketDocRefPool)
+	h.ms.GET("/gl/journal/img/select-all", h.GetAllDocRefPool)
+	h.ms.GET("/gl/journal/img/select", h.SelectDocRefPool)
+	h.ms.GET("/gl/journal/img/unselect", h.UnSelectDocRefPool)
+
 	h.ms.GET("/checkx", h.Check)
 }
 
@@ -281,33 +285,6 @@ func (h JournalHttp) SaveBulk(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h JournalHttp) Pub(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-
-	docID := userInfo.Username
-	q := ctx.QueryParam("q")
-
-	if docID == "" {
-		ctx.Response(http.StatusBadRequest, "doc parameter missing")
-		return nil
-	}
-
-	journalRef := models.JournalRef{
-		DocRef: q,
-	}
-
-	// journalRef := "send ok " + q
-
-	tempx, _ := json.Marshal(journalRef)
-
-	h.svcWebsocket.Pub(shopID, docID, "image", tempx)
-
-	ctx.Response(http.StatusOK, docID)
-
-	return nil
-}
-
 func (h JournalHttp) WebsocketImage(ctx microservice.IContext) error {
 
 	screenName := "image"
@@ -330,30 +307,29 @@ func (h JournalHttp) WebsocketImage(ctx microservice.IContext) error {
 		return err
 	}
 
-	defer ws.Close()
-
 	err = h.svcWebsocket.SetWebsocket(shopID, processID, screenName, socketID)
 
 	if err != nil {
 		return err
 	}
 
-	cacheMsg, subID, err := h.svcWebsocket.Sub(shopID, processID, screenName)
+	cacheMsg, subID, err := h.svcWebsocket.SubDoc(shopID, processID, screenName)
 
 	if err != nil {
 		return err
 	}
 
-	defer func() {
-		h.ms.WebsocketClose(socketID)
-		h.svcWebsocket.UnSub(subID)
-		h.svcWebsocket.DelWebsocket(shopID, processID, screenName, socketID)
-
-	}()
-
 	// Receive
 	go func(ws *websocket.Conn) {
+		defer func() {
+			h.ms.WebsocketClose(socketID)
+			h.svcWebsocket.UnSub(subID)
+			h.svcWebsocket.DelWebsocket(shopID, processID, screenName, socketID)
+			h.ClearDocRef(shopID, processID)
+		}()
+
 		for {
+
 			journalRef := models.JournalRef{}
 			err := ws.ReadJSON(&journalRef)
 
@@ -362,32 +338,19 @@ func (h JournalHttp) WebsocketImage(ctx microservice.IContext) error {
 			}
 
 			tempRef, _ := json.Marshal(journalRef)
-			h.svcWebsocket.Pub(shopID, processID, sendScreenName, tempRef)
+			h.svcWebsocket.PubDoc(shopID, processID, sendScreenName, tempRef)
 
+			err = h.svcWebsocket.SaveLastMessage(shopID, processID, sendScreenName, string(tempRef))
+			if err != nil {
+				h.ms.Logger.Error(err.Error())
+			}
 		}
 	}(ws)
 
 	// Send
-	lastMessage, err := h.svcWebsocket.GetLastMessage(shopID, processID, screenName)
-	if err != nil {
-		h.ms.Logger.Error(err.Error())
-	}
-
-	if lastMessage != "" {
-		err = ws.WriteMessage(websocket.TextMessage, []byte(lastMessage))
-
-		if err != nil {
-			h.ms.Logger.Error(err.Error())
-		}
-	}
-
 	for {
 		temp := <-cacheMsg
 		if temp != nil {
-			err := h.svcWebsocket.SaveLastMessage(shopID, processID, screenName, temp.Payload)
-			if err != nil {
-				h.ms.Logger.Error(err.Error())
-			}
 
 			err = ws.WriteMessage(websocket.TextMessage, []byte(temp.Payload))
 			if err != nil {
@@ -421,39 +384,47 @@ func (h JournalHttp) WebsocketForm(ctx microservice.IContext) error {
 		return err
 	}
 
-	defer ws.Close()
-
 	err = h.svcWebsocket.SetWebsocket(shopID, processID, screenName, socketID)
 
 	if err != nil {
 		return err
 	}
 
-	cacheMsg, subID, err := h.svcWebsocket.Sub(shopID, processID, screenName)
+	cacheMsg, subID, err := h.svcWebsocket.SubDoc(shopID, processID, screenName)
 
 	if err != nil {
 		return err
 	}
 
-	defer func() {
-		h.ms.WebsocketClose(socketID)
-		h.svcWebsocket.UnSub(subID)
-		h.svcWebsocket.DelWebsocket(shopID, processID, screenName, socketID)
-	}()
-
 	// Receive
 	go func(ws *websocket.Conn) {
+		defer func() {
+			ws.Close()
+			h.ms.WebsocketClose(socketID)
+			h.svcWebsocket.UnSub(subID)
+			h.svcWebsocket.DelWebsocket(shopID, processID, screenName, socketID)
+			h.ClearDocRef(shopID, processID)
+		}()
+
 		for {
-			journalRef := models.JournalRef{}
-			err := ws.ReadJSON(&journalRef)
+			journalCommand := models.JournalCommand{}
+			err := ws.ReadJSON(&journalCommand)
 
 			if err != nil {
 				return
 			}
 
-			tempRef, _ := json.Marshal(journalRef)
-			h.svcWebsocket.Pub(shopID, processID, sendScreenName, tempRef)
+			tempRef, _ := json.Marshal(journalCommand)
+			h.svcWebsocket.PubDoc(shopID, processID, sendScreenName, tempRef)
+
+			switch journalCommand.Command {
+			case "save":
+				h.svcWebsocket.ClearLastMessage(shopID, processID)
+				//clear
+				h.ClearDocRef(shopID, processID)
+			}
 		}
+
 	}(ws)
 
 	// Send
@@ -473,10 +444,6 @@ func (h JournalHttp) WebsocketForm(ctx microservice.IContext) error {
 	for {
 		temp := <-cacheMsg
 		if temp != nil {
-			err := h.svcWebsocket.SaveLastMessage(shopID, processID, screenName, temp.Payload)
-			if err != nil {
-				h.ms.Logger.Error(err.Error())
-			}
 
 			err = ws.WriteMessage(websocket.TextMessage, []byte(temp.Payload))
 			if err != nil {
@@ -487,7 +454,17 @@ func (h JournalHttp) WebsocketForm(ctx microservice.IContext) error {
 
 }
 
-func (h JournalHttp) WebsocketDev(ctx microservice.IContext) error {
+func (h JournalHttp) WebsocketDocRefPool(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	username := userInfo.Username
+
+	if username == "" {
+		ctx.Response(http.StatusBadRequest, "username is missing")
+		return nil
+	}
 
 	socketID := utils.NewID()
 
@@ -497,25 +474,107 @@ func (h JournalHttp) WebsocketDev(ctx microservice.IContext) error {
 		return err
 	}
 
-	defer func() {
-		h.ms.WebsocketClose(socketID)
-	}()
+	return h.svcWebsocket.DocRefPool(shopID, username, ws)
 
-	for {
-		// Write
-		err := ws.WriteMessage(websocket.TextMessage, []byte("Hello :: "+time.Now().String()))
-		if err != nil {
-			h.ms.Logger.Error(err.Error())
-		}
+}
 
-		// Read
-		_, msg, err := ws.ReadMessage()
-		if err != nil {
-			h.ms.Logger.Error(err.Error())
-		}
-		fmt.Printf("%s\n", msg)
+func (h JournalHttp) ClearDocRef(shopID string, processID string) error {
+
+	isExists, err := h.svcWebsocket.ExistsWebsocket(shopID, processID)
+	if err != nil {
+		h.ms.Logger.Error(err.Error())
 	}
 
+	if isExists {
+		return nil
+	}
+
+	lastMessage, err := h.svcWebsocket.GetLastMessage(shopID, processID, "form")
+	if err != nil {
+		h.ms.Logger.Error(err.Error())
+	}
+
+	if lastMessage != "" {
+		journalRef := models.JournalRef{}
+		json.Unmarshal([]byte(lastMessage), &journalRef)
+
+		err = h.svcWebsocket.DelDocRefPool(shopID, journalRef.DocRef)
+		if err != nil {
+			h.ms.Logger.Error(err.Error())
+		}
+
+		fmt.Println("Clear docref :: " + journalRef.DocRef)
+	}
+
+	return nil
+}
+
+func (h JournalHttp) GetAllDocRefPool(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	result, err := h.svcWebsocket.GetAllDocRefPool(shopID)
+
+	docRefPool := []models.DocRefPool{}
+	for tempDocRef, tempUsername := range result {
+		docRefPool = append(docRefPool, models.DocRefPool{
+			DocRef:   tempDocRef,
+			Username: tempUsername,
+		})
+	}
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docRefPool,
+	})
+	return nil
+}
+
+func (h JournalHttp) SelectDocRefPool(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	username := userInfo.Username
+
+	docRef := ctx.QueryParam("docref")
+
+	result, err := h.svcWebsocket.DocRefSelect(shopID, username, docRef)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    result,
+	})
+	return nil
+}
+
+func (h JournalHttp) UnSelectDocRefPool(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	username := userInfo.Username
+
+	docRef := ctx.QueryParam("docref")
+
+	result, err := h.svcWebsocket.DocRefUnSelect(shopID, username, docRef)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    result,
+	})
+	return nil
 }
 
 func (h JournalHttp) Check(ctx microservice.IContext) error {
