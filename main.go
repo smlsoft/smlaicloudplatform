@@ -76,6 +76,8 @@ func main() {
 		panic(err)
 	}
 
+	ms.HttpUsePrometheus()
+
 	if devApiMode == "" || devApiMode == "2" {
 
 		ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)
@@ -94,6 +96,7 @@ func main() {
 
 			"/healthz",
 			"/ws",
+			"/metrics",
 		}
 
 		exceptShopPath := []string{
