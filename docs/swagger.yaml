@@ -2410,16 +2410,24 @@ definitions:
     type: object
   models.Tax:
     properties:
+      address:
+        type: string
+      branchcode:
+        type: string
       custname:
         type: string
       custtaxid:
         type: string
       custtype:
-        type: string
+        type: integer
       details:
         items:
           $ref: '#/definitions/models.TaxDetail'
         type: array
+      organization:
+        type: integer
+      taxamount:
+        type: number
       taxdate:
         type: string
       taxdocno:
@@ -2594,10 +2602,16 @@ definitions:
     type: object
   models.Vat:
     properties:
+      address:
+        type: string
       branchcode:
+        type: string
+      custname:
         type: string
       custtaxid:
         type: string
+      custtype:
+        type: integer
       exceptvat:
         type: number
       organization:
