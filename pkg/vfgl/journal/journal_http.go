@@ -53,10 +53,10 @@ func (h JournalHttp) RouteSetup() {
 	h.ms.PUT("/gl/journal/:id", h.UpdateJournal)
 	h.ms.DELETE("/gl/journal/:id", h.DeleteJournal)
 
-	h.ms.GET("/gl/journal/ws/image", h.WebsocketImage)
-	h.ms.GET("/gl/journal/ws/form", h.WebsocketForm)
+	// h.ms.GET("/gl/journal/ws/image", h.WebsocketImage)
+	// h.ms.GET("/gl/journal/ws/form", h.WebsocketForm)
+	// h.ms.GET("/gl/journal/ws/docref", h.WebsocketDocRefPool)
 
-	h.ms.GET("/gl/journal/ws/docref", h.WebsocketDocRefPool)
 	h.ms.GET("/gl/journal/img/select-all", h.GetAllDocRefPool)
 	h.ms.POST("/gl/journal/img/select", h.SelectDocRefPool)
 	h.ms.POST("/gl/journal/img/unselect", h.UnSelectDocRefPool)
