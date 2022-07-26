@@ -2,6 +2,7 @@ package microservice
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"os/signal"
@@ -20,6 +21,7 @@ import (
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/websocket"
+	"github.com/labstack/echo-contrib/jaegertracing"
 	"github.com/labstack/echo-contrib/prometheus"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -60,6 +62,7 @@ type Microservice struct {
 	websocketPool             *WebsocketPool
 	pathPrefix                string
 	config                    IConfig
+	jaegerCloser              io.Closer
 	Logger                    *log.Entry
 	Mode                      string
 }
@@ -262,6 +265,10 @@ func (ms *Microservice) Cleanup() error {
 		}
 	}
 
+	if ms.jaegerCloser != nil {
+		ms.jaegerCloser.Close()
+	}
+
 	return nil
 }
 
@@ -393,6 +400,12 @@ func (ms *Microservice) HttpUsePrometheus() {
 	ms.Logger.Info("Start Prometheus.")
 	p := prometheus.NewPrometheus("smlcloudplatform", nil)
 	p.Use(ms.echo)
+}
+
+func (ms *Microservice) HttpUseJaeger() {
+	ms.Logger.Info("Start Jaeger.")
+	c := jaegertracing.New(ms.echo, nil)
+	ms.jaegerCloser = c
 }
 
 // newKafkaConsumer create new Kafka consumer
