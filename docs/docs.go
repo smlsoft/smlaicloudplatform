@@ -9154,6 +9154,12 @@ const docTemplate = `{
         "models.Tax": {
             "type": "object",
             "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "branchcode": {
+                    "type": "string"
+                },
                 "custname": {
                     "type": "string"
                 },
@@ -9161,13 +9167,19 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "custtype": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "details": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.TaxDetail"
                     }
+                },
+                "organization": {
+                    "type": "integer"
+                },
+                "taxamount": {
+                    "type": "number"
                 },
                 "taxdate": {
                     "type": "string"
@@ -9417,11 +9429,20 @@ const docTemplate = `{
         "models.Vat": {
             "type": "object",
             "properties": {
+                "address": {
+                    "type": "string"
+                },
                 "branchcode": {
+                    "type": "string"
+                },
+                "custname": {
                     "type": "string"
                 },
                 "custtaxid": {
                     "type": "string"
+                },
+                "custtype": {
+                    "type": "integer"
                 },
                 "exceptvat": {
                     "type": "number"

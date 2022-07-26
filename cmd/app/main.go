@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/authentication"
@@ -28,7 +27,7 @@ import (
 	"smlcloudplatform/pkg/vfgl/journal"
 	"smlcloudplatform/pkg/vfgl/journalbook"
 
-	_ "net/http/pprof"
+	// _ "net/http/pprof"
 
 	"github.com/labstack/echo/v4"
 )
@@ -41,9 +40,9 @@ func main() {
 		panic(err)
 	}
 
-	go func() {
-		log.Println(http.ListenAndServe(":6060", nil))
-	}()
+	// go func() {
+	// 	log.Println(http.ListenAndServe(":6060", nil))
+	// }()
 
 	cacher := ms.Cacher(cfg.CacherConfig())
 	// jwtService := microservice.NewJwtService(cacher, cfg.JwtSecretKey(), 24*3)
@@ -124,6 +123,9 @@ func main() {
 
 	journalhttp := journal.NewJournalHttp(ms, cfg)
 	journalhttp.RouteSetup()
+
+	journalWs := journal.NewJournalWs(ms, cfg)
+	journalWs.RouteSetup()
 
 	accountGroupHttp := accountgroup.NewAccountGroupHttp(ms, cfg)
 	accountGroupHttp.RouteSetup()
