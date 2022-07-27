@@ -80,13 +80,19 @@ func (h JournalWs) WebsocketImage(ctx microservice.IContext) error {
 		return err
 	}
 
+	sigClose := make(chan struct{})
+	defer func(ws *websocket.Conn) {
+		ws.Close()
+		h.ms.WebsocketClose(socketID)
+		h.svcWebsocket.UnSub(subID)
+		h.svcWebsocket.DelWebsocket(shopID, processID, screenName, socketID)
+		h.ClearDocRef(shopID, processID)
+	}(ws)
+
 	// Receive
 	go func(ws *websocket.Conn) {
 		defer func() {
-			h.ms.WebsocketClose(socketID)
-			h.svcWebsocket.UnSub(subID)
-			h.svcWebsocket.DelWebsocket(shopID, processID, screenName, socketID)
-			h.ClearDocRef(shopID, processID)
+			sigClose <- struct{}{}
 		}()
 
 		for {
@@ -110,14 +116,18 @@ func (h JournalWs) WebsocketImage(ctx microservice.IContext) error {
 
 	// Send
 	for {
-		temp := <-cacheMsg
-		if temp != nil {
+		select {
+		case temp := <-cacheMsg:
+			if temp != nil {
 
-			err = ws.WriteMessage(websocket.TextMessage, []byte(temp.Payload))
-			if err != nil {
-				return err
+				err = ws.WriteMessage(websocket.TextMessage, []byte(temp.Payload))
+				if err != nil {
+					return err
+				}
+
 			}
-
+		case <-sigClose:
+			return nil
 		}
 	}
 
@@ -157,14 +167,19 @@ func (h JournalWs) WebsocketForm(ctx microservice.IContext) error {
 		return err
 	}
 
+	sigClose := make(chan struct{})
+	defer func() {
+		ws.Close()
+		h.ms.WebsocketClose(socketID)
+		h.svcWebsocket.UnSub(subID)
+		h.svcWebsocket.DelWebsocket(shopID, processID, screenName, socketID)
+		h.ClearDocRef(shopID, processID)
+	}()
+
 	// Receive
-	go func(ws *websocket.Conn) {
+	go func(ws *websocket.Conn, sigClose chan struct{}) {
 		defer func() {
-			ws.Close()
-			h.ms.WebsocketClose(socketID)
-			h.svcWebsocket.UnSub(subID)
-			h.svcWebsocket.DelWebsocket(shopID, processID, screenName, socketID)
-			h.ClearDocRef(shopID, processID)
+			sigClose <- struct{}{}
 		}()
 
 		for {
@@ -186,7 +201,7 @@ func (h JournalWs) WebsocketForm(ctx microservice.IContext) error {
 			}
 		}
 
-	}(ws)
+	}(ws, sigClose)
 
 	// Send
 	lastMessage, err := h.svcWebsocket.GetLastMessage(shopID, processID, screenName)
@@ -203,16 +218,24 @@ func (h JournalWs) WebsocketForm(ctx microservice.IContext) error {
 	}
 
 	for {
-		temp := <-cacheMsg
-		if temp != nil {
-
-			err = ws.WriteMessage(websocket.TextMessage, []byte(temp.Payload))
-			if err != nil {
-				return err
+		select {
+		case temp := <-cacheMsg:
+			if temp != nil {
+				err = ws.WriteMessage(websocket.TextMessage, []byte(temp.Payload))
+				if err != nil {
+					return err
+				}
 			}
+		case <-sigClose:
+			return nil
 		}
+
 	}
 
+}
+
+func printx(msg ...any) {
+	fmt.Println(msg...)
 }
 
 func (h JournalWs) WebsocketDocRefPool(ctx microservice.IContext) error {

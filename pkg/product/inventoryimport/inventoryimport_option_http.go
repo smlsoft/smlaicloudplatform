@@ -19,14 +19,14 @@ type InventoryImporOptionMaintHttp struct {
 	svc IInventoryOptionMainImportService
 }
 
-func NewInventoryImporOptionMaintHttp(ms *microservice.Microservice, cfg microservice.IConfig) InventoryImporOptionMaintHttp {
+func NewInventoryImporOptionMaintHttp(ms *microservice.Microservice, cfg microservice.IConfig) *InventoryImporOptionMaintHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	invImportOptionMainRepo := NewInventoryOptionMainImportRepository(pst)
 	invImportOptionMainService := NewInventoryOptionMainImportService(invImportOptionMainRepo)
 
-	return InventoryImporOptionMaintHttp{
+	return &InventoryImporOptionMaintHttp{
 		ms:  ms,
 		cfg: cfg,
 		svc: invImportOptionMainService,

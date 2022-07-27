@@ -169,6 +169,9 @@ func main() {
 		journalhttp := journal.NewJournalHttp(ms, cfg)
 		journalhttp.RouteSetup()
 
+		journalws := journal.NewJournalWs(ms, cfg)
+		journalws.RouteSetup()
+
 		journalReportHttp := journalreport.NewJournalReportHttp(ms, cfg)
 		journalReportHttp.RouteSetup()
 
