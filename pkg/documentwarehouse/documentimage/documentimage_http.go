@@ -45,11 +45,11 @@ func NewDocumentImageHttp(ms *microservice.Microservice, cfg microservice.IConfi
 
 func (h DocumentImageHttp) RouteSetup() {
 	h.ms.GET("/documentimage", h.SearchDocumentImage)
-	h.ms.GET("/saleinvoice/:id", h.GetDocumentImageInfo)
+	h.ms.GET("/documentimage/:id", h.GetDocumentImageInfo)
 	h.ms.POST("/documentimage/upload", h.UploadDocumentImage)
 	h.ms.POST("/documentimage", h.CreateDocumentImage)
 	h.ms.PUT("/documentimage", h.UpdateDocumentImage)
-	h.ms.DELETE("/saleinvoice/:id", h.DeleteDocumentImage)
+	h.ms.DELETE("/documentimage/:id", h.DeleteDocumentImage)
 }
 
 // List Document Image
