@@ -14,6 +14,7 @@ type DocumentImage struct {
 	ImageUri    string    `json:"imageuri" bson:"imageuri"`
 	Module      string    `json:"module" bson:"module"`
 	DocGUIDRef  string    `json:"docguidref" bson:"docguidref"`
+	Status      int8      `json:"status" bson:"status"`
 	UploadedBy  string    `json:"uploadedby" bson:"uploadedby"`
 	UploadedAt  time.Time `json:"uploadedat" bson:"uploadedat"`
 }
