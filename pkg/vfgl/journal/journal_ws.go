@@ -43,7 +43,6 @@ func (h JournalWs) RouteSetup() {
 	h.ms.POST("/gl/journal/img/select", h.SelectDocRefPool)
 	h.ms.POST("/gl/journal/img/unselect", h.UnSelectDocRefPool)
 
-	h.ms.GET("/checkx", h.Check)
 }
 
 func (h JournalWs) WebsocketImage(ctx microservice.IContext) error {
@@ -377,7 +376,7 @@ func (h JournalWs) UnSelectDocRefPool(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h JournalWs) Check(ctx microservice.IContext) error {
+func (h JournalWs) WebsocketConnectCount(ctx microservice.IContext) error {
 
 	ctx.Response(http.StatusOK, h.ms.WebsocketCount())
 

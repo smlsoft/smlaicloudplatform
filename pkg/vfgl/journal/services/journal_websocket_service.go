@@ -266,32 +266,6 @@ func (svc JournalWebsocketService) DocRefPool(shopID string, username string, ws
 		svc.UnSub(subID)
 	}(ws, svc)
 
-	// Send
-	// result, err := svc.GetAllDocRefPool(shopID)
-
-	// if err != nil {
-	// 	return err
-	// }
-
-	// docRefPool := []models.DocRefPool{}
-	// for tempDocRef, tempUsername := range result {
-	// 	docRefPool = append(docRefPool, models.DocRefPool{
-	// 		DocRef:   tempDocRef,
-	// 		Username: tempUsername,
-	// 	})
-	// }
-
-	// dataMsg, err := json.Marshal(docRefPool)
-
-	// if err != nil {
-	// 	return err
-	// }
-
-	// err = ws.WriteMessage(websocket.TextMessage, []byte(dataMsg))
-	// if err != nil {
-	// 	return err
-	// }
-
 	for {
 		temp := <-cacheMsg
 		if temp != nil {
