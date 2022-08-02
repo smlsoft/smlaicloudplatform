@@ -48,7 +48,7 @@ func (h DocumentImageHttp) RouteSetup() {
 	h.ms.GET("/documentimage/:id", h.GetDocumentImageInfo)
 	h.ms.POST("/documentimage/upload", h.UploadDocumentImage)
 	h.ms.POST("/documentimage", h.CreateDocumentImage)
-	h.ms.PUT("/documentimage", h.UpdateDocumentImage)
+	h.ms.PUT("/documentimage/:id", h.UpdateDocumentImage)
 	h.ms.DELETE("/documentimage/:id", h.DeleteDocumentImage)
 }
 
