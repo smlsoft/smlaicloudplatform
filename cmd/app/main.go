@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/authentication"
+	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
 	"smlcloudplatform/pkg/product/category"
@@ -92,6 +93,7 @@ func main() {
 		journalbook.NewJournalBookHttp(ms, cfg),
 		zonedesign.NewZoneDesignHttp(ms, cfg),
 		mastersync.NewMasterSyncHttp(ms, cfg),
+		documentimage.NewDocumentImageHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)

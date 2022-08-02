@@ -18,6 +18,7 @@ import (
 type IDocumentImageService interface {
 	CreateDocumentImage(shopID string, authUsername string, doc models.DocumentImage) (string, error)
 	UpdateDocumentImage(shopID string, guid string, authUsername string, doc models.DocumentImage) error
+	UpdateDocumentImageStatus(shopID string, guid string, authUsername string, doc models.DocumentImageStatus) error
 	DeleteDocumentImage(shopID string, guid string, authUsername string) error
 	InfoDocumentImage(shopID string, guid string) (models.DocumentImageInfo, error)
 	SearchDocumentImage(shopID string, q string, page int, limit int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
@@ -77,6 +78,31 @@ func (svc DocumentImageService) UpdateDocumentImage(shopID string, guid string, 
 	}
 
 	findDoc.DocumentImage = doc
+
+	findDoc.UpdatedBy = authUsername
+	findDoc.UpdatedAt = time.Now()
+
+	err = svc.Repo.Update(shopID, guid, findDoc)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (svc DocumentImageService) UpdateDocumentImageStatus(shopID string, guid string, authUsername string, doc models.DocumentImageStatus) error {
+
+	findDoc, err := svc.Repo.FindByGuid(shopID, guid)
+
+	if err != nil {
+		return err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return errors.New("document not found")
+	}
+
+	findDoc.Status = doc.Status
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()

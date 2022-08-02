@@ -18,7 +18,6 @@ type DocumentImage struct {
 	UploadedBy  string    `json:"uploadedby" bson:"uploadedby"`
 	UploadedAt  time.Time `json:"uploadedat" bson:"uploadedat"`
 }
-
 type DocumentImageInfo struct {
 	models.DocIdentity `bson:"inline"`
 	DocumentImage      `bson:"inline"`
@@ -53,4 +52,8 @@ type DocumentImagePageResponse struct {
 	Success    bool                          `json:"success"`
 	Data       []DocumentImageInfo           `json:"data,omitempty"`
 	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
+}
+
+type DocumentImageStatus struct {
+	Status int8 `json:"status" bson:"status"`
 }

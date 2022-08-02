@@ -48,6 +48,7 @@ func (h DocumentImageHttp) RouteSetup() {
 	h.ms.GET("/documentimage/:id", h.GetDocumentImageInfo)
 	h.ms.POST("/documentimage/upload", h.UploadDocumentImage)
 	h.ms.POST("/documentimage", h.CreateDocumentImage)
+	h.ms.PUT("/documentimage/status/:id", h.UpdateDocumentImageStatus)
 	h.ms.PUT("/documentimage/:id", h.UpdateDocumentImage)
 	h.ms.DELETE("/documentimage/:id", h.DeleteDocumentImage)
 }
@@ -181,6 +182,45 @@ func (h DocumentImageHttp) UpdateDocumentImage(ctx microservice.IContext) error 
 	}
 
 	err = h.service.UpdateDocumentImage(shopID, id, authUsername, *docReq)
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+		ID:      id,
+	})
+	return nil
+}
+
+// Update Document Image Status godoc
+// @Summary		Update Document Image Status
+// @Description Update Document Image Status
+// @Tags		DocumentImageStatus
+// @Param		id  path      string  true  "ID"
+// @Param		DocumentImageStatus  body      models.DocumentImageStatus  true  "DocumentImageStatus"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /documentimage/status/{id} [put]
+func (h DocumentImageHttp) UpdateDocumentImageStatus(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	id := ctx.Param("id")
+	input := ctx.ReadInput()
+
+	docReq := &models.DocumentImageStatus{}
+	err := json.Unmarshal([]byte(input), &docReq)
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.service.UpdateDocumentImageStatus(shopID, id, authUsername, *docReq)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
