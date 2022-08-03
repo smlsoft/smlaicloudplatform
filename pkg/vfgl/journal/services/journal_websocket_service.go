@@ -159,7 +159,8 @@ func (svc JournalWebsocketService) GetAllDocRefPool(shopID string) (map[string]s
 
 func (svc JournalWebsocketService) DelDocRefPool(shopID string, docRef string) error {
 	cacheKeyName := svc.getTagID(shopID, "", svc.cachePoolDocRef)
-	return svc.repo.Del(cacheKeyName, docRef)
+	fmt.Println(cacheKeyName)
+	return svc.repo.HDel(cacheKeyName, docRef)
 }
 
 func (svc JournalWebsocketService) getChannelDocRef(shopID string, prefix string) string {
@@ -198,7 +199,7 @@ func (svc JournalWebsocketService) DocRefUnSelect(shopID string, username string
 	docRefEvent := models.DocRefEvent{
 		DocRef:   docRef,
 		Username: username,
-		Status:   "unselected,",
+		Status:   "unselected",
 	}
 
 	tempData, err := json.Marshal(docRefEvent)
@@ -235,7 +236,7 @@ func (svc JournalWebsocketService) DocRefSelect(shopID string, username string, 
 	docRefEvent := models.DocRefEvent{
 		DocRef:   docRef,
 		Username: username,
-		Status:   "selected,",
+		Status:   "selected",
 	}
 
 	tempData, err := json.Marshal(docRefEvent)
