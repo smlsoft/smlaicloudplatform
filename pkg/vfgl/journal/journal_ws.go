@@ -2,14 +2,15 @@ package journal
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/vfgl/journal/config"
 	"smlcloudplatform/pkg/vfgl/journal/models"
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
 	"smlcloudplatform/pkg/vfgl/journal/services"
+	"unicode/utf8"
 
 	"github.com/gorilla/websocket"
 )
@@ -39,23 +40,25 @@ func (h JournalWs) RouteSetup() {
 	h.ms.GET("/gl/journal/ws/form", h.WebsocketForm)
 
 	h.ms.GET("/gl/journal/ws/docref", h.WebsocketDocRefPool)
-	h.ms.GET("/gl/journal/img/select-all", h.GetAllDocRefPool)
-	h.ms.POST("/gl/journal/img/select", h.SelectDocRefPool)
-	h.ms.POST("/gl/journal/img/unselect", h.UnSelectDocRefPool)
+	h.ms.GET("/gl/journal/docref/selected", h.GetAllDocRefPool)
+	h.ms.POST("/gl/journal/docref/select", h.SelectDocRefPool)
+	h.ms.POST("/gl/journal/docref/unselect", h.UnSelectDocRefPool)
+	h.ms.GET("/gl/journal/user-docref", h.GetUserDocRef)
+	h.ms.GET("/gl/journal/docref-user", h.GetDocRefUser)
 
 }
 
 func (h JournalWs) WebsocketImage(ctx microservice.IContext) error {
 
-	screenName := "image"
-	sendScreenName := "form"
+	screenName := config.WEBSOCKET_SCREEN_IMAGE
+
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	processID := userInfo.Username
+	username := userInfo.Username
 
-	if processID == "" {
-		ctx.Response(http.StatusBadRequest, "processID parameter missing")
+	if username == "" {
+		ctx.Response(http.StatusBadRequest, "username parameter missing")
 		return nil
 	}
 
@@ -67,13 +70,13 @@ func (h JournalWs) WebsocketImage(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svcWebsocket.SetWebsocket(shopID, processID, screenName, socketID)
+	err = h.svcWebsocket.SetWebsocket(shopID, username, screenName, socketID)
 
 	if err != nil {
 		return err
 	}
 
-	cacheMsg, subID, err := h.svcWebsocket.SubDoc(shopID, processID, screenName)
+	cacheMsg, subID, err := h.svcWebsocket.SubDoc(shopID, username, screenName)
 
 	if err != nil {
 		return err
@@ -84,36 +87,36 @@ func (h JournalWs) WebsocketImage(ctx microservice.IContext) error {
 		ws.Close()
 		h.ms.WebsocketClose(socketID)
 		h.svcWebsocket.UnSub(subID)
-		h.svcWebsocket.DelWebsocket(shopID, processID, screenName, socketID)
-		h.ClearDocRef(shopID, processID)
+		h.svcWebsocket.DelWebsocket(shopID, username, screenName, socketID)
+		h.ClearDocRef(shopID, username)
 	}(ws)
 
 	// Receive
-	go func(ws *websocket.Conn) {
-		defer func() {
-			sigClose <- struct{}{}
-		}()
+	// go func(ws *websocket.Conn) {
+	// 	defer func() {
+	// 		sigClose <- struct{}{}
+	// 	}()
 
-		for {
+	// 	for {
 
-			journalRef := models.JournalRef{}
-			err := ws.ReadJSON(&journalRef)
+	// 		journalRef := models.JournalRef{}
+	// 		err := ws.ReadJSON(&journalRef)
 
-			if err != nil {
-				return
-			}
+	// 		if err != nil {
+	// 			return
+	// 		}
 
-			tempRef, _ := json.Marshal(journalRef)
-			h.svcWebsocket.PubDoc(shopID, processID, sendScreenName, tempRef)
+	// 		tempRef, _ := json.Marshal(journalRef)
+	// 		h.svcWebsocket.PubDoc(shopID, username, sendScreenName, tempRef)
 
-			err = h.svcWebsocket.SaveLastMessage(shopID, processID, sendScreenName, string(tempRef))
-			if err != nil {
-				h.ms.Logger.Error(err.Error())
-			}
-		}
-	}(ws)
+	// 		err = h.svcWebsocket.SaveLastMessage(shopID, username, sendScreenName, string(tempRef))
+	// 		if err != nil {
+	// 			h.ms.Logger.Error(err.Error())
+	// 		}
+	// 	}
+	// }(ws)
 
-	// Send
+	// Send to client
 	for {
 		select {
 		case temp := <-cacheMsg:
@@ -134,15 +137,15 @@ func (h JournalWs) WebsocketImage(ctx microservice.IContext) error {
 
 func (h JournalWs) WebsocketForm(ctx microservice.IContext) error {
 
-	screenName := "form"
-	sendScreenName := "image"
+	screenName := config.WEBSOCKET_SCREEN_FORM
+	sendScreenName := config.WEBSOCKET_SCREEN_IMAGE
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	processID := userInfo.Username
+	username := userInfo.Username
 
-	if processID == "" {
-		ctx.Response(http.StatusBadRequest, "processID parameter missing")
+	if username == "" {
+		ctx.Response(http.StatusBadRequest, "username parameter missing")
 		return nil
 	}
 
@@ -154,13 +157,13 @@ func (h JournalWs) WebsocketForm(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svcWebsocket.SetWebsocket(shopID, processID, screenName, socketID)
+	err = h.svcWebsocket.SetWebsocket(shopID, username, screenName, socketID)
 
 	if err != nil {
 		return err
 	}
 
-	cacheMsg, subID, err := h.svcWebsocket.SubDoc(shopID, processID, screenName)
+	cacheMsg, subID, err := h.svcWebsocket.SubDoc(shopID, username, screenName)
 
 	if err != nil {
 		return err
@@ -171,11 +174,11 @@ func (h JournalWs) WebsocketForm(ctx microservice.IContext) error {
 		ws.Close()
 		h.ms.WebsocketClose(socketID)
 		h.svcWebsocket.UnSub(subID)
-		h.svcWebsocket.DelWebsocket(shopID, processID, screenName, socketID)
-		h.ClearDocRef(shopID, processID)
+		h.svcWebsocket.DelWebsocket(shopID, username, screenName, socketID)
+		h.ClearDocRef(shopID, username)
 	}()
 
-	// Receive
+	// Receive from client
 	go func(ws *websocket.Conn, sigClose chan struct{}) {
 		defer func() {
 			sigClose <- struct{}{}
@@ -190,20 +193,20 @@ func (h JournalWs) WebsocketForm(ctx microservice.IContext) error {
 			}
 
 			tempRef, _ := json.Marshal(journalCommand)
-			h.svcWebsocket.PubDoc(shopID, processID, sendScreenName, tempRef)
+			h.svcWebsocket.PubDoc(shopID, username, sendScreenName, tempRef)
 
 			switch journalCommand.Command {
 			case "save":
-				h.svcWebsocket.ClearLastMessage(shopID, processID)
+				h.svcWebsocket.ClearLastMessage(shopID, username)
 				//clear
-				h.ClearDocRef(shopID, processID)
+				h.ClearDocRef(shopID, username)
 			}
 		}
 
 	}(ws, sigClose)
 
-	// Send
-	lastMessage, err := h.svcWebsocket.GetLastMessage(shopID, processID, screenName)
+	// Send to client
+	lastMessage, err := h.svcWebsocket.GetLastMessage(shopID, username, screenName)
 	if err != nil {
 		h.ms.Logger.Error(err.Error())
 	}
@@ -233,10 +236,6 @@ func (h JournalWs) WebsocketForm(ctx microservice.IContext) error {
 
 }
 
-func printx(msg ...any) {
-	fmt.Println(msg...)
-}
-
 func (h JournalWs) WebsocketDocRefPool(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
@@ -261,9 +260,9 @@ func (h JournalWs) WebsocketDocRefPool(ctx microservice.IContext) error {
 
 }
 
-func (h JournalWs) ClearDocRef(shopID string, processID string) error {
+func (h JournalWs) ClearDocRef(shopID string, username string) error {
 
-	isExists, err := h.svcWebsocket.ExistsWebsocket(shopID, processID)
+	isExists, err := h.svcWebsocket.ExistsWebsocket(shopID, username)
 	if err != nil {
 		h.ms.Logger.Error(err.Error())
 	}
@@ -272,7 +271,7 @@ func (h JournalWs) ClearDocRef(shopID string, processID string) error {
 		return nil
 	}
 
-	lastMessage, err := h.svcWebsocket.GetLastMessage(shopID, processID, "form")
+	lastMessage, err := h.svcWebsocket.GetLastMessage(shopID, username, "form")
 	if err != nil {
 		h.ms.Logger.Error(err.Error())
 	}
@@ -281,12 +280,10 @@ func (h JournalWs) ClearDocRef(shopID string, processID string) error {
 		journalRef := models.JournalRef{}
 		json.Unmarshal([]byte(lastMessage), &journalRef)
 
-		err = h.svcWebsocket.DelDocRefPool(shopID, journalRef.DocRef)
+		err = h.svcWebsocket.DelDocRefPool(shopID, username, journalRef.DocRef)
 		if err != nil {
 			h.ms.Logger.Error(err.Error())
 		}
-
-		fmt.Println("Clear docref :: " + journalRef.DocRef)
 	}
 
 	return nil
@@ -318,6 +315,59 @@ func (h JournalWs) GetAllDocRefPool(ctx microservice.IContext) error {
 	return nil
 }
 
+func (h JournalWs) GetUserDocRef(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	username := userInfo.Username
+
+	result, err := h.svcWebsocket.GetDocRefUserPool(shopID, username)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data: &models.JournalRef{
+			DocRef: result,
+		},
+	})
+	return nil
+}
+
+func (h JournalWs) GetDocRefUser(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	docRef := ctx.QueryParam("docref")
+
+	if docRef == "" {
+		ctx.ResponseError(http.StatusBadRequest, "docref is empty")
+		return nil
+	}
+
+	if utf8.RuneCountInString(docRef) > 100 {
+		ctx.ResponseError(http.StatusBadRequest, "docref invalid")
+		return nil
+	}
+
+	result, err := h.svcWebsocket.GetDocRefPool(shopID, docRef)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data: map[string]string{
+			"username": result,
+		},
+	})
+	return nil
+}
+
 func (h JournalWs) SelectDocRefPool(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -333,7 +383,13 @@ func (h JournalWs) SelectDocRefPool(ctx microservice.IContext) error {
 		return err
 	}
 
-	result, err := h.svcWebsocket.DocRefSelect(shopID, username, docReq.DocRef)
+	forceSelectRaw := ctx.QueryParam("force")
+	forceSelect := false
+	if forceSelectRaw == "1" {
+		forceSelect = true
+	}
+
+	result, err := h.svcWebsocket.DocRefSelectForce(shopID, username, docReq.DocRef, forceSelect)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -352,17 +408,17 @@ func (h JournalWs) UnSelectDocRefPool(ctx microservice.IContext) error {
 	shopID := userInfo.ShopID
 	username := userInfo.Username
 
-	input := ctx.ReadInput()
+	// input := ctx.ReadInput()
 
-	docReq := &models.JournalRef{}
-	err := json.Unmarshal([]byte(input), &docReq)
+	// docReq := &models.JournalRef{}
+	// err := json.Unmarshal([]byte(input), &docReq)
 
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
+	// if err != nil {
+	// 	ctx.ResponseError(400, err.Error())
+	// 	return err
+	// }
 
-	result, err := h.svcWebsocket.DocRefUnSelect(shopID, username, docReq.DocRef)
+	result, err := h.svcWebsocket.DocRefUnSelect(shopID, username)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

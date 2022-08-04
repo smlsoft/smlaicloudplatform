@@ -30,29 +30,36 @@ type IJournalWebsocketService interface {
 	ExistsDocRefPool(shopID string, docRef string) (bool, error)
 	GetDocRefPool(shopID string, docRef string) (string, error)
 	GetAllDocRefPool(shopID string) (map[string]string, error)
-	DelDocRefPool(shopID string, docRef string) error
+	DelDocRefPool(shopID string, username string, docRef string) error
+
+	ExistsDocRefUserPool(shopID string, username string) (bool, error)
+	GetDocRefUserPool(shopID string, username string) (string, error)
+
 	DocRefSelect(shopID string, username string, docRef string) (bool, error)
-	DocRefUnSelect(shopID string, username string, docRef string) (bool, error)
+	DocRefUnSelect(shopID string, username string) (bool, error)
+	DocRefSelectForce(shopID string, username string, docRef string, forceSelect bool) (bool, error)
 }
 
 type JournalWebsocketService struct {
-	cacheChannelDoc    string
-	cacheChannelDocRef string
-	cachePoolDocRef    string
-	cacheMessageName   string
-	cacheWebsocketName string
-	repo               repositories.IJournalCacheRepository
+	cacheChannelDoc     string
+	cacheChannelDocRef  string
+	cachePoolDocRef     string
+	cachePoolDocRefUser string
+	cacheMessageName    string
+	cacheWebsocketName  string
+	repo                repositories.IJournalCacheRepository
 }
 
 func NewJournalWebsocketService(repo repositories.IJournalCacheRepository) *JournalWebsocketService {
 
 	return &JournalWebsocketService{
-		cacheChannelDoc:    "chdoc",
-		cacheChannelDocRef: "chdocref",
-		cachePoolDocRef:    "wsdocref",
-		cacheMessageName:   "wsmsg",
-		cacheWebsocketName: "wssc",
-		repo:               repo,
+		cacheChannelDoc:     "chdoc",
+		cacheChannelDocRef:  "chdocref",
+		cachePoolDocRef:     "wsdocref",
+		cachePoolDocRefUser: "wsdocuser",
+		cacheMessageName:    "wsmsg",
+		cacheWebsocketName:  "wssc",
+		repo:                repo,
 	}
 }
 
@@ -124,22 +131,44 @@ func (svc JournalWebsocketService) ExistsWebsocket(shopID string, processID stri
 	return svc.repo.Exists(cacheKeyName)
 }
 
+// doc ref
 func (svc JournalWebsocketService) SetDocRefPool(shopID string, username string, docRef string) error {
-	cacheKeyName := svc.getTagID(shopID, "", svc.cachePoolDocRef)
+	cacheKeyDocRef := svc.getTagID(shopID, "", svc.cachePoolDocRef)
+	cacheKeyUser := svc.getTagID(shopID, "", svc.cachePoolDocRefUser)
 
-	isSelected, err := svc.repo.HExists(cacheKeyName, docRef)
+	isDocRefSelected, err := svc.repo.HExists(cacheKeyDocRef, docRef)
 	if err != nil {
 		return err
 	}
 
-	if isSelected {
+	if isDocRefSelected {
 		return errors.New("doc ref is selected")
 	}
 
-	data := map[string]interface{}{
+	isDocUserSelected, err := svc.repo.HExists(cacheKeyUser, username)
+	if err != nil {
+		return err
+	}
+
+	if isDocUserSelected {
+		return errors.New("user is selected")
+	}
+
+	dataUser := map[string]interface{}{
+		username: docRef,
+	}
+
+	svc.repo.HSet(cacheKeyUser, dataUser)
+
+	if err != nil {
+		return err
+	}
+
+	dataDocRef := map[string]interface{}{
 		docRef: username,
 	}
-	return svc.repo.HSet(cacheKeyName, data)
+
+	return svc.repo.HSet(cacheKeyDocRef, dataDocRef)
 }
 
 func (svc JournalWebsocketService) ExistsDocRefPool(shopID string, docRef string) (bool, error) {
@@ -157,10 +186,28 @@ func (svc JournalWebsocketService) GetAllDocRefPool(shopID string) (map[string]s
 	return svc.repo.HGetAll(cacheKeyName)
 }
 
-func (svc JournalWebsocketService) DelDocRefPool(shopID string, docRef string) error {
-	cacheKeyName := svc.getTagID(shopID, "", svc.cachePoolDocRef)
-	fmt.Println(cacheKeyName)
-	return svc.repo.HDel(cacheKeyName, docRef)
+func (svc JournalWebsocketService) DelDocRefPool(shopID string, username string, docRef string) error {
+	cacheKeyDocRef := svc.getTagID(shopID, "", svc.cachePoolDocRef)
+	cacheKeyUser := svc.getTagID(shopID, "", svc.cachePoolDocRefUser)
+
+	err := svc.repo.HDel(cacheKeyUser, username)
+
+	if err != nil {
+		return err
+	}
+
+	return svc.repo.HDel(cacheKeyDocRef, docRef)
+}
+
+// user
+func (svc JournalWebsocketService) ExistsDocRefUserPool(shopID string, username string) (bool, error) {
+	cacheKeyName := svc.getTagID(shopID, "", svc.cachePoolDocRefUser)
+	return svc.repo.HExists(cacheKeyName, username)
+}
+
+func (svc JournalWebsocketService) GetDocRefUserPool(shopID string, username string) (string, error) {
+	cacheKeyName := svc.getTagID(shopID, "", svc.cachePoolDocRefUser)
+	return svc.repo.HGet(cacheKeyName, username)
 }
 
 func (svc JournalWebsocketService) getChannelDocRef(shopID string, prefix string) string {
@@ -179,22 +226,31 @@ func (JournalWebsocketService) getTagID(shopID string, processID string, prefix 
 	return tempID
 }
 
-func (svc JournalWebsocketService) DocRefUnSelect(shopID string, username string, docRef string) (bool, error) {
-	isExists, err := svc.ExistsDocRefPool(shopID, docRef)
+func (svc JournalWebsocketService) DocRefUnSelect(shopID string, username string) (bool, error) {
+
+	docRef, err := svc.GetDocRefUserPool(shopID, username)
+	if err != nil {
+		return false, err
+	}
+
+	if docRef == "" {
+		return false, errors.New("user is not selected")
+	}
+
+	err = svc.DelDocRefPool(shopID, username, docRef)
 
 	if err != nil {
 		return false, err
 	}
 
-	if !isExists {
-		return false, errors.New("doc ref not exists")
-	}
+	// send websocket to user
+	svc.ClearLastMessage(shopID, username)
 
-	err = svc.DelDocRefPool(shopID, docRef)
+	tempDocRef, _ := json.Marshal(models.JournalRef{
+		DocRef: "",
+	})
 
-	if err != nil {
-		return false, err
-	}
+	svc.PubDoc(shopID, username, "form", tempDocRef)
 
 	docRefEvent := models.DocRefEvent{
 		DocRef:   docRef,
@@ -202,18 +258,25 @@ func (svc JournalWebsocketService) DocRefUnSelect(shopID string, username string
 		Status:   "unselected",
 	}
 
-	tempData, err := json.Marshal(docRefEvent)
-	if err != nil {
-		return false, err
-	}
-
-	err = svc.PubDocRef(shopID, tempData)
+	err = svc.pubDocRefSelect(shopID, docRefEvent)
 
 	if err != nil {
 		return false, err
 	}
 
 	return true, nil
+}
+
+func (svc JournalWebsocketService) DocRefSelectForce(shopID string, username string, docRef string, forceSelect bool) (bool, error) {
+	if forceSelect {
+		_, err := svc.DocRefUnSelect(shopID, username)
+		if err != nil {
+			return false, err
+		}
+	}
+
+	return svc.DocRefSelect(shopID, username, docRef)
+
 }
 
 func (svc JournalWebsocketService) DocRefSelect(shopID string, username string, docRef string) (bool, error) {
@@ -224,11 +287,21 @@ func (svc JournalWebsocketService) DocRefSelect(shopID string, username string, 
 	}
 
 	if isExists {
-		return false, nil
+		return false, errors.New("user is selected")
 	}
 
 	err = svc.SetDocRefPool(shopID, username, docRef)
 
+	if err != nil {
+		return false, err
+	}
+
+	// send websocket to user
+	tempDocRef, _ := json.Marshal(models.JournalRef{
+		DocRef: docRef,
+	})
+	svc.PubDoc(shopID, username, "form", tempDocRef)
+	err = svc.SaveLastMessage(shopID, username, "form", string(tempDocRef))
 	if err != nil {
 		return false, err
 	}
@@ -239,19 +312,28 @@ func (svc JournalWebsocketService) DocRefSelect(shopID string, username string, 
 		Status:   "selected",
 	}
 
-	tempData, err := json.Marshal(docRefEvent)
-	if err != nil {
-		return false, err
-	}
-
-	err = svc.PubDocRef(shopID, tempData)
+	err = svc.pubDocRefSelect(shopID, docRefEvent)
 
 	if err != nil {
 		return false, err
 	}
 
 	return true, nil
+}
 
+func (svc JournalWebsocketService) pubDocRefSelect(shopID string, docRefEvent models.DocRefEvent) error {
+	tempData, err := json.Marshal(docRefEvent)
+	if err != nil {
+		return err
+	}
+
+	err = svc.PubDocRef(shopID, tempData)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (svc JournalWebsocketService) DocRefPool(shopID string, username string, ws *websocket.Conn) error {
