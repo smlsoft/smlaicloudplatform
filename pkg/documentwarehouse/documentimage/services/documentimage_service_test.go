@@ -25,6 +25,11 @@ type MockDocumentImageRepository struct {
 	mock.Mock
 }
 
+func (m *MockDocumentImageRepository) Minus(a int, b int) (int, error) {
+	args := m.Called(a, b)
+	return args.Int(0), args.Error(1)
+}
+
 func (m *MockDocumentImageRepository) Create(doc models.DocumentImageDoc) (string, error) {
 	args := m.Called(doc)
 	return args.String(0), args.Error(1)
@@ -53,6 +58,16 @@ func (m *MockDocumentImageRepository) FindByGuid(shopID string, guid string) (mo
 func (m *MockDocumentImageRepository) FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error) {
 	args := m.Called(shopID, colNameSearch, q, page, limit)
 	return args.Get(0).([]models.DocumentImageInfo), args.Get(1).(mongopagination.PaginationData), args.Error(2)
+}
+
+func (m *MockDocumentImageRepository) SaveDocumentImageDocRefGroup(shopID string, docRef string, docImages []string) error {
+	args := m.Called(shopID, docRef, docImages)
+	return args.Error(0)
+}
+
+func (m *MockDocumentImageRepository) ListDocumentImageGroup(shopID string, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error) {
+	args := m.Called(shopID)
+	return args.Get(0).([]models.DocumentImageGroup), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
 
 type MockDocumentImageFilePersister struct {
