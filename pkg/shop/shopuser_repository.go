@@ -18,6 +18,7 @@ type IShopUserRepository interface {
 	FindByShopID(shopID string) (*[]models.ShopUser, error)
 	FindByUsername(username string) (*[]models.ShopUser, error)
 	FindByUsernamePage(username string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error)
+	FindByUserInShopPage(shopID string, page int, limit int) ([]models.ShopUser, paginate.PaginationData, error)
 }
 
 type ShopUserRepository struct {
@@ -142,4 +143,21 @@ func (repo ShopUserRepository) FindByUsernamePage(username string, page int, lim
 	}
 
 	return docList, aggPaginatedData.Pagination, nil
+}
+
+func (repo ShopUserRepository) FindByUserInShopPage(shopID string, page int, limit int) ([]models.ShopUser, paginate.PaginationData, error) {
+
+	docList := []models.ShopUser{}
+
+	filtter := bson.M{
+		"shopid": shopID,
+	}
+
+	paginattion, err := repo.pst.FindPage(&models.ShopUser{}, limit, page, filtter, &docList)
+
+	if err != nil {
+		return []models.ShopUser{}, paginate.PaginationData{}, err
+	}
+
+	return docList, paginattion, nil
 }

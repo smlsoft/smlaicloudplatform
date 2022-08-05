@@ -73,10 +73,12 @@ type ShopSelectRequest struct {
 	ShopID string `json:"shopid" validate:"required"`
 }
 
+type UserRole = string
+
 const (
-	ROLE_OWNER string = "OWNER"
-	ROLE_ADMIN string = "ADMIN"
-	ROLE_USER  string = "USER"
+	ROLE_OWNER UserRole = "OWNER"
+	ROLE_ADMIN UserRole = "ADMIN"
+	ROLE_USER  UserRole = "USER"
 )
 
 type ShopUser struct {
@@ -99,3 +101,15 @@ type ShopUserInfo struct {
 func (*ShopUserInfo) CollectionName() string {
 	return "shopUsers"
 }
+
+type UserRoleRequest struct {
+	ShopID   string   `json:"shopid" bson:"shopid"`
+	Username string   `json:"username" bson:"username"`
+	Role     UserRole `json:"role" bson:"role"`
+}
+
+// func (u UserRole) EqualString(userRoleStr string)  bool {
+// 	switch u {
+// 		case
+// 	}
+// }

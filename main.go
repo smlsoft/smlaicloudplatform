@@ -117,6 +117,9 @@ func main() {
 		shopHttp := shop.NewShopHttp(ms, cfg)
 		shopHttp.RouteSetup()
 
+		shopUserHttp := shop.NewShopMemberHttp(ms, cfg)
+		shopUserHttp.RouteSetup()
+
 		empHttp := employee.NewEmployeeHttp(ms, cfg)
 		empHttp.RouteSetup()
 

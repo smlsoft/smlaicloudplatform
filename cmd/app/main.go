@@ -72,6 +72,7 @@ func main() {
 	services := []HttpRouteSetup{
 		authentication.NewAuthenticationHttp(ms, cfg),
 		shop.NewShopHttp(ms, cfg),
+		shop.NewShopMemberHttp(ms, cfg),
 		category.NewCategoryHttp(ms, cfg),
 		inventory.NewInventoryHttp(ms, cfg),
 		saleinvoice.NewSaleinvoiceHttp(ms, cfg),
