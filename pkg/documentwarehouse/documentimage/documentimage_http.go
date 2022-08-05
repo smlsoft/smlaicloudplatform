@@ -51,6 +51,9 @@ func (h DocumentImageHttp) RouteSetup() {
 	h.ms.PUT("/documentimage/status/:id", h.UpdateDocumentImageStatus)
 	h.ms.PUT("/documentimage/:id", h.UpdateDocumentImage)
 	h.ms.DELETE("/documentimage/:id", h.DeleteDocumentImage)
+
+	h.ms.GET("/documentimagegroup", h.GetDocumentImageGroup)
+	h.ms.POST("/documentimagegroup", h.SaveDocumentImageGroup)
 }
 
 // List Document Image
@@ -304,5 +307,78 @@ func (h DocumentImageHttp) UploadDocumentImage(ctx microservice.IContext) error 
 		Success: true,
 		Data:    idx,
 	})
+	return nil
+}
+
+// Get Document Image Group
+// @Description Get Document Image Group
+// @Tags		DocumentImageGroup
+// @Accept 		json
+// @Tags		Restaurant
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Size"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /documentimagegroup [get]
+func (h DocumentImageHttp) GetDocumentImageGroup(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	q := ctx.QueryParam("q")
+	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+
+	docList, pagination, err := h.service.ListDocumentImageDocRefGroup(shopID, q, page, limit)
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success:    true,
+		Data:       docList,
+		Pagination: pagination,
+	})
+
+	return nil
+}
+
+// Save Document Image Group
+// @Description Save Document Image Group
+// @Tags		DocumentImageGroup
+// @Param		DocumentImageGroup  body      models.models.DocumentImageGroup  true  "Document Image Group"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /documentimagegroup [post]
+func (h DocumentImageHttp) SaveDocumentImageGroup(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	docImages := &models.DocumentImageGroup{}
+
+	err := json.Unmarshal([]byte(input), &docImages)
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.service.SaveDocumentImageDocRefGroup(shopID, docImages.DocumentRef, docImages.DocumentImages)
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+	})
+
 	return nil
 }
