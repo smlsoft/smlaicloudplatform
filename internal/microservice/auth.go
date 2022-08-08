@@ -76,7 +76,7 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 
 			userRole, err := strconv.Atoi(fmt.Sprintf("%v", tempUserInfo[3]))
 			if err != nil {
-				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Mix Shop: User role invalid."})
+				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": fmt.Sprintf("Mix Shop: User role invalid. %v", tempUserInfo[3])})
 			}
 
 			userInfo := models.UserInfo{
