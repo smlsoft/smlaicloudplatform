@@ -21,6 +21,7 @@ type IDocumentImageRepository interface {
 
 	SaveDocumentImageDocRefGroup(shopID string, docRef string, docImages []string) error
 	ListDocumentImageGroup(shopID string, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error)
+	GetDocumentImageGroup(shopID string, docRef string) (models.DocumentImageGroup, error)
 }
 
 type DocumentImageRepository struct {
@@ -65,7 +66,7 @@ func (repo DocumentImageRepository) ListDocumentImageGroup(shopID string, q stri
 
 	projectQuery := bson.M{"$project": bson.M{"documentref": "$_id", "documentimages": 1}}
 
-	aggData, err := repo.pst.AggregatePage(&models.DocumentImageGroup{}, 20, 1, shopQuery, groupQuery, projectQuery)
+	aggData, err := repo.pst.AggregatePage(&models.DocumentImageGroup{}, limit, page, shopQuery, groupQuery, projectQuery)
 
 	if err != nil {
 		return nil, mongopagination.PaginationData{}, err
@@ -78,4 +79,30 @@ func (repo DocumentImageRepository) ListDocumentImageGroup(shopID string, q stri
 	}
 
 	return docList, aggData.Pagination, nil
+}
+
+func (repo DocumentImageRepository) GetDocumentImageGroup(shopID string, docRef string) (models.DocumentImageGroup, error) {
+
+	shopQuery := bson.M{"$match": bson.M{"shopid": shopID, "documentref": docRef}}
+
+	groupQuery := bson.M{"$group": bson.M{"_id": "$documentref", "documentimages": bson.M{"$push": "$imageuri"}}}
+
+	projectQuery := bson.M{"$project": bson.M{"documentref": "$_id", "documentimages": 1}}
+
+	results := []models.DocumentImageGroup{}
+	err := repo.pst.Aggregate(&models.DocumentImageGroup{}, []interface{}{
+		shopQuery,
+		groupQuery,
+		projectQuery,
+	}, &results)
+
+	if err != nil {
+		return models.DocumentImageGroup{}, err
+	}
+
+	if len(results) < 1 {
+		return models.DocumentImageGroup{}, nil
+	}
+
+	return results[0], nil
 }
