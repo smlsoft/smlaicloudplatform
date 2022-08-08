@@ -51,21 +51,33 @@ func main() {
 	authService := microservice.NewAuthService(cacher, 24*3)
 
 	publicPath := []string{
+		"/swagger",
 		"/login",
 		"/register",
+
+		"/employee/login",
+
+		"/images*",
+		"/productimage",
+
+		"/healthz",
+		"/ws",
+		"/metrics",
+	}
+
+	exceptShopPath := []string{
+		"/shop",
 		"/list-shop",
 		"/select-shop",
 		"/create-shop",
-		"/employee/login",
-		"/healthz",
-		"/metrics",
 	}
 
 	ms.HttpPreRemoveTrailingSlash()
 	ms.HttpUsePrometheus()
 	ms.HttpUseJaeger()
 
-	ms.HttpMiddleware(authService.MWFuncWithRedis(cacher, publicPath...))
+	// ms.HttpMiddleware(authService.MWFuncWithRedis(cacher, publicPath...))
+	ms.HttpMiddleware(authService.MWFuncWithRedisMixShop(cacher, exceptShopPath, publicPath...))
 
 	ms.RegisterLivenessProbeEndpoint("/healthz")
 

@@ -74,16 +74,23 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Shop not selected."})
 			}
 
-			userRole, err := strconv.Atoi(fmt.Sprintf("%v", tempUserInfo[3]))
-			if err != nil {
-				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": fmt.Sprintf("Mix Shop: User role invalid. %v", tempUserInfo[3])})
-			}
-
 			userInfo := models.UserInfo{
 				Username: fmt.Sprintf("%v", tempUserInfo[0]),
 				Name:     fmt.Sprintf("%v", tempUserInfo[1]),
-				ShopID:   fmt.Sprintf("%v", tempUserInfo[2]),
-				Role:     uint8(userRole),
+			}
+
+			if !thisPathExceptShopSelected {
+				if len(tempShopID) < 1 {
+					return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Shop not selected."})
+				}
+
+				userRole, err := strconv.Atoi(fmt.Sprintf("%v", tempUserInfo[3]))
+				if err != nil {
+					return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "User role invalid."})
+				}
+
+				userInfo.ShopID = fmt.Sprintf("%v", tempUserInfo[2])
+				userInfo.Role = uint8(userRole)
 			}
 
 			cacher.Expire(cacheKey, authService.expire)
