@@ -353,6 +353,7 @@ func (h AuthenticationHttp) SelectShop(ctx microservice.IContext) error {
 func (h AuthenticationHttp) ListShopCanAccess(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 
+	q := ctx.QueryParam("q")
 	page, err := strconv.Atoi(ctx.QueryParam("page"))
 	if err != nil {
 		page = 1
@@ -364,7 +365,7 @@ func (h AuthenticationHttp) ListShopCanAccess(ctx microservice.IContext) error {
 		limit = 20
 	}
 
-	docList, pagination, err := h.shopUserService.ListShopByUser(authUsername, page, limit)
+	docList, pagination, err := h.shopUserService.ListShopByUser(authUsername, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

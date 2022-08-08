@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice/models"
+	"strconv"
 	"strings"
 	"time"
 
@@ -69,15 +70,20 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 				}
 			}
 
-			if thisPathExceptShopSelected == false && len(string(tempShopID)) < 1 {
+			if !thisPathExceptShopSelected && len(string(tempShopID)) < 1 {
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Shop not selected."})
+			}
+
+			userRole, err := strconv.Atoi(fmt.Sprintf("%v", tempUserInfo[3]))
+			if err != nil {
+				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "User role invalid."})
 			}
 
 			userInfo := models.UserInfo{
 				Username: fmt.Sprintf("%v", tempUserInfo[0]),
 				Name:     fmt.Sprintf("%v", tempUserInfo[1]),
 				ShopID:   fmt.Sprintf("%v", tempUserInfo[2]),
-				Role:     fmt.Sprintf("%v", tempUserInfo[3]),
+				Role:     uint8(userRole),
 			}
 
 			cacher.Expire(cacheKey, authService.expire)
@@ -86,6 +92,10 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 			return next(c)
 		}
 	}
+}
+
+type Fax struct {
+	valx string
 }
 
 func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...string) echo.MiddlewareFunc {
@@ -126,11 +136,17 @@ func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...st
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Shop not selected."})
 			}
 
+			userRole, err := strconv.ParseUint(fmt.Sprintf("%v", tempUserInfo[3]), 10, 8)
+
+			if err != nil {
+				fmt.Println(err)
+				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "User role invalid."})
+			}
 			userInfo := models.UserInfo{
 				Username: fmt.Sprintf("%v", tempUserInfo[0]),
 				Name:     fmt.Sprintf("%v", tempUserInfo[1]),
 				ShopID:   fmt.Sprintf("%v", tempUserInfo[2]),
-				Role:     fmt.Sprintf("%v", tempUserInfo[3]),
+				Role:     uint8(userRole),
 			}
 
 			cacher.Expire(cacheKey, authService.expire)

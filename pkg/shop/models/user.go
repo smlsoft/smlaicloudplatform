@@ -73,19 +73,19 @@ type ShopSelectRequest struct {
 	ShopID string `json:"shopid" validate:"required"`
 }
 
-type UserRole = string
+type UserRole = uint8
 
 const (
-	ROLE_OWNER UserRole = "OWNER"
-	ROLE_ADMIN UserRole = "ADMIN"
-	ROLE_USER  UserRole = "USER"
+	ROLE_USER  UserRole = iota // "USER"
+	ROLE_ADMIN                 //= "ADMIN"
+	ROLE_OWNER                 //= "OWNER"
 )
 
 type ShopUser struct {
 	ID       primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Username string             `json:"username" bson:"username"`
 	ShopID   string             `json:"shopid" bson:"shopid"`
-	Role     string             `json:"role" bson:"role"`
+	Role     UserRole           `json:"role" bson:"role"`
 }
 
 func (*ShopUser) CollectionName() string {
@@ -93,9 +93,9 @@ func (*ShopUser) CollectionName() string {
 }
 
 type ShopUserInfo struct {
-	ShopID string `json:"shopid" bson:"shopid"`
-	Name   string `json:"name" bson:"name"`
-	Role   string `json:"role" bson:"role"`
+	ShopID string   `json:"shopid" bson:"shopid"`
+	Name   string   `json:"name" bson:"name"`
+	Role   UserRole `json:"role" bson:"role"`
 }
 
 func (*ShopUserInfo) CollectionName() string {
