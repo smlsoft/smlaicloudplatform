@@ -136,7 +136,7 @@ func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...st
 
 			if err != nil {
 				fmt.Println(err)
-				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "User role invalid."})
+				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": fmt.Sprintf("User role invalid. %v", tempUserInfo[3])})
 			}
 
 			userInfo := models.UserInfo{
