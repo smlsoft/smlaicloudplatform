@@ -52,7 +52,8 @@ func (h DocumentImageHttp) RouteSetup() {
 	h.ms.PUT("/documentimage/:id", h.UpdateDocumentImage)
 	h.ms.DELETE("/documentimage/:id", h.DeleteDocumentImage)
 
-	h.ms.GET("/documentimagegroup", h.GetDocumentImageGroup)
+	h.ms.GET("/documentimagegroup", h.ListDocumentImageGroup)
+	h.ms.GET("/documentimagegroup/:docref", h.GetDocumentImageGroup)
 	h.ms.POST("/documentimagegroup", h.SaveDocumentImageGroup)
 }
 
@@ -310,7 +311,7 @@ func (h DocumentImageHttp) UploadDocumentImage(ctx microservice.IContext) error 
 	return nil
 }
 
-// Get Document Image Group
+// List Document Image Group
 // @Description Get Document Image Group
 // @Tags		DocumentImageGroup
 // @Accept 		json
@@ -323,7 +324,7 @@ func (h DocumentImageHttp) UploadDocumentImage(ctx microservice.IContext) error 
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /documentimagegroup [get]
-func (h DocumentImageHttp) GetDocumentImageGroup(ctx microservice.IContext) error {
+func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -341,6 +342,40 @@ func (h DocumentImageHttp) GetDocumentImageGroup(ctx microservice.IContext) erro
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
+	})
+
+	return nil
+}
+
+// Get Document Image Group
+// @Description Get Document Image Group
+// @Tags		DocumentImageGroup
+// @Accept 		json
+// @Tags		Restaurant
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Size"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /documentimagegroup/{docref} [get]
+func (h DocumentImageHttp) GetDocumentImageGroup(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	docRef := ctx.Param("docref")
+
+	doc, err := h.service.GetDocumentImageDocRefGroup(shopID, docRef)
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
 	})
 
 	return nil

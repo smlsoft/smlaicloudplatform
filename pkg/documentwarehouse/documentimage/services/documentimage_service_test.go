@@ -70,6 +70,11 @@ func (m *MockDocumentImageRepository) ListDocumentImageGroup(shopID string, q st
 	return args.Get(0).([]models.DocumentImageGroup), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
 
+func (m *MockDocumentImageRepository) GetDocumentImageGroup(shopID string, docRef string) (models.DocumentImageGroup, error) {
+	args := m.Called(shopID, docRef)
+	return args.Get(0).(models.DocumentImageGroup), args.Error(1)
+}
+
 type MockDocumentImageFilePersister struct {
 	mock.Mock
 }

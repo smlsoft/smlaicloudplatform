@@ -25,6 +25,7 @@ type IDocumentImageService interface {
 	UploadDocumentImage(shopID string, authUsername string, moduleName string, fh *multipart.FileHeader) (*models.DocumentImageInfo, error)
 
 	SaveDocumentImageDocRefGroup(shopID string, docRef string, docImages []string) error
+	GetDocumentImageDocRefGroup(shopID string, docRef string) (models.DocumentImageGroup, error)
 	ListDocumentImageDocRefGroup(shopID string, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error)
 }
 
@@ -198,4 +199,10 @@ func (svc DocumentImageService) ListDocumentImageDocRefGroup(shopID string, q st
 	docList, pagination, err := svc.Repo.ListDocumentImageGroup(shopID, q, page, limit)
 
 	return docList, pagination, err
+}
+
+func (svc DocumentImageService) GetDocumentImageDocRefGroup(shopID string, docRef string) (models.DocumentImageGroup, error) {
+	docList, err := svc.Repo.GetDocumentImageGroup(shopID, docRef)
+
+	return docList, err
 }
