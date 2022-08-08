@@ -77,7 +77,7 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest) (s
 			return "", errors.New("shop invalid")
 		}
 
-		err = svc.authService.SelectShop(tokenString, userLoginReq.ShopID, string(shopUser.Role))
+		err = svc.authService.SelectShop(tokenString, userLoginReq.ShopID, shopUser.Role)
 
 		if err != nil {
 			return "", errors.New("failed shop select")
@@ -231,7 +231,7 @@ func (svc AuthenticationService) AccessShop(authorizationHeader string, shopID s
 		return errors.New("shop invalid")
 	}
 
-	err = svc.authService.SelectShop(tokenStr, shopID, string(shopUser.Role))
+	err = svc.authService.SelectShop(tokenStr, shopID, shopUser.Role)
 
 	if err != nil {
 		return errors.New("failed shop select")

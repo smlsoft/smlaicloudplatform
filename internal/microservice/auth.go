@@ -253,7 +253,7 @@ func (authService *AuthService) GenerateTokenWithRedis(userInfo models.UserInfo)
 	return tokenStr, nil
 }
 
-func (authService *AuthService) SelectShop(tokenStr string, shopID string, role string) error {
+func (authService *AuthService) SelectShop(tokenStr string, shopID string, role uint8) error {
 	cacheKey := authService.prefixCacheKey + tokenStr
 	err := authService.cacher.HMSet(cacheKey, map[string]interface{}{
 		"shopid": shopID,
