@@ -29,7 +29,7 @@ func NewShopMemberHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 func (h *ShopMemberHttp) RouteSetup() {
 	h.ms.GET("/user/permissions", h.ListShopUser)
 	h.ms.GET("/shop/users", h.ListUserInShop)
-	h.ms.POST("/shop/permission", h.SaveUserPermissionShop)
+	h.ms.PUT("/shop/permission", h.SaveUserPermissionShop)
 	h.ms.DELETE("/shop/permission", h.DeleteUserPermissionShop)
 }
 
@@ -37,9 +37,11 @@ func (h ShopMemberHttp) ListUserInShop(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
+	q := ctx.QueryParam("q")
 	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	sort := utils.GetSortParam(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.ListUserInShop(shopID, page, limit)
+	docList, pagination, err := h.svc.ListUserInShop(shopID, q, page, limit, sort)
 
 	if err != nil {
 		ctx.ResponseError(400, "find failed")
@@ -60,9 +62,10 @@ func (h ShopMemberHttp) ListShopUser(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 
+	q := ctx.QueryParam("q")
 	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.ListShopByUser(authUsername, page, limit)
+	docList, pagination, err := h.svc.ListShopByUser(authUsername, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, "find failed")
@@ -121,5 +124,10 @@ func (h ShopMemberHttp) DeleteUserPermissionShop(ctx microservice.IContext) erro
 	}
 
 	h.svc.DeleteUserPermissionShop(userRoleReq.ShopID, authUsername, userRoleReq.Username)
+	ctx.Response(http.StatusOK,
+		map[string]interface{}{
+			"success": true,
+		})
+
 	return nil
 }

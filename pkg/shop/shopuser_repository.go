@@ -7,18 +7,19 @@ import (
 
 	paginate "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type IShopUserRepository interface {
-	Save(shopID string, username string, role string) error
+	Save(shopID string, username string, role models.UserRole) error
 	Delete(shopID string, username string) error
 	FindByShopIDAndUsername(shopID string, username string) (models.ShopUser, error)
-	FindRole(shopID string, username string) (string, error)
+	FindRole(shopID string, username string) (models.UserRole, error)
 	FindByShopID(shopID string) (*[]models.ShopUser, error)
 	FindByUsername(username string) (*[]models.ShopUser, error)
-	FindByUsernamePage(username string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error)
-	FindByUserInShopPage(shopID string, page int, limit int) ([]models.ShopUser, paginate.PaginationData, error)
+	FindByUsernamePage(username string, q string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error)
+	FindByUserInShopPage(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, paginate.PaginationData, error)
 }
 
 type ShopUserRepository struct {
@@ -31,7 +32,7 @@ func NewShopUserRepository(pst microservice.IPersisterMongo) ShopUserRepository 
 	}
 }
 
-func (svc ShopUserRepository) Save(shopID string, username string, role string) error {
+func (svc ShopUserRepository) Save(shopID string, username string, role models.UserRole) error {
 
 	optUpdate := options.Update().SetUpsert(true)
 	err := svc.pst.Update(&models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, bson.M{"$set": bson.M{"role": role}}, optUpdate)
@@ -67,14 +68,14 @@ func (svc ShopUserRepository) FindByShopIDAndUsername(shopID string, username st
 	return *shopUser, nil
 }
 
-func (svc ShopUserRepository) FindRole(shopID string, username string) (string, error) {
+func (svc ShopUserRepository) FindRole(shopID string, username string) (models.UserRole, error) {
 
 	shopUser := &models.ShopUser{}
 
 	err := svc.pst.FindOne(&models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, shopUser)
 
 	if err != nil {
-		return "", err
+		return models.ROLE_USER, err
 	}
 
 	return shopUser.Role, nil
@@ -104,12 +105,28 @@ func (svc ShopUserRepository) FindByUsername(username string) (*[]models.ShopUse
 	return shopUsers, nil
 }
 
-func (repo ShopUserRepository) FindByUsernamePage(username string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error) {
+func (repo ShopUserRepository) FindByUsernamePage(username string, q string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error) {
 
 	docList := []models.ShopUserInfo{}
 
+	searchFilterList := []interface{}{}
+
+	searchCols := []string{
+		"shopid",
+		"name",
+	}
+
+	for _, colName := range searchCols {
+		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
+			Pattern: ".*" + q + ".*",
+			Options: "",
+		}}})
+	}
+
 	aggPaginatedData, err := repo.pst.AggregatePage(&models.ShopUser{}, limit, page,
-		bson.M{"$match": bson.M{"username": username}},
+		bson.M{"$match": bson.M{
+			"username": username,
+		}},
 		bson.M{"$lookup": bson.M{
 			"from":         "shops",
 			"localField":   "shopid",
@@ -125,6 +142,11 @@ func (repo ShopUserRepository) FindByUsernamePage(username string, page int, lim
 				"role":   1,
 				"shopid": 1,
 				"name":   bson.M{"$first": "$shopInfo.name1"},
+			},
+		},
+		bson.M{
+			"$match": bson.M{
+				"$or": searchFilterList,
 			},
 		},
 	)
@@ -145,15 +167,29 @@ func (repo ShopUserRepository) FindByUsernamePage(username string, page int, lim
 	return docList, aggPaginatedData.Pagination, nil
 }
 
-func (repo ShopUserRepository) FindByUserInShopPage(shopID string, page int, limit int) ([]models.ShopUser, paginate.PaginationData, error) {
+func (repo ShopUserRepository) FindByUserInShopPage(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, paginate.PaginationData, error) {
 
 	docList := []models.ShopUser{}
 
-	filtter := bson.M{
-		"shopid": shopID,
+	searchCols := []string{
+		"username",
 	}
 
-	paginattion, err := repo.pst.FindPage(&models.ShopUser{}, limit, page, filtter, &docList)
+	searchFilterList := []interface{}{}
+
+	for _, colName := range searchCols {
+		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
+			Pattern: ".*" + q + ".*",
+			Options: "",
+		}}})
+	}
+
+	filtter := bson.M{
+		"shopid": shopID,
+		"$or":    searchFilterList,
+	}
+
+	paginattion, err := repo.pst.FindPageSort(&models.ShopUser{}, limit, page, filtter, sort, &docList)
 
 	if err != nil {
 		return []models.ShopUser{}, paginate.PaginationData{}, err

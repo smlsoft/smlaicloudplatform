@@ -110,7 +110,7 @@ func (h ShopHttp) UpdateShop(ctx microservice.IContext) error {
 		return err
 	}
 
-	if userInfo.Role == "" || userInfo.Role != models.ROLE_OWNER {
+	if userInfo.Role != models.ROLE_OWNER {
 		ctx.Response(http.StatusOK, &common.ApiResponse{
 			Success: false,
 			Message: "permission denied",
@@ -143,7 +143,7 @@ func (h ShopHttp) DeleteShop(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	if userInfo.Role == "" || userInfo.Role != models.ROLE_OWNER {
+	if userInfo.Role != models.ROLE_OWNER {
 		ctx.Response(http.StatusOK, &common.ApiResponse{
 			Success: false,
 			Message: "permission denied",
@@ -180,7 +180,7 @@ func (h ShopHttp) InfoShop(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	id := ctx.Param("id")
 
-	if userInfo.Role == "" || userInfo.Role != models.ROLE_OWNER {
+	if userInfo.Role != models.ROLE_OWNER {
 		ctx.Response(http.StatusOK, &common.ApiResponse{
 			Success: false,
 			Message: "permission denied",

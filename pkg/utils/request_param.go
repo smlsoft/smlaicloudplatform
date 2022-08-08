@@ -13,6 +13,11 @@ const RequestSearchMinLimit = 1
 const RequestSearchDefaultPage = 1
 const RequestSearchDefaultLimit = 20
 
+func GetSearchQueryParam(fnGetParam func(string) string) string {
+	q := strings.Trim(fnGetParam("sort"), " ")
+	return q
+}
+
 func GetPaginationParam(fnGetParam func(string) string) (int, int) {
 
 	pageRawText := fnGetParam("page")
@@ -77,4 +82,12 @@ func GetSortParam(fnGetParam func(string) string) map[string]int {
 	}
 
 	return tempSort
+}
+
+func GetSearchParam(fnGetParam func(string) string) (string, int, int, map[string]int) {
+	q := GetSearchQueryParam(fnGetParam)
+	page, limit := GetPaginationParam(fnGetParam)
+	sort := GetSortParam(fnGetParam)
+
+	return q, page, limit, sort
 }
