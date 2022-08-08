@@ -76,7 +76,7 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 
 			userRole, err := strconv.Atoi(fmt.Sprintf("%v", tempUserInfo[3]))
 			if err != nil {
-				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "User role invalid."})
+				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Mix Shop: User role invalid."})
 			}
 
 			userInfo := models.UserInfo{
@@ -92,10 +92,6 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 			return next(c)
 		}
 	}
-}
-
-type Fax struct {
-	valx string
 }
 
 func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...string) echo.MiddlewareFunc {
@@ -142,6 +138,7 @@ func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...st
 				fmt.Println(err)
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "User role invalid."})
 			}
+
 			userInfo := models.UserInfo{
 				Username: fmt.Sprintf("%v", tempUserInfo[0]),
 				Name:     fmt.Sprintf("%v", tempUserInfo[1]),
