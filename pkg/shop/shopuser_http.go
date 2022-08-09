@@ -30,7 +30,7 @@ func (h *ShopMemberHttp) RouteSetup() {
 	h.ms.GET("/user/permissions", h.ListShopUser)
 	h.ms.GET("/shop/users", h.ListUserInShop)
 	h.ms.PUT("/shop/permission", h.SaveUserPermissionShop)
-	h.ms.DELETE("/shop/permission/:user", h.DeleteUserPermissionShop)
+	h.ms.DELETE("/shop/permission/:username", h.DeleteUserPermissionShop)
 }
 
 func (h ShopMemberHttp) ListUserInShop(ctx microservice.IContext) error {
@@ -125,6 +125,11 @@ func (h ShopMemberHttp) DeleteUserPermissionShop(ctx microservice.IContext) erro
 	// }
 
 	username := ctx.Param("username")
+
+	if len(username) < 1 {
+		ctx.ResponseError(400, "username invalid")
+		return nil
+	}
 
 	err := h.svc.DeleteUserPermissionShop(shopID, authUsername, username)
 
