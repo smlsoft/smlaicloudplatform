@@ -18,7 +18,8 @@ import (
 type IDocumentImageService interface {
 	CreateDocumentImage(shopID string, authUsername string, doc models.DocumentImage) (string, error)
 	UpdateDocumentImage(shopID string, guid string, authUsername string, doc models.DocumentImage) error
-	UpdateDocumentImageStatus(shopID string, guid string, authUsername string, doc models.DocumentImageStatus) error
+	UpdateDocumentImageStatus(shopID string, guid string, status int8) error
+	UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, status int8) error
 	DeleteDocumentImage(shopID string, guid string, authUsername string) error
 	InfoDocumentImage(shopID string, guid string) (models.DocumentImageInfo, error)
 	SearchDocumentImage(shopID string, q string, page int, limit int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
@@ -94,24 +95,27 @@ func (svc DocumentImageService) UpdateDocumentImage(shopID string, guid string, 
 	return nil
 }
 
-func (svc DocumentImageService) UpdateDocumentImageStatus(shopID string, guid string, authUsername string, doc models.DocumentImageStatus) error {
+func (svc DocumentImageService) UpdateDocumentImageStatus(shopID string, guid string, status int8) error {
 
-	findDoc, err := svc.Repo.FindByGuid(shopID, guid)
+	if len(guid) < 1 {
+		return errors.New("guid is not empty")
+	}
+
+	err := svc.Repo.UpdateDocumentImageStatus(shopID, guid, status)
 
 	if err != nil {
 		return err
 	}
+	return nil
+}
 
-	if findDoc.ID == primitive.NilObjectID {
-		return errors.New("document not found")
+func (svc DocumentImageService) UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, status int8) error {
+
+	if len(docRef) < 1 {
+		return errors.New("document ref is not empty")
 	}
 
-	findDoc.Status = doc.Status
-
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
-
-	err = svc.Repo.Update(shopID, guid, findDoc)
+	err := svc.Repo.UpdateDocumentImageStatusByDocumentRef(shopID, docRef, status)
 
 	if err != nil {
 		return err

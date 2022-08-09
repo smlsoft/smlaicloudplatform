@@ -8,13 +8,13 @@ import (
 func AggregatePageDecode[T any](paginatedData *mongopagination.PaginatedData) ([]T, error) {
 	var aggList []T
 	for _, raw := range paginatedData.Data {
-		var product *T
-		marshallErr := bson.Unmarshal(raw, &product)
+		var item *T
+		marshallErr := bson.Unmarshal(raw, &item)
 
 		if marshallErr != nil {
 			return aggList, marshallErr
 		}
-		aggList = append(aggList, *product)
+		aggList = append(aggList, *item)
 	}
 
 	return aggList, nil

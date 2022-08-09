@@ -211,7 +211,6 @@ func (h DocumentImageHttp) UpdateDocumentImage(ctx microservice.IContext) error 
 // @Router /documentimage/status/{id} [put]
 func (h DocumentImageHttp) UpdateDocumentImageStatus(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
@@ -224,7 +223,7 @@ func (h DocumentImageHttp) UpdateDocumentImageStatus(ctx microservice.IContext) 
 		return err
 	}
 
-	err = h.service.UpdateDocumentImageStatus(shopID, id, authUsername, *docReq)
+	err = h.service.UpdateDocumentImageStatus(shopID, id, docReq.Status)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
@@ -397,7 +396,7 @@ func (h DocumentImageHttp) SaveDocumentImageGroup(ctx microservice.IContext) err
 
 	input := ctx.ReadInput()
 
-	docImages := &models.DocumentImageGroup{}
+	docImages := &models.DocumentImageGroupRequest{}
 
 	err := json.Unmarshal([]byte(input), &docImages)
 	if err != nil {

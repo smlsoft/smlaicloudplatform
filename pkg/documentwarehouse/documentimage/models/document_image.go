@@ -10,6 +10,7 @@ import (
 const documentImageCollectionName = "documentImages"
 
 type DocumentImage struct {
+	Name        string    `json:"name" bson:"name"`
 	DocumentRef string    `json:"documentref" bson:"documentref"`
 	ImageUri    string    `json:"imageuri" bson:"imageuri"`
 	Module      string    `json:"module" bson:"module"`
@@ -57,3 +58,11 @@ type DocumentImagePageResponse struct {
 type DocumentImageStatus struct {
 	Status int8 `json:"status" bson:"status"`
 }
+
+type ImageStatus = int8
+
+const (
+	ImageNormal ImageStatus = iota
+	ImageReject
+	ImageCompleted
+)

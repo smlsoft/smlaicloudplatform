@@ -15,6 +15,7 @@ type JournalBody struct {
 	BatchID            string    `json:"batchId" bson:"batch" gorm:"column:batchid"`
 	DocNo              string    `json:"docno" bson:"docno" gorm:"column:docno;primaryKey"`
 	DocDate            time.Time `json:"docdate" bson:"docdate" format:"dateTime" gorm:"column:docdate"`
+	DocumentRef        string    `json:"documentref" bson:"documentref" gorm:"column:documentref"`
 	AccountPeriod      int16     `json:"accountperiod" bson:"accountperiod" gorm:"column:accountperiod"`
 	AccountYear        int16     `json:"accountyear" bson:"accountyear" gorm:"column:accountyear"`
 	AccountGroup       string    `json:"accountgroup" bson:"accountgroup" gorm:"column:accountgroup"`
