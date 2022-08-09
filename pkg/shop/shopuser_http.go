@@ -30,7 +30,7 @@ func (h *ShopMemberHttp) RouteSetup() {
 	h.ms.GET("/user/permissions", h.ListShopUser)
 	h.ms.GET("/shop/users", h.ListUserInShop)
 	h.ms.PUT("/shop/permission", h.SaveUserPermissionShop)
-	h.ms.DELETE("/shop/permission", h.DeleteUserPermissionShop)
+	h.ms.DELETE("/shop/permission/:user", h.DeleteUserPermissionShop)
 }
 
 func (h ShopMemberHttp) ListUserInShop(ctx microservice.IContext) error {
@@ -112,18 +112,27 @@ func (h ShopMemberHttp) SaveUserPermissionShop(ctx microservice.IContext) error 
 func (h ShopMemberHttp) DeleteUserPermissionShop(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
 
-	input := ctx.ReadInput()
+	// input := ctx.ReadInput()
 
-	userRoleReq := &models.UserRoleRequest{}
-	err := json.Unmarshal([]byte(input), &userRoleReq)
+	// userRoleReq := &models.UserRoleRequest{}
+	// err := json.Unmarshal([]byte(input), &userRoleReq)
+
+	// if err != nil {
+	// 	ctx.ResponseError(400, err.Error())
+	// 	return err
+	// }
+
+	username := ctx.Param("username")
+
+	err := h.svc.DeleteUserPermissionShop(shopID, authUsername, username)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	h.svc.DeleteUserPermissionShop(userRoleReq.ShopID, authUsername, userRoleReq.Username)
 	ctx.Response(http.StatusOK,
 		map[string]interface{}{
 			"success": true,
