@@ -57,3 +57,11 @@ type DocumentImagePageResponse struct {
 type DocumentImageStatus struct {
 	Status int8 `json:"status" bson:"status"`
 }
+
+type ImageStatus = int8
+
+const (
+	ImageNormal ImageStatus = iota
+	ImageReject
+	ImageCompleted
+)

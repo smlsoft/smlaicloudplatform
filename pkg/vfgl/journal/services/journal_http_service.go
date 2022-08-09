@@ -17,7 +17,7 @@ type IJournalHttpService interface {
 	CreateJournal(shopID string, authUsername string, doc models.Journal) (string, error)
 	UpdateJournal(guid string, shopID string, authUsername string, doc models.Journal) error
 	DeleteJournal(guid string, shopID string, authUsername string) error
-	InfoJournal(guid string, shopID string) (models.JournalInfo, error)
+	InfoJournal(shopID string, guid string) (models.JournalInfo, error)
 	SearchJournal(shopID string, q string, page int, limit int, sort map[string]int) ([]models.JournalInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Journal) (common.BulkImport, error)
 }
@@ -125,7 +125,7 @@ func (svc JournalHttpService) DeleteJournal(guid string, shopID string, authUser
 	return nil
 }
 
-func (svc JournalHttpService) InfoJournal(guid string, shopID string) (models.JournalInfo, error) {
+func (svc JournalHttpService) InfoJournal(shopID string, guid string) (models.JournalInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
