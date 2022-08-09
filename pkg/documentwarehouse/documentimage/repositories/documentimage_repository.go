@@ -86,12 +86,26 @@ func (repo DocumentImageRepository) SaveDocumentImageDocRefGroup(shopID string, 
 
 func (repo DocumentImageRepository) ListDocumentImageGroup(shopID string, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error) {
 
-	shopQuery := bson.M{"$match": bson.M{"shopid": shopID, "documentref": bson.M{"$regex": primitive.Regex{
-		Pattern: ".*" + q + ".*",
-		Options: "",
-	}}}}
+	shopQuery := bson.M{"$match": bson.M{
+		"shopid": shopID,
+		"documentref": bson.M{"$regex": primitive.Regex{
+			Pattern: ".*" + q + ".*",
+			Options: "",
+		}},
+		"name": bson.M{"$regex": primitive.Regex{
+			Pattern: ".*" + q + ".*",
+			Options: "",
+		}},
+	}}
 
-	groupQuery := bson.M{"$group": bson.M{"_id": "$documentref", "documentimages": bson.M{"$push": "$imageuri"}}}
+	groupQuery := bson.M{"$group": bson.M{"_id": "$documentref", "documentimages": bson.M{"$push": bson.M{
+		"guidfixed":  "$guidfixed",
+		"name":       "$name",
+		"imageuri":   "$imageuri",
+		"docguidref": "$docguidref",
+		"module":     "$module",
+		"status":     "$status",
+	}}}}
 
 	projectQuery := bson.M{"$project": bson.M{"documentref": "$_id", "documentimages": 1}}
 
@@ -114,7 +128,14 @@ func (repo DocumentImageRepository) GetDocumentImageGroup(shopID string, docRef 
 
 	shopQuery := bson.M{"$match": bson.M{"shopid": shopID, "documentref": docRef}}
 
-	groupQuery := bson.M{"$group": bson.M{"_id": "$documentref", "documentimages": bson.M{"$push": "$imageuri"}}}
+	groupQuery := bson.M{"$group": bson.M{"_id": "$documentref", "documentimages": bson.M{"$push": bson.M{
+		"guidfixed":  "$guidfixed",
+		"name":       "$name",
+		"imageuri":   "$imageuri",
+		"docguidref": "$docguidref",
+		"module":     "$module",
+		"status":     "$status",
+	}}}}
 
 	projectQuery := bson.M{"$project": bson.M{"documentref": "$_id", "documentimages": 1}}
 

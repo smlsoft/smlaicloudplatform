@@ -10,6 +10,7 @@ import (
 const documentImageCollectionName = "documentImages"
 
 type DocumentImage struct {
+	Name        string    `json:"name" bson:"name"`
 	DocumentRef string    `json:"documentref" bson:"documentref"`
 	ImageUri    string    `json:"imageuri" bson:"imageuri"`
 	Module      string    `json:"module" bson:"module"`

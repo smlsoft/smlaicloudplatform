@@ -396,7 +396,7 @@ func (h DocumentImageHttp) SaveDocumentImageGroup(ctx microservice.IContext) err
 
 	input := ctx.ReadInput()
 
-	docImages := &models.DocumentImageGroup{}
+	docImages := &models.DocumentImageGroupRequest{}
 
 	err := json.Unmarshal([]byte(input), &docImages)
 	if err != nil {
