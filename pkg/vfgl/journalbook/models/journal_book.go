@@ -11,6 +11,7 @@ const journalBookTableName = "journal_book"
 
 type JournalBook struct {
 	Code        string `json:"code" bson:"code"`
+	DocumentRef string `json:"documentref" bson:"documentref"`
 	models.Name `bson:"inline"`
 }
 
@@ -69,6 +70,7 @@ type JournalPg struct {
 	models.Identity          `gorm:"embedded;"`
 	models.PartitionIdentity `gorm:"embedded;"`
 	Code                     string `json:"code" gorm:"column:code;primaryKey"`
+	DocumentRef              string `json:"documentref" gorm:"column:documentref"`
 	Name1                    string `json:"name1" gorm:"column:name1"`
 }
 
