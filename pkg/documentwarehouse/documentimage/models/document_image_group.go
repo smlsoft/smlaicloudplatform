@@ -12,6 +12,7 @@ func (DocumentImageGroup) CollectionName() string {
 }
 
 type DocumentImageGroupDetail struct {
+	GuidFixed  string `json:"guidfixed" bson:"guidfixed"`
 	Name       string `json:"name" bson:"name"`
 	ImageUri   string `json:"imageuri" bson:"imageuri"`
 	Module     string `json:"module" bson:"module"`
