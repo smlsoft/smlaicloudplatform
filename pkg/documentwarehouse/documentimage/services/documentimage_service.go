@@ -111,10 +111,6 @@ func (svc DocumentImageService) UpdateDocumentImageStatus(shopID string, guid st
 
 func (svc DocumentImageService) UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, status int8) error {
 
-	if len(docRef) < 1 {
-		return errors.New("document ref is not empty")
-	}
-
 	err := svc.Repo.UpdateDocumentImageStatusByDocumentRef(shopID, docRef, status)
 
 	if err != nil {
