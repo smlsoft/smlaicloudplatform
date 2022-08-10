@@ -82,7 +82,6 @@ func (h JournalWs) WebsocketImage(ctx microservice.IContext) error {
 		return err
 	}
 
-	sigClose := make(chan struct{})
 	defer func(ws *websocket.Conn) {
 		ws.Close()
 		h.ms.WebsocketClose(socketID)
@@ -91,48 +90,24 @@ func (h JournalWs) WebsocketImage(ctx microservice.IContext) error {
 		h.ClearDocRef(shopID, username)
 	}(ws)
 
-	// Receive
-	// go func(ws *websocket.Conn) {
-	// 	defer func() {
-	// 		sigClose <- struct{}{}
-	// 	}()
-
-	// 	for {
-
-	// 		journalRef := models.JournalRef{}
-	// 		err := ws.ReadJSON(&journalRef)
-
-	// 		if err != nil {
-	// 			return
-	// 		}
-
-	// 		tempRef, _ := json.Marshal(journalRef)
-	// 		h.svcWebsocket.PubDoc(shopID, username, sendScreenName, tempRef)
-
-	// 		err = h.svcWebsocket.SaveLastMessage(shopID, username, sendScreenName, string(tempRef))
-	// 		if err != nil {
-	// 			h.ms.Logger.Error(err.Error())
-	// 		}
-	// 	}
-	// }(ws)
-
 	// Send to client
 	for {
-		select {
-		case temp := <-cacheMsg:
-			if temp != nil {
-
-				err = ws.WriteMessage(websocket.TextMessage, []byte(temp.Payload))
-				if err != nil {
-					return err
-				}
-
-			}
-		case <-sigClose:
+		_, _, err := ws.ReadMessage()
+		if err != nil {
 			return nil
 		}
-	}
 
+		temp := <-cacheMsg
+		if temp != nil {
+
+			err = ws.WriteMessage(websocket.TextMessage, []byte(temp.Payload))
+			if err != nil {
+				return err
+			}
+
+		}
+
+	}
 }
 
 func (h JournalWs) WebsocketForm(ctx microservice.IContext) error {
