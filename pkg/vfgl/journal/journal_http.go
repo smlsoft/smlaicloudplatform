@@ -142,8 +142,7 @@ func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
 
 	if journalInfo.DocumentRef != docReq.DocumentRef {
 
-		if len(journalInfo.GuidFixed) > 0 {
-
+		if len(journalInfo.DocumentRef) > 0 {
 			err = h.svcDocImage.UpdateDocumentImageStatusByDocumentRef(shopID, journalInfo.DocumentRef, 1)
 
 			if err != nil {
@@ -152,11 +151,13 @@ func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
 			}
 		}
 
-		err = h.svcDocImage.UpdateDocumentImageStatusByDocumentRef(shopID, docReq.DocumentRef, modelDocumentimage.ImageCompleted)
+		if len(docReq.DocumentRef) > 0 {
+			err = h.svcDocImage.UpdateDocumentImageStatusByDocumentRef(shopID, docReq.DocumentRef, modelDocumentimage.ImageCompleted)
 
-		if err != nil {
-			ctx.ResponseError(http.StatusBadRequest, err.Error())
-			return err
+			if err != nil {
+				ctx.ResponseError(http.StatusBadRequest, err.Error())
+				return err
+			}
 		}
 	}
 
