@@ -22,7 +22,7 @@ type IDocumentImageService interface {
 	UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, status int8) error
 	DeleteDocumentImage(shopID string, guid string, authUsername string) error
 	InfoDocumentImage(shopID string, guid string) (models.DocumentImageInfo, error)
-	SearchDocumentImage(shopID string, q string, page int, limit int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
+	SearchDocumentImage(shopID string, matchFilters map[string]interface{}, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
 	UploadDocumentImage(shopID string, authUsername string, moduleName string, fh *multipart.FileHeader) (*models.DocumentImageInfo, error)
 
 	SaveDocumentImageDocRefGroup(shopID string, docRef string, docImages []string) error
@@ -144,8 +144,9 @@ func (svc DocumentImageService) InfoDocumentImage(shopID string, guid string) (m
 
 }
 
-func (svc DocumentImageService) SearchDocumentImage(shopID string, q string, page int, limit int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.Repo.FindPage(shopID, []string{"guidfixed", "documentref", "module"}, q, page, limit)
+func (svc DocumentImageService) SearchDocumentImage(shopID string, matchFilters map[string]interface{}, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error) {
+	// docList, pagination, err := svc.Repo.FindPage(shopID, []string{"guidfixed", "documentref", "module"}, q, page, limit)
+	docList, pagination, err := svc.Repo.FindPageFilterSort(shopID, matchFilters, []string{"guidfixed", "documentref", "module"}, q, page, limit, sorts)
 
 	if err != nil {
 		return []models.DocumentImageInfo{}, pagination, err
@@ -157,7 +158,7 @@ func (svc DocumentImageService) SearchDocumentImage(shopID string, q string, pag
 func (svc DocumentImageService) UploadDocumentImage(shopID string, authUsername string, moduleName string, fh *multipart.FileHeader) (*models.DocumentImageInfo, error) {
 
 	if fh.Filename == "" {
-		return nil, errors.New("Image Filename Not Found")
+		return nil, errors.New("image file name not found")
 	}
 	// try upload
 	fileUploadMetadataSlice := strings.Split(fh.Filename, ".")

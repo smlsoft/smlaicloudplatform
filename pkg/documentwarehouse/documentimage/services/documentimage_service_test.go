@@ -60,6 +60,11 @@ func (m *MockDocumentImageRepository) FindPage(shopID string, colNameSearch []st
 	return args.Get(0).([]models.DocumentImageInfo), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
 
+func (m *MockDocumentImageRepository) FindPageFilterSort(shopID string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error) {
+	args := m.Called(shopID, filters, colNameSearch, q, page, limit, sorts)
+	return args.Get(0).([]models.DocumentImageInfo), args.Get(1).(mongopagination.PaginationData), args.Error(2)
+}
+
 func (m *MockDocumentImageRepository) SaveDocumentImageDocRefGroup(shopID string, docRef string, docImages []string) error {
 	args := m.Called(shopID, docRef, docImages)
 	return args.Error(0)

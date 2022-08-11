@@ -67,3 +67,40 @@ func (repo SearchRepository[T]) FindPageSort(shopID string, colNameSearch []stri
 
 	return docList, pagination, nil
 }
+
+func (repo SearchRepository[T]) FindPageFilterSort(shopID string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]T, mongopagination.PaginationData, error) {
+
+	matchFilterList := []interface{}{}
+
+	for key, value := range filters {
+		matchFilterList = append(matchFilterList, bson.M{key: value})
+	}
+
+	searchFilterList := []interface{}{}
+
+	for _, colName := range colNameSearch {
+		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
+			Pattern: ".*" + q + ".*",
+			Options: "",
+		}}})
+	}
+
+	queryFilters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+		"$or":       searchFilterList,
+	}
+
+	if len(matchFilterList) > 0 {
+		queryFilters["$and"] = matchFilterList
+	}
+
+	docList := []T{}
+	pagination, err := repo.pst.FindPageSort(new(T), limit, page, queryFilters, sorts, &docList)
+
+	if err != nil {
+		return []T{}, mongopagination.PaginationData{}, err
+	}
+
+	return docList, pagination, nil
+}

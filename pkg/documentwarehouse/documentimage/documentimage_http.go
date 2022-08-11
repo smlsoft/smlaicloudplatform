@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/models"
@@ -76,8 +78,38 @@ func (h DocumentImageHttp) SearchDocumentImage(ctx microservice.IContext) error 
 
 	q := ctx.QueryParam("q")
 	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	//sort := utils.GetSortParam(ctx.QueryParam)
-	docList, pagination, err := h.service.SearchDocumentImage(shopID, q, page, limit)
+	sorts := utils.GetSortParam(ctx.QueryParam)
+
+	matchFilters := map[string]interface{}{}
+
+	status := strings.TrimSpace(ctx.QueryParam("status"))
+
+	if len(status) > 0 {
+		tempStatus, err := strconv.Atoi(status)
+		if err == nil {
+			matchFilters["status"] = tempStatus
+		}
+	}
+
+	module := strings.TrimSpace(ctx.QueryParam("module"))
+
+	if len(module) > 0 {
+		matchFilters["module"] = module
+	}
+
+	docGuidRef := strings.TrimSpace(ctx.QueryParam("docguidref"))
+
+	if len(docGuidRef) > 0 {
+		matchFilters["docguidref"] = docGuidRef
+	}
+
+	documentRef := strings.TrimSpace(ctx.QueryParam("documentref"))
+
+	if len(documentRef) > 0 {
+		matchFilters["documentref"] = documentRef
+	}
+
+	docList, pagination, err := h.service.SearchDocumentImage(shopID, matchFilters, q, page, limit, sorts)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err

@@ -18,6 +18,7 @@ type IDocumentImageRepository interface {
 	FindOne(shopID string, filters map[string]interface{}) (models.DocumentImageDoc, error)
 	FindByGuid(shopID string, guid string) (models.DocumentImageDoc, error)
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
+	FindPageFilterSort(shopID string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
 
 	UpdateDocumentImageStatus(shopID string, guid string, status int8) error
 	UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, status int8) error
