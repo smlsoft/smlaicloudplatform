@@ -408,6 +408,14 @@ func (ms *Microservice) HttpUseJaeger() {
 	ms.jaegerCloser = c
 }
 
+func (ms *Microservice) HttpUseCors() {
+
+	ms.echo.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: ms.config.HttpCORS(),
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
+}
+
 // newKafkaConsumer create new Kafka consumer
 func (ms *Microservice) newKafkaConsumer(servers string, groupID string) (*kafka.Consumer, error) {
 	// Configurations
