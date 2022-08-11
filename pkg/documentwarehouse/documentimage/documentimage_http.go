@@ -64,8 +64,13 @@ func (h DocumentImageHttp) RouteSetup() {
 // @Description List Document Image
 // @Tags		DocumentImage
 // @Param		q		query	string		false  "Search Value"
+// @Param		status		query	integer		false  "Status Value"
+// @Param		module		query	string		false  "Module Value"
+// @Param		docguidref		query	string		false  "Doc GUID Ref Value"
+// @Param		documentref		query	string		false  "Document Ref Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
+// @Param		sort	query	string		false  "Sort"
 // @Accept 		json
 // @Success		200	{object}	models.DocumentImagePageResponse
 // @Failure		401 {object}	common.AuthResponseFailed
