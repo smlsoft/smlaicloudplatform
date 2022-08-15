@@ -459,7 +459,7 @@ func (h DocumentImageHttp) GetDocumentImageGroup(ctx microservice.IContext) erro
 // Save Document Image Group
 // @Description Save Document Image Group
 // @Tags		DocumentImageGroup
-// @Param		DocumentImageGroup  body      models.models.DocumentImageGroup  true  "Document Image Group"
+// @Param		DocumentImageGroup  body      models.DocumentImageGroup  true  "Document Image Group"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
