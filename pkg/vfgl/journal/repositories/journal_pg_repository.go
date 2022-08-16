@@ -55,14 +55,25 @@ func (repo JournalPgRepository) Update(shopID string, docNo string, doc models.J
 }
 
 func (repo JournalPgRepository) Delete(shopID string, docNo string) error {
-	err := repo.pst.Delete(models.JournalPg{}, map[string]interface{}{
+
+	var details *[]models.JournalDetailPg
+	tx := repo.pst.DBClient().Begin()
+	tx.Model(&models.JournalDetailPg{}).Where(" shopid=? AND docno=?", shopID, docNo).Find(&details)
+	for _, tmp := range *details {
+		// mark delete
+		tx.Delete(&models.JournalDetailPg{}, tmp.ID)
+	}
+
+	err := tx.Delete(models.JournalPg{}, map[string]interface{}{
 		"shopid": shopID,
 		"docno":  docNo,
-	})
+	}).Error
 
 	if err != nil {
+		tx.Rollback()
 		return err
 	}
+	tx.Commit()
 	return nil
 }
 

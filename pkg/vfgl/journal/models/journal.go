@@ -22,8 +22,8 @@ type JournalBody struct {
 	Amount             float64   `json:"amount" bson:"amount" gorm:"column:amount"`
 	AccountDescription string    `json:"accountdescription" bson:"accountdescription" gorm:"column:accountdescription"`
 	BookCode           string    `json:"bookcode" bson:"bookcode"`
-	Vats               []Vat     `json:"vats" bson:"vats"`
-	Taxes              []Tax     `json:"taxes" bson:"taxes"`
+	Vats               []Vat     `json:"vats" bson:"vats" gorm:"-"`
+	Taxes              []Tax     `json:"taxes" bson:"taxes" gorm:"-"`
 }
 
 type Journal struct {
@@ -206,3 +206,17 @@ func (jd *JournalDetailPg) BeforeCreate(tx *gorm.DB) error {
 	})
 	return nil
 }
+
+// func (j *JournalPg) BeforeDelete(tx *gorm.DB) (err error) {
+
+// 	// find old data
+// 	var details *[]JournalDetailPg
+// 	tx.Model(&JournalDetailPg{}).Where(" shopid=? AND docno=?", j.ShopID, j.DocNo).Find(&details)
+
+// 	// delete unuse data
+// 	for _, tmp := range *details {
+// 		tx.Delete(&JournalDetailPg{}, tmp.ID)
+// 	}
+
+// 	return nil
+// }
