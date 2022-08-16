@@ -42,7 +42,7 @@ func (svc EmployeeService) Login(shopID string, loginReq models.EmployeeRequestL
 		return nil, errors.New("username is not exists")
 	}
 
-	passwordInvalid := !utils.CheckPasswordHash(loginReq.Password, findUser.Password)
+	passwordInvalid := !utils.CheckHashPassword(loginReq.Password, findUser.Password)
 
 	if passwordInvalid {
 		return nil, errors.New("password is not invalid")

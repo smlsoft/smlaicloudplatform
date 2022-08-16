@@ -5,7 +5,6 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/shop"
 	"smlcloudplatform/pkg/shop/models"
-	"smlcloudplatform/pkg/utils"
 	"strings"
 	"time"
 
@@ -21,20 +20,26 @@ type IAuthenticationService interface {
 	UpdatePassword(username string, currentPassword string, newPassword string) error
 	Logout(authorizationHeader string) error
 	Profile(username string) (models.UserProfile, error)
-	AccessShop(authorizationHeader string, shopID string, username string) error
+	AccessShop(shopID string, username string, authorizationHeader string) error
 }
 
 type AuthenticationService struct {
-	authService  *microservice.AuthService
-	authRepo     IAuthenticationRepository
-	shopUserRepo shop.IShopUserRepository
+	authService       microservice.IAuthService
+	authRepo          IAuthenticationRepository
+	shopUserRepo      shop.IShopUserRepository
+	passwordEncoder   func(string) (string, error)
+	checkHashPassword func(password string, hash string) bool
+	timeNow           func() time.Time
 }
 
-func NewAuthenticationService(authRepo IAuthenticationRepository, shopUserRepo shop.IShopUserRepository, authService *microservice.AuthService) AuthenticationService {
+func NewAuthenticationService(authRepo IAuthenticationRepository, shopUserRepo shop.IShopUserRepository, authService microservice.IAuthService, passwordEncoder func(string) (string, error), checkHashPassword func(password string, hash string) bool, timeNow func() time.Time) AuthenticationService {
 	return AuthenticationService{
-		authRepo:     authRepo,
-		authService:  authService,
-		shopUserRepo: shopUserRepo,
+		authRepo:          authRepo,
+		authService:       authService,
+		shopUserRepo:      shopUserRepo,
+		passwordEncoder:   passwordEncoder,
+		checkHashPassword: checkHashPassword,
+		timeNow:           timeNow,
 	}
 }
 
@@ -54,7 +59,7 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest) (s
 		return "", errors.New("username is not exists")
 	}
 
-	passwordInvalid := !utils.CheckPasswordHash(userLoginReq.Password, findUser.Password)
+	passwordInvalid := !svc.checkHashPassword(userLoginReq.Password, findUser.Password)
 
 	if passwordInvalid {
 		return "", errors.New("password is not invalid")
@@ -98,7 +103,7 @@ func (svc AuthenticationService) Register(userRequest models.UserRequest) (strin
 		return "", errors.New("username is exists")
 	}
 
-	hashPassword, err := utils.HashPassword(userRequest.Password)
+	hashPassword, err := svc.passwordEncoder(userRequest.Password)
 
 	if err != nil {
 		return "", err
@@ -109,7 +114,7 @@ func (svc AuthenticationService) Register(userRequest models.UserRequest) (strin
 	user.Username = userRequest.Username
 	user.Password = hashPassword
 	user.UserDetail = userRequest.UserDetail
-	user.CreatedAt = time.Now()
+	user.CreatedAt = svc.timeNow()
 
 	idx, err := svc.authRepo.CreateUser(user)
 
@@ -136,7 +141,7 @@ func (svc AuthenticationService) Update(username string, userRequest models.User
 	}
 
 	userFind.Name = userRequest.Name
-	userFind.UpdatedAt = time.Now()
+	userFind.UpdatedAt = svc.timeNow()
 
 	err = svc.authRepo.UpdateUser(username, *userFind)
 
@@ -162,20 +167,20 @@ func (svc AuthenticationService) UpdatePassword(username string, currentPassword
 		return errors.New("username is not exists")
 	}
 
-	passwordNotMatch := !utils.CheckPasswordHash(currentPassword, userFind.Password)
+	passwordInvalid := !svc.checkHashPassword(currentPassword, userFind.Password)
 
-	if passwordNotMatch {
+	if passwordInvalid {
 		return errors.New("current password invalid")
 	}
 
-	hashPassword, err := utils.HashPassword(newPassword)
+	hashPassword, err := svc.passwordEncoder(newPassword)
 
 	if err != nil {
 		return err
 	}
 
 	userFind.Password = hashPassword
-	userFind.UpdatedAt = time.Now()
+	userFind.UpdatedAt = svc.timeNow()
 
 	err = svc.authRepo.UpdateUser(username, *userFind)
 
@@ -201,7 +206,7 @@ func (svc AuthenticationService) Profile(username string) (models.UserProfile, e
 	return userProfile, nil
 }
 
-func (svc AuthenticationService) AccessShop(authorizationHeader string, shopID string, username string) error {
+func (svc AuthenticationService) AccessShop(shopID string, username string, authorizationHeader string) error {
 
 	if shopID == "" {
 		return errors.New("shop invalid")

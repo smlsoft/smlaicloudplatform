@@ -11,6 +11,7 @@ import (
 	"strings"
 	"sync"
 	"syscall"
+	"time"
 
 	"smlcloudplatform/internal/microservice/models"
 	msValidator "smlcloudplatform/internal/validator"
@@ -39,6 +40,8 @@ type IMicroservice interface {
 	PUT(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc)
 	PATCH(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc)
 	DELETE(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc)
+
+	TimeNow() func() time.Time
 
 	// CRUD(cfg IConfig, pathName string, modelx GenCrud)
 	ECHO() *echo.Echo
@@ -270,6 +273,10 @@ func (ms *Microservice) Cleanup() error {
 	}
 
 	return nil
+}
+
+func (ms *Microservice) TimeNow() time.Time {
+	return time.Now()
 }
 
 // Log log message to console
