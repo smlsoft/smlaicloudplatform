@@ -107,6 +107,7 @@ func main() {
 		}
 		ms.HttpMiddleware(authService.MWFuncWithRedisMixShop(cacher, exceptShopPath, publicPath...))
 		ms.RegisterLivenessProbeEndpoint("/healthz")
+		ms.HttpUseCors()
 		// ms.Echo().GET("/healthz", func(c echo.Context) error {
 		// 	return c.String(http.StatusOK, "ok")
 		// })
