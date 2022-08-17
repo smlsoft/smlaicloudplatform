@@ -48,6 +48,10 @@ func init() {
 	persisterConfig := mock.NewPersisterPostgresqlConfig()
 	pst := microservice.NewPersister(persisterConfig)
 	repo = repositories.NewJournalPgRepository(pst)
+	pst.AutoMigrate(
+		models.JournalPg{},
+		models.JournalDetailPg{},
+	)
 }
 
 func TestJournalRepositoryRealDBCreate(t *testing.T) {
@@ -75,4 +79,59 @@ func TestJournalRepositoryRealDBGetAssertErrNotFound(t *testing.T) {
 
 	_, err := repo.Get("TESTSHOP", "DOC01")
 	assert.Error(t, err, "Failed Get Journal Doc NotFound But No Error")
+}
+
+func TestCreateAndDeleteJournal(t *testing.T) {
+
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
+	json_str := `{
+		"id": "62cdc14ca3f6ef3ca30543e8",
+		"shopid": "2BYWCndV194TYXVEO7NlRLuJYWY",
+		"guidfixed": "2Br5noZ5LmgRuQLwYrpreUl2J9a",
+		"batchId": "",
+		"docno": "JO-20220713014532831-1",
+		"docdate": "2022-07-12T18:45:32.068Z",
+		"documentref": "",
+		"accountperiod": 7,
+		"accountyear": 2565,
+		"accountgroup": "2",
+		"amount": 200,
+		"accountdescription": "ชำระค่าธรรมเนียมสมัครสมาชิก#6500000049",
+		"bookcode": "2",
+		"vats": [],
+		"taxes": [],
+		"parid": "",
+		"journaldetail": [
+		  {
+			"accountcode": "11020",
+			"accountname": "เงินสด - บัญชี 2",
+			"debitamount": 200,
+			"creditamount": 0
+		  },
+		  {
+			"accountcode": "43010",
+			"accountname": "รายได้ - ค่าธรรมเนียม-แรกเข้า",
+			"debitamount": 0,
+			"creditamount": 200
+		  }
+		]
+	  }	
+	`
+	if os.Getenv("SERVERLESS") == "serverless" {
+		t.Skip()
+	}
+	assert.NotNil(t, repo, "Failed to Init Repo")
+
+	doc := models.JournalPg{}
+	err := json.Unmarshal([]byte(json_str), &doc)
+	assert.Nil(t, err, "Failed Unmarshal Json to JournalDoc Create1")
+
+	err = repo.Create(doc)
+	assert.Nil(t, err, "Failed Unmarshal Json to JournalDoc Create1")
+
+	err = repo.Delete(doc.ShopID, doc.DocNo)
+	assert.Nil(t, err, "Failed Unmarshal Json to JournalDoc Create1")
+
 }

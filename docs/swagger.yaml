@@ -524,10 +524,38 @@ definitions:
         type: string
       module:
         type: string
+      name:
+        type: string
+      status:
+        type: integer
       uploadedat:
         type: string
       uploadedby:
         type: string
+    type: object
+  models.DocumentImageGroup:
+    properties:
+      documentimages:
+        items:
+          $ref: '#/definitions/models.DocumentImageGroupDetail'
+        type: array
+      documentref:
+        type: string
+    type: object
+  models.DocumentImageGroupDetail:
+    properties:
+      docguidref:
+        type: string
+      guidfixed:
+        type: string
+      imageuri:
+        type: string
+      module:
+        type: string
+      name:
+        type: string
+      status:
+        type: integer
     type: object
   models.DocumentImageInfo:
     properties:
@@ -541,6 +569,10 @@ definitions:
         type: string
       module:
         type: string
+      name:
+        type: string
+      status:
+        type: integer
       uploadedat:
         type: string
       uploadedby:
@@ -563,6 +595,11 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
+    type: object
+  models.DocumentImageStatus:
+    properties:
+      status:
+        type: integer
     type: object
   models.Employee:
     properties:
@@ -1117,6 +1154,8 @@ definitions:
         type: string
       docno:
         type: string
+      documentref:
+        type: string
       journaldetail:
         items:
           $ref: '#/definitions/models.JournalDetail'
@@ -1217,6 +1256,8 @@ definitions:
         format: dateTime
         type: string
       docno:
+        type: string
+      documentref:
         type: string
       guidfixed:
         type: string
@@ -2279,7 +2320,7 @@ definitions:
       name:
         type: string
       role:
-        type: string
+        type: integer
       shopid:
         type: string
     type: object
@@ -2850,6 +2891,22 @@ paths:
         in: query
         name: q
         type: string
+      - description: Status Value
+        in: query
+        name: status
+        type: integer
+      - description: Module Value
+        in: query
+        name: module
+        type: string
+      - description: Doc GUID Ref Value
+        in: query
+        name: docguidref
+        type: string
+      - description: Document Ref Value
+        in: query
+        name: documentref
+        type: string
       - description: Page
         in: query
         name: page
@@ -2858,6 +2915,10 @@ paths:
         in: query
         name: limit
         type: integer
+      - description: Sort
+        in: query
+        name: sort
+        type: string
       responses:
         "200":
           description: OK
@@ -2976,6 +3037,68 @@ paths:
       summary: Update Document Image
       tags:
       - DocumentImage
+  /documentimage/documentref/status/{docref}:
+    put:
+      consumes:
+      - application/json
+      description: Update Document Image Status By Document Ref
+      parameters:
+      - description: Document Ref
+        in: path
+        name: docref
+        required: true
+        type: string
+      - description: DocumentImageStatus
+        in: body
+        name: DocumentImageStatus
+        required: true
+        schema:
+          $ref: '#/definitions/models.DocumentImageStatus'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: Update Document Image Status By Document Ref
+      tags:
+      - DocumentImageStatusByDocumentRef
+  /documentimage/status/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update Document Image Status
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: DocumentImageStatus
+        in: body
+        name: DocumentImageStatus
+        required: true
+        schema:
+          $ref: '#/definitions/models.DocumentImageStatus'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: Update Document Image Status
+      tags:
+      - DocumentImageStatus
   /documentimage/upload:
     post:
       consumes:
@@ -3015,6 +3138,96 @@ paths:
       - AccessToken: []
       tags:
       - DocumentImage
+  /documentimagegroup:
+    get:
+      consumes:
+      - application/json
+      - application/json
+      description: Get Document Image Group
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentImageGroup
+      - Restaurant
+    post:
+      consumes:
+      - application/json
+      description: Save Document Image Group
+      parameters:
+      - description: Document Image Group
+        in: body
+        name: DocumentImageGroup
+        required: true
+        schema:
+          $ref: '#/definitions/models.DocumentImageGroup'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentImageGroup
+  /documentimagegroup/{docref}:
+    get:
+      consumes:
+      - application/json
+      - application/json
+      description: Get Document Image Group
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentImageGroup
+      - Restaurant
   /employee:
     get:
       consumes:

@@ -5,6 +5,7 @@ import (
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/utils/mogoutil"
+	"strings"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
@@ -87,17 +88,35 @@ func (repo DocumentImageRepository) SaveDocumentImageDocRefGroup(shopID string, 
 
 func (repo DocumentImageRepository) ListDocumentImageGroup(shopID string, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error) {
 
-	shopQuery := bson.M{"$match": bson.M{
+	searchFilter := bson.M{
 		"shopid": shopID,
-		"documentref": bson.M{"$regex": primitive.Regex{
-			Pattern: ".*" + q + ".*",
-			Options: "",
-		}},
-		"name": bson.M{"$regex": primitive.Regex{
-			Pattern: ".*" + q + ".*",
-			Options: "",
-		}},
-	}}
+	}
+
+	if len(strings.TrimSpace(q)) > 0 {
+
+		searchFields := []string{"documentref", "name"}
+
+		tempFilters := []interface{}{}
+
+		for _, fieldName := range searchFields {
+			tempFilters = append(tempFilters, bson.M{fieldName: bson.M{"$regex": primitive.Regex{
+				Pattern: ".*" + q + ".*",
+				Options: "",
+			}}})
+		}
+
+		searchFilter["$or"] = tempFilters
+
+		// "$or": []interface{}{
+		// 	bson.M{"name": bson.M{"$exists": false}},
+		// 	bson.M{"name": bson.M{"$regex": primitive.Regex{
+		// 		Pattern: ".*" + q + ".*",
+		// 		Options: "",
+		// 	}}},
+		// },
+	}
+
+	searchQuery := bson.M{"$match": searchFilter}
 
 	groupQuery := bson.M{"$group": bson.M{"_id": "$documentref", "documentimages": bson.M{"$push": bson.M{
 		"guidfixed":  "$guidfixed",
@@ -110,7 +129,7 @@ func (repo DocumentImageRepository) ListDocumentImageGroup(shopID string, q stri
 
 	projectQuery := bson.M{"$project": bson.M{"documentref": "$_id", "documentimages": 1}}
 
-	aggData, err := repo.pst.AggregatePage(&models.DocumentImageGroup{}, limit, page, shopQuery, groupQuery, projectQuery)
+	aggData, err := repo.pst.AggregatePage(&models.DocumentImageGroup{}, limit, page, searchQuery, groupQuery, projectQuery)
 
 	if err != nil {
 		return nil, mongopagination.PaginationData{}, err
@@ -119,7 +138,11 @@ func (repo DocumentImageRepository) ListDocumentImageGroup(shopID string, q stri
 	docList, err := mogoutil.AggregatePageDecode[models.DocumentImageGroup](aggData)
 
 	if err != nil {
-		return nil, mongopagination.PaginationData{}, err
+		return []models.DocumentImageGroup{}, mongopagination.PaginationData{}, err
+	}
+
+	if len(docList) < 1 {
+		return []models.DocumentImageGroup{}, mongopagination.PaginationData{}, nil
 	}
 
 	return docList, aggData.Pagination, nil

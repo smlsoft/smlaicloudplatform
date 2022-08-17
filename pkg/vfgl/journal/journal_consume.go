@@ -108,12 +108,12 @@ func StartJournalComsumeDeleted(ms *microservice.Microservice, cfg microservice.
 	mq.CreateTopicR(topicCreated, 5, 1, time.Hour*24*7)
 
 	ms.Consume(mqConfig.URI(), topicCreated, groupID, timeout, func(ctx microservice.IContext) error {
-		moduleName := "comsume journal created"
+		moduleName := "comsume journal delete"
 
 		pst := ms.Persister(cfg.PersisterConfig())
 		msg := ctx.ReadInput()
 
-		ms.Logger.Debugf("Consume Journal Created : %v", msg)
+		ms.Logger.Debugf("Consume Journal delete : %v", msg)
 		doc := models.JournalDoc{}
 		err := json.Unmarshal([]byte(msg), &doc)
 
@@ -124,6 +124,7 @@ func StartJournalComsumeDeleted(ms *microservice.Microservice, cfg microservice.
 		repo := repositories.NewJournalPgRepository(pst)
 		svc := services.NewJournalConsumeService(repo)
 
+		ms.Logger.Debugf("Journal delete : %v, %v", doc.ShopID, doc.DocNo)
 		err = svc.Delete(doc.ShopID, doc.DocNo)
 
 		if err != nil {

@@ -2,6 +2,7 @@ package microservice
 
 import (
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -15,6 +16,7 @@ type IConfig interface {
 	CacherConfig() ICacherConfig
 	MQConfig() IMQConfig
 	TopicName() string
+	HttpCORS() []string
 
 	// SignKeyPath() string
 	// VerifyKeyPath() string
@@ -75,6 +77,12 @@ func (*Config) TopicName() string {
 
 func (*Config) ApplicationName() string {
 	return getEnv("SERVICE_NAME", "microservice")
+}
+
+func (*Config) HttpCORS() []string {
+	rawCORS := getEnv("HTTP_CORS", "*")
+
+	return strings.Split(rawCORS, " ")
 }
 
 // func (*Config) SignKeyPath() string {
