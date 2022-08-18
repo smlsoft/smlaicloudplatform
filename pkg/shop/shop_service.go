@@ -3,7 +3,6 @@ package shop
 import (
 	"errors"
 	"smlcloudplatform/pkg/shop/models"
-	"smlcloudplatform/pkg/utils"
 	"time"
 
 	paginate "github.com/gobeam/mongo-go-pagination"
@@ -21,22 +20,26 @@ type IShopService interface {
 type ShopService struct {
 	shopRepo     IShopRepository
 	shopUserRepo IShopUserRepository
+	newGUID      func() string
+	timeNow      func() time.Time
 }
 
-func NewShopService(shopRepo IShopRepository, shopUserRepo IShopUserRepository) ShopService {
+func NewShopService(shopRepo IShopRepository, shopUserRepo IShopUserRepository, newGUID func() string, timeNow func() time.Time) ShopService {
 	return ShopService{
 		shopRepo:     shopRepo,
 		shopUserRepo: shopUserRepo,
+		newGUID:      newGUID,
+		timeNow:      timeNow,
 	}
 }
 
 func (svc ShopService) CreateShop(username string, doc models.Shop) (string, error) {
 
 	dataDoc := models.ShopDoc{}
-	shopID := utils.NewGUID()
+	shopID := svc.newGUID()
 	dataDoc.GuidFixed = shopID
 	dataDoc.CreatedBy = username
-	dataDoc.CreatedAt = time.Now()
+	dataDoc.CreatedAt = svc.timeNow()
 	dataDoc.Shop = doc
 
 	_, err := svc.shopRepo.Create(dataDoc)
@@ -45,7 +48,11 @@ func (svc ShopService) CreateShop(username string, doc models.Shop) (string, err
 		return "", err
 	}
 
-	svc.shopUserRepo.Save(shopID, username, models.ROLE_OWNER)
+	err = svc.shopUserRepo.Save(shopID, username, models.ROLE_OWNER)
+
+	if err != nil {
+		return "", err
+	}
 
 	return shopID, nil
 }

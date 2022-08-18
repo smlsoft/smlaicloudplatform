@@ -37,7 +37,7 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 	authRepo := NewAuthenticationRepository(pst)
 	authenticationService := NewAuthenticationService(authRepo, shopUserRepo, authService, utils.HashPassword, utils.CheckHashPassword, ms.TimeNow)
 
-	shopService := shop.NewShopService(shopRepo, shopUserRepo)
+	shopService := shop.NewShopService(shopRepo, shopUserRepo, utils.NewGUID, ms.TimeNow)
 	shopUserService := shop.NewShopUserService(shopUserRepo)
 	return AuthenticationHttp{
 		ms:                    ms,

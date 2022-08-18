@@ -16,121 +16,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type AuthenticationRepositoryMock struct {
-	mock.Mock
-}
-
-func (m *AuthenticationRepositoryMock) FindUser(id string) (*models.UserDoc, error) {
-	args := m.Called(id)
-	return args.Get(0).(*models.UserDoc), args.Error(1)
-}
-
-func (m *AuthenticationRepositoryMock) CreateUser(doc models.UserDoc) (primitive.ObjectID, error) {
-	args := m.Called(doc)
-	return args.Get(0).(primitive.ObjectID), args.Error(1)
-}
-
-func (m *AuthenticationRepositoryMock) UpdateUser(username string, userDoc models.UserDoc) error {
-	args := m.Called(username, userDoc)
-	return args.Error(0)
-}
-
-type ShopUserRepositoryMock struct {
-	mock.Mock
-}
-
-func (m *ShopUserRepositoryMock) Save(shopID string, username string, role models.UserRole) error {
-	args := m.Called(shopID, username, role)
-	return args.Error(0)
-}
-
-func (m *ShopUserRepositoryMock) Delete(shopID string, username string) error {
-	args := m.Called(shopID, username)
-	return args.Error(0)
-}
-
-func (m *ShopUserRepositoryMock) FindByShopIDAndUsername(shopID string, username string) (models.ShopUser, error) {
-	args := m.Called(shopID, username)
-	return args.Get(0).(models.ShopUser), args.Error(1)
-}
-
-func (m *ShopUserRepositoryMock) FindRole(shopID string, username string) (models.UserRole, error) {
-	args := m.Called(shopID, username)
-	return args.Get(0).(models.UserRole), args.Error(1)
-}
-func (m *ShopUserRepositoryMock) FindByShopID(shopID string) (*[]models.ShopUser, error) {
-	args := m.Called(shopID)
-	return args.Get(0).(*[]models.ShopUser), args.Error(1)
-}
-
-func (m *ShopUserRepositoryMock) FindByUsername(username string) (*[]models.ShopUser, error) {
-	args := m.Called(username)
-	return args.Get(0).(*[]models.ShopUser), args.Error(1)
-}
-func (m *ShopUserRepositoryMock) FindByUsernamePage(username string, q string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error) {
-	args := m.Called(username, q, page, limit)
-	return args.Get(0).([]models.ShopUserInfo), args.Get(1).(paginate.PaginationData), args.Error(2)
-}
-func (m *ShopUserRepositoryMock) FindByUserInShopPage(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, paginate.PaginationData, error) {
-	args := m.Called(shopID, q, page, limit, sort)
-	return args.Get(0).([]models.ShopUser), args.Get(1).(paginate.PaginationData), args.Error(2)
-}
-
-type AuthServiceMock struct {
-	mock.Mock
-}
-
-func (m *AuthServiceMock) MWFuncWithRedisMixShop(cacher microservice.ICacher, shopPath []string, publicPath ...string) echo.MiddlewareFunc {
-	args := m.Called(cacher, shopPath, publicPath)
-	return args.Get(0).(echo.MiddlewareFunc)
-}
-
-func (m *AuthServiceMock) MWFuncWithRedis(cacher microservice.ICacher, publicPath ...string) echo.MiddlewareFunc {
-	args := m.Called(cacher, publicPath)
-	return args.Get(0).(echo.MiddlewareFunc)
-}
-
-func (m *AuthServiceMock) MWFuncWithShop(cacher microservice.ICacher, publicPath ...string) echo.MiddlewareFunc {
-	args := m.Called(cacher, publicPath)
-	return args.Get(0).(echo.MiddlewareFunc)
-}
-
-func (m *AuthServiceMock) GetPrefixCacheKey() string {
-	args := m.Called()
-	return args.String(0)
-}
-
-func (m *AuthServiceMock) GetTokenFromContext(c echo.Context) (string, error) {
-
-	args := m.Called(c)
-
-	return args.String(0), args.Error(1)
-}
-
-func (m *AuthServiceMock) GetTokenFromAuthorizationHeader(tokenAuthorization string) (string, error) {
-
-	args := m.Called(tokenAuthorization)
-
-	return args.String(0), args.Error(1)
-}
-
-func (m *AuthServiceMock) GenerateTokenWithRedis(userInfo micromodel.UserInfo) (string, error) {
-
-	args := m.Called(userInfo)
-	return args.String(0), args.Error(1)
-}
-
-func (m *AuthServiceMock) SelectShop(tokenStr string, shopID string, role uint8) error {
-
-	args := m.Called(tokenStr, shopID, role)
-	return args.Error(0)
-}
-
-func (m *AuthServiceMock) ExpireToken(tokenAuthorizationHeader string) error {
-	args := m.Called(tokenAuthorizationHeader)
-	return args.Error(0)
-}
-
 func mockLoginData(authRepo *AuthenticationRepositoryMock, shopUserRepo *ShopUserRepositoryMock, microAuthServiceMock *AuthServiceMock) {
 
 	shopID := "SHOP_ID_TEST"
@@ -555,6 +440,121 @@ func TestAuthService_AccessShop(t *testing.T) {
 			}
 		})
 	}
+}
+
+type AuthenticationRepositoryMock struct {
+	mock.Mock
+}
+
+func (m *AuthenticationRepositoryMock) FindUser(id string) (*models.UserDoc, error) {
+	args := m.Called(id)
+	return args.Get(0).(*models.UserDoc), args.Error(1)
+}
+
+func (m *AuthenticationRepositoryMock) CreateUser(doc models.UserDoc) (primitive.ObjectID, error) {
+	args := m.Called(doc)
+	return args.Get(0).(primitive.ObjectID), args.Error(1)
+}
+
+func (m *AuthenticationRepositoryMock) UpdateUser(username string, userDoc models.UserDoc) error {
+	args := m.Called(username, userDoc)
+	return args.Error(0)
+}
+
+type ShopUserRepositoryMock struct {
+	mock.Mock
+}
+
+func (m *ShopUserRepositoryMock) Save(shopID string, username string, role models.UserRole) error {
+	args := m.Called(shopID, username, role)
+	return args.Error(0)
+}
+
+func (m *ShopUserRepositoryMock) Delete(shopID string, username string) error {
+	args := m.Called(shopID, username)
+	return args.Error(0)
+}
+
+func (m *ShopUserRepositoryMock) FindByShopIDAndUsername(shopID string, username string) (models.ShopUser, error) {
+	args := m.Called(shopID, username)
+	return args.Get(0).(models.ShopUser), args.Error(1)
+}
+
+func (m *ShopUserRepositoryMock) FindRole(shopID string, username string) (models.UserRole, error) {
+	args := m.Called(shopID, username)
+	return args.Get(0).(models.UserRole), args.Error(1)
+}
+func (m *ShopUserRepositoryMock) FindByShopID(shopID string) (*[]models.ShopUser, error) {
+	args := m.Called(shopID)
+	return args.Get(0).(*[]models.ShopUser), args.Error(1)
+}
+
+func (m *ShopUserRepositoryMock) FindByUsername(username string) (*[]models.ShopUser, error) {
+	args := m.Called(username)
+	return args.Get(0).(*[]models.ShopUser), args.Error(1)
+}
+func (m *ShopUserRepositoryMock) FindByUsernamePage(username string, q string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error) {
+	args := m.Called(username, q, page, limit)
+	return args.Get(0).([]models.ShopUserInfo), args.Get(1).(paginate.PaginationData), args.Error(2)
+}
+func (m *ShopUserRepositoryMock) FindByUserInShopPage(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, paginate.PaginationData, error) {
+	args := m.Called(shopID, q, page, limit, sort)
+	return args.Get(0).([]models.ShopUser), args.Get(1).(paginate.PaginationData), args.Error(2)
+}
+
+type AuthServiceMock struct {
+	mock.Mock
+}
+
+func (m *AuthServiceMock) MWFuncWithRedisMixShop(cacher microservice.ICacher, shopPath []string, publicPath ...string) echo.MiddlewareFunc {
+	args := m.Called(cacher, shopPath, publicPath)
+	return args.Get(0).(echo.MiddlewareFunc)
+}
+
+func (m *AuthServiceMock) MWFuncWithRedis(cacher microservice.ICacher, publicPath ...string) echo.MiddlewareFunc {
+	args := m.Called(cacher, publicPath)
+	return args.Get(0).(echo.MiddlewareFunc)
+}
+
+func (m *AuthServiceMock) MWFuncWithShop(cacher microservice.ICacher, publicPath ...string) echo.MiddlewareFunc {
+	args := m.Called(cacher, publicPath)
+	return args.Get(0).(echo.MiddlewareFunc)
+}
+
+func (m *AuthServiceMock) GetPrefixCacheKey() string {
+	args := m.Called()
+	return args.String(0)
+}
+
+func (m *AuthServiceMock) GetTokenFromContext(c echo.Context) (string, error) {
+
+	args := m.Called(c)
+
+	return args.String(0), args.Error(1)
+}
+
+func (m *AuthServiceMock) GetTokenFromAuthorizationHeader(tokenAuthorization string) (string, error) {
+
+	args := m.Called(tokenAuthorization)
+
+	return args.String(0), args.Error(1)
+}
+
+func (m *AuthServiceMock) GenerateTokenWithRedis(userInfo micromodel.UserInfo) (string, error) {
+
+	args := m.Called(userInfo)
+	return args.String(0), args.Error(1)
+}
+
+func (m *AuthServiceMock) SelectShop(tokenStr string, shopID string, role uint8) error {
+
+	args := m.Called(tokenStr, shopID, role)
+	return args.Error(0)
+}
+
+func (m *AuthServiceMock) ExpireToken(tokenAuthorizationHeader string) error {
+	args := m.Called(tokenAuthorizationHeader)
+	return args.Error(0)
 }
 
 func MockObjectID() primitive.ObjectID {
