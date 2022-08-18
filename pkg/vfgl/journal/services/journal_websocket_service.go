@@ -133,6 +133,11 @@ func (svc JournalWebsocketService) ExistsWebsocket(shopID string, processID stri
 
 // doc ref
 func (svc JournalWebsocketService) SetDocRefPool(shopID string, username string, docRef string) error {
+
+	if len(docRef) < 1 {
+		return errors.New("doc ref is empty")
+	}
+
 	cacheKeyDocRef := svc.getTagID(shopID, "", svc.cachePoolDocRef)
 	cacheKeyUser := svc.getTagID(shopID, "", svc.cachePoolDocRefUser)
 
