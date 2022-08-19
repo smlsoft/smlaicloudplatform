@@ -10,6 +10,7 @@ import (
 	"smlcloudplatform/pkg/vfgl/journal/models"
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
 	"smlcloudplatform/pkg/vfgl/journal/services"
+	"time"
 	"unicode/utf8"
 
 	"github.com/gorilla/websocket"
@@ -25,7 +26,7 @@ func NewJournalWs(ms *microservice.Microservice, cfg microservice.IConfig) Journ
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	cacheRepo := repositories.NewJournalCacheRepository(cache)
-	svcWebsocket := services.NewJournalWebsocketService(cacheRepo)
+	svcWebsocket := services.NewJournalWebsocketService(cacheRepo, time.Duration(30)*time.Minute)
 
 	return JournalWs{
 		ms:           ms,
@@ -35,7 +36,6 @@ func NewJournalWs(ms *microservice.Microservice, cfg microservice.IConfig) Journ
 }
 
 func (h JournalWs) RouteSetup() {
-
 	h.ms.GET("/gl/journal/ws/image", h.WebsocketImage)
 	h.ms.GET("/gl/journal/ws/form", h.WebsocketForm)
 
@@ -70,7 +70,13 @@ func (h JournalWs) WebsocketImage(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svcWebsocket.SetWebsocket(shopID, username, screenName, socketID)
+	err = h.svcWebsocket.SetWebsocket(shopID, username, screenName)
+
+	if err != nil {
+		return err
+	}
+
+	err = h.svcWebsocket.ExpireWebsocket(shopID, username)
 
 	if err != nil {
 		return err
@@ -82,16 +88,18 @@ func (h JournalWs) WebsocketImage(ctx microservice.IContext) error {
 		return err
 	}
 
-	defer func(ws *websocket.Conn) {
+	defer func() {
 		ws.Close()
 		h.ms.WebsocketClose(socketID)
 		h.svcWebsocket.UnSub(subID)
-		h.svcWebsocket.DelWebsocket(shopID, username, screenName, socketID)
+		h.svcWebsocket.DelWebsocket(shopID, username, screenName)
 		h.ClearDocRef(shopID, username)
-	}(ws)
+	}()
 
 	// Send to client
 	for {
+		h.svcWebsocket.ExpireWebsocket(shopID, username)
+
 		_, _, err := ws.ReadMessage()
 		if err != nil {
 			return nil
@@ -132,7 +140,13 @@ func (h JournalWs) WebsocketForm(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svcWebsocket.SetWebsocket(shopID, username, screenName, socketID)
+	err = h.svcWebsocket.SetWebsocket(shopID, username, screenName)
+
+	if err != nil {
+		return err
+	}
+
+	err = h.svcWebsocket.ExpireWebsocket(shopID, username)
 
 	if err != nil {
 		return err
@@ -149,7 +163,7 @@ func (h JournalWs) WebsocketForm(ctx microservice.IContext) error {
 		ws.Close()
 		h.ms.WebsocketClose(socketID)
 		h.svcWebsocket.UnSub(subID)
-		h.svcWebsocket.DelWebsocket(shopID, username, screenName, socketID)
+		h.svcWebsocket.DelWebsocket(shopID, username, screenName)
 		h.ClearDocRef(shopID, username)
 	}()
 
@@ -160,6 +174,8 @@ func (h JournalWs) WebsocketForm(ctx microservice.IContext) error {
 		}()
 
 		for {
+			h.svcWebsocket.ExpireWebsocket(shopID, username)
+
 			journalCommand := models.JournalCommand{}
 			err := ws.ReadJSON(&journalCommand)
 

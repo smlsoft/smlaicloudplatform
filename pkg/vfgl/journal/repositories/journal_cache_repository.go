@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	"time"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -19,6 +20,7 @@ type IJournalCacheRepository interface {
 	HExists(key string, field string) (bool, error)
 	Exists(key string) (bool, error)
 	Del(key ...string) error
+	Expire(key string, expire time.Duration) error
 }
 
 type JournalCacheRepository struct {
@@ -72,4 +74,8 @@ func (repo JournalCacheRepository) HDel(key string, fields ...string) error {
 
 func (repo JournalCacheRepository) Del(key ...string) error {
 	return repo.cache.Del(key...)
+}
+
+func (repo JournalCacheRepository) Expire(key string, expire time.Duration) error {
+	return repo.cache.Expire(key, expire)
 }

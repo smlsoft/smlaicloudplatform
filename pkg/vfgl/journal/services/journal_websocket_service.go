@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"smlcloudplatform/pkg/vfgl/journal/models"
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
+	"time"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/websocket"
@@ -21,9 +22,10 @@ type IJournalWebsocketService interface {
 	GetLastMessage(shopID string, processID string, screen string) (string, error)
 	ClearLastMessage(shopID string, processID string) error
 
-	SetWebsocket(shopID string, processID string, screen string, socketID string) error
-	DelWebsocket(shopID string, processID string, screen string, socketID string) error
+	SetWebsocket(shopID string, processID string, screen string) error
+	DelWebsocket(shopID string, processID string, screen string) error
 	ExistsWebsocket(shopID string, processID string) (bool, error)
+	ExpireWebsocket(shopID string, processID string) error
 
 	DocRefPool(shopID string, username string, ws *websocket.Conn) error
 	SetDocRefPool(shopID string, username string, docRef string) error
@@ -47,10 +49,11 @@ type JournalWebsocketService struct {
 	cachePoolDocRefUser string
 	cacheMessageName    string
 	cacheWebsocketName  string
+	cacheExpire         time.Duration
 	repo                repositories.IJournalCacheRepository
 }
 
-func NewJournalWebsocketService(repo repositories.IJournalCacheRepository) *JournalWebsocketService {
+func NewJournalWebsocketService(repo repositories.IJournalCacheRepository, cacheExpire time.Duration) *JournalWebsocketService {
 
 	return &JournalWebsocketService{
 		cacheChannelDoc:     "chdoc",
@@ -60,6 +63,7 @@ func NewJournalWebsocketService(repo repositories.IJournalCacheRepository) *Jour
 		cacheMessageName:    "wsmsg",
 		cacheWebsocketName:  "wssc",
 		repo:                repo,
+		cacheExpire:         cacheExpire,
 	}
 }
 
@@ -109,10 +113,10 @@ func (svc JournalWebsocketService) ClearLastMessage(shopID string, processID str
 	return svc.repo.Del(cacheKeyName)
 }
 
-func (svc JournalWebsocketService) SetWebsocket(shopID string, processID string, screen string, socketID string) error {
+func (svc JournalWebsocketService) SetWebsocket(shopID string, processID string, screen string) error {
 	cacheKeyName := svc.getTagID(shopID, processID, svc.cacheWebsocketName)
 
-	keyVal := fmt.Sprintf("%s:%s", socketID, screen)
+	keyVal := screen
 	data := map[string]interface{}{
 		keyVal: 1,
 	}
@@ -120,15 +124,20 @@ func (svc JournalWebsocketService) SetWebsocket(shopID string, processID string,
 	return svc.repo.HSet(cacheKeyName, data)
 }
 
-func (svc JournalWebsocketService) DelWebsocket(shopID string, processID string, screen string, socketID string) error {
+func (svc JournalWebsocketService) DelWebsocket(shopID string, processID string, screen string) error {
 	cacheKeyName := svc.getTagID(shopID, processID, svc.cacheWebsocketName)
-	keyVal := fmt.Sprintf("%s:%s", socketID, screen)
+	keyVal := screen
 	return svc.repo.HDel(cacheKeyName, keyVal)
 }
 
 func (svc JournalWebsocketService) ExistsWebsocket(shopID string, processID string) (bool, error) {
 	cacheKeyName := svc.getTagID(shopID, processID, svc.cacheWebsocketName)
 	return svc.repo.Exists(cacheKeyName)
+}
+
+func (svc JournalWebsocketService) ExpireWebsocket(shopID string, processID string) error {
+	cacheKeyName := svc.getTagID(shopID, processID, svc.cacheWebsocketName)
+	return svc.repo.Expire(cacheKeyName, svc.cacheExpire)
 }
 
 // doc ref

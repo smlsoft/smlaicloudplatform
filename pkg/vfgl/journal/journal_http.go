@@ -12,6 +12,7 @@ import (
 	"smlcloudplatform/pkg/vfgl/journal/models"
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
 	"smlcloudplatform/pkg/vfgl/journal/services"
+	"time"
 )
 
 type IJournalHttp interface{}
@@ -34,7 +35,7 @@ func NewJournalHttp(ms *microservice.Microservice, cfg microservice.IConfig) Jou
 	svc := services.NewJournalHttpService(repo, mqRepo)
 
 	cacheRepo := repositories.NewJournalCacheRepository(cache)
-	svcWebsocket := services.NewJournalWebsocketService(cacheRepo)
+	svcWebsocket := services.NewJournalWebsocketService(cacheRepo, time.Duration(30)*time.Minute)
 
 	repoDocImage := repoDocumentimage.NewDocumentImageRepository(pst)
 	svcDocImage := serviceDocumentimage.NewDocumentImageService(repoDocImage, nil)
