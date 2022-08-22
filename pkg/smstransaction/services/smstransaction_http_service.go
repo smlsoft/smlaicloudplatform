@@ -32,7 +32,7 @@ func NewSmsTransactionHttpService(repo repositories.SmsTransactionRepository) Sm
 
 func (svc SmsTransactionHttpService) CreateSmsTransaction(shopID string, authUsername string, doc models.SmsTransaction) (string, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentiryGuid(shopID, "docno", doc.TransId)
+	findDoc, err := svc.repo.FindByDocIndentiryGuid(shopID, "transid", doc.TransId)
 
 	if err != nil {
 		return "", err
@@ -130,7 +130,7 @@ func (svc SmsTransactionHttpService) InfoSmsTransaction(guid string, shopID stri
 func (svc SmsTransactionHttpService) SearchSmsTransaction(shopID string, q string, page int, limit int, sort map[string]int) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
 		"guidfixed",
-		"docno",
+		"transid",
 	}
 
 	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
