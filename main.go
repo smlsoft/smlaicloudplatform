@@ -6,6 +6,7 @@ import (
 	"smlcloudplatform/docs"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/authentication"
+	"smlcloudplatform/pkg/bankmaster"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/images"
 	"smlcloudplatform/pkg/mastersync"
@@ -21,6 +22,7 @@ import (
 	"smlcloudplatform/pkg/shop"
 	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
+	"smlcloudplatform/pkg/smstransaction"
 	"smlcloudplatform/pkg/transaction/purchase"
 	"smlcloudplatform/pkg/transaction/saleinvoice"
 	"smlcloudplatform/pkg/vfgl/accountgroup"
@@ -193,6 +195,12 @@ func main() {
 
 		masterSync := mastersync.NewMasterSyncHttp(ms, cfg)
 		masterSync.RouteSetup()
+
+		smsTransactionhttp := smstransaction.NewSmsTransactionHttp(ms, cfg)
+		smsTransactionhttp.RouteSetup()
+
+		bankMasterHttp := bankmaster.NewBankMasterHttp(ms, cfg)
+		bankMasterHttp.RouteSetup()
 	}
 
 	if devApiMode == "1" || devApiMode == "2" {
