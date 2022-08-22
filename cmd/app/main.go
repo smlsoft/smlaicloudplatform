@@ -21,6 +21,7 @@ import (
 	"smlcloudplatform/pkg/shop"
 	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
+	"smlcloudplatform/pkg/smstransaction"
 	"smlcloudplatform/pkg/syncdata"
 	"smlcloudplatform/pkg/tools"
 	"smlcloudplatform/pkg/transaction/purchase"
@@ -107,6 +108,8 @@ func main() {
 		zonedesign.NewZoneDesignHttp(ms, cfg),
 		mastersync.NewMasterSyncHttp(ms, cfg),
 		documentimage.NewDocumentImageHttp(ms, cfg),
+		//new
+		smstransaction.NewSmsTransactionHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)
