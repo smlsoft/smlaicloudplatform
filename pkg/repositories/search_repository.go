@@ -18,6 +18,31 @@ func NewSearchRepository[T any](pst microservice.IPersisterMongo) SearchReposito
 	}
 }
 
+func (repo SearchRepository[T]) Find(shopID string, colNameSearch []string, q string) ([]T, error) {
+
+	searchFilterList := []interface{}{}
+
+	for _, colName := range colNameSearch {
+		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
+			Pattern: ".*" + q + ".*",
+			Options: "",
+		}}})
+	}
+
+	docList := []T{}
+	err := repo.pst.Find(new(T), bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+		"$or":       searchFilterList,
+	}, &docList)
+
+	if err != nil {
+		return []T{}, err
+	}
+
+	return docList, nil
+}
+
 func (repo SearchRepository[T]) FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]T, mongopagination.PaginationData, error) {
 
 	searchFilterList := []interface{}{}
