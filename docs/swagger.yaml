@@ -156,72 +156,6 @@ definitions:
       success:
         type: boolean
     type: object
-  models.BankMaster:
-    properties:
-      bankcode:
-        type: string
-      banklogo:
-        type: string
-      countrycode:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      parid:
-        type: string
-    required:
-    - name1
-    type: object
-  models.BankMasterInfo:
-    properties:
-      bankcode:
-        type: string
-      banklogo:
-        type: string
-      countrycode:
-        type: string
-      guidfixed:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      parid:
-        type: string
-    required:
-    - name1
-    type: object
-  models.BankMasterInfoResponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.BankMasterInfo'
-      success:
-        type: boolean
-    type: object
-  models.BankMasterPageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/models.BankMasterInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
   models.BulkInsertResponse:
     properties:
       created:
@@ -1714,6 +1648,76 @@ definitions:
           $ref: '#/definitions/models.TransferPayment'
         type: array
     type: object
+  models.PaymentMaster:
+    properties:
+      countrycode:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      parid:
+        type: string
+      paymentcode:
+        type: string
+      paymentlogo:
+        type: string
+      paymenttype:
+        type: integer
+    required:
+    - name1
+    type: object
+  models.PaymentMasterInfo:
+    properties:
+      countrycode:
+        type: string
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      parid:
+        type: string
+      paymentcode:
+        type: string
+      paymentlogo:
+        type: string
+      paymenttype:
+        type: integer
+    required:
+    - name1
+    type: object
+  models.PaymentMasterInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.PaymentMasterInfo'
+      success:
+        type: boolean
+    type: object
+  models.PaymentMasterPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.PaymentMasterInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
   models.PrinterTerminal:
     properties:
       address:
@@ -2803,170 +2807,6 @@ info:
   title: SML Cloud Platform API
   version: "1.0"
 paths:
-  /bankmaster:
-    get:
-      consumes:
-      - application/json
-      description: แสดงรายการ bank master
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Size
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.BankMasterPageResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      summary: แสดงรายการ bank master
-      tags:
-      - GL
-    post:
-      consumes:
-      - application/json
-      description: สร้าง bank master
-      parameters:
-      - description: bankmaster
-        in: body
-        name: BankMaster
-        required: true
-        schema:
-          $ref: '#/definitions/models.BankMaster'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      summary: สร้าง bank master
-      tags:
-      - GL
-  /bankmaster/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: ลบ bank master
-      parameters:
-      - description: Journal ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      summary: ลบ bank master
-      tags:
-      - GL
-    get:
-      consumes:
-      - application/json
-      description: แสดงรายละเอียด bank master
-      parameters:
-      - description: Journal Id
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.BankMasterInfoResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      summary: แสดงรายละเอียด bank master
-      tags:
-      - GL
-    put:
-      consumes:
-      - application/json
-      description: แก้ไข bank master
-      parameters:
-      - description: Bank Master ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: bankmaster
-        in: body
-        name: BankMaster
-        required: true
-        schema:
-          $ref: '#/definitions/models.BankMaster'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      summary: แก้ไข bank master
-      tags:
-      - GL
-  /bankmaster/bulk:
-    post:
-      consumes:
-      - application/json
-      description: นำเข้าข้อมูล bank master
-      parameters:
-      - description: bankmaster
-        in: body
-        name: Journal
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.Journal'
-          type: array
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.BulkInsertResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      summary: นำเข้าข้อมูล bank master
-      tags:
-      - GL
   /category:
     get:
       consumes:
@@ -5334,6 +5174,189 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
+  /paymentmaster:
+    get:
+      consumes:
+      - application/json
+      description: แสดงรายการ payment master
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PaymentMasterPageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: แสดงรายการ payment master
+      tags:
+      - PaymentMaster
+    post:
+      consumes:
+      - application/json
+      description: สร้าง payment master
+      parameters:
+      - description: paymentmaster
+        in: body
+        name: PaymentMaster
+        required: true
+        schema:
+          $ref: '#/definitions/models.PaymentMaster'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: สร้าง payment master
+      tags:
+      - PaymentMaster
+  /paymentmaster-type:
+    get:
+      consumes:
+      - application/json
+      description: แสดงรายละเอียด payment master
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PaymentMasterInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: แสดงรายละเอียด payment master
+      tags:
+      - PaymentMaster
+  /paymentmaster/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: ลบ payment master
+      parameters:
+      - description: Journal ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: ลบ payment master
+      tags:
+      - PaymentMaster
+    get:
+      consumes:
+      - application/json
+      description: แสดงรายละเอียด payment master
+      parameters:
+      - description: Journal Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PaymentMasterInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: แสดงรายละเอียด payment master
+      tags:
+      - PaymentMaster
+    put:
+      consumes:
+      - application/json
+      description: แก้ไข payment master
+      parameters:
+      - description: Payment Master ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: paymentmaster
+        in: body
+        name: PaymentMaster
+        required: true
+        schema:
+          $ref: '#/definitions/models.PaymentMaster'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: แก้ไข payment master
+      tags:
+      - PaymentMaster
+  /paymentmaster/bulk:
+    post:
+      consumes:
+      - application/json
+      description: นำเข้าข้อมูล payment master
+      parameters:
+      - description: paymentmaster
+        in: body
+        name: Journal
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Journal'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkInsertResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: นำเข้าข้อมูล payment master
+      tags:
+      - PaymentMaster
   /profile:
     get:
       consumes:

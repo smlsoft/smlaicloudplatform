@@ -24,267 +24,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/bankmaster": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "แสดงรายการ bank master",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "GL"
-                ],
-                "summary": "แสดงรายการ bank master",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Size",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.BankMasterPageResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "สร้าง bank master",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "GL"
-                ],
-                "summary": "สร้าง bank master",
-                "parameters": [
-                    {
-                        "description": "bankmaster",
-                        "name": "BankMaster",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.BankMaster"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/bankmaster/bulk": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "นำเข้าข้อมูล bank master",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "GL"
-                ],
-                "summary": "นำเข้าข้อมูล bank master",
-                "parameters": [
-                    {
-                        "description": "bankmaster",
-                        "name": "Journal",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Journal"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.BulkInsertResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/bankmaster/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "แสดงรายละเอียด bank master",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "GL"
-                ],
-                "summary": "แสดงรายละเอียด bank master",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Journal Id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.BankMasterInfoResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "แก้ไข bank master",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "GL"
-                ],
-                "summary": "แก้ไข bank master",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bank Master ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "bankmaster",
-                        "name": "BankMaster",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.BankMaster"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "ลบ bank master",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "GL"
-                ],
-                "summary": "ลบ bank master",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Journal ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/category": {
             "get": {
                 "security": [
@@ -4067,6 +3806,298 @@ const docTemplate = `{
                 }
             }
         },
+        "/paymentmaster": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายการ payment master",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PaymentMaster"
+                ],
+                "summary": "แสดงรายการ payment master",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.PaymentMasterPageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "สร้าง payment master",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PaymentMaster"
+                ],
+                "summary": "สร้าง payment master",
+                "parameters": [
+                    {
+                        "description": "paymentmaster",
+                        "name": "PaymentMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PaymentMaster"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/paymentmaster-type": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายละเอียด payment master",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PaymentMaster"
+                ],
+                "summary": "แสดงรายละเอียด payment master",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.PaymentMasterInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/paymentmaster/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "นำเข้าข้อมูล payment master",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PaymentMaster"
+                ],
+                "summary": "นำเข้าข้อมูล payment master",
+                "parameters": [
+                    {
+                        "description": "paymentmaster",
+                        "name": "Journal",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Journal"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkInsertResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/paymentmaster/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายละเอียด payment master",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PaymentMaster"
+                ],
+                "summary": "แสดงรายละเอียด payment master",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Journal Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.PaymentMasterInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แก้ไข payment master",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PaymentMaster"
+                ],
+                "summary": "แก้ไข payment master",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Payment Master ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "paymentmaster",
+                        "name": "PaymentMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PaymentMaster"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "ลบ payment master",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PaymentMaster"
+                ],
+                "summary": "ลบ payment master",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Journal ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/profile": {
             "get": {
                 "security": [
@@ -6448,107 +6479,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.BankMaster": {
-            "type": "object",
-            "required": [
-                "name1"
-            ],
-            "properties": {
-                "bankcode": {
-                    "type": "string"
-                },
-                "banklogo": {
-                    "type": "string"
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "parid": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.BankMasterInfo": {
-            "type": "object",
-            "required": [
-                "name1"
-            ],
-            "properties": {
-                "bankcode": {
-                    "type": "string"
-                },
-                "banklogo": {
-                    "type": "string"
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "parid": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.BankMasterInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.BankMasterInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.BankMasterPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.BankMasterInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
         "models.BulkInsertResponse": {
             "type": "object",
             "properties": {
@@ -8804,6 +8734,113 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.TransferPayment"
                     }
+                }
+            }
+        },
+        "models.PaymentMaster": {
+            "type": "object",
+            "required": [
+                "name1"
+            ],
+            "properties": {
+                "countrycode": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "paymentcode": {
+                    "type": "string"
+                },
+                "paymentlogo": {
+                    "type": "string"
+                },
+                "paymenttype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.PaymentMasterInfo": {
+            "type": "object",
+            "required": [
+                "name1"
+            ],
+            "properties": {
+                "countrycode": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "paymentcode": {
+                    "type": "string"
+                },
+                "paymentlogo": {
+                    "type": "string"
+                },
+                "paymenttype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.PaymentMasterInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.PaymentMasterInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.PaymentMasterPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PaymentMasterInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },

@@ -40,12 +40,14 @@ func (h PaymentMasterHttp) RouteSetup() {
 	h.ms.GET("/paymentmaster/:id", h.InfoPaymentMaster)
 	h.ms.PUT("/paymentmaster/:id", h.UpdatePaymentMaster)
 	h.ms.DELETE("/paymentmaster/:id", h.DeletePaymentMaster)
+
+	h.ms.GET("/paymentmaster-type ", h.InfoPaymentMasterType)
 }
 
 // Create Payment Master godoc
 // @Summary		สร้าง payment master
 // @Description สร้าง payment master
-// @Tags		GL
+// @Tags		PaymentMaster
 // @Param		PaymentMaster  body      models.PaymentMaster  true  "paymentmaster"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
@@ -82,7 +84,7 @@ func (h PaymentMasterHttp) CreatePaymentMaster(ctx microservice.IContext) error 
 // Update Payment Master godoc
 // @Summary		แก้ไข payment master
 // @Description แก้ไข payment master
-// @Tags		GL
+// @Tags		PaymentMaster
 // @Param		id  path      string  true  "Payment Master ID"
 // @Param		PaymentMaster  body      models.PaymentMaster  true  "paymentmaster"
 // @Accept 		json
@@ -124,7 +126,7 @@ func (h PaymentMasterHttp) UpdatePaymentMaster(ctx microservice.IContext) error 
 // Delete Payment Master godoc
 // @Summary		ลบ payment master
 // @Description ลบ payment master
-// @Tags		GL
+// @Tags		PaymentMaster
 // @Param		id  path      string  true  "Journal ID"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
@@ -156,7 +158,7 @@ func (h PaymentMasterHttp) DeletePaymentMaster(ctx microservice.IContext) error 
 // Get Payment Master godoc
 // @Summary		แสดงรายละเอียด payment master
 // @Description แสดงรายละเอียด payment master
-// @Tags		GL
+// @Tags		PaymentMaster
 // @Param		id  path      string  true  "Journal Id"
 // @Accept 		json
 // @Success		200	{object}	models.PaymentMasterInfoResponse
@@ -188,7 +190,7 @@ func (h PaymentMasterHttp) InfoPaymentMaster(ctx microservice.IContext) error {
 // List Payment Master godoc
 // @Summary		แสดงรายการ payment master
 // @Description แสดงรายการ payment master
-// @Tags		GL
+// @Tags		PaymentMaster
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
@@ -219,7 +221,7 @@ func (h PaymentMasterHttp) SearchPaymentMaster(ctx microservice.IContext) error 
 // Create Payment Master godoc
 // @Summary		นำเข้าข้อมูล payment master
 // @Description นำเข้าข้อมูล payment master
-// @Tags		GL
+// @Tags		PaymentMaster
 // @Param		Journal  body      []models.Journal  true  "paymentmaster"
 // @Accept 		json
 // @Success		201	{object}	common.BulkInsertResponse
@@ -257,5 +259,26 @@ func (h PaymentMasterHttp) SaveBulk(ctx microservice.IContext) error {
 		},
 	)
 
+	return nil
+}
+
+// Get Payment Master Type godoc
+// @Summary		แสดงรายละเอียด payment master
+// @Description แสดงรายละเอียด payment master
+// @Tags		PaymentMaster
+// @Accept 		json
+// @Success		200	{object}	models.PaymentMasterInfoResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /paymentmaster-type [get]
+func (h PaymentMasterHttp) InfoPaymentMasterType(ctx microservice.IContext) error {
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data: map[int8]string{
+			0: "bank",
+			1: "qr payment",
+		},
+	})
 	return nil
 }
