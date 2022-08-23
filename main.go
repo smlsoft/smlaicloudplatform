@@ -6,11 +6,11 @@ import (
 	"smlcloudplatform/docs"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/authentication"
-	"smlcloudplatform/pkg/bankmaster"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/images"
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
+	"smlcloudplatform/pkg/paymentmaster"
 	"smlcloudplatform/pkg/product/category"
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
@@ -199,8 +199,8 @@ func main() {
 		smsTransactionhttp := smstransaction.NewSmsTransactionHttp(ms, cfg)
 		smsTransactionhttp.RouteSetup()
 
-		bankMasterHttp := bankmaster.NewBankMasterHttp(ms, cfg)
-		bankMasterHttp.RouteSetup()
+		paymentMasterHttp := paymentmaster.NewPaymentMasterHttp(ms, cfg)
+		paymentMasterHttp.RouteSetup()
 	}
 
 	if devApiMode == "1" || devApiMode == "2" {

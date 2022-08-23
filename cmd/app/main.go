@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/authentication"
-	"smlcloudplatform/pkg/bankmaster"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
+	"smlcloudplatform/pkg/paymentmaster"
 	"smlcloudplatform/pkg/product/category"
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
@@ -111,7 +111,7 @@ func main() {
 		documentimage.NewDocumentImageHttp(ms, cfg),
 		//new
 		smstransaction.NewSmsTransactionHttp(ms, cfg),
-		bankmaster.NewBankMasterHttp(ms, cfg),
+		paymentmaster.NewPaymentMasterHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)

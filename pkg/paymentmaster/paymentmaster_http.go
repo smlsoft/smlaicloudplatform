@@ -1,64 +1,63 @@
-package bankmaster
+package paymentmaster
 
 import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/bankmaster/models"
-	"smlcloudplatform/pkg/bankmaster/repositories"
-	"smlcloudplatform/pkg/bankmaster/services"
 	common "smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/paymentmaster/models"
+	"smlcloudplatform/pkg/paymentmaster/repositories"
+	"smlcloudplatform/pkg/paymentmaster/services"
 )
 
-type IBankMasterHttp interface{}
+type IPaymentMasterHttp interface{}
 
-type BankMasterHttp struct {
+type PaymentMasterHttp struct {
 	ms  *microservice.Microservice
 	cfg microservice.IConfig
-	svc services.IBankMasterHttpService
+	svc services.IPaymentMasterHttpService
 }
 
-func NewBankMasterHttp(ms *microservice.Microservice, cfg microservice.IConfig) BankMasterHttp {
+func NewPaymentMasterHttp(ms *microservice.Microservice, cfg microservice.IConfig) PaymentMasterHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
-	repo := repositories.NewBankMasterRepository(pst)
-	svc := services.NewBankMasterHttpService(repo)
+	repo := repositories.NewPaymentMasterRepository(pst)
+	svc := services.NewPaymentMasterHttpService(repo)
 
-	return BankMasterHttp{
+	return PaymentMasterHttp{
 		ms:  ms,
 		cfg: cfg,
 		svc: svc,
 	}
 }
 
-func (h BankMasterHttp) RouteSetup() {
+func (h PaymentMasterHttp) RouteSetup() {
 
-	h.ms.POST("/bankmaster/bulk", h.SaveBulk)
+	h.ms.POST("/paymentmaster/bulk", h.SaveBulk)
 
-	h.ms.GET("/bankmaster", h.SearchBankMaster)
-	h.ms.POST("/bankmaster", h.CreateBankMaster)
-	h.ms.GET("/bankmaster/:id", h.InfoBankMaster)
-	h.ms.PUT("/bankmaster/:id", h.UpdateBankMaster)
-	h.ms.DELETE("/bankmaster/:id", h.DeleteBankMaster)
+	h.ms.GET("/paymentmaster", h.SearchPaymentMaster)
+	h.ms.POST("/paymentmaster", h.CreatePaymentMaster)
+	h.ms.GET("/paymentmaster/:id", h.InfoPaymentMaster)
+	h.ms.PUT("/paymentmaster/:id", h.UpdatePaymentMaster)
+	h.ms.DELETE("/paymentmaster/:id", h.DeletePaymentMaster)
 }
 
-// Create Bank Master godoc
-// @Summary		สร้าง bank master
-// @Description สร้าง bank master
+// Create Payment Master godoc
+// @Summary		สร้าง payment master
+// @Description สร้าง payment master
 // @Tags		GL
-// @Param		BankMaster  body      models.BankMaster  true  "bankmaster"
+// @Param		PaymentMaster  body      models.PaymentMaster  true  "paymentmaster"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /bankmaster [post]
-func (h BankMasterHttp) CreateBankMaster(ctx microservice.IContext) error {
+// @Router /paymentmaster [post]
+func (h PaymentMasterHttp) CreatePaymentMaster(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &models.BankMaster{}
+	docReq := &models.PaymentMaster{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -66,7 +65,7 @@ func (h BankMasterHttp) CreateBankMaster(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.svc.CreateBankMaster(shopID, authUsername, *docReq)
+	idx, err := h.svc.CreatePaymentMaster(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -80,18 +79,18 @@ func (h BankMasterHttp) CreateBankMaster(ctx microservice.IContext) error {
 	return nil
 }
 
-// Update Bank Master godoc
-// @Summary		แก้ไข bank master
-// @Description แก้ไข bank master
+// Update Payment Master godoc
+// @Summary		แก้ไข payment master
+// @Description แก้ไข payment master
 // @Tags		GL
-// @Param		id  path      string  true  "Bank Master ID"
-// @Param		BankMaster  body      models.BankMaster  true  "bankmaster"
+// @Param		id  path      string  true  "Payment Master ID"
+// @Param		PaymentMaster  body      models.PaymentMaster  true  "paymentmaster"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /bankmaster/{id} [put]
-func (h BankMasterHttp) UpdateBankMaster(ctx microservice.IContext) error {
+// @Router /paymentmaster/{id} [put]
+func (h PaymentMasterHttp) UpdatePaymentMaster(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -99,7 +98,7 @@ func (h BankMasterHttp) UpdateBankMaster(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &models.BankMaster{}
+	docReq := &models.PaymentMaster{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -107,7 +106,7 @@ func (h BankMasterHttp) UpdateBankMaster(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svc.UpdateBankMaster(id, shopID, authUsername, *docReq)
+	err = h.svc.UpdatePaymentMaster(id, shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -122,24 +121,24 @@ func (h BankMasterHttp) UpdateBankMaster(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete Bank Master godoc
-// @Summary		ลบ bank master
-// @Description ลบ bank master
+// Delete Payment Master godoc
+// @Summary		ลบ payment master
+// @Description ลบ payment master
 // @Tags		GL
 // @Param		id  path      string  true  "Journal ID"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /bankmaster/{id} [delete]
-func (h BankMasterHttp) DeleteBankMaster(ctx microservice.IContext) error {
+// @Router /paymentmaster/{id} [delete]
+func (h PaymentMasterHttp) DeletePaymentMaster(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
 
 	id := ctx.Param("id")
 
-	err := h.svc.DeleteBankMaster(id, shopID, authUsername)
+	err := h.svc.DeletePaymentMaster(id, shopID, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -154,24 +153,24 @@ func (h BankMasterHttp) DeleteBankMaster(ctx microservice.IContext) error {
 	return nil
 }
 
-// Get Bank Master godoc
-// @Summary		แสดงรายละเอียด bank master
-// @Description แสดงรายละเอียด bank master
+// Get Payment Master godoc
+// @Summary		แสดงรายละเอียด payment master
+// @Description แสดงรายละเอียด payment master
 // @Tags		GL
 // @Param		id  path      string  true  "Journal Id"
 // @Accept 		json
-// @Success		200	{object}	models.BankMasterInfoResponse
+// @Success		200	{object}	models.PaymentMasterInfoResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /bankmaster/{id} [get]
-func (h BankMasterHttp) InfoBankMaster(ctx microservice.IContext) error {
+// @Router /paymentmaster/{id} [get]
+func (h PaymentMasterHttp) InfoPaymentMaster(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	h.ms.Logger.Debugf("Get BankMaster %v", id)
-	doc, err := h.svc.InfoBankMaster(id, shopID)
+	h.ms.Logger.Debugf("Get PaymentMaster %v", id)
+	doc, err := h.svc.InfoPaymentMaster(id, shopID)
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
@@ -186,26 +185,24 @@ func (h BankMasterHttp) InfoBankMaster(ctx microservice.IContext) error {
 	return nil
 }
 
-// List Bank Master godoc
-// @Summary		แสดงรายการ bank master
-// @Description แสดงรายการ bank master
+// List Payment Master godoc
+// @Summary		แสดงรายการ payment master
+// @Description แสดงรายการ payment master
 // @Tags		GL
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
 // @Accept 		json
-// @Success		200	{object}	models.BankMasterPageResponse
+// @Success		200	{object}	models.PaymentMasterPageResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /bankmaster [get]
-func (h BankMasterHttp) SearchBankMaster(ctx microservice.IContext) error {
+// @Router /paymentmaster [get]
+func (h PaymentMasterHttp) SearchPaymentMaster(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	sort := utils.GetSortParam(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchBankMaster(shopID, q, page, limit, sort)
+	docList, err := h.svc.SearchPaymentMaster(shopID, q)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -213,24 +210,23 @@ func (h BankMasterHttp) SearchBankMaster(ctx microservice.IContext) error {
 	}
 
 	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success:    true,
-		Data:       docList,
-		Pagination: pagination,
+		Success: true,
+		Data:    docList,
 	})
 	return nil
 }
 
-// Create Bank Master godoc
-// @Summary		นำเข้าข้อมูล bank master
-// @Description นำเข้าข้อมูล bank master
+// Create Payment Master godoc
+// @Summary		นำเข้าข้อมูล payment master
+// @Description นำเข้าข้อมูล payment master
 // @Tags		GL
-// @Param		Journal  body      []models.Journal  true  "bankmaster"
+// @Param		Journal  body      []models.Journal  true  "paymentmaster"
 // @Accept 		json
 // @Success		201	{object}	common.BulkInsertResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /bankmaster/bulk [post]
-func (h BankMasterHttp) SaveBulk(ctx microservice.IContext) error {
+// @Router /paymentmaster/bulk [post]
+func (h PaymentMasterHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -238,7 +234,7 @@ func (h BankMasterHttp) SaveBulk(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	dataReq := []models.BankMaster{}
+	dataReq := []models.PaymentMaster{}
 	err := json.Unmarshal([]byte(input), &dataReq)
 
 	if err != nil {

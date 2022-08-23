@@ -156,6 +156,72 @@ definitions:
       success:
         type: boolean
     type: object
+  models.BankMaster:
+    properties:
+      bankcode:
+        type: string
+      banklogo:
+        type: string
+      countrycode:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      parid:
+        type: string
+    required:
+    - name1
+    type: object
+  models.BankMasterInfo:
+    properties:
+      bankcode:
+        type: string
+      banklogo:
+        type: string
+      countrycode:
+        type: string
+      guidfixed:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      parid:
+        type: string
+    required:
+    - name1
+    type: object
+  models.BankMasterInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.BankMasterInfo'
+      success:
+        type: boolean
+    type: object
+  models.BankMasterPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.BankMasterInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
   models.BulkInsertResponse:
     properties:
       created:
@@ -2438,6 +2504,52 @@ definitions:
       success:
         type: boolean
     type: object
+  models.SmsTransaction:
+    properties:
+      address:
+        type: string
+      body:
+        type: string
+      date:
+        type: string
+      parid:
+        type: string
+      transid:
+        type: string
+    type: object
+  models.SmsTransactionInfo:
+    properties:
+      address:
+        type: string
+      body:
+        type: string
+      date:
+        type: string
+      guidfixed:
+        type: string
+      parid:
+        type: string
+      transid:
+        type: string
+    type: object
+  models.SmsTransactionInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.SmsTransactionInfo'
+      success:
+        type: boolean
+    type: object
+  models.SmsTransactionPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.SmsTransactionInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
   models.SyncInventoryData:
     properties:
       data:
@@ -2691,6 +2803,170 @@ info:
   title: SML Cloud Platform API
   version: "1.0"
 paths:
+  /bankmaster:
+    get:
+      consumes:
+      - application/json
+      description: แสดงรายการ bank master
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.BankMasterPageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: แสดงรายการ bank master
+      tags:
+      - GL
+    post:
+      consumes:
+      - application/json
+      description: สร้าง bank master
+      parameters:
+      - description: bankmaster
+        in: body
+        name: BankMaster
+        required: true
+        schema:
+          $ref: '#/definitions/models.BankMaster'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: สร้าง bank master
+      tags:
+      - GL
+  /bankmaster/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: ลบ bank master
+      parameters:
+      - description: Journal ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: ลบ bank master
+      tags:
+      - GL
+    get:
+      consumes:
+      - application/json
+      description: แสดงรายละเอียด bank master
+      parameters:
+      - description: Journal Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.BankMasterInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: แสดงรายละเอียด bank master
+      tags:
+      - GL
+    put:
+      consumes:
+      - application/json
+      description: แก้ไข bank master
+      parameters:
+      - description: Bank Master ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: bankmaster
+        in: body
+        name: BankMaster
+        required: true
+        schema:
+          $ref: '#/definitions/models.BankMaster'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: แก้ไข bank master
+      tags:
+      - GL
+  /bankmaster/bulk:
+    post:
+      consumes:
+      - application/json
+      description: นำเข้าข้อมูล bank master
+      parameters:
+      - description: bankmaster
+        in: body
+        name: Journal
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Journal'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkInsertResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: นำเข้าข้อมูล bank master
+      tags:
+      - GL
   /category:
     get:
       consumes:
@@ -6197,6 +6473,111 @@ paths:
       - AccessToken: []
       tags:
       - Shop
+  /smstransaction:
+    post:
+      consumes:
+      - application/json
+      description: รับข้อมูล sms
+      parameters:
+      - description: sms data
+        in: body
+        name: Transaction
+        required: true
+        schema:
+          $ref: '#/definitions/models.SmsTransaction'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: รับข้อมูล sms
+      tags:
+      - SMS
+  /smstransaction/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: รับข้อมูล sms
+      parameters:
+      - description: GIUDFIXED
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: รับข้อมูล sms
+      tags:
+      - SMS
+    get:
+      consumes:
+      - application/json
+      description: รับข้อมูล sms
+      parameters:
+      - description: GIUDFIXED
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SmsTransactionInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: รับข้อมูล sms
+      tags:
+      - SMS
+    put:
+      consumes:
+      - application/json
+      description: รับข้อมูล sms
+      parameters:
+      - description: GIUDFIXED
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: sms data
+        in: body
+        name: Journal
+        required: true
+        schema:
+          $ref: '#/definitions/models.SmsTransaction'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: รับข้อมูล sms
+      tags:
+      - SMS
   /syncproduct:
     post:
       consumes:
