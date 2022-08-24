@@ -41,7 +41,7 @@ func (h PaymentMasterHttp) RouteSetup() {
 	h.ms.PUT("/paymentmaster/:id", h.UpdatePaymentMaster)
 	h.ms.DELETE("/paymentmaster/:id", h.DeletePaymentMaster)
 
-	h.ms.GET("/paymentmaster-type ", h.InfoPaymentMasterType)
+	h.ms.GET("/paymentmaster-type", h.InfoPaymentMasterType)
 }
 
 // Create Payment Master godoc
