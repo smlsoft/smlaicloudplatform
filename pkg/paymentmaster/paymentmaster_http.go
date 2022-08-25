@@ -263,11 +263,11 @@ func (h PaymentMasterHttp) SaveBulk(ctx microservice.IContext) error {
 }
 
 // Get Payment Master Type godoc
-// @Summary		แสดงรายละเอียด payment master
-// @Description แสดงรายละเอียด payment master
+// @Summary		แสดงรายละเอียด payment master type
+// @Description แสดงรายละเอียด payment master type
 // @Tags		PaymentMaster
 // @Accept 		json
-// @Success		200	{object}	models.PaymentMasterInfoResponse
+// @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /paymentmaster-type [get]

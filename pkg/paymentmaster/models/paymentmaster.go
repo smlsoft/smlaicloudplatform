@@ -10,10 +10,11 @@ const paymentmasterCollectionName = "paymentMaster"
 
 type PaymentMaster struct {
 	models.PartitionIdentity `bson:"inline"`
-	PaymentCode              string `json:"paymentcode" bson:"paymentcode"`
-	CountryCode              string `json:"countrycode" bson:"countrycode"`
-	PaymentLogo              string `json:"paymentlogo" bson:"paymentlogo"`
-	PaymentType              int8   `json:"paymenttype" bson:"paymenttype"`
+	PaymentCode              string  `json:"paymentcode" bson:"paymentcode"`
+	CountryCode              string  `json:"countrycode" bson:"countrycode"`
+	PaymentLogo              string  `json:"paymentlogo" bson:"paymentlogo"`
+	PaymentType              int8    `json:"paymenttype" bson:"paymenttype"`
+	FeeRate                  float64 `json:"feerate" bson:"feerate"`
 	models.Name              `bson:"inline"`
 }
 

@@ -3904,19 +3904,19 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "แสดงรายละเอียด payment master",
+                "description": "แสดงรายละเอียด payment master type",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "PaymentMaster"
                 ],
-                "summary": "แสดงรายละเอียด payment master",
+                "summary": "แสดงรายละเอียด payment master type",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.PaymentMasterInfoResponse"
+                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     },
                     "401": {
@@ -8746,6 +8746,9 @@ const docTemplate = `{
                 "countrycode": {
                     "type": "string"
                 },
+                "feerate": {
+                    "type": "number"
+                },
                 "name1": {
                     "type": "string"
                 },
@@ -8783,6 +8786,9 @@ const docTemplate = `{
             "properties": {
                 "countrycode": {
                     "type": "string"
+                },
+                "feerate": {
+                    "type": "number"
                 },
                 "guidfixed": {
                     "type": "string"
