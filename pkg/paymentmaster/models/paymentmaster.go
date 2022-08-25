@@ -15,6 +15,7 @@ type PaymentMaster struct {
 	PaymentLogo              string  `json:"paymentlogo" bson:"paymentlogo"`
 	PaymentType              int8    `json:"paymenttype" bson:"paymenttype"`
 	FeeRate                  float64 `json:"feerate" bson:"feerate"`
+	WalletPayType            int16   `json:"wallettype" bson:"wallettype"`
 	models.Name              `bson:"inline"`
 }
 
