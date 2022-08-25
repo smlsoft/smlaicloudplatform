@@ -7,6 +7,7 @@ import (
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/shop"
 	shopmodel "smlcloudplatform/pkg/shop/models"
+	"smlcloudplatform/pkg/utils"
 	"strconv"
 )
 
@@ -34,9 +35,9 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 	shopRepo := shop.NewShopRepository(pst)
 	shopUserRepo := shop.NewShopUserRepository(pst)
 	authRepo := NewAuthenticationRepository(pst)
-	authenticationService := NewAuthenticationService(authRepo, shopUserRepo, authService)
+	authenticationService := NewAuthenticationService(authRepo, shopUserRepo, authService, utils.HashPassword, utils.CheckHashPassword, ms.TimeNow)
 
-	shopService := shop.NewShopService(shopRepo, shopUserRepo)
+	shopService := shop.NewShopService(shopRepo, shopUserRepo, utils.NewGUID, ms.TimeNow)
 	shopUserService := shop.NewShopUserService(shopUserRepo)
 	return AuthenticationHttp{
 		ms:                    ms,
@@ -282,7 +283,7 @@ func (h AuthenticationHttp) ListShop(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.authenticationService.AccessShop(authorizationHeader, shopSelectReq.ShopID, authUsername)
+	err = h.authenticationService.AccessShop(shopSelectReq.ShopID, authUsername, authorizationHeader)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, common.ApiResponse{
@@ -325,7 +326,7 @@ func (h AuthenticationHttp) SelectShop(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.authenticationService.AccessShop(authorizationHeader, shopSelectReq.ShopID, authUsername)
+	err = h.authenticationService.AccessShop(shopSelectReq.ShopID, authUsername, authorizationHeader)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, common.ApiResponse{

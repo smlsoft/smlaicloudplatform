@@ -13,11 +13,11 @@ type UserDetail struct {
 }
 
 type UsernameCode struct {
-	Username string `json:"username,omitempty" bson:"username" validate:"required,gte=3"`
+	Username string `json:"username,omitempty" bson:"username" validate:"required,gte=5,max=233"`
 }
 
 type UserPassword struct {
-	Password string `json:"password,omitempty" bson:"password" validate:"required,gte=3"`
+	Password string `json:"password,omitempty" bson:"password" validate:"required,gte=5,max=233"`
 }
 
 type UserDoc struct {
@@ -60,8 +60,8 @@ type UserProfileRequest struct {
 }
 
 type UserPasswordRequest struct {
-	CurrentPassword string `json:"currentpassword" bson:"currentpassword" validate:"required,gte=3"`
-	NewPassword     string `json:"newpassword" bson:"newpassword" validate:"required,gte=3"`
+	CurrentPassword string `json:"currentpassword" bson:"currentpassword" validate:"required,gte=5"`
+	NewPassword     string `json:"newpassword" bson:"newpassword" validate:"required,gte=5"`
 }
 
 type UserProfileReponse struct {

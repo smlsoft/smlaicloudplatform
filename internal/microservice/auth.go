@@ -11,6 +11,18 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type IAuthService interface {
+	MWFuncWithRedisMixShop(cacher ICacher, shopPath []string, publicPath ...string) echo.MiddlewareFunc
+	MWFuncWithRedis(cacher ICacher, publicPath ...string) echo.MiddlewareFunc
+	MWFuncWithShop(cacher ICacher, publicPath ...string) echo.MiddlewareFunc
+	GetPrefixCacheKey() string
+	GetTokenFromContext(c echo.Context) (string, error)
+	GetTokenFromAuthorizationHeader(tokenAuthorization string) (string, error)
+	GenerateTokenWithRedis(userInfo models.UserInfo) (string, error)
+	SelectShop(tokenStr string, shopID string, role uint8) error
+	ExpireToken(tokenAuthorizationHeader string) error
+}
+
 func NewAuthService(cacher ICacher, expireHour int) *AuthService {
 
 	return &AuthService{
@@ -230,6 +242,10 @@ func (authService *AuthService) GetTokenFromContext(c echo.Context) (string, err
 }
 
 func (authService *AuthService) GetTokenFromAuthorizationHeader(tokenAuthorization string) (string, error) {
+
+	if len(tokenAuthorization) < 1 {
+		return "", fmt.Errorf("authorization is not empty")
+	}
 
 	parts := strings.SplitN(tokenAuthorization, " ", 2)
 	if !(len(parts) == 2 && parts[0] == authService.prefixAuthorization) {
