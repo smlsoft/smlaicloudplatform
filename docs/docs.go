@@ -1723,6 +1723,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/gl/journal/docref/{doc}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายละเอียดข้อมูลรายวัน ตามเอกสารอ้างอิง",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แสดงรายละเอียดข้อมูลรายวัน ตามเอกสารอ้างอิง",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Document Ref",
+                        "name": "doc",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/gl/journal/{id}": {
             "get": {
                 "security": [
@@ -5954,7 +5994,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SmsTransaction"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransaction"
                         }
                     }
                 ],
@@ -6002,7 +6042,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.SmsTransactionInfoResponse"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfoResponse"
                         }
                     },
                     "401": {
@@ -6041,7 +6081,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SmsTransaction"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransaction"
                         }
                     }
                 ],
@@ -8775,6 +8815,9 @@ const docTemplate = `{
                 },
                 "paymenttype": {
                     "type": "integer"
+                },
+                "wallettype": {
+                    "type": "integer"
                 }
             }
         },
@@ -8818,6 +8861,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "paymenttype": {
+                    "type": "integer"
+                },
+                "wallettype": {
                     "type": "integer"
                 }
             }
@@ -10040,77 +10086,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.SmsTransaction": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "body": {
-                    "type": "string"
-                },
-                "date": {
-                    "type": "string"
-                },
-                "parid": {
-                    "type": "string"
-                },
-                "transid": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.SmsTransactionInfo": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "body": {
-                    "type": "string"
-                },
-                "date": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "parid": {
-                    "type": "string"
-                },
-                "transid": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.SmsTransactionInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.SmsTransactionInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.SmsTransactionPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.SmsTransactionInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
         "models.SyncInventoryData": {
             "type": "object",
             "properties": {
@@ -10344,14 +10319,16 @@ const docTemplate = `{
             "properties": {
                 "password": {
                     "type": "string",
-                    "minLength": 3
+                    "maxLength": 233,
+                    "minLength": 5
                 },
                 "shopid": {
                     "type": "string"
                 },
                 "username": {
                     "type": "string",
-                    "minLength": 3
+                    "maxLength": 233,
+                    "minLength": 5
                 }
             }
         },
@@ -10367,7 +10344,8 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string",
-                    "minLength": 3
+                    "maxLength": 233,
+                    "minLength": 5
                 }
             }
         },
@@ -10395,11 +10373,13 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string",
-                    "minLength": 3
+                    "maxLength": 233,
+                    "minLength": 5
                 },
                 "username": {
                     "type": "string",
-                    "minLength": 3
+                    "maxLength": 233,
+                    "minLength": 5
                 }
             }
         },
@@ -10459,6 +10439,148 @@ const docTemplate = `{
                 },
                 "vatyear": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransaction": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "integer"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "transid": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfo": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "integer"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "transid": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_smstransaction_models.SmsTransaction": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "transid": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfo": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "transid": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_smstransaction_models.SmsTransactionPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         }

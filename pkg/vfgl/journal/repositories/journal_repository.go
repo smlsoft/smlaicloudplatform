@@ -16,6 +16,7 @@ type IJournalRepository interface {
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.JournalInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.JournalDoc, error)
+	FindOne(shopID string, filters map[string]interface{}) (models.JournalDoc, error)
 }
 
 type JournalRepository struct {

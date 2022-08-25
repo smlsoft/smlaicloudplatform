@@ -10,6 +10,7 @@ import (
 	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -18,6 +19,7 @@ type IJournalHttpService interface {
 	UpdateJournal(guid string, shopID string, authUsername string, doc models.Journal) error
 	DeleteJournal(guid string, shopID string, authUsername string) error
 	InfoJournal(shopID string, guid string) (models.JournalInfo, error)
+	InfoJournalByDocumentRef(shopID string, documentRef string) (models.JournalInfo, error)
 	SearchJournal(shopID string, q string, page int, limit int, sort map[string]int) ([]models.JournalInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Journal) (common.BulkImport, error)
 }
@@ -128,6 +130,26 @@ func (svc JournalHttpService) DeleteJournal(guid string, shopID string, authUser
 func (svc JournalHttpService) InfoJournal(shopID string, guid string) (models.JournalInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+
+	if err != nil {
+		return models.JournalInfo{}, err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return models.JournalInfo{}, errors.New("document not found")
+	}
+
+	return findDoc.JournalInfo, nil
+
+}
+
+func (svc JournalHttpService) InfoJournalByDocumentRef(shopID string, documentRef string) (models.JournalInfo, error) {
+
+	filters := bson.M{
+		"documentref": documentRef,
+	}
+
+	findDoc, err := svc.repo.FindOne(shopID, filters)
 
 	if err != nil {
 		return models.JournalInfo{}, err

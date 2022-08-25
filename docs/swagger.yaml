@@ -1672,6 +1672,8 @@ definitions:
         type: string
       paymenttype:
         type: integer
+      wallettype:
+        type: integer
     required:
     - name1
     type: object
@@ -1700,6 +1702,8 @@ definitions:
       paymentlogo:
         type: string
       paymenttype:
+        type: integer
+      wallettype:
         type: integer
     required:
     - name1
@@ -2512,52 +2516,6 @@ definitions:
       success:
         type: boolean
     type: object
-  models.SmsTransaction:
-    properties:
-      address:
-        type: string
-      body:
-        type: string
-      date:
-        type: string
-      parid:
-        type: string
-      transid:
-        type: string
-    type: object
-  models.SmsTransactionInfo:
-    properties:
-      address:
-        type: string
-      body:
-        type: string
-      date:
-        type: string
-      guidfixed:
-        type: string
-      parid:
-        type: string
-      transid:
-        type: string
-    type: object
-  models.SmsTransactionInfoResponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.SmsTransactionInfo'
-      success:
-        type: boolean
-    type: object
-  models.SmsTransactionPageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/models.SmsTransactionInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
   models.SyncInventoryData:
     properties:
       data:
@@ -2717,12 +2675,14 @@ definitions:
   models.UserLoginRequest:
     properties:
       password:
-        minLength: 3
+        maxLength: 233
+        minLength: 5
         type: string
       shopid:
         type: string
       username:
-        minLength: 3
+        maxLength: 233
+        minLength: 5
         type: string
     required:
     - password
@@ -2733,7 +2693,8 @@ definitions:
       name:
         type: string
       username:
-        minLength: 3
+        maxLength: 233
+        minLength: 5
         type: string
     required:
     - name
@@ -2751,10 +2712,12 @@ definitions:
       name:
         type: string
       password:
-        minLength: 3
+        maxLength: 233
+        minLength: 5
         type: string
       username:
-        minLength: 3
+        maxLength: 233
+        minLength: 5
         type: string
     required:
     - name
@@ -2799,6 +2762,98 @@ definitions:
         type: integer
       vatyear:
         type: integer
+    type: object
+  smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransaction:
+    properties:
+      address:
+        type: string
+      body:
+        type: string
+      date:
+        type: integer
+      parid:
+        type: string
+      transid:
+        type: string
+    type: object
+  smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfo:
+    properties:
+      address:
+        type: string
+      body:
+        type: string
+      date:
+        type: integer
+      guidfixed:
+        type: string
+      parid:
+        type: string
+      transid:
+        type: string
+    type: object
+  smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfo'
+      success:
+        type: boolean
+    type: object
+  smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  smlcloudplatform_pkg_smstransaction_models.SmsTransaction:
+    properties:
+      address:
+        type: string
+      body:
+        type: string
+      date:
+        type: string
+      parid:
+        type: string
+      transid:
+        type: string
+    type: object
+  smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfo:
+    properties:
+      address:
+        type: string
+      body:
+        type: string
+      date:
+        type: string
+      guidfixed:
+        type: string
+      parid:
+        type: string
+      transid:
+        type: string
+    type: object
+  smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfo'
+      success:
+        type: boolean
+    type: object
+  smlcloudplatform_pkg_smstransaction_models.SmsTransactionPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
     type: object
 info:
   contact:
@@ -3955,6 +4010,31 @@ paths:
       security:
       - AccessToken: []
       summary: นำเข้าข้อมูลรายวัน
+      tags:
+      - GL
+  /gl/journal/docref/{doc}:
+    get:
+      consumes:
+      - application/json
+      description: แสดงรายละเอียดข้อมูลรายวัน ตามเอกสารอ้างอิง
+      parameters:
+      - description: Document Ref
+        in: path
+        name: doc
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JournalInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: แสดงรายละเอียดข้อมูลรายวัน ตามเอกสารอ้างอิง
       tags:
       - GL
   /gl/journalbook:
@@ -6511,7 +6591,7 @@ paths:
         name: Transaction
         required: true
         schema:
-          $ref: '#/definitions/models.SmsTransaction'
+          $ref: '#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransaction'
       responses:
         "200":
           description: OK
@@ -6565,7 +6645,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.SmsTransactionInfoResponse'
+            $ref: '#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfoResponse'
         "401":
           description: Unauthorized
           schema:
@@ -6590,7 +6670,7 @@ paths:
         name: Journal
         required: true
         schema:
-          $ref: '#/definitions/models.SmsTransaction'
+          $ref: '#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransaction'
       responses:
         "200":
           description: OK
