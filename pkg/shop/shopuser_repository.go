@@ -1,7 +1,6 @@
 package shop
 
 import (
-	"fmt"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/shop/models"
 
@@ -61,7 +60,6 @@ func (svc ShopUserRepository) FindByShopIDAndUsername(shopID string, username st
 
 	err := svc.pst.FindOne(&models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, shopUser)
 	if err != nil {
-		fmt.Println("err -> ", err.Error())
 		return models.ShopUser{}, err
 	}
 

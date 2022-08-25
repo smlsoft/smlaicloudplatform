@@ -31,7 +31,7 @@ func NewShopHttp(ms *microservice.Microservice, cfg microservice.IConfig) ShopHt
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	repo := NewShopRepository(pst)
 	shopUserRepo := NewShopUserRepository(pst)
-	service := NewShopService(repo, shopUserRepo)
+	service := NewShopService(repo, shopUserRepo, utils.NewGUID, ms.TimeNow)
 
 	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
 

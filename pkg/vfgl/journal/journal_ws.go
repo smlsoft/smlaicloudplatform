@@ -253,29 +253,29 @@ func (h JournalWs) WebsocketDocRefPool(ctx microservice.IContext) error {
 
 func (h JournalWs) ClearDocRef(shopID string, username string) error {
 
-	isExists, err := h.svcWebsocket.ExistsWebsocket(shopID, username)
-	if err != nil {
-		h.ms.Logger.Error(err.Error())
-	}
+	// isExists, err := h.svcWebsocket.ExistsWebsocket(shopID, username)
+	// if err != nil {
+	// 	h.ms.Logger.Error(err.Error())
+	// }
 
-	if isExists {
-		return nil
-	}
+	// if isExists {
+	// 	return nil
+	// }
 
-	lastMessage, err := h.svcWebsocket.GetLastMessage(shopID, username, "form")
-	if err != nil {
-		h.ms.Logger.Error(err.Error())
-	}
+	// lastMessage, err := h.svcWebsocket.GetLastMessage(shopID, username, "form")
+	// if err != nil {
+	// 	h.ms.Logger.Error(err.Error())
+	// }
 
-	if lastMessage != "" {
-		journalRef := models.JournalRef{}
-		json.Unmarshal([]byte(lastMessage), &journalRef)
+	// if lastMessage != "" {
+	// 	journalRef := models.JournalRef{}
+	// 	json.Unmarshal([]byte(lastMessage), &journalRef)
 
-		err = h.svcWebsocket.DelDocRefPool(shopID, username, journalRef.DocRef)
-		if err != nil {
-			h.ms.Logger.Error(err.Error())
-		}
-	}
+	// 	err = h.svcWebsocket.DelDocRefPool(shopID, username, journalRef.DocRef)
+	// 	if err != nil {
+	// 		h.ms.Logger.Error(err.Error())
+	// 	}
+	// }
 
 	return nil
 }
