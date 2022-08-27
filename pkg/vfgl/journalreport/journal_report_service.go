@@ -1,15 +1,16 @@
 package journalreport
 
 import (
+	"fmt"
 	chartofaccountModel "smlcloudplatform/pkg/vfgl/chartofaccount/models"
 	"smlcloudplatform/pkg/vfgl/journalreport/models"
 	"time"
 )
 
 type IJournalReportService interface {
-	ProcessTrialBalanceSheetReport(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*models.TrialBalanceSheetReport, error)
-	ProcessProfitAndLossSheetReport(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*models.ProfitAndLossSheetReport, error)
-	ProcessBalanceSheetReport(shopId string, accountGroup string, endDate time.Time) (*models.BalanceSheetReport, error)
+	ProcessTrialBalanceSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) (*models.TrialBalanceSheetReport, error)
+	ProcessProfitAndLossSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) (*models.ProfitAndLossSheetReport, error)
+	ProcessBalanceSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) (*models.BalanceSheetReport, error)
 }
 
 type JournalReportService struct {
@@ -22,10 +23,10 @@ func NewJournalReportService(repo IJournalReportRepository) JournalReportService
 	}
 }
 
-func (svc JournalReportService) ProcessTrialBalanceSheetReport(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*models.TrialBalanceSheetReport, error) {
+func (svc JournalReportService) ProcessTrialBalanceSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) (*models.TrialBalanceSheetReport, error) {
 	// mock := MockTrialBalanceSheetReport(shopId, accountGroup, startDate, endDate)
 	// return mock, nil
-	details, err := svc.repo.GetDataTrialBalance(shopId, accountGroup, startDate, endDate)
+	details, err := svc.repo.GetDataTrialBalance(shopId, accountGroup, includeCloseAccountMode, startDate, endDate)
 
 	var totalBalanceDebit float64
 	var totalBalanceCredit float64
@@ -59,10 +60,10 @@ func (svc JournalReportService) ProcessTrialBalanceSheetReport(shopId string, ac
 	return result, err
 }
 
-func (svc JournalReportService) ProcessProfitAndLossSheetReport(shopId string, accountGroup string, startDate time.Time, endDate time.Time) (*models.ProfitAndLossSheetReport, error) {
+func (svc JournalReportService) ProcessProfitAndLossSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) (*models.ProfitAndLossSheetReport, error) {
 	// mock := MockProfitAndLossSheetReport(shopId, accountGroup, startDate, endDate)
 	// return mock, nil
-	details, err := svc.repo.GetDataProfitAndLoss(shopId, accountGroup, startDate, endDate)
+	details, err := svc.repo.GetDataProfitAndLoss(shopId, accountGroup, includeCloseAccountMode, startDate, endDate)
 	if err != nil {
 		return nil, err
 	}
@@ -104,16 +105,16 @@ func (svc JournalReportService) ProcessProfitAndLossSheetReport(shopId string, a
 	return result, nil
 }
 
-func (svc JournalReportService) ProcessBalanceSheetReport(shopId string, accountGroup string, endDate time.Time) (*models.BalanceSheetReport, error) {
+func (svc JournalReportService) ProcessBalanceSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) (*models.BalanceSheetReport, error) {
 	// mock := MockBalanceSheetReport(shopId, accountGroup, endDate)
 	// return mock, nil
-	details, err := svc.repo.GetDataBalanceSheet(shopId, accountGroup, endDate)
+	details, err := svc.repo.GetDataBalanceSheet(shopId, accountGroup, includeCloseAccountMode, endDate)
 	if err != nil {
 		return nil, err
 	}
 
 	// var totalData = len(details)
-	//fmt.Printf("rows: %v", rows)
+	fmt.Printf("rows: %v", len(details))
 	//fmt.Printf("details: %+v\n", details)
 	var totalAssetAmount float64 = 0
 	var totalLiabilityAmount float64 = 0
@@ -129,6 +130,8 @@ func (svc JournalReportService) ProcessBalanceSheetReport(shopId string, account
 	var ownesEquities []models.BalanceSheetAccountDetail
 
 	for _, v := range details {
+
+		// fmt.Printf("%+v\n", v)
 
 		if v.AccountCategory <= 3 {
 			if v.AccountCategory == 1 {

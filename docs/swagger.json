@@ -2172,6 +2172,13 @@
                         "name": "enddate",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "รวมรายการปิดปัญชี",
+                        "name": "ica",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2232,6 +2239,13 @@
                         "name": "enddate",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "รวมรายการปิดปัญชี",
+                        "name": "ica",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2290,6 +2304,13 @@
                         "type": "string",
                         "description": "ถึงวันที่ (Date Format: YYYY-MM-DD)",
                         "name": "enddate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "รวมรายการปิดปัญชี",
+                        "name": "ica",
                         "in": "query",
                         "required": true
                     }

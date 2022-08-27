@@ -1,15 +1,16 @@
 package journalreport
 
 import (
+	"fmt"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/vfgl/journalreport/models"
 	"time"
 )
 
 type IJournalReportRepository interface {
-	GetDataTrialBalance(shopId string, accountGroup string, startDate time.Time, endDate time.Time) ([]models.TrialBalanceSheetAccountDetail, error)
-	GetDataProfitAndLoss(shopId string, accountGroup string, startDate time.Time, endDate time.Time) ([]models.ProfitAndLossSheetAccountDetail, error)
-	GetDataBalanceSheet(shopId string, accountGroup string, endDate time.Time) ([]models.BalanceSheetAccountDetail, error)
+	GetDataTrialBalance(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.TrialBalanceSheetAccountDetail, error)
+	GetDataProfitAndLoss(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.ProfitAndLossSheetAccountDetail, error)
+	GetDataBalanceSheet(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) ([]models.BalanceSheetAccountDetail, error)
 }
 
 type JournalReportRepository struct {
@@ -85,8 +86,24 @@ WITH journal_doc as (
 
 */
 
-func (repo JournalReportRepository) GetDataTrialBalance(shopId string, accountGroup string, startDate time.Time, endDate time.Time) ([]models.TrialBalanceSheetAccountDetail, error) {
+func (repo JournalReportRepository) GetDataTrialBalance(shopId string, accountGroup string, includeCloseAccountMode bool,
+	startDate time.Time, endDate time.Time) ([]models.TrialBalanceSheetAccountDetail, error) {
 
+	var closeDocFilter string
+
+	if includeCloseAccountMode == true {
+		closeDocFilter = ` 
+		union all 
+		select h.shopid, h.docno, h.docdate, h.accountyear, h.accountperiod, h.accountgroup
+			, d.accountcode
+			, d.debitamount ,d.creditamount
+			, acc.accountcategory
+			from journals_detail as d
+			join journals as h on h.shopid = d.shopid and h.docno = d.docno
+			left join chartofaccounts as acc on acc.shopid = d.shopid and acc.accountcode = d.accountcode 
+            where h.shopid= @shopid and ( h.journaltype = 1 and h.docdate between @startdate and @enddate )
+	`
+	}
 	query := `
 	WITH journal_doc as (
 		select h.shopid, h.docno, h.docdate, h.accountyear, h.accountperiod, h.accountgroup
@@ -97,7 +114,10 @@ func (repo JournalReportRepository) GetDataTrialBalance(shopId string, accountGr
 			from journals_detail as d
 			join journals as h on h.shopid = d.shopid and h.docno = d.docno
 			left join chartofaccounts as acc on acc.shopid = d.shopid and acc.accountcode = d.accountcode
-			where h.shopid= @shopid and h.accountgroup = @accountgroup
+			where h.shopid= @shopid and h.accountgroup = @accountgroup  and h.docdate < @enddate 
+			 and (( h.journaltype = 0) or (h.journaltype=1 and h.docdate < @startdate ))
+		
+		` + closeDocFilter + `
 			
 		)
 		, bal as (
@@ -113,7 +133,9 @@ func (repo JournalReportRepository) GetDataTrialBalance(shopId string, accountGr
 		)
 		, nex as (
 			select accountcode, sum(debitamount) as debitamount, sum(creditamount) as creditamount 
-			from journal_doc where ( accountcategory in (1,2,3) and journal_doc.docdate <= @enddate ) or ( accountcategory in (4,5) and journal_doc.docdate between @startdate and @enddate )
+			from journal_doc 
+			where 
+			 ( accountcategory in (1,2,3) and journal_doc.docdate <= @enddate ) or ( accountcategory in (4,5) and journal_doc.docdate between @startdate and @enddate )
 			group by accountcode
 		)
 		, journal_sheet_sum as (
@@ -165,16 +187,39 @@ func (repo JournalReportRepository) GetDataTrialBalance(shopId string, accountGr
 	return details, nil
 }
 
-func (repo JournalReportRepository) GetDataProfitAndLoss(shopId string, accountGroup string, startDate time.Time, endDate time.Time) ([]models.ProfitAndLossSheetAccountDetail, error) {
+func (repo JournalReportRepository) GetDataProfitAndLoss(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.ProfitAndLossSheetAccountDetail, error) {
+
+	var closeDocFilter string
+
+	if includeCloseAccountMode == true {
+		closeDocFilter = ` 
+		union all 
+		select h.shopid, h.docno, h.docdate, h.accountyear, h.accountperiod, h.accountgroup
+			, d.accountcode
+			, d.debitamount ,d.creditamount
+			, acc.accountcategory
+			from journals_detail as d
+			join journals as h on h.shopid = d.shopid and h.docno = d.docno
+			left join chartofaccounts as acc on acc.shopid = d.shopid and acc.accountcode = d.accountcode 
+
+            where h.shopid= @shopid and ( h.journaltype = 1 and h.docdate between @startdate and @enddate )
+	`
+	}
 
 	query := `
 	WITH journal_doc as (
 		select h.shopid, h.docno, h.docdate, h.accountyear, h.accountperiod, h.accountgroup
 			, d.accountcode
 			, d.debitamount ,d.creditamount
+			, acc.accountcategory
 			from journals_detail as d
 			join journals as h on h.shopid = d.shopid and h.docno = d.docno
-			where h.shopid= @shopid and h.accountgroup = @accountgroup
+			left join chartofaccounts as acc on acc.shopid = d.shopid and acc.accountcode = d.accountcode 
+
+			where h.shopid= @shopid and h.accountgroup = @accountgroup and h.docdate < @enddate 
+			and (( h.journaltype = 0) or (h.journaltype=1 and h.docdate < @startdate ))
+
+		` + closeDocFilter + `
 		)
 		, prd as (
 			select accountcode, sum(debitamount) as debitamount, sum(creditamount) as creditamount 
@@ -219,15 +264,56 @@ func (repo JournalReportRepository) GetDataProfitAndLoss(shopId string, accountG
 	return details, nil
 }
 
-func (repo JournalReportRepository) GetDataBalanceSheet(shopId string, accountGroup string, endDate time.Time) ([]models.BalanceSheetAccountDetail, error) {
+func (repo JournalReportRepository) GetDataBalanceSheet(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) ([]models.BalanceSheetAccountDetail, error) {
+
+	reportYear := endDate.Year()
+	var closeDocFilter string
+
+	if includeCloseAccountMode == true {
+		closeDocFilter = ` 
+		union all 
+		select h.shopid, h.docno, h.docdate, h.accountyear, h.accountperiod, h.accountgroup
+			, d.accountcode
+			, d.debitamount ,d.creditamount
+			, acc.accountcategory
+			from journals_detail as d
+			join journals as h on h.shopid = d.shopid and h.docno = d.docno
+			left join chartofaccounts as acc on acc.shopid = d.shopid and acc.accountcode = d.accountcode 
+
+            where h.shopid= @shopid and ( h.journaltype = 1 and (extract (year from h.docdate)) = @reportyear )
+	`
+	}
+
+	/*
+
+		and (( h.journaltype = 0) or (h.journaltype=1 and date(h.docdate) < date(@enddate) ))
+
+				and (
+					(acc.accountcategory in (1,2,3)) or
+					(
+						acc.accountcategory in (4,5) and (extract (year from h.docdate)) = @reportyear
+					)
+				)
+	*/
 	query := `
 	WITH journal_doc as (
 		select h.shopid, h.docno, h.docdate, h.accountyear, h.accountperiod, h.accountgroup
 			, d.accountcode
 			, d.debitamount ,d.creditamount
+			, acc.accountcategory
 			from journals_detail as d
 			join journals as h on h.shopid = d.shopid and h.docno = d.docno
-			where h.shopid= @shopid and h.accountgroup = @accountgroup
+			left join chartofaccounts as acc on acc.shopid = d.shopid and acc.accountcode = d.accountcode 
+
+			where h.shopid= @shopid and h.accountgroup = @accountgroup  and h.docdate < @enddate 
+			and ( 
+				acc.accountcategory in (1,2,3) or (acc.accountcategory in (4,5) and (extract (year from h.docdate)) = @reportyear)
+			)
+			and ( (h.journaltype = 0) or (
+				h.journaltype=1 and (extract (year from h.docdate)) < @reportyear
+			))
+			
+		` + closeDocFilter + `
 		)
 		, nex as (
 			select accountcode, sum(debitamount) as debitamount, sum(creditamount) as creditamount 
@@ -260,12 +346,16 @@ func (repo JournalReportRepository) GetDataBalanceSheet(shopId string, accountGr
 		"shopid":       shopId,
 		"accountgroup": accountGroup,
 		"enddate":      endDate,
+		"reportyear":   reportYear,
 	}
 
 	_, err := repo.pst.Raw(query, condition, &details)
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Print("query : " + query + "\n")
+	fmt.Printf("details: \n %+v\n", details)
 
 	return details, nil
 }

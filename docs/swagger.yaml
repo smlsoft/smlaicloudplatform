@@ -4177,6 +4177,11 @@ paths:
         name: enddate
         required: true
         type: string
+      - description: รวมรายการปิดปัญชี
+        in: query
+        name: ica
+        required: true
+        type: integer
       responses:
         "200":
           description: OK
@@ -4216,6 +4221,11 @@ paths:
         name: enddate
         required: true
         type: string
+      - description: รวมรายการปิดปัญชี
+        in: query
+        name: ica
+        required: true
+        type: integer
       responses:
         "200":
           description: OK
@@ -4255,6 +4265,11 @@ paths:
         name: enddate
         required: true
         type: string
+      - description: รวมรายการปิดปัญชี
+        in: query
+        name: ica
+        required: true
+        type: integer
       responses:
         "200":
           description: OK

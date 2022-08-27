@@ -2178,6 +2178,13 @@ const docTemplate = `{
                         "name": "enddate",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "รวมรายการปิดปัญชี",
+                        "name": "ica",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2238,6 +2245,13 @@ const docTemplate = `{
                         "name": "enddate",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "รวมรายการปิดปัญชี",
+                        "name": "ica",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2296,6 +2310,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "ถึงวันที่ (Date Format: YYYY-MM-DD)",
                         "name": "enddate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "รวมรายการปิดปัญชี",
+                        "name": "ica",
                         "in": "query",
                         "required": true
                     }

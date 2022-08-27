@@ -28,7 +28,7 @@ func TestGetDataTrialBalanceReportRepository(t *testing.T) {
 	startDate := time.Date(2022, 05, 01, 00, 00, 00, 0, time.UTC)
 	endDate := time.Date(2022, 05, 31, 00, 00, 00, 0, time.UTC)
 
-	get, err := repo.GetDataTrialBalance(shopId, accGroup, startDate, endDate)
+	get, err := repo.GetDataTrialBalance(shopId, accGroup, false, startDate, endDate)
 	assert.Nil(err)
 	assert.NotNil(get)
 }
@@ -50,7 +50,7 @@ func TestGetDataProfitAndLossReportRepository(t *testing.T) {
 	startDate := time.Date(2022, 05, 01, 00, 00, 00, 0, time.UTC)
 	endDate := time.Date(2022, 05, 31, 00, 00, 00, 0, time.UTC)
 
-	get, err := repo.GetDataProfitAndLoss(shopId, accGroup, startDate, endDate)
+	get, err := repo.GetDataProfitAndLoss(shopId, accGroup, false, startDate, endDate)
 	assert.Nil(err)
 	assert.NotNil(get)
 }
@@ -71,7 +71,7 @@ func TestGetDataBalanceSheetReportRepository(t *testing.T) {
 	accGroup := "01"
 	endDate := time.Date(2022, 05, 31, 00, 00, 00, 0, time.UTC)
 
-	get, err := repo.GetDataBalanceSheet(shopId, accGroup, endDate)
+	get, err := repo.GetDataBalanceSheet(shopId, accGroup, false, endDate)
 	assert.Nil(err)
 	assert.NotNil(get)
 }
