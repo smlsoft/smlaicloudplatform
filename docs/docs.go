@@ -2178,6 +2178,13 @@ const docTemplate = `{
                         "name": "enddate",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "รวมรายการปิดปัญชี",
+                        "name": "ica",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2238,6 +2245,13 @@ const docTemplate = `{
                         "name": "enddate",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "รวมรายการปิดปัญชี",
+                        "name": "ica",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2296,6 +2310,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "ถึงวันที่ (Date Format: YYYY-MM-DD)",
                         "name": "enddate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "รวมรายการปิดปัญชี",
+                        "name": "ica",
                         "in": "query",
                         "required": true
                     }
@@ -5994,7 +6015,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransaction"
+                            "$ref": "#/definitions/models.SmsTransaction"
                         }
                     }
                 ],
@@ -6042,7 +6063,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfoResponse"
+                            "$ref": "#/definitions/models.SmsTransactionInfoResponse"
                         }
                     },
                     "401": {
@@ -6081,7 +6102,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransaction"
+                            "$ref": "#/definitions/models.SmsTransaction"
                         }
                     }
                 ],
@@ -8031,6 +8052,10 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.JournalDetail"
                     }
                 },
+                "journaltype": {
+                    "description": "ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)",
+                    "type": "integer"
+                },
                 "parid": {
                     "type": "string"
                 },
@@ -8190,6 +8215,10 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.JournalDetail"
                     }
+                },
+                "journaltype": {
+                    "description": "ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)",
+                    "type": "integer"
                 },
                 "parid": {
                     "type": "string"
@@ -10086,6 +10115,77 @@ const docTemplate = `{
                 }
             }
         },
+        "models.SmsTransaction": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "transid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SmsTransactionInfo": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "transid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SmsTransactionInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.SmsTransactionInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.SmsTransactionPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SmsTransactionInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "models.SyncInventoryData": {
             "type": "object",
             "properties": {
@@ -10439,148 +10539,6 @@ const docTemplate = `{
                 },
                 "vatyear": {
                     "type": "integer"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransaction": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "body": {
-                    "type": "string"
-                },
-                "date": {
-                    "type": "integer"
-                },
-                "parid": {
-                    "type": "string"
-                },
-                "transid": {
-                    "type": "string"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfo": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "body": {
-                    "type": "string"
-                },
-                "date": {
-                    "type": "integer"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "parid": {
-                    "type": "string"
-                },
-                "transid": {
-                    "type": "string"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_smstransaction_models.SmsTransaction": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "body": {
-                    "type": "string"
-                },
-                "date": {
-                    "type": "string"
-                },
-                "parid": {
-                    "type": "string"
-                },
-                "transid": {
-                    "type": "string"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfo": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "body": {
-                    "type": "string"
-                },
-                "date": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "parid": {
-                    "type": "string"
-                },
-                "transid": {
-                    "type": "string"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_smstransaction_models.SmsTransactionPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
                 }
             }
         }

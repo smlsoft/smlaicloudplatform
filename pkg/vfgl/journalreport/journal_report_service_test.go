@@ -15,18 +15,18 @@ type MockJournalreportRepository struct {
 	mock.Mock
 }
 
-func (m *MockJournalreportRepository) GetDataTrialBalance(shopId string, accountGroup string, startDate time.Time, endDate time.Time) ([]models.TrialBalanceSheetAccountDetail, error) {
-	ret := m.Called(shopId, accountGroup, startDate, endDate)
+func (m *MockJournalreportRepository) GetDataTrialBalance(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.TrialBalanceSheetAccountDetail, error) {
+	ret := m.Called(shopId, accountGroup, includeCloseAccountMode, startDate, endDate)
 	return ret.Get(0).([]models.TrialBalanceSheetAccountDetail), ret.Error(1)
 }
 
-func (m *MockJournalreportRepository) GetDataProfitAndLoss(shopId string, accountGroup string, startDate time.Time, endDate time.Time) ([]models.ProfitAndLossSheetAccountDetail, error) {
-	ret := m.Called(shopId, accountGroup, startDate, endDate)
+func (m *MockJournalreportRepository) GetDataProfitAndLoss(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.ProfitAndLossSheetAccountDetail, error) {
+	ret := m.Called(shopId, accountGroup, includeCloseAccountMode, startDate, endDate)
 	return ret.Get(0).([]models.ProfitAndLossSheetAccountDetail), ret.Error(1)
 }
 
-func (m *MockJournalreportRepository) GetDataBalanceSheet(shopId string, accountGroup string, endDate time.Time) ([]models.BalanceSheetAccountDetail, error) {
-	ret := m.Called(shopId, accountGroup, endDate)
+func (m *MockJournalreportRepository) GetDataBalanceSheet(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) ([]models.BalanceSheetAccountDetail, error) {
+	ret := m.Called(shopId, accountGroup, includeCloseAccountMode, endDate)
 	return ret.Get(0).([]models.BalanceSheetAccountDetail), ret.Error(1)
 }
 
@@ -95,7 +95,7 @@ func TestProcessBalanceSheetReport(t *testing.T) {
 	}
 
 	service := journalreport.NewJournalReportService(repo)
-	get, err := service.ProcessBalanceSheetReport("TESTSHOP", "01", endDate)
+	get, err := service.ProcessBalanceSheetReport("TESTSHOP", "01", false, endDate)
 	get.ReportDate = fixReportDate
 	assert.Nil(t, err, "Error should be nil")
 
