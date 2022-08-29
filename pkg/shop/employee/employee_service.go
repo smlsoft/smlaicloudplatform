@@ -113,7 +113,7 @@ func (svc EmployeeService) Update(shopID string, authUsername string, emp models
 	}
 
 	userFind.Name = emp.Name
-	userFind.Roles = *emp.Roles
+	userFind.Role = *emp.Role
 
 	userFind.UpdatedBy = authUsername
 	userFind.UpdatedAt = time.Now()

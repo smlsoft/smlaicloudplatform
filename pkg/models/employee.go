@@ -5,10 +5,11 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 const employeeCollectionName string = "employees"
 
 type Employee struct {
-	Username string   `json:"username" bson:"username"`
-	Password string   `json:"password" bson:"password"`
-	Name     string   `json:"name" bson:"name"`
-	Roles    []string `json:"roles" bson:"roles"`
+	Username       string `json:"username" bson:"username"`
+	Password       string `json:"password" bson:"password"`
+	Name           string `json:"name" bson:"name"`
+	ProfilePicture string `json:"profilepicture" bson:"profilepicture"`
+	Role           string `json:"role" bson:"role"`
 }
 
 type EmployeeInfo struct {
@@ -41,9 +42,9 @@ type EmployeeRequestLogin struct {
 }
 
 type EmployeeRequestUpdate struct {
-	Username string    `json:"username" bson:"username"`
-	Name     string    `json:"name" bson:"name"`
-	Roles    *[]string `json:"roles" bson:"roles"`
+	Username string  `json:"username" bson:"username"`
+	Name     string  `json:"name" bson:"name"`
+	Role     *string `json:"role" bson:"role"`
 }
 
 type EmployeeRequestPassword struct {
