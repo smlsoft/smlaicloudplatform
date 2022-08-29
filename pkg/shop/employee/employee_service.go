@@ -12,7 +12,8 @@ import (
 
 type IEmployeeService interface {
 	Login(shopID string, loginReq models.EmployeeRequestLogin) (*models.EmployeeInfo, error)
-	Register(shopID string, authUsername string, emp models.Employee) (string, error)
+	Register(shopID string, authUsername string, emp models.EmployeeRequestRegister) (string, error)
+	Get(shopID string, username string) (models.EmployeeInfo, error)
 	List(shopID string, q string, page int, limit int) ([]models.EmployeeInfo, paginate.PaginationData, error)
 	Update(shopID string, authUsername string, emp models.EmployeeRequestUpdate) error
 	UpdatePassword(shopID string, authUsername string, emp models.EmployeeRequestPassword) error
@@ -51,7 +52,7 @@ func (svc EmployeeService) Login(shopID string, loginReq models.EmployeeRequestL
 	return &findUser.EmployeeInfo, nil
 }
 
-func (svc EmployeeService) Register(shopID string, authUsername string, emp models.Employee) (string, error) {
+func (svc EmployeeService) Register(shopID string, authUsername string, emp models.EmployeeRequestRegister) (string, error) {
 
 	userFind, err := svc.empRepo.FindEmployeeByUsername(shopID, emp.Username)
 	if err != nil && err.Error() != "mongo: no documents in result" {
@@ -68,15 +69,14 @@ func (svc EmployeeService) Register(shopID string, authUsername string, emp mode
 		return "", err
 	}
 
-	emp.Password = hashPassword
-
 	newGuid := utils.NewGUID()
 
 	empDoc := models.EmployeeDoc{}
 
 	empDoc.ShopID = shopID
 	empDoc.GuidFixed = newGuid
-	empDoc.Employee = emp
+	empDoc.Employee = emp.Employee
+	empDoc.Password = hashPassword
 
 	empDoc.CreatedBy = authUsername
 	empDoc.CreatedAt = time.Now()
@@ -88,6 +88,16 @@ func (svc EmployeeService) Register(shopID string, authUsername string, emp mode
 	}
 
 	return newGuid, nil
+}
+
+func (svc EmployeeService) Get(shopID string, username string) (models.EmployeeInfo, error) {
+	doc, err := svc.empRepo.FindEmployeeByUsername(shopID, username)
+
+	if err != nil {
+		return models.EmployeeInfo{}, err
+	}
+
+	return doc.EmployeeInfo, nil
 }
 
 func (svc EmployeeService) List(shopID string, q string, page int, limit int) ([]models.EmployeeInfo, paginate.PaginationData, error) {
