@@ -971,6 +971,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/employee/login": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Validate Employee",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "parameters": [
+                    {
+                        "description": "EmployeeUserPassword",
+                        "name": "EmployeeUserPassword",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.EmployeeRequestLogin"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.EmployeeInfo"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/employee/password/{id}": {
             "put": {
                 "security": [
@@ -1020,47 +1061,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/employee/whois": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Validate Employee",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Employee"
-                ],
-                "parameters": [
-                    {
-                        "description": "EmployeeUserPassword",
-                        "name": "EmployeeUserPassword",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.EmployeeRequestLogin"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.EmployeeInfo"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/employee/{id}": {
             "put": {
                 "security": [
@@ -1103,6 +1103,39 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/employee/{username}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "List Employee",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.EmployeePageResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
                         }
@@ -7217,14 +7250,11 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "password": {
+                "profilepicture": {
                     "type": "string"
                 },
-                "roles": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "role": {
+                    "type": "string"
                 },
                 "username": {
                     "type": "string"
@@ -7243,11 +7273,11 @@ const docTemplate = `{
                 "password": {
                     "type": "string"
                 },
-                "roles": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "profilepicture": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
                 },
                 "username": {
                     "type": "string"
@@ -7277,6 +7307,9 @@ const docTemplate = `{
                 "password": {
                     "type": "string"
                 },
+                "shopid": {
+                    "type": "string"
+                },
                 "username": {
                     "type": "string"
                 }
@@ -7299,11 +7332,11 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "roles": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "profilepicture": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
                 },
                 "username": {
                     "type": "string"
