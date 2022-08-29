@@ -13,10 +13,10 @@ type EmployeePassword struct {
 }
 
 type Employee struct {
-	Username       string `json:"username" bson:"username"`
-	Name           string `json:"name" bson:"name"`
-	ProfilePicture string `json:"profilepicture" bson:"profilepicture"`
-	Role           string `json:"role" bson:"role"`
+	Username       string   `json:"username" bson:"username"`
+	Name           string   `json:"name" bson:"name"`
+	ProfilePicture string   `json:"profilepicture" bson:"profilepicture"`
+	Roles          []string `json:"role" bson:"role"`
 }
 
 type EmployeeInfo struct {
@@ -56,10 +56,10 @@ type EmployeeRequestLogin struct {
 }
 
 type EmployeeRequestUpdate struct {
-	Username       string  `json:"username" bson:"username"`
-	Name           string  `json:"name" bson:"name"`
-	ProfilePicture string  `json:"profilepicture" bson:"profilepicture"`
-	Role           *string `json:"role" bson:"role"`
+	Username       string    `json:"username" bson:"username"`
+	Name           string    `json:"name" bson:"name"`
+	ProfilePicture string    `json:"profilepicture" bson:"profilepicture"`
+	Roles          *[]string `json:"role" bson:"role"`
 }
 
 type EmployeeRequestPassword struct {
