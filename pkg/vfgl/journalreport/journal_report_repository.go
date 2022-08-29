@@ -144,7 +144,8 @@ func (repo JournalReportRepository) GetDataTrialBalance(shopId string, accountGr
 			, chart.accountcategory, chart.accountbalancetype, chart.accountgroup, chart.accountlevel, chart.consolidateaccountcode
 			, coalesce(bal.debitamount, 0) as balancedebitamount, coalesce(bal.creditamount, 0) as balancecreditamount
 			, coalesce(prd.debitamount, 0) as debitamount, coalesce(prd.creditamount, 0) as creditamount
-			, coalesce(nex.debitamount, 0) as nextbalancedebitamount, coalesce(nex.creditamount, 0) as nextbalancecreditamount
+			, case when(accountcategory = 1 or accountcategory = 5) then coalesce(nex.debitamount, 0)-coalesce(nex.creditamount, 0) else 0 end as nextbalancedebitamount
+            , case when(accountcategory = 1 or accountcategory = 5) then 0 else coalesce(nex.creditamount, 0)-coalesce(nex.debitamount, 0) end as nextbalancecreditamount
 			, case when(accountcategory = 1 or accountcategory = 5) then coalesce(bal.debitamount, 0)-coalesce(bal.creditamount, 0)
 				else coalesce(bal.creditamount, 0)-coalesce(bal.debitamount, 0)
 				end as balanceamount
@@ -281,7 +282,7 @@ func (repo JournalReportRepository) GetDataBalanceSheet(shopId string, accountGr
 			left join chartofaccounts as acc on acc.shopid = d.shopid and acc.accountcode = d.accountcode 
 
             where h.shopid= @shopid and ( h.journaltype = 1 and (extract (year from h.docdate)) = @reportyear )
-	`
+		`
 	}
 
 	/*
@@ -295,6 +296,7 @@ func (repo JournalReportRepository) GetDataBalanceSheet(shopId string, accountGr
 					)
 				)
 	*/
+
 	query := `
 	WITH journal_doc as (
 		select h.shopid, h.docno, h.docdate, h.accountyear, h.accountperiod, h.accountgroup
