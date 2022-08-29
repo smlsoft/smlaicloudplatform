@@ -16,7 +16,7 @@ type Employee struct {
 	Username       string   `json:"username" bson:"username"`
 	Name           string   `json:"name" bson:"name"`
 	ProfilePicture string   `json:"profilepicture" bson:"profilepicture"`
-	Roles          []string `json:"role" bson:"role"`
+	Roles          []string `json:"roles" bson:"roles"`
 }
 
 type EmployeeInfo struct {
@@ -59,7 +59,7 @@ type EmployeeRequestUpdate struct {
 	Username       string    `json:"username" bson:"username"`
 	Name           string    `json:"name" bson:"name"`
 	ProfilePicture string    `json:"profilepicture" bson:"profilepicture"`
-	Roles          *[]string `json:"role" bson:"role"`
+	Roles          *[]string `json:"roles" bson:"roles"`
 }
 
 type EmployeeRequestPassword struct {
