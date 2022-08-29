@@ -8,6 +8,7 @@ import (
 	"smlcloudplatform/pkg/models"
 	categoryRepo "smlcloudplatform/pkg/product/category/repositories"
 	categoryService "smlcloudplatform/pkg/product/category/services"
+	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/utils"
 	"strings"
 	"time"
@@ -37,6 +38,7 @@ type MasterSyncHttp struct {
 	svcShopPrinter shopprinter.IShopPrinterService
 	svcShopTable   shoptable.ShopTableService
 	svcShopZone    shopzone.ShopZoneService
+	svcEmployee    employee.EmployeeService
 }
 
 func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) MasterSyncHttp {
@@ -82,6 +84,11 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	shopZoneCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "shopzone")
 	svcShopZone := shopzone.NewShopZoneService(repoShopZone, shopZoneCacheSyncRepo)
 
+	// Employee
+	repoEmployee := employee.NewEmployeeRepository(pst)
+	employeeCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "employee")
+	svcEmployee := employee.NewEmployeeService(repoEmployee, employeeCacheSyncRepo)
+
 	masterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "mastersync")
 	svcMasterSync := services.NewMasterSyncService(masterCacheSyncRepo)
 
@@ -96,11 +103,12 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 		svcShopPrinter: svcShopPrinter,
 		svcShopTable:   svcShopTable,
 		svcShopZone:    svcShopZone,
+		svcEmployee:    *svcEmployee,
 	}
 }
 
 func (h MasterSyncHttp) RouteSetup() {
-	h.ms.GET("/master-sync", h.LastActivityCategory)
+	h.ms.GET("/master-sync", h.LastActivitySync)
 	h.ms.GET("/master-sync/status", h.SyncStatus)
 }
 
@@ -117,7 +125,7 @@ func (h MasterSyncHttp) SyncStatus(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h MasterSyncHttp) LastActivityCategory(ctx microservice.IContext) error {
+func (h MasterSyncHttp) LastActivitySync(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -169,6 +177,7 @@ func (h MasterSyncHttp) LastActivityCategory(ctx microservice.IContext) error {
 	moduleList["shopprinter"] = h.svcShopPrinter
 	moduleList["shoptable"] = h.svcShopTable
 	moduleList["shopzone"] = h.svcShopZone
+	moduleList["employee"] = h.svcEmployee
 
 	result, pagination, err := runModule(moduleList, isSelectAll, keySelectList, ActivityParam{
 		ShopID:     shopID,

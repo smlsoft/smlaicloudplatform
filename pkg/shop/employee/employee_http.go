@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 )
@@ -17,10 +18,12 @@ type EmployeeHttp struct {
 }
 
 func NewEmployeeHttp(ms *microservice.Microservice, cfg microservice.IConfig) EmployeeHttp {
-
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
+
 	empRepo := NewEmployeeRepository(pst)
-	empService := NewEmployeeService(empRepo)
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "employee")
+	empService := NewEmployeeService(empRepo, masterSyncCacheRepo)
 
 	return EmployeeHttp{
 		ms:         ms,

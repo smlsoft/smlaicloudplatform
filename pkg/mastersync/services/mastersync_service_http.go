@@ -21,7 +21,7 @@ func NewMasterSyncService(cacheRepo repositories.IMasterSyncCacheRepository) Mas
 }
 
 func (svc MasterSyncService) GetStatus(shopID string) (map[string]time.Time, error) {
-	syncModules := []string{"all", "category", "member", "inventory", "kitchen", "shopprinter", "shoptable", "shopzone"}
+	syncModules := []string{"all", "category", "member", "inventory", "kitchen", "shopprinter", "shoptable", "shopzone", "employee"}
 
 	moduleStatus := map[string]time.Time{}
 
