@@ -1,6 +1,10 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 const employeeCollectionName string = "employees"
 
@@ -16,9 +20,8 @@ type Employee struct {
 }
 
 type EmployeeInfo struct {
-	DocIdentity      `bson:"inline" gorm:"embedded;"`
-	Employee         `bson:"inline" gorm:"embedded;"`
-	EmployeePassword `bson:"inline" gorm:"embedded;"`
+	DocIdentity `bson:"inline" gorm:"embedded;"`
+	Employee    `bson:"inline" gorm:"embedded;"`
 }
 
 func (EmployeeInfo) CollectionName() string {
@@ -31,9 +34,10 @@ type EmployeeData struct {
 }
 
 type EmployeeDoc struct {
-	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	EmployeeData `bson:"inline"`
-	ActivityDoc  `bson:"inline"`
+	ID               primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	EmployeeData     `bson:"inline"`
+	ActivityDoc      `bson:"inline"`
+	EmployeePassword `bson:"inline" gorm:"embedded;"`
 }
 
 func (EmployeeDoc) CollectionName() string {
@@ -67,4 +71,26 @@ type EmployeePageResponse struct {
 	Success    bool                   `json:"success"`
 	Data       []EmployeeInfo         `json:"data,omitempty"`
 	Pagination PaginationDataResponse `json:"pagination,omitempty"`
+}
+
+type EmployeeActivity struct {
+	EmployeeData `bson:"inline"`
+	CreatedAt    *time.Time `json:"createdat,omitempty" bson:"createdat,omitempty"`
+	UpdatedAt    *time.Time `json:"updatedat,omitempty" bson:"updatedat,omitempty"`
+	DeletedAt    *time.Time `json:"deletedat,omitempty" bson:"deletedat,omitempty"`
+}
+
+func (EmployeeActivity) CollectionName() string {
+	return employeeCollectionName
+}
+
+type EmployeeDeleteActivity struct {
+	Identity  `bson:"inline"`
+	CreatedAt *time.Time `json:"createdat,omitempty" bson:"createdat,omitempty"`
+	UpdatedAt *time.Time `json:"updatedat,omitempty" bson:"updatedat,omitempty"`
+	DeletedAt *time.Time `json:"deletedat,omitempty" bson:"deletedat,omitempty"`
+}
+
+func (EmployeeDeleteActivity) CollectionName() string {
+	return employeeCollectionName
 }
