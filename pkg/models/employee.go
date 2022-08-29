@@ -13,8 +13,11 @@ type Employee struct {
 }
 
 type EmployeeInfo struct {
-	DocIdentity `bson:"inline" gorm:"embedded;"`
-	Employee    `bson:"inline" gorm:"embedded;"`
+	DocIdentity    `bson:"inline" gorm:"embedded;"`
+	Username       string `json:"username" bson:"username"`
+	Name           string `json:"name" bson:"name"`
+	ProfilePicture string `json:"profilepicture" bson:"profilepicture"`
+	Role           string `json:"role" bson:"role"`
 }
 
 func (EmployeeInfo) CollectionName() string {
