@@ -30,8 +30,9 @@ func NewEmployeeHttp(ms *microservice.Microservice, cfg microservice.IConfig) Em
 }
 
 func (h EmployeeHttp) RouteSetup() {
-	h.ms.POST("/employee/login", h.Login)
+	// h.ms.POST("/employee/login", h.Login)
 	h.ms.POST("/employee", h.Register)
+	h.ms.GET("/employee/:username", h.InfoEmployee)
 	h.ms.GET("/employee", h.SearchEmployee)
 	h.ms.PUT("/employee", h.Update)
 	h.ms.PUT("/employee/password", h.UpdatePassword)
@@ -45,10 +46,8 @@ func (h EmployeeHttp) RouteSetup() {
 // @Success		201	{object}	models.EmployeeInfo
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /employee/whois [post]
+// @Router /employee/login [post]
 func (h EmployeeHttp) Login(ctx microservice.IContext) error {
-	userAuthInfo := ctx.UserInfo()
-	shopID := userAuthInfo.ShopID
 	input := ctx.ReadInput()
 
 	userReq := &models.EmployeeRequestLogin{}
@@ -59,7 +58,7 @@ func (h EmployeeHttp) Login(ctx microservice.IContext) error {
 		return err
 	}
 
-	employee, err := h.empService.Login(shopID, *userReq)
+	employee, err := h.empService.Login(userReq.ShopID, *userReq)
 
 	if err != nil {
 		ctx.ResponseError(400, "login failed.")
@@ -197,6 +196,37 @@ func (h EmployeeHttp) UpdatePassword(ctx microservice.IContext) error {
 	ctx.Response(http.StatusCreated, models.ApiResponse{
 		Success: true,
 	})
+
+	return nil
+}
+
+// Info Employee godoc
+// @Description List Employee
+// @Tags		Employee
+// @Accept 		json
+// @Success		200	{array}	models.EmployeePageResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /employee/{username} [get]
+func (h EmployeeHttp) InfoEmployee(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	username := ctx.Param("username")
+
+	docList, err := h.empService.Get(shopID, username)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(
+		http.StatusOK,
+		models.ApiResponse{
+			Success: true,
+			Data:    docList,
+		})
 
 	return nil
 }

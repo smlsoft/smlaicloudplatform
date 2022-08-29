@@ -605,12 +605,10 @@ definitions:
     properties:
       name:
         type: string
-      password:
+      profilepicture:
         type: string
-      roles:
-        items:
-          type: string
-        type: array
+      role:
+        type: string
       username:
         type: string
     type: object
@@ -622,10 +620,10 @@ definitions:
         type: string
       password:
         type: string
-      roles:
-        items:
-          type: string
-        type: array
+      profilepicture:
+        type: string
+      role:
+        type: string
       username:
         type: string
     type: object
@@ -644,6 +642,8 @@ definitions:
     properties:
       password:
         type: string
+      shopid:
+        type: string
       username:
         type: string
     type: object
@@ -658,10 +658,10 @@ definitions:
     properties:
       name:
         type: string
-      roles:
-        items:
-          type: string
-        type: array
+      profilepicture:
+        type: string
+      role:
+        type: string
       username:
         type: string
     type: object
@@ -2522,52 +2522,6 @@ definitions:
       success:
         type: boolean
     type: object
-  models.SmsTransaction:
-    properties:
-      address:
-        type: string
-      body:
-        type: string
-      date:
-        type: string
-      parid:
-        type: string
-      transid:
-        type: string
-    type: object
-  models.SmsTransactionInfo:
-    properties:
-      address:
-        type: string
-      body:
-        type: string
-      date:
-        type: string
-      guidfixed:
-        type: string
-      parid:
-        type: string
-      transid:
-        type: string
-    type: object
-  models.SmsTransactionInfoResponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.SmsTransactionInfo'
-      success:
-        type: boolean
-    type: object
-  models.SmsTransactionPageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/models.SmsTransactionInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
   models.SyncInventoryData:
     properties:
       data:
@@ -2814,6 +2768,98 @@ definitions:
         type: integer
       vatyear:
         type: integer
+    type: object
+  smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransaction:
+    properties:
+      address:
+        type: string
+      body:
+        type: string
+      date:
+        type: integer
+      parid:
+        type: string
+      transid:
+        type: string
+    type: object
+  smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfo:
+    properties:
+      address:
+        type: string
+      body:
+        type: string
+      date:
+        type: integer
+      guidfixed:
+        type: string
+      parid:
+        type: string
+      transid:
+        type: string
+    type: object
+  smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfo'
+      success:
+        type: boolean
+    type: object
+  smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  smlcloudplatform_pkg_smstransaction_models.SmsTransaction:
+    properties:
+      address:
+        type: string
+      body:
+        type: string
+      date:
+        type: string
+      parid:
+        type: string
+      transid:
+        type: string
+    type: object
+  smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfo:
+    properties:
+      address:
+        type: string
+      body:
+        type: string
+      date:
+        type: string
+      guidfixed:
+        type: string
+      parid:
+        type: string
+      transid:
+        type: string
+    type: object
+  smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfo'
+      success:
+        type: boolean
+    type: object
+  smlcloudplatform_pkg_smstransaction_models.SmsTransactionPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
     type: object
 info:
   contact:
@@ -3452,6 +3498,51 @@ paths:
       summary: Update Employee
       tags:
       - Employee
+  /employee/{username}:
+    get:
+      consumes:
+      - application/json
+      description: List Employee
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.EmployeePageResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Employee
+  /employee/login:
+    post:
+      consumes:
+      - application/json
+      description: Validate Employee
+      parameters:
+      - description: EmployeeUserPassword
+        in: body
+        name: EmployeeUserPassword
+        required: true
+        schema:
+          $ref: '#/definitions/models.EmployeeRequestLogin'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.EmployeeInfo'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Employee
   /employee/password/{id}:
     put:
       consumes:
@@ -3481,31 +3572,6 @@ paths:
       security:
       - AccessToken: []
       summary: Register An Account
-      tags:
-      - Employee
-  /employee/whois:
-    post:
-      consumes:
-      - application/json
-      description: Validate Employee
-      parameters:
-      - description: EmployeeUserPassword
-        in: body
-        name: EmployeeUserPassword
-        required: true
-        schema:
-          $ref: '#/definitions/models.EmployeeRequestLogin'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.EmployeeInfo'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
       tags:
       - Employee
   /gl/accountgroup:
@@ -6566,7 +6632,7 @@ paths:
         name: Transaction
         required: true
         schema:
-          $ref: '#/definitions/models.SmsTransaction'
+          $ref: '#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransaction'
       responses:
         "200":
           description: OK
@@ -6620,7 +6686,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.SmsTransactionInfoResponse'
+            $ref: '#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfoResponse'
         "401":
           description: Unauthorized
           schema:
@@ -6645,7 +6711,7 @@ paths:
         name: Journal
         required: true
         schema:
-          $ref: '#/definitions/models.SmsTransaction'
+          $ref: '#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransaction'
       responses:
         "200":
           description: OK
