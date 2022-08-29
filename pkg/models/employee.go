@@ -4,20 +4,21 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 
 const employeeCollectionName string = "employees"
 
+type EmployeePassword struct {
+	Password string `json:"password" bson:"password"`
+}
+
 type Employee struct {
 	Username       string `json:"username" bson:"username"`
-	Password       string `json:"password" bson:"password"`
 	Name           string `json:"name" bson:"name"`
 	ProfilePicture string `json:"profilepicture" bson:"profilepicture"`
 	Role           string `json:"role" bson:"role"`
 }
 
 type EmployeeInfo struct {
-	DocIdentity    `bson:"inline" gorm:"embedded;"`
-	Username       string `json:"username" bson:"username"`
-	Name           string `json:"name" bson:"name"`
-	ProfilePicture string `json:"profilepicture" bson:"profilepicture"`
-	Role           string `json:"role" bson:"role"`
+	DocIdentity      `bson:"inline" gorm:"embedded;"`
+	Employee         `bson:"inline" gorm:"embedded;"`
+	EmployeePassword `bson:"inline" gorm:"embedded;"`
 }
 
 func (EmployeeInfo) CollectionName() string {
@@ -39,15 +40,21 @@ func (EmployeeDoc) CollectionName() string {
 	return employeeCollectionName
 }
 
+type EmployeeRequestRegister struct {
+	Employee         `bson:"inline" gorm:"embedded;"`
+	EmployeePassword `bson:"inline" gorm:"embedded;"`
+}
+
 type EmployeeRequestLogin struct {
 	Username string `json:"username" bson:"username"`
 	Password string `json:"password" bson:"password"`
 }
 
 type EmployeeRequestUpdate struct {
-	Username string  `json:"username" bson:"username"`
-	Name     string  `json:"name" bson:"name"`
-	Role     *string `json:"role" bson:"role"`
+	Username       string  `json:"username" bson:"username"`
+	Name           string  `json:"name" bson:"name"`
+	ProfilePicture string  `json:"profilepicture" bson:"profilepicture"`
+	Role           *string `json:"role" bson:"role"`
 }
 
 type EmployeeRequestPassword struct {

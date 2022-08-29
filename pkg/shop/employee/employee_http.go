@@ -30,7 +30,7 @@ func NewEmployeeHttp(ms *microservice.Microservice, cfg microservice.IConfig) Em
 }
 
 func (h EmployeeHttp) RouteSetup() {
-	h.ms.POST("/employee/whois", h.Login)
+	h.ms.POST("/employee/login", h.Login)
 	h.ms.POST("/employee", h.Register)
 	h.ms.GET("/employee", h.SearchEmployee)
 	h.ms.PUT("/employee", h.Update)
@@ -90,7 +90,7 @@ func (h EmployeeHttp) Register(ctx microservice.IContext) error {
 	shopID := userAuthInfo.ShopID
 	input := ctx.ReadInput()
 
-	userReq := models.Employee{}
+	userReq := models.EmployeeRequestRegister{}
 	err := json.Unmarshal([]byte(input), &userReq)
 
 	if err != nil {
