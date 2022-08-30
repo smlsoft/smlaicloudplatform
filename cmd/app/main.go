@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/apikeyservice"
 	"smlcloudplatform/pkg/authentication"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/mastersync"
@@ -112,6 +113,7 @@ func main() {
 		//new
 		smstransaction.NewSmsTransactionHttp(ms, cfg),
 		paymentmaster.NewPaymentMasterHttp(ms, cfg),
+		apikeyservice.NewApiKeyServiceHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)
