@@ -13,6 +13,7 @@ import (
 
 type IEmployeeRepository interface {
 	FindEmployeeByShopIDPage(shopID string, q string, page int, limit int) ([]models.EmployeeInfo, mongopagination.PaginationData, error)
+	FindEmployeeByCode(shopID string, code string) (models.EmployeeDoc, error)
 	FindEmployeeByUsername(shopID string, username string) (models.EmployeeDoc, error)
 	Create(models.EmployeeDoc) (primitive.ObjectID, error)
 	Update(shopID string, guidFixed string, employee models.EmployeeDoc) error
@@ -60,6 +61,21 @@ func (r EmployeeRepository) FindEmployeeByShopIDPage(shopID string, q string, pa
 	return docList, pagination, nil
 }
 
+func (r EmployeeRepository) FindEmployeeByCode(shopID string, code string) (models.EmployeeDoc, error) {
+
+	findDoc := &models.EmployeeDoc{}
+	err := r.pst.FindOne(&models.EmployeeDoc{}, bson.M{
+		"shopid": shopID,
+		"code":   code,
+	}, findDoc)
+
+	if err != nil {
+		return models.EmployeeDoc{}, err
+	}
+
+	return *findDoc, nil
+}
+
 func (r EmployeeRepository) FindEmployeeByUsername(shopID string, username string) (models.EmployeeDoc, error) {
 
 	findDoc := &models.EmployeeDoc{}
@@ -88,7 +104,7 @@ func (r EmployeeRepository) Create(employee models.EmployeeDoc) (primitive.Objec
 func (r EmployeeRepository) Update(shopID string, guidFixed string, employee models.EmployeeDoc) error {
 	filterDoc := map[string]interface{}{
 		"shopid":    shopID,
-		"guidFixed": guidFixed,
+		"guidfixed": guidFixed,
 	}
 
 	err := r.pst.UpdateOne(&models.EmployeeDoc{}, filterDoc, employee)
