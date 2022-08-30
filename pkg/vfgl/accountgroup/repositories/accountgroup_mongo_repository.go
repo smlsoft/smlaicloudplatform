@@ -14,6 +14,7 @@ type IAccountGroupMongoRepository interface {
 	CreateInBatch(inventories []models.AccountGroupDoc) error
 	Update(shopID string, guid string, category models.AccountGroupDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
+	FindOne(shopID string, filters map[string]interface{}) (models.AccountGroupDoc, error)
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.AccountGroupInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.AccountGroupDoc, error)
 }
