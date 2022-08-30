@@ -48,7 +48,7 @@ func (svc EmployeeService) Login(shopID string, loginReq models.EmployeeRequestL
 	}
 
 	if len(findUser.Username) < 1 {
-		return nil, errors.New("username is not exists")
+		return nil, errors.New("username is exists")
 	}
 
 	passwordInvalid := !utils.CheckHashPassword(loginReq.Password, findUser.Password)
@@ -61,6 +61,16 @@ func (svc EmployeeService) Login(shopID string, loginReq models.EmployeeRequestL
 }
 
 func (svc EmployeeService) Register(shopID string, authUsername string, emp models.EmployeeRequestRegister) (string, error) {
+
+	findUserCode, err := svc.empRepo.FindEmployeeByCode(shopID, emp.Code)
+
+	if err != nil && err.Error() != "mongo: no documents in result" {
+		return "", errors.New("auth: database connect error")
+	}
+
+	if len(findUserCode.Code) > 0 {
+		return "", errors.New("code is exists")
+	}
 
 	userFind, err := svc.empRepo.FindEmployeeByUsername(shopID, emp.Username)
 	if err != nil && err.Error() != "mongo: no documents in result" {
@@ -129,11 +139,12 @@ func (svc EmployeeService) Update(shopID string, authUsername string, emp models
 	}
 
 	if len(userFind.Username) < 1 {
-		return errors.New("username is not exists")
+		return errors.New("username is exists")
 	}
 
 	userFind.Name = emp.Name
-	userFind.Roles = *emp.Roles
+	userFind.Roles = emp.Roles
+	userFind.ProfilePicture = emp.ProfilePicture
 
 	userFind.UpdatedBy = authUsername
 	userFind.UpdatedAt = time.Now()
@@ -157,7 +168,7 @@ func (svc EmployeeService) UpdatePassword(shopID string, authUsername string, em
 	}
 
 	if len(userFind.Username) < 1 {
-		return errors.New("username is not exists")
+		return errors.New("username is exists")
 	}
 
 	hashPassword, err := utils.HashPassword(emp.Password)

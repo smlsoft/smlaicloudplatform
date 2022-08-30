@@ -13,10 +13,11 @@ type EmployeePassword struct {
 }
 
 type Employee struct {
-	Username       string   `json:"username" bson:"username"`
-	Name           string   `json:"name" bson:"name"`
-	ProfilePicture string   `json:"profilepicture" bson:"profilepicture"`
-	Roles          []string `json:"roles" bson:"roles"`
+	Code           string    `json:"code" bson:"code"`
+	Username       string    `json:"username" bson:"username"`
+	Name           string    `json:"name" bson:"name"`
+	ProfilePicture string    `json:"profilepicture" bson:"profilepicture"`
+	Roles          *[]string `json:"roles" bson:"roles"`
 }
 
 type EmployeeInfo struct {
@@ -56,10 +57,7 @@ type EmployeeRequestLogin struct {
 }
 
 type EmployeeRequestUpdate struct {
-	Username       string    `json:"username" bson:"username"`
-	Name           string    `json:"name" bson:"name"`
-	ProfilePicture string    `json:"profilepicture" bson:"profilepicture"`
-	Roles          *[]string `json:"roles" bson:"roles"`
+	Employee `bson:"inline" gorm:"embedded;"`
 }
 
 type EmployeeRequestPassword struct {
