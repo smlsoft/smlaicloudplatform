@@ -15,6 +15,8 @@ import (
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
 	"smlcloudplatform/pkg/product/inventorysearchconsumer"
+	"smlcloudplatform/pkg/product/option"
+	"smlcloudplatform/pkg/product/optiongroup"
 	"smlcloudplatform/pkg/restaurant/kitchen"
 	"smlcloudplatform/pkg/restaurant/shopprinter"
 	"smlcloudplatform/pkg/restaurant/shoptable"
@@ -143,6 +145,12 @@ func main() {
 
 		catImp := inventoryimport.NewCategoryImportHttp(ms, cfg)
 		catImp.RouteSetup()
+
+		optionHttp := option.NewOptionHttp(ms, cfg)
+		optionHttp.RouteSetup()
+
+		optionGroupHttp := optiongroup.NewOptionGroupHttp(ms, cfg)
+		optionGroupHttp.RouteSetup()
 
 		//filePersister := microservice.NewPersisterFile(microservice.NewStorageFileConfig())
 		azureFileBlob := microservice.NewPersisterAzureBlob()
