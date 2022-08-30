@@ -275,3 +275,11 @@ func TestJournalConsumeServiceUpdateWhenFoundOldData(t *testing.T) {
 	assert.NotNil(t, get, "Failed Upsert Data is Nil")
 	//assert.Equal(t, &get, want, "Failed After Upsert Consume Data")
 }
+
+func TestConsumerServiceCreateDocFromJson(t *testing.T) {
+	jsonStr := `
+	{"id":"000000000000000000000000","shopid":"2E1NVOURRw9sxHxDFfdnmamPWXI","guidfixed":"2E4CzDZN07hcoq3mesUDWpI5upa","batchId":"","docno":"IV6506006","docdate":"2022-06-16T17:00:00Z","documentref":"","accountperiod":6,"accountyear":2565,"accountgroup":"0001","amount":8639.71,"accountdescription":"","bookcode":"01","vats":[],"taxes":[],"journaltype":0,"parid":"0000000","journaldetail":[{"accountcode":"115840","accountname":"ค่าภาษีเงินได้นิติบุคคลถูกหัก.-ณ.ที่จ่าย","debitamount":86.32,"creditamount":0},{"accountcode":"111110","accountname":"เงินสดในมือ","debitamount":8553.39,"creditamount":0},{"accountcode":"410010","accountname":"รายได้จากการขายสินค้า","debitamount":0,"creditamount":8521.21},{"accountcode":"410010","accountname":"รายได้จากการขายสินค้า","debitamount":0,"creditamount":29},{"accountcode":"410010","accountname":"รายได้จากการขายสินค้า","debitamount":0,"creditamount":81.75},{"accountcode":"215500","accountname":"ค่าภาษีขาย","debitamount":0,"creditamount":7.75}]}
+	`
+
+	print(jsonStr)
+}

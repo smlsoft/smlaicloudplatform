@@ -24,7 +24,7 @@ type JournalBody struct {
 	BookCode           string    `json:"bookcode" bson:"bookcode"`
 	Vats               []Vat     `json:"vats" bson:"vats" gorm:"-"`
 	Taxes              []Tax     `json:"taxes" bson:"taxes" gorm:"-"`
-	JournalType        int16     `json:"journaltype" bson:"journaltype" gorm:"column:journaltype;DEFAULT:0"` // ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)
+	JournalType        int       `json:"journaltype" bson:"journaltype" gorm:"column:journaltype;DEFAULT:0"` // ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)
 }
 
 type Journal struct {
