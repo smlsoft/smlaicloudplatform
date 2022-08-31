@@ -38,10 +38,17 @@ func (h ApiKeyServiceHttp) RouteSetup() {
 	h.ms.DELETE("/apikeyservice", h.RemoveApiKey)
 }
 
+// X Api key generate
+// @Description generate x-api-key
+// @Tags		XApiKey
+// @Accept 		json
+// @Success		200	{object}	common.AuthResponse
+// @Failure		400 {object}	common.AuthResponseFailed
+// @Router /apikeyservice [post]
 func (h ApiKeyServiceHttp) CreateApiKey(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 
-	token, err := h.svc.CreateApiKeyService(userInfo, time.Duration(24*30)*time.Hour)
+	token, err := h.svc.CreateApiKeyService(userInfo, time.Duration(24*90)*time.Hour)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -55,6 +62,13 @@ func (h ApiKeyServiceHttp) CreateApiKey(ctx microservice.IContext) error {
 	return nil
 }
 
+// X Api key generate
+// @Description delete x-api-key
+// @Tags		XApiKey
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		400 {object}	common.AuthResponseFailed
+// @Router /apikeyservice [delete]
 func (h ApiKeyServiceHttp) RemoveApiKey(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
