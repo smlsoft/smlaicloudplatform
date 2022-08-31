@@ -65,7 +65,7 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest) (s
 		return "", errors.New("password is not invalid")
 	}
 
-	tokenString, err := svc.authService.GenerateTokenWithRedis(micromodel.UserInfo{Username: findUser.Username, Name: findUser.Name})
+	tokenString, err := svc.authService.GenerateTokenWithRedis(microservice.AUTHTYPE_BEARER, micromodel.UserInfo{Username: findUser.Username, Name: findUser.Name})
 
 	if err != nil {
 		return "", errors.New("generate token error")
@@ -82,7 +82,7 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest) (s
 			return "", errors.New("shop invalid")
 		}
 
-		err = svc.authService.SelectShop(tokenString, userLoginReq.ShopID, shopUser.Role)
+		err = svc.authService.SelectShop(microservice.AUTHTYPE_BEARER, tokenString, userLoginReq.ShopID, shopUser.Role)
 
 		if err != nil {
 			return "", errors.New("failed shop select")
@@ -192,7 +192,7 @@ func (svc AuthenticationService) UpdatePassword(username string, currentPassword
 }
 
 func (svc AuthenticationService) Logout(authorizationHeader string) error {
-	return svc.authService.ExpireToken(authorizationHeader)
+	return svc.authService.ExpireToken(microservice.AUTHTYPE_BEARER, authorizationHeader)
 }
 
 func (svc AuthenticationService) Profile(username string) (models.UserProfile, error) {
@@ -216,7 +216,7 @@ func (svc AuthenticationService) AccessShop(shopID string, username string, auth
 		return errors.New("username invalid")
 	}
 
-	tokenStr, err := svc.authService.GetTokenFromAuthorizationHeader(authorizationHeader)
+	tokenStr, err := svc.authService.GetTokenFromAuthorizationHeader(microservice.AUTHTYPE_BEARER, authorizationHeader)
 
 	if err != nil {
 		return err
@@ -236,7 +236,7 @@ func (svc AuthenticationService) AccessShop(shopID string, username string, auth
 		return errors.New("shop invalid")
 	}
 
-	err = svc.authService.SelectShop(tokenStr, shopID, shopUser.Role)
+	err = svc.authService.SelectShop(microservice.AUTHTYPE_BEARER, tokenStr, shopID, shopUser.Role)
 
 	if err != nil {
 		return errors.New("failed shop select")

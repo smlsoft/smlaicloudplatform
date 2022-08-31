@@ -35,6 +35,19 @@ func NewChartOfAccountHttpService(repo repositories.ChartOfAccountRepository, mq
 }
 
 func (svc ChartOfAccountHttpService) Create(shopID string, authUsername string, doc models.ChartOfAccount) (string, error) {
+
+	findDoc, err := svc.repo.FindOne(shopID, map[string]interface{}{
+		"accountcode": doc.AccountCode,
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	if len(findDoc.AccountCode) > 0 {
+		return "", errors.New("account code is exists")
+	}
+
 	newGuidFixed := utils.NewGUID()
 
 	docData := models.ChartOfAccountDoc{}
@@ -45,7 +58,7 @@ func (svc ChartOfAccountHttpService) Create(shopID string, authUsername string, 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err := svc.repo.Create(docData)
+	_, err = svc.repo.Create(docData)
 
 	if err != nil {
 		return "", err
@@ -69,6 +82,20 @@ func (svc ChartOfAccountHttpService) Update(guid string, shopID string, authUser
 
 	if findDoc.ID == primitive.NilObjectID {
 		return errors.New("document not found")
+	}
+
+	findDocCode, err := svc.repo.FindOne(shopID, map[string]interface{}{
+		"accountcode": doc.AccountCode,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	isAccountCodeExists := findDoc.AccountCode != doc.AccountCode && len(findDocCode.AccountCode) > 0
+
+	if isAccountCodeExists {
+		return errors.New("account code is exists")
 	}
 
 	findDoc.ChartOfAccount = doc

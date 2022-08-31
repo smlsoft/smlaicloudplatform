@@ -56,8 +56,8 @@ func (repo InventoryImportRepository) DeleteInBatch(shopID string, guidList []st
 func (repo InventoryImportRepository) DeleteInBatchCode(shopID string, codeList []string) error {
 
 	err := repo.pst.Delete(&models.InventoryImportDoc{}, bson.M{
-		"shopid":  shopID,
-		"barcode": bson.M{"$in": codeList},
+		"shopid":   shopID,
+		"itemcode": bson.M{"$in": codeList},
 	})
 
 	if err != nil {

@@ -41,6 +41,7 @@ func (h JournalReportHttp) RouteSetup() {
 // @Param		accountgroup query string true "กลุ่มบัญชี"
 // @Param		startdate query string true "จากวันที่ (Date Format: YYYY-MM-DD)"
 // @Param		enddate query string true "ถึงวันที่ (Date Format: YYYY-MM-DD)"
+// @Param		ica query int true "รวมรายการปิดปัญชี"
 // @Accept		json
 // @Success		200 {object} models.TrialBalanceSheetReportResponse
 // @Failure		400 {object} common.AuthResponseFailed
@@ -56,6 +57,7 @@ func (r JournalReportHttp) ProcessReportTrialBalanceSheet(ctx microservice.ICont
 	accountGroup := ctx.QueryParam("accountgroup")
 	startDateStr := ctx.QueryParam("startdate")
 	endDateStr := ctx.QueryParam("enddate")
+	includeCloseAccountMode := ctx.QueryParam("ica") == "1"
 
 	//lastUpdateStr = strings.Trim(lastUpdateStr, " ")
 	if len(accountGroup) < 1 || len(startDateStr) < 1 || len(endDateStr) < 1 {
@@ -76,8 +78,8 @@ func (r JournalReportHttp) ProcessReportTrialBalanceSheet(ctx microservice.ICont
 	}
 	endDate = endDate.AddDate(0, 0, 1).Add(time.Second * -1)
 
-	r.ms.Logger.Debugf("Start Process TrialBalanceSheet %v:%v", startDate, endDate)
-	reportData, err := r.svc.ProcessTrialBalanceSheetReport(shopID, accountGroup, startDate, endDate)
+	r.ms.Logger.Debugf("Start Process TrialBalanceSheet %v:%v, includecloseaccount: %v", startDate, endDate, includeCloseAccountMode)
+	reportData, err := r.svc.ProcessTrialBalanceSheetReport(shopID, accountGroup, includeCloseAccountMode, startDate, endDate)
 	if err != nil {
 		ctx.ResponseError(500, fmt.Sprintf("Failed on Process Report : %v.", err.Error()))
 		return err
@@ -98,6 +100,7 @@ func (r JournalReportHttp) ProcessReportTrialBalanceSheet(ctx microservice.ICont
 // @Tags		GLReport
 // @Param		accountgroup query string true "กลุ่มบัญชี"
 // @Param		enddate query string true "ณ วันที่ (Date Format: YYYY-MM-DD)"
+// @Param		ica query int true "รวมรายการปิดปัญชี"
 // @Accept		json
 // @Success		200 {object} models.BalanceSheetReportResponse
 // @Failure		400 {object} common.AuthResponseFailed
@@ -111,6 +114,7 @@ func (r JournalReportHttp) ProcessBalanceSheetReport(ctx microservice.IContext) 
 	layout := "2006-01-02" //
 	endDateStr := ctx.QueryParam("enddate")
 	accountGroup := ctx.QueryParam("accountgroup")
+	includeCloseAccountMode := ctx.QueryParam("ica") == "1"
 
 	//lastUpdateStr = strings.Trim(lastUpdateStr, " ")
 	if len(accountGroup) < 1 || len(endDateStr) < 1 {
@@ -126,7 +130,7 @@ func (r JournalReportHttp) ProcessBalanceSheetReport(ctx microservice.IContext) 
 	endDate = endDate.AddDate(0, 0, 1).Add(time.Second * -1)
 
 	r.ms.Logger.Debugf("Start Process BalanceSheet at %v", endDate)
-	reportData, err := r.svc.ProcessBalanceSheetReport(shopID, accountGroup, endDate)
+	reportData, err := r.svc.ProcessBalanceSheetReport(shopID, accountGroup, includeCloseAccountMode, endDate)
 	if err != nil {
 		ctx.ResponseError(500, fmt.Sprintf("Failed on Process Report : %v.", err.Error()))
 		return err
@@ -148,6 +152,7 @@ func (r JournalReportHttp) ProcessBalanceSheetReport(ctx microservice.IContext) 
 // @Param		accountgroup query string true "กลุ่มบัญชี"
 // @Param		startdate query string true "จากวันที่ (Date Format: YYYY-MM-DD)"
 // @Param		enddate query string true "ถึงวันที่ (Date Format: YYYY-MM-DD)"
+// @Param		ica query int true "รวมรายการปิดปัญชี"
 // @Accept		json
 // @Success		200 {object} models.LostAndProfitSheetReportResponse
 // @Failure		400 {object} common.AuthResponseFailed
@@ -162,6 +167,7 @@ func (r JournalReportHttp) ProcessProfitAndLossReport(ctx microservice.IContext)
 	accountGroup := ctx.QueryParam("accountgroup")
 	startDateStr := ctx.QueryParam("startdate")
 	endDateStr := ctx.QueryParam("enddate")
+	includeCloseAccountMode := ctx.QueryParam("ica") == "1"
 
 	//lastUpdateStr = strings.Trim(lastUpdateStr, " ")
 	if len(accountGroup) < 1 || len(startDateStr) < 1 || len(endDateStr) < 1 {
@@ -183,7 +189,7 @@ func (r JournalReportHttp) ProcessProfitAndLossReport(ctx microservice.IContext)
 	endDate = endDate.AddDate(0, 0, 1).Add(time.Second * -1)
 
 	r.ms.Logger.Debugf("Start Process ProfitAndLoss %v:%v", startDate, endDate)
-	reportData, err := r.svc.ProcessProfitAndLossSheetReport(shopID, accountGroup, startDate, endDate)
+	reportData, err := r.svc.ProcessProfitAndLossSheetReport(shopID, accountGroup, includeCloseAccountMode, startDate, endDate)
 	if err != nil {
 		ctx.ResponseError(500, fmt.Sprintf("Failed on Process Report : %v.", err.Error()))
 		return err

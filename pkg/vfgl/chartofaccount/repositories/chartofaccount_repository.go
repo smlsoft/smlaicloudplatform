@@ -14,6 +14,7 @@ type IChartOfAccountRepository interface {
 	CreateInBatch(docList []models.ChartOfAccountDoc) error
 	Update(shopID string, guid string, doc models.ChartOfAccountDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
+	FindOne(shopID string, filters map[string]interface{}) (models.ChartOfAccountDoc, error)
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.ChartOfAccountInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.ChartOfAccountDoc, error)
 }

@@ -78,7 +78,7 @@ type BalanceSheetReport struct {
 type BalanceSheetAccountDetail struct {
 	chartofaccountModel.ChartOfAccountPG
 	// มูลค่า
-	Amount float64 `json:"amount"`
+	Amount float64 `json:"amount" gorm:"column:amount"`
 }
 
 type ProfitAndLossSheetReport struct {

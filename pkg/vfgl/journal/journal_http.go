@@ -56,6 +56,7 @@ func (h JournalHttp) RouteSetup() {
 	h.ms.GET("/gl/journal", h.SearchJournal)
 	h.ms.POST("/gl/journal", h.CreateJournal)
 	h.ms.GET("/gl/journal/:id", h.InfoJournal)
+	h.ms.GET("/gl/journal/docref/:doc", h.InfoJournalByDocumentRef)
 	h.ms.PUT("/gl/journal/:id", h.UpdateJournal)
 	h.ms.DELETE("/gl/journal/:id", h.DeleteJournal)
 
@@ -223,6 +224,38 @@ func (h JournalHttp) InfoJournal(ctx microservice.IContext) error {
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// Get Journal Infomation By document ref godoc
+// @Summary		แสดงรายละเอียดข้อมูลรายวัน ตามเอกสารอ้างอิง
+// @Description แสดงรายละเอียดข้อมูลรายวัน ตามเอกสารอ้างอิง
+// @Tags		GL
+// @Param		doc  path      string  true  "Document Ref"
+// @Accept 		json
+// @Success		200	{object}	models.JournalInfoResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /gl/journal/docref/{doc} [get]
+func (h JournalHttp) InfoJournalByDocumentRef(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	docRef := ctx.Param("doc")
+
+	h.ms.Logger.Debugf("Get Journal Document ref %v:", docRef)
+	doc, err := h.svc.InfoJournalByDocumentRef(shopID, docRef)
+
+	if err != nil {
+		h.ms.Logger.Errorf("Error getting document %v: %v", doc, err)
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}

@@ -24,7 +24,6 @@ const inventoryIndexName string = "inventories_index"
 type Inventory struct {
 	ParID        string  `json:"parid" bson:"parid" gorm:"parid"`
 	ItemSku      string  `json:"itemsku,omitempty" bson:"itemsku,omitempty" gorm:"itemsku,omitempty"`
-	Barcode      string  `json:"barcode" bson:"barcode" gorm:"barcode"`
 	CategoryGuid string  `json:"categoryguid,omitempty" bson:"categoryguid" gorm:"categoryguid"` // Guid กลุ่มสินค้า
 	Price        float32 `json:"price" bson:"price" gorm:"price"`                                // ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
 	MemberPrice  float32 `json:"memberprice,omitempty" bson:"memberprice,omitempty" gorm:"memberprice,omitempty"`
@@ -42,14 +41,14 @@ type Inventory struct {
 	Description4 string `json:"description4,omitempty" bson:"description4,omitempty" gorm:"description4,omitempty"`
 	Description5 string `json:"description5,omitempty" bson:"description5,omitempty" gorm:"description5,omitempty"`
 
-	UnitName1 string `json:"unitname1" bson:"unitname1" gorm:"unitname1" gorm:"unitname1"`
+	UnitName1 string `json:"unitname1" bson:"unitname1" gorm:"unitname1"`
 	UnitName2 string `json:"unitname2,omitempty" bson:"unitname2,omitempty" gorm:"unitname2,omitempty"`
 	UnitName3 string `json:"unitname3,omitempty" bson:"unitname3,omitempty" gorm:"unitname3,omitempty"`
 	UnitName4 string `json:"unitname4,omitempty" bson:"unitname4,omitempty" gorm:"unitname4,omitempty"`
 	UnitName5 string `json:"unitname5,omitempty" bson:"unitname5,omitempty" gorm:"unitname5,omitempty"`
 
 	ItemGuid     string  `json:"itemguid,omitempty" bson:"itemguid,omitempty" gorm:"itemguid,omitempty"`
-	ItemCode     string  `json:"itemcode,omitempty" bson:"itemcode,omitempty" gorm:"itemcode,omitempty"`
+	ItemCode     string  `json:"itemcode" bson:"itemcode" gorm:"itemcode"`
 	ItemUnitCode string  `json:"itemunitcode,omitempty" bson:"itemunitcode,omitempty" gorm:"itemunitcode,omitempty"`
 	ItemUnitStd  float64 `json:"itemunitstd,omitempty" bson:"itemunitstd,omitempty" gorm:"itemunitstd,omitempty"`
 	ItemUnitDiv  float64 `json:"itemunitdiv,omitempty" bson:"itemunitdiv,omitempty" gorm:"itemunitdiv,omitempty"`
@@ -59,11 +58,37 @@ type Inventory struct {
 	Tags     *[]InventoryTag         `json:"tags,omitempty" bson:"tags" gorm:"tags;foreignKey:DocID"`
 	Category *categoryModel.Category `json:"category,omitempty" bson:"category,omitempty"`
 	XOrder   int8                    `json:"xorder" bson:"xorder" gorm:"xorder"`
+
+	Barcodes *[]Barcode `json:"barcodes" bson:"barcodes" gorm:"barcodes"`
+	UnitUses *[]UnitUse `json:"unituses" bson:"unituses" gorm:"units"`
+
+	HaveSerialno bool `json:"haveserialno" bson:"haveserialno" gorm:"haveserialno,type:bool,default:false"`
+	ItemVat      int8 `json:"itemvat" bson:"itemvat" gorm:"itemvat"`
+	ItemType     int8 `json:"itemtype" bson:"itemtype" gorm:"itemtype"`
+	HavePoint    bool `json:"havepoint" bson:"havepoint" gorm:"havepoint"`
+
 	// WaitType         int             `json:"-" bson:"waitType"`                // ประเภทการรอ (สินค้าหมด)
 	// WaitUntil        time.Time       `json:"-" bson:"waitUntil"`               // ระยะเวลาที่รอ
 	// MultipleUnits    bool            `json:"-" bson:"multipleuUits" `          // สินค้าหลายหน่วยนับ
 	// UnitStandardGuid string          `json:"-" bson:"unitStandardGuid" `       // หน่วยนับมาตรฐาน (นับสต๊อก)
 	// UnitList         []InventoryUnit `json:"unitlist" bson:"unitList" `        // กรณีหลายหน่วยนับ ตารางหน่วบนับ
+}
+
+type Barcode struct {
+	Barcode  string  `json:"barcode" bson:"barcode" gorm:"barcode"`
+	UnitCode string  `json:"unitcode" bson:"unitcode" gorm:"unitcode"`
+	UnitName string  `json:"unitname" bson:"unitname" gorm:"unitname"`
+	Price    float64 `json:"price" bson:"price" gorm:"price"`
+	Image    string  `json:"image" bson:"image" gorm:"image"`
+}
+
+type UnitUse struct {
+	UnitCode       string  `json:"unitcode" bson:"unitcode" gorm:"unitcode"`
+	UnitName       string  `json:"unitname" bson:"unitname" gorm:"unitname"`
+	ItemUnitSTD    float64 `json:"itemunitstd" bson:"itemunitstd" gorm:"itemunitstd"`
+	ItemUnitDIV    float64 `json:"itemunitdiv" bson:"itemunitdiv" gorm:"itemunitdiv"`
+	IsUnitCost     bool    `json:"isunitcost" bson:"isunitcost" gorm:"isunitcost,type:bool,default:false"`
+	IsUnitStandard bool    `json:"isunitstandard" bson:"isunitstandard" gorm:"isunitstandard,type:bool,default:false"`
 }
 
 type InventoryItemGuid struct {

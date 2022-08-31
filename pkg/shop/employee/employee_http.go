@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 )
@@ -17,10 +18,12 @@ type EmployeeHttp struct {
 }
 
 func NewEmployeeHttp(ms *microservice.Microservice, cfg microservice.IConfig) EmployeeHttp {
-
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
+
 	empRepo := NewEmployeeRepository(pst)
-	empService := NewEmployeeService(empRepo)
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "employee")
+	empService := NewEmployeeService(empRepo, masterSyncCacheRepo)
 
 	return EmployeeHttp{
 		ms:         ms,
@@ -30,10 +33,11 @@ func NewEmployeeHttp(ms *microservice.Microservice, cfg microservice.IConfig) Em
 }
 
 func (h EmployeeHttp) RouteSetup() {
-	h.ms.POST("/employee/whois", h.Login)
+	// h.ms.POST("/employee/login", h.Login)
 	h.ms.POST("/employee", h.Register)
+	h.ms.GET("/employee/:username", h.InfoEmployee)
 	h.ms.GET("/employee", h.SearchEmployee)
-	h.ms.PUT("/employee", h.Update)
+	h.ms.PUT("/employee/:username", h.Update)
 	h.ms.PUT("/employee/password", h.UpdatePassword)
 }
 
@@ -45,10 +49,8 @@ func (h EmployeeHttp) RouteSetup() {
 // @Success		201	{object}	models.EmployeeInfo
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /employee/whois [post]
+// @Router /employee/login [post]
 func (h EmployeeHttp) Login(ctx microservice.IContext) error {
-	userAuthInfo := ctx.UserInfo()
-	shopID := userAuthInfo.ShopID
 	input := ctx.ReadInput()
 
 	userReq := &models.EmployeeRequestLogin{}
@@ -59,7 +61,7 @@ func (h EmployeeHttp) Login(ctx microservice.IContext) error {
 		return err
 	}
 
-	employee, err := h.empService.Login(shopID, *userReq)
+	employee, err := h.empService.Login(userReq.ShopID, *userReq)
 
 	if err != nil {
 		ctx.ResponseError(400, "login failed.")
@@ -90,7 +92,7 @@ func (h EmployeeHttp) Register(ctx microservice.IContext) error {
 	shopID := userAuthInfo.ShopID
 	input := ctx.ReadInput()
 
-	userReq := models.Employee{}
+	userReq := models.EmployeeRequestRegister{}
 	err := json.Unmarshal([]byte(input), &userReq)
 
 	if err != nil {
@@ -120,21 +122,25 @@ func (h EmployeeHttp) Register(ctx microservice.IContext) error {
 // @Summary		Update Employee
 // @Description	Update Employee
 // @Tags		Employee
-// @Param		id  path      string  true  "Employee ID"
+// @Param		username  path      string  true  "Employee username"
 // @Param		Employee  body      models.EmployeeRequestUpdate  true  "Employee"
 // @Success		200	{object}	models.ResponseSuccess
 // @Failure		400 {object}	models.AuthResponseFailed
 // @Accept 		json
 // @Security     AccessToken
-// @Router		/employee/{id} [put]
+// @Router		/employee/{username} [put]
 func (h EmployeeHttp) Update(ctx microservice.IContext) error {
 	userAuthInfo := ctx.UserInfo()
 	authUsername := userAuthInfo.Username
 	shopID := userAuthInfo.ShopID
 	input := ctx.ReadInput()
 
+	username := ctx.Param("username")
+
 	userReq := models.EmployeeRequestUpdate{}
 	err := json.Unmarshal([]byte(input), &userReq)
+
+	userReq.Username = username
 
 	if err != nil {
 		ctx.ResponseError(400, "user payload invalid")
@@ -197,6 +203,37 @@ func (h EmployeeHttp) UpdatePassword(ctx microservice.IContext) error {
 	ctx.Response(http.StatusCreated, models.ApiResponse{
 		Success: true,
 	})
+
+	return nil
+}
+
+// Info Employee godoc
+// @Description List Employee
+// @Tags		Employee
+// @Accept 		json
+// @Success		200	{array}	models.EmployeePageResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /employee/{username} [get]
+func (h EmployeeHttp) InfoEmployee(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	username := ctx.Param("username")
+
+	docList, err := h.empService.Get(shopID, username)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(
+		http.StatusOK,
+		models.ApiResponse{
+			Success: true,
+			Data:    docList,
+		})
 
 	return nil
 }

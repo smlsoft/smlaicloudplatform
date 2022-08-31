@@ -14,6 +14,7 @@ type IJournalBookMongoRepository interface {
 	CreateInBatch(inventories []models.JournalBookDoc) error
 	Update(shopID string, guid string, category models.JournalBookDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
+	FindOne(shopID string, filters map[string]interface{}) (models.JournalBookDoc, error)
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.JournalBookInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.JournalBookDoc, error)
 }

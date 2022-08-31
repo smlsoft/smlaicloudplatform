@@ -391,10 +391,10 @@ func (pst *PersisterMongo) UpdateOne(model interface{}, filterConditions map[str
 		return err
 	}
 
-	var filterDoc bson.D
+	filterDoc := bson.M{}
 
 	for key, val := range filterConditions {
-		filterDoc = append(filterDoc, bson.E{key, val})
+		filterDoc[key] = val
 	}
 
 	_, err = db.Collection(collectionName).UpdateOne(

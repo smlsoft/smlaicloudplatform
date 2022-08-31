@@ -24,6 +24,54 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/apikeyservice": {
+            "post": {
+                "description": "generate x-api-key",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "XApiKey"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete x-api-key",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "XApiKey"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/category": {
             "get": {
                 "security": [
@@ -971,6 +1019,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/employee/login": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Validate Employee",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "parameters": [
+                    {
+                        "description": "EmployeeUserPassword",
+                        "name": "EmployeeUserPassword",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.EmployeeRequestLogin"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.EmployeeInfo"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/employee/password/{id}": {
             "put": {
                 "security": [
@@ -1020,47 +1109,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/employee/whois": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Validate Employee",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Employee"
-                ],
-                "parameters": [
-                    {
-                        "description": "EmployeeUserPassword",
-                        "name": "EmployeeUserPassword",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.EmployeeRequestLogin"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.EmployeeInfo"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/employee/{id}": {
             "put": {
                 "security": [
@@ -1103,6 +1151,39 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/employee/{username}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "List Employee",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.EmployeePageResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
                         }
@@ -1723,6 +1804,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/gl/journal/docref/{doc}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายละเอียดข้อมูลรายวัน ตามเอกสารอ้างอิง",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แสดงรายละเอียดข้อมูลรายวัน ตามเอกสารอ้างอิง",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Document Ref",
+                        "name": "doc",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/gl/journal/{id}": {
             "get": {
                 "security": [
@@ -2138,6 +2259,13 @@ const docTemplate = `{
                         "name": "enddate",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "รวมรายการปิดปัญชี",
+                        "name": "ica",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2198,6 +2326,13 @@ const docTemplate = `{
                         "name": "enddate",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "รวมรายการปิดปัญชี",
+                        "name": "ica",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2256,6 +2391,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "ถึงวันที่ (Date Format: YYYY-MM-DD)",
                         "name": "enddate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "รวมรายการปิดปัญชี",
+                        "name": "ica",
                         "in": "query",
                         "required": true
                     }
@@ -5954,7 +6096,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SmsTransaction"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransaction"
                         }
                     }
                 ],
@@ -6002,7 +6144,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.SmsTransactionInfoResponse"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfoResponse"
                         }
                     },
                     "401": {
@@ -6041,7 +6183,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SmsTransaction"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransaction"
                         }
                     }
                 ],
@@ -7156,7 +7298,7 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "password": {
+                "profilepicture": {
                     "type": "string"
                 },
                 "roles": {
@@ -7179,7 +7321,7 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "password": {
+                "profilepicture": {
                     "type": "string"
                 },
                 "roles": {
@@ -7216,6 +7358,9 @@ const docTemplate = `{
                 "password": {
                     "type": "string"
                 },
+                "shopid": {
+                    "type": "string"
+                },
                 "username": {
                     "type": "string"
                 }
@@ -7236,6 +7381,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "name": {
+                    "type": "string"
+                },
+                "profilepicture": {
                     "type": "string"
                 },
                 "roles": {
@@ -7991,6 +8139,10 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.JournalDetail"
                     }
                 },
+                "journaltype": {
+                    "description": "ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)",
+                    "type": "integer"
+                },
                 "parid": {
                     "type": "string"
                 },
@@ -8150,6 +8302,10 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.JournalDetail"
                     }
+                },
+                "journaltype": {
+                    "description": "ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)",
+                    "type": "integer"
                 },
                 "parid": {
                     "type": "string"
@@ -8775,6 +8931,9 @@ const docTemplate = `{
                 },
                 "paymenttype": {
                     "type": "integer"
+                },
+                "wallettype": {
+                    "type": "integer"
                 }
             }
         },
@@ -8818,6 +8977,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "paymenttype": {
+                    "type": "integer"
+                },
+                "wallettype": {
                     "type": "integer"
                 }
             }
@@ -10040,77 +10202,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.SmsTransaction": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "body": {
-                    "type": "string"
-                },
-                "date": {
-                    "type": "string"
-                },
-                "parid": {
-                    "type": "string"
-                },
-                "transid": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.SmsTransactionInfo": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "body": {
-                    "type": "string"
-                },
-                "date": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "parid": {
-                    "type": "string"
-                },
-                "transid": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.SmsTransactionInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.SmsTransactionInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.SmsTransactionPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.SmsTransactionInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
         "models.SyncInventoryData": {
             "type": "object",
             "properties": {
@@ -10344,14 +10435,16 @@ const docTemplate = `{
             "properties": {
                 "password": {
                     "type": "string",
-                    "minLength": 3
+                    "maxLength": 233,
+                    "minLength": 5
                 },
                 "shopid": {
                     "type": "string"
                 },
                 "username": {
                     "type": "string",
-                    "minLength": 3
+                    "maxLength": 233,
+                    "minLength": 5
                 }
             }
         },
@@ -10367,7 +10460,8 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string",
-                    "minLength": 3
+                    "maxLength": 233,
+                    "minLength": 5
                 }
             }
         },
@@ -10395,11 +10489,13 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string",
-                    "minLength": 3
+                    "maxLength": 233,
+                    "minLength": 5
                 },
                 "username": {
                     "type": "string",
-                    "minLength": 3
+                    "maxLength": 233,
+                    "minLength": 5
                 }
             }
         },
@@ -10459,6 +10555,148 @@ const docTemplate = `{
                 },
                 "vatyear": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransaction": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "integer"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "transid": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfo": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "integer"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "transid": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_smstransaction_models.SmsTransaction": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "transid": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfo": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "transid": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_smstransaction_models.SmsTransactionPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         }

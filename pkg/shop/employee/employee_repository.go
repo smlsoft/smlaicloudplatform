@@ -3,30 +3,41 @@ package employee
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/repositories"
+	"time"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type IEmployeeRepository interface {
-	FindEmployeeByShopIDPage(shopID string, q string, page int, limit int) ([]models.EmployeeInfo, paginate.PaginationData, error)
+	FindEmployeeByShopIDPage(shopID string, q string, page int, limit int) ([]models.EmployeeInfo, mongopagination.PaginationData, error)
+	FindEmployeeByCode(shopID string, code string) (models.EmployeeDoc, error)
 	FindEmployeeByUsername(shopID string, username string) (models.EmployeeDoc, error)
 	Create(models.EmployeeDoc) (primitive.ObjectID, error)
 	Update(shopID string, guidFixed string, employee models.EmployeeDoc) error
+
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.EmployeeDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.EmployeeActivity, mongopagination.PaginationData, error)
 }
 
 type EmployeeRepository struct {
 	pst microservice.IPersisterMongo
+	repositories.ActivityRepository[models.EmployeeActivity, models.EmployeeDeleteActivity]
 }
 
-func NewEmployeeRepository(pst microservice.IPersisterMongo) EmployeeRepository {
-	return EmployeeRepository{
+func NewEmployeeRepository(pst microservice.IPersisterMongo) *EmployeeRepository {
+	insRepo := &EmployeeRepository{
 		pst: pst,
 	}
+
+	insRepo.ActivityRepository = repositories.NewActivityRepository[models.EmployeeActivity, models.EmployeeDeleteActivity](pst)
+
+	return insRepo
 }
 
-func (r EmployeeRepository) FindEmployeeByShopIDPage(shopID string, q string, page int, limit int) ([]models.EmployeeInfo, paginate.PaginationData, error) {
+func (r EmployeeRepository) FindEmployeeByShopIDPage(shopID string, q string, page int, limit int) ([]models.EmployeeInfo, mongopagination.PaginationData, error) {
 
 	docList := []models.EmployeeInfo{}
 	pagination, err := r.pst.FindPage(&models.EmployeeInfo{}, limit, page, bson.M{
@@ -44,10 +55,25 @@ func (r EmployeeRepository) FindEmployeeByShopIDPage(shopID string, q string, pa
 	}, &docList)
 
 	if err != nil {
-		return []models.EmployeeInfo{}, paginate.PaginationData{}, err
+		return []models.EmployeeInfo{}, mongopagination.PaginationData{}, err
 	}
 
 	return docList, pagination, nil
+}
+
+func (r EmployeeRepository) FindEmployeeByCode(shopID string, code string) (models.EmployeeDoc, error) {
+
+	findDoc := &models.EmployeeDoc{}
+	err := r.pst.FindOne(&models.EmployeeDoc{}, bson.M{
+		"shopid": shopID,
+		"code":   code,
+	}, findDoc)
+
+	if err != nil {
+		return models.EmployeeDoc{}, err
+	}
+
+	return *findDoc, nil
 }
 
 func (r EmployeeRepository) FindEmployeeByUsername(shopID string, username string) (models.EmployeeDoc, error) {
@@ -78,7 +104,7 @@ func (r EmployeeRepository) Create(employee models.EmployeeDoc) (primitive.Objec
 func (r EmployeeRepository) Update(shopID string, guidFixed string, employee models.EmployeeDoc) error {
 	filterDoc := map[string]interface{}{
 		"shopid":    shopID,
-		"guidFixed": guidFixed,
+		"guidfixed": guidFixed,
 	}
 
 	err := r.pst.UpdateOne(&models.EmployeeDoc{}, filterDoc, employee)

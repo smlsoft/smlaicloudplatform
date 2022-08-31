@@ -38,6 +38,18 @@ func NewJournalBookHttpService(repo repositories.JournalBookMongoRepository, mqR
 
 func (svc JournalBookHttpService) Create(shopID string, authUsername string, doc models.JournalBook) (string, error) {
 
+	findDoc, err := svc.repo.FindOne(shopID, map[string]interface{}{
+		"code": doc.Code,
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	if len(findDoc.Code) > 0 {
+		return "", errors.New("code is exists")
+	}
+
 	newGuidFixed := utils.NewGUID()
 
 	docData := models.JournalBookDoc{}
@@ -48,7 +60,7 @@ func (svc JournalBookHttpService) Create(shopID string, authUsername string, doc
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err := svc.repo.Create(docData)
+	_, err = svc.repo.Create(docData)
 
 	if err != nil {
 		return "", err
@@ -72,6 +84,18 @@ func (svc JournalBookHttpService) Update(guid string, shopID string, authUsernam
 
 	if findDoc.ID == primitive.NilObjectID {
 		return errors.New("document not found")
+	}
+
+	findDocCode, err := svc.repo.FindOne(shopID, map[string]interface{}{
+		"code": doc.Code,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	if findDoc.Code != doc.Code && len(findDocCode.Code) > 0 {
+		return errors.New("code is exists")
 	}
 
 	findDoc.JournalBook = doc

@@ -521,39 +521,45 @@ func (m *AuthServiceMock) MWFuncWithShop(cacher microservice.ICacher, publicPath
 	return args.Get(0).(echo.MiddlewareFunc)
 }
 
-func (m *AuthServiceMock) GetPrefixCacheKey() string {
-	args := m.Called()
+func (m *AuthServiceMock) GetPrefixCacheKey(tokenType microservice.TokenType) string {
+	args := m.Called(tokenType)
 	return args.String(0)
 }
 
-func (m *AuthServiceMock) GetTokenFromContext(c echo.Context) (string, error) {
+func (m *AuthServiceMock) GetTokenFromContext(c echo.Context) (*microservice.TokenContext, error) {
 
 	args := m.Called(c)
 
+	return args.Get(0).(*microservice.TokenContext), args.Error(1)
+}
+
+func (m *AuthServiceMock) GetTokenFromAuthorizationHeader(tokenType microservice.TokenType, tokenAuthorization string) (string, error) {
+
+	args := m.Called(tokenType, tokenAuthorization)
+
 	return args.String(0), args.Error(1)
 }
 
-func (m *AuthServiceMock) GetTokenFromAuthorizationHeader(tokenAuthorization string) (string, error) {
+func (m *AuthServiceMock) GenerateTokenWithRedis(tokenType microservice.TokenType, userInfo micromodel.UserInfo) (string, error) {
 
-	args := m.Called(tokenAuthorization)
-
+	args := m.Called(tokenType, userInfo)
 	return args.String(0), args.Error(1)
 }
 
-func (m *AuthServiceMock) GenerateTokenWithRedis(userInfo micromodel.UserInfo) (string, error) {
+func (m *AuthServiceMock) GenerateTokenWithRedisExpire(tokenType microservice.TokenType, userInfo micromodel.UserInfo, expireTime time.Duration) (string, error) {
 
-	args := m.Called(userInfo)
+	args := m.Called(tokenType, userInfo, expireTime)
 	return args.String(0), args.Error(1)
 }
 
-func (m *AuthServiceMock) SelectShop(tokenStr string, shopID string, role uint8) error {
+func (m *AuthServiceMock) SelectShop(tokenType microservice.TokenType, tokenStr string, shopID string, role uint8) error {
 
-	args := m.Called(tokenStr, shopID, role)
+	args := m.Called(tokenType, tokenStr, shopID, role)
 	return args.Error(0)
 }
 
-func (m *AuthServiceMock) ExpireToken(tokenAuthorizationHeader string) error {
-	args := m.Called(tokenAuthorizationHeader)
+func (m *AuthServiceMock) ExpireToken(tokenType microservice.TokenType, tokenAuthorizationHeader string) error {
+	args := m.Called(tokenType, tokenAuthorizationHeader)
 	return args.Error(0)
 }
 

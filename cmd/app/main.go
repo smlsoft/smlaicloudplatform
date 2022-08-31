@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/apikeyservice"
 	"smlcloudplatform/pkg/authentication"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/mastersync"
@@ -28,6 +29,7 @@ import (
 	"smlcloudplatform/pkg/transaction/purchase"
 	"smlcloudplatform/pkg/transaction/saleinvoice"
 	"smlcloudplatform/pkg/vfgl/accountgroup"
+	"smlcloudplatform/pkg/vfgl/chartofaccount"
 	"smlcloudplatform/pkg/vfgl/journal"
 	"smlcloudplatform/pkg/vfgl/journalbook"
 
@@ -109,9 +111,11 @@ func main() {
 		zonedesign.NewZoneDesignHttp(ms, cfg),
 		mastersync.NewMasterSyncHttp(ms, cfg),
 		documentimage.NewDocumentImageHttp(ms, cfg),
+		chartofaccount.NewChartOfAccountHttp(ms, cfg),
 		//new
 		smstransaction.NewSmsTransactionHttp(ms, cfg),
 		paymentmaster.NewPaymentMasterHttp(ms, cfg),
+		apikeyservice.NewApiKeyServiceHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)

@@ -1,14 +1,23 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 const employeeCollectionName string = "employees"
 
+type EmployeePassword struct {
+	Password string `json:"password" bson:"password"`
+}
+
 type Employee struct {
-	Username string   `json:"username" bson:"username"`
-	Password string   `json:"password" bson:"password"`
-	Name     string   `json:"name" bson:"name"`
-	Roles    []string `json:"roles" bson:"roles"`
+	Code           string    `json:"code" bson:"code"`
+	Username       string    `json:"username" bson:"username"`
+	Name           string    `json:"name" bson:"name"`
+	ProfilePicture string    `json:"profilepicture" bson:"profilepicture"`
+	Roles          *[]string `json:"roles" bson:"roles"`
 }
 
 type EmployeeInfo struct {
@@ -26,24 +35,29 @@ type EmployeeData struct {
 }
 
 type EmployeeDoc struct {
-	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	EmployeeData `bson:"inline"`
-	ActivityDoc  `bson:"inline"`
+	ID               primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	EmployeeData     `bson:"inline"`
+	ActivityDoc      `bson:"inline"`
+	EmployeePassword `bson:"inline" gorm:"embedded;"`
 }
 
 func (EmployeeDoc) CollectionName() string {
 	return employeeCollectionName
 }
 
+type EmployeeRequestRegister struct {
+	Employee         `bson:"inline" gorm:"embedded;"`
+	EmployeePassword `bson:"inline" gorm:"embedded;"`
+}
+
 type EmployeeRequestLogin struct {
+	ShopIdentity
 	Username string `json:"username" bson:"username"`
 	Password string `json:"password" bson:"password"`
 }
 
 type EmployeeRequestUpdate struct {
-	Username string    `json:"username" bson:"username"`
-	Name     string    `json:"name" bson:"name"`
-	Roles    *[]string `json:"roles" bson:"roles"`
+	Employee `bson:"inline" gorm:"embedded;"`
 }
 
 type EmployeeRequestPassword struct {
@@ -55,4 +69,26 @@ type EmployeePageResponse struct {
 	Success    bool                   `json:"success"`
 	Data       []EmployeeInfo         `json:"data,omitempty"`
 	Pagination PaginationDataResponse `json:"pagination,omitempty"`
+}
+
+type EmployeeActivity struct {
+	EmployeeData `bson:"inline"`
+	CreatedAt    *time.Time `json:"createdat,omitempty" bson:"createdat,omitempty"`
+	UpdatedAt    *time.Time `json:"updatedat,omitempty" bson:"updatedat,omitempty"`
+	DeletedAt    *time.Time `json:"deletedat,omitempty" bson:"deletedat,omitempty"`
+}
+
+func (EmployeeActivity) CollectionName() string {
+	return employeeCollectionName
+}
+
+type EmployeeDeleteActivity struct {
+	Identity  `bson:"inline"`
+	CreatedAt *time.Time `json:"createdat,omitempty" bson:"createdat,omitempty"`
+	UpdatedAt *time.Time `json:"updatedat,omitempty" bson:"updatedat,omitempty"`
+	DeletedAt *time.Time `json:"deletedat,omitempty" bson:"deletedat,omitempty"`
+}
+
+func (EmployeeDeleteActivity) CollectionName() string {
+	return employeeCollectionName
 }
