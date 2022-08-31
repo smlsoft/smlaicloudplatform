@@ -15,8 +15,6 @@ import (
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
 	"smlcloudplatform/pkg/product/inventorysearchconsumer"
-	"smlcloudplatform/pkg/product/option"
-	"smlcloudplatform/pkg/product/optiongroup"
 	"smlcloudplatform/pkg/restaurant/kitchen"
 	"smlcloudplatform/pkg/restaurant/shopprinter"
 	"smlcloudplatform/pkg/restaurant/shoptable"
@@ -115,100 +113,43 @@ func main() {
 		// ms.Echo().GET("/healthz", func(c echo.Context) error {
 		// 	return c.String(http.StatusOK, "ok")
 		// })
-
-		authHttp := authentication.NewAuthenticationHttp(ms, cfg)
-		authHttp.RouteSetup()
-
-		shopHttp := shop.NewShopHttp(ms, cfg)
-		shopHttp.RouteSetup()
-
-		shopUserHttp := shop.NewShopMemberHttp(ms, cfg)
-		shopUserHttp.RouteSetup()
-
-		empHttp := employee.NewEmployeeHttp(ms, cfg)
-		empHttp.RouteSetup()
-
-		memberapi := member.NewMemberHttp(ms, cfg)
-		memberapi.RouteSetup()
-
-		inventoryapi := inventory.NewInventoryHttp(ms, cfg)
-		inventoryapi.RouteSetup()
-
-		categoryHttp := category.NewCategoryHttp(ms, cfg)
-		categoryHttp.RouteSetup()
-
-		invImp := inventoryimport.NewInventoryImportHttp(ms, cfg)
-		invImp.RouteSetup()
-
-		invOptionImp := inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg)
-		invOptionImp.RouteSetup()
-
-		catImp := inventoryimport.NewCategoryImportHttp(ms, cfg)
-		catImp.RouteSetup()
-
-		optionHttp := option.NewOptionHttp(ms, cfg)
-		optionHttp.RouteSetup()
-
-		optionGroupHttp := optiongroup.NewOptionGroupHttp(ms, cfg)
-		optionGroupHttp.RouteSetup()
-
-		//filePersister := microservice.NewPersisterFile(microservice.NewStorageFileConfig())
 		azureFileBlob := microservice.NewPersisterAzureBlob()
 		imagePersister := microservice.NewPersisterImage(azureFileBlob)
 
-		imageHttp := images.NewImagesHttp(ms, cfg, imagePersister)
-		imageHttp.RouteSetup()
+		httpServices := []HttpRouteSetup{
 
-		shopzonehttp := shopzone.NewShopZoneHttp(ms, cfg)
-		shopzonehttp.RouteSetup()
+			authentication.NewAuthenticationHttp(ms, cfg),
+			shop.NewShopHttp(ms, cfg),
 
-		shoptablehttp := shoptable.NewShopTableHttp(ms, cfg)
-		shoptablehttp.RouteSetup()
+			shop.NewShopMemberHttp(ms, cfg),
+			employee.NewEmployeeHttp(ms, cfg), member.NewMemberHttp(ms, cfg),
+			inventory.NewInventoryHttp(ms, cfg),
+			category.NewCategoryHttp(ms, cfg),
+			inventoryimport.NewInventoryImportHttp(ms, cfg),
+			inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg),
+			inventoryimport.NewCategoryImportHttp(ms, cfg),
 
-		shopprinterhttp := shopprinter.NewShopPrinterHttp(ms, cfg)
-		shopprinterhttp.RouteSetup()
+			images.NewImagesHttp(ms, cfg, imagePersister),
+			shopzone.NewShopZoneHttp(ms, cfg),
+			shoptable.NewShopTableHttp(ms, cfg),
+			shopprinter.NewShopPrinterHttp(ms, cfg),
+			kitchen.NewKitchenHttp(ms, cfg),
+			purchase.NewPurchaseHttp(ms, cfg),
+			saleinvoice.NewSaleinvoiceHttp(ms, cfg),
+			chartofaccount.NewChartOfAccountHttp(ms, cfg),
+			journal.NewJournalHttp(ms, cfg),
+			journal.NewJournalWs(ms, cfg),
+			journalreport.NewJournalReportHttp(ms, cfg),
+			accountgroup.NewAccountGroupHttp(ms, cfg),
+			journalbook.NewJournalBookHttp(ms, cfg),
+			zonedesign.NewZoneDesignHttp(ms, cfg),
+			documentimage.NewDocumentImageHttp(ms, cfg),
+			mastersync.NewMasterSyncHttp(ms, cfg),
+			smstransaction.NewSmsTransactionHttp(ms, cfg),
+			paymentmaster.NewPaymentMasterHttp(ms, cfg),
+		}
 
-		kitchenhttp := kitchen.NewKitchenHttp(ms, cfg)
-		kitchenhttp.RouteSetup()
-
-		purchase := purchase.NewPurchaseHttp(ms, cfg)
-		purchase.RouteSetup()
-
-		saleinvoiceHttp := saleinvoice.NewSaleinvoiceHttp(ms, cfg)
-		saleinvoiceHttp.RouteSetup()
-
-		chartHttp := chartofaccount.NewChartOfAccountHttp(ms, cfg)
-		chartHttp.RouteSetup()
-
-		journalhttp := journal.NewJournalHttp(ms, cfg)
-		journalhttp.RouteSetup()
-
-		journalws := journal.NewJournalWs(ms, cfg)
-		journalws.RouteSetup()
-
-		journalReportHttp := journalreport.NewJournalReportHttp(ms, cfg)
-		journalReportHttp.RouteSetup()
-
-		accountGroup := accountgroup.NewAccountGroupHttp(ms, cfg)
-		accountGroup.RouteSetup()
-
-		journalBook := journalbook.NewJournalBookHttp(ms, cfg)
-		journalBook.RouteSetup()
-
-		zoneDesignhttp := zonedesign.NewZoneDesignHttp(ms, cfg)
-		zoneDesignhttp.RouteSetup()
-
-		documentImageHttp := documentimage.NewDocumentImageHttp(ms, cfg)
-		documentImageHttp.RouteSetup()
-
-		masterSync := mastersync.NewMasterSyncHttp(ms, cfg)
-		masterSync.RouteSetup()
-
-		smsTransactionhttp := smstransaction.NewSmsTransactionHttp(ms, cfg)
-		smsTransactionhttp.RouteSetup()
-
-		paymentMasterHttp := paymentmaster.NewPaymentMasterHttp(ms, cfg)
-		paymentMasterHttp.RouteSetup()
+		startHttpServices(httpServices...)
 	}
 
 	if devApiMode == "1" || devApiMode == "2" {
@@ -240,4 +181,14 @@ func main() {
 	}
 
 	ms.Start()
+}
+
+type HttpRouteSetup interface {
+	RouteSetup()
+}
+
+func startHttpServices(services ...HttpRouteSetup) {
+	for _, service := range services {
+		service.RouteSetup()
+	}
 }

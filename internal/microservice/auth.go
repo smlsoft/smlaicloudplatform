@@ -15,29 +15,46 @@ type IAuthService interface {
 	MWFuncWithRedisMixShop(cacher ICacher, shopPath []string, publicPath ...string) echo.MiddlewareFunc
 	MWFuncWithRedis(cacher ICacher, publicPath ...string) echo.MiddlewareFunc
 	MWFuncWithShop(cacher ICacher, publicPath ...string) echo.MiddlewareFunc
-	GetPrefixCacheKey() string
-	GetTokenFromContext(c echo.Context) (string, error)
-	GetTokenFromAuthorizationHeader(tokenAuthorization string) (string, error)
-	GenerateTokenWithRedis(userInfo models.UserInfo) (string, error)
-	SelectShop(tokenStr string, shopID string, role uint8) error
-	ExpireToken(tokenAuthorizationHeader string) error
+	GetPrefixCacheKey(tokenType TokenType) string
+	GetTokenFromContext(c echo.Context) (*TokenContext, error)
+	GetTokenFromAuthorizationHeader(tokenType TokenType, tokenAuthorization string) (string, error)
+	GenerateTokenWithRedis(tokenType TokenType, userInfo models.UserInfo) (string, error)
+	GenerateTokenWithRedisExpire(tokenType TokenType, userInfo models.UserInfo, expireTime time.Duration) (string, error)
+	SelectShop(tokenType TokenType, tokenStr string, shopID string, role uint8) error
+	ExpireToken(tokenType TokenType, tokenAuthorizationHeader string) error
+}
+
+type TokenType = int
+
+const (
+	AUTHTYPE_BEARER TokenType = iota
+	AUTHTYPE_WEBSOCKET
+	AUTHTYPE_XAPIKEY
+)
+
+type TokenContext struct {
+	token     string
+	tokenType TokenType
 }
 
 func NewAuthService(cacher ICacher, expireHour int) *AuthService {
 
 	return &AuthService{
-		cacher:              cacher,
-		expire:              time.Duration(expireHour) * time.Hour,
-		prefixCacheKey:      "auth-",
-		prefixAuthorization: "Bearer",
+		cacher:                cacher,
+		expireBearer:          time.Duration(expireHour) * time.Hour,
+		prefixBearerCacheKey:  "auth-",
+		prefixBearerToken:     "Bearer",
+		prefixXApiKeyCacheKey: "xapikey-",
 	}
 }
 
 type AuthService struct {
-	cacher              ICacher
-	expire              time.Duration
-	prefixCacheKey      string
-	prefixAuthorization string
+	cacher                ICacher
+	expireBearer          time.Duration
+	prefixBearerCacheKey  string
+	prefixBearerToken     string
+	expireXApiKey         time.Duration
+	prefixXApiKeyCacheKey string
 }
 
 func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath []string, publicPath ...string) echo.MiddlewareFunc {
@@ -55,13 +72,14 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 
 			}
 
-			tokenStr, err := authService.GetTokenFromContext(c)
+			tokenCtx, err := authService.GetTokenFromContext(c)
 
 			if err != nil {
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
 			}
 
-			cacheKey := authService.prefixCacheKey + tokenStr
+			cacheKey := authService.GetPrefixCacheKey(tokenCtx.tokenType) + tokenCtx.token
+
 			tempUserInfo, err := authService.cacher.HMGet(cacheKey, []string{"username", "name", "shopid", "role"})
 
 			if err != nil || tempUserInfo[0] == nil {
@@ -105,7 +123,8 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 				userInfo.Role = uint8(userRole)
 			}
 
-			cacher.Expire(cacheKey, authService.expire)
+			authService.ReTokenExpire(tokenCtx.tokenType, cacheKey)
+
 			c.Set("UserInfo", userInfo)
 
 			return next(c)
@@ -129,12 +148,13 @@ func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...st
 
 			}
 
-			tokenStr, err := authService.GetTokenFromContext(c)
+			tokenCtx, err := authService.GetTokenFromContext(c)
 			if err != nil {
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
 			}
 
-			cacheKey := authService.prefixCacheKey + tokenStr
+			cacheKey := authService.GetPrefixCacheKey(tokenCtx.tokenType) + tokenCtx.token
+
 			tempUserInfo, err := authService.cacher.HMGet(cacheKey, []string{"username", "name", "shopid", "role"})
 
 			if err != nil || tempUserInfo[0] == nil {
@@ -165,7 +185,7 @@ func (authService *AuthService) MWFuncWithRedis(cacher ICacher, publicPath ...st
 				Role:     uint8(userRole),
 			}
 
-			cacher.Expire(cacheKey, authService.expire)
+			authService.ReTokenExpire(tokenCtx.tokenType, cacheKey)
 			c.Set("UserInfo", userInfo)
 
 			return next(c)
@@ -186,13 +206,13 @@ func (authService *AuthService) MWFuncWithShop(cacher ICacher, publicPath ...str
 				}
 			}
 
-			tokenStr, err := authService.GetTokenFromContext(c)
+			tokenCtx, err := authService.GetTokenFromContext(c)
 
 			if err != nil {
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
 			}
 
-			cacheKey := authService.prefixCacheKey + tokenStr
+			cacheKey := authService.GetPrefixCacheKey(tokenCtx.tokenType) + tokenCtx.token
 
 			tempUserInfo, err := authService.cacher.HMGet(cacheKey, []string{"username", "name"})
 
@@ -216,61 +236,131 @@ func (authService *AuthService) MWFuncWithShop(cacher ICacher, publicPath ...str
 	}
 }
 
-func (authService *AuthService) GetPrefixCacheKey() string {
-	return authService.prefixCacheKey
-}
+func (authService *AuthService) GetTokenFromContext(c echo.Context) (*TokenContext, error) {
 
-func (authService *AuthService) GetTokenFromContext(c echo.Context) (string, error) {
+	var rawToken string = ""
+	var err error
+	var tokenType TokenType = AUTHTYPE_BEARER
 
 	// socket
 	if c.IsWebSocket() {
-		return c.QueryParam("apikey"), nil
+		rawToken = authService.getWebSocketApiKey(c.QueryParam)
+		tokenType = AUTHTYPE_WEBSOCKET
 	} else {
 
-		tokenString := c.Request().Header.Get("Authorization")
-		if tokenString == "" {
-			return "", fmt.Errorf("missing authorization header")
+		// bearer token
+		rawToken, err = authService.getBearerToken(c.Request().Header.Get)
+
+		if err != nil {
+			rawToken, err = authService.getXApiKeyToken(c.Request().Header.Get)
+			tokenType = AUTHTYPE_XAPIKEY
+
+			if err == nil {
+				err = nil
+			}
 		}
 
-		parts := strings.SplitN(tokenString, " ", 2)
-		if !(len(parts) == 2 && parts[0] == authService.prefixAuthorization) {
-			return "", fmt.Errorf("missing authorization bearer")
-		}
-
-		return parts[1], nil
 	}
+
+	return &TokenContext{
+		token:     rawToken,
+		tokenType: tokenType,
+	}, err
 }
 
-func (authService *AuthService) GetTokenFromAuthorizationHeader(tokenAuthorization string) (string, error) {
-
-	if len(tokenAuthorization) < 1 {
-		return "", fmt.Errorf("authorization is not empty")
+func (authService *AuthService) GetPrefixCacheKey(tokenType TokenType) string {
+	prefixCacheKey := ""
+	if tokenType == AUTHTYPE_BEARER || tokenType == AUTHTYPE_WEBSOCKET {
+		prefixCacheKey = authService.prefixBearerCacheKey
+	} else if tokenType == AUTHTYPE_XAPIKEY {
+		prefixCacheKey = authService.prefixXApiKeyCacheKey
 	}
 
-	parts := strings.SplitN(tokenAuthorization, " ", 2)
-	if !(len(parts) == 2 && parts[0] == authService.prefixAuthorization) {
+	return prefixCacheKey
+}
+
+func (authService *AuthService) getBearerToken(fncGetHeader func(string) string) (string, error) {
+	tokenString := fncGetHeader("Authorization")
+
+	if tokenString == "" {
+		return "", fmt.Errorf("missing authorization header")
+	}
+
+	parts := strings.SplitN(tokenString, " ", 2)
+	if !(len(parts) == 2 && parts[0] == authService.prefixBearerToken) {
 		return "", fmt.Errorf("missing authorization bearer")
 	}
 
 	return parts[1], nil
 }
 
-func (authService *AuthService) GenerateTokenWithRedis(userInfo models.UserInfo) (string, error) {
+func (authService *AuthService) getWebSocketApiKey(fncQueryParam func(string) string) string {
+	return fncQueryParam("apikey")
+}
+
+func (authService *AuthService) getXApiKeyToken(fncGetHeader func(string) string) (string, error) {
+	tokenString := fncGetHeader("x-api-key")
+
+	if tokenString == "" {
+		return "", fmt.Errorf("missing authorization header")
+	}
+
+	return strings.TrimSpace(tokenString), nil
+}
+
+func (authService *AuthService) GetTokenFromAuthorizationHeader(tokenType TokenType, tokenAuthorization string) (string, error) {
+
+	if tokenType == AUTHTYPE_BEARER {
+		if len(tokenAuthorization) < 1 {
+			return "", fmt.Errorf("authorization is not empty")
+		}
+
+		parts := strings.SplitN(tokenAuthorization, " ", 2)
+		if !(len(parts) == 2 && parts[0] == authService.prefixBearerToken) {
+			return "", fmt.Errorf("missing authorization bearer")
+		}
+
+		return parts[1], nil
+	} else {
+		return strings.TrimSpace(tokenAuthorization), nil
+	}
+
+}
+
+func (authService *AuthService) GenerateTokenWithRedis(tokenType TokenType, userInfo models.UserInfo) (string, error) {
 
 	tokenStr := NewUUID()
 
-	cacheKey := authService.prefixCacheKey + tokenStr
+	cacheKey := authService.GetPrefixCacheKey(tokenType) + tokenStr
+
 	authService.cacher.HMSet(cacheKey, map[string]interface{}{
 		"username": userInfo.Username,
 		"name":     userInfo.Name,
 	})
-	authService.cacher.Expire(cacheKey, authService.expire)
+	authService.SetTokenExpire(tokenType, cacheKey)
 
 	return tokenStr, nil
 }
 
-func (authService *AuthService) SelectShop(tokenStr string, shopID string, role uint8) error {
-	cacheKey := authService.prefixCacheKey + tokenStr
+func (authService *AuthService) GenerateTokenWithRedisExpire(tokenType TokenType, userInfo models.UserInfo, expireTime time.Duration) (string, error) {
+
+	tokenStr := NewUUID()
+
+	cacheKey := authService.GetPrefixCacheKey(tokenType) + tokenStr
+
+	authService.cacher.HMSet(cacheKey, map[string]interface{}{
+		"username": userInfo.Username,
+		"name":     userInfo.Name,
+		"shopid":   userInfo.ShopID,
+		"role":     userInfo.Role,
+	})
+	authService.cacher.Expire(cacheKey, expireTime)
+
+	return tokenStr, nil
+}
+
+func (authService *AuthService) SelectShop(tokenType TokenType, tokenStr string, shopID string, role uint8) error {
+	cacheKey := authService.GetPrefixCacheKey(tokenType) + tokenStr
 	err := authService.cacher.HMSet(cacheKey, map[string]interface{}{
 		"shopid": shopID,
 		"role":   role,
@@ -281,15 +371,28 @@ func (authService *AuthService) SelectShop(tokenStr string, shopID string, role 
 	}
 
 	return nil
-
 }
 
-func (authService *AuthService) ExpireToken(tokenAuthorizationHeader string) error {
-	tokenStr, err := authService.GetTokenFromAuthorizationHeader(tokenAuthorizationHeader)
+func (authService *AuthService) ReTokenExpire(tokenType TokenType, cacheKey string) {
+	if tokenType == AUTHTYPE_BEARER || tokenType == AUTHTYPE_WEBSOCKET {
+		authService.cacher.Expire(cacheKey, authService.expireBearer)
+	}
+}
+
+func (authService *AuthService) SetTokenExpire(tokenType TokenType, cacheKey string) {
+	if tokenType == AUTHTYPE_BEARER || tokenType == AUTHTYPE_WEBSOCKET {
+		authService.cacher.Expire(cacheKey, authService.expireBearer)
+	} else if tokenType == AUTHTYPE_XAPIKEY {
+		authService.cacher.Expire(cacheKey, authService.expireXApiKey)
+	}
+}
+
+func (authService *AuthService) ExpireToken(tokenType TokenType, tokenAuthorizationHeader string) error {
+	tokenStr, err := authService.GetTokenFromAuthorizationHeader(tokenType, tokenAuthorizationHeader)
 	if err != nil {
 		return err
 	}
-	cacheKey := authService.prefixCacheKey + tokenStr
+	cacheKey := authService.GetPrefixCacheKey(tokenType) + tokenStr
 	authService.cacher.Expire(cacheKey, -1)
 	return nil
 }
