@@ -124,27 +124,33 @@ func main() {
 
 			shop.NewShopMemberHttp(ms, cfg),
 			employee.NewEmployeeHttp(ms, cfg), member.NewMemberHttp(ms, cfg),
+
 			inventory.NewInventoryHttp(ms, cfg),
 			category.NewCategoryHttp(ms, cfg),
+			option.NewOptionHttp(ms, cfg),
+
 			inventoryimport.NewInventoryImportHttp(ms, cfg),
 			inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg),
 			inventoryimport.NewCategoryImportHttp(ms, cfg),
-			option.NewOptionHttp(ms, cfg),
 
 			images.NewImagesHttp(ms, cfg, imagePersister),
+
 			shopzone.NewShopZoneHttp(ms, cfg),
 			shoptable.NewShopTableHttp(ms, cfg),
 			shopprinter.NewShopPrinterHttp(ms, cfg),
 			kitchen.NewKitchenHttp(ms, cfg),
+			zonedesign.NewZoneDesignHttp(ms, cfg),
+
 			purchase.NewPurchaseHttp(ms, cfg),
 			saleinvoice.NewSaleinvoiceHttp(ms, cfg),
+
 			chartofaccount.NewChartOfAccountHttp(ms, cfg),
 			journal.NewJournalHttp(ms, cfg),
 			journal.NewJournalWs(ms, cfg),
 			journalreport.NewJournalReportHttp(ms, cfg),
 			accountgroup.NewAccountGroupHttp(ms, cfg),
 			journalbook.NewJournalBookHttp(ms, cfg),
-			zonedesign.NewZoneDesignHttp(ms, cfg),
+
 			documentimage.NewDocumentImageHttp(ms, cfg),
 			mastersync.NewMasterSyncHttp(ms, cfg),
 			smstransaction.NewSmsTransactionHttp(ms, cfg),
