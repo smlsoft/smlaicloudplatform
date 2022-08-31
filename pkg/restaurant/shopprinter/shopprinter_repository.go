@@ -12,7 +12,7 @@ import (
 type IShopPrinterRepository interface {
 	Count(shopID string) (int, error)
 	Create(category models.PrinterTerminalDoc) (string, error)
-	CreateInBatch(inventories []models.PrinterTerminalDoc) error
+	CreateInBatch(docList []models.PrinterTerminalDoc) error
 	Update(shopID string, guid string, category models.PrinterTerminalDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.PrinterTerminalInfo, mongopagination.PaginationData, error)

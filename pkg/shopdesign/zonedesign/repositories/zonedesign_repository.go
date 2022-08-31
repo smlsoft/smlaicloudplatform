@@ -11,7 +11,7 @@ import (
 type IZoneDesignRepository interface {
 	Count(shopID string) (int, error)
 	Create(category models.ZoneDesignDoc) (string, error)
-	CreateInBatch(inventories []models.ZoneDesignDoc) error
+	CreateInBatch(docList []models.ZoneDesignDoc) error
 	Update(shopID string, guid string, category models.ZoneDesignDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindOne(shopID string, filters map[string]interface{}) (models.ZoneDesignDoc, error)

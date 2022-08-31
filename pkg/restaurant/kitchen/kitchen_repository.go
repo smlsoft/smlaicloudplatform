@@ -12,7 +12,7 @@ import (
 type IKitchenRepository interface {
 	Count(shopID string) (int, error)
 	Create(category models.KitchenDoc) (string, error)
-	CreateInBatch(inventories []models.KitchenDoc) error
+	CreateInBatch(docList []models.KitchenDoc) error
 	Update(shopID string, guid string, category models.KitchenDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.KitchenInfo, mongopagination.PaginationData, error)

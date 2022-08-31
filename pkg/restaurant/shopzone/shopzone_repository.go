@@ -12,7 +12,7 @@ import (
 type IShopZoneRepository interface {
 	Count(shopID string) (int, error)
 	Create(category models.ShopZoneDoc) (string, error)
-	CreateInBatch(inventories []models.ShopZoneDoc) error
+	CreateInBatch(docList []models.ShopZoneDoc) error
 	Update(shopID string, guid string, category models.ShopZoneDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.ShopZoneInfo, mongopagination.PaginationData, error)

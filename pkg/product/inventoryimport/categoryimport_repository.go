@@ -9,7 +9,7 @@ import (
 )
 
 type ICategoryImportRepository interface {
-	CreateInBatch(inventories []models.CategoryImportDoc) error
+	CreateInBatch(docList []models.CategoryImportDoc) error
 	DeleteInBatch(shopID string, guidList []string) error
 	DeleteInBatchCode(shopID string, codeList []string) error
 	FindPage(shopID string, page int, limit int) ([]models.CategoryImportInfo, paginate.PaginationData, error)

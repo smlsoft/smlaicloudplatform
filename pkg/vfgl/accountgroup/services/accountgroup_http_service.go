@@ -202,7 +202,7 @@ func (svc AccountGroupHttpService) SaveInBatch(shopID string, authUsername strin
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.AccountGroupDoc, error) {
-			return svc.repo.FindByDocIndentiryGuid(shopID, "code", guid)
+			return svc.repo.FindByDocIndentityGuid(shopID, "code", guid)
 		},
 		func(doc models.AccountGroupDoc) bool {
 			if doc.Code != "" {

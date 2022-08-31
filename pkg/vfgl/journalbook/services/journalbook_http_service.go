@@ -202,7 +202,7 @@ func (svc JournalBookHttpService) SaveInBatch(shopID string, authUsername string
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.JournalBookDoc, error) {
-			return svc.repo.FindByDocIndentiryGuid(shopID, "code", guid)
+			return svc.repo.FindByDocIndentityGuid(shopID, "code", guid)
 		},
 		func(doc models.JournalBookDoc) bool {
 			if doc.Code != "" {

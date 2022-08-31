@@ -220,7 +220,7 @@ func (svc ChartOfAccountHttpService) SaveInBatch(shopID string, authUsername str
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.ChartOfAccountDoc, error) {
-			return svc.repo.FindByDocIndentiryGuid(shopID, "accountcode", guid)
+			return svc.repo.FindByDocIndentityGuid(shopID, "accountcode", guid)
 		},
 		func(doc models.ChartOfAccountDoc) bool {
 			if doc.AccountCode != "" {

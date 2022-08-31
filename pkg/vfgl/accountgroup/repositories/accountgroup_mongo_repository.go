@@ -11,7 +11,7 @@ import (
 type IAccountGroupMongoRepository interface {
 	Count(shopID string) (int, error)
 	Create(category models.AccountGroupDoc) (string, error)
-	CreateInBatch(inventories []models.AccountGroupDoc) error
+	CreateInBatch(docList []models.AccountGroupDoc) error
 	Update(shopID string, guid string, category models.AccountGroupDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindOne(shopID string, filters map[string]interface{}) (models.AccountGroupDoc, error)

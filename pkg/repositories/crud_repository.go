@@ -130,7 +130,7 @@ func (repo CrudRepository[T]) FindByGuid(shopID string, guid string) (T, error) 
 	return *doc, nil
 }
 
-func (repo CrudRepository[T]) FindByDocIndentiryGuid(shopID string, indentityField string, indentityValue interface{}) (T, error) {
+func (repo CrudRepository[T]) FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (T, error) {
 
 	doc := new(T)
 

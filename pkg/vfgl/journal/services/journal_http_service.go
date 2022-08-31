@@ -39,7 +39,7 @@ func NewJournalHttpService(repo repositories.JournalRepository, mqRepo repositor
 
 func (svc JournalHttpService) CreateJournal(shopID string, authUsername string, doc models.Journal) (string, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentiryGuid(shopID, "docno", doc.DocNo)
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", doc.DocNo)
 
 	if err != nil {
 		return "", err
@@ -229,7 +229,7 @@ func (svc JournalHttpService) SaveInBatch(shopID string, authUsername string, da
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.JournalDoc, error) {
-			return svc.repo.FindByDocIndentiryGuid(shopID, "docno", guid)
+			return svc.repo.FindByDocIndentityGuid(shopID, "docno", guid)
 		},
 		func(doc models.JournalDoc) bool {
 			if doc.DocNo != "" {

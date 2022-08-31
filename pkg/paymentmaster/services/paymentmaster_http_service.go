@@ -34,7 +34,7 @@ func NewPaymentMasterHttpService(repo repositories.PaymentMasterRepository) Paym
 
 func (svc PaymentMasterHttpService) CreatePaymentMaster(shopID string, authUsername string, doc models.PaymentMaster) (string, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentiryGuid(shopID, "paymentcode", doc.PaymentCode)
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "paymentcode", doc.PaymentCode)
 
 	if err != nil {
 		return "", err
@@ -191,7 +191,7 @@ func (svc PaymentMasterHttpService) SaveInBatch(shopID string, authUsername stri
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.PaymentMasterDoc, error) {
-			return svc.repo.FindByDocIndentiryGuid(shopID, "paymentcode", guid)
+			return svc.repo.FindByDocIndentityGuid(shopID, "paymentcode", guid)
 		},
 		func(doc models.PaymentMasterDoc) bool {
 			if doc.PaymentCode != "" {

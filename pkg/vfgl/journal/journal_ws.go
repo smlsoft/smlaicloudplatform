@@ -40,9 +40,11 @@ func (h JournalWs) RouteSetup() {
 	h.ms.GET("/gl/journal/ws/form", h.WebsocketForm)
 
 	h.ms.GET("/gl/journal/ws/docref", h.WebsocketDocRefPool)
+
 	h.ms.GET("/gl/journal/docref/selected", h.GetAllDocRefPool)
 	h.ms.POST("/gl/journal/docref/select", h.SelectDocRefPool)
 	h.ms.POST("/gl/journal/docref/unselect", h.UnSelectDocRefPool)
+
 	h.ms.GET("/gl/journal/user-docref", h.GetUserDocRef)
 	h.ms.GET("/gl/journal/docref-user", h.GetDocRefUser)
 
@@ -280,6 +282,15 @@ func (h JournalWs) ClearDocRef(shopID string, username string) error {
 	return nil
 }
 
+// List Document Ref selected godoc
+// @Summary		List Document Ref selected
+// @Description	For List Document Ref selected
+// @Tags		WSDocumentRef
+// @Success		200	{object}	common.ApiResponse
+// @Failure		400 {object}	models.AuthResponseFailed
+// @Accept 		json
+// @Security     AccessToken
+// @Router		/selected [get]
 func (h JournalWs) GetAllDocRefPool(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -359,6 +370,16 @@ func (h JournalWs) GetDocRefUser(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Document Ref selected godoc
+// @Summary		List Document Ref selected
+// @Description	For List Document Ref selected
+// @Tags		WSDocumentRef
+// @Param		User  body      models.JournalRef  true  "JournalRef body"
+// @Success		200	{object}	common.ApiResponse
+// @Failure		400 {object}	models.AuthResponseFailed
+// @Accept 		json
+// @Security     AccessToken
+// @Router		/select [post]
 func (h JournalWs) SelectDocRefPool(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -394,6 +415,16 @@ func (h JournalWs) SelectDocRefPool(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Document Ref selected godoc
+// @Summary		List Document Ref selected
+// @Description	For List Document Ref selected
+// @Tags		WSDocumentRef
+// @Param		User  body      models.JournalRef  true  "JournalRef body"
+// @Success		200	{object}	common.ApiResponse
+// @Failure		400 {object}	models.AuthResponseFailed
+// @Accept 		json
+// @Security     AccessToken
+// @Router		/select [post]
 func (h JournalWs) UnSelectDocRefPool(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID

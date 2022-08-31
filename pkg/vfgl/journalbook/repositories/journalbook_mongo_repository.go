@@ -11,7 +11,7 @@ import (
 type IJournalBookMongoRepository interface {
 	Count(shopID string) (int, error)
 	Create(category models.JournalBookDoc) (string, error)
-	CreateInBatch(inventories []models.JournalBookDoc) error
+	CreateInBatch(docList []models.JournalBookDoc) error
 	Update(shopID string, guid string, category models.JournalBookDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindOne(shopID string, filters map[string]interface{}) (models.JournalBookDoc, error)

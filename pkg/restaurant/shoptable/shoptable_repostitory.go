@@ -12,7 +12,7 @@ import (
 type IShopTableRepository interface {
 	Count(shopID string) (int, error)
 	Create(category models.ShopTableDoc) (string, error)
-	CreateInBatch(inventories []models.ShopTableDoc) error
+	CreateInBatch(docList []models.ShopTableDoc) error
 	Update(shopID string, guid string, category models.ShopTableDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.ShopTableInfo, mongopagination.PaginationData, error)

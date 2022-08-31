@@ -144,9 +144,9 @@ func TestAuthService_Login(t *testing.T) {
 		},
 	}
 
+	authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
 
 			userReq := &models.UserLoginRequest{}
 			userReq.Username = tt.args.username

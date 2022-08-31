@@ -12,7 +12,7 @@ import (
 type ICategoryRepository interface {
 	Count(shopID string) (int, error)
 	Create(category models.CategoryDoc) (string, error)
-	CreateInBatch(inventories []models.CategoryDoc) error
+	CreateInBatch(docList []models.CategoryDoc) error
 	Update(shopID string, guid string, category models.CategoryDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindOne(shopID string, filters map[string]interface{}) (models.CategoryDoc, error)

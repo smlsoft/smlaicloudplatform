@@ -77,8 +77,10 @@ type UserRole = uint8
 
 const (
 	ROLE_USER  UserRole = iota // "USER"
-	ROLE_ADMIN                 //= "ADMIN"
-	ROLE_OWNER                 //= "OWNER"
+	ROLE_ADMIN                 // "ADMIN"
+	ROLE_OWNER                 // "OWNER"
+
+	ROLE_SYSTEM = 255 // APP MANAGER
 )
 
 type ShopUser struct {

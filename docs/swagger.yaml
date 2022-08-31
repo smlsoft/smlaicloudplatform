@@ -156,6 +156,19 @@ definitions:
       success:
         type: boolean
     type: object
+  models.Barcode:
+    properties:
+      barcode:
+        type: string
+      image:
+        type: string
+      price:
+        type: number
+      unitcode:
+        type: string
+      unitname:
+        type: string
+    type: object
   models.BulkInsertResponse:
     properties:
       created:
@@ -603,6 +616,8 @@ definitions:
     type: object
   models.Employee:
     properties:
+      code:
+        type: string
       name:
         type: string
       profilepicture:
@@ -616,6 +631,8 @@ definitions:
     type: object
   models.EmployeeInfo:
     properties:
+      code:
+        type: string
       guidfixed:
         type: string
       name:
@@ -658,6 +675,8 @@ definitions:
     type: object
   models.EmployeeRequestUpdate:
     properties:
+      code:
+        type: string
       name:
         type: string
       profilepicture:
@@ -679,8 +698,10 @@ definitions:
       activated:
         description: เปิดใช้งานอยู่
         type: boolean
-      barcode:
-        type: string
+      barcodes:
+        items:
+          $ref: '#/definitions/models.Barcode'
+        type: array
       category:
         $ref: '#/definitions/models.Category'
       categoryguid:
@@ -697,6 +718,10 @@ definitions:
         type: string
       description5:
         type: string
+      havepoint:
+        type: boolean
+      haveserialno:
+        type: boolean
       images:
         items:
           $ref: '#/definitions/models.InventoryImage'
@@ -707,12 +732,16 @@ definitions:
         type: string
       itemsku:
         type: string
+      itemtype:
+        type: integer
       itemunitcode:
         type: string
       itemunitdiv:
         type: number
       itemunitstd:
         type: number
+      itemvat:
+        type: integer
       memberprice:
         type: number
       name1:
@@ -752,6 +781,10 @@ definitions:
         type: string
       unitname5:
         type: string
+      unituses:
+        items:
+          $ref: '#/definitions/models.UnitUse'
+        type: array
       xorder:
         type: integer
     type: object
@@ -760,8 +793,10 @@ definitions:
       activated:
         description: เปิดใช้งานอยู่
         type: boolean
-      barcode:
-        type: string
+      barcodes:
+        items:
+          $ref: '#/definitions/models.Barcode'
+        type: array
       category:
         $ref: '#/definitions/models.Category'
       categoryguid:
@@ -784,6 +819,10 @@ definitions:
         type: string
       guidfixed:
         type: string
+      havepoint:
+        type: boolean
+      haveserialno:
+        type: boolean
       images:
         items:
           $ref: '#/definitions/models.InventoryImage'
@@ -794,12 +833,16 @@ definitions:
         type: string
       itemsku:
         type: string
+      itemtype:
+        type: integer
       itemunitcode:
         type: string
       itemunitdiv:
         type: number
       itemunitstd:
         type: number
+      itemvat:
+        type: integer
       memberprice:
         type: number
       name1:
@@ -841,6 +884,10 @@ definitions:
         type: string
       unitname5:
         type: string
+      unituses:
+        items:
+          $ref: '#/definitions/models.UnitUse'
+        type: array
       updatedat:
         type: string
       xorder:
@@ -899,8 +946,10 @@ definitions:
       activated:
         description: เปิดใช้งานอยู่
         type: boolean
-      barcode:
-        type: string
+      barcodes:
+        items:
+          $ref: '#/definitions/models.Barcode'
+        type: array
       category:
         $ref: '#/definitions/models.Category'
       categoryguid:
@@ -919,6 +968,10 @@ definitions:
         type: string
       guidfixed:
         type: string
+      havepoint:
+        type: boolean
+      haveserialno:
+        type: boolean
       images:
         items:
           $ref: '#/definitions/models.InventoryImage'
@@ -929,12 +982,16 @@ definitions:
         type: string
       itemsku:
         type: string
+      itemtype:
+        type: integer
       itemunitcode:
         type: string
       itemunitdiv:
         type: number
       itemunitstd:
         type: number
+      itemvat:
+        type: integer
       memberprice:
         type: number
       name1:
@@ -974,6 +1031,10 @@ definitions:
         type: string
       unitname5:
         type: string
+      unituses:
+        items:
+          $ref: '#/definitions/models.UnitUse'
+        type: array
       xorder:
         type: integer
     type: object
@@ -1303,6 +1364,11 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
+    type: object
+  models.JournalRef:
+    properties:
+      docref:
+        type: string
     type: object
   models.Kitchen:
     properties:
@@ -1955,8 +2021,10 @@ definitions:
         type: boolean
       amount:
         type: number
-      barcode:
-        type: string
+      barcodes:
+        items:
+          $ref: '#/definitions/models.Barcode'
+        type: array
       category:
         $ref: '#/definitions/models.Category'
       categoryguid:
@@ -1979,6 +2047,10 @@ definitions:
         type: string
       guidfixed:
         type: string
+      havepoint:
+        type: boolean
+      haveserialno:
+        type: boolean
       images:
         items:
           $ref: '#/definitions/models.InventoryImage'
@@ -1989,12 +2061,16 @@ definitions:
         type: string
       itemsku:
         type: string
+      itemtype:
+        type: integer
       itemunitcode:
         type: string
       itemunitdiv:
         type: number
       itemunitstd:
         type: number
+      itemvat:
+        type: integer
       linenumber:
         type: integer
       memberprice:
@@ -2037,6 +2113,10 @@ definitions:
         type: string
       unitname5:
         type: string
+      unituses:
+        items:
+          $ref: '#/definitions/models.UnitUse'
+        type: array
       xorder:
         type: integer
     type: object
@@ -2130,8 +2210,10 @@ definitions:
         type: boolean
       amount:
         type: number
-      barcode:
-        type: string
+      barcodes:
+        items:
+          $ref: '#/definitions/models.Barcode'
+        type: array
       category:
         $ref: '#/definitions/models.Category'
       categoryguid:
@@ -2154,6 +2236,10 @@ definitions:
         type: string
       guidfixed:
         type: string
+      havepoint:
+        type: boolean
+      haveserialno:
+        type: boolean
       images:
         items:
           $ref: '#/definitions/models.InventoryImage'
@@ -2164,12 +2250,16 @@ definitions:
         type: string
       itemsku:
         type: string
+      itemtype:
+        type: integer
       itemunitcode:
         type: string
       itemunitdiv:
         type: number
       itemunitstd:
         type: number
+      itemvat:
+        type: integer
       linenumber:
         type: integer
       memberprice:
@@ -2212,6 +2302,10 @@ definitions:
         type: string
       unitname5:
         type: string
+      unituses:
+        items:
+          $ref: '#/definitions/models.UnitUse'
+        type: array
       xorder:
         type: integer
     type: object
@@ -2526,6 +2620,52 @@ definitions:
       success:
         type: boolean
     type: object
+  models.SmsTransaction:
+    properties:
+      address:
+        type: string
+      body:
+        type: string
+      date:
+        type: integer
+      parid:
+        type: string
+      transid:
+        type: string
+    type: object
+  models.SmsTransactionInfo:
+    properties:
+      address:
+        type: string
+      body:
+        type: string
+      date:
+        type: integer
+      guidfixed:
+        type: string
+      parid:
+        type: string
+      transid:
+        type: string
+    type: object
+  models.SmsTransactionInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.SmsTransactionInfo'
+      success:
+        type: boolean
+    type: object
+  models.SmsTransactionPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.SmsTransactionInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
   models.SyncInventoryData:
     properties:
       data:
@@ -2682,6 +2822,21 @@ definitions:
       success:
         type: boolean
     type: object
+  models.UnitUse:
+    properties:
+      isunitcost:
+        type: boolean
+      isunitstandard:
+        type: boolean
+      itemunitdiv:
+        type: number
+      itemunitstd:
+        type: number
+      unitcode:
+        type: string
+      unitname:
+        type: string
+    type: object
   models.UserLoginRequest:
     properties:
       password:
@@ -2772,98 +2927,6 @@ definitions:
         type: integer
       vatyear:
         type: integer
-    type: object
-  smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransaction:
-    properties:
-      address:
-        type: string
-      body:
-        type: string
-      date:
-        type: integer
-      parid:
-        type: string
-      transid:
-        type: string
-    type: object
-  smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfo:
-    properties:
-      address:
-        type: string
-      body:
-        type: string
-      date:
-        type: integer
-      guidfixed:
-        type: string
-      parid:
-        type: string
-      transid:
-        type: string
-    type: object
-  smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfoResponse:
-    properties:
-      data:
-        $ref: '#/definitions/smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfo'
-      success:
-        type: boolean
-    type: object
-  smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionPageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/smlcloudplatform_pkg_smsreceive_smstransaction_models.SmsTransactionInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
-  smlcloudplatform_pkg_smstransaction_models.SmsTransaction:
-    properties:
-      address:
-        type: string
-      body:
-        type: string
-      date:
-        type: string
-      parid:
-        type: string
-      transid:
-        type: string
-    type: object
-  smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfo:
-    properties:
-      address:
-        type: string
-      body:
-        type: string
-      date:
-        type: string
-      guidfixed:
-        type: string
-      parid:
-        type: string
-      transid:
-        type: string
-    type: object
-  smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfoResponse:
-    properties:
-      data:
-        $ref: '#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfo'
-      success:
-        type: boolean
-    type: object
-  smlcloudplatform_pkg_smstransaction_models.SmsTransactionPageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
     type: object
 info:
   contact:
@@ -3502,15 +3565,34 @@ paths:
       summary: Create Employee
       tags:
       - Employee
-  /employee/{id}:
+  /employee/{username}:
+    get:
+      consumes:
+      - application/json
+      description: List Employee
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.EmployeePageResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Employee
     put:
       consumes:
       - application/json
       description: Update Employee
       parameters:
-      - description: Employee ID
+      - description: Employee username
         in: path
-        name: id
+        name: username
         required: true
         type: string
       - description: Employee
@@ -3531,26 +3613,6 @@ paths:
       security:
       - AccessToken: []
       summary: Update Employee
-      tags:
-      - Employee
-  /employee/{username}:
-    get:
-      consumes:
-      - application/json
-      description: List Employee
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.EmployeePageResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
       tags:
       - Employee
   /employee/login:
@@ -6587,6 +6649,32 @@ paths:
       - AccessToken: []
       tags:
       - Sale Invoice
+  /select:
+    post:
+      consumes:
+      - application/json
+      description: For List Document Ref selected
+      parameters:
+      - description: JournalRef body
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.JournalRef'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: List Document Ref selected
+      tags:
+      - WSDocumentRef
   /select-shop:
     post:
       consumes:
@@ -6612,6 +6700,25 @@ paths:
       - AccessToken: []
       tags:
       - Authentication
+  /selected:
+    get:
+      consumes:
+      - application/json
+      description: For List Document Ref selected
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: List Document Ref selected
+      tags:
+      - WSDocumentRef
   /shop:
     get:
       consumes:
@@ -6667,7 +6774,7 @@ paths:
         name: Transaction
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransaction'
+          $ref: '#/definitions/models.SmsTransaction'
       responses:
         "200":
           description: OK
@@ -6721,7 +6828,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransactionInfoResponse'
+            $ref: '#/definitions/models.SmsTransactionInfoResponse'
         "401":
           description: Unauthorized
           schema:
@@ -6746,7 +6853,7 @@ paths:
         name: Journal
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_smstransaction_models.SmsTransaction'
+          $ref: '#/definitions/models.SmsTransaction'
       responses:
         "200":
           description: OK

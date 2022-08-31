@@ -23,7 +23,9 @@ import (
 	"smlcloudplatform/pkg/shop"
 	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
-	"smlcloudplatform/pkg/smstransaction"
+	"smlcloudplatform/pkg/smsreceive/smspatterns"
+	"smlcloudplatform/pkg/smsreceive/smspaymentsettings"
+	"smlcloudplatform/pkg/smsreceive/smstransaction"
 	"smlcloudplatform/pkg/syncdata"
 	"smlcloudplatform/pkg/tools"
 	"smlcloudplatform/pkg/transaction/purchase"
@@ -113,9 +115,13 @@ func main() {
 		documentimage.NewDocumentImageHttp(ms, cfg),
 		chartofaccount.NewChartOfAccountHttp(ms, cfg),
 		//new
-		smstransaction.NewSmsTransactionHttp(ms, cfg),
+
 		paymentmaster.NewPaymentMasterHttp(ms, cfg),
 		apikeyservice.NewApiKeyServiceHttp(ms, cfg),
+
+		smstransaction.NewSmsTransactionHttp(ms, cfg),
+		smspatterns.NewSmsPatternsHttp(ms, cfg),
+		smspaymentsettings.NewSmsPaymentSettingsHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)

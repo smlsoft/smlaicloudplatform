@@ -11,7 +11,7 @@ import (
 type IJournalRepository interface {
 	Count(shopID string) (int, error)
 	Create(category models.JournalDoc) (string, error)
-	CreateInBatch(inventories []models.JournalDoc) error
+	CreateInBatch(docList []models.JournalDoc) error
 	Update(shopID string, guid string, category models.JournalDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.JournalInfo, mongopagination.PaginationData, error)

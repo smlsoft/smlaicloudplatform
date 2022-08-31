@@ -23,7 +23,7 @@ import (
 	"smlcloudplatform/pkg/shop"
 	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
-	"smlcloudplatform/pkg/smstransaction"
+	"smlcloudplatform/pkg/smsreceive/smstransaction"
 	"smlcloudplatform/pkg/transaction/purchase"
 	"smlcloudplatform/pkg/transaction/saleinvoice"
 	"smlcloudplatform/pkg/vfgl/accountgroup"

@@ -1,7 +1,6 @@
 package models
 
 import (
-	"encoding/json"
 	"smlcloudplatform/pkg/models"
 	"time"
 
@@ -10,33 +9,13 @@ import (
 
 const smstransactionCollectionName = "smsTransactions"
 
-type JsonTime time.Time
-
-func (t *JsonTime) UnmarshalJSON(data []byte) error {
-
-	var s string
-	if err := json.Unmarshal(data, &s); err != nil {
-		return err
-	}
-
-	timeVal, err := time.Parse("2006-01-02T15:04:05", s)
-
-	if err != nil {
-		println(err)
-		return err
-	}
-
-	*t = JsonTime(timeVal)
-
-	return nil
-}
-
 type SmsTransaction struct {
 	models.PartitionIdentity `bson:"inline"`
-	TransId                  string   `json:"transid" bson:"transid"`
-	Address                  string   `json:"address" bson:"address"`
-	Body                     string   `json:"body" bson:"body"`
-	Date                     JsonTime `json:"date" bson:"date"`
+	TransId                  string    `json:"transid" bson:"transid"`
+	Address                  string    `json:"address" bson:"address"`
+	Body                     string    `json:"body" bson:"body"`
+	SendedAt                 time.Time `json:"sendedat" bson:"sendedat"`
+	Status                   int8      `json:"status" bson:"status"`
 }
 
 type SmsTransactionInfo struct {

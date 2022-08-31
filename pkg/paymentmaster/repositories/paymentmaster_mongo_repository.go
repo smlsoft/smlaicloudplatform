@@ -11,7 +11,7 @@ import (
 type IPaymentMasterRepository interface {
 	Count(shopID string) (int, error)
 	Create(category models.PaymentMasterDoc) (string, error)
-	CreateInBatch(inventories []models.PaymentMasterDoc) error
+	CreateInBatch(docList []models.PaymentMasterDoc) error
 	Update(shopID string, guid string, category models.PaymentMasterDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	Find(shopID string, colNameSearch []string, q string) ([]models.PaymentMasterInfo, error)
