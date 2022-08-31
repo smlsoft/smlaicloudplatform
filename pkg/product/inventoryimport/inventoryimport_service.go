@@ -31,7 +31,7 @@ func (svc InventoryImportService) CreateInBatch(shopID string, authUsername stri
 	tempInvDataList := []models.InventoryImportDoc{}
 
 	for _, inventory := range inventories {
-		codeList = append(codeList, inventory.Barcode)
+		codeList = append(codeList, inventory.ItemCode)
 
 		newGuid := utils.NewGUID()
 		invDoc := models.InventoryImportDoc{}
