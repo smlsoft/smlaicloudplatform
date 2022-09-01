@@ -2,6 +2,7 @@ package journal
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	common "smlcloudplatform/pkg/models"
@@ -90,6 +91,7 @@ func (h JournalWs) WebsocketImage(ctx microservice.IContext) error {
 		return err
 	}
 
+	singClose := make(chan struct{})
 	defer func() {
 		ws.Close()
 		h.ms.WebsocketClose(socketID)
@@ -98,14 +100,28 @@ func (h JournalWs) WebsocketImage(ctx microservice.IContext) error {
 		h.ClearDocRef(shopID, username)
 	}()
 
+	go func() {
+
+		defer func() {
+			fmt.Println("image is close")
+			singClose <- struct{}{}
+		}()
+
+		for {
+			_, _, err = ws.ReadMessage()
+			if err != nil {
+				return
+			}
+		}
+	}()
+
 	// Send to client
 	for {
 		h.svcWebsocket.ExpireWebsocket(shopID, username)
 
-		_, _, err := ws.ReadMessage()
-		if err != nil {
-			return nil
-		}
+		// if err != nil {
+		// 	return nil
+		// }
 
 		temp := <-cacheMsg
 		if temp != nil {
