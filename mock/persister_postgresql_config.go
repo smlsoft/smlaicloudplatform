@@ -12,12 +12,20 @@ import (
 type PersisterPostgresqlConfig struct{}
 
 func NewPersisterPostgresqlConfig() microservice.IPersisterConfig {
+
+	env := os.Getenv("MODE")
+	if env == "" {
+		os.Setenv("MODE", "development")
+		env = "development"
+	}
+
 	re := regexp.MustCompile(`^(.*` + projectDirName + `)`)
 	cwd, _ := os.Getwd()
 	rootPath := re.Find([]byte(cwd))
+	basePath := string(rootPath)
 
-	err := godotenv.Load(string(rootPath) + `/mock/.env`)
-
+	godotenv.Load(basePath + "/.env." + env + ".test.local")
+	err := godotenv.Load(basePath + `/mock/.env`)
 	if err != nil {
 		fmt.Println("Load Env Failed ")
 	}
