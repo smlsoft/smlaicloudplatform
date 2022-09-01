@@ -108,6 +108,13 @@ func (pst *PersisterMongo) getClient() (*mongo.Database, error) {
 		return nil, err
 	}
 
+	// cmdMonitor := &event.CommandMonitor{
+	// 	Started: func(_ context.Context, evt *event.CommandStartedEvent) {
+	// 		log.Print(evt.Command)
+	// 	},
+	// }
+
+	// client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr).SetMonitor(cmdMonitor))
 	client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr))
 	if err != nil {
 		return nil, err
@@ -279,7 +286,9 @@ func (pst *PersisterMongo) FindOne(model interface{}, filter interface{}, decode
 		return err
 	}
 
-	err = db.Collection(collectionName).FindOne(context.TODO(), filter).Decode(decode)
+	result := db.Collection(collectionName).FindOne(context.TODO(), filter)
+
+	err = result.Decode(decode)
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return err
 	}

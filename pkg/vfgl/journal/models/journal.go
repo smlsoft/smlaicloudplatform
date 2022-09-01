@@ -34,7 +34,7 @@ type Journal struct {
 }
 
 type JournalDetail struct {
-	AccountCode  string  `json:"accountcode" bson:"accountcode"`
+	AccountCode  string  `json:"accountcode" bson:"accountcode"` //chart of account code
 	AccountName  string  `json:"accountname" bson:"accountname"`
 	DebitAmount  float64 `json:"debitamount" bson:"debitamount"`
 	CreditAmount float64 `json:"creditamount" bson:"creditamount"`

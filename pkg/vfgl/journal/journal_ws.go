@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	documentimagerepo "smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/vfgl/journal/config"
@@ -24,10 +25,12 @@ type JournalWs struct {
 }
 
 func NewJournalWs(ms *microservice.Microservice, cfg microservice.IConfig) JournalWs {
+	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
+	docImageRepo := documentimagerepo.NewDocumentImageRepository(pst)
 	cacheRepo := repositories.NewJournalCacheRepository(cache)
-	svcWebsocket := services.NewJournalWebsocketService(cacheRepo, time.Duration(30)*time.Minute)
+	svcWebsocket := services.NewJournalWebsocketService(docImageRepo, cacheRepo, time.Duration(30)*time.Minute)
 
 	return JournalWs{
 		ms:           ms,
@@ -44,7 +47,8 @@ func (h JournalWs) RouteSetup() {
 
 	h.ms.GET("/gl/journal/docref/selected", h.GetAllDocRefPool)
 	h.ms.POST("/gl/journal/docref/select", h.SelectDocRefPool)
-	h.ms.POST("/gl/journal/docref/unselect", h.UnSelectDocRefPool)
+	h.ms.POST("/gl/journal/docref/deselect", h.DeSelectDocRefPool)
+	h.ms.POST("/gl/journal/docref/next", h.NextSelectDocumentRef)
 
 	h.ms.GET("/gl/journal/user-docref", h.GetUserDocRef)
 	h.ms.GET("/gl/journal/docref-user", h.GetDocRefUser)
@@ -194,17 +198,17 @@ func (h JournalWs) WebsocketForm(ctx microservice.IContext) error {
 		for {
 			h.svcWebsocket.ExpireWebsocket(shopID, username)
 
-			journalCommand := models.JournalCommand{}
-			err := ws.ReadJSON(&journalCommand)
+			journalEvent := models.JournalEvent{}
+			err := ws.ReadJSON(&journalEvent)
 
 			if err != nil {
 				return
 			}
 
-			tempRef, _ := json.Marshal(journalCommand)
+			tempRef, _ := json.Marshal(journalEvent)
 			h.svcWebsocket.PubDoc(shopID, username, sendScreenName, tempRef)
 
-			switch journalCommand.Command {
+			switch journalEvent.Event {
 			case "save":
 				h.svcWebsocket.ClearLastMessage(shopID, username)
 				//clear
@@ -395,7 +399,7 @@ func (h JournalWs) GetDocRefUser(ctx microservice.IContext) error {
 // @Failure		400 {object}	models.AuthResponseFailed
 // @Accept 		json
 // @Security     AccessToken
-// @Router		/select [post]
+// @Router		/gl/journal/docref/select [post]
 func (h JournalWs) SelectDocRefPool(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -440,8 +444,8 @@ func (h JournalWs) SelectDocRefPool(ctx microservice.IContext) error {
 // @Failure		400 {object}	models.AuthResponseFailed
 // @Accept 		json
 // @Security     AccessToken
-// @Router		/select [post]
-func (h JournalWs) UnSelectDocRefPool(ctx microservice.IContext) error {
+// @Router		/gl/journal/docref/deselect [post]
+func (h JournalWs) DeSelectDocRefPool(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	username := userInfo.Username
@@ -456,7 +460,7 @@ func (h JournalWs) UnSelectDocRefPool(ctx microservice.IContext) error {
 	// 	return err
 	// }
 
-	result, err := h.svcWebsocket.DocRefUnSelect(shopID, username)
+	result, err := h.svcWebsocket.DocRefDeSelect(shopID, username)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -474,5 +478,43 @@ func (h JournalWs) WebsocketConnectCount(ctx microservice.IContext) error {
 
 	ctx.Response(http.StatusOK, h.ms.WebsocketCount())
 
+	return nil
+}
+
+// List Document Ref selected godoc
+// @Summary		List Document Ref selected
+// @Description	For List Document Ref selected
+// @Tags		WSDocumentRef
+// @Param		User  body      models.JournalRef  true  "JournalRef body"
+// @Success		200	{object}	common.ApiResponse
+// @Failure		400 {object}	models.AuthResponseFailed
+// @Accept 		json
+// @Security     AccessToken
+// @Router		/gl/journal/docref/next [post]
+func (h JournalWs) NextSelectDocumentRef(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	username := userInfo.Username
+
+	doc, err := h.svcWebsocket.DocRefNextSelect(shopID, username, 0)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	_, err = h.svcWebsocket.DocRefSelectForce(shopID, username, doc.DocumentRef, true)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data: map[string]string{
+			"documentref": doc.DocumentRef,
+		},
+	})
 	return nil
 }
