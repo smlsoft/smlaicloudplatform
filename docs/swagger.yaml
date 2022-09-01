@@ -1287,6 +1287,7 @@ definitions:
   models.JournalDetail:
     properties:
       accountcode:
+        description: chart of account code
         type: string
       accountname:
         type: string
@@ -4204,6 +4205,77 @@ paths:
       summary: แสดงรายละเอียดข้อมูลรายวัน ตามเอกสารอ้างอิง
       tags:
       - GL
+  /gl/journal/docref/deselect:
+    post:
+      consumes:
+      - application/json
+      description: For List Document Ref selected
+      parameters:
+      - description: JournalRef body
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.JournalRef'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: List Document Ref selected
+      tags:
+      - WSDocumentRef
+  /gl/journal/docref/next:
+    post:
+      consumes:
+      - application/json
+      description: For List Document Ref selected
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: List Document Ref selected
+      tags:
+      - WSDocumentRef
+  /gl/journal/docref/select:
+    post:
+      consumes:
+      - application/json
+      description: For List Document Ref selected
+      parameters:
+      - description: JournalRef body
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.JournalRef'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: List Document Ref selected
+      tags:
+      - WSDocumentRef
   /gl/journalbook:
     get:
       consumes:
@@ -6693,32 +6765,6 @@ paths:
       - AccessToken: []
       tags:
       - Sale Invoice
-  /select:
-    post:
-      consumes:
-      - application/json
-      description: For List Document Ref selected
-      parameters:
-      - description: JournalRef body
-        in: body
-        name: User
-        required: true
-        schema:
-          $ref: '#/definitions/models.JournalRef'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      summary: List Document Ref selected
-      tags:
-      - WSDocumentRef
   /select-shop:
     post:
       consumes:

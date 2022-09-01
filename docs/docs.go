@@ -1853,6 +1853,121 @@ const docTemplate = `{
                 }
             }
         },
+        "/gl/journal/docref/deselect": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "For List Document Ref selected",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WSDocumentRef"
+                ],
+                "summary": "List Document Ref selected",
+                "parameters": [
+                    {
+                        "description": "JournalRef body",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalRef"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journal/docref/next": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "For List Document Ref selected",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WSDocumentRef"
+                ],
+                "summary": "List Document Ref selected",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journal/docref/select": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "For List Document Ref selected",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WSDocumentRef"
+                ],
+                "summary": "List Document Ref selected",
+                "parameters": [
+                    {
+                        "description": "JournalRef body",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalRef"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/gl/journal/docref/{doc}": {
             "get": {
                 "security": [
@@ -6010,48 +6125,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/select": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "For List Document Ref selected",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "WSDocumentRef"
-                ],
-                "summary": "List Document Ref selected",
-                "parameters": [
-                    {
-                        "description": "JournalRef body",
-                        "name": "User",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.JournalRef"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/select-shop": {
             "post": {
                 "security": [
@@ -8755,6 +8828,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "accountcode": {
+                    "description": "chart of account code",
                     "type": "string"
                 },
                 "accountname": {
