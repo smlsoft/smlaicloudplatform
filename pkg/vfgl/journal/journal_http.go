@@ -12,40 +12,39 @@ import (
 	"smlcloudplatform/pkg/vfgl/journal/models"
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
 	"smlcloudplatform/pkg/vfgl/journal/services"
-	"time"
 )
 
 type IJournalHttp interface{}
 
 type JournalHttp struct {
-	ms           *microservice.Microservice
-	cfg          microservice.IConfig
-	svc          services.IJournalHttpService
-	svcDocImage  serviceDocumentimage.DocumentImageService
-	svcWebsocket services.IJournalWebsocketService
+	ms          *microservice.Microservice
+	cfg         microservice.IConfig
+	svc         services.IJournalHttpService
+	svcDocImage serviceDocumentimage.DocumentImageService
+	// svcWebsocket services.IJournalWebsocketService
 }
 
 func NewJournalHttp(ms *microservice.Microservice, cfg microservice.IConfig) JournalHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
-	cache := ms.Cacher(cfg.CacherConfig())
+	// cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := repositories.NewJournalRepository(pst)
 	mqRepo := repositories.NewJournalMqRepository(prod)
 	svc := services.NewJournalHttpService(repo, mqRepo)
 
-	cacheRepo := repositories.NewJournalCacheRepository(cache)
-	svcWebsocket := services.NewJournalWebsocketService(cacheRepo, time.Duration(30)*time.Minute)
+	// cacheRepo := repositories.NewJournalCacheRepository(cache)
+	// svcWebsocket := services.NewJournalWebsocketService(repo, cacheRepo, time.Duration(30)*time.Minute)
 
 	repoDocImage := repoDocumentimage.NewDocumentImageRepository(pst)
 	svcDocImage := serviceDocumentimage.NewDocumentImageService(repoDocImage, nil)
 
 	return JournalHttp{
-		ms:           ms,
-		cfg:          cfg,
-		svc:          svc,
-		svcDocImage:  svcDocImage,
-		svcWebsocket: svcWebsocket,
+		ms:          ms,
+		cfg:         cfg,
+		svc:         svc,
+		svcDocImage: svcDocImage,
+		// svcWebsocket: svcWebsocket,
 	}
 }
 
