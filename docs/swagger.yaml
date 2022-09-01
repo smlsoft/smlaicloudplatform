@@ -190,6 +190,27 @@ definitions:
           type: string
         type: array
     type: object
+  models.BulkReponse:
+    properties:
+      created:
+        items:
+          type: string
+        type: array
+      payloadDuplicate:
+        items:
+          type: string
+        type: array
+      success:
+        type: boolean
+      updateFailed:
+        items:
+          type: string
+        type: array
+      updated:
+        items:
+          type: string
+        type: array
+    type: object
   models.Category:
     properties:
       categoryguid:
@@ -771,16 +792,6 @@ definitions:
         items:
           $ref: '#/definitions/models.InventoryTag'
         type: array
-      unitname1:
-        type: string
-      unitname2:
-        type: string
-      unitname3:
-        type: string
-      unitname4:
-        type: string
-      unitname5:
-        type: string
       unituses:
         items:
           $ref: '#/definitions/models.UnitUse'
@@ -874,16 +885,6 @@ definitions:
         items:
           $ref: '#/definitions/models.InventoryTag'
         type: array
-      unitname1:
-        type: string
-      unitname2:
-        type: string
-      unitname3:
-        type: string
-      unitname4:
-        type: string
-      unitname5:
-        type: string
       unituses:
         items:
           $ref: '#/definitions/models.UnitUse'
@@ -1021,16 +1022,6 @@ definitions:
         items:
           $ref: '#/definitions/models.InventoryTag'
         type: array
-      unitname1:
-        type: string
-      unitname2:
-        type: string
-      unitname3:
-        type: string
-      unitname4:
-        type: string
-      unitname5:
-        type: string
       unituses:
         items:
           $ref: '#/definitions/models.UnitUse'
@@ -2103,16 +2094,6 @@ definitions:
         items:
           $ref: '#/definitions/models.InventoryTag'
         type: array
-      unitname1:
-        type: string
-      unitname2:
-        type: string
-      unitname3:
-        type: string
-      unitname4:
-        type: string
-      unitname5:
-        type: string
       unituses:
         items:
           $ref: '#/definitions/models.UnitUse'
@@ -2292,16 +2273,6 @@ definitions:
         items:
           $ref: '#/definitions/models.InventoryTag'
         type: array
-      unitname1:
-        type: string
-      unitname2:
-        type: string
-      unitname3:
-        type: string
-      unitname4:
-        type: string
-      unitname5:
-        type: string
       unituses:
         items:
           $ref: '#/definitions/models.UnitUse'
@@ -2626,10 +2597,12 @@ definitions:
         type: string
       body:
         type: string
-      date:
-        type: integer
       parid:
         type: string
+      sendedat:
+        type: string
+      status:
+        type: integer
       transid:
         type: string
     type: object
@@ -2639,12 +2612,14 @@ definitions:
         type: string
       body:
         type: string
-      date:
-        type: integer
       guidfixed:
         type: string
       parid:
         type: string
+      sendedat:
+        type: string
+      status:
+        type: integer
       transid:
         type: string
     type: object
@@ -2822,6 +2797,33 @@ definitions:
       success:
         type: boolean
     type: object
+  models.Unit:
+    properties:
+      isunitcost:
+        type: boolean
+      isunitstandard:
+        type: boolean
+      itemunitdiv:
+        type: number
+      itemunitstd:
+        type: number
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      parid:
+        type: string
+      unitcode:
+        type: string
+    required:
+    - name1
+    type: object
   models.UnitUse:
     properties:
       isunitcost:
@@ -2832,10 +2834,20 @@ definitions:
         type: number
       itemunitstd:
         type: number
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
       unitcode:
         type: string
-      unitname:
-        type: string
+    required:
+    - name1
     type: object
   models.UserLoginRequest:
     properties:
@@ -3160,6 +3172,38 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
+  /checksms:
+    get:
+      consumes:
+      - application/json
+      description: รับข้อมูล sms
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SmsTransactionPageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: รับข้อมูล sms
+      tags:
+      - SMS
   /documentimage:
     get:
       consumes:
@@ -6764,6 +6808,37 @@ paths:
       tags:
       - Shop
   /smstransaction:
+    get:
+      consumes:
+      - application/json
+      description: รับข้อมูล sms
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SmsTransactionPageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: รับข้อมูล sms
+      tags:
+      - SMS
     post:
       consumes:
       - application/json
@@ -6893,6 +6968,166 @@ paths:
       - AccessToken: []
       tags:
       - Synchronize
+  /unit:
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
+    post:
+      consumes:
+      - application/json
+      description: Create Unit
+      parameters:
+      - description: Unit
+        in: body
+        name: Unit
+        required: true
+        schema:
+          $ref: '#/definitions/models.Unit'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
+  /unit/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Unit
+      parameters:
+      - description: Unit ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Unit ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
+    put:
+      consumes:
+      - application/json
+      description: Update Unit
+      parameters:
+      - description: Unit ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Unit
+        in: body
+        name: Unit
+        required: true
+        schema:
+          $ref: '#/definitions/models.Unit'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
+  /unit/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Unit
+      parameters:
+      - description: Unit
+        in: body
+        name: Unit
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Unit'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
   /upload/images:
     post:
       consumes:

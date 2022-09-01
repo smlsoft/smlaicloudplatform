@@ -33,15 +33,6 @@ func NewUnitHttpService(repo repositories.IUnitRepository) *UnitHttpService {
 	}
 }
 
-// Get Unit godoc
-// @Description get struct array by ID
-// @Tags		Unit
-// @Param		id  path      string  true  "Unit ID"
-// @Accept 		json
-// @Success		200	{object}	models.UnitInfoResponse
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /unit/{id} [get]
 func (svc UnitHttpService) CreateUnit(shopID string, authUsername string, doc models.Unit) (string, error) {
 
 	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "unitcode", doc.UnitCode)

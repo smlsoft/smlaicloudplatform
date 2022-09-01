@@ -378,6 +378,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/checksms": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "รับข้อมูล sms",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMS"
+                ],
+                "summary": "รับข้อมูล sms",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SmsTransactionPageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/documentimage": {
             "get": {
                 "security": [
@@ -6146,6 +6197,55 @@ const docTemplate = `{
             }
         },
         "/smstransaction": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "รับข้อมูล sms",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMS"
+                ],
+                "summary": "รับข้อมูล sms",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SmsTransactionPageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -6346,6 +6446,264 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/unit": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Unit",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "description": "Unit",
+                        "name": "Unit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Unit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/unit/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Unit",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "description": "Unit",
+                        "name": "Unit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Unit"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/unit/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Unit ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Unit",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Unit ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Unit",
+                        "name": "Unit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Unit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Unit",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Unit ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
                         }
@@ -6713,6 +7071,38 @@ const docTemplate = `{
             }
         },
         "models.BulkInsertResponse": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "payloadDuplicate": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "updateFailed": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.BulkReponse": {
             "type": "object",
             "properties": {
                 "created": {
@@ -7619,21 +8009,6 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryTag"
                     }
                 },
-                "unitname1": {
-                    "type": "string"
-                },
-                "unitname2": {
-                    "type": "string"
-                },
-                "unitname3": {
-                    "type": "string"
-                },
-                "unitname4": {
-                    "type": "string"
-                },
-                "unitname5": {
-                    "type": "string"
-                },
                 "unituses": {
                     "type": "array",
                     "items": {
@@ -7770,21 +8145,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.InventoryTag"
                     }
-                },
-                "unitname1": {
-                    "type": "string"
-                },
-                "unitname2": {
-                    "type": "string"
-                },
-                "unitname3": {
-                    "type": "string"
-                },
-                "unitname4": {
-                    "type": "string"
-                },
-                "unitname5": {
-                    "type": "string"
                 },
                 "unituses": {
                     "type": "array",
@@ -7990,21 +8350,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.InventoryTag"
                     }
-                },
-                "unitname1": {
-                    "type": "string"
-                },
-                "unitname2": {
-                    "type": "string"
-                },
-                "unitname3": {
-                    "type": "string"
-                },
-                "unitname4": {
-                    "type": "string"
-                },
-                "unitname5": {
-                    "type": "string"
                 },
                 "unituses": {
                     "type": "array",
@@ -9629,21 +9974,6 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryTag"
                     }
                 },
-                "unitname1": {
-                    "type": "string"
-                },
-                "unitname2": {
-                    "type": "string"
-                },
-                "unitname3": {
-                    "type": "string"
-                },
-                "unitname4": {
-                    "type": "string"
-                },
-                "unitname5": {
-                    "type": "string"
-                },
                 "unituses": {
                     "type": "array",
                     "items": {
@@ -9911,21 +10241,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.InventoryTag"
                     }
-                },
-                "unitname1": {
-                    "type": "string"
-                },
-                "unitname2": {
-                    "type": "string"
-                },
-                "unitname3": {
-                    "type": "string"
-                },
-                "unitname4": {
-                    "type": "string"
-                },
-                "unitname5": {
-                    "type": "string"
                 },
                 "unituses": {
                     "type": "array",
@@ -10424,11 +10739,14 @@ const docTemplate = `{
                 "body": {
                     "type": "string"
                 },
-                "date": {
-                    "type": "integer"
-                },
                 "parid": {
                     "type": "string"
+                },
+                "sendedat": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
                 },
                 "transid": {
                     "type": "string"
@@ -10444,14 +10762,17 @@ const docTemplate = `{
                 "body": {
                     "type": "string"
                 },
-                "date": {
-                    "type": "integer"
-                },
                 "guidfixed": {
                     "type": "string"
                 },
                 "parid": {
                     "type": "string"
+                },
+                "sendedat": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
                 },
                 "transid": {
                     "type": "string"
@@ -10710,8 +11031,11 @@ const docTemplate = `{
                 }
             }
         },
-        "models.UnitUse": {
+        "models.Unit": {
             "type": "object",
+            "required": [
+                "name1"
+            ],
             "properties": {
                 "isunitcost": {
                     "type": "boolean"
@@ -10725,10 +11049,63 @@ const docTemplate = `{
                 "itemunitstd": {
                     "type": "number"
                 },
-                "unitcode": {
+                "name1": {
                     "type": "string"
                 },
-                "unitname": {
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "parid": {
+                    "type": "string"
+                },
+                "unitcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UnitUse": {
+            "type": "object",
+            "required": [
+                "name1"
+            ],
+            "properties": {
+                "isunitcost": {
+                    "type": "boolean"
+                },
+                "isunitstandard": {
+                    "type": "boolean"
+                },
+                "itemunitdiv": {
+                    "type": "number"
+                },
+                "itemunitstd": {
+                    "type": "number"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "unitcode": {
                     "type": "string"
                 }
             }

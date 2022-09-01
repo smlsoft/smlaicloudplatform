@@ -224,7 +224,7 @@ func (h UnitHttp) SearchUnit(ctx microservice.IContext) error {
 // @Success		201	{object}	common.BulkReponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /inventory/bulk [post]
+// @Router /unit/bulk [post]
 func (h UnitHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
