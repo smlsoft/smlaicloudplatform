@@ -485,7 +485,6 @@ func (h JournalWs) WebsocketConnectCount(ctx microservice.IContext) error {
 // @Summary		List Document Ref selected
 // @Description	For List Document Ref selected
 // @Tags		WSDocumentRef
-// @Param		User  body      models.JournalRef  true  "JournalRef body"
 // @Success		200	{object}	common.ApiResponse
 // @Failure		400 {object}	models.AuthResponseFailed
 // @Accept 		json

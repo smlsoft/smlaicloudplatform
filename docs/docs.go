@@ -378,6 +378,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/checksms": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "รับข้อมูล sms",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMS"
+                ],
+                "summary": "รับข้อมูล sms",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SmsTransactionPageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/documentimage": {
             "get": {
                 "security": [
@@ -1795,6 +1846,121 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journal/docref/deselect": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "For List Document Ref selected",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WSDocumentRef"
+                ],
+                "summary": "List Document Ref selected",
+                "parameters": [
+                    {
+                        "description": "JournalRef body",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalRef"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journal/docref/next": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "For List Document Ref selected",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WSDocumentRef"
+                ],
+                "summary": "List Document Ref selected",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journal/docref/select": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "For List Document Ref selected",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WSDocumentRef"
+                ],
+                "summary": "List Document Ref selected",
+                "parameters": [
+                    {
+                        "description": "JournalRef body",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalRef"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
                         }
@@ -5959,48 +6125,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/select": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "For List Document Ref selected",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "WSDocumentRef"
-                ],
-                "summary": "List Document Ref selected",
-                "parameters": [
-                    {
-                        "description": "JournalRef body",
-                        "name": "User",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.JournalRef"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/select-shop": {
             "post": {
                 "security": [
@@ -6146,6 +6270,55 @@ const docTemplate = `{
             }
         },
         "/smstransaction": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "รับข้อมูล sms",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMS"
+                ],
+                "summary": "รับข้อมูล sms",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SmsTransactionPageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -8410,6 +8583,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "accountcode": {
+                    "description": "chart of account code",
                     "type": "string"
                 },
                 "accountname": {
@@ -10424,11 +10598,14 @@ const docTemplate = `{
                 "body": {
                     "type": "string"
                 },
-                "date": {
-                    "type": "integer"
-                },
                 "parid": {
                     "type": "string"
+                },
+                "sendedat": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
                 },
                 "transid": {
                     "type": "string"
@@ -10444,14 +10621,17 @@ const docTemplate = `{
                 "body": {
                     "type": "string"
                 },
-                "date": {
-                    "type": "integer"
-                },
                 "guidfixed": {
                     "type": "string"
                 },
                 "parid": {
                     "type": "string"
+                },
+                "sendedat": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
                 },
                 "transid": {
                     "type": "string"

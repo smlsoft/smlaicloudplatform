@@ -1296,6 +1296,7 @@ definitions:
   models.JournalDetail:
     properties:
       accountcode:
+        description: chart of account code
         type: string
       accountname:
         type: string
@@ -2626,10 +2627,12 @@ definitions:
         type: string
       body:
         type: string
-      date:
-        type: integer
       parid:
         type: string
+      sendedat:
+        type: string
+      status:
+        type: integer
       transid:
         type: string
     type: object
@@ -2639,12 +2642,14 @@ definitions:
         type: string
       body:
         type: string
-      date:
-        type: integer
       guidfixed:
         type: string
       parid:
         type: string
+      sendedat:
+        type: string
+      status:
+        type: integer
       transid:
         type: string
     type: object
@@ -3160,6 +3165,38 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
+  /checksms:
+    get:
+      consumes:
+      - application/json
+      description: รับข้อมูล sms
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SmsTransactionPageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: รับข้อมูล sms
+      tags:
+      - SMS
   /documentimage:
     get:
       consumes:
@@ -4160,6 +4197,77 @@ paths:
       summary: แสดงรายละเอียดข้อมูลรายวัน ตามเอกสารอ้างอิง
       tags:
       - GL
+  /gl/journal/docref/deselect:
+    post:
+      consumes:
+      - application/json
+      description: For List Document Ref selected
+      parameters:
+      - description: JournalRef body
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.JournalRef'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: List Document Ref selected
+      tags:
+      - WSDocumentRef
+  /gl/journal/docref/next:
+    post:
+      consumes:
+      - application/json
+      description: For List Document Ref selected
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: List Document Ref selected
+      tags:
+      - WSDocumentRef
+  /gl/journal/docref/select:
+    post:
+      consumes:
+      - application/json
+      description: For List Document Ref selected
+      parameters:
+      - description: JournalRef body
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.JournalRef'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: List Document Ref selected
+      tags:
+      - WSDocumentRef
   /gl/journalbook:
     get:
       consumes:
@@ -6649,32 +6757,6 @@ paths:
       - AccessToken: []
       tags:
       - Sale Invoice
-  /select:
-    post:
-      consumes:
-      - application/json
-      description: For List Document Ref selected
-      parameters:
-      - description: JournalRef body
-        in: body
-        name: User
-        required: true
-        schema:
-          $ref: '#/definitions/models.JournalRef'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      summary: List Document Ref selected
-      tags:
-      - WSDocumentRef
   /select-shop:
     post:
       consumes:
@@ -6764,6 +6846,37 @@ paths:
       tags:
       - Shop
   /smstransaction:
+    get:
+      consumes:
+      - application/json
+      description: รับข้อมูล sms
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SmsTransactionPageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: รับข้อมูล sms
+      tags:
+      - SMS
     post:
       consumes:
       - application/json
