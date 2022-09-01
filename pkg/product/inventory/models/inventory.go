@@ -41,11 +41,11 @@ type Inventory struct {
 	Description4 string `json:"description4,omitempty" bson:"description4,omitempty" gorm:"description4,omitempty"`
 	Description5 string `json:"description5,omitempty" bson:"description5,omitempty" gorm:"description5,omitempty"`
 
-	UnitName1 string `json:"unitname1" bson:"unitname1" gorm:"unitname1"`
-	UnitName2 string `json:"unitname2,omitempty" bson:"unitname2,omitempty" gorm:"unitname2,omitempty"`
-	UnitName3 string `json:"unitname3,omitempty" bson:"unitname3,omitempty" gorm:"unitname3,omitempty"`
-	UnitName4 string `json:"unitname4,omitempty" bson:"unitname4,omitempty" gorm:"unitname4,omitempty"`
-	UnitName5 string `json:"unitname5,omitempty" bson:"unitname5,omitempty" gorm:"unitname5,omitempty"`
+	// UnitName1 string `json:"unitname1" bson:"unitname1" gorm:"unitname1"`
+	// UnitName2 string `json:"unitname2,omitempty" bson:"unitname2,omitempty" gorm:"unitname2,omitempty"`
+	// UnitName3 string `json:"unitname3,omitempty" bson:"unitname3,omitempty" gorm:"unitname3,omitempty"`
+	// UnitName4 string `json:"unitname4,omitempty" bson:"unitname4,omitempty" gorm:"unitname4,omitempty"`
+	// UnitName5 string `json:"unitname5,omitempty" bson:"unitname5,omitempty" gorm:"unitname5,omitempty"`
 
 	ItemGuid     string  `json:"itemguid,omitempty" bson:"itemguid,omitempty" gorm:"itemguid,omitempty"`
 	ItemCode     string  `json:"itemcode" bson:"itemcode" gorm:"itemcode"`
@@ -83,8 +83,9 @@ type Barcode struct {
 }
 
 type UnitUse struct {
-	UnitCode       string  `json:"unitcode" bson:"unitcode" gorm:"unitcode"`
-	UnitName       string  `json:"unitname" bson:"unitname" gorm:"unitname"`
+	UnitCode string `json:"unitcode" bson:"unitcode" gorm:"unitcode"`
+	// UnitName       string  `json:"unitname" bson:"unitname" gorm:"unitname"`
+	common.Name    `bson:"inline"`
 	ItemUnitSTD    float64 `json:"itemunitstd" bson:"itemunitstd" gorm:"itemunitstd"`
 	ItemUnitDIV    float64 `json:"itemunitdiv" bson:"itemunitdiv" gorm:"itemunitdiv"`
 	IsUnitCost     bool    `json:"isunitcost" bson:"isunitcost" gorm:"isunitcost,type:bool,default:false"`
