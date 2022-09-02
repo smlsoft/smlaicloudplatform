@@ -5,6 +5,7 @@ import (
 	"os"
 	"smlcloudplatform/docs"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/apikeyservice"
 	"smlcloudplatform/pkg/authentication"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/images"
@@ -119,6 +120,7 @@ func main() {
 
 		httpServices := []HttpRouteSetup{
 
+			apikeyservice.NewApiKeyServiceHttp(ms, cfg),
 			authentication.NewAuthenticationHttp(ms, cfg),
 			shop.NewShopHttp(ms, cfg),
 
