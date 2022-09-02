@@ -113,7 +113,10 @@ func (repo SearchRepository[T]) FindPageFilterSort(shopID string, filters map[st
 	queryFilters := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$exists": false},
-		"$or":       searchFilterList,
+	}
+
+	if len(searchFilterList) > 0 {
+		queryFilters["$or"] = searchFilterList
 	}
 
 	if len(matchFilterList) > 0 {
