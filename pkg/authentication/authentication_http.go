@@ -56,6 +56,8 @@ func (h AuthenticationHttp) RouteSetup() {
 
 	h.ms.POST("/register", h.Register)
 	h.ms.GET("/profile", h.Profile)
+	h.ms.GET("/profileshop", h.ProfileShop)
+
 	h.ms.PUT("/profile", h.Update)
 	h.ms.PUT("/profile/password", h.UpdatePassword)
 
@@ -250,6 +252,33 @@ func (h AuthenticationHttp) Logout(ctx microservice.IContext) error {
 func (h AuthenticationHttp) Profile(ctx microservice.IContext) error {
 
 	userProfile, err := h.authenticationService.Profile(ctx.UserInfo().Username)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, common.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    userProfile,
+	})
+	return nil
+}
+
+// Get Current Profile
+// @Description Get Current Profile
+// @Tags		Authentication
+// @Accept 		json
+// @Success		200	{array}	shopmodel.UserProfileReponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /profileshop [get]
+func (h AuthenticationHttp) ProfileShop(ctx microservice.IContext) error {
+
+	userProfile, err := h.shopService.InfoShop(ctx.UserInfo().ShopID)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, common.ApiResponse{
