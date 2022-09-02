@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math/rand"
 	documentimagemodel "smlcloudplatform/pkg/documentwarehouse/documentimage/models"
 	documentimagerepo "smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
 	"smlcloudplatform/pkg/vfgl/journal/models"
@@ -384,26 +385,33 @@ func (svc JournalWebsocketService) DocRefNextSelect(shopID string, username stri
 		return documentimagemodel.DocumentImageInfo{}, err
 	}
 
-	tempNextDocImage := documentimagemodel.DocumentImageDoc{}
-
 	docRefList := []string{}
 	for docRef := range docList {
 		docRefList = append(docRefList, docRef)
 	}
 
-	filters := bson.M{
+	filters := map[string]interface{}{
 		"status": status,
-		"documentref": bson.M{
-			"$nin": docRefList,
-		},
 	}
 
-	tempNextDocImage, err = svc.docImageRepo.FindOne(shopID, filters)
+	if len(docRefList) > 0 {
+		filters["documentref"] = bson.M{
+			"$nin": docRefList,
+		}
+	}
+
+	tempNextDocImage, _, err := svc.docImageRepo.FindPageFilterSort(shopID, filters, []string{}, "", 1, 30, map[string]int{})
 
 	if err != nil {
 		return documentimagemodel.DocumentImageInfo{}, err
 	}
 
-	return tempNextDocImage.DocumentImageInfo, nil
+	totalDoc := len(tempNextDocImage)
+
+	randNum := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	randIdx := randNum.Intn(totalDoc)
+
+	return tempNextDocImage[randIdx], nil
 
 }
