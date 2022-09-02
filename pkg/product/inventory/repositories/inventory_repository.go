@@ -25,6 +25,7 @@ type IInventoryRepository interface {
 	FindByItemGuid(shopId string, itemguid string) (models.InventoryDoc, error)
 	FindByItemGuidList(shopID string, guidList []string) ([]models.InventoryDoc, error)
 	FindByItemBarcode(shopId string, barcode string) (models.InventoryDoc, error)
+	FindByBarcodes(shopID string, barcodes []string) ([]models.InventoryDoc, error)
 }
 
 type InventoryRepository struct {
@@ -89,6 +90,24 @@ func (repo InventoryRepository) Delete(shopID string, guid string, username stri
 		return err
 	}
 	return nil
+}
+
+func (repo InventoryRepository) FindByBarcodes(shopID string, barcodes []string) ([]models.InventoryDoc, error) {
+
+	findDoc := []models.InventoryDoc{}
+
+	filters := bson.M{
+		"shopid":           shopID,
+		"barcodes":         bson.M{"$exists": true},
+		"barcodes.barcode": bson.M{"$in": barcodes},
+	}
+
+	err := repo.pst.Find(&models.InventoryDoc{}, filters, &findDoc)
+
+	if err != nil {
+		return []models.InventoryDoc{}, err
+	}
+	return findDoc, nil
 }
 
 func (repo InventoryRepository) FindByItemCodeGuid(shopID string, itemCodeGuidList []string) ([]models.InventoryItemGuid, error) {

@@ -25,6 +25,7 @@ type IBarcodeMasterRepository interface {
 	FindByItemGuid(shopId string, itemguid string) (models.BarcodeMasterDoc, error)
 	FindByItemGuidList(shopID string, guidList []string) ([]models.BarcodeMasterDoc, error)
 	FindByItemBarcode(shopId string, barcode string) (models.BarcodeMasterDoc, error)
+	FindByBarcodes(shopID string, barcodes []string) ([]models.BarcodeMasterDoc, error)
 }
 
 type BarcodeMasterRepository struct {
@@ -183,6 +184,24 @@ func (repo BarcodeMasterRepository) FindCreatedOrUpdatedPage(shopID string, last
 	}
 
 	return docList, pagination, nil
+}
+
+func (repo BarcodeMasterRepository) FindByBarcodes(shopID string, barcodes []string) ([]models.BarcodeMasterDoc, error) {
+
+	findDoc := []models.BarcodeMasterDoc{}
+
+	filters := bson.M{
+		"shopid":           shopID,
+		"barcodes":         bson.M{"$exists": true},
+		"barcodes.barcode": bson.M{"$in": barcodes},
+	}
+
+	err := repo.pst.Find(&models.BarcodeMasterDoc{}, filters, &findDoc)
+
+	if err != nil {
+		return []models.BarcodeMasterDoc{}, err
+	}
+	return findDoc, nil
 }
 
 func (repo BarcodeMasterRepository) FindByItemGuid(shopID string, itemguid string) (models.BarcodeMasterDoc, error) {

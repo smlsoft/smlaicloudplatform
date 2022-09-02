@@ -215,6 +215,23 @@ func preparePayloadDataBarcodeMaster(shopID string, authUsername string, findIte
 
 func (svc BarcodeMasterService) CreateWithGuid(shopID string, authUsername string, guidFixed string, barcodemaster models.BarcodeMaster) (string, error) {
 
+	reqBarcodes := []string{}
+
+	for _, barcode := range *barcodemaster.Barcodes {
+		reqBarcodes = append(reqBarcodes, barcode.Barcode)
+	}
+
+	findDocBarcodes, err := svc.invRepo.FindByBarcodes(shopID, reqBarcodes)
+
+	if err != nil {
+		return "", err
+	}
+
+	if len(findDocBarcodes) > 0 {
+		tempBarcode := *findDocBarcodes[0].Barcodes
+		return "", fmt.Errorf("barcode '%s' is exists", tempBarcode[0].Barcode)
+	}
+
 	newGuid := guidFixed
 
 	invDoc := models.BarcodeMasterDoc{}
@@ -299,6 +316,33 @@ func (svc BarcodeMasterService) UpdateBarcodeMaster(shopID string, guid string, 
 
 	if findDoc.ID == primitive.NilObjectID {
 		return errors.New("document not found")
+	}
+
+	if len(*barcodemaster.Barcodes) > 0 {
+		reqBarcodes := []string{}
+		idxReqBarcode := map[string]struct{}{}
+
+		for _, barcode := range *barcodemaster.Barcodes {
+			reqBarcodes = append(reqBarcodes, barcode.Barcode)
+			idxReqBarcode[barcode.Barcode] = struct{}{}
+		}
+
+		findDocBarcodes, err := svc.invRepo.FindByBarcodes(shopID, reqBarcodes)
+
+		if err != nil {
+			return err
+		}
+
+		for _, doc := range findDocBarcodes {
+			for _, barcode := range *doc.Barcodes {
+
+				if doc.GuidFixed != findDoc.GuidFixed {
+					if _, ok := idxReqBarcode[barcode.Barcode]; ok {
+						return fmt.Errorf("barcode %s is exists", barcode.Barcode)
+					}
+				}
+			}
+		}
 	}
 
 	findDoc.BarcodeMaster = barcodemaster
