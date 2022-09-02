@@ -26,6 +26,11 @@ const docTemplate = `{
     "paths": {
         "/apikeyservice": {
             "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
                 "description": "generate x-api-key",
                 "consumes": [
                     "application/json"
@@ -4765,6 +4770,39 @@ const docTemplate = `{
             }
         },
         "/profile": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Current Profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.UserProfileReponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/profileshop": {
             "get": {
                 "security": [
                     {

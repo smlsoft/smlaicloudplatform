@@ -124,6 +124,7 @@ func main() {
 
 			apikeyservice.NewApiKeyServiceHttp(ms, cfg),
 			authentication.NewAuthenticationHttp(ms, cfg),
+			apikeyservice.NewApiKeyServiceHttp(ms, cfg),
 			shop.NewShopHttp(ms, cfg),
 
 			shop.NewShopMemberHttp(ms, cfg),

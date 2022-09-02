@@ -3320,6 +3320,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
       tags:
       - XApiKey
   /barcodemaster:
@@ -6259,6 +6261,26 @@ paths:
       tags:
       - PaymentMaster
   /profile:
+    get:
+      consumes:
+      - application/json
+      description: Get Current Profile
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.UserProfileReponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Authentication
+  /profileshop:
     get:
       consumes:
       - application/json

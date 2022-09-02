@@ -44,11 +44,12 @@ func (h ApiKeyServiceHttp) RouteSetup() {
 // @Accept 		json
 // @Success		200	{object}	common.AuthResponse
 // @Failure		400 {object}	common.AuthResponseFailed
+// @Security     AccessToken
 // @Router /apikeyservice [post]
 func (h ApiKeyServiceHttp) CreateApiKey(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 
-	token, err := h.svc.CreateApiKeyService(userInfo, time.Duration(24*90)*time.Hour)
+	token, err := h.svc.CreateApiKeyService(userInfo, time.Duration(24*180)*time.Hour)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
