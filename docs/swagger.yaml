@@ -169,6 +169,345 @@ definitions:
       unitname:
         type: string
     type: object
+  models.BarcodeMaster:
+    properties:
+      activated:
+        description: เปิดใช้งานอยู่
+        type: boolean
+      barcodes:
+        items:
+          $ref: '#/definitions/models.Barcode'
+        type: array
+      category:
+        $ref: '#/definitions/models.Category'
+      categoryguid:
+        description: Guid กลุ่มสินค้า
+        type: string
+      description1:
+        description: รายละเอียดภาษาไทย
+        type: string
+      description2:
+        type: string
+      description3:
+        type: string
+      description4:
+        type: string
+      description5:
+        type: string
+      havepoint:
+        type: boolean
+      haveserialno:
+        type: boolean
+      images:
+        items:
+          $ref: '#/definitions/models.InventoryImage'
+        type: array
+      itemcode:
+        type: string
+      itemguid:
+        type: string
+      itemsku:
+        type: string
+      itemtype:
+        type: integer
+      itemunitcode:
+        type: string
+      itemunitdiv:
+        type: number
+      itemunitstd:
+        type: number
+      itemvat:
+        type: integer
+      memberprice:
+        type: number
+      name1:
+        description: ชื่อภาษาไทย
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      options:
+        items:
+          $ref: '#/definitions/models.Option'
+        type: array
+      parid:
+        type: string
+      price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      recommended:
+        description: สินค้าแนะนำ
+        type: boolean
+      tags:
+        items:
+          $ref: '#/definitions/models.InventoryTag'
+        type: array
+      unituses:
+        items:
+          $ref: '#/definitions/models.UnitUse'
+        type: array
+      xorder:
+        type: integer
+    type: object
+  models.BarcodeMasterActivity:
+    properties:
+      activated:
+        description: เปิดใช้งานอยู่
+        type: boolean
+      barcodes:
+        items:
+          $ref: '#/definitions/models.Barcode'
+        type: array
+      category:
+        $ref: '#/definitions/models.Category'
+      categoryguid:
+        description: Guid กลุ่มสินค้า
+        type: string
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      description1:
+        description: รายละเอียดภาษาไทย
+        type: string
+      description2:
+        type: string
+      description3:
+        type: string
+      description4:
+        type: string
+      description5:
+        type: string
+      guidfixed:
+        type: string
+      havepoint:
+        type: boolean
+      haveserialno:
+        type: boolean
+      images:
+        items:
+          $ref: '#/definitions/models.InventoryImage'
+        type: array
+      itemcode:
+        type: string
+      itemguid:
+        type: string
+      itemsku:
+        type: string
+      itemtype:
+        type: integer
+      itemunitcode:
+        type: string
+      itemunitdiv:
+        type: number
+      itemunitstd:
+        type: number
+      itemvat:
+        type: integer
+      memberprice:
+        type: number
+      name1:
+        description: ชื่อภาษาไทย
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      options:
+        items:
+          $ref: '#/definitions/models.Option'
+        type: array
+      parid:
+        type: string
+      price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      recommended:
+        description: สินค้าแนะนำ
+        type: boolean
+      shopid:
+        type: string
+      tags:
+        items:
+          $ref: '#/definitions/models.InventoryTag'
+        type: array
+      unituses:
+        items:
+          $ref: '#/definitions/models.UnitUse'
+        type: array
+      updatedat:
+        type: string
+      xorder:
+        type: integer
+    type: object
+  models.BarcodeMasterBulkInsertResponse:
+    properties:
+      created:
+        items:
+          type: string
+        type: array
+      payloadDuplicate:
+        items:
+          type: string
+        type: array
+      success:
+        type: boolean
+      updateFailed:
+        items:
+          type: string
+        type: array
+      updated:
+        items:
+          type: string
+        type: array
+    type: object
+  models.BarcodeMasterDeleteActivity:
+    properties:
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      shopid:
+        type: string
+      updatedat:
+        type: string
+    type: object
+  models.BarcodeMasterFetchUpdateResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.BarcodeMasterLastActivityResponse'
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  models.BarcodeMasterInfo:
+    properties:
+      activated:
+        description: เปิดใช้งานอยู่
+        type: boolean
+      barcodes:
+        items:
+          $ref: '#/definitions/models.Barcode'
+        type: array
+      category:
+        $ref: '#/definitions/models.Category'
+      categoryguid:
+        description: Guid กลุ่มสินค้า
+        type: string
+      description1:
+        description: รายละเอียดภาษาไทย
+        type: string
+      description2:
+        type: string
+      description3:
+        type: string
+      description4:
+        type: string
+      description5:
+        type: string
+      guidfixed:
+        type: string
+      havepoint:
+        type: boolean
+      haveserialno:
+        type: boolean
+      images:
+        items:
+          $ref: '#/definitions/models.InventoryImage'
+        type: array
+      itemcode:
+        type: string
+      itemguid:
+        type: string
+      itemsku:
+        type: string
+      itemtype:
+        type: integer
+      itemunitcode:
+        type: string
+      itemunitdiv:
+        type: number
+      itemunitstd:
+        type: number
+      itemvat:
+        type: integer
+      memberprice:
+        type: number
+      name1:
+        description: ชื่อภาษาไทย
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      options:
+        items:
+          $ref: '#/definitions/models.Option'
+        type: array
+      parid:
+        type: string
+      price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      recommended:
+        description: สินค้าแนะนำ
+        type: boolean
+      tags:
+        items:
+          $ref: '#/definitions/models.InventoryTag'
+        type: array
+      unituses:
+        items:
+          $ref: '#/definitions/models.UnitUse'
+        type: array
+      xorder:
+        type: integer
+    type: object
+  models.BarcodeMasterInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.BarcodeMasterInfo'
+      success:
+        type: boolean
+    type: object
+  models.BarcodeMasterLastActivityResponse:
+    properties:
+      new:
+        items:
+          $ref: '#/definitions/models.BarcodeMasterActivity'
+        type: array
+      remove:
+        items:
+          $ref: '#/definitions/models.BarcodeMasterDeleteActivity'
+        type: array
+    type: object
+  models.BarcodeMasterPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.BarcodeMasterInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
   models.BulkInsertResponse:
     properties:
       created:
@@ -2983,6 +3322,230 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       tags:
       - XApiKey
+  /barcodemaster:
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.BarcodeMasterPageResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BarcodeMaster
+    post:
+      consumes:
+      - application/json
+      description: Create BarcodeMaster
+      parameters:
+      - description: BarcodeMaster
+        in: body
+        name: BarcodeMaster
+        required: true
+        schema:
+          $ref: '#/definitions/models.BarcodeMaster'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BarcodeMaster
+  /barcodemaster/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete BarcodeMaster
+      parameters:
+      - description: BarcodeMaster ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BarcodeMaster
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: BarcodeMaster ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.BarcodeMasterInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BarcodeMaster
+    put:
+      consumes:
+      - application/json
+      description: Update BarcodeMaster
+      parameters:
+      - description: BarcodeMaster ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: BarcodeMaster
+        in: body
+        name: BarcodeMaster
+        required: true
+        schema:
+          $ref: '#/definitions/models.BarcodeMaster'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BarcodeMaster
+  /barcodemaster/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create BarcodeMaster
+      parameters:
+      - description: BarcodeMaster
+        in: body
+        name: BarcodeMaster
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.BarcodeMaster'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BarcodeMasterBulkInsertResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BarcodeMaster
+  /barcodemaster/categoryupdate/{catid}:
+    post:
+      consumes:
+      - application/json
+      description: Update BarcodeMaster Category List
+      parameters:
+      - description: Category GUID
+        in: path
+        name: catid
+        required: true
+        type: string
+      - description: BarcodeMaster
+        in: body
+        name: BarcodeMaster
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccess'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BarcodeMaster
+  /barcodemaster/fetchupdate:
+    get:
+      consumes:
+      - application/json
+      description: Fetch Update BarcodeMaster By Date
+      parameters:
+      - description: DateTime YYYY-MM-DDTHH:mm
+        in: query
+        name: lastUpdate
+        required: true
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.BarcodeMasterFetchUpdateResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BarcodeMaster
   /category:
     get:
       consumes:

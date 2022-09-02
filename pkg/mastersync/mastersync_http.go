@@ -22,23 +22,27 @@ import (
 	inventoryRepo "smlcloudplatform/pkg/product/inventory/repositories"
 	inventoryService "smlcloudplatform/pkg/product/inventory/services"
 
+	barcodemasterRepo "smlcloudplatform/pkg/product/barcodemaster/repositories"
+	barcodemasterService "smlcloudplatform/pkg/product/barcodemaster/services"
+
 	"smlcloudplatform/pkg/mastersync/repositories"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 )
 
 type MasterSyncHttp struct {
-	ms             *microservice.Microservice
-	cfg            microservice.IConfig
-	svcMasterSync  services.IMasterSyncService
-	svcCategory    categoryService.ICategoryService
-	svcMember      member.IMemberService
-	svcInventory   inventoryService.IInventoryService
-	svcKitchen     kitchen.IKitchenService
-	svcShopPrinter shopprinter.IShopPrinterService
-	svcShopTable   shoptable.ShopTableService
-	svcShopZone    shopzone.ShopZoneService
-	svcEmployee    employee.EmployeeService
+	ms               *microservice.Microservice
+	cfg              microservice.IConfig
+	svcMasterSync    services.IMasterSyncService
+	svcCategory      categoryService.ICategoryService
+	svcMember        member.IMemberService
+	svcInventory     inventoryService.IInventoryService
+	svcKitchen       kitchen.IKitchenService
+	svcShopPrinter   shopprinter.IShopPrinterService
+	svcShopTable     shoptable.ShopTableService
+	svcShopZone      shopzone.ShopZoneService
+	svcEmployee      employee.EmployeeService
+	svcBarcodeMaster barcodemasterService.BarcodeMasterService
 }
 
 func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) MasterSyncHttp {
@@ -89,21 +93,28 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	employeeCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "employee")
 	svcEmployee := employee.NewEmployeeService(repoEmployee, employeeCacheSyncRepo)
 
+	// Barcode Master
+	repoBarcodeMaster := barcodemasterRepo.NewBarcodeMasterRepository(pst)
+	mqRepoBarcodeMaster := barcodemasterRepo.NewBarcodeMasterMQRepository(prod)
+	barcodeMasterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "inventory")
+	svcBarcodeMaster := barcodemasterService.NewBarcodeMasterService(repoBarcodeMaster, mqRepoBarcodeMaster, barcodeMasterCacheSyncRepo)
+
 	masterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "mastersync")
 	svcMasterSync := services.NewMasterSyncService(masterCacheSyncRepo)
 
 	return MasterSyncHttp{
-		ms:             ms,
-		cfg:            cfg,
-		svcMasterSync:  svcMasterSync,
-		svcCategory:    svcCategory,
-		svcInventory:   svcInventory,
-		svcMember:      svcMember,
-		svcKitchen:     svcKitchen,
-		svcShopPrinter: svcShopPrinter,
-		svcShopTable:   svcShopTable,
-		svcShopZone:    svcShopZone,
-		svcEmployee:    *svcEmployee,
+		ms:               ms,
+		cfg:              cfg,
+		svcMasterSync:    svcMasterSync,
+		svcCategory:      svcCategory,
+		svcInventory:     svcInventory,
+		svcMember:        svcMember,
+		svcKitchen:       svcKitchen,
+		svcShopPrinter:   svcShopPrinter,
+		svcShopTable:     svcShopTable,
+		svcShopZone:      svcShopZone,
+		svcEmployee:      *svcEmployee,
+		svcBarcodeMaster: svcBarcodeMaster,
 	}
 }
 
@@ -178,6 +189,7 @@ func (h MasterSyncHttp) LastActivitySync(ctx microservice.IContext) error {
 	moduleList["shoptable"] = h.svcShopTable
 	moduleList["shopzone"] = h.svcShopZone
 	moduleList["employee"] = h.svcEmployee
+	moduleList["barcodemaster"] = h.svcBarcodeMaster
 
 	result, pagination, err := runModule(moduleList, isSelectAll, keySelectList, ActivityParam{
 		ShopID:     shopID,
