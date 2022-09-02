@@ -3320,6 +3320,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
       tags:
       - XApiKey
   /barcodemaster:

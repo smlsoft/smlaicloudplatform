@@ -26,6 +26,11 @@ const docTemplate = `{
     "paths": {
         "/apikeyservice": {
             "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
                 "description": "generate x-api-key",
                 "consumes": [
                     "application/json"
