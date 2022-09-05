@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-	documentimagemodel "smlcloudplatform/pkg/documentwarehouse/documentimage/models"
-	documentimagerepo "smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
+	documentimageModel "smlcloudplatform/pkg/documentwarehouse/documentimage/models"
+	documentimageRepo "smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
 	"smlcloudplatform/pkg/vfgl/journal/models"
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
 	"time"
@@ -44,7 +44,7 @@ type IJournalWebsocketService interface {
 	DocRefSelect(shopID string, username string, docRef string) (bool, error)
 	DocRefDeSelect(shopID string, username string) (bool, error)
 	DocRefSelectForce(shopID string, username string, docRef string, forceSelect bool) (bool, error)
-	DocRefNextSelect(shopID string, username string, status int8) (documentimagemodel.DocumentImageInfo, error)
+	DocRefNextSelect(shopID string, username string, status int8) (documentimageModel.DocumentImageInfo, error)
 }
 
 type JournalWebsocketService struct {
@@ -55,11 +55,11 @@ type JournalWebsocketService struct {
 	cacheMessageName    string
 	cacheWebsocketName  string
 	cacheExpire         time.Duration
-	docImageRepo        documentimagerepo.IDocumentImageRepository
+	docImageRepo        documentimageRepo.IDocumentImageRepository
 	repoCache           repositories.IJournalCacheRepository
 }
 
-func NewJournalWebsocketService(docImageRepo documentimagerepo.IDocumentImageRepository, repoCache repositories.IJournalCacheRepository, cacheExpire time.Duration) *JournalWebsocketService {
+func NewJournalWebsocketService(docImageRepo documentimageRepo.IDocumentImageRepository, repoCache repositories.IJournalCacheRepository, cacheExpire time.Duration) *JournalWebsocketService {
 
 	return &JournalWebsocketService{
 		cacheChannelDoc:     "chdoc",
@@ -378,11 +378,11 @@ func (svc JournalWebsocketService) DocRefPool(shopID string, username string, ws
 	}
 }
 
-func (svc JournalWebsocketService) DocRefNextSelect(shopID string, username string, status int8) (documentimagemodel.DocumentImageInfo, error) {
+func (svc JournalWebsocketService) DocRefNextSelect(shopID string, username string, status int8) (documentimageModel.DocumentImageInfo, error) {
 	docList, err := svc.GetAllDocRefPool(shopID)
 
 	if err != nil {
-		return documentimagemodel.DocumentImageInfo{}, err
+		return documentimageModel.DocumentImageInfo{}, err
 	}
 
 	docRefList := []string{}
@@ -403,7 +403,7 @@ func (svc JournalWebsocketService) DocRefNextSelect(shopID string, username stri
 	tempNextDocImage, _, err := svc.docImageRepo.FindPageFilterSort(shopID, filters, []string{}, "", 1, 30, map[string]int{})
 
 	if err != nil {
-		return documentimagemodel.DocumentImageInfo{}, err
+		return documentimageModel.DocumentImageInfo{}, err
 	}
 
 	totalDoc := len(tempNextDocImage)

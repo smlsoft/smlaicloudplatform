@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	documentimagerepo "smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
+	documentimageRepo "smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/vfgl/journal/config"
@@ -28,7 +28,7 @@ func NewJournalWs(ms *microservice.Microservice, cfg microservice.IConfig) Journ
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
-	docImageRepo := documentimagerepo.NewDocumentImageRepository(pst)
+	docImageRepo := documentimageRepo.NewDocumentImageRepository(pst)
 	cacheRepo := repositories.NewJournalCacheRepository(cache)
 	svcWebsocket := services.NewJournalWebsocketService(docImageRepo, cacheRepo, time.Duration(30)*time.Minute)
 

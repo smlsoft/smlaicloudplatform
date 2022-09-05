@@ -31,7 +31,6 @@ func NewChartOfAccountHttp(ms *microservice.Microservice, cfg microservice.IConf
 	repoJournal := journalRepo.NewJournalRepository(pst)
 
 	svc := services.NewChartOfAccountHttpService(repo, repoJournal, mqRepo)
-
 	return ChartOfAccountHttp{
 		ms:  ms,
 		cfg: cfg,
