@@ -6,6 +6,8 @@ import (
 	"smlcloudplatform/pkg/vfgl/journal/models"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type IJournalRepository interface {
@@ -17,6 +19,7 @@ type IJournalRepository interface {
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.JournalInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.JournalDoc, error)
 	FindOne(shopID string, filters map[string]interface{}) (models.JournalDoc, error)
+	IsAccountCodeUsed(shopID string, accountCode string) (bool, error)
 }
 
 type JournalRepository struct {
@@ -37,4 +40,23 @@ func NewJournalRepository(pst microservice.IPersisterMongo) JournalRepository {
 	insRepo.GuidRepository = repositories.NewGuidRepository[models.JournalItemGuid](pst)
 
 	return insRepo
+}
+
+func (repo *JournalRepository) IsAccountCodeUsed(shopID string, accountCode string) (bool, error) {
+
+	findDoc := models.JournalDoc{}
+
+	filters := bson.M{
+		"shopid":                    shopID,
+		"journaldetail.accountcode": accountCode,
+	}
+
+	err := repo.pst.FindOne(models.JournalDoc{}, filters, &findDoc)
+
+	if err != nil {
+		return true, nil
+	}
+
+	return findDoc.ID != primitive.NilObjectID, nil
+
 }

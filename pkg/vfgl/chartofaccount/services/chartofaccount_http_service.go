@@ -7,6 +7,7 @@ import (
 	"smlcloudplatform/pkg/utils/importdata"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/models"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/repositories"
+	journalRepo "smlcloudplatform/pkg/vfgl/journal/repositories"
 	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
@@ -23,14 +24,16 @@ type IChartOfAccountHttpService interface {
 }
 
 type ChartOfAccountHttpService struct {
-	repo   repositories.ChartOfAccountRepository
-	mqRepo repositories.ChartOfAccountMQRepository
+	repoJournal journalRepo.JournalRepository
+	repo        repositories.ChartOfAccountRepository
+	mqRepo      repositories.ChartOfAccountMQRepository
 }
 
-func NewChartOfAccountHttpService(repo repositories.ChartOfAccountRepository, mqRepo repositories.ChartOfAccountMQRepository) ChartOfAccountHttpService {
+func NewChartOfAccountHttpService(repo repositories.ChartOfAccountRepository, repoJournal journalRepo.JournalRepository, mqRepo repositories.ChartOfAccountMQRepository) ChartOfAccountHttpService {
 	return ChartOfAccountHttpService{
-		repo:   repo,
-		mqRepo: mqRepo,
+		repo:        repo,
+		repoJournal: repoJournal,
+		mqRepo:      mqRepo,
 	}
 }
 
@@ -126,6 +129,17 @@ func (svc ChartOfAccountHttpService) Delete(guid string, shopID string, authUser
 	if findDoc.ID == primitive.NilObjectID {
 		return errors.New("document not found")
 	}
+
+	isAccountCodeUsed, err := svc.repoJournal.IsAccountCodeUsed(shopID, findDoc.AccountCode)
+
+	if err != nil {
+		return err
+	}
+
+	if isAccountCodeUsed {
+		return errors.New("document is used")
+	}
+
 	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
 	if err != nil {
 		return err

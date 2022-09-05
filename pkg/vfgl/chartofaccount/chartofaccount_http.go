@@ -9,6 +9,7 @@ import (
 	"smlcloudplatform/pkg/vfgl/chartofaccount/models"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/repositories"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/services"
+	journalRepo "smlcloudplatform/pkg/vfgl/journal/repositories"
 )
 
 type IChartOfAccountHttp interface{}
@@ -27,7 +28,9 @@ func NewChartOfAccountHttp(ms *microservice.Microservice, cfg microservice.IConf
 	repo := repositories.NewChartOfAccountRepository(pst)
 	mqRepo := repositories.NewChartOfAccountMQRepository(prod)
 
-	svc := services.NewChartOfAccountHttpService(repo, mqRepo)
+	repoJournal := journalRepo.NewJournalRepository(pst)
+
+	svc := services.NewChartOfAccountHttpService(repo, repoJournal, mqRepo)
 
 	return ChartOfAccountHttp{
 		ms:  ms,
