@@ -81,6 +81,10 @@ func (svc ShopUserService) DeleteUserPermissionShop(shopID string, authUsername 
 		return errors.New("permission denied")
 	}
 
+	if authUser.Username == authUsername {
+		return errors.New("can't delete your permission")
+	}
+
 	err = svc.repo.Delete(shopID, username)
 
 	if err != nil {
