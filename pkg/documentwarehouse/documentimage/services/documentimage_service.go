@@ -27,7 +27,7 @@ type IDocumentImageService interface {
 
 	SaveDocumentImageDocRefGroup(shopID string, docRef string, docImages []string) error
 	GetDocumentImageDocRefGroup(shopID string, docRef string) (models.DocumentImageGroup, error)
-	ListDocumentImageDocRefGroup(shopID string, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error)
+	ListDocumentImageDocRefGroup(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error)
 }
 
 type DocumentImageService struct {
@@ -196,8 +196,8 @@ func (svc DocumentImageService) SaveDocumentImageDocRefGroup(shopID string, docR
 	return svc.Repo.SaveDocumentImageDocRefGroup(shopID, docRef, docImages)
 }
 
-func (svc DocumentImageService) ListDocumentImageDocRefGroup(shopID string, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.Repo.ListDocumentImageGroup(shopID, q, page, limit)
+func (svc DocumentImageService) ListDocumentImageDocRefGroup(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error) {
+	docList, pagination, err := svc.Repo.ListDocumentImageGroup(shopID, filters, q, page, limit)
 
 	return docList, pagination, err
 }

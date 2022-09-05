@@ -24,7 +24,7 @@ type IDocumentImageRepository interface {
 	UpdateDocumentImageStatus(shopID string, guid string, status int8) error
 	UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, status int8) error
 	SaveDocumentImageDocRefGroup(shopID string, docRef string, docImages []string) error
-	ListDocumentImageGroup(shopID string, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error)
+	ListDocumentImageGroup(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error)
 	GetDocumentImageGroup(shopID string, docRef string) (models.DocumentImageGroup, error)
 }
 
@@ -86,10 +86,16 @@ func (repo DocumentImageRepository) SaveDocumentImageDocRefGroup(shopID string, 
 	return repo.pst.Update(models.DocumentImageDoc{}, fillter, data)
 }
 
-func (repo DocumentImageRepository) ListDocumentImageGroup(shopID string, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error) {
+func (repo DocumentImageRepository) ListDocumentImageGroup(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error) {
 
 	searchFilter := bson.M{
 		"shopid": shopID,
+	}
+
+	if len(filters) > 0 {
+		for key, val := range filters {
+			searchFilter[key] = val
+		}
 	}
 
 	if len(strings.TrimSpace(q)) > 0 {

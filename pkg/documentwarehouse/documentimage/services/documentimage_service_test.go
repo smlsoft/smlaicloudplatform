@@ -70,8 +70,8 @@ func (m *MockDocumentImageRepository) SaveDocumentImageDocRefGroup(shopID string
 	return args.Error(0)
 }
 
-func (m *MockDocumentImageRepository) ListDocumentImageGroup(shopID string, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error) {
-	args := m.Called(shopID)
+func (m *MockDocumentImageRepository) ListDocumentImageGroup(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error) {
+	args := m.Called(shopID, filters, q, page, limit)
 	return args.Get(0).([]models.DocumentImageGroup), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
 
