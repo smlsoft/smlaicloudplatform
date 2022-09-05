@@ -49,6 +49,7 @@ func (repo *JournalRepository) IsAccountCodeUsed(shopID string, accountCode stri
 	filters := bson.M{
 		"shopid":                    shopID,
 		"journaldetail.accountcode": accountCode,
+		"deletedat":                 bson.M{"$exists": false},
 	}
 
 	err := repo.pst.FindOne(models.JournalDoc{}, filters, &findDoc)
