@@ -2,7 +2,6 @@ package journal
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	documentimageRepo "smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
@@ -107,7 +106,6 @@ func (h JournalWs) WebsocketImage(ctx microservice.IContext) error {
 	go func() {
 
 		defer func() {
-			fmt.Println("image is close")
 			singClose <- struct{}{}
 		}()
 
@@ -120,6 +118,60 @@ func (h JournalWs) WebsocketImage(ctx microservice.IContext) error {
 	}()
 
 	// Send to client
+	lastMessageForm, err := h.svcWebsocket.GetLastMessage(shopID, username, config.WEBSOCKET_SCREEN_FORM)
+	if err != nil {
+		h.ms.Logger.Error(err.Error())
+	}
+
+	lastMessage, err := h.svcWebsocket.GetLastMessage(shopID, username, screenName)
+	if err != nil {
+		h.ms.Logger.Error(err.Error())
+	}
+
+	tempMessage := map[string]interface{}{
+		"docref": "",
+	}
+
+	if lastMessageForm != "" {
+		tempForm := map[string]interface{}{}
+		err = json.Unmarshal([]byte(lastMessageForm), &tempForm)
+		if err != nil {
+			h.ms.Logger.Error(err.Error())
+		}
+
+		if tempDocref, ok := tempForm["docref"]; ok {
+			tempMessage["docref"] = tempDocref
+		}
+	}
+
+	if lastMessage != "" {
+		tempImage := map[string]interface{}{}
+
+		err = json.Unmarshal([]byte(lastMessage), &tempImage)
+		if err != nil {
+			h.ms.Logger.Error(err.Error())
+		}
+
+		if tempEvent, ok := tempImage["event"]; ok {
+			tempMessage["event"] = tempEvent
+		}
+
+		if tempPayload, ok := tempImage["payload"]; ok {
+			tempMessage["payload"] = tempPayload
+		}
+	}
+
+	tempMessageText, err := json.Marshal(tempMessage)
+	if err != nil {
+		h.ms.Logger.Error(err.Error())
+	}
+
+	err = ws.WriteMessage(websocket.TextMessage, []byte(tempMessageText))
+
+	if err != nil {
+		h.ms.Logger.Error(err.Error())
+	}
+
 	for {
 		h.svcWebsocket.ExpireWebsocket(shopID, username)
 
@@ -135,6 +187,7 @@ func (h JournalWs) WebsocketImage(ctx microservice.IContext) error {
 				return err
 			}
 
+			h.svcWebsocket.SaveLastMessage(shopID, username, screenName, temp.Payload)
 		}
 
 	}
