@@ -6,13 +6,20 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/models"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/services"
+
+	journalRepo "smlcloudplatform/pkg/vfgl/journal/repositories"
+	journalSvc "smlcloudplatform/pkg/vfgl/journal/services"
+
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IDocumentImageHttp interface {
@@ -28,20 +35,30 @@ type DocumentImageHttp struct {
 	ms      *microservice.Microservice
 	cfg     microservice.IConfig
 	service services.IDocumentImageService
+
+	svcWsJournal journalSvc.IJournalWebsocketService
 }
 
 func NewDocumentImageHttp(ms *microservice.Microservice, cfg microservice.IConfig) *DocumentImageHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
+
 	repo := repositories.NewDocumentImageRepository(pst)
 
 	azureblob := microservice.NewPersisterAzureBlob()
 	svc := services.NewDocumentImageService(repo, azureblob)
 
+	docImageRepo := repositories.NewDocumentImageRepository(pst)
+
+	cacheRepo := journalRepo.NewJournalCacheRepository(cache)
+	svcWsJournal := journalSvc.NewJournalWebsocketService(docImageRepo, cacheRepo, time.Duration(30)*time.Minute)
+
 	return &DocumentImageHttp{
-		ms:      ms,
-		cfg:     cfg,
-		service: svc,
+		ms:           ms,
+		cfg:          cfg,
+		service:      svc,
+		svcWsJournal: svcWsJournal,
 	}
 }
 
@@ -111,7 +128,20 @@ func (h DocumentImageHttp) SearchDocumentImage(ctx microservice.IContext) error 
 
 	documentRef := strings.TrimSpace(ctx.QueryParam("documentref"))
 
-	if len(documentRef) > 0 {
+	docRefReserve := strings.TrimSpace(ctx.QueryParam("docref-reserve"))
+
+	if len(docRefReserve) > 0 && docRefReserve != "0" {
+		docRefPoolList, err := h.svcWsJournal.GetAllDocRefPool(shopID)
+
+		if err == nil {
+			docRefList := []string{}
+			for docRef := range docRefPoolList {
+				docRefList = append(docRefList, docRef)
+			}
+			matchFilters["documentref"] = bson.M{"$eq": documentRef, "$nin": docRefList}
+		}
+
+	} else if len(documentRef) > 0 {
 		matchFilters["documentref"] = documentRef
 	}
 
