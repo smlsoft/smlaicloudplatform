@@ -437,7 +437,24 @@ func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) err
 	q := ctx.QueryParam("q")
 	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 
-	docList, pagination, err := h.service.ListDocumentImageDocRefGroup(shopID, q, page, limit)
+	matchFilters := map[string]interface{}{}
+
+	docRefReserve := strings.TrimSpace(ctx.QueryParam("docref-reserve"))
+
+	if len(docRefReserve) > 0 && docRefReserve != "0" {
+		docRefPoolList, err := h.svcWsJournal.GetAllDocRefPool(shopID)
+
+		if err == nil {
+			docRefList := []string{}
+			for docRef := range docRefPoolList {
+				docRefList = append(docRefList, docRef)
+			}
+			matchFilters["documentref"] = bson.M{"$nin": docRefList}
+		}
+
+	}
+
+	docList, pagination, err := h.service.ListDocumentImageDocRefGroup(shopID, matchFilters, q, page, limit)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
