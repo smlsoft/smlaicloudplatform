@@ -12,6 +12,8 @@ import (
 	"smlcloudplatform/pkg/vfgl/journal/models"
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
 	"smlcloudplatform/pkg/vfgl/journal/services"
+	"strings"
+	"time"
 )
 
 type IJournalHttp interface{}
@@ -285,7 +287,34 @@ func (h JournalHttp) SearchJournal(ctx microservice.IContext) error {
 	q := ctx.QueryParam("q")
 	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 	sort := utils.GetSortParam(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchJournal(shopID, q, page, limit, sort)
+
+	accountGroup := ctx.QueryParam("accountgroup")
+
+	startDateText := strings.TrimSpace(ctx.QueryParam("startdate"))
+	endDateText := strings.TrimSpace(ctx.QueryParam("enddate"))
+
+	startDate := time.Time{}
+	endDate := time.Time{}
+
+	var err error
+
+	if len(startDateText) > 0 {
+		startDate, err = time.Parse("2006-01-02", startDateText)
+
+		if err == nil {
+			startDate = startDate.Add(time.Duration(-24) * time.Hour)
+		}
+	}
+
+	if len(endDateText) > 0 {
+		endDate, err = time.Parse("2006-01-02", endDateText)
+
+		if err == nil {
+			endDate = endDate.Add(time.Duration(24) * time.Hour)
+		}
+	}
+
+	docList, pagination, err := h.svc.SearchJournal(shopID, q, page, limit, sort, startDate, endDate, accountGroup)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

@@ -20,7 +20,7 @@ type IJournalHttpService interface {
 	DeleteJournal(guid string, shopID string, authUsername string) error
 	InfoJournal(shopID string, guid string) (models.JournalInfo, error)
 	InfoJournalByDocumentRef(shopID string, documentRef string) (models.JournalInfo, error)
-	SearchJournal(shopID string, q string, page int, limit int, sort map[string]int) ([]models.JournalInfo, mongopagination.PaginationData, error)
+	SearchJournal(shopID string, q string, page int, limit int, sort map[string]int, startDate time.Time, endDate time.Time, accountGroup string) ([]models.JournalInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Journal) (common.BulkImport, error)
 }
 
@@ -163,13 +163,27 @@ func (svc JournalHttpService) InfoJournalByDocumentRef(shopID string, documentRe
 
 }
 
-func (svc JournalHttpService) SearchJournal(shopID string, q string, page int, limit int, sort map[string]int) ([]models.JournalInfo, mongopagination.PaginationData, error) {
+func (svc JournalHttpService) SearchJournal(shopID string, q string, page int, limit int, sort map[string]int, startDate time.Time, endDate time.Time, accountGroup string) ([]models.JournalInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
 		"guidfixed",
 		"docno",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	filters := map[string]interface{}{}
+
+	if !startDate.IsZero() && !endDate.IsZero() {
+		filters["docdate"] = bson.M{"$gte": startDate, "$lt": endDate}
+	} else if !startDate.IsZero() {
+		filters["docdate"] = bson.M{"$gte": startDate}
+	} else if !endDate.IsZero() {
+		filters["docdate"] = bson.M{"$lt": endDate}
+	}
+
+	if accountGroup != "" {
+		filters["accountgroup"] = accountGroup
+	}
+
+	docList, pagination, err := svc.repo.FindPageFilterSort(shopID, filters, searchCols, q, page, limit, sort)
 
 	if err != nil {
 		return []models.JournalInfo{}, pagination, err
@@ -179,9 +193,6 @@ func (svc JournalHttpService) SearchJournal(shopID string, q string, page int, l
 }
 
 func (svc JournalHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.Journal) (common.BulkImport, error) {
-
-	createDataList := []models.JournalDoc{}
-	duplicateDataList := []models.Journal{}
 
 	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.Journal](dataList, svc.getDocIDKey)
 
@@ -201,7 +212,7 @@ func (svc JournalHttpService) SaveInBatch(shopID string, authUsername string, da
 		foundItemGuidList = append(foundItemGuidList, doc.DocNo)
 	}
 
-	duplicateDataList, createDataList = importdata.PreparePayloadData[models.Journal, models.JournalDoc](
+	duplicateDataList, createDataList := importdata.PreparePayloadData[models.Journal, models.JournalDoc](
 		shopID,
 		authUsername,
 		foundItemGuidList,
