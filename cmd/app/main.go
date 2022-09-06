@@ -27,6 +27,7 @@ import (
 	"smlcloudplatform/pkg/smsreceive/smspatterns"
 	"smlcloudplatform/pkg/smsreceive/smspaymentsettings"
 	"smlcloudplatform/pkg/smsreceive/smstransaction"
+	"smlcloudplatform/pkg/storefront"
 	"smlcloudplatform/pkg/syncdata"
 	"smlcloudplatform/pkg/tools"
 	"smlcloudplatform/pkg/transaction/purchase"
@@ -127,6 +128,7 @@ func main() {
 
 		barcodemaster.NewBarcodeMasterHttp(ms, cfg),
 		warehouse.NewWarehouseHttp(ms, cfg),
+		storefront.NewStorefrontHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)

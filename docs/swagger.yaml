@@ -885,6 +885,13 @@ definitions:
       remark:
         type: string
     type: object
+  models.Device:
+    properties:
+      os:
+        type: string
+      uuid:
+        type: string
+    type: object
   models.DocumentImage:
     properties:
       docguidref:
@@ -2981,6 +2988,25 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
+    type: object
+  models.Storefront:
+    properties:
+      devices:
+        items:
+          $ref: '#/definitions/models.Device'
+        type: array
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+    required:
+    - name1
     type: object
   models.SyncInventoryData:
     properties:
@@ -7592,6 +7618,139 @@ paths:
       summary: รับข้อมูล sms
       tags:
       - SMS
+  /storefront:
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Storefront
+    post:
+      consumes:
+      - application/json
+      description: Create Storefront
+      parameters:
+      - description: Storefront
+        in: body
+        name: Storefront
+        required: true
+        schema:
+          $ref: '#/definitions/models.Storefront'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Storefront
+  /storefront/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Storefront
+      parameters:
+      - description: Storefront ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Storefront
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Storefront ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Storefront
+    put:
+      consumes:
+      - application/json
+      description: Update Storefront
+      parameters:
+      - description: Storefront ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Storefront
+        in: body
+        name: Storefront
+        required: true
+        schema:
+          $ref: '#/definitions/models.Storefront'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Storefront
   /syncproduct:
     post:
       consumes:
