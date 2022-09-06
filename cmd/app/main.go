@@ -35,6 +35,7 @@ import (
 	"smlcloudplatform/pkg/vfgl/chartofaccount"
 	"smlcloudplatform/pkg/vfgl/journal"
 	"smlcloudplatform/pkg/vfgl/journalbook"
+	"smlcloudplatform/pkg/warehouse"
 
 	_ "net/http/pprof"
 
@@ -125,6 +126,7 @@ func main() {
 		smspaymentsettings.NewSmsPaymentSettingsHttp(ms, cfg),
 
 		barcodemaster.NewBarcodeMasterHttp(ms, cfg),
+		warehouse.NewWarehouseHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)

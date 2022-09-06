@@ -105,8 +105,6 @@ definitions:
       consolidateaccountcode:
         description: รหัสผังบัญชีกลาง
         type: string
-      parid:
-        type: string
       shopid:
         type: string
     type: object
@@ -1558,8 +1556,6 @@ definitions:
       journaltype:
         description: ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)
         type: integer
-      parid:
-        type: string
       taxes:
         items:
           $ref: '#/definitions/models.Tax'
@@ -1667,8 +1663,6 @@ definitions:
       journaltype:
         description: ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)
         type: integer
-      parid:
-        type: string
       taxes:
         items:
           $ref: '#/definitions/models.Tax'
@@ -1856,6 +1850,23 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
+    type: object
+  models.Location:
+    properties:
+      code:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+    required:
+    - name1
     type: object
   models.LostAndProfitSheetReportResponse:
     properties:
@@ -2071,8 +2082,6 @@ definitions:
         type: string
       name5:
         type: string
-      parid:
-        type: string
       paymentcode:
         type: string
       paymentlogo:
@@ -2101,8 +2110,6 @@ definitions:
       name4:
         type: string
       name5:
-        type: string
-      parid:
         type: string
       paymentcode:
         type: string
@@ -2278,8 +2285,6 @@ definitions:
         type: number
       consolidateaccountcode:
         description: รหัสผังบัญชีกลาง
-        type: string
-      parid:
         type: string
       shopid:
         type: string
@@ -2937,8 +2942,6 @@ definitions:
         type: string
       body:
         type: string
-      parid:
-        type: string
       sendedat:
         type: string
       status:
@@ -2953,8 +2956,6 @@ definitions:
       body:
         type: string
       guidfixed:
-        type: string
-      parid:
         type: string
       sendedat:
         type: string
@@ -3087,8 +3088,6 @@ definitions:
       nextbalancedebitamount:
         description: ยอดสะสมเดบิต
         type: number
-      parid:
-        type: string
       shopid:
         type: string
     type: object
@@ -3156,8 +3155,6 @@ definitions:
       name4:
         type: string
       name5:
-        type: string
-      parid:
         type: string
       unitcode:
         type: string
@@ -3279,6 +3276,27 @@ definitions:
         type: integer
       vatyear:
         type: integer
+    type: object
+  models.Warehouse:
+    properties:
+      code:
+        type: string
+      locations:
+        items:
+          $ref: '#/definitions/models.Location'
+        type: array
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+    required:
+    - name1
     type: object
 info:
   contact:
@@ -7827,6 +7845,166 @@ paths:
       - AccessToken: []
       tags:
       - Common
+  /warehouse:
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Warehouse
+    post:
+      consumes:
+      - application/json
+      description: Create Warehouse
+      parameters:
+      - description: Warehouse
+        in: body
+        name: Warehouse
+        required: true
+        schema:
+          $ref: '#/definitions/models.Warehouse'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Warehouse
+  /warehouse/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Warehouse
+      parameters:
+      - description: Warehouse ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Warehouse
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Warehouse ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Warehouse
+    put:
+      consumes:
+      - application/json
+      description: Update Warehouse
+      parameters:
+      - description: Warehouse ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Warehouse
+        in: body
+        name: Warehouse
+        required: true
+        schema:
+          $ref: '#/definitions/models.Warehouse'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Warehouse
+  /warehouse/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Warehouse
+      parameters:
+      - description: Warehouse
+        in: body
+        name: Warehouse
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Warehouse'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Warehouse
 schemes:
 - http
 - https

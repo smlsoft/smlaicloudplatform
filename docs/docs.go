@@ -7289,6 +7289,264 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/warehouse": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Warehouse",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "description": "Warehouse",
+                        "name": "Warehouse",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Warehouse"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Warehouse",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "description": "Warehouse",
+                        "name": "Warehouse",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Warehouse"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Warehouse",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Warehouse",
+                        "name": "Warehouse",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Warehouse"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Warehouse",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -7446,9 +7704,6 @@ const docTemplate = `{
                 },
                 "consolidateaccountcode": {
                     "description": "รหัสผังบัญชีกลาง",
-                    "type": "string"
-                },
-                "parid": {
                     "type": "string"
                 },
                 "shopid": {
@@ -9626,9 +9881,6 @@ const docTemplate = `{
                     "description": "ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)",
                     "type": "integer"
                 },
-                "parid": {
-                    "type": "string"
-                },
                 "taxes": {
                     "type": "array",
                     "items": {
@@ -9790,9 +10042,6 @@ const docTemplate = `{
                 "journaltype": {
                     "description": "ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)",
                     "type": "integer"
-                },
-                "parid": {
-                    "type": "string"
                 },
                 "taxes": {
                     "type": "array",
@@ -10079,6 +10328,32 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.Location": {
+            "type": "object",
+            "required": [
+                "name1"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
                 }
             }
         },
@@ -10412,9 +10687,6 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
-                "parid": {
-                    "type": "string"
-                },
                 "paymentcode": {
                     "type": "string"
                 },
@@ -10457,9 +10729,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name5": {
-                    "type": "string"
-                },
-                "parid": {
                     "type": "string"
                 },
                 "paymentcode": {
@@ -10721,9 +10990,6 @@ const docTemplate = `{
                 },
                 "consolidateaccountcode": {
                     "description": "รหัสผังบัญชีกลาง",
-                    "type": "string"
-                },
-                "parid": {
                     "type": "string"
                 },
                 "shopid": {
@@ -11715,9 +11981,6 @@ const docTemplate = `{
                 "body": {
                     "type": "string"
                 },
-                "parid": {
-                    "type": "string"
-                },
                 "sendedat": {
                     "type": "string"
                 },
@@ -11739,9 +12002,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "guidfixed": {
-                    "type": "string"
-                },
-                "parid": {
                     "type": "string"
                 },
                 "sendedat": {
@@ -11936,9 +12196,6 @@ const docTemplate = `{
                     "description": "ยอดสะสมเดบิต",
                     "type": "number"
                 },
-                "parid": {
-                    "type": "string"
-                },
                 "shopid": {
                     "type": "string"
                 }
@@ -12038,9 +12295,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name5": {
-                    "type": "string"
-                },
-                "parid": {
                     "type": "string"
                 },
                 "unitcode": {
@@ -12215,6 +12469,38 @@ const docTemplate = `{
                 },
                 "vatyear": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.Warehouse": {
+            "type": "object",
+            "required": [
+                "name1"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "locations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Location"
+                    }
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
                 }
             }
         }

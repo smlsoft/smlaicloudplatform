@@ -14,5 +14,5 @@ type DocIdentity struct {
 }
 
 type PartitionIdentity struct {
-	ParID string `json:"parid"  gorm:"column:parid"`
+	ParID string `json:"-"  gorm:"column:parid"`
 }
