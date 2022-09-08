@@ -441,6 +441,15 @@ func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) err
 
 	docRefReserve := strings.TrimSpace(ctx.QueryParam("docref-reserve"))
 
+	status := strings.TrimSpace(ctx.QueryParam("status"))
+
+	if len(status) > 0 {
+		tempStatus, err := strconv.Atoi(status)
+		if err == nil {
+			matchFilters["status"] = tempStatus
+		}
+	}
+
 	if len(docRefReserve) > 0 && docRefReserve != "0" {
 		docRefPoolList, err := h.svcWsJournal.GetAllDocRefPool(shopID)
 
