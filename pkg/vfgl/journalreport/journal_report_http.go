@@ -57,6 +57,7 @@ func (r JournalReportHttp) ProcessReportTrialBalanceSheet(ctx microservice.ICont
 	accountGroup := ctx.QueryParam("accountgroup")
 	startDateStr := ctx.QueryParam("startdate")
 	endDateStr := ctx.QueryParam("enddate")
+	//timeZone := ctx.QueryParam("timezone")
 	includeCloseAccountMode := ctx.QueryParam("ica") == "1"
 
 	//lastUpdateStr = strings.Trim(lastUpdateStr, " ")

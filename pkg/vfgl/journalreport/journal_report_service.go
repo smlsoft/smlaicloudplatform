@@ -83,7 +83,7 @@ func (svc JournalReportService) ProcessProfitAndLossSheetReport(shopId string, a
 			incomes = append(incomes, v)
 			incomeAmount += v.Amount
 		} else {
-			incomes = append(incomes, v)
+			expenses = append(expenses, v)
 			expenseAmount += v.Amount
 		}
 	}
