@@ -13,10 +13,10 @@ import (
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
 	"smlcloudplatform/pkg/paymentmaster"
-	"smlcloudplatform/pkg/product/barcodemaster"
 	"smlcloudplatform/pkg/product/category"
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
+	"smlcloudplatform/pkg/product/unit"
 	"smlcloudplatform/pkg/restaurant/kitchen"
 	"smlcloudplatform/pkg/restaurant/shopprinter"
 	"smlcloudplatform/pkg/restaurant/shoptable"
@@ -126,9 +126,10 @@ func main() {
 		smspatterns.NewSmsPatternsHttp(ms, cfg),
 		smspaymentsettings.NewSmsPaymentSettingsHttp(ms, cfg),
 
-		barcodemaster.NewBarcodeMasterHttp(ms, cfg),
 		warehouse.NewWarehouseHttp(ms, cfg),
 		storefront.NewStorefrontHttp(ms, cfg),
+
+		unit.NewUnitHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)

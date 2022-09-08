@@ -3,19 +3,21 @@ package microservice
 import (
 	"context"
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/event"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // IPersister is interface for persister
 type IPersisterMongo interface {
-	Aggregate(model interface{}, filters []interface{}, decode interface{}) error
+	Aggregate(model interface{}, pipeline interface{}, decode interface{}) error
 	AggregatePage(model interface{}, limit int, page int, criteria ...interface{}) (*mongopagination.PaginatedData, error)
 	Find(model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOptions) error
 	FindPage(model interface{}, limit int, page int, filter interface{}, decode interface{}) (mongopagination.PaginationData, error)
@@ -108,14 +110,14 @@ func (pst *PersisterMongo) getClient() (*mongo.Database, error) {
 		return nil, err
 	}
 
-	// cmdMonitor := &event.CommandMonitor{
-	// 	Started: func(_ context.Context, evt *event.CommandStartedEvent) {
-	// 		log.Print(evt.Command)
-	// 	},
-	// }
+	cmdMonitor := &event.CommandMonitor{
+		Started: func(_ context.Context, evt *event.CommandStartedEvent) {
+			log.Print(evt.Command)
+		},
+	}
 
-	// client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr).SetMonitor(cmdMonitor))
-	client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr))
+	client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr).SetMonitor(cmdMonitor))
+	// client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr))
 	if err != nil {
 		return nil, err
 	}
@@ -598,7 +600,7 @@ func (pst *PersisterMongo) Exec(model interface{}) (*mongo.Collection, error) {
 	return mongoCollection, nil
 }
 
-func (pst *PersisterMongo) Aggregate(model interface{}, filters []interface{}, decode interface{}) error {
+func (pst *PersisterMongo) Aggregate(model interface{}, pipeline interface{}, decode interface{}) error {
 	db, err := pst.getClient()
 	if err != nil {
 		return err
@@ -609,12 +611,12 @@ func (pst *PersisterMongo) Aggregate(model interface{}, filters []interface{}, d
 		return err
 	}
 
-	var aggregationFilter []bson.M
-	for _, filter := range filters {
-		aggregationFilter = append(aggregationFilter, filter.(bson.M))
-	}
+	// var aggregationFilter []bson.M
+	// for _, filter := range filters {
+	// 	aggregationFilter = append(aggregationFilter, filter.(bson.M))
+	// }
 
-	filterCursor, err := db.Collection(collectionName).Aggregate(pst.ctx, aggregationFilter)
+	filterCursor, err := db.Collection(collectionName).Aggregate(pst.ctx, pipeline)
 
 	if err != nil {
 		return err
@@ -627,7 +629,7 @@ func (pst *PersisterMongo) Aggregate(model interface{}, filters []interface{}, d
 	return nil
 }
 
-func (pst PersisterMongo) AggregatePage(model interface{}, limit int, page int, criteria ...interface{}) (*mongopagination.PaginatedData, error) {
+func (pst *PersisterMongo) AggregatePage(model interface{}, limit int, page int, criteria ...interface{}) (*mongopagination.PaginatedData, error) {
 	db, err := pst.getClient()
 
 	emptyPage := &mongopagination.PaginatedData{}

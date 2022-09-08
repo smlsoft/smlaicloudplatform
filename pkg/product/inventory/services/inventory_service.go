@@ -215,21 +215,22 @@ func preparePayloadDataInventory(shopID string, authUsername string, findItemGui
 
 func (svc InventoryService) CreateWithGuid(shopID string, authUsername string, guidFixed string, inventory models.Inventory) (string, error) {
 
-	reqBarcodes := []string{}
+	if inventory.Barcodes != nil {
+		reqBarcodes := []string{}
+		for _, barcode := range *inventory.Barcodes {
+			reqBarcodes = append(reqBarcodes, barcode.Barcode)
+		}
 
-	for _, barcode := range *inventory.Barcodes {
-		reqBarcodes = append(reqBarcodes, barcode.Barcode)
-	}
+		findDocBarcodes, err := svc.invRepo.FindByBarcodes(shopID, reqBarcodes)
 
-	findDocBarcodes, err := svc.invRepo.FindByBarcodes(shopID, reqBarcodes)
+		if err != nil {
+			return "", err
+		}
 
-	if err != nil {
-		return "", err
-	}
-
-	if len(findDocBarcodes) > 0 {
-		tempBarcode := *findDocBarcodes[0].Barcodes
-		return "", fmt.Errorf("barcode '%s' is exists", tempBarcode[0].Barcode)
+		if len(findDocBarcodes) > 0 {
+			tempBarcode := *findDocBarcodes[0].Barcodes
+			return "", fmt.Errorf("barcode '%s' is exists", tempBarcode[0].Barcode)
+		}
 	}
 
 	newGuid := guidFixed
@@ -318,7 +319,7 @@ func (svc InventoryService) UpdateInventory(shopID string, guid string, authUser
 		return errors.New("document not found")
 	}
 
-	if len(*inventory.Barcodes) > 0 {
+	if inventory.Barcodes != nil && len(*inventory.Barcodes) > 0 {
 		reqBarcodes := []string{}
 		idxReqBarcode := map[string]struct{}{}
 

@@ -1,6 +1,7 @@
 package repositories_test
 
 import (
+	"fmt"
 	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
@@ -45,13 +46,13 @@ func TestFindByItemGuid(t *testing.T) {
 	if os.Getenv("SERVERLESS") == "serverless" {
 		t.Skip()
 	}
-	doc, err := repoMock.FindByItemGuid("27daMDw274R5hHejrjkHDuI91ag", "ix001x")
+	doc, err := repoMock.FindByGuid("27dcEdktOoaSBYFmnN6G6ett4Jb", "2EQsi6PRQ3lAmXORqYD9zJltnsz")
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	t.Log(doc)
+	fmt.Printf("%v", doc)
 
 	// if doc.DeletedAt.IsZero() {
 	// 	t.Log("is zero")
