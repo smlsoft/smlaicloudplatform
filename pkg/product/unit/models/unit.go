@@ -6,12 +6,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const unitCollectionName = "unit"
+const unitCollectionName = "units"
 
 type Unit struct {
 	models.PartitionIdentity `bson:"inline"`
 	UnitCode                 string `json:"unitcode" bson:"unitcode" `
-	models.Name              `bson:"inline"`
+	models.UnitName          `bson:"inline"`
 	ItemUnitSTD              float64 `json:"itemunitstd" bson:"itemunitstd" `
 	ItemUnitDIV              float64 `json:"itemunitdiv" bson:"itemunitdiv" `
 	IsUnitCost               bool    `json:"isunitcost" bson:"isunitcost"`

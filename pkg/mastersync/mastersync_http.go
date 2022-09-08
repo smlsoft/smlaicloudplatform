@@ -22,8 +22,8 @@ import (
 	inventoryRepo "smlcloudplatform/pkg/product/inventory/repositories"
 	inventoryService "smlcloudplatform/pkg/product/inventory/services"
 
-	barcodemasterRepo "smlcloudplatform/pkg/product/barcodemaster/repositories"
-	barcodemasterService "smlcloudplatform/pkg/product/barcodemaster/services"
+	productbarcodeRepo "smlcloudplatform/pkg/product/productbarcode/repositories"
+	productbarcodeService "smlcloudplatform/pkg/product/productbarcode/services"
 
 	"smlcloudplatform/pkg/mastersync/repositories"
 
@@ -31,18 +31,18 @@ import (
 )
 
 type MasterSyncHttp struct {
-	ms               *microservice.Microservice
-	cfg              microservice.IConfig
-	svcMasterSync    services.IMasterSyncService
-	svcCategory      categoryService.ICategoryService
-	svcMember        member.IMemberService
-	svcInventory     inventoryService.IInventoryService
-	svcKitchen       kitchen.IKitchenService
-	svcShopPrinter   shopprinter.IShopPrinterService
-	svcShopTable     shoptable.ShopTableService
-	svcShopZone      shopzone.ShopZoneService
-	svcEmployee      employee.EmployeeService
-	svcBarcodeMaster barcodemasterService.BarcodeMasterService
+	ms                *microservice.Microservice
+	cfg               microservice.IConfig
+	svcMasterSync     services.IMasterSyncService
+	svcCategory       categoryService.ICategoryService
+	svcMember         member.IMemberService
+	svcInventory      inventoryService.IInventoryService
+	svcKitchen        kitchen.IKitchenService
+	svcShopPrinter    shopprinter.IShopPrinterService
+	svcShopTable      shoptable.ShopTableService
+	svcShopZone       shopzone.ShopZoneService
+	svcEmployee       employee.EmployeeService
+	svcProductBarcode productbarcodeService.ProductBarcodeService
 }
 
 func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) MasterSyncHttp {
@@ -93,28 +93,27 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	employeeCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "employee")
 	svcEmployee := employee.NewEmployeeService(repoEmployee, employeeCacheSyncRepo)
 
-	// Barcode Master
-	repoBarcodeMaster := barcodemasterRepo.NewBarcodeMasterRepository(pst)
-	mqRepoBarcodeMaster := barcodemasterRepo.NewBarcodeMasterMQRepository(prod)
+	// Product Barcode
+	repoProductBarcode := productbarcodeRepo.NewProductBarcodeRepository(pst)
 	barcodeMasterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "inventory")
-	svcBarcodeMaster := barcodemasterService.NewBarcodeMasterService(repoBarcodeMaster, mqRepoBarcodeMaster, barcodeMasterCacheSyncRepo)
+	svcProductBarcode := productbarcodeService.NewProductBarcodeService(repoProductBarcode, barcodeMasterCacheSyncRepo)
 
 	masterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "mastersync")
 	svcMasterSync := services.NewMasterSyncService(masterCacheSyncRepo)
 
 	return MasterSyncHttp{
-		ms:               ms,
-		cfg:              cfg,
-		svcMasterSync:    svcMasterSync,
-		svcCategory:      svcCategory,
-		svcInventory:     svcInventory,
-		svcMember:        svcMember,
-		svcKitchen:       svcKitchen,
-		svcShopPrinter:   svcShopPrinter,
-		svcShopTable:     svcShopTable,
-		svcShopZone:      svcShopZone,
-		svcEmployee:      *svcEmployee,
-		svcBarcodeMaster: svcBarcodeMaster,
+		ms:                ms,
+		cfg:               cfg,
+		svcMasterSync:     svcMasterSync,
+		svcCategory:       svcCategory,
+		svcInventory:      svcInventory,
+		svcMember:         svcMember,
+		svcKitchen:        svcKitchen,
+		svcShopPrinter:    svcShopPrinter,
+		svcShopTable:      svcShopTable,
+		svcShopZone:       svcShopZone,
+		svcEmployee:       *svcEmployee,
+		svcProductBarcode: svcProductBarcode,
 	}
 }
 
@@ -189,7 +188,7 @@ func (h MasterSyncHttp) LastActivitySync(ctx microservice.IContext) error {
 	moduleList["shoptable"] = h.svcShopTable
 	moduleList["shopzone"] = h.svcShopZone
 	moduleList["employee"] = h.svcEmployee
-	moduleList["barcodemaster"] = h.svcBarcodeMaster
+	moduleList["productbarcode"] = h.svcProductBarcode
 
 	result, pagination, err := runModule(moduleList, isSelectAll, keySelectList, ActivityParam{
 		ShopID:     shopID,
