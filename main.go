@@ -33,6 +33,7 @@ import (
 	"smlcloudplatform/pkg/vfgl/journal"
 	"smlcloudplatform/pkg/vfgl/journalbook"
 	"smlcloudplatform/pkg/vfgl/journalreport"
+	"smlcloudplatform/pkg/warehouse"
 
 	"github.com/joho/godotenv"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -160,6 +161,7 @@ func main() {
 			mastersync.NewMasterSyncHttp(ms, cfg),
 			smstransaction.NewSmsTransactionHttp(ms, cfg),
 			paymentmaster.NewPaymentMasterHttp(ms, cfg),
+			warehouse.NewWarehouseHttp(ms, cfg),
 		}
 
 		startHttpServices(httpServices...)
