@@ -11,7 +11,9 @@ const smstransactionCollectionName = "smsTransactions"
 
 type SmsTransaction struct {
 	models.PartitionIdentity `bson:"inline"`
+	StorefrontGUID           string    `json:"storefrontguid" bson:"storefrontguid" validate:"required,max=233"`
 	TransId                  string    `json:"transid" bson:"transid"`
+	DeviceUUID               string    `json:"deviceuuid" bson:"deviceuuid"`
 	Address                  string    `json:"address" bson:"address"`
 	Body                     string    `json:"body" bson:"body"`
 	SendedAt                 time.Time `json:"sendedat" bson:"sendedat"`
@@ -77,4 +79,15 @@ type SmsTransactionPageResponse struct {
 	Success    bool                          `json:"success"`
 	Data       []SmsTransactionInfo          `json:"data,omitempty"`
 	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
+}
+
+type SmsTransactionCheck struct {
+	SmsTransactionGUIDFixed string  `json:"smstransactionguidfixed"`
+	Pass                    bool    `json:"pass"`
+	Amount                  float64 `json:"amount"`
+	AmountCheck             float64 `json:"amountcheck"`
+}
+
+type SmsTransactionAmount struct {
+	Amount float64 `json:"amount"`
 }

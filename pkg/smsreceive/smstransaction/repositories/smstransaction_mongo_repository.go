@@ -21,7 +21,7 @@ type ISmsTransactionRepository interface {
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.SmsTransactionDoc, error)
 	FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error)
 
-	FindFilterSms(shopID string, address string, startTime time.Time, endTime time.Time) ([]models.SmsTransactionInfo, error)
+	FindFilterSms(shopID string, storefrontGUID string, address string, startTime time.Time, endTime time.Time) ([]models.SmsTransactionInfo, error)
 }
 
 type SmsTransactionRepository struct {
@@ -44,13 +44,15 @@ func NewSmsTransactionRepository(pst microservice.IPersisterMongo) SmsTransactio
 	return insRepo
 }
 
-func (repo SmsTransactionRepository) FindFilterSms(shopID string, address string, startTime time.Time, endTime time.Time) ([]models.SmsTransactionInfo, error) {
+func (repo SmsTransactionRepository) FindFilterSms(shopID string, storefrontGUID string, address string, startTime time.Time, endTime time.Time) ([]models.SmsTransactionInfo, error) {
 
 	filters := bson.M{
-		"shopid":    shopID,
-		"deletedat": bson.M{"$exists": false},
-		"address":   address,
-		"sendedat": bson.M{
+		"shopid":         shopID,
+		"storefrontguid": storefrontGUID,
+		"deletedat":      bson.M{"$exists": false},
+		"address":        address,
+		"status":         0,
+		"createdat": bson.M{
 			"$gte": startTime,
 			"$lte": endTime,
 		},

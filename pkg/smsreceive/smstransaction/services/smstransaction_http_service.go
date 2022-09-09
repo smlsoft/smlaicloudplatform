@@ -3,6 +3,8 @@ package services
 import (
 	"errors"
 	"regexp"
+	smspatternsRepo "smlcloudplatform/pkg/smsreceive/smspatterns/repositories"
+	smssetingsRepo "smlcloudplatform/pkg/smsreceive/smspaymentsettings/repositories"
 	"smlcloudplatform/pkg/smsreceive/smstransaction/models"
 	"smlcloudplatform/pkg/smsreceive/smstransaction/repositories"
 	"strconv"
@@ -18,21 +20,30 @@ type ISmsTransactionHttpService interface {
 	DeleteSmsTransaction(guid string, shopID string, authUsername string) error
 	InfoSmsTransaction(guid string, shopID string) (models.SmsTransactionInfo, error)
 	SearchSmsTransaction(shopID string, q string, page int, limit int, sort map[string]int) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error)
-	CheckSMS(shopID string, amount float64, startTime time.Time, endTime time.Time) (float64, error)
+	CheckSMS(shopID string, storefrontGUID string, amountCheck float64, checkTime time.Time) (models.SmsTransactionCheck, error)
+	ConfirmSmsTransaction(shopID string, smsTransactionGUIDFixed string) error
 }
 
 type SmsTransactionHttpService struct {
-	repo    repositories.ISmsTransactionRepository
-	genGUID func() string
-	timeNow func() time.Time
+	repo           repositories.ISmsTransactionRepository
+	smsPatternRepo smspatternsRepo.ISmsPatternsRepository
+	smsSetingsRepo smssetingsRepo.ISmsPaymentSettingsRepository
+	genGUID        func() string
+	timeNow        func() time.Time
 }
 
-func NewSmsTransactionHttpService(repo repositories.ISmsTransactionRepository, genGUID func() string, timeNow func() time.Time) *SmsTransactionHttpService {
+func NewSmsTransactionHttpService(
+	repo repositories.ISmsTransactionRepository,
+	smsPatternRepo smspatternsRepo.ISmsPatternsRepository,
+	smsSetingsRepo smssetingsRepo.ISmsPaymentSettingsRepository,
+	genGUID func() string, timeNow func() time.Time) *SmsTransactionHttpService {
 
 	return &SmsTransactionHttpService{
-		repo:    repo,
-		genGUID: genGUID,
-		timeNow: timeNow,
+		repo:           repo,
+		smsPatternRepo: smsPatternRepo,
+		smsSetingsRepo: smsSetingsRepo,
+		genGUID:        genGUID,
+		timeNow:        timeNow,
 	}
 }
 
@@ -148,26 +159,55 @@ func (svc SmsTransactionHttpService) SearchSmsTransaction(shopID string, q strin
 	return docList, pagination, nil
 }
 
-func (svc SmsTransactionHttpService) CheckSMS(shopID string, amount float64, startTime time.Time, endTime time.Time) (float64, error) {
+func (svc SmsTransactionHttpService) CheckSMS(shopID string, storefrontGUID string, amountCheck float64, checkTime time.Time) (models.SmsTransactionCheck, error) {
+
+	storefrontSmsPaymentSettingDoc, err := svc.smsSetingsRepo.FindOne(shopID,
+		map[string]interface{}{
+			"storefrontguid": storefrontGUID,
+		})
+
+	if err != nil {
+		return models.SmsTransactionCheck{
+			Pass:        false,
+			Amount:      0,
+			AmountCheck: amountCheck,
+		}, err
+	}
+
+	smsPatternDoc, err := svc.smsPatternRepo.FindByCode(storefrontSmsPaymentSettingDoc.PatternCode)
+
+	if err != nil {
+		return models.SmsTransactionCheck{
+			Pass:        false,
+			Amount:      0,
+			AmountCheck: amountCheck,
+		}, err
+	}
 
 	// timeNowUnix := time.Unix(svc.timeNow().Unix(), 0)
 
-	// startTime := timeNowUnix.Add(time.Duration(-3) * time.Minute).Unix()
-	// endTime := timeNowUnix.Add(time.Duration(10) * time.Minute).Unix()
+	startTime := checkTime.Add(time.Duration(-(storefrontSmsPaymentSettingDoc.TimeMinuteBefore)) * time.Minute)
+	endTime := checkTime.Add(time.Duration(storefrontSmsPaymentSettingDoc.TimeMinuteAfter) * time.Minute)
 
-	addressKey := "kbank"
+	addressKey := smsPatternDoc.Address
 
-	smsList, err := svc.repo.FindFilterSms(shopID, addressKey, startTime, endTime)
+	smsList, err := svc.repo.FindFilterSms(shopID, storefrontGUID, addressKey, startTime, endTime)
 	if err != nil {
-		return 0, err
+		return models.SmsTransactionCheck{
+			Pass:        false,
+			Amount:      0,
+			AmountCheck: amountCheck,
+		}, err
 	}
 
 	var amountVal float64 = 0
 
+	tempSmsTrans := models.SmsTransactionInfo{}
 	for _, smsMessage := range smsList {
 		// msg1 := "12/04/63 09:25 บชX231148X รับโอนจากX815923X 1170.00บ คงเหลือ 2160.29บ"
 
-		re := regexp.MustCompile(`[0-9]{2}\/[0-9]{2}\/[0-9]{2} [0-9]{2}:[0-9]{2} บชX[0-9].*X (?P<Amount>[0-9].*)บ คงเหลือ [0-9].*บ`)
+		// re := regexp.MustCompile(`[0-9]{2}\/[0-9]{2}\/[0-9]{2} [0-9]{2}:[0-9]{2} บชX[0-9].*X (?P<Amount>[0-9].*)บ คงเหลือ [0-9].*บ`)
+		re := regexp.MustCompile(smsPatternDoc.Pattern)
 
 		reVal := re.FindStringSubmatch(smsMessage.Body)
 
@@ -176,14 +216,44 @@ func (svc SmsTransactionHttpService) CheckSMS(shopID string, amount float64, sta
 			amountVal, err = strconv.ParseFloat(reVal[1], 64)
 
 			if err != nil {
-				return 0, err
+				return models.SmsTransactionCheck{
+					Pass:        false,
+					Amount:      0,
+					AmountCheck: amountCheck,
+				}, err
 			}
 
 			if amountVal > 0 {
+				tempSmsTrans = smsMessage
 				break
 			}
 		}
 	}
 
-	return amountVal, nil
+	if amountVal != amountCheck {
+		return models.SmsTransactionCheck{
+			Pass:        false,
+			Amount:      0,
+			AmountCheck: amountCheck,
+		}, err
+	}
+
+	return models.SmsTransactionCheck{
+		SmsTransactionGUIDFixed: tempSmsTrans.GuidFixed,
+		Pass:                    true,
+		Amount:                  amountVal,
+		AmountCheck:             amountCheck,
+	}, nil
+}
+
+func (svc SmsTransactionHttpService) ConfirmSmsTransaction(shopID string, smsTransactionGUIDFixed string) error {
+	findDoc, err := svc.repo.FindByGuid(shopID, smsTransactionGUIDFixed)
+
+	if err != nil {
+		return err
+	}
+
+	findDoc.Status = 1
+
+	return svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
 }

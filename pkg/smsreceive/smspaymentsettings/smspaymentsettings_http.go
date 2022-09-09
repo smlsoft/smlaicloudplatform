@@ -9,6 +9,7 @@ import (
 	"smlcloudplatform/pkg/smsreceive/smspaymentsettings/models"
 	"smlcloudplatform/pkg/smsreceive/smspaymentsettings/repositories"
 	"smlcloudplatform/pkg/smsreceive/smspaymentsettings/services"
+	"smlcloudplatform/pkg/utils"
 )
 
 type ISmsPaymentSettingsHttp interface{}
@@ -37,24 +38,40 @@ func NewSmsPaymentSettingsHttp(ms *microservice.Microservice, cfg microservice.I
 
 func (h SmsPaymentSettingsHttp) RouteSetup() {
 
-	h.ms.POST("/smspaymentsettings", h.CreateSmsPaymentSettings)
-	h.ms.GET("/smspaymentsettings", h.InfoSmsPaymentSettings)
+	h.ms.PUT("/smspaymentsettings/:storefrontguid", h.CreateSmsPaymentSettings)
+	h.ms.GET("/smspaymentsettings/:storefrontguid", h.InfoSmsPaymentSettings)
+	h.ms.GET("/smspaymentsettings", h.SearchSmsPaymentSettings)
 }
 
+// Save SMS Payment Settings godoc
+// @Summary		sms payment settings
+// @Description sms payment received settings service
+// @Tags		SmsPayment
+// @Param		storefrontguid  path      string  true  "storefront guidfixed"
+// @Param		SmsPaymentSettings  body      models.SmsPaymentSettings  true  "sms payment settings"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /smspaymentsettings/{storefrontguid} [put]
 func (h SmsPaymentSettingsHttp) CreateSmsPaymentSettings(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
+	storefrontGUID := ctx.Param("storefrontguid")
+
 	docReq := &models.SmsPaymentSettings{}
 	err := json.Unmarshal([]byte(input), &docReq)
+
+	docReq.StorefrontGUID = storefrontGUID
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	err = h.svc.SaveSmsPaymentSettings(shopID, authUsername, *docReq)
+	err = h.svc.SaveSmsPaymentSettings(shopID, authUsername, storefrontGUID, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -67,11 +84,23 @@ func (h SmsPaymentSettingsHttp) CreateSmsPaymentSettings(ctx microservice.IConte
 	return nil
 }
 
+// Get SMS Payment Settings godoc
+// @Summary		sms payment settings
+// @Description sms payment received settings service
+// @Tags		SmsPayment
+// @Param		storefrontguid  path      string  true  "storefront guidfixed"
+// @Accept 		json
+// @Success		200	{object}	models.JournalInfoResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router smspaymentsettings/{storefrontguid} [get]
 func (h SmsPaymentSettingsHttp) InfoSmsPaymentSettings(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	doc, err := h.svc.InfoSmsPaymentSettings(shopID)
+	storefrontGUID := ctx.Param("storefrontguid")
+
+	doc, err := h.svc.InfoSmsPaymentSettings(shopID, storefrontGUID)
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v", err)
@@ -82,6 +111,40 @@ func (h SmsPaymentSettingsHttp) InfoSmsPaymentSettings(ctx microservice.IContext
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		Data:    doc,
+	})
+	return nil
+}
+
+// List SMS Payment Settings godoc
+// @Summary		sms payment settings
+// @Description sms payment received settings service
+// @Tags		SmsPayment
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Size"
+// @Accept 		json
+// @Success		200	{object}	models.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /smspaymentsettings [get]
+func (h SmsPaymentSettingsHttp) SearchSmsPaymentSettings(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	q := ctx.QueryParam("q")
+	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	sort := utils.GetSortParam(ctx.QueryParam)
+	docList, pagination, err := h.svc.SearchSmsPaymentSettings(shopID, q, page, limit, sort)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success:    true,
+		Data:       docList,
+		Pagination: pagination,
 	})
 	return nil
 }

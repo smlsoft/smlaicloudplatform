@@ -5,11 +5,12 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	common "smlcloudplatform/pkg/models"
+	smspatternsRepo "smlcloudplatform/pkg/smsreceive/smspatterns/repositories"
+	smssetingsRepo "smlcloudplatform/pkg/smsreceive/smspaymentsettings/repositories"
 	"smlcloudplatform/pkg/smsreceive/smstransaction/models"
 	"smlcloudplatform/pkg/smsreceive/smstransaction/repositories"
 	"smlcloudplatform/pkg/smsreceive/smstransaction/services"
 	"smlcloudplatform/pkg/utils"
-	"time"
 )
 
 type ISmsTransactionHttp interface{}
@@ -24,7 +25,9 @@ func NewSmsTransactionHttp(ms *microservice.Microservice, cfg microservice.IConf
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	repo := repositories.NewSmsTransactionRepository(pst)
-	svc := services.NewSmsTransactionHttpService(repo, utils.NewGUID, ms.TimeNow)
+	smsPatternRepo := smspatternsRepo.NewSmsPatternsRepository(pst)
+	smsSetingsRepo := smssetingsRepo.NewSmsPaymentSettingsRepository(pst)
+	svc := services.NewSmsTransactionHttpService(repo, smsPatternRepo, smsSetingsRepo, utils.NewGUID, ms.TimeNow)
 
 	return SmsTransactionHttp{
 		ms:  ms,
@@ -39,7 +42,8 @@ func (h SmsTransactionHttp) RouteSetup() {
 	h.ms.GET("/smstransaction/:id", h.InfoSmsTransaction)
 	h.ms.PUT("/smstransaction/:id", h.UpdateSmsTransaction)
 	h.ms.DELETE("/smstransaction/:id", h.DeleteSmsTransaction)
-	h.ms.GET("/checksms", h.CheckSMS)
+	h.ms.POST("/smstransaction/checksms/:storefront", h.CheckSMS)
+	h.ms.POST("/smstransaction/confirm/:id", h.ConfirmSmsTransaction)
 }
 
 // Create SMS Transaction godoc
@@ -219,7 +223,7 @@ func (h SmsTransactionHttp) SearchSmsTransaction(ctx microservice.IContext) erro
 	return nil
 }
 
-// LIST SMS Transaction godoc
+// Check SMS Transaction godoc
 // @Summary		รับข้อมูล sms
 // @Description รับข้อมูล sms
 // @Tags		SMS
@@ -235,12 +239,23 @@ func (h SmsTransactionHttp) CheckSMS(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	mockTime, _ := time.Parse(time.RFC3339, "2022-08-25T03:09:57.335+00:00")
+	storefrontCode := ctx.Param("storefront")
 
-	startTime := mockTime.Add(time.Duration(-5) * time.Minute)
-	endTime := mockTime.Add(time.Duration(5) * time.Minute)
+	input := ctx.ReadInput()
 
-	amount, err := h.svc.CheckSMS(shopID, 1170.00, startTime, endTime)
+	docReq := &models.SmsTransactionAmount{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	// mockTime, _ := time.Parse(time.RFC3339, "2022-08-25T03:09:57.335+00:00")
+
+	checkTime := h.ms.TimeNow()
+
+	amount, err := h.svc.CheckSMS(shopID, storefrontCode, docReq.Amount, checkTime)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -250,6 +265,41 @@ func (h SmsTransactionHttp) CheckSMS(ctx microservice.IContext) error {
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		Data:    amount,
+	})
+	return nil
+}
+
+// Check SMS Transaction godoc
+// @Summary		รับข้อมูล sms
+// @Description รับข้อมูล sms
+// @Tags		SMS
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Size"
+// @Accept 		json
+// @Success		200	{object}	models.SmsTransactionPageResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /checksms [get]
+func (h SmsTransactionHttp) ConfirmSmsTransaction(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	// mockTime, _ := time.Parse(time.RFC3339, "2022-08-25T03:09:57.335+00:00")
+
+	// checkTime := h.ms.TimeNow()
+
+	id := ctx.Param("id")
+
+	err := h.svc.ConfirmSmsTransaction(shopID, id)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
 	})
 	return nil
 }

@@ -8,12 +8,15 @@ import (
 	"smlcloudplatform/pkg/utils"
 	"time"
 
+	mongopagination "github.com/gobeam/mongo-go-pagination"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ISmsPaymentSettingsHttpService interface {
-	SaveSmsPaymentSettings(shopID string, authUsername string, doc models.SmsPaymentSettings) error
-	InfoSmsPaymentSettings(shopID string) (models.SmsPaymentSettingsInfo, error)
+	SaveSmsPaymentSettings(shopID string, authUsername string, storefrontGUID string, doc models.SmsPaymentSettings) error
+	InfoSmsPaymentSettings(shopID string, storefrontGUID string) (models.SmsPaymentSettingsInfo, error)
+	SearchSmsPaymentSettings(shopID string, q string, page int, limit int, sorts map[string]int) ([]models.SmsPaymentSettingsInfo, mongopagination.PaginationData, error)
 }
 
 type SmsPaymentSettingsHttpService struct {
@@ -29,7 +32,7 @@ func NewSmsPaymentSettingsHttpService(repo repositories.SmsPaymentSettingsReposi
 	}
 }
 
-func (svc SmsPaymentSettingsHttpService) SaveSmsPaymentSettings(shopID string, authUsername string, doc models.SmsPaymentSettings) error {
+func (svc SmsPaymentSettingsHttpService) SaveSmsPaymentSettings(shopID string, authUsername string, storefrontGUID string, doc models.SmsPaymentSettings) error {
 
 	findPattern, err := svc.repoPattern.FindByCode(doc.PatternCode)
 
@@ -47,7 +50,7 @@ func (svc SmsPaymentSettingsHttpService) SaveSmsPaymentSettings(shopID string, a
 		return err
 	}
 
-	isExitsSetting, err := svc.isExistsPaymentSettings(findDoc)
+	isExitsSetting, err := svc.isExistsPaymentSettings(storefrontGUID, findDoc)
 
 	if err != nil {
 		return err
@@ -61,9 +64,9 @@ func (svc SmsPaymentSettingsHttpService) SaveSmsPaymentSettings(shopID string, a
 
 }
 
-func (svc SmsPaymentSettingsHttpService) isExistsPaymentSettings(findDoc models.SmsPaymentSettingsDoc) (bool, error) {
+func (svc SmsPaymentSettingsHttpService) isExistsPaymentSettings(storefrontGUID string, findDoc models.SmsPaymentSettingsDoc) (bool, error) {
 
-	if len(findDoc.ShopID) > 0 {
+	if len(findDoc.ShopID) > 0 && findDoc.StorefrontGUID == storefrontGUID {
 		return true, nil
 	}
 
@@ -118,14 +121,29 @@ func (svc SmsPaymentSettingsHttpService) updateSmsPaymentSettings(shopID string,
 	return nil
 }
 
-func (svc SmsPaymentSettingsHttpService) InfoSmsPaymentSettings(shopID string) (models.SmsPaymentSettingsInfo, error) {
+func (svc SmsPaymentSettingsHttpService) InfoSmsPaymentSettings(shopID string, storefrontGUID string) (models.SmsPaymentSettingsInfo, error) {
 
-	findDoc, err := svc.repo.FindOne(shopID, map[string]interface{}{})
+	findDoc, err := svc.repo.FindOne(shopID,
+		map[string]interface{}{
+			"storefrontguid": storefrontGUID,
+		})
 
 	if err != nil {
 		return models.SmsPaymentSettingsInfo{}, err
 	}
 
 	return findDoc.SmsPaymentSettingsInfo, nil
+
+}
+
+func (svc SmsPaymentSettingsHttpService) SearchSmsPaymentSettings(shopID string, q string, page int, limit int, sorts map[string]int) ([]models.SmsPaymentSettingsInfo, mongopagination.PaginationData, error) {
+
+	docList, pagination, err := svc.repo.FindPageSort(shopID, []string{}, q, page, limit, sorts)
+
+	if err != nil {
+		return []models.SmsPaymentSettingsInfo{}, mongopagination.PaginationData{}, err
+	}
+
+	return docList, pagination, nil
 
 }

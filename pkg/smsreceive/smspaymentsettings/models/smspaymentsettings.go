@@ -9,7 +9,8 @@ import (
 const smspaymentsettingsCollectionName = "smsPaymentSettings"
 
 type SmsPaymentSettings struct {
-	PatternCode      string `json:"patterncode" bson:"patterncode"`
+	StorefrontGUID   string `json:"storefrontguid" bson:"storefrontguid" validate:"required,max=233"`
+	PatternCode      string `json:"patterncode" bson:"patterncode" validate:"required"`
 	TimeMinuteBefore int    `json:"timeminutebefore" bson:"timeminutebefore"`
 	TimeMinuteAfter  int    `json:"timeminuteafter" bson:"timeminuteafter"`
 }
