@@ -197,10 +197,15 @@ func (repo ProductBarcodeRepository) FindCreatedOrUpdatedPage(shopID string, las
 
 	lookupUnitQuery4 := bson.M{
 		"$lookup": bson.M{
-			"from":         "units",
-			"localField":   "unitcode",
-			"foreignField": "unitcode",
-			"as":           "unit",
+			"from": "units",
+			"let":  bson.M{"unitcode": "$unitcode"},
+			"pipeline": []interface{}{
+				bson.M{"$match": bson.M{
+					"shopid": shopID,
+					"$expr":  bson.M{"$eq": []string{"$$unitcode", "$unitcode"}},
+				}},
+			},
+			"as": "unit",
 		},
 	}
 

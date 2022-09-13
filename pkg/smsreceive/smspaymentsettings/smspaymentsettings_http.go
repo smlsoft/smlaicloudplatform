@@ -93,7 +93,7 @@ func (h SmsPaymentSettingsHttp) CreateSmsPaymentSettings(ctx microservice.IConte
 // @Success		200	{object}	models.JournalInfoResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router smspaymentsettings/{storefrontguid} [get]
+// @Router /smspaymentsettings/{storefrontguid} [get]
 func (h SmsPaymentSettingsHttp) InfoSmsPaymentSettings(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID

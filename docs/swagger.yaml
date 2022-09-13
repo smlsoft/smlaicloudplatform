@@ -158,353 +158,49 @@ definitions:
     properties:
       barcode:
         type: string
+      description1:
+        type: string
+      description2:
+        type: string
+      description3:
+        type: string
+      description4:
+        type: string
+      description5:
+        type: string
       image:
         type: string
+      isprimary:
+        type: boolean
+      memberprice:
+        type: number
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
         type: number
       unitcode:
         type: string
-      unitname:
+      unitname1:
         type: string
-    type: object
-  models.BarcodeMaster:
-    properties:
-      activated:
-        description: เปิดใช้งานอยู่
-        type: boolean
-      barcodes:
-        items:
-          $ref: '#/definitions/models.Barcode'
-        type: array
-      category:
-        $ref: '#/definitions/models.Category'
-      categoryguid:
-        description: Guid กลุ่มสินค้า
+      unitname2:
         type: string
-      description1:
-        description: รายละเอียดภาษาไทย
+      unitname3:
         type: string
-      description2:
+      unitname4:
         type: string
-      description3:
+      unitname5:
         type: string
-      description4:
-        type: string
-      description5:
-        type: string
-      havepoint:
-        type: boolean
-      haveserialno:
-        type: boolean
-      images:
-        items:
-          $ref: '#/definitions/models.InventoryImage'
-        type: array
-      itemcode:
-        type: string
-      itemguid:
-        type: string
-      itemsku:
-        type: string
-      itemtype:
-        type: integer
-      itemunitcode:
-        type: string
-      itemunitdiv:
-        type: number
-      itemunitstd:
-        type: number
-      itemvat:
-        type: integer
-      memberprice:
-        type: number
-      name1:
-        description: ชื่อภาษาไทย
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      options:
-        items:
-          $ref: '#/definitions/models.Option'
-        type: array
-      parid:
-        type: string
-      price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      recommended:
-        description: สินค้าแนะนำ
-        type: boolean
-      tags:
-        items:
-          $ref: '#/definitions/models.InventoryTag'
-        type: array
-      unituses:
-        items:
-          $ref: '#/definitions/models.UnitUse'
-        type: array
-      xorder:
-        type: integer
-    type: object
-  models.BarcodeMasterActivity:
-    properties:
-      activated:
-        description: เปิดใช้งานอยู่
-        type: boolean
-      barcodes:
-        items:
-          $ref: '#/definitions/models.Barcode'
-        type: array
-      category:
-        $ref: '#/definitions/models.Category'
-      categoryguid:
-        description: Guid กลุ่มสินค้า
-        type: string
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      description1:
-        description: รายละเอียดภาษาไทย
-        type: string
-      description2:
-        type: string
-      description3:
-        type: string
-      description4:
-        type: string
-      description5:
-        type: string
-      guidfixed:
-        type: string
-      havepoint:
-        type: boolean
-      haveserialno:
-        type: boolean
-      images:
-        items:
-          $ref: '#/definitions/models.InventoryImage'
-        type: array
-      itemcode:
-        type: string
-      itemguid:
-        type: string
-      itemsku:
-        type: string
-      itemtype:
-        type: integer
-      itemunitcode:
-        type: string
-      itemunitdiv:
-        type: number
-      itemunitstd:
-        type: number
-      itemvat:
-        type: integer
-      memberprice:
-        type: number
-      name1:
-        description: ชื่อภาษาไทย
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      options:
-        items:
-          $ref: '#/definitions/models.Option'
-        type: array
-      parid:
-        type: string
-      price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      recommended:
-        description: สินค้าแนะนำ
-        type: boolean
-      shopid:
-        type: string
-      tags:
-        items:
-          $ref: '#/definitions/models.InventoryTag'
-        type: array
-      unituses:
-        items:
-          $ref: '#/definitions/models.UnitUse'
-        type: array
-      updatedat:
-        type: string
-      xorder:
-        type: integer
-    type: object
-  models.BarcodeMasterBulkInsertResponse:
-    properties:
-      created:
-        items:
-          type: string
-        type: array
-      payloadDuplicate:
-        items:
-          type: string
-        type: array
-      success:
-        type: boolean
-      updateFailed:
-        items:
-          type: string
-        type: array
-      updated:
-        items:
-          type: string
-        type: array
-    type: object
-  models.BarcodeMasterDeleteActivity:
-    properties:
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      shopid:
-        type: string
-      updatedat:
-        type: string
-    type: object
-  models.BarcodeMasterFetchUpdateResponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.BarcodeMasterLastActivityResponse'
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
-  models.BarcodeMasterInfo:
-    properties:
-      activated:
-        description: เปิดใช้งานอยู่
-        type: boolean
-      barcodes:
-        items:
-          $ref: '#/definitions/models.Barcode'
-        type: array
-      category:
-        $ref: '#/definitions/models.Category'
-      categoryguid:
-        description: Guid กลุ่มสินค้า
-        type: string
-      description1:
-        description: รายละเอียดภาษาไทย
-        type: string
-      description2:
-        type: string
-      description3:
-        type: string
-      description4:
-        type: string
-      description5:
-        type: string
-      guidfixed:
-        type: string
-      havepoint:
-        type: boolean
-      haveserialno:
-        type: boolean
-      images:
-        items:
-          $ref: '#/definitions/models.InventoryImage'
-        type: array
-      itemcode:
-        type: string
-      itemguid:
-        type: string
-      itemsku:
-        type: string
-      itemtype:
-        type: integer
-      itemunitcode:
-        type: string
-      itemunitdiv:
-        type: number
-      itemunitstd:
-        type: number
-      itemvat:
-        type: integer
-      memberprice:
-        type: number
-      name1:
-        description: ชื่อภาษาไทย
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      options:
-        items:
-          $ref: '#/definitions/models.Option'
-        type: array
-      parid:
-        type: string
-      price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      recommended:
-        description: สินค้าแนะนำ
-        type: boolean
-      tags:
-        items:
-          $ref: '#/definitions/models.InventoryTag'
-        type: array
-      unituses:
-        items:
-          $ref: '#/definitions/models.UnitUse'
-        type: array
-      xorder:
-        type: integer
-    type: object
-  models.BarcodeMasterInfoResponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.BarcodeMasterInfo'
-      success:
-        type: boolean
-    type: object
-  models.BarcodeMasterLastActivityResponse:
-    properties:
-      new:
-        items:
-          $ref: '#/definitions/models.BarcodeMasterActivity'
-        type: array
-      remove:
-        items:
-          $ref: '#/definitions/models.BarcodeMasterDeleteActivity'
-        type: array
-    type: object
-  models.BarcodeMasterPageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/models.BarcodeMasterInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
+    required:
+    - name1
     type: object
   models.BulkInsertResponse:
     properties:
@@ -1063,6 +759,10 @@ definitions:
       activated:
         description: เปิดใช้งานอยู่
         type: boolean
+      barcode:
+        type: string
+      barcodedescriptionfromproduct:
+        type: boolean
       barcodes:
         items:
           $ref: '#/definitions/models.Barcode'
@@ -1073,7 +773,6 @@ definitions:
         description: Guid กลุ่มสินค้า
         type: string
       description1:
-        description: รายละเอียดภาษาไทย
         type: string
       description2:
         type: string
@@ -1091,6 +790,8 @@ definitions:
         items:
           $ref: '#/definitions/models.InventoryImage'
         type: array
+      isstockproduct:
+        type: boolean
       itemcode:
         type: string
       itemguid:
@@ -1099,18 +800,11 @@ definitions:
         type: string
       itemtype:
         type: integer
-      itemunitcode:
-        type: string
-      itemunitdiv:
-        type: number
-      itemunitstd:
-        type: number
       itemvat:
         type: integer
       memberprice:
         type: number
       name1:
-        description: ชื่อภาษาไทย
         type: string
       name2:
         type: string
@@ -1132,22 +826,34 @@ definitions:
       recommended:
         description: สินค้าแนะนำ
         type: boolean
+      stockproductguidref:
+        type: string
       tags:
         items:
           $ref: '#/definitions/models.InventoryTag'
         type: array
+      unitcode:
+        type: string
       unituses:
         items:
           $ref: '#/definitions/models.UnitUse'
         type: array
       xorder:
         type: integer
+    required:
+    - name1
     type: object
   models.InventoryActivity:
     properties:
       activated:
         description: เปิดใช้งานอยู่
         type: boolean
+      barcode:
+        type: string
+      barcodedescriptionfromproduct:
+        type: boolean
+      barcodedetail:
+        $ref: '#/definitions/models.Barcode'
       barcodes:
         items:
           $ref: '#/definitions/models.Barcode'
@@ -1162,7 +868,6 @@ definitions:
       deletedat:
         type: string
       description1:
-        description: รายละเอียดภาษาไทย
         type: string
       description2:
         type: string
@@ -1182,6 +887,8 @@ definitions:
         items:
           $ref: '#/definitions/models.InventoryImage'
         type: array
+      isstockproduct:
+        type: boolean
       itemcode:
         type: string
       itemguid:
@@ -1190,18 +897,11 @@ definitions:
         type: string
       itemtype:
         type: integer
-      itemunitcode:
-        type: string
-      itemunitdiv:
-        type: number
-      itemunitstd:
-        type: number
       itemvat:
         type: integer
       memberprice:
         type: number
       name1:
-        description: ชื่อภาษาไทย
         type: string
       name2:
         type: string
@@ -1225,10 +925,16 @@ definitions:
         type: boolean
       shopid:
         type: string
+      stockproductguidref:
+        type: string
       tags:
         items:
           $ref: '#/definitions/models.InventoryTag'
         type: array
+      unit:
+        $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit'
+      unitcode:
+        type: string
       unituses:
         items:
           $ref: '#/definitions/models.UnitUse'
@@ -1237,6 +943,8 @@ definitions:
         type: string
       xorder:
         type: integer
+    required:
+    - name1
     type: object
   models.InventoryBulkInsertResponse:
     properties:
@@ -1291,6 +999,12 @@ definitions:
       activated:
         description: เปิดใช้งานอยู่
         type: boolean
+      barcode:
+        type: string
+      barcodedescriptionfromproduct:
+        type: boolean
+      barcodedetail:
+        $ref: '#/definitions/models.Barcode'
       barcodes:
         items:
           $ref: '#/definitions/models.Barcode'
@@ -1301,7 +1015,6 @@ definitions:
         description: Guid กลุ่มสินค้า
         type: string
       description1:
-        description: รายละเอียดภาษาไทย
         type: string
       description2:
         type: string
@@ -1321,6 +1034,8 @@ definitions:
         items:
           $ref: '#/definitions/models.InventoryImage'
         type: array
+      isstockproduct:
+        type: boolean
       itemcode:
         type: string
       itemguid:
@@ -1329,18 +1044,11 @@ definitions:
         type: string
       itemtype:
         type: integer
-      itemunitcode:
-        type: string
-      itemunitdiv:
-        type: number
-      itemunitstd:
-        type: number
       itemvat:
         type: integer
       memberprice:
         type: number
       name1:
-        description: ชื่อภาษาไทย
         type: string
       name2:
         type: string
@@ -1362,16 +1070,24 @@ definitions:
       recommended:
         description: สินค้าแนะนำ
         type: boolean
+      stockproductguidref:
+        type: string
       tags:
         items:
           $ref: '#/definitions/models.InventoryTag'
         type: array
+      unit:
+        $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit'
+      unitcode:
+        type: string
       unituses:
         items:
           $ref: '#/definitions/models.UnitUse'
         type: array
       xorder:
         type: integer
+    required:
+    - name1
     type: object
   models.InventoryInfoResponse:
     properties:
@@ -2364,6 +2080,12 @@ definitions:
         type: boolean
       amount:
         type: number
+      barcode:
+        type: string
+      barcodedescriptionfromproduct:
+        type: boolean
+      barcodedetail:
+        $ref: '#/definitions/models.Barcode'
       barcodes:
         items:
           $ref: '#/definitions/models.Barcode'
@@ -2374,7 +2096,6 @@ definitions:
         description: Guid กลุ่มสินค้า
         type: string
       description1:
-        description: รายละเอียดภาษาไทย
         type: string
       description2:
         type: string
@@ -2398,6 +2119,8 @@ definitions:
         items:
           $ref: '#/definitions/models.InventoryImage'
         type: array
+      isstockproduct:
+        type: boolean
       itemcode:
         type: string
       itemguid:
@@ -2406,12 +2129,6 @@ definitions:
         type: string
       itemtype:
         type: integer
-      itemunitcode:
-        type: string
-      itemunitdiv:
-        type: number
-      itemunitstd:
-        type: number
       itemvat:
         type: integer
       linenumber:
@@ -2419,7 +2136,6 @@ definitions:
       memberprice:
         type: number
       name1:
-        description: ชื่อภาษาไทย
         type: string
       name2:
         type: string
@@ -2442,16 +2158,24 @@ definitions:
       recommended:
         description: สินค้าแนะนำ
         type: boolean
+      stockproductguidref:
+        type: string
       tags:
         items:
           $ref: '#/definitions/models.InventoryTag'
         type: array
+      unit:
+        $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit'
+      unitcode:
+        type: string
       unituses:
         items:
           $ref: '#/definitions/models.UnitUse'
         type: array
       xorder:
         type: integer
+    required:
+    - name1
     type: object
   models.PurchaseInfo:
     properties:
@@ -2543,6 +2267,12 @@ definitions:
         type: boolean
       amount:
         type: number
+      barcode:
+        type: string
+      barcodedescriptionfromproduct:
+        type: boolean
+      barcodedetail:
+        $ref: '#/definitions/models.Barcode'
       barcodes:
         items:
           $ref: '#/definitions/models.Barcode'
@@ -2553,7 +2283,6 @@ definitions:
         description: Guid กลุ่มสินค้า
         type: string
       description1:
-        description: รายละเอียดภาษาไทย
         type: string
       description2:
         type: string
@@ -2577,6 +2306,8 @@ definitions:
         items:
           $ref: '#/definitions/models.InventoryImage'
         type: array
+      isstockproduct:
+        type: boolean
       itemcode:
         type: string
       itemguid:
@@ -2585,12 +2316,6 @@ definitions:
         type: string
       itemtype:
         type: integer
-      itemunitcode:
-        type: string
-      itemunitdiv:
-        type: number
-      itemunitstd:
-        type: number
       itemvat:
         type: integer
       linenumber:
@@ -2598,7 +2323,6 @@ definitions:
       memberprice:
         type: number
       name1:
-        description: ชื่อภาษาไทย
         type: string
       name2:
         type: string
@@ -2621,16 +2345,24 @@ definitions:
       recommended:
         description: สินค้าแนะนำ
         type: boolean
+      stockproductguidref:
+        type: string
       tags:
         items:
           $ref: '#/definitions/models.InventoryTag'
         type: array
+      unit:
+        $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit'
+      unitcode:
+        type: string
       unituses:
         items:
           $ref: '#/definitions/models.UnitUse'
         type: array
       xorder:
         type: integer
+    required:
+    - name1
     type: object
   models.SaleinvoiceInfo:
     properties:
@@ -2943,18 +2675,40 @@ definitions:
       success:
         type: boolean
     type: object
+  models.SmsPaymentSettings:
+    properties:
+      patterncode:
+        type: string
+      storefrontguid:
+        maxLength: 233
+        type: string
+      timeminuteafter:
+        type: integer
+      timeminutebefore:
+        type: integer
+    required:
+    - patterncode
+    - storefrontguid
+    type: object
   models.SmsTransaction:
     properties:
       address:
         type: string
       body:
         type: string
+      deviceuuid:
+        type: string
       sendedat:
         type: string
       status:
         type: integer
+      storefrontguid:
+        maxLength: 233
+        type: string
       transid:
         type: string
+    required:
+    - storefrontguid
     type: object
   models.SmsTransactionInfo:
     properties:
@@ -2962,14 +2716,21 @@ definitions:
         type: string
       body:
         type: string
+      deviceuuid:
+        type: string
       guidfixed:
         type: string
       sendedat:
         type: string
       status:
         type: integer
+      storefrontguid:
+        maxLength: 233
+        type: string
       transid:
         type: string
+    required:
+    - storefrontguid
     type: object
   models.SmsTransactionInfoResponse:
     properties:
@@ -3162,33 +2923,20 @@ definitions:
       success:
         type: boolean
     type: object
-  models.Unit:
-    properties:
-      isunitcost:
-        type: boolean
-      isunitstandard:
-        type: boolean
-      itemunitdiv:
-        type: number
-      itemunitstd:
-        type: number
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      unitcode:
-        type: string
-    required:
-    - name1
-    type: object
   models.UnitUse:
     properties:
+      description1:
+        type: string
+      description2:
+        type: string
+      description3:
+        type: string
+      description4:
+        type: string
+      description5:
+        type: string
+      isprimary:
+        type: boolean
       isunitcost:
         type: boolean
       isunitstandard:
@@ -3197,20 +2945,18 @@ definitions:
         type: number
       itemunitstd:
         type: number
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
       unitcode:
         type: string
-    required:
-    - name1
+      unitname1:
+        type: string
+      unitname2:
+        type: string
+      unitname3:
+        type: string
+      unitname4:
+        type: string
+      unitname5:
+        type: string
     type: object
   models.UserLoginRequest:
     properties:
@@ -3324,6 +3070,44 @@ definitions:
     required:
     - name1
     type: object
+  smlcloudplatform_pkg_product_inventory_models.Unit:
+    properties:
+      unitcode:
+        type: string
+      unitname1:
+        type: string
+      unitname2:
+        type: string
+      unitname3:
+        type: string
+      unitname4:
+        type: string
+      unitname5:
+        type: string
+    type: object
+  smlcloudplatform_pkg_product_unit_models.Unit:
+    properties:
+      isunitcost:
+        type: boolean
+      isunitstandard:
+        type: boolean
+      itemunitdiv:
+        type: number
+      itemunitstd:
+        type: number
+      unitcode:
+        type: string
+      unitname1:
+        type: string
+      unitname2:
+        type: string
+      unitname3:
+        type: string
+      unitname4:
+        type: string
+      unitname5:
+        type: string
+    type: object
 info:
   contact:
     email: support@swagger.io
@@ -3368,230 +3152,6 @@ paths:
       - AccessToken: []
       tags:
       - XApiKey
-  /barcodemaster:
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: Add Category
-        in: query
-        name: page
-        type: integer
-      - description: Add Category
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.BarcodeMasterPageResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - BarcodeMaster
-    post:
-      consumes:
-      - application/json
-      description: Create BarcodeMaster
-      parameters:
-      - description: BarcodeMaster
-        in: body
-        name: BarcodeMaster
-        required: true
-        schema:
-          $ref: '#/definitions/models.BarcodeMaster'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - BarcodeMaster
-  /barcodemaster/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete BarcodeMaster
-      parameters:
-      - description: BarcodeMaster ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - BarcodeMaster
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: BarcodeMaster ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.BarcodeMasterInfoResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - BarcodeMaster
-    put:
-      consumes:
-      - application/json
-      description: Update BarcodeMaster
-      parameters:
-      - description: BarcodeMaster ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: BarcodeMaster
-        in: body
-        name: BarcodeMaster
-        required: true
-        schema:
-          $ref: '#/definitions/models.BarcodeMaster'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - BarcodeMaster
-  /barcodemaster/bulk:
-    post:
-      consumes:
-      - application/json
-      description: Create BarcodeMaster
-      parameters:
-      - description: BarcodeMaster
-        in: body
-        name: BarcodeMaster
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.BarcodeMaster'
-          type: array
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.BarcodeMasterBulkInsertResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - BarcodeMaster
-  /barcodemaster/categoryupdate/{catid}:
-    post:
-      consumes:
-      - application/json
-      description: Update BarcodeMaster Category List
-      parameters:
-      - description: Category GUID
-        in: path
-        name: catid
-        required: true
-        type: string
-      - description: BarcodeMaster
-        in: body
-        name: BarcodeMaster
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccess'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - BarcodeMaster
-  /barcodemaster/fetchupdate:
-    get:
-      consumes:
-      - application/json
-      description: Fetch Update BarcodeMaster By Date
-      parameters:
-      - description: DateTime YYYY-MM-DDTHH:mm
-        in: query
-        name: lastUpdate
-        required: true
-        type: string
-      - description: Add Category
-        in: query
-        name: page
-        type: integer
-      - description: Add Category
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.BarcodeMasterFetchUpdateResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - BarcodeMaster
   /category:
     get:
       consumes:
@@ -7482,6 +7042,93 @@ paths:
       - AccessToken: []
       tags:
       - Shop
+  /smspaymentsettings:
+    get:
+      consumes:
+      - application/json
+      description: sms payment received settings service
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: sms payment settings
+      tags:
+      - SmsPayment
+  /smspaymentsettings/{storefrontguid}:
+    get:
+      consumes:
+      - application/json
+      description: sms payment received settings service
+      parameters:
+      - description: storefront guidfixed
+        in: path
+        name: storefrontguid
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JournalInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: sms payment settings
+      tags:
+      - SmsPayment
+    put:
+      consumes:
+      - application/json
+      description: sms payment received settings service
+      parameters:
+      - description: storefront guidfixed
+        in: path
+        name: storefrontguid
+        required: true
+        type: string
+      - description: sms payment settings
+        in: body
+        name: SmsPaymentSettings
+        required: true
+        schema:
+          $ref: '#/definitions/models.SmsPaymentSettings'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: sms payment settings
+      tags:
+      - SmsPayment
   /smstransaction:
     get:
       consumes:
@@ -7819,7 +7466,7 @@ paths:
         name: Unit
         required: true
         schema:
-          $ref: '#/definitions/models.Unit'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_unit_models.Unit'
       responses:
         "201":
           description: Created
@@ -7895,7 +7542,7 @@ paths:
         name: Unit
         required: true
         schema:
-          $ref: '#/definitions/models.Unit'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_unit_models.Unit'
       responses:
         "201":
           description: Created
@@ -7921,7 +7568,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/models.Unit'
+            $ref: '#/definitions/smlcloudplatform_pkg_product_unit_models.Unit'
           type: array
       responses:
         "201":

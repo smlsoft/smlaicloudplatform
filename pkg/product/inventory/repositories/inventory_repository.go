@@ -185,7 +185,7 @@ func (repo InventoryRepository) FindByGuid(shopID string, guid string) (models.I
 				"deletedat": bson.M{"$exists": false},
 			},
 		},
-		repo.unitLookupQuery(),
+		repo.unitLookupQuery(shopID),
 		repo.unitUnwindQuery(),
 		{"$limit": 1},
 	}
@@ -216,7 +216,7 @@ func (repo InventoryRepository) FindPage(shopID string, q string, page int, limi
 		},
 	}}
 
-	aggData, err := repo.pst.AggregatePage(models.InventoryInfo{}, limit, page, matchQuery, repo.unitLookupQuery(), repo.unitUnwindQuery())
+	aggData, err := repo.pst.AggregatePage(models.InventoryInfo{}, limit, page, matchQuery, repo.unitLookupQuery(shopID), repo.unitUnwindQuery())
 
 	if err != nil {
 		return []models.InventoryInfo{}, paginate.PaginationData{}, err
@@ -259,7 +259,7 @@ func (repo InventoryRepository) FindCreatedOrUpdatedPage(shopID string, lastUpda
 		},
 	}
 
-	aggData, err := repo.pst.AggregatePage(models.InventoryActivity{}, limit, page, matchQuery, repo.unitLookupQuery(), repo.unitUnwindQuery())
+	aggData, err := repo.pst.AggregatePage(models.InventoryActivity{}, limit, page, matchQuery, repo.unitLookupQuery(shopID), repo.unitUnwindQuery())
 
 	if err != nil {
 		return []models.InventoryActivity{}, paginate.PaginationData{}, err
@@ -286,7 +286,7 @@ func (repo InventoryRepository) FindByItemGuid(shopID string, itemguid string) (
 				"deletedat": bson.M{"$exists": false},
 			},
 		},
-		repo.unitLookupQuery(),
+		repo.unitLookupQuery(shopID),
 		repo.unitUnwindQuery(),
 		{"$limit": 1},
 	}
@@ -316,7 +316,7 @@ func (repo InventoryRepository) FindByItemGuidList(shopID string, guidList []str
 				"deletedat": bson.M{"$exists": false},
 			},
 		},
-		repo.unitLookupQuery(),
+		repo.unitLookupQuery(shopID),
 		repo.unitUnwindQuery(),
 	}
 
@@ -340,7 +340,7 @@ func (repo InventoryRepository) FindByItemBarcode(shopID string, barcode string)
 				"deletedat": bson.M{"$exists": false},
 			},
 		},
-		repo.unitLookupQuery(),
+		repo.unitLookupQuery(shopID),
 		repo.unitUnwindQuery(),
 		{"$limit": 1},
 	}
@@ -358,13 +358,18 @@ func (repo InventoryRepository) FindByItemBarcode(shopID string, barcode string)
 	return findDocList[0], nil
 }
 
-func (repo InventoryRepository) unitLookupQuery() bson.M {
+func (repo InventoryRepository) unitLookupQuery(shopID string) bson.M {
 	return bson.M{
 		"$lookup": bson.M{
-			"from":         "units",
-			"localField":   "unitcode",
-			"foreignField": "unitcode",
-			"as":           "unit",
+			"from": "units",
+			"let":  bson.M{"unitcode": "$unitcode"},
+			"pipeline": []interface{}{
+				bson.M{"$match": bson.M{
+					"shopid": shopID,
+					"$expr":  bson.M{"$eq": []string{"$$unitcode", "$unitcode"}},
+				}},
+			},
+			"as": "unit",
 		},
 	}
 }
