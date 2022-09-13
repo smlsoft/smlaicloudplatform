@@ -78,6 +78,7 @@ type Barcode struct {
 	Barcode            string `json:"barcode" bson:"barcode" gorm:"barcode"`
 	UnitCode           string `json:"unitcode" bson:"unitcode" gorm:"unitcode"`
 	Image              string `json:"image" bson:"image" gorm:"image"`
+	IsPrimary          bool   `json:"isprimary" bson:"isprimary" gorm:"isprimary,type:bool,default:false"`
 	ProductPrice       `bson:"inline"`
 	models.UnitName    `bson:"inline"`
 	models.Name        `bson:"inline"`
@@ -92,6 +93,7 @@ type UnitUse struct {
 	ItemUnitDIV        float64 `json:"itemunitdiv" bson:"itemunitdiv" gorm:"itemunitdiv"`
 	IsUnitCost         bool    `json:"isunitcost" bson:"isunitcost" gorm:"isunitcost,type:bool,default:false"`
 	IsUnitStandard     bool    `json:"isunitstandard" bson:"isunitstandard" gorm:"isunitstandard,type:bool,default:false"`
+	IsPrimary          bool    `json:"isprimary" bson:"isprimary" gorm:"isprimary,type:bool,default:false"`
 }
 
 type InventoryItemGuid struct {

@@ -77,366 +77,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/barcodemaster": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get struct array by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "BarcodeMaster"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Add Category",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Add Category",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.BarcodeMasterPageResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create BarcodeMaster",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "BarcodeMaster"
-                ],
-                "parameters": [
-                    {
-                        "description": "BarcodeMaster",
-                        "name": "BarcodeMaster",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.BarcodeMaster"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/barcodemaster/bulk": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create BarcodeMaster",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "BarcodeMaster"
-                ],
-                "parameters": [
-                    {
-                        "description": "BarcodeMaster",
-                        "name": "BarcodeMaster",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.BarcodeMaster"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.BarcodeMasterBulkInsertResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/barcodemaster/categoryupdate/{catid}": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update BarcodeMaster Category List",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "BarcodeMaster"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Category GUID",
-                        "name": "catid",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "BarcodeMaster",
-                        "name": "BarcodeMaster",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccess"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/barcodemaster/fetchupdate": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Fetch Update BarcodeMaster By Date",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "BarcodeMaster"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "DateTime YYYY-MM-DDTHH:mm",
-                        "name": "lastUpdate",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Add Category",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Add Category",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.BarcodeMasterFetchUpdateResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/barcodemaster/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get struct array by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "BarcodeMaster"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "BarcodeMaster ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.BarcodeMasterInfoResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update BarcodeMaster",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "BarcodeMaster"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "BarcodeMaster ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "BarcodeMaster",
-                        "name": "BarcodeMaster",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.BarcodeMaster"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete BarcodeMaster",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "BarcodeMaster"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "BarcodeMaster ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/category": {
             "get": {
                 "security": [
@@ -6685,6 +6325,144 @@ const docTemplate = `{
                 }
             }
         },
+        "/smspaymentsettings": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "sms payment received settings service",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SmsPayment"
+                ],
+                "summary": "sms payment settings",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/smspaymentsettings/{storefrontguid}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "sms payment received settings service",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SmsPayment"
+                ],
+                "summary": "sms payment settings",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "storefront guidfixed",
+                        "name": "storefrontguid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "sms payment received settings service",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SmsPayment"
+                ],
+                "summary": "sms payment settings",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "storefront guidfixed",
+                        "name": "storefrontguid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "sms payment settings",
+                        "name": "SmsPaymentSettings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SmsPaymentSettings"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/smstransaction": {
             "get": {
                 "security": [
@@ -7228,7 +7006,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Unit"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_product_unit_models.Unit"
                         }
                     }
                 ],
@@ -7271,7 +7049,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Unit"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_product_unit_models.Unit"
                             }
                         }
                     }
@@ -7357,7 +7135,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Unit"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_product_unit_models.Unit"
                         }
                     }
                 ],
@@ -8010,525 +7788,73 @@ const docTemplate = `{
         },
         "models.Barcode": {
             "type": "object",
+            "required": [
+                "name1"
+            ],
             "properties": {
                 "barcode": {
+                    "type": "string"
+                },
+                "description1": {
+                    "type": "string"
+                },
+                "description2": {
+                    "type": "string"
+                },
+                "description3": {
+                    "type": "string"
+                },
+                "description4": {
+                    "type": "string"
+                },
+                "description5": {
                     "type": "string"
                 },
                 "image": {
                     "type": "string"
                 },
+                "isprimary": {
+                    "type": "boolean"
+                },
+                "memberprice": {
+                    "type": "number"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
                     "type": "number"
                 },
                 "unitcode": {
                     "type": "string"
                 },
-                "unitname": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.BarcodeMaster": {
-            "type": "object",
-            "properties": {
-                "activated": {
-                    "description": "เปิดใช้งานอยู่",
-                    "type": "boolean"
-                },
-                "barcodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Barcode"
-                    }
-                },
-                "category": {
-                    "$ref": "#/definitions/models.Category"
-                },
-                "categoryguid": {
-                    "description": "Guid กลุ่มสินค้า",
+                "unitname1": {
                     "type": "string"
                 },
-                "description1": {
-                    "description": "รายละเอียดภาษาไทย",
+                "unitname2": {
                     "type": "string"
                 },
-                "description2": {
+                "unitname3": {
                     "type": "string"
                 },
-                "description3": {
+                "unitname4": {
                     "type": "string"
                 },
-                "description4": {
+                "unitname5": {
                     "type": "string"
-                },
-                "description5": {
-                    "type": "string"
-                },
-                "havepoint": {
-                    "type": "boolean"
-                },
-                "haveserialno": {
-                    "type": "boolean"
-                },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryImage"
-                    }
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemguid": {
-                    "type": "string"
-                },
-                "itemsku": {
-                    "type": "string"
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitdiv": {
-                    "type": "number"
-                },
-                "itemunitstd": {
-                    "type": "number"
-                },
-                "itemvat": {
-                    "type": "integer"
-                },
-                "memberprice": {
-                    "type": "number"
-                },
-                "name1": {
-                    "description": "ชื่อภาษาไทย",
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "options": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Option"
-                    }
-                },
-                "parid": {
-                    "type": "string"
-                },
-                "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "recommended": {
-                    "description": "สินค้าแนะนำ",
-                    "type": "boolean"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryTag"
-                    }
-                },
-                "unituses": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.UnitUse"
-                    }
-                },
-                "xorder": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.BarcodeMasterActivity": {
-            "type": "object",
-            "properties": {
-                "activated": {
-                    "description": "เปิดใช้งานอยู่",
-                    "type": "boolean"
-                },
-                "barcodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Barcode"
-                    }
-                },
-                "category": {
-                    "$ref": "#/definitions/models.Category"
-                },
-                "categoryguid": {
-                    "description": "Guid กลุ่มสินค้า",
-                    "type": "string"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "description1": {
-                    "description": "รายละเอียดภาษาไทย",
-                    "type": "string"
-                },
-                "description2": {
-                    "type": "string"
-                },
-                "description3": {
-                    "type": "string"
-                },
-                "description4": {
-                    "type": "string"
-                },
-                "description5": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "havepoint": {
-                    "type": "boolean"
-                },
-                "haveserialno": {
-                    "type": "boolean"
-                },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryImage"
-                    }
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemguid": {
-                    "type": "string"
-                },
-                "itemsku": {
-                    "type": "string"
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitdiv": {
-                    "type": "number"
-                },
-                "itemunitstd": {
-                    "type": "number"
-                },
-                "itemvat": {
-                    "type": "integer"
-                },
-                "memberprice": {
-                    "type": "number"
-                },
-                "name1": {
-                    "description": "ชื่อภาษาไทย",
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "options": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Option"
-                    }
-                },
-                "parid": {
-                    "type": "string"
-                },
-                "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "recommended": {
-                    "description": "สินค้าแนะนำ",
-                    "type": "boolean"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryTag"
-                    }
-                },
-                "unituses": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.UnitUse"
-                    }
-                },
-                "updatedat": {
-                    "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.BarcodeMasterBulkInsertResponse": {
-            "type": "object",
-            "properties": {
-                "created": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "payloadDuplicate": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "success": {
-                    "type": "boolean"
-                },
-                "updateFailed": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "updated": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "models.BarcodeMasterDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.BarcodeMasterFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.BarcodeMasterLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.BarcodeMasterInfo": {
-            "type": "object",
-            "properties": {
-                "activated": {
-                    "description": "เปิดใช้งานอยู่",
-                    "type": "boolean"
-                },
-                "barcodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Barcode"
-                    }
-                },
-                "category": {
-                    "$ref": "#/definitions/models.Category"
-                },
-                "categoryguid": {
-                    "description": "Guid กลุ่มสินค้า",
-                    "type": "string"
-                },
-                "description1": {
-                    "description": "รายละเอียดภาษาไทย",
-                    "type": "string"
-                },
-                "description2": {
-                    "type": "string"
-                },
-                "description3": {
-                    "type": "string"
-                },
-                "description4": {
-                    "type": "string"
-                },
-                "description5": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "havepoint": {
-                    "type": "boolean"
-                },
-                "haveserialno": {
-                    "type": "boolean"
-                },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryImage"
-                    }
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemguid": {
-                    "type": "string"
-                },
-                "itemsku": {
-                    "type": "string"
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitdiv": {
-                    "type": "number"
-                },
-                "itemunitstd": {
-                    "type": "number"
-                },
-                "itemvat": {
-                    "type": "integer"
-                },
-                "memberprice": {
-                    "type": "number"
-                },
-                "name1": {
-                    "description": "ชื่อภาษาไทย",
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "options": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Option"
-                    }
-                },
-                "parid": {
-                    "type": "string"
-                },
-                "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "recommended": {
-                    "description": "สินค้าแนะนำ",
-                    "type": "boolean"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryTag"
-                    }
-                },
-                "unituses": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.UnitUse"
-                    }
-                },
-                "xorder": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.BarcodeMasterInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.BarcodeMasterInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.BarcodeMasterLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.BarcodeMasterActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.BarcodeMasterDeleteActivity"
-                    }
-                }
-            }
-        },
-        "models.BarcodeMasterPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.BarcodeMasterInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
                 }
             }
         },
@@ -9370,9 +8696,18 @@ const docTemplate = `{
         },
         "models.Inventory": {
             "type": "object",
+            "required": [
+                "name1"
+            ],
             "properties": {
                 "activated": {
                     "description": "เปิดใช้งานอยู่",
+                    "type": "boolean"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "barcodedescriptionfromproduct": {
                     "type": "boolean"
                 },
                 "barcodes": {
@@ -9389,7 +8724,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "description1": {
-                    "description": "รายละเอียดภาษาไทย",
                     "type": "string"
                 },
                 "description2": {
@@ -9416,6 +8750,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryImage"
                     }
                 },
+                "isstockproduct": {
+                    "type": "boolean"
+                },
                 "itemcode": {
                     "type": "string"
                 },
@@ -9428,15 +8765,6 @@ const docTemplate = `{
                 "itemtype": {
                     "type": "integer"
                 },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitdiv": {
-                    "type": "number"
-                },
-                "itemunitstd": {
-                    "type": "number"
-                },
                 "itemvat": {
                     "type": "integer"
                 },
@@ -9444,7 +8772,6 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "name1": {
-                    "description": "ชื่อภาษาไทย",
                     "type": "string"
                 },
                 "name2": {
@@ -9476,11 +8803,17 @@ const docTemplate = `{
                     "description": "สินค้าแนะนำ",
                     "type": "boolean"
                 },
+                "stockproductguidref": {
+                    "type": "string"
+                },
                 "tags": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.InventoryTag"
                     }
+                },
+                "unitcode": {
+                    "type": "string"
                 },
                 "unituses": {
                     "type": "array",
@@ -9495,10 +8828,22 @@ const docTemplate = `{
         },
         "models.InventoryActivity": {
             "type": "object",
+            "required": [
+                "name1"
+            ],
             "properties": {
                 "activated": {
                     "description": "เปิดใช้งานอยู่",
                     "type": "boolean"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "barcodedescriptionfromproduct": {
+                    "type": "boolean"
+                },
+                "barcodedetail": {
+                    "$ref": "#/definitions/models.Barcode"
                 },
                 "barcodes": {
                     "type": "array",
@@ -9520,7 +8865,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "description1": {
-                    "description": "รายละเอียดภาษาไทย",
                     "type": "string"
                 },
                 "description2": {
@@ -9550,6 +8894,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryImage"
                     }
                 },
+                "isstockproduct": {
+                    "type": "boolean"
+                },
                 "itemcode": {
                     "type": "string"
                 },
@@ -9562,15 +8909,6 @@ const docTemplate = `{
                 "itemtype": {
                     "type": "integer"
                 },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitdiv": {
-                    "type": "number"
-                },
-                "itemunitstd": {
-                    "type": "number"
-                },
                 "itemvat": {
                     "type": "integer"
                 },
@@ -9578,7 +8916,6 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "name1": {
-                    "description": "ชื่อภาษาไทย",
                     "type": "string"
                 },
                 "name2": {
@@ -9613,11 +8950,20 @@ const docTemplate = `{
                 "shopid": {
                     "type": "string"
                 },
+                "stockproductguidref": {
+                    "type": "string"
+                },
                 "tags": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.InventoryTag"
                     }
+                },
+                "unit": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
+                },
+                "unitcode": {
+                    "type": "string"
                 },
                 "unituses": {
                     "type": "array",
@@ -9709,10 +9055,22 @@ const docTemplate = `{
         },
         "models.InventoryInfo": {
             "type": "object",
+            "required": [
+                "name1"
+            ],
             "properties": {
                 "activated": {
                     "description": "เปิดใช้งานอยู่",
                     "type": "boolean"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "barcodedescriptionfromproduct": {
+                    "type": "boolean"
+                },
+                "barcodedetail": {
+                    "$ref": "#/definitions/models.Barcode"
                 },
                 "barcodes": {
                     "type": "array",
@@ -9728,7 +9086,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "description1": {
-                    "description": "รายละเอียดภาษาไทย",
                     "type": "string"
                 },
                 "description2": {
@@ -9758,6 +9115,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryImage"
                     }
                 },
+                "isstockproduct": {
+                    "type": "boolean"
+                },
                 "itemcode": {
                     "type": "string"
                 },
@@ -9770,15 +9130,6 @@ const docTemplate = `{
                 "itemtype": {
                     "type": "integer"
                 },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitdiv": {
-                    "type": "number"
-                },
-                "itemunitstd": {
-                    "type": "number"
-                },
                 "itemvat": {
                     "type": "integer"
                 },
@@ -9786,7 +9137,6 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "name1": {
-                    "description": "ชื่อภาษาไทย",
                     "type": "string"
                 },
                 "name2": {
@@ -9818,11 +9168,20 @@ const docTemplate = `{
                     "description": "สินค้าแนะนำ",
                     "type": "boolean"
                 },
+                "stockproductguidref": {
+                    "type": "string"
+                },
                 "tags": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.InventoryTag"
                     }
+                },
+                "unit": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
+                },
+                "unitcode": {
+                    "type": "string"
                 },
                 "unituses": {
                     "type": "array",
@@ -11330,6 +10689,9 @@ const docTemplate = `{
         },
         "models.PurchaseDetail": {
             "type": "object",
+            "required": [
+                "name1"
+            ],
             "properties": {
                 "activated": {
                     "description": "เปิดใช้งานอยู่",
@@ -11337,6 +10699,15 @@ const docTemplate = `{
                 },
                 "amount": {
                     "type": "number"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "barcodedescriptionfromproduct": {
+                    "type": "boolean"
+                },
+                "barcodedetail": {
+                    "$ref": "#/definitions/models.Barcode"
                 },
                 "barcodes": {
                     "type": "array",
@@ -11352,7 +10723,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "description1": {
-                    "description": "รายละเอียดภาษาไทย",
                     "type": "string"
                 },
                 "description2": {
@@ -11388,6 +10758,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryImage"
                     }
                 },
+                "isstockproduct": {
+                    "type": "boolean"
+                },
                 "itemcode": {
                     "type": "string"
                 },
@@ -11400,15 +10773,6 @@ const docTemplate = `{
                 "itemtype": {
                     "type": "integer"
                 },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitdiv": {
-                    "type": "number"
-                },
-                "itemunitstd": {
-                    "type": "number"
-                },
                 "itemvat": {
                     "type": "integer"
                 },
@@ -11419,7 +10783,6 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "name1": {
-                    "description": "ชื่อภาษาไทย",
                     "type": "string"
                 },
                 "name2": {
@@ -11453,11 +10816,20 @@ const docTemplate = `{
                     "description": "สินค้าแนะนำ",
                     "type": "boolean"
                 },
+                "stockproductguidref": {
+                    "type": "string"
+                },
                 "tags": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.InventoryTag"
                     }
+                },
+                "unit": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
+                },
+                "unitcode": {
+                    "type": "string"
                 },
                 "unituses": {
                     "type": "array",
@@ -11598,6 +10970,9 @@ const docTemplate = `{
         },
         "models.SaleinvoiceDetail": {
             "type": "object",
+            "required": [
+                "name1"
+            ],
             "properties": {
                 "activated": {
                     "description": "เปิดใช้งานอยู่",
@@ -11605,6 +10980,15 @@ const docTemplate = `{
                 },
                 "amount": {
                     "type": "number"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "barcodedescriptionfromproduct": {
+                    "type": "boolean"
+                },
+                "barcodedetail": {
+                    "$ref": "#/definitions/models.Barcode"
                 },
                 "barcodes": {
                     "type": "array",
@@ -11620,7 +11004,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "description1": {
-                    "description": "รายละเอียดภาษาไทย",
                     "type": "string"
                 },
                 "description2": {
@@ -11656,6 +11039,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryImage"
                     }
                 },
+                "isstockproduct": {
+                    "type": "boolean"
+                },
                 "itemcode": {
                     "type": "string"
                 },
@@ -11668,15 +11054,6 @@ const docTemplate = `{
                 "itemtype": {
                     "type": "integer"
                 },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitdiv": {
-                    "type": "number"
-                },
-                "itemunitstd": {
-                    "type": "number"
-                },
                 "itemvat": {
                     "type": "integer"
                 },
@@ -11687,7 +11064,6 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "name1": {
-                    "description": "ชื่อภาษาไทย",
                     "type": "string"
                 },
                 "name2": {
@@ -11721,11 +11097,20 @@ const docTemplate = `{
                     "description": "สินค้าแนะนำ",
                     "type": "boolean"
                 },
+                "stockproductguidref": {
+                    "type": "string"
+                },
                 "tags": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.InventoryTag"
                     }
+                },
+                "unit": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
+                },
+                "unitcode": {
+                    "type": "string"
                 },
                 "unituses": {
                     "type": "array",
@@ -12215,13 +11600,41 @@ const docTemplate = `{
                 }
             }
         },
+        "models.SmsPaymentSettings": {
+            "type": "object",
+            "required": [
+                "patterncode",
+                "storefrontguid"
+            ],
+            "properties": {
+                "patterncode": {
+                    "type": "string"
+                },
+                "storefrontguid": {
+                    "type": "string",
+                    "maxLength": 233
+                },
+                "timeminuteafter": {
+                    "type": "integer"
+                },
+                "timeminutebefore": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.SmsTransaction": {
             "type": "object",
+            "required": [
+                "storefrontguid"
+            ],
             "properties": {
                 "address": {
                     "type": "string"
                 },
                 "body": {
+                    "type": "string"
+                },
+                "deviceuuid": {
                     "type": "string"
                 },
                 "sendedat": {
@@ -12230,6 +11643,10 @@ const docTemplate = `{
                 "status": {
                     "type": "integer"
                 },
+                "storefrontguid": {
+                    "type": "string",
+                    "maxLength": 233
+                },
                 "transid": {
                     "type": "string"
                 }
@@ -12237,11 +11654,17 @@ const docTemplate = `{
         },
         "models.SmsTransactionInfo": {
             "type": "object",
+            "required": [
+                "storefrontguid"
+            ],
             "properties": {
                 "address": {
                     "type": "string"
                 },
                 "body": {
+                    "type": "string"
+                },
+                "deviceuuid": {
                     "type": "string"
                 },
                 "guidfixed": {
@@ -12252,6 +11675,10 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "integer"
+                },
+                "storefrontguid": {
+                    "type": "string",
+                    "maxLength": 233
                 },
                 "transid": {
                     "type": "string"
@@ -12536,50 +11963,27 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Unit": {
-            "type": "object",
-            "required": [
-                "name1"
-            ],
-            "properties": {
-                "isunitcost": {
-                    "type": "boolean"
-                },
-                "isunitstandard": {
-                    "type": "boolean"
-                },
-                "itemunitdiv": {
-                    "type": "number"
-                },
-                "itemunitstd": {
-                    "type": "number"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "unitcode": {
-                    "type": "string"
-                }
-            }
-        },
         "models.UnitUse": {
             "type": "object",
-            "required": [
-                "name1"
-            ],
             "properties": {
+                "description1": {
+                    "type": "string"
+                },
+                "description2": {
+                    "type": "string"
+                },
+                "description3": {
+                    "type": "string"
+                },
+                "description4": {
+                    "type": "string"
+                },
+                "description5": {
+                    "type": "string"
+                },
+                "isprimary": {
+                    "type": "boolean"
+                },
                 "isunitcost": {
                     "type": "boolean"
                 },
@@ -12592,22 +11996,22 @@ const docTemplate = `{
                 "itemunitstd": {
                     "type": "number"
                 },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
                 "unitcode": {
+                    "type": "string"
+                },
+                "unitname1": {
+                    "type": "string"
+                },
+                "unitname2": {
+                    "type": "string"
+                },
+                "unitname3": {
+                    "type": "string"
+                },
+                "unitname4": {
+                    "type": "string"
+                },
+                "unitname5": {
                     "type": "string"
                 }
             }
@@ -12772,6 +12176,64 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name5": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_inventory_models.Unit": {
+            "type": "object",
+            "properties": {
+                "unitcode": {
+                    "type": "string"
+                },
+                "unitname1": {
+                    "type": "string"
+                },
+                "unitname2": {
+                    "type": "string"
+                },
+                "unitname3": {
+                    "type": "string"
+                },
+                "unitname4": {
+                    "type": "string"
+                },
+                "unitname5": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_unit_models.Unit": {
+            "type": "object",
+            "properties": {
+                "isunitcost": {
+                    "type": "boolean"
+                },
+                "isunitstandard": {
+                    "type": "boolean"
+                },
+                "itemunitdiv": {
+                    "type": "number"
+                },
+                "itemunitstd": {
+                    "type": "number"
+                },
+                "unitcode": {
+                    "type": "string"
+                },
+                "unitname1": {
+                    "type": "string"
+                },
+                "unitname2": {
+                    "type": "string"
+                },
+                "unitname3": {
+                    "type": "string"
+                },
+                "unitname4": {
+                    "type": "string"
+                },
+                "unitname5": {
                     "type": "string"
                 }
             }
