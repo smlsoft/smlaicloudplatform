@@ -2795,6 +2795,12 @@ const docTemplate = `{
                         "name": "ica",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "TimeZone",
+                        "name": "timezone",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2862,6 +2868,12 @@ const docTemplate = `{
                         "name": "ica",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "TimeZone",
+                        "name": "timezone",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2929,6 +2941,12 @@ const docTemplate = `{
                         "name": "ica",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "TimeZone",
+                        "name": "timezone",
+                        "in": "query"
                     }
                 ],
                 "responses": {

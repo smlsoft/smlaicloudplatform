@@ -5070,6 +5070,10 @@ paths:
         name: ica
         required: true
         type: integer
+      - description: TimeZone
+        in: query
+        name: timezone
+        type: string
       responses:
         "200":
           description: OK
@@ -5114,6 +5118,10 @@ paths:
         name: ica
         required: true
         type: integer
+      - description: TimeZone
+        in: query
+        name: timezone
+        type: string
       responses:
         "200":
           description: OK
@@ -5158,6 +5166,10 @@ paths:
         name: ica
         required: true
         type: integer
+      - description: TimeZone
+        in: query
+        name: timezone
+        type: string
       responses:
         "200":
           description: OK
