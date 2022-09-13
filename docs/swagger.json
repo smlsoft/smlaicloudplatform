@@ -2789,6 +2789,12 @@
                         "name": "ica",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "TimeZone",
+                        "name": "timezone",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2856,6 +2862,12 @@
                         "name": "ica",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "TimeZone",
+                        "name": "timezone",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2923,6 +2935,12 @@
                         "name": "ica",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "TimeZone",
+                        "name": "timezone",
+                        "in": "query"
                     }
                 ],
                 "responses": {
