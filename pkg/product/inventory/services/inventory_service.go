@@ -24,7 +24,8 @@ type IInventoryService interface {
 	DeleteInventory(shopID string, guid string, username string) error
 	InfoInventory(shopID string, guid string) (models.InventoryInfo, error)
 	InfoMongoInventory(id string) (models.InventoryInfo, error)
-	SearchInventory(shopID string, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
+	InfoInventoryBarcode(shopID string, barcode string) (models.InventoryInfo, error)
+	SearchInventory(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
 	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, paginate.PaginationData, error)
 	UpdateProductCategory(shopID string, authUsername string, catId string, guid []string) error
 }
@@ -409,6 +410,21 @@ func (svc InventoryService) InfoMongoInventory(id string) (models.InventoryInfo,
 	return findDoc.InventoryInfo, nil
 }
 
+func (svc InventoryService) InfoInventoryBarcode(shopID string, barcode string) (models.InventoryInfo, error) {
+
+	findDoc, err := svc.invRepo.FindByItemBarcode(shopID, barcode)
+
+	if err != nil && err.Error() != "mongo: no documents in result" {
+		return models.InventoryInfo{}, err
+	}
+
+	// if findDoc.ID == primitive.NilObjectID {
+	// 	return models.InventoryInfo{}, nil
+	// }
+
+	return findDoc.InventoryInfo, nil
+}
+
 func (svc InventoryService) InfoInventory(shopID string, guid string) (models.InventoryInfo, error) {
 
 	findDoc, err := svc.invRepo.FindByGuid(shopID, guid)
@@ -424,8 +440,8 @@ func (svc InventoryService) InfoInventory(shopID string, guid string) (models.In
 	return findDoc.InventoryInfo, nil
 }
 
-func (svc InventoryService) SearchInventory(shopID string, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error) {
-	docList, pagination, err := svc.invRepo.FindPage(shopID, q, page, limit)
+func (svc InventoryService) SearchInventory(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error) {
+	docList, pagination, err := svc.invRepo.FindPage(shopID, filters, q, page, limit)
 
 	if err != nil {
 		return []models.InventoryInfo{}, pagination, err
