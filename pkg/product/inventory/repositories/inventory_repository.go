@@ -21,7 +21,7 @@ type IInventoryRepository interface {
 	FindByItemCodeGuid(shopID string, itemCodeGuidList []string) ([]models.InventoryItemGuid, error)
 	FindByID(id primitive.ObjectID) (models.InventoryDoc, error)
 	FindByGuid(shopID string, guid string) (models.InventoryDoc, error)
-	FindPage(shopID string, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
+	FindPage(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
 	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryDeleteActivity, paginate.PaginationData, error)
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryActivity, paginate.PaginationData, error)
 	FindByItemGuid(shopId string, itemguid string) (models.InventoryDoc, error)
@@ -100,10 +100,15 @@ func (repo InventoryRepository) FindByBarcodes(shopID string, barcodes []string)
 	findDoc := []models.InventoryDoc{}
 
 	filters := bson.M{
-		"shopid":           shopID,
-		"barcodes":         bson.M{"$exists": true},
-		"barcodes.barcode": bson.M{"$in": barcodes},
-		"deletedat":        bson.M{"$exists": false},
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+		"barcodes":  bson.M{"$exists": true},
+		"$and": []interface{}{
+			bson.M{"$or": []interface{}{bson.M{
+				"barcodes.barcode": bson.M{"$in": barcodes},
+				"barcode":          bson.M{"$in": barcodes},
+			}}},
+		},
 	}
 
 	err := repo.pst.Find(&models.InventoryDoc{}, filters, &findDoc)
@@ -202,19 +207,28 @@ func (repo InventoryRepository) FindByGuid(shopID string, guid string) (models.I
 	return findDocList[0], nil
 }
 
-func (repo InventoryRepository) FindPage(shopID string, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error) {
+func (repo InventoryRepository) FindPage(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error) {
 
-	matchQuery := bson.M{"$match": bson.M{
+	filterQuery := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$exists": false},
 		"$or": []interface{}{
-			bson.M{"guidfixed": q},
+			bson.M{"itemcode": q},
 			bson.M{"name1": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + q + ".*",
 				Options: "",
 			}}},
 		},
-	}}
+	}
+
+	if len(filters) > 0 {
+		for xkey, xval := range filters {
+			filterQuery[xkey] = xval
+		}
+
+	}
+
+	matchQuery := bson.M{"$match": filterQuery}
 
 	aggData, err := repo.pst.AggregatePage(models.InventoryInfo{}, limit, page, matchQuery, repo.unitLookupQuery(shopID), repo.unitUnwindQuery())
 
@@ -336,8 +350,14 @@ func (repo InventoryRepository) FindByItemBarcode(shopID string, barcode string)
 		{
 			"$match": bson.M{
 				"shopid":    shopID,
-				"barcode":   barcode,
 				"deletedat": bson.M{"$exists": false},
+				"barcodes":  bson.M{"$exists": true},
+				"$and": []interface{}{
+					bson.M{"$or": []interface{}{bson.M{
+						"barcodes.barcode": barcode,
+						"barcode":          barcode,
+					}}},
+				},
 			},
 		},
 		repo.unitLookupQuery(shopID),
@@ -351,7 +371,7 @@ func (repo InventoryRepository) FindByItemBarcode(shopID string, barcode string)
 		return models.InventoryDoc{}, err
 	}
 
-	if len(findDocList) > 0 {
+	if len(findDocList) < 1 {
 		return models.InventoryDoc{}, nil
 	}
 

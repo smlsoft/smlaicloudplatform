@@ -61,6 +61,7 @@ func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) *
 
 func (h InventoryHttp) RouteSetup() {
 	h.ms.GET("/inventory/:id", h.InfoInventory)
+	h.ms.GET("/inventory/barcode/:barcode", h.InfoInventoryBarcode)
 	h.ms.GET("/inventory", h.SearchInventory)
 	h.ms.POST("/inventory", h.CreateInventory)
 	h.ms.POST("/inventory/bulk", h.CreateInBatchInventory)
@@ -276,6 +277,40 @@ func (h InventoryHttp) InfoInventory(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Inventory Barcode godoc
+// @Description get struct array by barcode
+// @Tags		Inventory
+// @Param		barcode  path      string  true  "Barcode"
+// @Accept 		json
+// @Success		200	{object}	models.InventoryInfoResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /inventory/barcode/{barcode} [get]
+func (h InventoryHttp) InfoInventoryBarcode(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	barcode := ctx.Param("barcode")
+
+	doc, err := h.invService.InfoInventoryBarcode(shopID, barcode)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(
+		http.StatusOK,
+		common.ApiResponse{
+			Success: true,
+			Data:    doc,
+		},
+	)
+
+	return nil
+}
+
 // List Inventory godoc
 // @Description get struct array by ID
 // @Tags		Inventory
@@ -294,7 +329,15 @@ func (h InventoryHttp) SearchInventory(ctx microservice.IContext) error {
 	q := ctx.QueryParam("q")
 	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 
-	docList, pagination, err := h.invService.SearchInventory(shopID, q, page, limit)
+	filters := map[string]interface{}{}
+
+	stock := strings.TrimSpace(ctx.QueryParam("stock"))
+
+	if len(stock) > 0 {
+		filters["isstockproduct"] = stock == "true"
+	}
+
+	docList, pagination, err := h.invService.SearchInventory(shopID, filters, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

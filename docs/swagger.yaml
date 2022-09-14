@@ -5122,6 +5122,30 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
+  /inventory/barcode/{barcode}:
+    get:
+      consumes:
+      - application/json
+      description: get struct array by barcode
+      parameters:
+      - description: Barcode
+        in: path
+        name: barcode
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.InventoryInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Inventory
   /inventory/bulk:
     post:
       consumes:
