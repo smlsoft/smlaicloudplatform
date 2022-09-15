@@ -5225,6 +5225,59 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
+  /inventory/itemcode/{itemcode}:
+    get:
+      consumes:
+      - application/json
+      description: get struct array by Item Code
+      parameters:
+      - description: Inventory Item Code
+        in: path
+        name: itemcode
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.InventoryInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Inventory
+    put:
+      consumes:
+      - application/json
+      description: Update Inventory
+      parameters:
+      - description: Inventory Item Code
+        in: path
+        name: itemcode
+        required: true
+        type: string
+      - description: Inventory
+        in: body
+        name: Inventory
+        required: true
+        schema:
+          $ref: '#/definitions/models.Inventory'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Inventory
   /list-shop:
     get:
       consumes:
