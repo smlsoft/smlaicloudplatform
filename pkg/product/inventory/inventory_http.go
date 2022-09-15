@@ -65,6 +65,7 @@ func (h InventoryHttp) RouteSetup() {
 	h.ms.GET("/inventory/barcode/:barcode", h.InfoInventoryBarcode)
 	h.ms.GET("/inventory", h.SearchInventory)
 	h.ms.POST("/inventory", h.CreateInventory)
+	h.ms.POST("/inventory/save", h.SaveInventory)
 	h.ms.POST("/inventory/bulk", h.CreateInBatchInventory)
 	h.ms.PUT("/inventory/:id", h.UpdateInventory)
 	h.ms.PUT("/inventory/itemcode/:itemcode", h.UpdateInventoryByItemCode)
@@ -72,6 +73,47 @@ func (h InventoryHttp) RouteSetup() {
 	h.ms.GET("/inventory/fetchupdate", h.LastActivityInventory)
 
 	h.ms.POST("/inventory/categoryupdate/:catid", h.UpdateProductCategory)
+}
+
+// Save Inventory godoc
+// @Description Save Inventory
+// @Tags		Inventory
+// @Param		Inventory  body      models.Inventory  true  "Inventory"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /inventory/save [post]
+func (h InventoryHttp) SaveInventory(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	inventoryReq := &models.Inventory{}
+	err := json.Unmarshal([]byte(input), &inventoryReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.invService.SaveInventory(shopID, authUsername, *inventoryReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(
+		http.StatusOK,
+		common.ApiResponse{
+			Success: true,
+		})
+
+	return nil
 }
 
 // Create Inventory godoc

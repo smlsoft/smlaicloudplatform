@@ -24,6 +24,7 @@ type IInventoryService interface {
 	UpdateInventoryByGuidfixed(shopID string, guid string, authUsername string, inventory models.Inventory) error
 	UpdateInventoryByItemCode(shopID string, itemCode string, authUsername string, inventory models.Inventory) error
 	DeleteInventory(shopID string, guid string, username string) error
+	SaveInventory(shopID string, authUsername string, inventory models.Inventory) error
 	InfoInventory(shopID string, guid string) (models.InventoryInfo, error)
 	InfoInventoryItemCode(shopID string, itemCode string) (models.InventoryInfo, error)
 	InfoMongoInventory(id string) (models.InventoryInfo, error)
@@ -215,6 +216,20 @@ func preparePayloadDataInventory(shopID string, authUsername string, findItemGui
 		}
 	}
 	return duplicateDataList, createDataList
+}
+
+func (svc InventoryService) SaveInventory(shopID string, authUsername string, inventory models.Inventory) error {
+
+	findDoc, _ := svc.invRepo.FindByItemCode(shopID, inventory.ItemCode)
+
+	if len(findDoc.GuidFixed) < 1 {
+		newGuid := utils.NewGUID()
+		_, err := svc.CreateWithGuid(shopID, authUsername, newGuid, inventory)
+		return err
+	} else {
+		return svc.UpdateInventory(shopID, findDoc, authUsername, inventory)
+	}
+
 }
 
 func (svc InventoryService) CreateWithGuid(shopID string, authUsername string, guidFixed string, inventory models.Inventory) (string, error) {
