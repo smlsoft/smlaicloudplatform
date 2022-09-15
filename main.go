@@ -176,9 +176,8 @@ func main() {
 			consumerGroupName = "03"
 		}
 
-		inventorysearchconsumer.StartInventorySearchComsumerOnProductCreated(ms, cfg)
-		inventorysearchconsumer.StartInventorySearchComsumerOnProductUpdated(ms, cfg)
-		inventorysearchconsumer.StartInventorySearchComsumerOnProductDeleted(ms, cfg)
+		inventoryConsumer := inventorysearchconsumer.NewInventorySearchConsumer(ms, cfg)
+		inventoryConsumer.Start()
 
 		saleinvoice.StartSaleinvoiceComsumeCreated(ms, cfg, consumerGroupName)
 

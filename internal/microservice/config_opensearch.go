@@ -1,5 +1,11 @@
 package microservice
 
+type IPersisterOpenSearchConfig interface {
+	Address() []string
+	Username() string
+	Password() string
+}
+
 type PersisterOpenSearchConfig struct{}
 
 func NewPersisterOpenSearchConfig() *PersisterOpenSearchConfig {
@@ -14,9 +20,9 @@ func (c *PersisterOpenSearchConfig) Address() []string {
 }
 
 func (c *PersisterOpenSearchConfig) Username() string {
-	return getEnv("OPEN_SEARCH_USERNAME", "elastic")
+	return getEnv("OPEN_SEARCH_USERNAME", "")
 }
 
 func (c *PersisterOpenSearchConfig) Password() string {
-	return getEnv("OPEN_SEARCH_PASSWORD", "smlSoft2021")
+	return getEnv("OPEN_SEARCH_PASSWORD", "")
 }

@@ -21,12 +21,6 @@ type IPersisterOpenSearch interface {
 	Delete(docID string, model interface{}) error
 }
 
-type IPersisterOpenSearchConfig interface {
-	Address() []string
-	Username() string
-	Password() string
-}
-
 type OpenSearchModel interface {
 	IndexName() string
 }

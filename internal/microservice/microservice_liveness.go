@@ -10,7 +10,7 @@ func (ms *Microservice) isCacherAlive() bool {
 
 	for _, cacher := range ms.cachers {
 
-		ms.Logger.Debug("Perform healthcheck on Cacher")
+		// ms.Logger.Debug("Perform healthcheck on Cacher")
 		err := cacher.Healthcheck()
 		if err != nil {
 			return false
@@ -24,7 +24,7 @@ func (ms *Microservice) isMongoDBAlive() bool {
 
 	for _, pst := range ms.mongoPersisters {
 
-		ms.Logger.Debug("Perform healthcheck on MongoDB")
+		// ms.Logger.Debug("Perform healthcheck on MongoDB")
 		err := pst.Healthcheck()
 		if err != nil {
 			return false
