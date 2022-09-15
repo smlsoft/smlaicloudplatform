@@ -61,11 +61,13 @@ func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) *
 
 func (h InventoryHttp) RouteSetup() {
 	h.ms.GET("/inventory/:id", h.InfoInventory)
+	h.ms.GET("/inventory/itemcode/:itemcode", h.InfoInventoryItemCode)
 	h.ms.GET("/inventory/barcode/:barcode", h.InfoInventoryBarcode)
 	h.ms.GET("/inventory", h.SearchInventory)
 	h.ms.POST("/inventory", h.CreateInventory)
 	h.ms.POST("/inventory/bulk", h.CreateInBatchInventory)
 	h.ms.PUT("/inventory/:id", h.UpdateInventory)
+	h.ms.PUT("/inventory/itemcode/:itemcode", h.UpdateInventoryByItemCode)
 	h.ms.DELETE("/inventory/:id", h.DeleteInventory)
 	h.ms.GET("/inventory/fetchupdate", h.LastActivityInventory)
 
@@ -193,7 +195,7 @@ func (h InventoryHttp) UpdateInventory(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.invService.UpdateInventory(shopID, id, authUsername, *inventoryReq)
+	err = h.invService.UpdateInventoryByGuidfixed(shopID, id, authUsername, *inventoryReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -205,6 +207,49 @@ func (h InventoryHttp) UpdateInventory(ctx microservice.IContext) error {
 		common.ApiResponse{
 			Success: true,
 			ID:      id,
+		})
+
+	return nil
+}
+
+// Update Inventory By Item Code godoc
+// @Description Update Inventory
+// @Tags		Inventory
+// @Param		itemcode  path      string  true  "Inventory Item Code"
+// @Param		Inventory  body      models.Inventory  true  "Inventory"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /inventory/itemcode/{itemcode} [put]
+func (h InventoryHttp) UpdateInventoryByItemCode(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	itemCode := ctx.Param("itemcode")
+	input := ctx.ReadInput()
+
+	inventoryReq := &models.Inventory{}
+	err := json.Unmarshal([]byte(input), &inventoryReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.invService.UpdateInventoryByItemCode(shopID, itemCode, authUsername, *inventoryReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(
+		http.StatusCreated,
+		common.ApiResponse{
+			Success: true,
+			ID:      itemCode,
 		})
 
 	return nil
@@ -260,6 +305,40 @@ func (h InventoryHttp) InfoInventory(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 
 	doc, err := h.invService.InfoInventory(shopID, id)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(
+		http.StatusOK,
+		common.ApiResponse{
+			Success: true,
+			Data:    doc,
+		},
+	)
+
+	return nil
+}
+
+// Get Inventory By Item Code godoc
+// @Description get struct array by Item Code
+// @Tags		Inventory
+// @Param		itemcode  path      string  true  "Inventory Item Code"
+// @Accept 		json
+// @Success		200	{object}	models.InventoryInfoResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /inventory/itemcode/{itemcode} [get]
+func (h InventoryHttp) InfoInventoryItemCode(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	itemCode := ctx.Param("itemcode")
+
+	doc, err := h.invService.InfoInventoryItemCode(shopID, itemCode)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

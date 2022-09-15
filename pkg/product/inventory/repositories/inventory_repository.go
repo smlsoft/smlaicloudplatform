@@ -21,6 +21,7 @@ type IInventoryRepository interface {
 	FindByItemCodeGuid(shopID string, itemCodeGuidList []string) ([]models.InventoryItemGuid, error)
 	FindByID(id primitive.ObjectID) (models.InventoryDoc, error)
 	FindByGuid(shopID string, guid string) (models.InventoryDoc, error)
+	FindByItemCode(shopID string, itemCode string) (models.InventoryDoc, error)
 	FindPage(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
 	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryDeleteActivity, paginate.PaginationData, error)
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryActivity, paginate.PaginationData, error)
@@ -187,6 +188,35 @@ func (repo InventoryRepository) FindByGuid(shopID string, guid string) (models.I
 			"$match": bson.M{
 				"shopid":    shopID,
 				"guidfixed": guid,
+				"deletedat": bson.M{"$exists": false},
+			},
+		},
+		repo.unitLookupQuery(shopID),
+		repo.unitUnwindQuery(),
+		{"$limit": 1},
+	}
+
+	err := repo.pst.Aggregate(models.InventoryDoc{}, pipeline, &findDocList)
+
+	if err != nil {
+		return models.InventoryDoc{}, err
+	}
+
+	if len(findDocList) < 1 {
+		return models.InventoryDoc{}, errors.New("document not found")
+	}
+	return findDocList[0], nil
+}
+
+func (repo InventoryRepository) FindByItemCode(shopID string, itemCode string) (models.InventoryDoc, error) {
+
+	findDocList := []models.InventoryDoc{}
+
+	pipeline := []bson.M{
+		{
+			"$match": bson.M{
+				"shopid":    shopID,
+				"itemcode":  itemCode,
 				"deletedat": bson.M{"$exists": false},
 			},
 		},

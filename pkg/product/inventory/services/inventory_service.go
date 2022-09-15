@@ -20,9 +20,12 @@ type IInventoryService interface {
 	CreateInBatch(shopID string, authUsername string, inventories []models.Inventory) (models.InventoryBulkImport, error)
 	CreateWithGuid(shopID string, authUsername string, guidFixed string, inventory models.Inventory) (string, error)
 	CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, string, error)
-	UpdateInventory(shopID string, guid string, authUsername string, inventory models.Inventory) error
+	UpdateInventory(shopID string, findDoc models.InventoryDoc, authUsername string, inventory models.Inventory) error
+	UpdateInventoryByGuidfixed(shopID string, guid string, authUsername string, inventory models.Inventory) error
+	UpdateInventoryByItemCode(shopID string, itemCode string, authUsername string, inventory models.Inventory) error
 	DeleteInventory(shopID string, guid string, username string) error
 	InfoInventory(shopID string, guid string) (models.InventoryInfo, error)
+	InfoInventoryItemCode(shopID string, itemCode string) (models.InventoryInfo, error)
 	InfoMongoInventory(id string) (models.InventoryInfo, error)
 	InfoInventoryBarcode(shopID string, barcode string) (models.InventoryInfo, error)
 	SearchInventory(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
@@ -234,6 +237,12 @@ func (svc InventoryService) CreateWithGuid(shopID string, authUsername string, g
 		}
 	}
 
+	findDoc, _ := svc.invRepo.FindByItemCode(shopID, inventory.ItemCode)
+
+	if len(findDoc.GuidFixed) > 0 {
+		return "", errors.New("item code is exists")
+	}
+
 	newGuid := guidFixed
 
 	invDoc := models.InventoryDoc{}
@@ -308,8 +317,7 @@ func (svc InventoryService) CreateInventory(shopID string, authUsername string, 
 	return mongoIdx, newGuid, err
 }
 
-func (svc InventoryService) UpdateInventory(shopID string, guid string, authUsername string, inventory models.Inventory) error {
-
+func (svc InventoryService) UpdateInventoryByGuidfixed(shopID string, guid string, authUsername string, inventory models.Inventory) error {
 	findDoc, err := svc.invRepo.FindByGuid(shopID, guid)
 
 	if err != nil {
@@ -319,6 +327,27 @@ func (svc InventoryService) UpdateInventory(shopID string, guid string, authUser
 	if findDoc.ID == primitive.NilObjectID {
 		return errors.New("document not found")
 	}
+
+	return svc.UpdateInventory(shopID, findDoc, authUsername, inventory)
+}
+
+func (svc InventoryService) UpdateInventoryByItemCode(shopID string, itemCode string, authUsername string, inventory models.Inventory) error {
+	findDoc, err := svc.invRepo.FindByItemCode(shopID, itemCode)
+
+	if err != nil {
+		return err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return errors.New("document not found")
+	}
+
+	return svc.UpdateInventory(shopID, findDoc, authUsername, inventory)
+}
+
+func (svc InventoryService) UpdateInventory(shopID string, findDoc models.InventoryDoc, authUsername string, inventory models.Inventory) error {
+
+	tempItemCode := findDoc.ItemCode
 
 	if inventory.Barcodes != nil && len(*inventory.Barcodes) > 0 {
 		reqBarcodes := []string{}
@@ -349,11 +378,13 @@ func (svc InventoryService) UpdateInventory(shopID string, guid string, authUser
 
 	findDoc.Inventory = inventory
 
+	findDoc.ItemCode = tempItemCode
+
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 	findDoc.LastUpdatedAt = time.Now()
 
-	err = svc.invRepo.Update(shopID, guid, findDoc)
+	err := svc.invRepo.Update(shopID, findDoc.GuidFixed, findDoc)
 
 	if err != nil {
 		return err
@@ -428,6 +459,21 @@ func (svc InventoryService) InfoInventoryBarcode(shopID string, barcode string) 
 func (svc InventoryService) InfoInventory(shopID string, guid string) (models.InventoryInfo, error) {
 
 	findDoc, err := svc.invRepo.FindByGuid(shopID, guid)
+
+	if err != nil && err.Error() != "mongo: no documents in result" {
+		return models.InventoryInfo{}, err
+	}
+
+	// if findDoc.ID == primitive.NilObjectID {
+	// 	return models.InventoryInfo{}, nil
+	// }
+
+	return findDoc.InventoryInfo, nil
+}
+
+func (svc InventoryService) InfoInventoryItemCode(shopID string, itemCode string) (models.InventoryInfo, error) {
+
+	findDoc, err := svc.invRepo.FindByItemCode(shopID, itemCode)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return models.InventoryInfo{}, err
