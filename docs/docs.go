@@ -3363,6 +3363,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/inventory/save": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Save Inventory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "description": "Inventory",
+                        "name": "Inventory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Inventory"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/inventory/{id}": {
             "get": {
                 "security": [

@@ -5290,6 +5290,31 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
+  /inventory/save:
+    post:
+      consumes:
+      - application/json
+      description: Save Inventory
+      parameters:
+      - description: Inventory
+        in: body
+        name: Inventory
+        required: true
+        schema:
+          $ref: '#/definitions/models.Inventory'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Inventory
   /list-shop:
     get:
       consumes:
