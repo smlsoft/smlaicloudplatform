@@ -99,7 +99,7 @@ func (h SyncDataHttp) Save(ctx microservice.IContext) error {
 				return idx, nil
 			},
 			func() error {
-				return h.inventoryService.UpdateInventory(userInfo.ShopID, syncData.MyGuid, userInfo.Username, inv)
+				return h.inventoryService.UpdateInventoryByGuidfixed(userInfo.ShopID, syncData.MyGuid, userInfo.Username, inv)
 			},
 		)
 
