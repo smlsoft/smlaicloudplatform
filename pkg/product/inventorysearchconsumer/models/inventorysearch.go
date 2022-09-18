@@ -1,6 +1,7 @@
 package models
 
 import (
+	"os"
 	common "smlcloudplatform/pkg/models"
 	inventoryModel "smlcloudplatform/pkg/product/inventory/models"
 )
@@ -13,5 +14,10 @@ type InventorySearch struct {
 }
 
 func (*InventorySearch) IndexName() string {
-	return INVENTORY_SEARCH_INDEXNAME
+
+	inventorySearchIndexName := os.Getenv("INVENTORY_SEARCH_INDEXNAME")
+	if inventorySearchIndexName == "" {
+		inventorySearchIndexName = INVENTORY_SEARCH_INDEXNAME
+	}
+	return inventorySearchIndexName
 }
