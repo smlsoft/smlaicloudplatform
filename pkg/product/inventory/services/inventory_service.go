@@ -393,7 +393,9 @@ func (svc InventoryService) UpdateInventory(shopID string, findDoc models.Invent
 
 	findDoc.Inventory = inventory
 
-	findDoc.ItemCode = tempItemCode
+	if len(findDoc.ItemCode) > 0 {
+		findDoc.ItemCode = tempItemCode
+	}
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
