@@ -57,6 +57,14 @@ type Inventory struct {
 	Barcodes *[]Barcode              `json:"barcodes" bson:"barcodes" gorm:"barcodes"`
 	UnitUses *[]UnitUse              `json:"unituses" bson:"unituses" gorm:"units"`
 
+	UnitCost     string `json:"unitcost,omitempty" bson:"unitcost,omitempty" gorm:"unitcost,omitempty"`
+	UnitStandard string `json:"unitstandard,omitempty" bson:"unitstandard,omitempty" gorm:"unitstandard,omitempty"`
+	MultiUnit    bool   `json:"multiunit,omitempty" bson:"multiunit,omitempty" gorm:"multiunit,omitempty,type:bool,default:false"`
+
+	ShopRecommended bool    `json:"shoprecommended,omitempty" bson:"shoprecommended,omitempty" gorm:"shoprecommended,omitempty,type:bool,default:false"`
+	StarPercent     float32 `json:"starpercent,omitempty" bson:"starpercent,omitempty" gorm:"starpercent,omitempty,default:0.0"`
+	OrderCount      int     `json:"ordercount,omitempty" bson:"ordercount,omitempty" gorm:"ordercount,omitempty"`
+
 	// WaitType         int             `json:"-" bson:"waitType"`                // ประเภทการรอ (สินค้าหมด)
 	// WaitUntil        time.Time       `json:"-" bson:"waitUntil"`               // ระยะเวลาที่รอ
 	// MultipleUnits    bool            `json:"-" bson:"multipleuUits" `          // สินค้าหลายหน่วยนับ
@@ -65,8 +73,11 @@ type Inventory struct {
 }
 
 type ProductPrice struct {
-	Price       float64 `json:"price" bson:"price" gorm:"price"` // ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-	MemberPrice float32 `json:"memberprice,omitempty" bson:"memberprice,omitempty" gorm:"memberprice,omitempty"`
+	Price         float64 `json:"price" bson:"price" gorm:"price"` // ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+	MemberPrice   float64 `json:"memberprice,omitempty" bson:"memberprice,omitempty" gorm:"memberprice,omitempty"`
+	NormalPrice   float64 `json:"normalprice,omitempty" bson:"normalprice,omitempty" gorm:"normalprice,omitempty"`
+	PriceRangeMin float64 `json:"pricerangemin,omitempty" bson:"pricerangemin,omitempty" gorm:"pricerangemin,omitempty"`
+	PriceRangeMax float64 `json:"pricerangemaxmax,omitempty" bson:"pricerangemax,omitempty" gorm:"pricerangemax,omitempty"`
 }
 
 type Unit struct {
