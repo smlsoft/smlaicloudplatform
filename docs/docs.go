@@ -2465,6 +2465,65 @@ const docTemplate = `{
                 }
             }
         },
+        "/gl/report/ledgeraccount": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "บัญชีแยกประเภท",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GLReport"
+                ],
+                "summary": "บัญชีแยกประเภท",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "จากวันที่ (Date Format: YYYY-MM-DD)",
+                        "name": "startdate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ถึงวันที่ (Date Format: YYYY-MM-DD)",
+                        "name": "enddate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "TimeZone",
+                        "name": "timezone",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.TrialBalanceSheetReportResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/gl/report/profitandloss": {
             "get": {
                 "security": [
@@ -7999,8 +8058,17 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "price": {
                     "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "unitcode": {
@@ -8936,6 +9004,9 @@ const docTemplate = `{
                 "memberprice": {
                     "type": "number"
                 },
+                "multiunit": {
+                    "type": "boolean"
+                },
                 "name1": {
                     "type": "string"
                 },
@@ -8951,11 +9022,17 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "options": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Option"
                     }
+                },
+                "ordercount": {
+                    "type": "integer"
                 },
                 "parid": {
                     "type": "string"
@@ -8964,9 +9041,21 @@ const docTemplate = `{
                     "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
                     "type": "number"
                 },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
+                },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
                     "type": "boolean"
+                },
+                "shoprecommended": {
+                    "type": "boolean"
+                },
+                "starpercent": {
+                    "type": "number"
                 },
                 "stockproductguidref": {
                     "type": "string"
@@ -8978,6 +9067,12 @@ const docTemplate = `{
                     }
                 },
                 "unitcode": {
+                    "type": "string"
+                },
+                "unitcost": {
+                    "type": "string"
+                },
+                "unitstandard": {
                     "type": "string"
                 },
                 "unituses": {
@@ -9080,6 +9175,9 @@ const docTemplate = `{
                 "memberprice": {
                     "type": "number"
                 },
+                "multiunit": {
+                    "type": "boolean"
+                },
                 "name1": {
                     "type": "string"
                 },
@@ -9095,11 +9193,17 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "options": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Option"
                     }
+                },
+                "ordercount": {
+                    "type": "integer"
                 },
                 "parid": {
                     "type": "string"
@@ -9108,12 +9212,24 @@ const docTemplate = `{
                     "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
                     "type": "number"
                 },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
+                },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
                     "type": "boolean"
                 },
                 "shopid": {
                     "type": "string"
+                },
+                "shoprecommended": {
+                    "type": "boolean"
+                },
+                "starpercent": {
+                    "type": "number"
                 },
                 "stockproductguidref": {
                     "type": "string"
@@ -9128,6 +9244,12 @@ const docTemplate = `{
                     "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
                 },
                 "unitcode": {
+                    "type": "string"
+                },
+                "unitcost": {
+                    "type": "string"
+                },
+                "unitstandard": {
                     "type": "string"
                 },
                 "unituses": {
@@ -9301,6 +9423,9 @@ const docTemplate = `{
                 "memberprice": {
                     "type": "number"
                 },
+                "multiunit": {
+                    "type": "boolean"
+                },
                 "name1": {
                     "type": "string"
                 },
@@ -9316,11 +9441,17 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "options": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Option"
                     }
+                },
+                "ordercount": {
+                    "type": "integer"
                 },
                 "parid": {
                     "type": "string"
@@ -9329,9 +9460,21 @@ const docTemplate = `{
                     "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
                     "type": "number"
                 },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
+                },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
                     "type": "boolean"
+                },
+                "shoprecommended": {
+                    "type": "boolean"
+                },
+                "starpercent": {
+                    "type": "number"
                 },
                 "stockproductguidref": {
                     "type": "string"
@@ -9346,6 +9489,12 @@ const docTemplate = `{
                     "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
                 },
                 "unitcode": {
+                    "type": "string"
+                },
+                "unitcost": {
+                    "type": "string"
+                },
+                "unitstandard": {
                     "type": "string"
                 },
                 "unituses": {
@@ -10947,6 +11096,9 @@ const docTemplate = `{
                 "memberprice": {
                     "type": "number"
                 },
+                "multiunit": {
+                    "type": "boolean"
+                },
                 "name1": {
                     "type": "string"
                 },
@@ -10962,16 +11114,28 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "options": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Option"
                     }
                 },
+                "ordercount": {
+                    "type": "integer"
+                },
                 "parid": {
                     "type": "string"
                 },
                 "price": {
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "qty": {
@@ -10980,6 +11144,12 @@ const docTemplate = `{
                 "recommended": {
                     "description": "สินค้าแนะนำ",
                     "type": "boolean"
+                },
+                "shoprecommended": {
+                    "type": "boolean"
+                },
+                "starpercent": {
+                    "type": "number"
                 },
                 "stockproductguidref": {
                     "type": "string"
@@ -10994,6 +11164,12 @@ const docTemplate = `{
                     "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
                 },
                 "unitcode": {
+                    "type": "string"
+                },
+                "unitcost": {
+                    "type": "string"
+                },
+                "unitstandard": {
                     "type": "string"
                 },
                 "unituses": {
@@ -11228,6 +11404,9 @@ const docTemplate = `{
                 "memberprice": {
                     "type": "number"
                 },
+                "multiunit": {
+                    "type": "boolean"
+                },
                 "name1": {
                     "type": "string"
                 },
@@ -11243,16 +11422,28 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "options": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Option"
                     }
                 },
+                "ordercount": {
+                    "type": "integer"
+                },
                 "parid": {
                     "type": "string"
                 },
                 "price": {
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "qty": {
@@ -11261,6 +11452,12 @@ const docTemplate = `{
                 "recommended": {
                     "description": "สินค้าแนะนำ",
                     "type": "boolean"
+                },
+                "shoprecommended": {
+                    "type": "boolean"
+                },
+                "starpercent": {
+                    "type": "number"
                 },
                 "stockproductguidref": {
                     "type": "string"
@@ -11275,6 +11472,12 @@ const docTemplate = `{
                     "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
                 },
                 "unitcode": {
+                    "type": "string"
+                },
+                "unitcost": {
+                    "type": "string"
+                },
+                "unitstandard": {
                     "type": "string"
                 },
                 "unituses": {

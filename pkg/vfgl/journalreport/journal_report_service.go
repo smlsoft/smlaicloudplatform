@@ -11,6 +11,7 @@ type IJournalReportService interface {
 	ProcessTrialBalanceSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) (*models.TrialBalanceSheetReport, error)
 	ProcessProfitAndLossSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) (*models.ProfitAndLossSheetReport, error)
 	ProcessBalanceSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) (*models.BalanceSheetReport, error)
+	ProcessLedgerAccount(shopId string, startDate time.Time, endDate time.Time) ([]models.LedgerAccount, error)
 }
 
 type JournalReportService struct {
@@ -180,4 +181,55 @@ func (svc JournalReportService) ProcessBalanceSheetReport(shopId string, account
 	}
 
 	return result, nil
+}
+
+func (svc JournalReportService) ProcessLedgerAccount(shopID string, startDate time.Time, endDate time.Time) ([]models.LedgerAccount, error) {
+
+	rawDocList, err := svc.repo.GetDataLedgerAccount(shopID, startDate, endDate)
+
+	if err != nil {
+		return nil, err
+	}
+
+	docList := []models.LedgerAccount{}
+
+	lastAccountCode := ""
+	lastAmount := 0.0
+	tempDoc := models.LedgerAccount{}
+
+	currentIndexAccount := -1
+	for _, doc := range rawDocList {
+
+		if lastAccountCode != doc.AccountCode && doc.RowMode == -1 {
+			currentIndexAccount++
+			tempDoc = models.LedgerAccount{}
+			tempDoc.Details = &[]models.LedgerAccountDetail{}
+			tempDoc.AccountCode = doc.AccountCode
+			tempDoc.AccountName = doc.AccountName
+
+			lastAmount = doc.Amount
+			tempDoc.Balance = lastAmount
+			tempDoc.NextBalance = lastAmount
+
+			docList = append(docList, tempDoc)
+		}
+
+		if doc.RowMode == 0 {
+			lastAmount = (lastAmount + doc.DebitAmount) - doc.CreditAmount
+			docList[currentIndexAccount].NextBalance = lastAmount
+
+			detail := models.LedgerAccountDetail{
+				DocNo:   doc.DocNo,
+				DocDate: doc.DocDate,
+				Debit:   doc.DebitAmount,
+				Credit:  doc.CreditAmount,
+				Amount:  lastAmount,
+			}
+			*tempDoc.Details = append(*tempDoc.Details, detail)
+		}
+
+		lastAccountCode = doc.AccountCode
+	}
+
+	return docList, nil
 }

@@ -184,8 +184,14 @@ definitions:
         type: string
       name5:
         type: string
+      normalprice:
+        type: number
       price:
         description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -804,6 +810,8 @@ definitions:
         type: integer
       memberprice:
         type: number
+      multiunit:
+        type: boolean
       name1:
         type: string
       name2:
@@ -814,18 +822,30 @@ definitions:
         type: string
       name5:
         type: string
+      normalprice:
+        type: number
       options:
         items:
           $ref: '#/definitions/models.Option'
         type: array
+      ordercount:
+        type: integer
       parid:
         type: string
       price:
         description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
         type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
+      shoprecommended:
+        type: boolean
+      starpercent:
+        type: number
       stockproductguidref:
         type: string
       tags:
@@ -833,6 +853,10 @@ definitions:
           $ref: '#/definitions/models.InventoryTag'
         type: array
       unitcode:
+        type: string
+      unitcost:
+        type: string
+      unitstandard:
         type: string
       unituses:
         items:
@@ -901,6 +925,8 @@ definitions:
         type: integer
       memberprice:
         type: number
+      multiunit:
+        type: boolean
       name1:
         type: string
       name2:
@@ -911,20 +937,32 @@ definitions:
         type: string
       name5:
         type: string
+      normalprice:
+        type: number
       options:
         items:
           $ref: '#/definitions/models.Option'
         type: array
+      ordercount:
+        type: integer
       parid:
         type: string
       price:
         description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
       shopid:
         type: string
+      shoprecommended:
+        type: boolean
+      starpercent:
+        type: number
       stockproductguidref:
         type: string
       tags:
@@ -934,6 +972,10 @@ definitions:
       unit:
         $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit'
       unitcode:
+        type: string
+      unitcost:
+        type: string
+      unitstandard:
         type: string
       unituses:
         items:
@@ -1048,6 +1090,8 @@ definitions:
         type: integer
       memberprice:
         type: number
+      multiunit:
+        type: boolean
       name1:
         type: string
       name2:
@@ -1058,18 +1102,30 @@ definitions:
         type: string
       name5:
         type: string
+      normalprice:
+        type: number
       options:
         items:
           $ref: '#/definitions/models.Option'
         type: array
+      ordercount:
+        type: integer
       parid:
         type: string
       price:
         description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
         type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
+      shoprecommended:
+        type: boolean
+      starpercent:
+        type: number
       stockproductguidref:
         type: string
       tags:
@@ -1079,6 +1135,10 @@ definitions:
       unit:
         $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit'
       unitcode:
+        type: string
+      unitcost:
+        type: string
+      unitstandard:
         type: string
       unituses:
         items:
@@ -2135,6 +2195,8 @@ definitions:
         type: integer
       memberprice:
         type: number
+      multiunit:
+        type: boolean
       name1:
         type: string
       name2:
@@ -2145,19 +2207,31 @@ definitions:
         type: string
       name5:
         type: string
+      normalprice:
+        type: number
       options:
         items:
           $ref: '#/definitions/models.Option'
         type: array
+      ordercount:
+        type: integer
       parid:
         type: string
       price:
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       qty:
         type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
+      shoprecommended:
+        type: boolean
+      starpercent:
+        type: number
       stockproductguidref:
         type: string
       tags:
@@ -2167,6 +2241,10 @@ definitions:
       unit:
         $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit'
       unitcode:
+        type: string
+      unitcost:
+        type: string
+      unitstandard:
         type: string
       unituses:
         items:
@@ -2322,6 +2400,8 @@ definitions:
         type: integer
       memberprice:
         type: number
+      multiunit:
+        type: boolean
       name1:
         type: string
       name2:
@@ -2332,19 +2412,31 @@ definitions:
         type: string
       name5:
         type: string
+      normalprice:
+        type: number
       options:
         items:
           $ref: '#/definitions/models.Option'
         type: array
+      ordercount:
+        type: integer
       parid:
         type: string
       price:
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       qty:
         type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
+      shoprecommended:
+        type: boolean
+      starpercent:
+        type: number
       stockproductguidref:
         type: string
       tags:
@@ -2354,6 +2446,10 @@ definitions:
       unit:
         $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit'
       unitcode:
+        type: string
+      unitcost:
+        type: string
+      unitstandard:
         type: string
       unituses:
         items:
@@ -4650,6 +4746,44 @@ paths:
       security:
       - AccessToken: []
       summary: ดึงข้อมูลงบดุล
+      tags:
+      - GLReport
+  /gl/report/ledgeraccount:
+    get:
+      consumes:
+      - application/json
+      description: บัญชีแยกประเภท
+      parameters:
+      - description: 'จากวันที่ (Date Format: YYYY-MM-DD)'
+        in: query
+        name: startdate
+        required: true
+        type: string
+      - description: 'ถึงวันที่ (Date Format: YYYY-MM-DD)'
+        in: query
+        name: enddate
+        required: true
+        type: string
+      - description: TimeZone
+        in: query
+        name: timezone
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.TrialBalanceSheetReportResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: บัญชีแยกประเภท
       tags:
       - GLReport
   /gl/report/profitandloss:

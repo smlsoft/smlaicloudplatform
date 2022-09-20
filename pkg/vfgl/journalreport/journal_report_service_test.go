@@ -7,6 +7,8 @@ import (
 	"testing"
 	"time"
 
+	mocktest "smlcloudplatform/mock"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -28,6 +30,11 @@ func (m *MockJournalreportRepository) GetDataProfitAndLoss(shopId string, accoun
 func (m *MockJournalreportRepository) GetDataBalanceSheet(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) ([]models.BalanceSheetAccountDetail, error) {
 	ret := m.Called(shopId, accountGroup, includeCloseAccountMode, endDate)
 	return ret.Get(0).([]models.BalanceSheetAccountDetail), ret.Error(1)
+}
+
+func (m *MockJournalreportRepository) GetDataLedgerAccount(shopId string, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error) {
+	ret := m.Called(shopId, startDate, endDate)
+	return ret.Get(0).([]models.LedgerAccountRaw), ret.Error(1)
 }
 
 func TestProcessBalanceSheetReport(t *testing.T) {
@@ -100,4 +107,112 @@ func TestProcessBalanceSheetReport(t *testing.T) {
 	assert.Nil(t, err, "Error should be nil")
 
 	assert.Equal(t, get, want, "Process BalanceSheet Report Not Match")
+}
+
+func TestLedgerAccount(t *testing.T) {
+	repo := new(MockJournalreportRepository)
+	repo.On("GetDataLedgerAccount", "TESTSHOP", mocktest.MockTime(), mocktest.MockTime()).Return([]models.LedgerAccountRaw{
+		{
+			RowMode:      -1,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC001",
+			AccountName:  "AC Name 1",
+			DebitAmount:  0,
+			CreditAmount: 0,
+			Amount:       75,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "DOC001",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC001",
+			AccountName:  "AC Name 1",
+			DebitAmount:  50,
+			CreditAmount: 0,
+			Amount:       0,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "DOC002",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC001",
+			AccountName:  "AC Name 1",
+			DebitAmount:  50,
+			CreditAmount: 0,
+			Amount:       0,
+		},
+		{
+			RowMode:      -1,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC002",
+			AccountName:  "AC Name 2",
+			DebitAmount:  0,
+			CreditAmount: 0,
+			Amount:       200,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "DOC003",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC002",
+			AccountName:  "AC Name 2",
+			DebitAmount:  0,
+			CreditAmount: 250,
+			Amount:       0,
+		},
+		{
+			RowMode:      -1,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC003",
+			AccountName:  "AC Name 3",
+			DebitAmount:  0,
+			CreditAmount: 0,
+			Amount:       -50,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC003",
+			AccountName:  "AC Name 3",
+			DebitAmount:  100,
+			CreditAmount: 0,
+			Amount:       0,
+		},
+		{
+			RowMode:      -1,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC004",
+			AccountName:  "AC Name 4",
+			DebitAmount:  0,
+			CreditAmount: 0,
+			Amount:       -50,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC004",
+			AccountName:  "AC Name 4",
+			DebitAmount:  0,
+			CreditAmount: 100,
+			Amount:       0,
+		},
+	}, nil)
+
+	service := journalreport.NewJournalReportService(repo)
+	docList, err := service.ProcessLedgerAccount("TESTSHOP", mocktest.MockTime(), mocktest.MockTime())
+
+	assert.Nil(t, err)
+	assert.Equal(t, 4, len(docList))
+
+	assert.Equal(t, 175.0, docList[0].NextBalance)
+	assert.Equal(t, -50.0, docList[1].NextBalance)
+	assert.Equal(t, 50.0, docList[2].NextBalance)
+	assert.Equal(t, -150.0, docList[3].NextBalance)
+
 }
