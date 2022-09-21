@@ -64,6 +64,7 @@ type Inventory struct {
 	ShopRecommended bool    `json:"shoprecommended,omitempty" bson:"shoprecommended,omitempty" gorm:"shoprecommended,omitempty,type:bool,default:false"`
 	StarPercent     float32 `json:"starpercent,omitempty" bson:"starpercent,omitempty" gorm:"starpercent,omitempty,default:0.0"`
 	OrderCount      int     `json:"ordercount,omitempty" bson:"ordercount,omitempty" gorm:"ordercount,omitempty"`
+	OrderMinimum    float32 `json:"orderminimum,omitempty" bson:"orderminimum,omitempty" gorm:"orderminimum,omitempty"`
 
 	// WaitType         int             `json:"-" bson:"waitType"`                // ประเภทการรอ (สินค้าหมด)
 	// WaitUntil        time.Time       `json:"-" bson:"waitUntil"`               // ระยะเวลาที่รอ
