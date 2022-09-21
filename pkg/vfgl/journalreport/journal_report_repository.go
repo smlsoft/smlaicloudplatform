@@ -11,7 +11,7 @@ type IJournalReportRepository interface {
 	GetDataTrialBalance(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.TrialBalanceSheetAccountDetail, error)
 	GetDataProfitAndLoss(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.ProfitAndLossSheetAccountDetail, error)
 	GetDataBalanceSheet(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) ([]models.BalanceSheetAccountDetail, error)
-	GetDataLedgerAccount(shopId string, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error)
+	GetDataLedgerAccount(shopId string, accountCode string, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error)
 }
 
 type JournalReportRepository struct {
@@ -363,22 +363,27 @@ func (repo JournalReportRepository) GetDataBalanceSheet(shopId string, accountGr
 	return details, nil
 }
 
-func (repo JournalReportRepository) GetDataLedgerAccount(shopID string, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error) {
+func (repo JournalReportRepository) GetDataLedgerAccount(shopID string, accountCode string, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error) {
+
+	accountCodeQuery := ""
+
+	if len(accountCode) > 0 {
+		accountCodeQuery = " and d.accountcode  = @accountcode"
+	}
 
 	rawQuery := `select * from (
 		select -1 as rowmode, '1900-01-01'::date as docdate, '' as docno, d.accountcode,a.accountname, 0 as debitamount, 0 as creditamount, sum(d.debitamount -  d.creditamount) as amount
 		from chartofaccounts a 
 		join journals_detail d on a.accountcode = d.accountcode
 		join journals j on j.shopid = d.shopid and j.docno = d.docno
-		where j.docdate < @startdate and a.shopid = @shopid
-
+		where j.docdate < @startdate and a.shopid = @shopid ` + accountCodeQuery + ` 
 		group by rowmode, d.accountcode, a.accountname
 		union all
 		select 0 as rowmode, j.docdate, j.docno, d.accountcode,d.accountname, d.debitamount, d.creditamount, 0 as amount 
 		from journals_detail d 
 		join journals j on j.shopid = d.shopid and j.docno = d.docno
 		join chartofaccounts a on a.accountcode = d.accountcode
-		where j.docdate between @startdate and @enddate and d.shopid = @shopid
+		where j.docdate between @startdate and @enddate and d.shopid = @shopid ` + accountCodeQuery + ` 
 			) as final_data order by accountcode,rowmode,docdate`
 
 	rawDocList := []models.LedgerAccountRaw{}
@@ -387,6 +392,10 @@ func (repo JournalReportRepository) GetDataLedgerAccount(shopID string, startDat
 		"shopid":    shopID,
 		"startdate": startDate,
 		"enddate":   endDate,
+	}
+
+	if len(accountCode) > 0 {
+		values["accountcode"] = accountCode
 	}
 
 	_, err := repo.pst.Raw(rawQuery, values, &rawDocList)

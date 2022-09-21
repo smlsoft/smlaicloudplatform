@@ -32,8 +32,8 @@ func (m *MockJournalreportRepository) GetDataBalanceSheet(shopId string, account
 	return ret.Get(0).([]models.BalanceSheetAccountDetail), ret.Error(1)
 }
 
-func (m *MockJournalreportRepository) GetDataLedgerAccount(shopId string, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error) {
-	ret := m.Called(shopId, startDate, endDate)
+func (m *MockJournalreportRepository) GetDataLedgerAccount(shopId string, accountCode string, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error) {
+	ret := m.Called(shopId, accountCode, startDate, endDate)
 	return ret.Get(0).([]models.LedgerAccountRaw), ret.Error(1)
 }
 
@@ -111,7 +111,7 @@ func TestProcessBalanceSheetReport(t *testing.T) {
 
 func TestLedgerAccount(t *testing.T) {
 	repo := new(MockJournalreportRepository)
-	repo.On("GetDataLedgerAccount", "TESTSHOP", mocktest.MockTime(), mocktest.MockTime()).Return([]models.LedgerAccountRaw{
+	repo.On("GetDataLedgerAccount", "TESTSHOP", "ACC01", mocktest.MockTime(), mocktest.MockTime()).Return([]models.LedgerAccountRaw{
 		{
 			RowMode:      -1,
 			DocNo:        "",
@@ -205,7 +205,7 @@ func TestLedgerAccount(t *testing.T) {
 	}, nil)
 
 	service := journalreport.NewJournalReportService(repo)
-	docList, err := service.ProcessLedgerAccount("TESTSHOP", mocktest.MockTime(), mocktest.MockTime())
+	docList, err := service.ProcessLedgerAccount("TESTSHOP", "ACC01", mocktest.MockTime(), mocktest.MockTime())
 
 	assert.Nil(t, err)
 	assert.Equal(t, 4, len(docList))
