@@ -2497,6 +2497,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Account Code",
+                        "name": "accountcode",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "TimeZone",
                         "name": "timezone",
                         "in": "query"

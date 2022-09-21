@@ -6,6 +6,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/vfgl/journalreport/models"
+	"strings"
 	"time"
 )
 
@@ -245,6 +246,7 @@ func (r JournalReportHttp) ProcessProfitAndLossReport(ctx microservice.IContext)
 // @Tags		GLReport
 // @Param		startdate query string true "จากวันที่ (Date Format: YYYY-MM-DD)"
 // @Param		enddate query string true "ถึงวันที่ (Date Format: YYYY-MM-DD)"
+// @Param		accountcode query string true "Account Code"
 // @Param		timezone query string false "TimeZone"
 // @Accept		json
 // @Success		200 {object} models.TrialBalanceSheetReportResponse
@@ -284,8 +286,10 @@ func (r JournalReportHttp) ProcessReportLedgerAccount(ctx microservice.IContext)
 	}
 	endDate = endDate.AddDate(0, 0, 1).Add(time.Second * -1)
 
+	accountCode := strings.TrimSpace(ctx.QueryParam("accountcode"))
+
 	r.ms.Logger.Debugf("Start Process Ledger Account %v:%v", startDate, endDate)
-	reportData, err := r.svc.ProcessLedgerAccount(shopID, startDate.UTC(), endDate.UTC())
+	reportData, err := r.svc.ProcessLedgerAccount(shopID, accountCode, startDate.UTC(), endDate.UTC())
 	if err != nil {
 		ctx.ResponseError(500, fmt.Sprintf("Failed on Process Report : %v.", err.Error()))
 		return err

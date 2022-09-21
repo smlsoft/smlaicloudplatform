@@ -4764,6 +4764,11 @@ paths:
         name: enddate
         required: true
         type: string
+      - description: Account Code
+        in: query
+        name: accountcode
+        required: true
+        type: string
       - description: TimeZone
         in: query
         name: timezone
