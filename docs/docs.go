@@ -1858,6 +1858,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/gl/journal/docno/{docno}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายละเอียดข้อมูลรายวัน",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แสดงรายละเอียดข้อมูลรายวัน",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Journal DocNo",
+                        "name": "docno",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/gl/journal/docref/deselect": {
             "post": {
                 "security": [
@@ -9041,6 +9081,9 @@ const docTemplate = `{
                 "ordercount": {
                     "type": "integer"
                 },
+                "orderminimum": {
+                    "type": "number"
+                },
                 "parid": {
                     "type": "string"
                 },
@@ -9211,6 +9254,9 @@ const docTemplate = `{
                 },
                 "ordercount": {
                     "type": "integer"
+                },
+                "orderminimum": {
+                    "type": "number"
                 },
                 "parid": {
                     "type": "string"
@@ -9459,6 +9505,9 @@ const docTemplate = `{
                 },
                 "ordercount": {
                     "type": "integer"
+                },
+                "orderminimum": {
+                    "type": "number"
                 },
                 "parid": {
                     "type": "string"
@@ -11133,6 +11182,9 @@ const docTemplate = `{
                 "ordercount": {
                     "type": "integer"
                 },
+                "orderminimum": {
+                    "type": "number"
+                },
                 "parid": {
                     "type": "string"
                 },
@@ -11440,6 +11492,9 @@ const docTemplate = `{
                 },
                 "ordercount": {
                     "type": "integer"
+                },
+                "orderminimum": {
+                    "type": "number"
                 },
                 "parid": {
                     "type": "string"

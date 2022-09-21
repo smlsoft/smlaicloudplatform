@@ -830,6 +830,8 @@ definitions:
         type: array
       ordercount:
         type: integer
+      orderminimum:
+        type: number
       parid:
         type: string
       price:
@@ -945,6 +947,8 @@ definitions:
         type: array
       ordercount:
         type: integer
+      orderminimum:
+        type: number
       parid:
         type: string
       price:
@@ -1110,6 +1114,8 @@ definitions:
         type: array
       ordercount:
         type: integer
+      orderminimum:
+        type: number
       parid:
         type: string
       price:
@@ -2215,6 +2221,8 @@ definitions:
         type: array
       ordercount:
         type: integer
+      orderminimum:
+        type: number
       parid:
         type: string
       price:
@@ -2420,6 +2428,8 @@ definitions:
         type: array
       ordercount:
         type: integer
+      orderminimum:
+        type: number
       parid:
         type: string
       price:
@@ -4443,6 +4453,31 @@ paths:
       security:
       - AccessToken: []
       summary: นำเข้าข้อมูลรายวัน
+      tags:
+      - GL
+  /gl/journal/docno/{docno}:
+    get:
+      consumes:
+      - application/json
+      description: แสดงรายละเอียดข้อมูลรายวัน
+      parameters:
+      - description: Journal DocNo
+        in: path
+        name: docno
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JournalInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: แสดงรายละเอียดข้อมูลรายวัน
       tags:
       - GL
   /gl/journal/docref/{doc}:

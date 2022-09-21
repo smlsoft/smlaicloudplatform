@@ -57,6 +57,7 @@ func (h JournalHttp) RouteSetup() {
 	h.ms.GET("/gl/journal", h.SearchJournal)
 	h.ms.POST("/gl/journal", h.CreateJournal)
 	h.ms.GET("/gl/journal/:id", h.InfoJournal)
+	h.ms.GET("/gl/journal/docno/:docno", h.InfoJournalByDocno)
 	h.ms.GET("/gl/journal/docref/:doc", h.InfoJournalByDocumentRef)
 	h.ms.PUT("/gl/journal/:id", h.UpdateJournal)
 	h.ms.DELETE("/gl/journal/:id", h.DeleteJournal)
@@ -225,6 +226,38 @@ func (h JournalHttp) InfoJournal(ctx microservice.IContext) error {
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// Get Journal Infomation By DocNo godoc
+// @Summary		แสดงรายละเอียดข้อมูลรายวัน
+// @Description แสดงรายละเอียดข้อมูลรายวัน
+// @Tags		GL
+// @Param		docno  path      string  true  "Journal DocNo"
+// @Accept 		json
+// @Success		200	{object}	models.JournalInfoResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /gl/journal/docno/{docno} [get]
+func (h JournalHttp) InfoJournalByDocno(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	docNo := ctx.Param("docno")
+
+	h.ms.Logger.Debugf("Get Journal %v", docNo)
+	doc, err := h.svc.InfoJournalByDocNo(shopID, docNo)
+
+	if err != nil {
+		h.ms.Logger.Errorf("Error getting document %v: %v", docNo, err)
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}
