@@ -38,7 +38,7 @@ func TestConsumerServiceOnConsumeInsert(t *testing.T) {
 
 			Inventory: inventoryModel.Inventory{
 				Name: common.Name{
-					Name1: &itemName,
+					Name1: itemName,
 				},
 			},
 		},

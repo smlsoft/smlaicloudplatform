@@ -10,16 +10,12 @@ import (
 const categoryCollectionName = "categories"
 
 type Category struct {
-	CategoryGuid string `json:"categoryguid" bson:"categoryguid" gorm:"categoryguid" validate:"required"`
-	ParentGuid   string `json:"parentguid"  bson:"parentguid"`
-	Name1        string `json:"name1" bson:"name1" validate:"required"`
-	Name2        string `json:"name2,omitempty" bson:"name2,omitempty"`
-	Name3        string `json:"name3,omitempty" bson:"name3,omitempty"`
-	Name4        string `json:"name4,omitempty" bson:"name4,omitempty"`
-	Name5        string `json:"name5,omitempty" bson:"name5,omitempty"`
+	CategoryGuid string `json:"categoryguid" bson:"categoryguid" gorm:"categoryguid" validate:"required,max=100"`
+	ParentGuid   string `json:"parentguid"  bson:"parentguid" validate:"max=100"`
+	models.Name  `bson:"inline"`
 	Image        string `json:"image" bson:"image,omitempty"`
-	XOrder       int8   `json:"xorder" bson:"xorder,omitempty"`
-	Code         string `json:"code" bson:"code"`
+	XOrder       int8   `json:"xorder" bson:"xorder,omitempty" validate:"min=-125,max=125"`
+	Code         string `json:"code" bson:"code" validate:"max=100"`
 }
 
 type CategoryInfo struct {

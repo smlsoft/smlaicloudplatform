@@ -105,12 +105,28 @@ func (h DocumentImageHttp) SearchDocumentImage(ctx microservice.IContext) error 
 
 	matchFilters := map[string]interface{}{}
 
-	status := strings.TrimSpace(ctx.QueryParam("status"))
+	statusRaw := strings.TrimSpace(ctx.QueryParam("status"))
 
-	if len(status) > 0 {
-		tempStatus, err := strconv.Atoi(status)
-		if err == nil {
-			matchFilters["status"] = tempStatus
+	statusFilter := []int{}
+	if len(statusRaw) > 0 {
+
+		statusRawArray := strings.Split(statusRaw, ",")
+
+		for _, status := range statusRawArray {
+			tempStatus, err := strconv.Atoi(status)
+			if err == nil {
+				statusFilter = append(statusFilter, tempStatus)
+			}
+		}
+	}
+
+	lenStatus := len(statusFilter)
+	if lenStatus > 0 {
+
+		if lenStatus == 1 {
+			matchFilters["status"] = statusFilter[0]
+		} else {
+			matchFilters["status"] = bson.M{"$in": statusFilter}
 		}
 	}
 

@@ -23,24 +23,24 @@ const inventoryTableName string = "inventories"
 const inventoryIndexName string = "inventories_index"
 
 type Inventory struct {
-	ParID    string `json:"parid" bson:"parid" gorm:"parid"`
-	ItemSku  string `json:"itemsku,omitempty" bson:"itemsku,omitempty" gorm:"itemsku,omitempty"`
-	ItemGuid string `json:"itemguid,omitempty" bson:"itemguid,omitempty" gorm:"itemguid,omitempty"`
-	ItemCode string `json:"itemcode" bson:"itemcode" gorm:"itemcode"`
+	ParID    string `json:"parid" bson:"parid" gorm:"parid" validate:"max=50"`
+	ItemSku  string `json:"itemsku,omitempty" bson:"itemsku,omitempty" gorm:"itemsku,omitempty" validate:"omitempty,max=50"`
+	ItemGuid string `json:"itemguid,omitempty" bson:"itemguid,omitempty" gorm:"itemguid,omitempty" validate:"omitempty,max=50"`
+	ItemCode string `json:"itemcode" bson:"itemcode" gorm:"itemcode" validate:"omitempty,max=50"`
 
-	Barcode string `json:"barcode" bson:"barcode" gorm:"barcode"`
+	Barcode string `json:"barcode" bson:"barcode" gorm:"barcode" validate:"omitempty,max=100"`
 
-	UnitCode string `json:"unitcode" bson:"unitcode" gorm:"unitcode"`
+	UnitCode string `json:"unitcode" bson:"unitcode" gorm:"unitcode" validate:"omitempty,max=100"`
 
 	models.Name        `bson:"inline"`
 	models.Description `bson:"inline"`
 	ProductPrice       `bson:"inline"`
-	CategoryGuid       string `json:"categoryguid,omitempty" bson:"categoryguid" gorm:"categoryguid"` // Guid กลุ่มสินค้า
-	HaveSerialno       bool   `json:"haveserialno" bson:"haveserialno" gorm:"haveserialno,type:bool,default:false"`
-	ItemVat            int8   `json:"itemvat" bson:"itemvat" gorm:"itemvat"`
-	ItemType           int8   `json:"itemtype" bson:"itemtype" gorm:"itemtype"`
+	CategoryGuid       string `json:"categoryguid,omitempty" bson:"categoryguid" gorm:"categoryguid" validate:"omitempty,max=100"` // Guid กลุ่มสินค้า
+	HaveSerialno       bool   `json:"haveserialno" bson:"haveserialno" gorm:"haveserialno,type:bool,default:false" `
+	ItemVat            int8   `json:"itemvat" bson:"itemvat" gorm:"itemvat" validate:"min=-125,max=125"`
+	ItemType           int8   `json:"itemtype" bson:"itemtype" gorm:"itemtype" validate:"min=-125,max=125"`
 	HavePoint          bool   `json:"havepoint" bson:"havepoint" gorm:"havepoint"`
-	XOrder             int8   `json:"xorder" bson:"xorder" gorm:"xorder"`
+	XOrder             int8   `json:"xorder" bson:"xorder" gorm:"xorder" validate:"min=-125,max=125"`
 
 	IsStockProduct      bool   `json:"isstockproduct" bson:"isstockproduct" gorm:"isstockproduct"`
 	StockProductGUIDRef string `json:"stockproductguidref" bson:"stockproductguidref" gorm:"stockproductguidref"`
@@ -57,14 +57,14 @@ type Inventory struct {
 	Barcodes *[]Barcode              `json:"barcodes" bson:"barcodes" gorm:"barcodes"`
 	UnitUses *[]UnitUse              `json:"unituses" bson:"unituses" gorm:"units"`
 
-	UnitCost     string `json:"unitcost,omitempty" bson:"unitcost,omitempty" gorm:"unitcost,omitempty"`
-	UnitStandard string `json:"unitstandard,omitempty" bson:"unitstandard,omitempty" gorm:"unitstandard,omitempty"`
+	UnitCost     string `json:"unitcost,omitempty" bson:"unitcost,omitempty" gorm:"unitcost,omitempty" validate:"omitempty,max=100"`
+	UnitStandard string `json:"unitstandard,omitempty" bson:"unitstandard,omitempty" gorm:"unitstandard,omitempty" validate:"omitempty,max=100"`
 	MultiUnit    bool   `json:"multiunit,omitempty" bson:"multiunit,omitempty" gorm:"multiunit,omitempty,type:bool,default:false"`
 
 	ShopRecommended bool    `json:"shoprecommended,omitempty" bson:"shoprecommended,omitempty" gorm:"shoprecommended,omitempty,type:bool,default:false"`
 	StarPercent     float32 `json:"starpercent,omitempty" bson:"starpercent,omitempty" gorm:"starpercent,omitempty,default:0.0"`
-	OrderCount      int     `json:"ordercount,omitempty" bson:"ordercount,omitempty" gorm:"ordercount,omitempty"`
-	OrderMinimum    float32 `json:"orderminimum,omitempty" bson:"orderminimum,omitempty" gorm:"orderminimum,omitempty"`
+	OrderCount      int     `json:"ordercount,omitempty" bson:"ordercount,omitempty" gorm:"ordercount,omitempty" validate:"omitempty,max=100"`
+	OrderMinimum    float32 `json:"orderminimum,omitempty" bson:"orderminimum,omitempty" gorm:"orderminimum,omitempty" `
 
 	// WaitType         int             `json:"-" bson:"waitType"`                // ประเภทการรอ (สินค้าหมด)
 	// WaitUntil        time.Time       `json:"-" bson:"waitUntil"`               // ระยะเวลาที่รอ

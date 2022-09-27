@@ -16,8 +16,15 @@ type DocumentImage struct {
 	Module      string    `json:"module" bson:"module"`
 	DocGUIDRef  string    `json:"docguidref" bson:"docguidref"`
 	Status      int8      `json:"status" bson:"status"`
+	Comments    []Comment `json:"comments" bson:"comments"`
 	UploadedBy  string    `json:"uploadedby" bson:"uploadedby"`
 	UploadedAt  time.Time `json:"uploadedat" bson:"uploadedat"`
+}
+
+type Comment struct {
+	Username    string    `json:"username" bson:"username"`
+	Comment     string    `json:"comment" bson:"comment"`
+	CommentedAt time.Time `json:"commentedat" bson:"commentedat"`
 }
 type DocumentImageInfo struct {
 	models.DocIdentity `bson:"inline"`
