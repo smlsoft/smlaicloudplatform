@@ -219,11 +219,12 @@ func (svc JournalReportService) ProcessLedgerAccount(shopID string, accountCode 
 			docList[currentIndexAccount].NextBalance = lastAmount
 
 			detail := models.LedgerAccountDetail{
-				DocNo:   doc.DocNo,
-				DocDate: doc.DocDate,
-				Debit:   doc.DebitAmount,
-				Credit:  doc.CreditAmount,
-				Amount:  lastAmount,
+				DocNo:              doc.DocNo,
+				AccountDescription: doc.AccountDescription,
+				DocDate:            doc.DocDate,
+				Debit:              doc.DebitAmount,
+				Credit:             doc.CreditAmount,
+				Amount:             lastAmount,
 			}
 			*tempDoc.Details = append(*tempDoc.Details, detail)
 		}

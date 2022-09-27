@@ -26,13 +26,14 @@ type Option struct {
 }
 
 type OptionDetail struct {
-	DetailCode    string         `json:"detailcode" bson:"detailcode"`
-	Name1         string         `json:"name1" bson:"name1" gorm:"name1"`
-	Name2         string         `json:"name2,omitempty" bson:"name2,omitempty" gorm:"name2,omitempty"`
-	Name3         string         `json:"name3,omitempty" bson:"name3,omitempty" gorm:"name3,omitempty"`
-	Name4         string         `json:"name4,omitempty" bson:"name4,omitempty" gorm:"name4,omitempty"`
-	Name5         string         `json:"name5,omitempty" bson:"name5,omitempty" gorm:"name5,omitempty"`
-	ChoiceDetails []IncudeChoice `json:"choicedetails" bson:"choicedetails"`
+	OptionDetailCode string         `json:"optiondetailcode" bson:"optiondetailcode"`
+	Name1            string         `json:"name1" bson:"name1" gorm:"name1"`
+	Name2            string         `json:"name2,omitempty" bson:"name2,omitempty" gorm:"name2,omitempty"`
+	Name3            string         `json:"name3,omitempty" bson:"name3,omitempty" gorm:"name3,omitempty"`
+	Name4            string         `json:"name4,omitempty" bson:"name4,omitempty" gorm:"name4,omitempty"`
+	Name5            string         `json:"name5,omitempty" bson:"name5,omitempty" gorm:"name5,omitempty"`
+	Image            string         `json:"image" bson:"image" gorm:"image"`
+	ChoiceDetails    []IncudeChoice `json:"choicedetails" bson:"choicedetails"`
 }
 
 type Choice struct {
@@ -57,7 +58,7 @@ type Choice struct {
 
 type IncudeChoice struct {
 	ChoiceCode string         `json:"choicecode" bson:"choicecode"`
-	Details    []IncudeChoice `json:"details" bson:"details"`
+	Details    []IncudeChoice `json:"choicedetails" bson:"choicedetails"`
 }
 
 type InventoryOptionMain struct {

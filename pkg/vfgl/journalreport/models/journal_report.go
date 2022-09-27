@@ -124,14 +124,15 @@ type LostAndProfitSheetReportResponse struct {
 }
 
 type LedgerAccountRaw struct {
-	RowMode      int8      `json:"rowmode" gorm:"column:rowmode"`
-	DocDate      time.Time `json:"docdate" gorm:"column:docdate"`
-	DocNo        string    `json:"docno" gorm:"column:docno"`
-	AccountCode  string    `json:"accountcode" gorm:"column:accountcode"`
-	AccountName  string    `json:"accountname" gorm:"column:accountname"`
-	DebitAmount  float64   `json:"debitamount" gorm:"column:debitamount"`
-	CreditAmount float64   `json:"creditamount" gorm:"column:creditamount"`
-	Amount       float64   `json:"amount" gorm:"column:amount"`
+	RowMode            int8      `json:"rowmode" gorm:"column:rowmode"`
+	DocDate            time.Time `json:"docdate" gorm:"column:docdate"`
+	DocNo              string    `json:"docno" gorm:"column:docno"`
+	AccountCode        string    `json:"accountcode" gorm:"column:accountcode"`
+	AccountName        string    `json:"accountname" gorm:"column:accountname"`
+	AccountDescription string    `json:"accountdescription" gorm:"column:accountdescription"`
+	DebitAmount        float64   `json:"debitamount" gorm:"column:debitamount"`
+	CreditAmount       float64   `json:"creditamount" gorm:"column:creditamount"`
+	Amount             float64   `json:"amount" gorm:"column:amount"`
 }
 
 type LedgerAccount struct {
@@ -143,9 +144,10 @@ type LedgerAccount struct {
 }
 
 type LedgerAccountDetail struct {
-	DocNo   string    `json:"docno" gorm:"column:docno"`
-	DocDate time.Time `json:"docdate" gorm:"column:docdate"`
-	Debit   float64   `json:"debit" gorm:"column:debit"`
-	Credit  float64   `json:"credit" gorm:"column:credit"`
-	Amount  float64   `json:"amount" gorm:"column:amount"`
+	DocNo              string    `json:"docno" gorm:"column:docno"`
+	DocDate            time.Time `json:"docdate" gorm:"column:docdate"`
+	AccountDescription string    `json:"accountdescription" gorm:"column:accountdescription"`
+	Debit              float64   `json:"debit" gorm:"column:debit"`
+	Credit             float64   `json:"credit" gorm:"column:credit"`
+	Amount             float64   `json:"amount" gorm:"column:amount"`
 }
