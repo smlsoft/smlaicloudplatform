@@ -1,5 +1,12 @@
 package services_test
 
+import (
+	"smlcloudplatform/pkg/smsreceive/smstransaction/services"
+	"testing"
+
+	"github.com/tj/assert"
+)
+
 /*
 import (
 	common "smlcloudplatform/pkg/models"
@@ -169,3 +176,17 @@ func TestFillterSms(t *testing.T) {
 	}
 }
 */
+
+func TestGetAmountFromPatern(t *testing.T) {
+	msg := "12/04/63 09:25 บชX231148X รับโอนจากX815923X 1170.01บ คงเหลือ 2160.29บ"
+	pattern := `[0-9]{2}\/[0-9]{2}\/[0-9]{2} [0-9]{2}:[0-9]{2} บชX[0-9].*X (?P<Amount>[0-9].*)บ คงเหลือ [0-9].*บ`
+
+	amount, err := services.GetAmountFromPattern(pattern, msg)
+
+	amountExported := 1170.01
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, amountExported, amount)
+
+}

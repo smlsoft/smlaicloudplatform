@@ -2,9 +2,11 @@ package services
 
 import (
 	"errors"
+	"regexp"
 	"smlcloudplatform/pkg/smsreceive/smspatterns/models"
 	"smlcloudplatform/pkg/smsreceive/smspatterns/repositories"
 	"smlcloudplatform/pkg/utils"
+	"strconv"
 	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
@@ -128,4 +130,18 @@ func (svc SmsPatternsHttpService) SearchSmsPatterns(q string, page int, limit in
 	}
 
 	return docList, pagination, nil
+}
+
+func GetAmountFromPattern(pattern string, message string) (float64, error) {
+	re := regexp.MustCompile(pattern)
+
+	reVal := re.FindStringSubmatch(message)
+
+	if len(reVal) > 1 {
+
+		return strconv.ParseFloat(reVal[1], 64)
+
+	}
+
+	return 0.0, errors.New("message not match")
 }

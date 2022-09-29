@@ -4,14 +4,19 @@ definitions:
       code:
         type: string
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
     required:
     - code
@@ -24,14 +29,19 @@ definitions:
       guidfixed:
         type: string
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
     required:
     - code
@@ -78,6 +88,19 @@ definitions:
         type: string
       success:
         type: boolean
+    type: object
+  models.AvailablePatternOption:
+    properties:
+      optionpatterntags:
+        items:
+          type: string
+        type: array
+      patternkey:
+        type: string
+      price:
+        type: number
+      qty:
+        type: number
     type: object
   models.BalanceSheetAccountDetail:
     properties:
@@ -159,14 +182,19 @@ definitions:
       barcode:
         type: string
       description1:
+        maxLength: 255
         type: string
       description2:
+        maxLength: 255
         type: string
       description3:
+        maxLength: 255
         type: string
       description4:
+        maxLength: 255
         type: string
       description5:
+        maxLength: 255
         type: string
       image:
         type: string
@@ -175,14 +203,19 @@ definitions:
       memberprice:
         type: number
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
       normalprice:
         type: number
@@ -196,17 +229,23 @@ definitions:
       unitcode:
         type: string
       unitname1:
+        maxLength: 255
         type: string
       unitname2:
+        maxLength: 255
         type: string
       unitname3:
+        maxLength: 255
         type: string
       unitname4:
+        maxLength: 255
         type: string
       unitname5:
+        maxLength: 255
         type: string
     required:
     - name1
+    - unitname1
     type: object
   models.BulkInsertResponse:
     properties:
@@ -253,24 +292,34 @@ definitions:
   models.Category:
     properties:
       categoryguid:
+        maxLength: 100
         type: string
       code:
+        maxLength: 100
         type: string
       image:
         type: string
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
       parentguid:
+        maxLength: 100
         type: string
       xorder:
+        maximum: 125
+        minimum: -125
         type: integer
     required:
     - categoryguid
@@ -279,8 +328,10 @@ definitions:
   models.CategoryActivity:
     properties:
       categoryguid:
+        maxLength: 100
         type: string
       code:
+        maxLength: 100
         type: string
       createdat:
         type: string
@@ -291,22 +342,30 @@ definitions:
       image:
         type: string
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
       parentguid:
+        maxLength: 100
         type: string
       shopid:
         type: string
       updatedat:
         type: string
       xorder:
+        maximum: 125
+        minimum: -125
         type: integer
     required:
     - categoryguid
@@ -358,24 +417,34 @@ definitions:
   models.CategoryImport:
     properties:
       categoryguid:
+        maxLength: 100
         type: string
       code:
+        maxLength: 100
         type: string
       image:
         type: string
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
       parentguid:
+        maxLength: 100
         type: string
       xorder:
+        maximum: 125
+        minimum: -125
         type: integer
     required:
     - categoryguid
@@ -384,26 +453,36 @@ definitions:
   models.CategoryImportInfo:
     properties:
       categoryguid:
+        maxLength: 100
         type: string
       code:
+        maxLength: 100
         type: string
       guidfixed:
         type: string
       image:
         type: string
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
       parentguid:
+        maxLength: 100
         type: string
       xorder:
+        maximum: 125
+        minimum: -125
         type: integer
     required:
     - categoryguid
@@ -423,26 +502,36 @@ definitions:
   models.CategoryInfo:
     properties:
       categoryguid:
+        maxLength: 100
         type: string
       code:
+        maxLength: 100
         type: string
       guidfixed:
         type: string
       image:
         type: string
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
       parentguid:
+        maxLength: 100
         type: string
       xorder:
+        maximum: 125
+        minimum: -125
         type: integer
     required:
     - categoryguid
@@ -549,6 +638,12 @@ definitions:
     properties:
       barcode:
         type: string
+      choicedetails:
+        items:
+          $ref: '#/definitions/models.IncudeChoice'
+        type: array
+      code:
+        type: string
       default:
         type: boolean
       itemunit:
@@ -574,6 +669,15 @@ definitions:
       suggestcode:
         type: string
     type: object
+  models.Comment:
+    properties:
+      comment:
+        type: string
+      commentedat:
+        type: string
+      username:
+        type: string
+    type: object
   models.CreditCardPayment:
     properties:
       amount:
@@ -596,6 +700,10 @@ definitions:
     type: object
   models.DocumentImage:
     properties:
+      comments:
+        items:
+          $ref: '#/definitions/models.Comment'
+        type: array
       docguidref:
         type: string
       documentref:
@@ -639,6 +747,10 @@ definitions:
     type: object
   models.DocumentImageInfo:
     properties:
+      comments:
+        items:
+          $ref: '#/definitions/models.Comment'
+        type: array
       docguidref:
         type: string
       documentref:
@@ -760,12 +872,26 @@ definitions:
       uri:
         type: string
     type: object
+  models.IncudeChoice:
+    properties:
+      choicecode:
+        type: string
+      choicedetails:
+        items:
+          $ref: '#/definitions/models.IncudeChoice'
+        type: array
+    type: object
   models.Inventory:
     properties:
       activated:
         description: เปิดใช้งานอยู่
         type: boolean
+      availablepatternoptions:
+        items:
+          $ref: '#/definitions/models.AvailablePatternOption'
+        type: array
       barcode:
+        maxLength: 100
         type: string
       barcodedescriptionfromproduct:
         type: boolean
@@ -777,16 +903,22 @@ definitions:
         $ref: '#/definitions/models.Category'
       categoryguid:
         description: Guid กลุ่มสินค้า
+        maxLength: 100
         type: string
       description1:
+        maxLength: 255
         type: string
       description2:
+        maxLength: 255
         type: string
       description3:
+        maxLength: 255
         type: string
       description4:
+        maxLength: 255
         type: string
       description5:
+        maxLength: 255
         type: string
       havepoint:
         type: boolean
@@ -799,40 +931,56 @@ definitions:
       isstockproduct:
         type: boolean
       itemcode:
+        maxLength: 50
         type: string
       itemguid:
+        maxLength: 50
         type: string
       itemsku:
+        maxLength: 50
         type: string
       itemtype:
+        maximum: 125
+        minimum: -125
         type: integer
       itemvat:
+        maximum: 125
+        minimum: -125
         type: integer
       memberprice:
         type: number
       multiunit:
         type: boolean
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
       normalprice:
         type: number
+      optionpatternmaster:
+        type: string
       options:
         items:
           $ref: '#/definitions/models.Option'
         type: array
       ordercount:
+        maximum: 100
         type: integer
       orderminimum:
         type: number
       parid:
+        maxLength: 50
         type: string
       price:
         description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
@@ -855,16 +1003,21 @@ definitions:
           $ref: '#/definitions/models.InventoryTag'
         type: array
       unitcode:
+        maxLength: 100
         type: string
       unitcost:
+        maxLength: 100
         type: string
       unitstandard:
+        maxLength: 100
         type: string
       unituses:
         items:
           $ref: '#/definitions/models.UnitUse'
         type: array
       xorder:
+        maximum: 125
+        minimum: -125
         type: integer
     required:
     - name1
@@ -874,7 +1027,12 @@ definitions:
       activated:
         description: เปิดใช้งานอยู่
         type: boolean
+      availablepatternoptions:
+        items:
+          $ref: '#/definitions/models.AvailablePatternOption'
+        type: array
       barcode:
+        maxLength: 100
         type: string
       barcodedescriptionfromproduct:
         type: boolean
@@ -888,20 +1046,26 @@ definitions:
         $ref: '#/definitions/models.Category'
       categoryguid:
         description: Guid กลุ่มสินค้า
+        maxLength: 100
         type: string
       createdat:
         type: string
       deletedat:
         type: string
       description1:
+        maxLength: 255
         type: string
       description2:
+        maxLength: 255
         type: string
       description3:
+        maxLength: 255
         type: string
       description4:
+        maxLength: 255
         type: string
       description5:
+        maxLength: 255
         type: string
       guidfixed:
         type: string
@@ -916,40 +1080,56 @@ definitions:
       isstockproduct:
         type: boolean
       itemcode:
+        maxLength: 50
         type: string
       itemguid:
+        maxLength: 50
         type: string
       itemsku:
+        maxLength: 50
         type: string
       itemtype:
+        maximum: 125
+        minimum: -125
         type: integer
       itemvat:
+        maximum: 125
+        minimum: -125
         type: integer
       memberprice:
         type: number
       multiunit:
         type: boolean
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
       normalprice:
         type: number
+      optionpatternmaster:
+        type: string
       options:
         items:
           $ref: '#/definitions/models.Option'
         type: array
       ordercount:
+        maximum: 100
         type: integer
       orderminimum:
         type: number
       parid:
+        maxLength: 50
         type: string
       price:
         description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
@@ -976,10 +1156,13 @@ definitions:
       unit:
         $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit'
       unitcode:
+        maxLength: 100
         type: string
       unitcost:
+        maxLength: 100
         type: string
       unitstandard:
+        maxLength: 100
         type: string
       unituses:
         items:
@@ -988,6 +1171,8 @@ definitions:
       updatedat:
         type: string
       xorder:
+        maximum: 125
+        minimum: -125
         type: integer
     required:
     - name1
@@ -1045,7 +1230,12 @@ definitions:
       activated:
         description: เปิดใช้งานอยู่
         type: boolean
+      availablepatternoptions:
+        items:
+          $ref: '#/definitions/models.AvailablePatternOption'
+        type: array
       barcode:
+        maxLength: 100
         type: string
       barcodedescriptionfromproduct:
         type: boolean
@@ -1059,16 +1249,22 @@ definitions:
         $ref: '#/definitions/models.Category'
       categoryguid:
         description: Guid กลุ่มสินค้า
+        maxLength: 100
         type: string
       description1:
+        maxLength: 255
         type: string
       description2:
+        maxLength: 255
         type: string
       description3:
+        maxLength: 255
         type: string
       description4:
+        maxLength: 255
         type: string
       description5:
+        maxLength: 255
         type: string
       guidfixed:
         type: string
@@ -1083,40 +1279,56 @@ definitions:
       isstockproduct:
         type: boolean
       itemcode:
+        maxLength: 50
         type: string
       itemguid:
+        maxLength: 50
         type: string
       itemsku:
+        maxLength: 50
         type: string
       itemtype:
+        maximum: 125
+        minimum: -125
         type: integer
       itemvat:
+        maximum: 125
+        minimum: -125
         type: integer
       memberprice:
         type: number
       multiunit:
         type: boolean
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
       normalprice:
         type: number
+      optionpatternmaster:
+        type: string
       options:
         items:
           $ref: '#/definitions/models.Option'
         type: array
       ordercount:
+        maximum: 100
         type: integer
       orderminimum:
         type: number
       parid:
+        maxLength: 50
         type: string
       price:
         description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
@@ -1141,16 +1353,21 @@ definitions:
       unit:
         $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit'
       unitcode:
+        maxLength: 100
         type: string
       unitcost:
+        maxLength: 100
         type: string
       unitstandard:
+        maxLength: 100
         type: string
       unituses:
         items:
           $ref: '#/definitions/models.UnitUse'
         type: array
       xorder:
+        maximum: 125
+        minimum: -125
         type: integer
     required:
     - name1
@@ -1215,6 +1432,8 @@ definitions:
         type: integer
       code:
         type: string
+      isstockcontrol:
+        type: boolean
       maxselect:
         type: integer
       name1:
@@ -1227,6 +1446,10 @@ definitions:
         type: string
       name5:
         type: string
+      optiondetails:
+        items:
+          $ref: '#/definitions/models.OptionDetail'
+        type: array
       required:
         type: boolean
       xorder:
@@ -1242,6 +1465,8 @@ definitions:
         type: integer
       code:
         type: string
+      isstockcontrol:
+        type: boolean
       maxselect:
         type: integer
       name1:
@@ -1254,6 +1479,10 @@ definitions:
         type: string
       name5:
         type: string
+      optiondetails:
+        items:
+          $ref: '#/definitions/models.OptionDetail'
+        type: array
       required:
         type: boolean
       xorder:
@@ -1271,6 +1500,8 @@ definitions:
         type: string
       guidfixed:
         type: string
+      isstockcontrol:
+        type: boolean
       maxselect:
         type: integer
       name1:
@@ -1283,6 +1514,10 @@ definitions:
         type: string
       name5:
         type: string
+      optiondetails:
+        items:
+          $ref: '#/definitions/models.OptionDetail'
+        type: array
       required:
         type: boolean
       xorder:
@@ -1359,14 +1594,19 @@ definitions:
       code:
         type: string
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
     required:
     - name1
@@ -1378,14 +1618,19 @@ definitions:
       guidfixed:
         type: string
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
     required:
     - name1
@@ -1645,14 +1890,19 @@ definitions:
       code:
         type: string
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
     required:
     - name1
@@ -1806,6 +2056,8 @@ definitions:
         type: integer
       code:
         type: string
+      isstockcontrol:
+        type: boolean
       maxselect:
         type: integer
       name1:
@@ -1818,6 +2070,92 @@ definitions:
         type: string
       name5:
         type: string
+      optiondetails:
+        items:
+          $ref: '#/definitions/models.OptionDetail'
+        type: array
+      required:
+        type: boolean
+      xorder:
+        type: integer
+    type: object
+  models.OptionDetail:
+    properties:
+      choicedetails:
+        items:
+          $ref: '#/definitions/models.IncudeChoice'
+        type: array
+      image:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      optiondetailcode:
+        type: string
+    type: object
+  models.OptionPattern:
+    properties:
+      name1:
+        maxLength: 255
+        type: string
+      name2:
+        maxLength: 255
+        type: string
+      name3:
+        maxLength: 255
+        type: string
+      name4:
+        maxLength: 255
+        type: string
+      name5:
+        maxLength: 255
+        type: string
+      optionpatterndetails:
+        items:
+          $ref: '#/definitions/models.OptionPatternDetail'
+        type: array
+      patterncode:
+        type: string
+    required:
+    - name1
+    type: object
+  models.OptionPatternDetail:
+    properties:
+      choices:
+        items:
+          $ref: '#/definitions/models.Choice'
+        type: array
+      choicetype:
+        type: integer
+      code:
+        type: string
+      isstockcontrol:
+        type: boolean
+      maxselect:
+        type: integer
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
+        type: string
+      optioncode:
+        type: string
+      optiondetails:
+        items:
+          $ref: '#/definitions/models.OptionDetail'
+        type: array
       required:
         type: boolean
       xorder:
@@ -1862,14 +2200,19 @@ definitions:
       feerate:
         type: number
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
       paymentcode:
         type: string
@@ -1891,14 +2234,19 @@ definitions:
       guidfixed:
         type: string
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
       paymentcode:
         type: string
@@ -2146,7 +2494,12 @@ definitions:
         type: boolean
       amount:
         type: number
+      availablepatternoptions:
+        items:
+          $ref: '#/definitions/models.AvailablePatternOption'
+        type: array
       barcode:
+        maxLength: 100
         type: string
       barcodedescriptionfromproduct:
         type: boolean
@@ -2160,16 +2513,22 @@ definitions:
         $ref: '#/definitions/models.Category'
       categoryguid:
         description: Guid กลุ่มสินค้า
+        maxLength: 100
         type: string
       description1:
+        maxLength: 255
         type: string
       description2:
+        maxLength: 255
         type: string
       description3:
+        maxLength: 255
         type: string
       description4:
+        maxLength: 255
         type: string
       description5:
+        maxLength: 255
         type: string
       discountamount:
         type: number
@@ -2188,14 +2547,21 @@ definitions:
       isstockproduct:
         type: boolean
       itemcode:
+        maxLength: 50
         type: string
       itemguid:
+        maxLength: 50
         type: string
       itemsku:
+        maxLength: 50
         type: string
       itemtype:
+        maximum: 125
+        minimum: -125
         type: integer
       itemvat:
+        maximum: 125
+        minimum: -125
         type: integer
       linenumber:
         type: integer
@@ -2204,26 +2570,35 @@ definitions:
       multiunit:
         type: boolean
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
       normalprice:
         type: number
+      optionpatternmaster:
+        type: string
       options:
         items:
           $ref: '#/definitions/models.Option'
         type: array
       ordercount:
+        maximum: 100
         type: integer
       orderminimum:
         type: number
       parid:
+        maxLength: 50
         type: string
       price:
         type: number
@@ -2249,16 +2624,21 @@ definitions:
       unit:
         $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit'
       unitcode:
+        maxLength: 100
         type: string
       unitcost:
+        maxLength: 100
         type: string
       unitstandard:
+        maxLength: 100
         type: string
       unituses:
         items:
           $ref: '#/definitions/models.UnitUse'
         type: array
       xorder:
+        maximum: 125
+        minimum: -125
         type: integer
     required:
     - name1
@@ -2353,7 +2733,12 @@ definitions:
         type: boolean
       amount:
         type: number
+      availablepatternoptions:
+        items:
+          $ref: '#/definitions/models.AvailablePatternOption'
+        type: array
       barcode:
+        maxLength: 100
         type: string
       barcodedescriptionfromproduct:
         type: boolean
@@ -2367,16 +2752,22 @@ definitions:
         $ref: '#/definitions/models.Category'
       categoryguid:
         description: Guid กลุ่มสินค้า
+        maxLength: 100
         type: string
       description1:
+        maxLength: 255
         type: string
       description2:
+        maxLength: 255
         type: string
       description3:
+        maxLength: 255
         type: string
       description4:
+        maxLength: 255
         type: string
       description5:
+        maxLength: 255
         type: string
       discountamount:
         type: number
@@ -2395,14 +2786,21 @@ definitions:
       isstockproduct:
         type: boolean
       itemcode:
+        maxLength: 50
         type: string
       itemguid:
+        maxLength: 50
         type: string
       itemsku:
+        maxLength: 50
         type: string
       itemtype:
+        maximum: 125
+        minimum: -125
         type: integer
       itemvat:
+        maximum: 125
+        minimum: -125
         type: integer
       linenumber:
         type: integer
@@ -2411,26 +2809,35 @@ definitions:
       multiunit:
         type: boolean
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
       normalprice:
         type: number
+      optionpatternmaster:
+        type: string
       options:
         items:
           $ref: '#/definitions/models.Option'
         type: array
       ordercount:
+        maximum: 100
         type: integer
       orderminimum:
         type: number
       parid:
+        maxLength: 50
         type: string
       price:
         type: number
@@ -2456,16 +2863,21 @@ definitions:
       unit:
         $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit'
       unitcode:
+        maxLength: 100
         type: string
       unitcost:
+        maxLength: 100
         type: string
       unitstandard:
+        maxLength: 100
         type: string
       unituses:
         items:
           $ref: '#/definitions/models.UnitUse'
         type: array
       xorder:
+        maximum: 125
+        minimum: -125
         type: integer
     required:
     - name1
@@ -2863,14 +3275,19 @@ definitions:
           $ref: '#/definitions/models.Device'
         type: array
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
     required:
     - name1
@@ -3032,14 +3449,19 @@ definitions:
   models.UnitUse:
     properties:
       description1:
+        maxLength: 255
         type: string
       description2:
+        maxLength: 255
         type: string
       description3:
+        maxLength: 255
         type: string
       description4:
+        maxLength: 255
         type: string
       description5:
+        maxLength: 255
         type: string
       isprimary:
         type: boolean
@@ -3054,15 +3476,22 @@ definitions:
       unitcode:
         type: string
       unitname1:
+        maxLength: 255
         type: string
       unitname2:
+        maxLength: 255
         type: string
       unitname3:
+        maxLength: 255
         type: string
       unitname4:
+        maxLength: 255
         type: string
       unitname5:
+        maxLength: 255
         type: string
+    required:
+    - unitname1
     type: object
   models.UserLoginRequest:
     properties:
@@ -3164,14 +3593,19 @@ definitions:
           $ref: '#/definitions/models.Location'
         type: array
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
     required:
     - name1
@@ -3181,15 +3615,22 @@ definitions:
       unitcode:
         type: string
       unitname1:
+        maxLength: 255
         type: string
       unitname2:
+        maxLength: 255
         type: string
       unitname3:
+        maxLength: 255
         type: string
       unitname4:
+        maxLength: 255
         type: string
       unitname5:
+        maxLength: 255
         type: string
+    required:
+    - unitname1
     type: object
   smlcloudplatform_pkg_product_unit_models.Unit:
     properties:
@@ -3204,15 +3645,22 @@ definitions:
       unitcode:
         type: string
       unitname1:
+        maxLength: 255
         type: string
       unitname2:
+        maxLength: 255
         type: string
       unitname3:
+        maxLength: 255
         type: string
       unitname4:
+        maxLength: 255
         type: string
       unitname5:
+        maxLength: 255
         type: string
+    required:
+    - unitname1
     type: object
 info:
   contact:
@@ -5969,6 +6417,166 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
+  /optionpattern:
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - OptionPattern
+    post:
+      consumes:
+      - application/json
+      description: Create OptionPattern
+      parameters:
+      - description: OptionPattern
+        in: body
+        name: OptionPattern
+        required: true
+        schema:
+          $ref: '#/definitions/models.OptionPattern'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - OptionPattern
+  /optionpattern/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete OptionPattern
+      parameters:
+      - description: OptionPattern ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - OptionPattern
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: OptionPattern ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - OptionPattern
+    put:
+      consumes:
+      - application/json
+      description: Update OptionPattern
+      parameters:
+      - description: OptionPattern ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: OptionPattern
+        in: body
+        name: OptionPattern
+        required: true
+        schema:
+          $ref: '#/definitions/models.OptionPattern'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - OptionPattern
+  /optionpattern/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create OptionPattern
+      parameters:
+      - description: OptionPattern
+        in: body
+        name: OptionPattern
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.OptionPattern'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - OptionPattern
   /paymentmaster:
     get:
       consumes:

@@ -4406,6 +4406,264 @@ const docTemplate = `{
                 }
             }
         },
+        "/optionpattern": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OptionPattern"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create OptionPattern",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OptionPattern"
+                ],
+                "parameters": [
+                    {
+                        "description": "OptionPattern",
+                        "name": "OptionPattern",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.OptionPattern"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/optionpattern/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create OptionPattern",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OptionPattern"
+                ],
+                "parameters": [
+                    {
+                        "description": "OptionPattern",
+                        "name": "OptionPattern",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.OptionPattern"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/optionpattern/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OptionPattern"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "OptionPattern ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update OptionPattern",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OptionPattern"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "OptionPattern ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "OptionPattern",
+                        "name": "OptionPattern",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.OptionPattern"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete OptionPattern",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OptionPattern"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "OptionPattern ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/paymentmaster": {
             "get": {
                 "security": [
@@ -7842,19 +8100,24 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
@@ -7872,19 +8135,24 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
@@ -7949,6 +8217,26 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.AvailablePatternOption": {
+            "type": "object",
+            "properties": {
+                "optionpatterntags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "patternkey": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "qty": {
+                    "type": "number"
                 }
             }
         },
@@ -8060,26 +8348,32 @@ const docTemplate = `{
         "models.Barcode": {
             "type": "object",
             "required": [
-                "name1"
+                "name1",
+                "unitname1"
             ],
             "properties": {
                 "barcode": {
                     "type": "string"
                 },
                 "description1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "image": {
                     "type": "string"
@@ -8091,19 +8385,24 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "normalprice": {
                     "type": "number"
@@ -8122,19 +8421,24 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "unitname1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "unitname2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "unitname3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "unitname4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "unitname5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
@@ -8210,34 +8514,44 @@ const docTemplate = `{
             ],
             "properties": {
                 "categoryguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "code": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "image": {
                     "type": "string"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "parentguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "xorder": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 }
             }
         },
@@ -8249,10 +8563,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "categoryguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "code": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "createdat": {
                     "type": "string"
@@ -8267,22 +8583,28 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "parentguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "shopid": {
                     "type": "string"
@@ -8291,7 +8613,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "xorder": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 }
             }
         },
@@ -8369,34 +8693,44 @@ const docTemplate = `{
             ],
             "properties": {
                 "categoryguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "code": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "image": {
                     "type": "string"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "parentguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "xorder": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 }
             }
         },
@@ -8408,10 +8742,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "categoryguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "code": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "guidfixed": {
                     "type": "string"
@@ -8420,25 +8756,33 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "parentguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "xorder": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 }
             }
         },
@@ -8467,10 +8811,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "categoryguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "code": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "guidfixed": {
                     "type": "string"
@@ -8479,25 +8825,33 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "parentguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "xorder": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 }
             }
         },
@@ -8649,6 +9003,15 @@ const docTemplate = `{
                 "barcode": {
                     "type": "string"
                 },
+                "choicedetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.IncudeChoice"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
                 "default": {
                     "type": "boolean"
                 },
@@ -8687,6 +9050,20 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Comment": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "commentedat": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "models.CreditCardPayment": {
             "type": "object",
             "properties": {
@@ -8721,6 +9098,12 @@ const docTemplate = `{
         "models.DocumentImage": {
             "type": "object",
             "properties": {
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Comment"
+                    }
+                },
                 "docguidref": {
                     "type": "string"
                 },
@@ -8787,6 +9170,12 @@ const docTemplate = `{
         "models.DocumentImageInfo": {
             "type": "object",
             "properties": {
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Comment"
+                    }
+                },
                 "docguidref": {
                     "type": "string"
                 },
@@ -8974,6 +9363,20 @@ const docTemplate = `{
                 }
             }
         },
+        "models.IncudeChoice": {
+            "type": "object",
+            "properties": {
+                "choicecode": {
+                    "type": "string"
+                },
+                "choicedetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.IncudeChoice"
+                    }
+                }
+            }
+        },
         "models.Inventory": {
             "type": "object",
             "required": [
@@ -8984,8 +9387,15 @@ const docTemplate = `{
                     "description": "เปิดใช้งานอยู่",
                     "type": "boolean"
                 },
+                "availablepatternoptions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AvailablePatternOption"
+                    }
+                },
                 "barcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "barcodedescriptionfromproduct": {
                     "type": "boolean"
@@ -9001,22 +9411,28 @@ const docTemplate = `{
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "description1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "havepoint": {
                     "type": "boolean"
@@ -9034,19 +9450,26 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "itemcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemsku": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemtype": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
                 "itemvat": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
                 "memberprice": {
                     "type": "number"
@@ -9055,22 +9478,30 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "normalprice": {
                     "type": "number"
+                },
+                "optionpatternmaster": {
+                    "type": "string"
                 },
                 "options": {
                     "type": "array",
@@ -9079,13 +9510,15 @@ const docTemplate = `{
                     }
                 },
                 "ordercount": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 100
                 },
                 "orderminimum": {
                     "type": "number"
                 },
                 "parid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "price": {
                     "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
@@ -9117,13 +9550,16 @@ const docTemplate = `{
                     }
                 },
                 "unitcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "unitcost": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "unitstandard": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "unituses": {
                     "type": "array",
@@ -9132,7 +9568,9 @@ const docTemplate = `{
                     }
                 },
                 "xorder": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 }
             }
         },
@@ -9146,8 +9584,15 @@ const docTemplate = `{
                     "description": "เปิดใช้งานอยู่",
                     "type": "boolean"
                 },
+                "availablepatternoptions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AvailablePatternOption"
+                    }
+                },
                 "barcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "barcodedescriptionfromproduct": {
                     "type": "boolean"
@@ -9166,7 +9611,8 @@ const docTemplate = `{
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "createdat": {
                     "type": "string"
@@ -9175,19 +9621,24 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "description1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "guidfixed": {
                     "type": "string"
@@ -9208,19 +9659,26 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "itemcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemsku": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemtype": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
                 "itemvat": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
                 "memberprice": {
                     "type": "number"
@@ -9229,22 +9687,30 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "normalprice": {
                     "type": "number"
+                },
+                "optionpatternmaster": {
+                    "type": "string"
                 },
                 "options": {
                     "type": "array",
@@ -9253,13 +9719,15 @@ const docTemplate = `{
                     }
                 },
                 "ordercount": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 100
                 },
                 "orderminimum": {
                     "type": "number"
                 },
                 "parid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "price": {
                     "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
@@ -9297,13 +9765,16 @@ const docTemplate = `{
                     "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
                 },
                 "unitcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "unitcost": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "unitstandard": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "unituses": {
                     "type": "array",
@@ -9315,7 +9786,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "xorder": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 }
             }
         },
@@ -9403,8 +9876,15 @@ const docTemplate = `{
                     "description": "เปิดใช้งานอยู่",
                     "type": "boolean"
                 },
+                "availablepatternoptions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AvailablePatternOption"
+                    }
+                },
                 "barcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "barcodedescriptionfromproduct": {
                     "type": "boolean"
@@ -9423,22 +9903,28 @@ const docTemplate = `{
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "description1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "guidfixed": {
                     "type": "string"
@@ -9459,19 +9945,26 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "itemcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemsku": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemtype": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
                 "itemvat": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
                 "memberprice": {
                     "type": "number"
@@ -9480,22 +9973,30 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "normalprice": {
                     "type": "number"
+                },
+                "optionpatternmaster": {
+                    "type": "string"
                 },
                 "options": {
                     "type": "array",
@@ -9504,13 +10005,15 @@ const docTemplate = `{
                     }
                 },
                 "ordercount": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 100
                 },
                 "orderminimum": {
                     "type": "number"
                 },
                 "parid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "price": {
                     "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
@@ -9545,13 +10048,16 @@ const docTemplate = `{
                     "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
                 },
                 "unitcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "unitcost": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "unitstandard": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "unituses": {
                     "type": "array",
@@ -9560,7 +10066,9 @@ const docTemplate = `{
                     }
                 },
                 "xorder": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 }
             }
         },
@@ -9656,6 +10164,9 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "isstockcontrol": {
+                    "type": "boolean"
+                },
                 "maxselect": {
                     "type": "integer"
                 },
@@ -9673,6 +10184,12 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                },
+                "optiondetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OptionDetail"
+                    }
                 },
                 "required": {
                     "type": "boolean"
@@ -9697,6 +10214,9 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "isstockcontrol": {
+                    "type": "boolean"
+                },
                 "maxselect": {
                     "type": "integer"
                 },
@@ -9714,6 +10234,12 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                },
+                "optiondetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OptionDetail"
+                    }
                 },
                 "required": {
                     "type": "boolean"
@@ -9741,6 +10267,9 @@ const docTemplate = `{
                 "guidfixed": {
                     "type": "string"
                 },
+                "isstockcontrol": {
+                    "type": "boolean"
+                },
                 "maxselect": {
                     "type": "integer"
                 },
@@ -9758,6 +10287,12 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                },
+                "optiondetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OptionDetail"
+                    }
                 },
                 "required": {
                     "type": "boolean"
@@ -9877,19 +10412,24 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
@@ -9906,19 +10446,24 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
@@ -10313,19 +10858,24 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
@@ -10557,6 +11107,9 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "isstockcontrol": {
+                    "type": "boolean"
+                },
                 "maxselect": {
                     "type": "integer"
                 },
@@ -10574,6 +11127,134 @@ const docTemplate = `{
                 },
                 "name5": {
                     "type": "string"
+                },
+                "optiondetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OptionDetail"
+                    }
+                },
+                "required": {
+                    "type": "boolean"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.OptionDetail": {
+            "type": "object",
+            "properties": {
+                "choicedetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.IncudeChoice"
+                    }
+                },
+                "image": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "optiondetailcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.OptionPattern": {
+            "type": "object",
+            "required": [
+                "name1"
+            ],
+            "properties": {
+                "name1": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name2": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name3": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name4": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "optionpatterndetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OptionPatternDetail"
+                    }
+                },
+                "patterncode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.OptionPatternDetail": {
+            "type": "object",
+            "properties": {
+                "choices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Choice"
+                    }
+                },
+                "choicetype": {
+                    "type": "integer"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "isstockcontrol": {
+                    "type": "boolean"
+                },
+                "maxselect": {
+                    "type": "integer"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "optioncode": {
+                    "type": "string"
+                },
+                "optiondetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OptionDetail"
+                    }
                 },
                 "required": {
                     "type": "boolean"
@@ -10645,19 +11326,24 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "paymentcode": {
                     "type": "string"
@@ -10689,19 +11375,24 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "paymentcode": {
                     "type": "string"
@@ -11070,8 +11761,15 @@ const docTemplate = `{
                 "amount": {
                     "type": "number"
                 },
+                "availablepatternoptions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AvailablePatternOption"
+                    }
+                },
                 "barcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "barcodedescriptionfromproduct": {
                     "type": "boolean"
@@ -11090,22 +11788,28 @@ const docTemplate = `{
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "description1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "discountamount": {
                     "type": "number"
@@ -11132,19 +11836,26 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "itemcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemsku": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemtype": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
                 "itemvat": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
                 "linenumber": {
                     "type": "integer"
@@ -11156,22 +11867,30 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "normalprice": {
                     "type": "number"
+                },
+                "optionpatternmaster": {
+                    "type": "string"
                 },
                 "options": {
                     "type": "array",
@@ -11180,13 +11899,15 @@ const docTemplate = `{
                     }
                 },
                 "ordercount": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 100
                 },
                 "orderminimum": {
                     "type": "number"
                 },
                 "parid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "price": {
                     "type": "number"
@@ -11223,13 +11944,16 @@ const docTemplate = `{
                     "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
                 },
                 "unitcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "unitcost": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "unitstandard": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "unituses": {
                     "type": "array",
@@ -11238,7 +11962,9 @@ const docTemplate = `{
                     }
                 },
                 "xorder": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 }
             }
         },
@@ -11381,8 +12107,15 @@ const docTemplate = `{
                 "amount": {
                     "type": "number"
                 },
+                "availablepatternoptions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AvailablePatternOption"
+                    }
+                },
                 "barcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "barcodedescriptionfromproduct": {
                     "type": "boolean"
@@ -11401,22 +12134,28 @@ const docTemplate = `{
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "description1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "discountamount": {
                     "type": "number"
@@ -11443,19 +12182,26 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "itemcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemsku": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemtype": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
                 "itemvat": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
                 "linenumber": {
                     "type": "integer"
@@ -11467,22 +12213,30 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "normalprice": {
                     "type": "number"
+                },
+                "optionpatternmaster": {
+                    "type": "string"
                 },
                 "options": {
                     "type": "array",
@@ -11491,13 +12245,15 @@ const docTemplate = `{
                     }
                 },
                 "ordercount": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 100
                 },
                 "orderminimum": {
                     "type": "number"
                 },
                 "parid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "price": {
                     "type": "number"
@@ -11534,13 +12290,16 @@ const docTemplate = `{
                     "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
                 },
                 "unitcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "unitcost": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "unitstandard": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "unituses": {
                     "type": "array",
@@ -11549,7 +12308,9 @@ const docTemplate = `{
                     }
                 },
                 "xorder": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 }
             }
         },
@@ -12156,19 +12917,24 @@ const docTemplate = `{
                     }
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
@@ -12395,21 +13161,29 @@ const docTemplate = `{
         },
         "models.UnitUse": {
             "type": "object",
+            "required": [
+                "unitname1"
+            ],
             "properties": {
                 "description1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "isprimary": {
                     "type": "boolean"
@@ -12430,19 +13204,24 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "unitname1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "unitname2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "unitname3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "unitname4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "unitname5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
@@ -12594,47 +13373,63 @@ const docTemplate = `{
                     }
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
         "smlcloudplatform_pkg_product_inventory_models.Unit": {
             "type": "object",
+            "required": [
+                "unitname1"
+            ],
             "properties": {
                 "unitcode": {
                     "type": "string"
                 },
                 "unitname1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "unitname2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "unitname3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "unitname4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "unitname5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
         "smlcloudplatform_pkg_product_unit_models.Unit": {
             "type": "object",
+            "required": [
+                "unitname1"
+            ],
             "properties": {
                 "isunitcost": {
                     "type": "boolean"
@@ -12652,19 +13447,24 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "unitname1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "unitname2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "unitname3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "unitname4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "unitname5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         }

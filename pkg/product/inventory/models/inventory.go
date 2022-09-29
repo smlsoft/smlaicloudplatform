@@ -66,11 +66,21 @@ type Inventory struct {
 	OrderCount      int     `json:"ordercount,omitempty" bson:"ordercount,omitempty" gorm:"ordercount,omitempty" validate:"omitempty,max=100"`
 	OrderMinimum    float32 `json:"orderminimum,omitempty" bson:"orderminimum,omitempty" gorm:"orderminimum,omitempty" `
 
+	OptionPatternMaster     string                   `json:"optionpatternmaster,omitempty" bson:"optionpatternmaster,omitempty" gorm:"optionpatternmaster,omitempty"`
+	AvailablePatternOptions []AvailablePatternOption `json:"availablepatternoptions,omitempty" bson:"availablepatternoptions"`
+
 	// WaitType         int             `json:"-" bson:"waitType"`                // ประเภทการรอ (สินค้าหมด)
 	// WaitUntil        time.Time       `json:"-" bson:"waitUntil"`               // ระยะเวลาที่รอ
 	// MultipleUnits    bool            `json:"-" bson:"multipleuUits" `          // สินค้าหลายหน่วยนับ
 	// UnitStandardGuid string          `json:"-" bson:"unitStandardGuid" `       // หน่วยนับมาตรฐาน (นับสต๊อก)
 	// UnitList         []InventoryUnit `json:"unitlist" bson:"unitList" `        // กรณีหลายหน่วยนับ ตารางหน่วบนับ
+}
+
+type AvailablePatternOption struct {
+	PatternKey        string   `json:"patternkey" bson:"patternkey"`
+	OptionPatternTags []string `json:"optionpatterntags" bson:"optionpatterntags"`
+	Qty               float64  `json:"qty" bson:"qty"`
+	Price             float64  `json:"price" bson:"price" `
 }
 
 type ProductPrice struct {

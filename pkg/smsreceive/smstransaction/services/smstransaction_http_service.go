@@ -204,30 +204,7 @@ func (svc SmsTransactionHttpService) CheckSMS(shopID string, storefrontGUID stri
 
 	tempSmsTrans := models.SmsTransactionInfo{}
 	for _, smsMessage := range smsList {
-		// msg1 := "12/04/63 09:25 บชX231148X รับโอนจากX815923X 1170.00บ คงเหลือ 2160.29บ"
-
-		// re := regexp.MustCompile(`[0-9]{2}\/[0-9]{2}\/[0-9]{2} [0-9]{2}:[0-9]{2} บชX[0-9].*X (?P<Amount>[0-9].*)บ คงเหลือ [0-9].*บ`)
-		re := regexp.MustCompile(smsPatternDoc.Pattern)
-
-		reVal := re.FindStringSubmatch(smsMessage.Body)
-
-		if len(reVal) > 1 {
-
-			amountVal, err = strconv.ParseFloat(reVal[1], 64)
-
-			if err != nil {
-				return models.SmsTransactionCheck{
-					Pass:        false,
-					Amount:      0,
-					AmountCheck: amountCheck,
-				}, err
-			}
-
-			if amountVal > 0 {
-				tempSmsTrans = smsMessage
-				break
-			}
-		}
+		amountVal, _ = GetAmountFromPattern(smsPatternDoc.Pattern, smsMessage.Body)
 	}
 
 	if amountVal != amountCheck {
@@ -256,4 +233,18 @@ func (svc SmsTransactionHttpService) ConfirmSmsTransaction(shopID string, smsTra
 	findDoc.Status = 1
 
 	return svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
+}
+
+func GetAmountFromPattern(pattern string, message string) (float64, error) {
+	re := regexp.MustCompile(pattern)
+
+	reVal := re.FindStringSubmatch(message)
+
+	if len(reVal) > 1 {
+
+		return strconv.ParseFloat(reVal[1], 64)
+
+	}
+
+	return 0.0, errors.New("message not match")
 }
