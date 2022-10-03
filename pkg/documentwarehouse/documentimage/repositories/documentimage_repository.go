@@ -117,13 +117,6 @@ func (repo DocumentImageRepository) ListDocumentImageGroup(shopID string, filter
 
 		searchFilter["$or"] = tempFilters
 
-		// "$or": []interface{}{
-		// 	bson.M{"name": bson.M{"$exists": false}},
-		// 	bson.M{"name": bson.M{"$regex": primitive.Regex{
-		// 		Pattern: ".*" + q + ".*",
-		// 		Options: "",
-		// 	}}},
-		// },
 	}
 
 	searchQuery := bson.M{"$match": searchFilter}
@@ -135,6 +128,8 @@ func (repo DocumentImageRepository) ListDocumentImageGroup(shopID string, filter
 		"docguidref": "$docguidref",
 		"module":     "$module",
 		"status":     "$status",
+		"uploadedby": "$uploadedby",
+		"uploadedat": "uploadedat",
 	}}}}
 
 	projectQuery := bson.M{"$project": bson.M{"documentref": "$_id", "documentimages": 1}}
@@ -169,6 +164,8 @@ func (repo DocumentImageRepository) GetDocumentImageGroup(shopID string, docRef 
 		"docguidref": "$docguidref",
 		"module":     "$module",
 		"status":     "$status",
+		"uploadedby": "$uploadedby",
+		"uploadedat": "uploadedat",
 	}}}}
 
 	projectQuery := bson.M{"$project": bson.M{"documentref": "$_id", "documentimages": 1}}
