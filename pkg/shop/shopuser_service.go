@@ -11,6 +11,7 @@ type IShopUserService interface {
 	SaveUserPermissionShop(shopID string, authUsername string, username string, role models.UserRole) error
 	DeleteUserPermissionShop(shopID string, authUsername string, username string) error
 
+	InfoShopByUser(shopID string, infoUsername string) (models.ShopUserInfo, error)
 	ListShopByUser(authUsername string, q string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error)
 	ListUserInShop(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, paginate.PaginationData, error)
 }
@@ -23,6 +24,17 @@ func NewShopUserService(shopUserRepo IShopUserRepository) ShopUserService {
 	return ShopUserService{
 		repo: shopUserRepo,
 	}
+}
+
+func (svc ShopUserService) InfoShopByUser(shopID string, infoUsername string) (models.ShopUserInfo, error) {
+
+	doc, err := svc.repo.FindByShopIDAndUsernameInfo(shopID, infoUsername)
+
+	if err != nil {
+		return models.ShopUserInfo{}, err
+	}
+
+	return doc, err
 }
 
 func (svc ShopUserService) ListShopByUser(authUsername string, q string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error) {

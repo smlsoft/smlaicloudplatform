@@ -13,6 +13,7 @@ import (
 type IShopUserRepository interface {
 	Save(shopID string, username string, role models.UserRole) error
 	Delete(shopID string, username string) error
+	FindByShopIDAndUsernameInfo(shopID string, username string) (models.ShopUserInfo, error)
 	FindByShopIDAndUsername(shopID string, username string) (models.ShopUser, error)
 	FindRole(shopID string, username string) (models.UserRole, error)
 	FindByShopID(shopID string) (*[]models.ShopUser, error)
@@ -52,6 +53,18 @@ func (svc ShopUserRepository) Delete(shopID string, username string) error {
 	}
 
 	return nil
+}
+
+func (svc ShopUserRepository) FindByShopIDAndUsernameInfo(shopID string, username string) (models.ShopUserInfo, error) {
+
+	shopUser := &models.ShopUserInfo{}
+
+	err := svc.pst.FindOne(&models.ShopUserInfo{}, bson.M{"shopid": shopID, "username": username}, shopUser)
+	if err != nil {
+		return models.ShopUserInfo{}, err
+	}
+
+	return *shopUser, nil
 }
 
 func (svc ShopUserRepository) FindByShopIDAndUsername(shopID string, username string) (models.ShopUser, error) {

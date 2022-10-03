@@ -58,6 +58,33 @@ func (h ShopMemberHttp) ListUserInShop(ctx microservice.IContext) error {
 	return nil
 }
 
+func (h ShopMemberHttp) InfoShopUser(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	username := ctx.Param("username")
+
+	if len(username) < 1 {
+		ctx.ResponseError(400, "username invalid")
+		return nil
+	}
+
+	doc, err := h.svc.InfoShopByUser(shopID, username)
+
+	if err != nil {
+		ctx.ResponseError(400, "find failed")
+		h.ms.Logger.Error("HTTP:: SearchShopUser " + err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK,
+		map[string]interface{}{
+			"success": true,
+			"data":    doc,
+		})
+	return nil
+}
+
 func (h ShopMemberHttp) ListShopUser(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
