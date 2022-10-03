@@ -123,6 +123,11 @@ func (m *ShopUserRepositoryMock) Delete(shopID string, username string) error {
 	return args.Error(0)
 }
 
+func (m *ShopUserRepositoryMock) FindByShopIDAndUsernameInfo(shopID string, username string) (models.ShopUserInfo, error) {
+	args := m.Called(shopID, username)
+	return args.Get(0).(models.ShopUserInfo), args.Error(1)
+}
+
 func (m *ShopUserRepositoryMock) FindByShopIDAndUsername(shopID string, username string) (models.ShopUser, error) {
 	args := m.Called(shopID, username)
 	return args.Get(0).(models.ShopUser), args.Error(1)
