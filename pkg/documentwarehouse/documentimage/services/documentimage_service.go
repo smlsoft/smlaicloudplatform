@@ -18,8 +18,8 @@ import (
 type IDocumentImageService interface {
 	CreateDocumentImage(shopID string, authUsername string, doc models.DocumentImage) (string, error)
 	UpdateDocumentImage(shopID string, guid string, authUsername string, doc models.DocumentImage) error
-	UpdateDocumentImageStatus(shopID string, guid string, status int8) error
-	UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, status int8) error
+	UpdateDocumentImageStatus(shopID string, guid string, docnoGUIDRef string, status int8) error
+	UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, docnoGUIDRef string, status int8) error
 	DeleteDocumentImage(shopID string, guid string, authUsername string) error
 	InfoDocumentImage(shopID string, guid string) (models.DocumentImageInfo, error)
 	SearchDocumentImage(shopID string, matchFilters map[string]interface{}, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
@@ -95,13 +95,13 @@ func (svc DocumentImageService) UpdateDocumentImage(shopID string, guid string, 
 	return nil
 }
 
-func (svc DocumentImageService) UpdateDocumentImageStatus(shopID string, guid string, status int8) error {
+func (svc DocumentImageService) UpdateDocumentImageStatus(shopID string, guid string, docnoGUIDRef string, status int8) error {
 
 	if len(guid) < 1 {
 		return errors.New("guid is not empty")
 	}
 
-	err := svc.Repo.UpdateDocumentImageStatus(shopID, guid, status)
+	err := svc.Repo.UpdateDocumentImageStatus(shopID, guid, docnoGUIDRef, status)
 
 	if err != nil {
 		return err
@@ -109,9 +109,9 @@ func (svc DocumentImageService) UpdateDocumentImageStatus(shopID string, guid st
 	return nil
 }
 
-func (svc DocumentImageService) UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, status int8) error {
+func (svc DocumentImageService) UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, docnoGUIDRef string, status int8) error {
 
-	err := svc.Repo.UpdateDocumentImageStatusByDocumentRef(shopID, docRef, status)
+	err := svc.Repo.UpdateDocumentImageStatusByDocumentRef(shopID, docRef, docnoGUIDRef, status)
 
 	if err != nil {
 		return err

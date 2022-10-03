@@ -16,6 +16,7 @@ import (
 	"smlcloudplatform/pkg/product/category"
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
+	"smlcloudplatform/pkg/product/optionpattern"
 	"smlcloudplatform/pkg/product/unit"
 	"smlcloudplatform/pkg/restaurant/kitchen"
 	"smlcloudplatform/pkg/restaurant/shopprinter"
@@ -36,6 +37,7 @@ import (
 	"smlcloudplatform/pkg/vfgl/chartofaccount"
 	"smlcloudplatform/pkg/vfgl/journal"
 	"smlcloudplatform/pkg/vfgl/journalbook"
+	"smlcloudplatform/pkg/vfgl/journalreport"
 	"smlcloudplatform/pkg/warehouse"
 
 	_ "net/http/pprof"
@@ -130,6 +132,9 @@ func main() {
 		storefront.NewStorefrontHttp(ms, cfg),
 
 		unit.NewUnitHttp(ms, cfg),
+		journalreport.NewJournalReportHttp(ms, cfg),
+
+		optionpattern.NewOptionPatternHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)

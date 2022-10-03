@@ -307,7 +307,7 @@ func (h DocumentImageHttp) UpdateDocumentImageStatus(ctx microservice.IContext) 
 		return err
 	}
 
-	err = h.service.UpdateDocumentImageStatus(shopID, id, docReq.Status)
+	err = h.service.UpdateDocumentImageStatus(shopID, id, docReq.DocGUIDRef, docReq.Status)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
@@ -345,7 +345,7 @@ func (h DocumentImageHttp) UpdateDocumentImageStatusByDocumentRef(ctx microservi
 		return err
 	}
 
-	err = h.service.UpdateDocumentImageStatusByDocumentRef(shopID, docref, docReq.Status)
+	err = h.service.UpdateDocumentImageStatusByDocumentRef(shopID, docref, docReq.DocGUIDRef, docReq.Status)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err

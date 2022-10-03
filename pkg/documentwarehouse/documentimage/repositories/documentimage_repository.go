@@ -21,8 +21,8 @@ type IDocumentImageRepository interface {
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
 	FindPageFilterSort(shopID string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
 
-	UpdateDocumentImageStatus(shopID string, guid string, status int8) error
-	UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, status int8) error
+	UpdateDocumentImageStatus(shopID string, guid string, docnoGUIDRef string, status int8) error
+	UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, docnoGUIDRef string, status int8) error
 	SaveDocumentImageDocRefGroup(shopID string, docRef string, docImages []string) error
 	ListDocumentImageGroup(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error)
 	GetDocumentImageGroup(shopID string, docRef string) (models.DocumentImageGroup, error)
@@ -45,7 +45,7 @@ func NewDocumentImageRepository(pst microservice.IPersisterMongo) DocumentImageR
 	return insRepo
 }
 
-func (repo DocumentImageRepository) UpdateDocumentImageStatus(shopID string, guid string, status int8) error {
+func (repo DocumentImageRepository) UpdateDocumentImageStatus(shopID string, guid string, docnoGUIDRef string, status int8) error {
 	fillter := bson.M{
 		"shopid":    shopID,
 		"guidfixed": guid,
@@ -58,7 +58,7 @@ func (repo DocumentImageRepository) UpdateDocumentImageStatus(shopID string, gui
 	return repo.pst.Update(models.DocumentImageDoc{}, fillter, data)
 }
 
-func (repo DocumentImageRepository) UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, status int8) error {
+func (repo DocumentImageRepository) UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, docnoGUIDRef string, status int8) error {
 
 	fillter := bson.M{
 		"shopid":      shopID,
@@ -66,7 +66,10 @@ func (repo DocumentImageRepository) UpdateDocumentImageStatusByDocumentRef(shopI
 	}
 
 	data := bson.M{
-		"$set": bson.M{"status": status},
+		"$set": bson.M{
+			"docguidref": docnoGUIDRef,
+			"status":     status,
+		},
 	}
 
 	return repo.pst.Update(models.DocumentImageDoc{}, fillter, data)
@@ -80,7 +83,8 @@ func (repo DocumentImageRepository) SaveDocumentImageDocRefGroup(shopID string, 
 	}
 
 	data := bson.M{
-		"$set": bson.M{"documentref": docRef},
+		"$set": bson.M{
+			"documentref": docRef},
 	}
 
 	return repo.pst.Update(models.DocumentImageDoc{}, fillter, data)

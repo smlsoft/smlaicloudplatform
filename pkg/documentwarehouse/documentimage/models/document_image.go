@@ -63,7 +63,8 @@ type DocumentImagePageResponse struct {
 }
 
 type DocumentImageStatus struct {
-	Status int8 `json:"status" bson:"status"`
+	DocGUIDRef string `json:"docguidref" bson:"docguidref"`
+	Status     int8   `json:"status" bson:"status"`
 }
 
 type ImageStatus = int8

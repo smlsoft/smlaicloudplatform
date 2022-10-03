@@ -80,14 +80,14 @@ func (m *MockDocumentImageRepository) GetDocumentImageGroup(shopID string, docRe
 	return args.Get(0).(models.DocumentImageGroup), args.Error(1)
 }
 
-func (m *MockDocumentImageRepository) UpdateDocumentImageStatus(shopID string, guid string, status int8) error {
-	args := m.Called(shopID, guid, status)
+func (m *MockDocumentImageRepository) UpdateDocumentImageStatus(shopID string, guid string, docnoGUIDRef string, status int8) error {
+	args := m.Called(shopID, guid, docnoGUIDRef, status)
 
 	return args.Error(0)
 }
 
-func (m *MockDocumentImageRepository) UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, status int8) error {
-	args := m.Called(shopID, docRef, status)
+func (m *MockDocumentImageRepository) UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, docnoGUIDRef string, status int8) error {
+	args := m.Called(shopID, docRef, docnoGUIDRef, status)
 
 	return args.Error(0)
 }
