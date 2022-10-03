@@ -129,7 +129,7 @@ func (repo DocumentImageRepository) ListDocumentImageGroup(shopID string, filter
 		"module":     "$module",
 		"status":     "$status",
 		"uploadedby": "$uploadedby",
-		"uploadedat": "uploadedat",
+		"uploadedat": "$uploadedat",
 	}}}}
 
 	projectQuery := bson.M{"$project": bson.M{"documentref": "$_id", "documentimages": 1}}
@@ -165,7 +165,7 @@ func (repo DocumentImageRepository) GetDocumentImageGroup(shopID string, docRef 
 		"module":     "$module",
 		"status":     "$status",
 		"uploadedby": "$uploadedby",
-		"uploadedat": "uploadedat",
+		"uploadedat": "$uploadedat",
 	}}}}
 
 	projectQuery := bson.M{"$project": bson.M{"documentref": "$_id", "documentimages": 1}}
