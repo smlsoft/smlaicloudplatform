@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/shop/models"
 	"smlcloudplatform/pkg/utils"
 )
@@ -29,10 +30,23 @@ func NewShopMemberHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 func (h *ShopMemberHttp) RouteSetup() {
 	h.ms.GET("/user/permissions", h.ListShopUser)
 	h.ms.GET("/shop/users", h.ListUserInShop)
+
 	h.ms.PUT("/shop/permission", h.SaveUserPermissionShop)
+	h.ms.GET("/shop/permission/:username", h.InfoShopUser)
 	h.ms.DELETE("/shop/permission/:username", h.DeleteUserPermissionShop)
 }
 
+// List Shop User godoc
+// @Description get shopuser
+// @Tags		ShopUser
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /shop/users [get]
 func (h ShopMemberHttp) ListUserInShop(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -49,15 +63,23 @@ func (h ShopMemberHttp) ListUserInShop(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusOK,
-		map[string]interface{}{
-			"success":    true,
-			"pagination": pagination,
-			"data":       docList,
-		})
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success:    true,
+		Pagination: pagination,
+		Data:       docList,
+	})
 	return nil
 }
 
+// Get Shop User godoc
+// @Description get shopuser info by username
+// @Tags		ShopUser
+// @Param		username	path     string  true  "username"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /shop/permission/{username} [get]
 func (h ShopMemberHttp) InfoShopUser(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -77,14 +99,24 @@ func (h ShopMemberHttp) InfoShopUser(ctx microservice.IContext) error {
 		return err
 	}
 
-	ctx.Response(http.StatusOK,
-		map[string]interface{}{
-			"success": true,
-			"data":    doc,
-		})
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
 	return nil
 }
 
+// List Shop By User godoc
+// @Description get shopuser
+// @Tags		ShopUser
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /user/permissions [get]
 func (h ShopMemberHttp) ListShopUser(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -101,14 +133,23 @@ func (h ShopMemberHttp) ListShopUser(ctx microservice.IContext) error {
 	}
 
 	ctx.Response(http.StatusOK,
-		map[string]interface{}{
-			"success":    true,
-			"pagination": pagination,
-			"data":       docList,
+		common.ApiResponse{
+			Success:    true,
+			Pagination: pagination,
+			Data:       docList,
 		})
 	return nil
 }
 
+// Save Permission Shop User godoc
+// @Description get shopuser info by username
+// @Tags		ShopUser
+// @Param		UserRoleRequest  body      models.UserRoleRequest  true  "UserRoleRequest"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /shop/permission [put]
 func (h ShopMemberHttp) SaveUserPermissionShop(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -129,27 +170,26 @@ func (h ShopMemberHttp) SaveUserPermissionShop(ctx microservice.IContext) error 
 		return err
 	}
 	ctx.Response(http.StatusOK,
-		map[string]interface{}{
-			"success": true,
+		common.ApiResponse{
+			Success: true,
 		})
 
 	return nil
 }
 
+// Delete Shop User godoc
+// @Description get shopuser info by username
+// @Tags		ShopUser
+// @Param		username	path     string  true  "username"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /shop/permission/{username} [delete]
 func (h ShopMemberHttp) DeleteUserPermissionShop(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
-
-	// input := ctx.ReadInput()
-
-	// userRoleReq := &models.UserRoleRequest{}
-	// err := json.Unmarshal([]byte(input), &userRoleReq)
-
-	// if err != nil {
-	// 	ctx.ResponseError(400, err.Error())
-	// 	return err
-	// }
 
 	username := ctx.Param("username")
 
@@ -166,8 +206,8 @@ func (h ShopMemberHttp) DeleteUserPermissionShop(ctx microservice.IContext) erro
 	}
 
 	ctx.Response(http.StatusOK,
-		map[string]interface{}{
-			"success": true,
+		common.ApiResponse{
+			Success: true,
 		})
 
 	return nil
