@@ -790,6 +790,8 @@ definitions:
     type: object
   models.DocumentImageStatus:
     properties:
+      docguidref:
+        type: string
       status:
         type: integer
     type: object
@@ -3544,6 +3546,15 @@ definitions:
     - name
     - password
     - username
+    type: object
+  models.UserRoleRequest:
+    properties:
+      role:
+        type: integer
+      shopid:
+        type: string
+      username:
+        type: string
     type: object
   models.Vat:
     properties:
@@ -7938,6 +7949,117 @@ paths:
       - AccessToken: []
       tags:
       - Shop
+  /shop/permission:
+    put:
+      consumes:
+      - application/json
+      description: get shopuser info by username
+      parameters:
+      - description: UserRoleRequest
+        in: body
+        name: UserRoleRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserRoleRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ShopUser
+  /shop/permission/{username}:
+    delete:
+      consumes:
+      - application/json
+      description: get shopuser info by username
+      parameters:
+      - description: username
+        in: path
+        name: username
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ShopUser
+    get:
+      consumes:
+      - application/json
+      description: get shopuser info by username
+      parameters:
+      - description: username
+        in: path
+        name: username
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ShopUser
+  /shop/users:
+    get:
+      consumes:
+      - application/json
+      description: get shopuser
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ShopUser
   /smspaymentsettings:
     get:
       consumes:
@@ -8547,6 +8669,39 @@ paths:
       - AccessToken: []
       tags:
       - Common
+  /user/permissions:
+    get:
+      consumes:
+      - application/json
+      description: get shopuser
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ShopUser
   /warehouse:
     get:
       consumes:
