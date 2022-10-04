@@ -6,6 +6,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
 	"smlcloudplatform/pkg/vfgl/journalreport"
+	"smlcloudplatform/pkg/vfgl/journalreport/models"
 	"testing"
 	"time"
 
@@ -87,7 +88,12 @@ func TestGetDataLedgerAccount(t *testing.T) {
 	pst := microservice.NewPersister(pstConfig)
 
 	repo := journalreport.NewJournalReportRepository(pst)
-	results, err := repo.GetDataLedgerAccount("27dcEdktOoaSBYFmnN6G6ett4Jb", "10000", time.Date(2022, 9, 1, 00, 00, 00, 0, time.UTC), time.Date(2022, 9, 30, 00, 00, 00, 0, time.UTC))
+	results, err := repo.GetDataLedgerAccount("27dcEdktOoaSBYFmnN6G6ett4Jb", []models.LedgerAccountCodeRange{
+		{
+			Start: "100000",
+			End:   "150000",
+		},
+	}, time.Date(2022, 9, 1, 00, 00, 00, 0, time.UTC), time.Date(2022, 9, 30, 00, 00, 00, 0, time.UTC))
 
 	assert := assert.New(t)
 	assert.Nil(err)

@@ -11,7 +11,7 @@ type IJournalReportService interface {
 	ProcessTrialBalanceSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) (*models.TrialBalanceSheetReport, error)
 	ProcessProfitAndLossSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) (*models.ProfitAndLossSheetReport, error)
 	ProcessBalanceSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) (*models.BalanceSheetReport, error)
-	ProcessLedgerAccount(shopId string, accountCode string, startDate time.Time, endDate time.Time) ([]models.LedgerAccount, error)
+	ProcessLedgerAccount(shopId string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccount, error)
 }
 
 type JournalReportService struct {
@@ -183,9 +183,9 @@ func (svc JournalReportService) ProcessBalanceSheetReport(shopId string, account
 	return result, nil
 }
 
-func (svc JournalReportService) ProcessLedgerAccount(shopID string, accountCode string, startDate time.Time, endDate time.Time) ([]models.LedgerAccount, error) {
+func (svc JournalReportService) ProcessLedgerAccount(shopID string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccount, error) {
 
-	rawDocList, err := svc.repo.GetDataLedgerAccount(shopID, accountCode, startDate, endDate)
+	rawDocList, err := svc.repo.GetDataLedgerAccount(shopID, accountRanges, startDate, endDate)
 
 	if err != nil {
 		return nil, err
