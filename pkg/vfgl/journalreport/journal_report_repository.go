@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/vfgl/journalreport/models"
+	"strconv"
 	"time"
 )
 
@@ -11,7 +12,7 @@ type IJournalReportRepository interface {
 	GetDataTrialBalance(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.TrialBalanceSheetAccountDetail, error)
 	GetDataProfitAndLoss(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.ProfitAndLossSheetAccountDetail, error)
 	GetDataBalanceSheet(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) ([]models.BalanceSheetAccountDetail, error)
-	GetDataLedgerAccount(shopId string, accountCode string, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error)
+	GetDataLedgerAccount(shopId string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error)
 }
 
 type JournalReportRepository struct {
@@ -363,12 +364,34 @@ func (repo JournalReportRepository) GetDataBalanceSheet(shopId string, accountGr
 	return details, nil
 }
 
-func (repo JournalReportRepository) GetDataLedgerAccount(shopID string, accountCode string, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error) {
+func (repo JournalReportRepository) GetDataLedgerAccount(shopID string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error) {
 
 	accountCodeQuery := ""
 
-	if len(accountCode) > 0 {
-		accountCodeQuery = " and d.accountcode  = @accountcode"
+	values := map[string]interface{}{
+		"shopid":    shopID,
+		"startdate": startDate,
+		"enddate":   endDate,
+	}
+
+	if len(accountRanges) > 0 {
+
+		for idx, accRange := range accountRanges {
+			if len(accountCodeQuery) > 0 {
+				accountCodeQuery = accountCodeQuery + " or "
+			}
+
+			idxStr := strconv.Itoa(idx)
+			accountCodeQuery = accountCodeQuery + " d.accountcode between @accountcode" + idxStr + "1 and  @accountcode" + idxStr + "2"
+
+			values["accountcode"+idxStr+"1"] = accRange.Start
+			values["accountcode"+idxStr+"2"] = accRange.End
+
+		}
+	}
+
+	if len(accountCodeQuery) > 0 {
+		accountCodeQuery = " and ( " + accountCodeQuery + " ) "
 	}
 
 	rawQuery := `select * from (
@@ -387,16 +410,6 @@ func (repo JournalReportRepository) GetDataLedgerAccount(shopID string, accountC
 			) as final_data order by accountcode,rowmode,docdate`
 
 	rawDocList := []models.LedgerAccountRaw{}
-
-	values := map[string]interface{}{
-		"shopid":    shopID,
-		"startdate": startDate,
-		"enddate":   endDate,
-	}
-
-	if len(accountCode) > 0 {
-		values["accountcode"] = accountCode
-	}
 
 	_, err := repo.pst.Raw(rawQuery, values, &rawDocList)
 	if err != nil {
