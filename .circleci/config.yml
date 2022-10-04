@@ -26,7 +26,28 @@ jobs:
       - k8s/initialize:
           cluster: 916a438e-9629-4798-8a7e-c5e31acb5b99
       - run: kubectl rollout restart deployment/dedepos-dev-api deployment/dedepos-dev-consume -n dedepos-dev
-  
+  build-prod-docker:
+    executor: docker/machine
+    steps:
+      - checkout
+      - docker/check
+      - docker/build:
+          # deploy: false
+          #dockerfile: Dockerfile-K8S
+          image: smlsoft/smlcloudplatform
+          #use-docker-credentials-store: true
+          tag: apiprod
+      - docker/push:
+          image: smlsoft/smlcloudplatform
+          tag: apiprod
+  deploy-prod-cluster:
+    executor: docker/machine
+    steps:
+      - checkout
+      - k8s/install
+      - k8s/initialize:
+          cluster: 916a438e-9629-4798-8a7e-c5e31acb5b99
+      - run: kubectl rollout restart deployment/dedepos-prd-api deployment/dedepos-prd-consume -n dedepos-prd
 workflows:
   build-dev-only:
     jobs:
@@ -42,3 +63,15 @@ workflows:
             branches:
               only:  # only branches matching the below regex filters will run
                 - develop
+  build-prod:
+    jobs:
+      - build-prod-docker:
+          filters:  # using regex filters requires the entire branch to match
+            branches:
+              only:  # only branches matching the below regex filters will run
+                - release
+      - deploy-prod-cluster:
+          filters:  # using regex filters requires the entire branch to match
+            branches:
+              only:  # only branches matching the below regex filters will run
+                - release
