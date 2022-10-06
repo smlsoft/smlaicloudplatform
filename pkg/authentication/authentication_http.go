@@ -220,6 +220,14 @@ func (h AuthenticationHttp) UpdatePassword(ctx microservice.IContext) error {
 	return nil
 }
 
+// Logout
+// @Description Logout Current Profile
+// @Tags		Authentication
+// @Accept 		json
+// @Success		200	{array}	shopmodel.UserProfileReponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /logout [post]
 func (h AuthenticationHttp) Logout(ctx microservice.IContext) error {
 
 	authorizationHeader := ctx.Header("Authorization")
@@ -295,39 +303,39 @@ func (h AuthenticationHttp) ProfileShop(ctx microservice.IContext) error {
 	return nil
 }
 
-func (h AuthenticationHttp) ListShop(ctx microservice.IContext) error {
-	authUsername := ctx.UserInfo().Username
-	authorizationHeader := ctx.Header("Authorization")
+// func (h AuthenticationHttp) ListShop(ctx microservice.IContext) error {
+// 	authUsername := ctx.UserInfo().Username
+// 	authorizationHeader := ctx.Header("Authorization")
 
-	input := ctx.ReadInput()
+// 	input := ctx.ReadInput()
 
-	shopSelectReq := &shopmodel.ShopSelectRequest{}
-	err := json.Unmarshal([]byte(input), &shopSelectReq)
+// 	shopSelectReq := &shopmodel.ShopSelectRequest{}
+// 	err := json.Unmarshal([]byte(input), &shopSelectReq)
 
-	if err != nil {
-		ctx.Response(http.StatusBadRequest, common.ApiResponse{
-			Success: false,
-			Message: err.Error(),
-		})
-		return err
-	}
+// 	if err != nil {
+// 		ctx.Response(http.StatusBadRequest, common.ApiResponse{
+// 			Success: false,
+// 			Message: err.Error(),
+// 		})
+// 		return err
+// 	}
 
-	err = h.authenticationService.AccessShop(shopSelectReq.ShopID, authUsername, authorizationHeader)
+// 	err = h.authenticationService.AccessShop(shopSelectReq.ShopID, authUsername, authorizationHeader)
 
-	if err != nil {
-		ctx.Response(http.StatusBadRequest, common.ApiResponse{
-			Success: false,
-			Message: err.Error(),
-		})
-		return err
-	}
+// 	if err != nil {
+// 		ctx.Response(http.StatusBadRequest, common.ApiResponse{
+// 			Success: false,
+// 			Message: err.Error(),
+// 		})
+// 		return err
+// 	}
 
-	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success: true,
-	})
+// 	ctx.Response(http.StatusOK, common.ApiResponse{
+// 		Success: true,
+// 	})
 
-	return nil
-}
+// 	return nil
+// }
 
 // Access Shop godoc
 // @Description Access to Shop
@@ -412,3 +420,13 @@ func (h AuthenticationHttp) ListShopCanAccess(ctx microservice.IContext) error {
 
 	return nil
 }
+
+// Create Shop  godoc
+// @Description Create Shop
+// @Tags		Shop
+// @Accept 		json
+// @Param		Shop  body      models.Shop  true  "Add Shop"
+// @Success		200	{object}		models.Shop
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /create-shop [post]

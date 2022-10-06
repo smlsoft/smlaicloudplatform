@@ -744,6 +744,10 @@ definitions:
         type: string
       status:
         type: integer
+      uploadedat:
+        type: string
+      uploadedby:
+        type: string
     type: object
   models.DocumentImageInfo:
     properties:
@@ -5989,6 +5993,26 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/models.AuthResponseFailed'
+      tags:
+      - Authentication
+  /logout:
+    post:
+      consumes:
+      - application/json
+      description: Logout Current Profile
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.UserProfileReponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
       tags:
       - Authentication
   /member:
