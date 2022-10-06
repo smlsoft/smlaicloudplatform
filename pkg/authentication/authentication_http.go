@@ -423,7 +423,7 @@ func (h AuthenticationHttp) ListShopCanAccess(ctx microservice.IContext) error {
 
 // Create Shop  godoc
 // @Description Create Shop
-// @Tags		Shop
+// @Tags		Authentication
 // @Accept 		json
 // @Param		Shop  body      models.Shop  true  "Add Shop"
 // @Success		200	{object}		models.Shop
