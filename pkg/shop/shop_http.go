@@ -52,8 +52,8 @@ func (h ShopHttp) RouteSetup() {
 	h.ms.DELETE("/shop/:id", h.DeleteShop)
 }
 
-// Create Shop  godoc
-// @Description Create Shop
+// Create Shop On login  godoc
+// @Description Create Shop on login
 // @Tags		Authentication
 // @Accept 		json
 // @Param		Shop  body      models.Shop  true  "Add Shop"
@@ -61,9 +61,12 @@ func (h ShopHttp) RouteSetup() {
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /create-shop [post]
+func Docs() {
+
+}
 
 // Create Shop godoc
-// @Description Create Shop
+// @Description Create Shop rt1wer11
 // @Tags		Shop
 // @Accept 		json
 // @Param		Shop  body      models.Shop  true  "Add Shop"

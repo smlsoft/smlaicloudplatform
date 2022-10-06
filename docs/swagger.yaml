@@ -3943,6 +3943,31 @@ paths:
       summary: รับข้อมูล sms
       tags:
       - SMS
+  /create-shop:
+    post:
+      consumes:
+      - application/json
+      description: Create Shop on login
+      parameters:
+      - description: Add Shop
+        in: body
+        name: Shop
+        required: true
+        schema:
+          $ref: '#/definitions/models.Shop'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Shop'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Authentication
   /documentimage:
     get:
       consumes:
@@ -7952,7 +7977,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create Shop
+      description: Create Shop rt1wer11
       parameters:
       - description: Add Shop
         in: body
