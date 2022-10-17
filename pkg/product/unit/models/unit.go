@@ -10,12 +10,8 @@ const unitCollectionName = "units"
 
 type Unit struct {
 	models.PartitionIdentity `bson:"inline"`
-	UnitCode                 string `json:"unitcode" bson:"unitcode" `
-	models.UnitName          `bson:"inline"`
-	ItemUnitSTD              float64 `json:"itemunitstd" bson:"itemunitstd" `
-	ItemUnitDIV              float64 `json:"itemunitdiv" bson:"itemunitdiv" `
-	IsUnitCost               bool    `json:"isunitcost" bson:"isunitcost"`
-	IsUnitStandard           bool    `json:"isunitstandard" bson:"isunitstandard"`
+	UnitCode                 string          `json:"unitcode" bson:"unitcode" `
+	Names                    *[]models.NameX `json:"names" bson:"names"`
 }
 
 type UnitInfo struct {
