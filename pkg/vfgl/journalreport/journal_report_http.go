@@ -286,10 +286,30 @@ func (r JournalReportHttp) ProcessReportLedgerAccount(ctx microservice.IContext)
 	}
 	endDate = endDate.AddDate(0, 0, 1).Add(time.Second * -1)
 
-	accountCode := strings.TrimSpace(ctx.QueryParam("accountcode"))
+	accountCodeRangeRaw := strings.TrimSpace(ctx.QueryParam("accountcode"))
+
+	accRanges := []models.LedgerAccountCodeRange{}
+	if len(accountCodeRangeRaw) > 0 {
+		accSplitRaw := strings.Split(accountCodeRangeRaw, ",")
+		for _, accRaw := range accSplitRaw {
+			if len(accRaw) > 0 {
+				accRangeRaw := strings.Split(accRaw, ":")
+				if len(accRangeRaw) == 2 {
+
+					accRanges = append(accRanges, models.LedgerAccountCodeRange{
+						Start: accRangeRaw[0],
+						End:   accRangeRaw[1],
+					})
+				}
+			}
+
+		}
+
+	}
 
 	r.ms.Logger.Debugf("Start Process Ledger Account %v:%v", startDate, endDate)
-	reportData, err := r.svc.ProcessLedgerAccount(shopID, accountCode, startDate.UTC(), endDate.UTC())
+	// reportData, err := r.svc.ProcessLedgerAccount(shopID, accRanges, startDate.UTC(), endDate.UTC())
+	reportData, err := r.svc.ProcessLedgerAccount(shopID, accRanges, startDate.UTC(), endDate.UTC())
 	if err != nil {
 		ctx.ResponseError(500, fmt.Sprintf("Failed on Process Report : %v.", err.Error()))
 		return err

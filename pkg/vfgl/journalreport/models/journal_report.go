@@ -151,3 +151,8 @@ type LedgerAccountDetail struct {
 	Credit             float64   `json:"credit" gorm:"column:credit"`
 	Amount             float64   `json:"amount" gorm:"column:amount"`
 }
+
+type LedgerAccountCodeRange struct {
+	Start string
+	End   string
+}
