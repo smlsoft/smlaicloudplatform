@@ -744,6 +744,10 @@ definitions:
         type: string
       status:
         type: integer
+      uploadedat:
+        type: string
+      uploadedby:
+        type: string
     type: object
   models.DocumentImageInfo:
     properties:

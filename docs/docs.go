@@ -9396,6 +9396,12 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "integer"
+                },
+                "uploadedat": {
+                    "type": "string"
+                },
+                "uploadedby": {
+                    "type": "string"
                 }
             }
         },
