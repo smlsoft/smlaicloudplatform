@@ -12,7 +12,7 @@ type IJournalReportRepository interface {
 	GetDataTrialBalance(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.TrialBalanceSheetAccountDetail, error)
 	GetDataProfitAndLoss(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.ProfitAndLossSheetAccountDetail, error)
 	GetDataBalanceSheet(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) ([]models.BalanceSheetAccountDetail, error)
-	GetDataLedgerAccount(shopId string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error)
+	GetDataLedgerAccount(shopId string, accountGroup string, consolidateAccountCode string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error)
 }
 
 type JournalReportRepository struct {
@@ -364,9 +364,11 @@ func (repo JournalReportRepository) GetDataBalanceSheet(shopId string, accountGr
 	return details, nil
 }
 
-func (repo JournalReportRepository) GetDataLedgerAccount(shopID string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error) {
+func (repo JournalReportRepository) GetDataLedgerAccount(shopID string, accountGroup string, consolidateAccountCode string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error) {
 
 	accountCodeQuery := ""
+	accountGroupQuery := ""
+	consolidateAccountCodeQuery := ""
 
 	values := map[string]interface{}{
 		"shopid":    shopID,
@@ -382,7 +384,7 @@ func (repo JournalReportRepository) GetDataLedgerAccount(shopID string, accountR
 			}
 
 			idxStr := strconv.Itoa(idx)
-			accountCodeQuery = accountCodeQuery + " d.accountcode between @accountcode" + idxStr + "1 and  @accountcode" + idxStr + "2"
+			accountCodeQuery = accountCodeQuery + " a.accountcode between @accountcode" + idxStr + "1 and  @accountcode" + idxStr + "2"
 
 			values["accountcode"+idxStr+"1"] = accRange.Start
 			values["accountcode"+idxStr+"2"] = accRange.End
@@ -390,23 +392,44 @@ func (repo JournalReportRepository) GetDataLedgerAccount(shopID string, accountR
 		}
 	}
 
+	if len(accountGroup) > 0 {
+		accountGroupQuery = " AND a.accountgroup = @accountgroup"
+		values["accountgroup"] = accountGroup
+	}
+
+	if len(consolidateAccountCode) > 0 {
+		consolidateAccountCodeQuery = " AND a.consolidateaccountcode = @consolidateaccountcode"
+		values["consolidateaccountcode"] = consolidateAccountCode
+	}
+
 	if len(accountCodeQuery) > 0 {
 		accountCodeQuery = " and ( " + accountCodeQuery + " ) "
 	}
 
 	rawQuery := `select * from (
-		select -1 as rowmode, '1900-01-01'::date as docdate, '' as docno, d.accountcode,a.accountname, '' as accountdescription, 0 as debitamount, 0 as creditamount, sum(d.debitamount -  d.creditamount) as amount
+		WITH 
+		acc as ( 
+			SELECT  a.accountcode,a.accountname
+		from chartofaccounts a  WHERE shopid = @shopid ` + accountGroupQuery + consolidateAccountCodeQuery + accountCodeQuery + ` 
+		)
+		,
+		acc_balance as (
+		select d.accountcode,  sum(d.debitamount -  d.creditamount) as amount
 		from chartofaccounts a 
-		join journals_detail d on a.accountcode = d.accountcode
-		join journals j on j.shopid = d.shopid and j.docno = d.docno
-		where j.docdate < @startdate and a.shopid = @shopid ` + accountCodeQuery + ` 
-		group by rowmode, d.accountcode, a.accountname
+		left join journals_detail d on d.shopid = a.shopid AND a.accountcode = d.accountcode 
+		left join journals j on j.shopid = d.shopid AND j.docno = d.docno
+		where j.docdate < @startdate and a.shopid = @shopid ` + accountGroupQuery + consolidateAccountCodeQuery + accountCodeQuery + ` 
+		group by d.accountcode
+		)
+		SELECT -1 as rowmode, '1900-01-01'::date as docdate, '' as docno,acc.accountcode,acc.accountname, '' as accountdescription,
+		0 as debitamount, 0 as creditamount, COALESCE(amount, 0) as amount 
+		FROM acc left join acc_balance ON acc.accountcode = acc_balance.accountcode
 		union all
 		select 0 as rowmode, j.docdate, j.docno, d.accountcode,d.accountname, j.accountdescription as accountdescription, d.debitamount, d.creditamount, 0 as amount 
 		from journals_detail d 
 		join journals j on j.shopid = d.shopid and j.docno = d.docno
 		join chartofaccounts a on a.accountcode = d.accountcode
-		where j.docdate between @startdate and @enddate and d.shopid = @shopid ` + accountCodeQuery + ` 
+		where j.docdate between @startdate and @enddate and d.shopid = @shopid ` + accountGroupQuery + consolidateAccountCodeQuery + accountCodeQuery + ` 
 			) as final_data order by accountcode,rowmode,docdate`
 
 	rawDocList := []models.LedgerAccountRaw{}

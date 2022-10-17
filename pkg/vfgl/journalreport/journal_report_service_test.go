@@ -32,8 +32,8 @@ func (m *MockJournalreportRepository) GetDataBalanceSheet(shopId string, account
 	return ret.Get(0).([]models.BalanceSheetAccountDetail), ret.Error(1)
 }
 
-func (m *MockJournalreportRepository) GetDataLedgerAccount(shopId string, accountCodeRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error) {
-	ret := m.Called(shopId, accountCodeRanges, startDate, endDate)
+func (m *MockJournalreportRepository) GetDataLedgerAccount(shopId string, accountGroup string, consolidateAccountCode string, accountCodeRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error) {
+	ret := m.Called(shopId, accountGroup, consolidateAccountCode, accountCodeRanges, startDate, endDate)
 	return ret.Get(0).([]models.LedgerAccountRaw), ret.Error(1)
 }
 
@@ -210,7 +210,7 @@ func TestLedgerAccount(t *testing.T) {
 	}, nil)
 
 	service := journalreport.NewJournalReportService(repo)
-	docList, err := service.ProcessLedgerAccount("TESTSHOP", []models.LedgerAccountCodeRange{
+	docList, err := service.ProcessLedgerAccount("TESTSHOP", "", "", []models.LedgerAccountCodeRange{
 		{
 			Start: "100000",
 			End:   "150000",
