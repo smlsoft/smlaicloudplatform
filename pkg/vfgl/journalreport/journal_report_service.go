@@ -206,6 +206,8 @@ func (svc JournalReportService) ProcessLedgerAccount(shopID string, accountGroup
 			tempDoc.Details = &[]models.LedgerAccountDetail{}
 			tempDoc.AccountCode = doc.AccountCode
 			tempDoc.AccountName = doc.AccountName
+			tempDoc.AccountGroup = doc.AccountGroup
+			tempDoc.ConsolidateAccountCode = doc.ConsolidateAccountCode
 
 			lastAmount = doc.Amount
 			tempDoc.Balance = lastAmount

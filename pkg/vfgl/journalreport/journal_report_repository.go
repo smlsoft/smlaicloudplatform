@@ -409,7 +409,7 @@ func (repo JournalReportRepository) GetDataLedgerAccount(shopID string, accountG
 	rawQuery := `select * from (
 		WITH 
 		acc as ( 
-			SELECT  a.accountcode,a.accountname
+			SELECT  a.accountcode,a.accountname,a.accountgroup, a.consolidateaccountcode
 		from chartofaccounts a  WHERE shopid = @shopid ` + accountGroupQuery + consolidateAccountCodeQuery + accountCodeQuery + ` 
 		)
 		,
@@ -422,10 +422,10 @@ func (repo JournalReportRepository) GetDataLedgerAccount(shopID string, accountG
 		group by d.accountcode
 		)
 		SELECT -1 as rowmode, '1900-01-01'::date as docdate, '' as docno,acc.accountcode,acc.accountname, '' as accountdescription,
-		0 as debitamount, 0 as creditamount, COALESCE(amount, 0) as amount 
+		0 as debitamount, 0 as creditamount, COALESCE(amount, 0) as amount, acc.accountgroup, acc.consolidateaccountcode
 		FROM acc left join acc_balance ON acc.accountcode = acc_balance.accountcode
 		union all
-		select 0 as rowmode, j.docdate, j.docno, d.accountcode,d.accountname, j.accountdescription as accountdescription, d.debitamount, d.creditamount, 0 as amount 
+		select 0 as rowmode, j.docdate, j.docno, d.accountcode,d.accountname, j.accountdescription as accountdescription, d.debitamount, d.creditamount, 0 as amount,a.accountgroup, a.consolidateaccountcode
 		from journals_detail d 
 		join journals j on j.shopid = d.shopid and j.docno = d.docno
 		join chartofaccounts a on a.accountcode = d.accountcode
