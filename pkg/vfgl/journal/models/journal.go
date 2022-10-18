@@ -25,6 +25,8 @@ type JournalBody struct {
 	Vats               []Vat     `json:"vats" bson:"vats" gorm:"-"`
 	Taxes              []Tax     `json:"taxes" bson:"taxes" gorm:"-"`
 	JournalType        int       `json:"journaltype" bson:"journaltype" gorm:"column:journaltype"` // ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)
+	ExDocRefNo         string    `json:"exdocrefno" bson:"exdocrefno" gorm:"column:exdocrefno" `
+	ExDocRefDate       time.Time `json:"exdocrefdate" bson:"exdocrefdate" gorm:"exdocrefdate"`
 }
 
 type Journal struct {

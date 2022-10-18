@@ -10693,6 +10693,12 @@ const docTemplate = `{
                 "documentref": {
                     "type": "string"
                 },
+                "exdocrefdate": {
+                    "type": "string"
+                },
+                "exdocrefno": {
+                    "type": "string"
+                },
                 "journaldetail": {
                     "type": "array",
                     "items": {
@@ -10860,6 +10866,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "documentref": {
+                    "type": "string"
+                },
+                "exdocrefdate": {
+                    "type": "string"
+                },
+                "exdocrefno": {
                     "type": "string"
                 },
                 "guidfixed": {
@@ -11404,6 +11416,26 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.NameX": {
+            "type": "object",
+            "required": [
+                "code",
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "isauto": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
@@ -13756,44 +13788,15 @@ const docTemplate = `{
         },
         "smlcloudplatform_pkg_product_unit_models.Unit": {
             "type": "object",
-            "required": [
-                "unitname1"
-            ],
             "properties": {
-                "isunitcost": {
-                    "type": "boolean"
-                },
-                "isunitstandard": {
-                    "type": "boolean"
-                },
-                "itemunitdiv": {
-                    "type": "number"
-                },
-                "itemunitstd": {
-                    "type": "number"
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "unitcode": {
                     "type": "string"
-                },
-                "unitname1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "unitname2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "unitname3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "unitname4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "unitname5": {
-                    "type": "string",
-                    "maxLength": 255
                 }
             }
         }
