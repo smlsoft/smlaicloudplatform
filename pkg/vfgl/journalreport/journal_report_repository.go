@@ -408,17 +408,17 @@ func (repo JournalReportRepository) GetDataLedgerAccount(shopID string, accountG
 
 	rawQuery := `select * from (
 		WITH 
-		acc as ( 
+			acc as ( 
 			SELECT  a.accountcode,a.accountname,a.accountgroup, a.consolidateaccountcode
 		from chartofaccounts a  WHERE shopid = @shopid ` + accountGroupQuery + consolidateAccountCodeQuery + accountCodeQuery + ` 
 		)
 		,
 		acc_balance as (
 		select d.accountcode,  sum(d.debitamount -  d.creditamount) as amount
-		from chartofaccounts a 
-		left join journals_detail d on d.shopid = a.shopid AND a.accountcode = d.accountcode 
-		left join journals j on j.shopid = d.shopid AND j.docno = d.docno
-		where j.docdate < @startdate and a.shopid = @shopid ` + accountGroupQuery + consolidateAccountCodeQuery + accountCodeQuery + ` 
+		from  journals j
+                left join journals_detail d on j.shopid = d.shopid AND j.docno = d.docno 
+                left join chartofaccounts a on j.shopid = a.shopid AND d.accountcode = a.accountcode
+		where j.docdate < @startdate and j.shopid = @shopid ` + accountGroupQuery + consolidateAccountCodeQuery + accountCodeQuery + ` 
 		group by d.accountcode
 		)
 		SELECT -1 as rowmode, '1900-01-01'::date as docdate, '' as docno,acc.accountcode,acc.accountname, '' as accountdescription,
@@ -426,10 +426,10 @@ func (repo JournalReportRepository) GetDataLedgerAccount(shopID string, accountG
 		FROM acc left join acc_balance ON acc.accountcode = acc_balance.accountcode
 		union all
 		select 0 as rowmode, j.docdate, j.docno, d.accountcode,d.accountname, j.accountdescription as accountdescription, d.debitamount, d.creditamount, 0 as amount,a.accountgroup, a.consolidateaccountcode
-		from journals_detail d 
-		join journals j on j.shopid = d.shopid and j.docno = d.docno
-		join chartofaccounts a on a.accountcode = d.accountcode
-		where j.docdate between @startdate and @enddate and d.shopid = @shopid ` + accountGroupQuery + consolidateAccountCodeQuery + accountCodeQuery + ` 
+		from journals j 
+		join journals_detail d on j.shopid = d.shopid and j.docno = d.docno
+		join chartofaccounts a on a.shopid = j.shopid and a.accountcode = d.accountcode
+		where j.docdate between @startdate and @enddate and j.shopid = @shopid ` + accountGroupQuery + consolidateAccountCodeQuery + accountCodeQuery + ` 
 			) as final_data order by accountcode,rowmode,docdate`
 
 	rawDocList := []models.LedgerAccountRaw{}
