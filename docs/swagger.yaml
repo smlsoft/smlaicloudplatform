@@ -1579,6 +1579,10 @@ definitions:
         type: string
       documentref:
         type: string
+      exdocrefdate:
+        type: string
+      exdocrefno:
+        type: string
       journaldetail:
         items:
           $ref: '#/definitions/models.JournalDetail'
@@ -1693,6 +1697,10 @@ definitions:
       docno:
         type: string
       documentref:
+        type: string
+      exdocrefdate:
+        type: string
+      exdocrefno:
         type: string
       guidfixed:
         type: string
@@ -2051,6 +2059,20 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
+    type: object
+  models.NameX:
+    properties:
+      code:
+        maxLength: 255
+        type: string
+      isauto:
+        type: boolean
+      name:
+        maxLength: 255
+        type: string
+    required:
+    - code
+    - name
     type: object
   models.Option:
     properties:
@@ -3649,33 +3671,12 @@ definitions:
     type: object
   smlcloudplatform_pkg_product_unit_models.Unit:
     properties:
-      isunitcost:
-        type: boolean
-      isunitstandard:
-        type: boolean
-      itemunitdiv:
-        type: number
-      itemunitstd:
-        type: number
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       unitcode:
         type: string
-      unitname1:
-        maxLength: 255
-        type: string
-      unitname2:
-        maxLength: 255
-        type: string
-      unitname3:
-        maxLength: 255
-        type: string
-      unitname4:
-        maxLength: 255
-        type: string
-      unitname5:
-        maxLength: 255
-        type: string
-    required:
-    - unitname1
     type: object
 info:
   contact:
