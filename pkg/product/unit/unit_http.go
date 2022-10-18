@@ -38,9 +38,11 @@ func (h UnitHttp) RouteSetup() {
 	h.ms.POST("/unit/bulk", h.SaveBulk)
 
 	h.ms.GET("/unit", h.SearchUnit)
+	h.ms.GET("/unit/limit", h.SearchUnitLimit)
 	h.ms.POST("/unit", h.CreateUnit)
 	h.ms.GET("/unit/:id", h.InfoUnit)
 	h.ms.PUT("/unit/:id", h.UpdateUnit)
+	h.ms.PATCH("/unit/:id", h.UpdateFieldUnit)
 	h.ms.DELETE("/unit/:id", h.DeleteUnit)
 }
 
@@ -121,6 +123,47 @@ func (h UnitHttp) UpdateUnit(ctx microservice.IContext) error {
 	return nil
 }
 
+// Update Field Unit godoc
+// @Description Update Unit
+// @Tags		Unit
+// @Param		id  path      string  true  "Unit ID"
+// @Param		Unit  body      models.Unit  true  "Unit"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /unit/{id} [patch]
+func (h UnitHttp) UpdateFieldUnit(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	id := ctx.Param("id")
+	input := ctx.ReadInput()
+
+	docReq := &models.Unit{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.UpdateFieldUnit(shopID, id, authUsername, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+		ID:      id,
+	})
+
+	return nil
+}
+
 // Delete Unit godoc
 // @Description Delete Unit
 // @Tags		Unit
@@ -187,8 +230,8 @@ func (h UnitHttp) InfoUnit(ctx microservice.IContext) error {
 // @Description get struct array by ID
 // @Tags		Unit
 // @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
+// @Param		page	query	integer		false  "Add "
+// @Param		limit	query	integer		false  "Add "
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -212,6 +255,42 @@ func (h UnitHttp) SearchUnit(ctx microservice.IContext) error {
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
+	})
+	return nil
+}
+
+// List Unit godoc
+// @Description get struct array by ID
+// @Tags		Unit
+// @Param		q		query	string		false  "Search Value"
+// @Param		skip	query	integer		false  "skip"
+// @Param		limit	query	integer		false  "limit"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /unit/limit [get]
+func (h UnitHttp) SearchUnitLimit(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	q := ctx.QueryParam("q")
+	offset, limit := utils.GetParamOffsetLimit(ctx.QueryParam)
+	sorts := utils.GetSortParam(ctx.QueryParam)
+
+	lang := ctx.QueryParam("lang")
+
+	docList, total, err := h.svc.SearchUnitLimit(shopID, lang, q, offset, limit, sorts)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docList,
+		Total:   total,
 	})
 	return nil
 }

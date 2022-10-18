@@ -1,11 +1,13 @@
 package repositories
 
 import (
+	"fmt"
 	"smlcloudplatform/internal/microservice"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type SearchRepository[T any] struct {
@@ -41,6 +43,62 @@ func (repo SearchRepository[T]) Find(shopID string, colNameSearch []string, q st
 	}
 
 	return docList, nil
+}
+
+func (repo SearchRepository[T]) FindLimit(shopID string, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]T, int, error) {
+
+	searchFilterList := []interface{}{}
+
+	for _, colName := range colNameSearch {
+		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
+			Pattern: ".*" + q + ".*",
+			Options: "",
+		}}})
+	}
+
+	filterQuery := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+		"$or":       searchFilterList,
+	}
+
+	tempSkip := int64(skip)
+	tempLimit := int64(limit)
+
+	tempOptions := &options.FindOptions{}
+	tempOptions.SetSkip(tempSkip)
+	tempOptions.SetLimit(tempLimit)
+
+	projectOptions := bson.M{}
+
+	for key, val := range projects {
+		projectOptions[key] = val
+	}
+	tempOptions.SetProjection(projectOptions)
+
+	fmt.Println(projectOptions)
+
+	tempSorts := bson.M{}
+	for key, val := range sorts {
+		tempSorts[key] = val
+	}
+
+	tempOptions.SetSort(tempSorts)
+
+	docList := []T{}
+	err := repo.pst.Find(new(T), filterQuery, &docList, tempOptions)
+
+	if err != nil {
+		return []T{}, 0, err
+	}
+
+	count, err := repo.pst.Count(new(T), filterQuery)
+
+	if err != nil {
+		return []T{}, 0, err
+	}
+
+	return docList, count, nil
 }
 
 func (repo SearchRepository[T]) FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]T, mongopagination.PaginationData, error) {
