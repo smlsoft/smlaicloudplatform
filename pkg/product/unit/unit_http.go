@@ -38,7 +38,7 @@ func (h UnitHttp) RouteSetup() {
 	h.ms.POST("/unit/bulk", h.SaveBulk)
 
 	h.ms.GET("/unit", h.SearchUnit)
-	h.ms.GET("/unit/limit", h.SearchUnitLimit)
+	h.ms.GET("/unit/list", h.SearchUnitLimit)
 	h.ms.POST("/unit", h.CreateUnit)
 	h.ms.GET("/unit/:id", h.InfoUnit)
 	h.ms.PUT("/unit/:id", h.UpdateUnit)
