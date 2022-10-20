@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"smlcloudplatform/pkg/models"
 	"strconv"
 	"strings"
 )
@@ -14,7 +15,7 @@ const RequestSearchDefaultPage = 1
 const RequestSearchDefaultLimit = 20
 
 func GetSearchQueryParam(fnGetParam func(string) string) string {
-	q := strings.Trim(fnGetParam("sort"), " ")
+	q := strings.Trim(fnGetParam("q"), " ")
 	return q
 }
 
@@ -87,7 +88,20 @@ func GetSortParam(fnGetParam func(string) string) map[string]int {
 func GetSearchParam(fnGetParam func(string) string) (string, int, int, map[string]int) {
 	q := GetSearchQueryParam(fnGetParam)
 	page, limit := GetPaginationParam(fnGetParam)
-	sort := GetSortParam(fnGetParam)
+	sorts := GetSortParam(fnGetParam)
 
-	return q, page, limit, sort
+	return q, page, limit, sorts
+}
+
+func GetSearchPageable(fnGetParam func(string) string) models.Pageable {
+	q := GetSearchQueryParam(fnGetParam)
+	page, limit := GetPaginationParam(fnGetParam)
+	sorts := GetSortParam(fnGetParam)
+
+	return models.Pageable{
+		Q:     q,
+		Page:  page,
+		Limit: limit,
+		Sorts: sorts,
+	}
 }

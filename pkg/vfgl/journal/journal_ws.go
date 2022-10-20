@@ -544,29 +544,29 @@ func (h JournalWs) WebsocketConnectCount(ctx microservice.IContext) error {
 // @Security     AccessToken
 // @Router		/gl/journal/docref/next [post]
 func (h JournalWs) NextSelectDocumentRef(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-	username := userInfo.Username
+	// userInfo := ctx.UserInfo()
+	// shopID := userInfo.ShopID
+	// username := userInfo.Username
 
-	doc, err := h.svcWebsocket.DocRefNextSelect(shopID, username, 0)
+	// doc, err := h.svcWebsocket.DocRefNextSelect(shopID, username, 0)
 
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
+	// if err != nil {
+	// 	ctx.ResponseError(http.StatusBadRequest, err.Error())
+	// 	return err
+	// }
 
-	_, err = h.svcWebsocket.DocRefSelectForce(shopID, username, doc.DocumentRef, true)
+	// _, err = h.svcWebsocket.DocRefSelectForce(shopID, username, doc.DocumentRef, true)
 
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
+	// if err != nil {
+	// 	ctx.ResponseError(http.StatusBadRequest, err.Error())
+	// 	return err
+	// }
 
-	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success: true,
-		Data: map[string]string{
-			"documentref": doc.DocumentRef,
-		},
-	})
+	// ctx.Response(http.StatusOK, common.ApiResponse{
+	// 	Success: true,
+	// 	Data: map[string]string{
+	// 		"documentref": doc.DocumentRef,
+	// 	},
+	// })
 	return nil
 }

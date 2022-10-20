@@ -10,15 +10,17 @@ import (
 const documentImageCollectionName = "documentImages"
 
 type DocumentImage struct {
-	Name        string    `json:"name" bson:"name"`
-	DocumentRef string    `json:"documentref" bson:"documentref"`
-	ImageUri    string    `json:"imageuri" bson:"imageuri"`
-	Module      string    `json:"module" bson:"module"`
-	DocGUIDRef  string    `json:"docguidref" bson:"docguidref"`
-	Status      int8      `json:"status" bson:"status"`
-	Comments    []Comment `json:"comments" bson:"comments"`
-	UploadedBy  string    `json:"uploadedby" bson:"uploadedby"`
-	UploadedAt  time.Time `json:"uploadedat" bson:"uploadedat"`
+	ImageUri   string       `json:"imageuri" bson:"imageuri"`
+	Name       string       `json:"name" bson:"name"`
+	IsReject   bool         `json:"isreject" bson:"isreject"`
+	References *[]Reference `json:"references" bson:"references"`
+	UploadedBy string       `json:"uploadedby" bson:"uploadedby"`
+	UploadedAt time.Time    `json:"uploadedat" bson:"uploadedat"`
+}
+
+type Reference struct {
+	Module string `json:"module" bson:"module"`
+	DocNo  string `json:"docno" bson:"docno" `
 }
 
 type Comment struct {
@@ -48,6 +50,14 @@ type DocumentImageDoc struct {
 }
 
 func (DocumentImageDoc) CollectionName() string {
+	return documentImageCollectionName
+}
+
+type DocumentImageItemGuid struct {
+	DocumentImageGuid string `json:"categoryguid" bson:"categoryguid" gorm:"categoryguid"`
+}
+
+func (DocumentImageItemGuid) CollectionName() string {
 	return documentImageCollectionName
 }
 

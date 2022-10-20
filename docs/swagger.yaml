@@ -669,15 +669,6 @@ definitions:
       suggestcode:
         type: string
     type: object
-  models.Comment:
-    properties:
-      comment:
-        type: string
-      commentedat:
-        type: string
-      username:
-        type: string
-    type: object
   models.CreditCardPayment:
     properties:
       amount:
@@ -700,22 +691,16 @@ definitions:
     type: object
   models.DocumentImage:
     properties:
-      comments:
-        items:
-          $ref: '#/definitions/models.Comment'
-        type: array
-      docguidref:
-        type: string
-      documentref:
-        type: string
       imageuri:
         type: string
-      module:
-        type: string
+      isreject:
+        type: boolean
       name:
         type: string
-      status:
-        type: integer
+      references:
+        items:
+          $ref: '#/definitions/models.Reference'
+        type: array
       uploadedat:
         type: string
       uploadedby:
@@ -723,48 +708,36 @@ definitions:
     type: object
   models.DocumentImageGroup:
     properties:
-      documentimages:
+      imagereferences:
         items:
-          $ref: '#/definitions/models.DocumentImageGroupDetail'
+          $ref: '#/definitions/models.ImageReference'
         type: array
-      documentref:
+      references:
+        items:
+          $ref: '#/definitions/models.Reference'
+        type: array
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        description: DocumentRef     string            `json:"documentref" bson:"documentref"`
         type: string
-    type: object
-  models.DocumentImageGroupDetail:
-    properties:
-      docguidref:
-        type: string
-      guidfixed:
-        type: string
-      imageuri:
-        type: string
-      module:
-        type: string
-      name:
-        type: string
-      status:
-        type: integer
     type: object
   models.DocumentImageInfo:
     properties:
-      comments:
-        items:
-          $ref: '#/definitions/models.Comment'
-        type: array
-      docguidref:
-        type: string
-      documentref:
-        type: string
       guidfixed:
         type: string
       imageuri:
         type: string
-      module:
-        type: string
+      isreject:
+        type: boolean
       name:
         type: string
-      status:
-        type: integer
+      references:
+        items:
+          $ref: '#/definitions/models.Reference'
+        type: array
       uploadedat:
         type: string
       uploadedby:
@@ -787,13 +760,6 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
-    type: object
-  models.DocumentImageStatus:
-    properties:
-      docguidref:
-        type: string
-      status:
-        type: integer
     type: object
   models.Employee:
     properties:
@@ -873,6 +839,13 @@ definitions:
     properties:
       uri:
         type: string
+    type: object
+  models.ImageReference:
+    properties:
+      documentimageguid:
+        type: string
+      xorder:
+        type: integer
     type: object
   models.IncudeChoice:
     properties:
@@ -2685,6 +2658,13 @@ definitions:
       success:
         type: boolean
     type: object
+  models.Reference:
+    properties:
+      docno:
+        type: string
+      module:
+        type: string
+    type: object
   models.ResponseSuccess:
     properties:
       success:
@@ -4001,7 +3981,9 @@ paths:
         name: DocumentImage
         required: true
         schema:
-          $ref: '#/definitions/models.DocumentImage'
+          items:
+            $ref: '#/definitions/models.DocumentImage'
+          type: array
       responses:
         "200":
           description: OK
@@ -4095,68 +4077,6 @@ paths:
       summary: Update Document Image
       tags:
       - DocumentImage
-  /documentimage/documentref/status/{docref}:
-    put:
-      consumes:
-      - application/json
-      description: Update Document Image Status By Document Ref
-      parameters:
-      - description: Document Ref
-        in: path
-        name: docref
-        required: true
-        type: string
-      - description: DocumentImageStatus
-        in: body
-        name: DocumentImageStatus
-        required: true
-        schema:
-          $ref: '#/definitions/models.DocumentImageStatus'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      summary: Update Document Image Status By Document Ref
-      tags:
-      - DocumentImageStatusByDocumentRef
-  /documentimage/status/{id}:
-    put:
-      consumes:
-      - application/json
-      description: Update Document Image Status
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: DocumentImageStatus
-        in: body
-        name: DocumentImageStatus
-        required: true
-        schema:
-          $ref: '#/definitions/models.DocumentImageStatus'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      summary: Update Document Image Status
-      tags:
-      - DocumentImageStatus
   /documentimage/upload:
     post:
       consumes:
@@ -4253,25 +4173,17 @@ paths:
       - AccessToken: []
       tags:
       - DocumentImageGroup
-  /documentimagegroup/{docref}:
+  /documentimagegroup/{guid}:
     get:
       consumes:
       - application/json
-      - application/json
       description: Get Document Image Group
       parameters:
-      - description: Search Value
-        in: query
-        name: q
+      - description: GUID
+        in: path
+        name: guid
+        required: true
         type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Size
-        in: query
-        name: limit
-        type: integer
       responses:
         "200":
           description: OK
@@ -4285,7 +4197,77 @@ paths:
       - AccessToken: []
       tags:
       - DocumentImageGroup
-      - Restaurant
+    put:
+      consumes:
+      - application/json
+      description: Update Document Image Group
+      parameters:
+      - description: GUID
+        in: path
+        name: guid
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentImageGroup
+  /documentimagegroup/{guid}/documentimages:
+    put:
+      consumes:
+      - application/json
+      description: Update Document Image Group
+      parameters:
+      - description: GUID
+        in: path
+        name: guid
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentImageGroup
+  /documentimagegroup/{guid}/ungroup:
+    put:
+      consumes:
+      - application/json
+      description: Ungroup Document Image Group
+      parameters:
+      - description: GUID
+        in: path
+        name: guid
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentImageGroup
   /employee:
     get:
       consumes:

@@ -6,6 +6,7 @@ import (
 	"os"
 	"reflect"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/mock"
 	"testing"
 
 	"github.com/tj/assert"
@@ -255,272 +256,44 @@ func TestMongodbFindPage(t *testing.T) {
 	// })
 }
 
-// func TestMongodbFindOne(t *testing.T) {
-// 	cfg := &ConfigDBTest{}
+type Model1 struct {
+	Name string `bson:"name"`
+}
 
-// 	pst := microservice.NewPersisterMongo(cfg)
+func (m Model1) CollectionName() string {
+	return "model1"
+}
 
-// 	product := &Product{}
-// 	err := pst.FindOne(&Product{}, bson.D{{Key: "product_code", Value: productCode}}, product)
+type Model2 struct {
+	Name string `bson:"name"`
+}
 
-// 	if err != nil {
-// 		t.Error(err.Error())
-// 		return
-// 	}
-
-// 	if product.ProductCode != productCode {
-// 		t.Error("Product code not match")
-// 		return
-// 	}
+// func (m Model2) CollectionName() string {
+// 	return "model2"
 // }
 
-// func TestMongodbFindByID(t *testing.T) {
-// 	cfg := &ConfigDBTest{}
+func TestMongoTransaction(t *testing.T) {
 
-// 	pst := microservice.NewPersisterMongo(cfg)
+	pst := microservice.NewPersisterMongo(mock.NewPersisterMongoConfig())
 
-// 	productFind := &Product{}
+	err := pst.Transaction(func() error {
+		idx, err := pst.Create(Model1{}, Model1{
+			Name: "name1",
+		})
 
-// 	err := pst.FindOne(&Product{}, bson.M{"product_code": productCode}, productFind)
+		if err != nil {
+			t.Log(idx)
+			return err
+		}
 
-// 	t.Log(productFind.ID.Hex())
-// 	if err != nil {
-// 		t.Error(err.Error())
-// 		return
-// 	}
+		err = pst.Update(&Model1{}, bson.M{"name": "name1"}, bson.M{"$set": bson.M{"name": "name3"}})
 
-// 	product := &Product{}
-// 	err = pst.FindByID(&Product{}, "_id", productFind.ID, product)
+		if err != nil {
+			return err
+		}
 
-// 	if err != nil {
-// 		t.Error(err.Error())
-// 		return
-// 	}
+		return nil
+	})
 
-// 	if product.ProductCode != productFind.ProductCode {
-// 		t.Error("Product code not match")
-// 		return
-// 	}
-// }
-
-// func TestMongodbUpdateOne(t *testing.T) {
-
-// 	productNameModified := "product name modifyx"
-
-// 	cfg := &ConfigDBTest{}
-
-// 	pst := microservice.NewPersisterMongo(cfg)
-
-// 	productFind := &Product{}
-// 	err := pst.FindOne(&Product{}, bson.M{"product_code": productCode}, productFind)
-
-// 	if err != nil {
-// 		t.Error(err.Error())
-// 	}
-
-// 	err = pst.UpdateOne(
-// 		&Product{},
-// 		map[string]interface{}{
-// 			"_id":          productFind.ID,
-// 			"product_code": productFind.ProductCode,
-// 		}, &Product{
-// 			ProductCode: productCode,
-// 			ProductName: productNameModified,
-// 		})
-
-// 	if err != nil {
-// 		t.Error(err.Error())
-// 	}
-
-// 	productCheck := &Product{}
-// 	err = pst.FindOne(&Product{}, bson.M{"product_code": productCode}, productCheck)
-
-// 	if err != nil {
-// 		t.Error(err.Error())
-// 	}
-
-// 	if productCheck.ProductName != productNameModified {
-// 		t.Error("Product not modified")
-// 	}
-// }
-
-// func TestMongodbUpdate(t *testing.T) {
-
-// 	productNameModified := "test modify"
-
-// 	cfg := &ConfigDBTest{}
-
-// 	pst := microservice.NewPersisterMongo(cfg)
-
-// 	productFind := &Product{}
-// 	err := pst.FindOne(&Product{}, bson.M{"product_code": productCode}, productFind)
-
-// 	if err != nil {
-// 		t.Error(err.Error())
-// 	}
-
-// 	err = pst.Update(&Product{}, bson.M{"_id": productFind.ID}, bson.M{"$set": &Product{
-// 		ProductCode: productCode,
-// 		ProductName: productNameModified,
-// 	}})
-
-// 	if err != nil {
-// 		t.Error(err.Error())
-// 	}
-
-// 	productCheck := &Product{}
-// 	err = pst.FindOne(&Product{}, bson.M{"product_code": productCode}, productCheck)
-
-// 	if err != nil {
-// 		t.Error(err.Error())
-// 	}
-
-// 	if productCheck.ProductName != productNameModified {
-// 		t.Error("Product not modified")
-// 	}
-
-// }
-
-// func TestMongodbDelete(t *testing.T) {
-// 	cfg := &ConfigDBTest{}
-
-// 	pst := microservice.NewPersisterMongo(cfg)
-
-// 	productFind := &Product{}
-
-// 	err := pst.FindOne(&Product{}, bson.M{"product_code": productCode}, productFind)
-
-// 	if err != nil {
-// 		t.Error(err.Error())
-// 		return
-// 	}
-
-// 	t.Log(productFind)
-// 	t.Log(productFind.ID.Hex())
-
-// 	product := &Product{}
-// 	err = pst.DeleteByID(product, productFind.ID.Hex())
-
-// 	if err != nil {
-// 		t.Error(err.Error())
-// 		return
-// 	}
-
-// }
-
-// func TestMongodbSoftDeleteByID(t *testing.T) {
-// 	cfg := &ConfigDBTest{}
-
-// 	pst := microservice.NewPersisterMongo(cfg)
-
-// 	product := &Product{}
-// 	err := pst.DeleteByID(product, "6195af880e33cec3af136720")
-
-// 	if err != nil {
-// 		t.Error(err.Error())
-// 		return
-// 	}
-
-// }
-
-// func TestMongodbSoftBatchDelete(t *testing.T) {
-// 	cfg := &ConfigDBTest{}
-
-// 	pst := microservice.NewPersisterMongo(cfg)
-
-// 	err := pst.SoftBatchDeleteByID(&Product{}, "", []string{"6195af880e33cec3af136724", "6195af880e33cec3af136725"})
-
-// 	if err != nil {
-// 		t.Error(err.Error())
-// 		return
-// 	}
-
-// }
-
-// func TestMongodbSoftDelete(t *testing.T) {
-// 	cfg := &ConfigDBTest{}
-
-// 	pst := microservice.NewPersisterMongo(cfg)
-
-// 	err := pst.SoftDeleteByID(&Product{}, "x123x", "dev")
-
-// 	if err != nil {
-// 		t.Error(err.Error())
-// 		return
-// 	}
-
-// }
-
-// func TestMongodbAggregate(t *testing.T) {
-// 	cfg := &ConfigDBTest{}
-
-// 	pst := microservice.NewPersisterMongo(cfg)
-
-// 	// pipeline := mongo.Pipeline{}
-// 	products := []Product{}
-
-// 	// query1 := bson.A{bson.D{{"$match", bson.D{{"product_code", "pdt-02"}}}}, bson.D{{"$count", "count"}}}
-// 	// query2 := bson.A{bson.D{{"$match", bson.D{{"product_code", "pdt-03"}}}}, bson.D{{"$count", "count"}}}
-// 	// query3 := bson.A{bson.D{{"$count", "total"}}}
-
-// 	// facetStage := bson.D{{"$facet", bson.D{{"query1", query1}, {"query2", query2}, {"query3", query3}}}}
-
-// 	err := pst.Aggregate(&Product{}, []bson.D{
-// 		bson.D{{"$match", bson.M{"product_code": "pdt-01"}}},
-// 	}, &products)
-
-// 	if err != nil {
-// 		fmt.Println("=====[Error]======")
-// 		fmt.Println(err.Error())
-// 	}
-
-// 	t.Log("count :: ", products)
-// }
-
-// func TestMongodbAggregatePage(t *testing.T) {
-// 	cfg := &ConfigDBTest{}
-
-// 	pst := microservice.NewPersisterMongo(cfg)
-
-// 	aggPaginatedData, err := pst.AggregatePage(&Product{}, 2, 0, bson.M{"$match": bson.M{"product_code": "pdt-01"}})
-
-// 	products := []Product{}
-// 	// var aggProductList []Product
-// 	for _, raw := range aggPaginatedData.Data {
-// 		var product *Product
-
-// 		if marshallErr := bson.Unmarshal(raw, &product); marshallErr == nil {
-// 			products = append(products, *product)
-// 		}
-
-// 	}
-
-// 	if err != nil {
-// 		fmt.Println("=====[Error]======")
-// 		fmt.Println(err.Error())
-// 	}
-// 	t.Log("count :: ", products)
-// }
-
-// func TestMongodbFindPageX(t *testing.T) {
-// 	cfg := &ConfigDBTest{}
-
-// 	pst := microservice.NewPersisterMongo(cfg)
-
-// 	products := []Product{}
-// 	pagination, err := pst.FindPageSort(&Product{}, 5, 1, bson.M{}, map[string]int{
-// 		"product_code": 5,
-// 	}, &products)
-
-// 	if err != nil {
-// 		t.Error(err.Error())
-// 		return
-// 	}
-
-// 	fmt.Println(pagination)
-// 	fmt.Println(products)
-
-// 	if len(products) < 1 {
-// 		t.Error("Find not found item")
-// 	}
-// }
+	t.Log(err)
+}

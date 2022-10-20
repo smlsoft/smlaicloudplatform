@@ -7,44 +7,59 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/models"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
+	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"strings"
 	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/samber/lo"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type IDocumentImageService interface {
 	CreateDocumentImage(shopID string, authUsername string, doc models.DocumentImage) (string, error)
+	BulkCreateDocumentImage(shopID string, authUsername string, docs []models.DocumentImage) error
 	UpdateDocumentImage(shopID string, guid string, authUsername string, doc models.DocumentImage) error
-	UpdateDocumentImageStatus(shopID string, guid string, docnoGUIDRef string, status int8) error
-	UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, docnoGUIDRef string, status int8) error
-	DeleteDocumentImage(shopID string, guid string, authUsername string) error
+	DeleteDocumentImage(shopID string, authUsername string, imageGUID string) error
+
 	InfoDocumentImage(shopID string, guid string) (models.DocumentImageInfo, error)
 	SearchDocumentImage(shopID string, matchFilters map[string]interface{}, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
-	UploadDocumentImage(shopID string, authUsername string, moduleName string, fh *multipart.FileHeader) (*models.DocumentImageInfo, error)
+	UploadDocumentImage(shopID string, authUsername string, fh *multipart.FileHeader) (*models.DocumentImageInfo, error)
 
-	SaveDocumentImageDocRefGroup(shopID string, docRef string, docImages []string) error
-	GetDocumentImageDocRefGroup(shopID string, docRef string) (models.DocumentImageGroup, error)
-	ListDocumentImageDocRefGroup(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error)
+	// SaveDocumentImageDocRefGroup(shopID string, authUsername string, docRef string, docImages []models.DocumentImageGroup) error
+	// GetDocumentImageDocRefGroup(shopID string, docRef string) (models.DocumentImageGroup, error)
+	// ListDocumentImageDocRefGroup(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error)
+
+	CreateDocumentImageGroup(shopID string, authUsername string, docImageGroup models.DocumentImageGroup) (string, error)
+	GetDocumentImageDocRefGroup(shopID string, docImageGroupGUID string) (models.DocumentImageGroupInfo, error)
+	UpdateDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImageGroup models.DocumentImageGroup) error
+	UpdateImageReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImages []models.ImageReference) error
+	UnGroupDocumentImageGroup(shopID string, authUsername string, groupGUID string) error
+	ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable common.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
 }
 
 type DocumentImageService struct {
-	Repo          repositories.IDocumentImageRepository
-	FilePersister microservice.IPersisterFile
-	NowFn         func() time.Time
-	NewGUIDFn     func() string
+	repoImageGroup               repositories.DocumentImageGroupRepository
+	repoImage                    repositories.IDocumentImageRepository
+	FilePersister                microservice.IPersisterFile
+	maxImageReferences           int
+	timeNowFnc                   func() time.Time
+	newDocumentImageGUIDFnc      func() string
+	newDocumentImageGroupGUIDFnc func() string
 }
 
-func NewDocumentImageService(repo repositories.IDocumentImageRepository, filePersister microservice.IPersisterFile) DocumentImageService {
+func NewDocumentImageService(repo repositories.IDocumentImageRepository, repoImageGroup repositories.DocumentImageGroupRepository, filePersister microservice.IPersisterFile) DocumentImageService {
 	return DocumentImageService{
-		Repo:          repo,
-		FilePersister: filePersister,
-		NowFn: func() time.Time {
+		maxImageReferences: 100,
+		repoImageGroup:     repoImageGroup,
+		repoImage:          repo,
+		FilePersister:      filePersister,
+		timeNowFnc: func() time.Time {
 			return time.Now()
 		},
-		NewGUIDFn: func() string { return utils.NewGUID() },
+		newDocumentImageGUIDFnc:      utils.NewGUID,
+		newDocumentImageGroupGUIDFnc: utils.NewGUID,
 	}
 }
 
@@ -52,27 +67,106 @@ func (svc DocumentImageService) CreateDocumentImage(shopID string, authUsername 
 
 	// do upload first
 
-	newGuidFixed := utils.NewGUID()
+	createdAt := svc.timeNowFnc()
+
+	documentImageGuid := svc.newDocumentImageGUIDFnc()
 
 	docData := models.DocumentImageDoc{}
 	docData.ShopID = shopID
-	docData.GuidFixed = newGuidFixed
+	docData.GuidFixed = documentImageGuid
 	docData.DocumentImage = doc
 
+	docData.IsReject = false
+	docData.References = &[]models.Reference{}
+
 	docData.CreatedBy = authUsername
-	docData.CreatedAt = time.Now()
+	docData.CreatedAt = createdAt
 
-	_, err := svc.Repo.Create(docData)
+	docData.UpdatedBy = authUsername
+	docData.UpdatedAt = createdAt
 
-	if err != nil {
-		return "", err
+	// image group
+	docDataImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, documentImageGuid, createdAt)
+
+	svc.repoImageGroup.Transaction(func() error {
+
+		_, err := svc.repoImage.Create(docData)
+
+		if err != nil {
+			return err
+		}
+
+		_, err = svc.repoImageGroup.Create(docDataImageGroup)
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return documentImageGuid, nil
+}
+
+func (svc DocumentImageService) BulkCreateDocumentImage(shopID string, authUsername string, docs []models.DocumentImage) error {
+
+	// do upload first
+
+	createdAt := svc.timeNowFnc()
+	docDataList := []models.DocumentImageDoc{}
+	docDataImageGroupList := []models.DocumentImageGroupDoc{}
+
+	for _, doc := range docs {
+		documentImageGuid := svc.newDocumentImageGUIDFnc()
+
+		docData := models.DocumentImageDoc{}
+		docData.ShopID = shopID
+		docData.GuidFixed = documentImageGuid
+		docData.DocumentImage = doc
+
+		docData.IsReject = false
+		docData.References = &[]models.Reference{}
+
+		docData.CreatedBy = authUsername
+		docData.CreatedAt = createdAt
+
+		docData.UpdatedBy = authUsername
+		docData.UpdatedAt = createdAt
+
+		// image group
+		docDataImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, documentImageGuid, createdAt)
+
+		docDataList = append(docDataList, docData)
+		docDataImageGroupList = append(docDataImageGroupList, docDataImageGroup)
 	}
-	return newGuidFixed, nil
+
+	svc.repoImageGroup.Transaction(func() error {
+
+		err := svc.repoImage.CreateInBatch(docDataList)
+
+		if err != nil {
+			return err
+		}
+
+		err = svc.repoImageGroup.CreateInBatch(docDataImageGroupList)
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return nil
 }
 
 func (svc DocumentImageService) UpdateDocumentImage(shopID string, guid string, authUsername string, doc models.DocumentImage) error {
 
-	findDoc, err := svc.Repo.FindByGuid(shopID, guid)
+	findDoc, err := svc.repoImage.FindByGuid(shopID, guid)
+
+	if svc.isDocumentImageHasReferenced(findDoc) {
+		return errors.New("document has referenced")
+	}
 
 	if err != nil {
 		return err
@@ -84,10 +178,12 @@ func (svc DocumentImageService) UpdateDocumentImage(shopID string, guid string, 
 
 	findDoc.DocumentImage = doc
 
+	findDoc.References = &[]models.Reference{}
+
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.Repo.Update(shopID, guid, findDoc)
+	err = svc.repoImage.Update(shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -95,32 +191,80 @@ func (svc DocumentImageService) UpdateDocumentImage(shopID string, guid string, 
 	return nil
 }
 
-func (svc DocumentImageService) UpdateDocumentImageStatus(shopID string, guid string, docnoGUIDRef string, status int8) error {
+func (svc DocumentImageService) DeleteDocumentImage(shopID string, authUsername string, imageGUID string) error {
+	findDoc, err := svc.repoImage.FindByGuid(shopID, imageGUID)
 
-	if len(guid) < 1 {
-		return errors.New("guid is not empty")
+	if svc.isDocumentImageHasReferenced(findDoc) {
+		return errors.New("document has referenced")
 	}
-
-	err := svc.Repo.UpdateDocumentImageStatus(shopID, guid, docnoGUIDRef, status)
 
 	if err != nil {
 		return err
 	}
-	return nil
-}
 
-func (svc DocumentImageService) UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, docnoGUIDRef string, status int8) error {
-
-	err := svc.Repo.UpdateDocumentImageStatusByDocumentRef(shopID, docRef, docnoGUIDRef, status)
+	findDocGroup, err := svc.repoImageGroup.FindByGuid(shopID, imageGUID)
 
 	if err != nil {
 		return err
 	}
+
+	if svc.isDocumentImageGroupHasReferenced(findDocGroup) {
+		return errors.New("document has referenced")
+	}
+
+	tempImageRef := []models.ImageReference{}
+
+	if findDocGroup.ImageReferences != nil {
+		for _, imageRef := range *findDocGroup.ImageReferences {
+			if imageRef.DocumentImageGUID != imageGUID {
+				tempImageRef = append(tempImageRef, imageRef)
+			}
+		}
+	}
+
+	findDocGroup.ImageReferences = &tempImageRef
+
+	err = svc.repoImage.DeleteByGuidfixed(shopID, imageGUID, authUsername)
+
+	if err != nil {
+		return err
+	}
+
+	if len(tempImageRef) > 0 {
+		if err = svc.repoImageGroup.Update(shopID, findDocGroup.GuidFixed, findDocGroup); err != nil {
+			return err
+		}
+	} else {
+		if err = svc.repoImageGroup.DeleteByGuidfixed(shopID, findDocGroup.GuidFixed); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
-func (svc DocumentImageService) DeleteDocumentImage(shopID string, guid string, authUsername string) error {
-	err := svc.Repo.DeleteByGuidfixed(shopID, guid, authUsername)
+func (svc DocumentImageService) RejectDocumentImage(shopID string, guid string, authUsername string, rejectStatus bool) error {
+
+	findDoc, err := svc.repoImage.FindByGuid(shopID, guid)
+
+	if svc.isDocumentImageHasReferenced(findDoc) {
+		return errors.New("document has referenced")
+	}
+
+	if err != nil {
+		return err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return errors.New("document not found")
+	}
+
+	findDoc.IsReject = rejectStatus
+
+	findDoc.UpdatedBy = authUsername
+	findDoc.UpdatedAt = time.Now()
+
+	err = svc.repoImage.Update(shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -130,7 +274,7 @@ func (svc DocumentImageService) DeleteDocumentImage(shopID string, guid string, 
 
 func (svc DocumentImageService) InfoDocumentImage(shopID string, guid string) (models.DocumentImageInfo, error) {
 
-	findDoc, err := svc.Repo.FindByGuid(shopID, guid)
+	findDoc, err := svc.repoImage.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return models.DocumentImageInfo{}, err
@@ -145,8 +289,7 @@ func (svc DocumentImageService) InfoDocumentImage(shopID string, guid string) (m
 }
 
 func (svc DocumentImageService) SearchDocumentImage(shopID string, matchFilters map[string]interface{}, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error) {
-	// docList, pagination, err := svc.Repo.FindPage(shopID, []string{"guidfixed", "documentref", "module"}, q, page, limit)
-	docList, pagination, err := svc.Repo.FindPageFilterSort(shopID, matchFilters, []string{"guidfixed", "documentref", "module"}, q, page, limit, sorts)
+	docList, pagination, err := svc.repoImage.FindPageFilterSort(shopID, matchFilters, []string{"guidfixed", "documentref", "module"}, q, page, limit, sorts)
 
 	if err != nil {
 		return []models.DocumentImageInfo{}, pagination, err
@@ -155,14 +298,14 @@ func (svc DocumentImageService) SearchDocumentImage(shopID string, matchFilters 
 	return docList, pagination, nil
 }
 
-func (svc DocumentImageService) UploadDocumentImage(shopID string, authUsername string, moduleName string, fh *multipart.FileHeader) (*models.DocumentImageInfo, error) {
+func (svc DocumentImageService) UploadDocumentImage(shopID string, authUsername string, fh *multipart.FileHeader) (*models.DocumentImageInfo, error) {
 
 	if fh.Filename == "" {
 		return nil, errors.New("image file name not found")
 	}
 	// try upload
 	fileUploadMetadataSlice := strings.Split(fh.Filename, ".")
-	fileName := svc.NewGUIDFn() //fileUploadMetadataSlice[0]
+	fileName := svc.newDocumentImageGUIDFnc() //fileUploadMetadataSlice[0]
 	fileExtension := fileUploadMetadataSlice[1]
 
 	fileNameWithShop := fmt.Sprintf("%s/%s", shopID, fileName)
@@ -174,17 +317,16 @@ func (svc DocumentImageService) UploadDocumentImage(shopID string, authUsername 
 
 	// create document image
 	doc := new(models.DocumentImageDoc)
-	doc.GuidFixed = svc.NewGUIDFn()
+	doc.GuidFixed = svc.newDocumentImageGUIDFnc()
 	doc.ImageUri = imageUri
 	doc.ShopID = shopID
-	doc.DocumentRef = svc.NewGUIDFn()
-	doc.Module = moduleName
 	doc.UploadedBy = authUsername
-	doc.UploadedAt = svc.NowFn()
+	doc.UploadedAt = svc.timeNowFnc()
 	doc.CreatedBy = authUsername
 	doc.CreatedAt = doc.UploadedAt
 
-	_, err = svc.Repo.Create(*doc)
+	_, err = svc.CreateDocumentImage(shopID, authUsername, doc.DocumentImage)
+
 	if err != nil {
 		return nil, err
 	}
@@ -192,18 +334,375 @@ func (svc DocumentImageService) UploadDocumentImage(shopID string, authUsername 
 	return &doc.DocumentImageInfo, err
 }
 
-func (svc DocumentImageService) SaveDocumentImageDocRefGroup(shopID string, docRef string, docImages []string) error {
-	return svc.Repo.SaveDocumentImageDocRefGroup(shopID, docRef, docImages)
+// Group
+
+func (svc DocumentImageService) getDocumentImageNotReferencedInGroup(shopID string, currentGroupGUID string, docImageRefs []models.ImageReference) ([]models.ImageReference, []string, error) {
+
+	docImageGUIDs := []string{}
+
+	for _, imageRef := range docImageRefs {
+		docImageGUIDs = append(docImageGUIDs, imageRef.DocumentImageGUID)
+	}
+
+	passDocImagesRef := []models.ImageReference{}
+
+	findGroups, err := svc.repoImageGroup.FindWithoutGUIDByDocumentImageGUIDs(shopID, currentGroupGUID, docImageGUIDs)
+
+	if err != nil {
+		return []models.ImageReference{}, []string{}, err
+	}
+
+	for _, imageGroup := range findGroups {
+		for _, imageRef := range *imageGroup.ImageReferences {
+			tempImageRef, isFound := lo.Find[models.ImageReference](docImageRefs, func(tempImageRef models.ImageReference) bool {
+				return imageRef.DocumentImageGUID == tempImageRef.DocumentImageGUID
+			})
+
+			if isFound && (imageGroup.References == nil || len(*imageGroup.References) < 1) {
+				passDocImagesRef = append(passDocImagesRef, tempImageRef)
+			} else if imageGroup.References != nil && len(*imageGroup.References) > 0 {
+				return []models.ImageReference{}, []string{}, fmt.Errorf("document image guid %s has referenced in %s", imageRef.DocumentImageGUID, imageGroup.GuidFixed)
+			} else {
+				return []models.ImageReference{}, []string{}, fmt.Errorf("document image guid \"%s\" has referenced in %s", imageRef.DocumentImageGUID, imageGroup.GuidFixed)
+			}
+		}
+	}
+
+	tempDocumentImageGroupGUIDs := []string{}
+	for _, imageGroup := range findGroups {
+		tempDocumentImageGroupGUIDs = append(tempDocumentImageGroupGUIDs, imageGroup.GuidFixed)
+	}
+
+	return passDocImagesRef, tempDocumentImageGroupGUIDs, nil
 }
 
-func (svc DocumentImageService) ListDocumentImageDocRefGroup(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.Repo.ListDocumentImageGroup(shopID, filters, q, page, limit)
+func (svc DocumentImageService) CreateDocumentImageGroup(shopID string, authUsername string, docImageGroup models.DocumentImageGroup) (string, error) {
+
+	if docImageGroup.ImageReferences == nil || len(*docImageGroup.ImageReferences) < 1 {
+		return "", errors.New("document image is size 0")
+	}
+
+	if docImageGroup.ImageReferences == nil || len(*docImageGroup.ImageReferences) > svc.maxImageReferences {
+		return "", fmt.Errorf("document images is over size %d", svc.maxImageReferences)
+	}
+
+	docImageGroupData := models.DocumentImageGroupDoc{}
+
+	passDocImagesRef, docImageGroupGUIDs, err := svc.getDocumentImageNotReferencedInGroup(shopID, "", *docImageGroup.ImageReferences)
+	if err != nil {
+		return "", err
+	}
+
+	if len(passDocImagesRef) < 1 {
+		return "", fmt.Errorf("document images  invalid")
+	}
+
+	createdAt := svc.timeNowFnc()
+	docImageGroupGUIDFixed := svc.newDocumentImageGroupGUIDFnc()
+
+	docImageGroupData.ShopID = shopID
+	docImageGroupData.DocumentImageGroup = docImageGroup
+	docImageGroupData.GuidFixed = docImageGroupGUIDFixed
+
+	docImageGroupData.CreatedBy = authUsername
+	docImageGroupData.CreatedAt = createdAt
+
+	docImageGroupData.ImageReferences = &passDocImagesRef
+
+	tempGUIDDocumentImages := []string{}
+	for _, imageRef := range passDocImagesRef {
+		tempGUIDDocumentImages = append(tempGUIDDocumentImages, imageRef.DocumentImageGUID)
+	}
+
+	err = svc.clearCreateDocumentImageGroupByDocumentGUIDs(shopID, docImageGroupGUIDs, tempGUIDDocumentImages)
+	if err != nil {
+		return "", err
+	}
+
+	_, err = svc.repoImageGroup.Create(docImageGroupData)
+
+	if err != nil {
+		return "", err
+	}
+
+	return docImageGroupGUIDFixed, nil
+}
+
+func (svc DocumentImageService) UpdateDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImageGroup models.DocumentImageGroup) error {
+	if docImageGroup.ImageReferences == nil || len(*docImageGroup.ImageReferences) > svc.maxImageReferences {
+		return fmt.Errorf("document image is over size %d", svc.maxImageReferences)
+	}
+
+	findDoc, err := svc.repoImageGroup.FindByGuid(shopID, groupGUID)
+
+	if err != nil {
+		return err
+	}
+
+	if findDoc.ID.IsZero() {
+		return errors.New("document not found")
+	}
+
+	if svc.isDocumentImageGroupHasReferenced(findDoc) {
+		return errors.New("document has referenced")
+	}
+
+	docImages := *docImageGroup.ImageReferences
+
+	passDocImagesRef, docImageGroupGUIDs, err := svc.getDocumentImageNotReferencedInGroup(shopID, groupGUID, docImages)
+	if err != nil {
+		return err
+	}
+
+	updateDocImagesRef := map[string]models.ImageReference{}
+	for _, imageRef := range passDocImagesRef {
+		updateDocImagesRef[imageRef.DocumentImageGUID] = imageRef
+	}
+
+	tempRemoveDocImageFromGroup := []models.ImageReference{}
+	// check exist from current document image group
+	if findDoc.ImageReferences != nil {
+		for _, imageRef := range *findDoc.ImageReferences {
+			tempImageRef, isFound := lo.Find[models.ImageReference](docImages, func(tempImageRef models.ImageReference) bool {
+				return imageRef.DocumentImageGUID == tempImageRef.DocumentImageGUID
+			})
+
+			if isFound {
+				updateDocImagesRef[tempImageRef.DocumentImageGUID] = tempImageRef
+			} else {
+				tempRemoveDocImageFromGroup = append(tempRemoveDocImageFromGroup, imageRef)
+			}
+		}
+	}
+
+	tempGUIDDocumentImages := []string{}
+	for _, imageRef := range updateDocImagesRef {
+		tempGUIDDocumentImages = append(tempGUIDDocumentImages, imageRef.DocumentImageGUID)
+	}
+
+	tempDocImageRef := []models.ImageReference{}
+	for _, docImageRef := range updateDocImagesRef {
+		tempDocImageRef = append(tempDocImageRef, docImageRef)
+	}
+
+	timeAt := svc.timeNowFnc()
+
+	findDoc.DocumentImageGroup = docImageGroup
+	findDoc.ImageReferences = &tempDocImageRef
+	findDoc.UpdatedAt = timeAt
+	findDoc.UpdatedBy = authUsername
+
+	if err = svc.repoImageGroup.Update(shopID, groupGUID, findDoc); err != nil {
+		return err
+	}
+
+	if err = svc.clearUpdateDocumentImageGroupByDocumentGUIDs(shopID, groupGUID, docImageGroupGUIDs, tempGUIDDocumentImages); err != nil {
+		return err
+	}
+
+	for _, imageRef := range tempRemoveDocImageFromGroup {
+		docImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, imageRef.DocumentImageGUID, timeAt)
+		_, err = svc.repoImageGroup.Create(docImageGroup)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (svc DocumentImageService) UpdateImageReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImages []models.ImageReference) error {
+	findDoc, err := svc.repoImageGroup.FindByGuid(shopID, groupGUID)
+
+	if err != nil {
+		return err
+	}
+
+	if svc.isDocumentImageGroupHasReferenced(findDoc) {
+		return errors.New("document has referenced")
+	}
+
+	tempDocImageGUIDs := []string{}
+
+	for _, imageRef := range docImages {
+		tempDocImageGUIDs = append(tempDocImageGUIDs, imageRef.DocumentImageGUID)
+	}
+
+	findDocImages, err := svc.repoImage.FindInGUIDs(shopID, tempDocImageGUIDs)
+
+	if err != nil {
+		return err
+	}
+
+	maxSizeInvalid := 50
+	if len(docImages) > (len(findDocImages) + maxSizeInvalid) {
+		return errors.New("document image invalid")
+	}
+
+	passDocImagesRef, docImageGroupGUIDs, err := svc.getDocumentImageNotReferencedInGroup(shopID, groupGUID, docImages)
+	if err != nil {
+		return err
+	}
+
+	updateDocImagesRef := map[string]models.ImageReference{}
+	for _, imageRef := range passDocImagesRef {
+		updateDocImagesRef[imageRef.DocumentImageGUID] = imageRef
+	}
+
+	tempRemoveDocImageFromGroup := []models.ImageReference{}
+	// check exist from current document image group
+	if findDoc.ImageReferences != nil {
+		for _, imageRef := range *findDoc.ImageReferences {
+			tempImageRef, isFound := lo.Find[models.ImageReference](docImages, func(tempImageRef models.ImageReference) bool {
+				return imageRef.DocumentImageGUID == tempImageRef.DocumentImageGUID
+			})
+
+			if isFound {
+				updateDocImagesRef[tempImageRef.DocumentImageGUID] = tempImageRef
+			} else {
+				tempRemoveDocImageFromGroup = append(tempRemoveDocImageFromGroup, imageRef)
+			}
+		}
+	}
+
+	tempGUIDDocumentImages := []string{}
+	tempDocImageRef := []models.ImageReference{}
+	for _, docImageRef := range updateDocImagesRef {
+		tempGUIDDocumentImages = append(tempGUIDDocumentImages, docImageRef.DocumentImageGUID)
+		tempDocImageRef = append(tempDocImageRef, docImageRef)
+	}
+
+	timeAt := svc.timeNowFnc()
+
+	findDoc.ImageReferences = &tempDocImageRef
+
+	findDoc.UpdatedAt = timeAt
+	findDoc.UpdatedBy = authUsername
+
+	if err = svc.repoImageGroup.Update(shopID, groupGUID, findDoc); err != nil {
+		return err
+	}
+
+	if err = svc.clearUpdateDocumentImageGroupByDocumentGUIDs(shopID, groupGUID, docImageGroupGUIDs, tempGUIDDocumentImages); err != nil {
+		return err
+	}
+
+	for _, imageRef := range tempRemoveDocImageFromGroup {
+		docImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, imageRef.DocumentImageGUID, timeAt)
+		_, err = svc.repoImageGroup.Create(docImageGroup)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (svc DocumentImageService) UnGroupDocumentImageGroup(shopID string, authUsername string, groupGUID string) error {
+	findDoc, err := svc.repoImageGroup.FindByGuid(shopID, groupGUID)
+
+	if err != nil {
+		return err
+	}
+
+	if svc.isDocumentImageGroupHasReferenced(findDoc) {
+		return errors.New("document has referenced")
+	}
+
+	createdAt := svc.timeNowFnc()
+	for _, imageRef := range *findDoc.ImageReferences {
+		docImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, imageRef.DocumentImageGUID, createdAt)
+		_, err = svc.repoImageGroup.Create(docImageGroup)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	svc.repoImageGroup.DeleteByGuidfixed(shopID, groupGUID)
+
+	return nil
+}
+
+func (svc DocumentImageService) ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable common.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error) {
+	docList, pagination, err := svc.repoImageGroup.FindPageFilterSort(shopID, filters, []string{"title"}, pageable.Q, pageable.Page, pageable.Limit, pageable.Sorts)
 
 	return docList, pagination, err
 }
 
-func (svc DocumentImageService) GetDocumentImageDocRefGroup(shopID string, docRef string) (models.DocumentImageGroup, error) {
-	docList, err := svc.Repo.GetDocumentImageGroup(shopID, docRef)
+func (svc DocumentImageService) GetDocumentImageDocRefGroup(shopID string, docImageGroupGUID string) (models.DocumentImageGroupInfo, error) {
+	doc, err := svc.repoImageGroup.FindByGuid(shopID, docImageGroupGUID)
 
-	return docList, err
+	if err != nil {
+		return models.DocumentImageGroupInfo{}, err
+	}
+
+	if doc.ID.IsZero() {
+		return models.DocumentImageGroupInfo{}, errors.New("document not found")
+	}
+
+	return doc.DocumentImageGroupInfo, nil
+}
+
+func (svc DocumentImageService) isDocumentImageGroupHasReferenced(doc models.DocumentImageGroupDoc) bool {
+	return doc.References != nil && len(*doc.References) > 0
+}
+
+func (svc DocumentImageService) isDocumentImageHasReferenced(doc models.DocumentImageDoc) bool {
+	return doc.References != nil && len(*doc.References) > 0
+}
+
+func (svc DocumentImageService) createImageGroupByDocumentImage(shopID string, authUsername string, documentImageGuid string, createdAt time.Time) models.DocumentImageGroupDoc {
+	newGuidFixedImageGroup := svc.newDocumentImageGroupGUIDFnc()
+	docDataImageGroup := models.DocumentImageGroupDoc{}
+	docDataImageGroup.ShopID = shopID
+	docDataImageGroup.GuidFixed = newGuidFixedImageGroup
+	docDataImageGroup.DocumentImageGroup = models.DocumentImageGroup{
+
+		References: &[]models.Reference{},
+		Tags:       &[]string{},
+		ImageReferences: &[]models.ImageReference{
+			{
+				XOrder:            1,
+				DocumentImageGUID: documentImageGuid,
+			},
+		},
+	}
+
+	docDataImageGroup.CreatedBy = authUsername
+	docDataImageGroup.CreatedAt = createdAt
+
+	return docDataImageGroup
+}
+
+func (svc DocumentImageService) clearCreateDocumentImageGroupByDocumentGUIDs(shopID string, docImageGroupGUIDs []string, docImageGUIDs []string) error {
+
+	err := svc.repoImageGroup.RemoveDocumentImageByDocumentImageGUIDs(shopID, docImageGUIDs)
+	if err != nil {
+		return err
+	}
+
+	err = svc.repoImageGroup.DeleteByGUIDsIsDocumentImageEmpty(shopID, docImageGroupGUIDs)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc DocumentImageService) clearUpdateDocumentImageGroupByDocumentGUIDs(shopID string, docGroupGUID string, clearDocImageGUIDs []string, docImageGUIDs []string) error {
+
+	err := svc.repoImageGroup.RemoveDocumentImageByDocumentImageGUIDsWithoutDocumentImageGroupGUID(shopID, docGroupGUID, docImageGUIDs)
+	if err != nil {
+		return err
+	}
+
+	err = svc.repoImageGroup.DeleteByGUIDsIsDocumentImageEmptyWithoutDocumentImageGroupGUID(shopID, docGroupGUID, clearDocImageGUIDs)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

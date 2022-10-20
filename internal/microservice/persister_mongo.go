@@ -3,12 +3,14 @@ package microservice
 import (
 	"context"
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/event"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -34,6 +36,7 @@ type IPersisterMongo interface {
 	SoftDeleteLastUpdate(model interface{}, username string, filter interface{}) error
 	SoftBatchDeleteByID(model interface{}, username string, ids []string) error
 	SoftDeleteByID(model interface{}, id string, username string) error
+	Transaction(queryFunc func() error) error
 	Cleanup() error
 	TestConnect() error
 	Healthcheck() error
@@ -108,14 +111,14 @@ func (pst *PersisterMongo) getClient() (*mongo.Database, error) {
 		return nil, err
 	}
 
-	// cmdMonitor := &event.CommandMonitor{
-	// 	Started: func(_ context.Context, evt *event.CommandStartedEvent) {
-	// 		log.Print(evt.Command)
-	// 	},
-	// }
+	cmdMonitor := &event.CommandMonitor{
+		Started: func(_ context.Context, evt *event.CommandStartedEvent) {
+			log.Print(evt.Command)
+		},
+	}
 
-	// client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr).SetMonitor(cmdMonitor))
-	client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr))
+	client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr).SetMonitor(cmdMonitor))
+	// client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr))
 	if err != nil {
 		return nil, err
 	}
@@ -682,4 +685,36 @@ func (pst *PersisterMongo) Healthcheck() error {
 		}
 		return nil
 	}
+}
+
+func (pst *PersisterMongo) Transaction(queryFunc func() error) error {
+	pst.getClient()
+	client := pst.client
+
+	session, err := client.StartSession()
+	if err != nil {
+		return err
+	}
+
+	if err := session.StartTransaction(); err != nil {
+		return err
+	}
+
+	if err := mongo.WithSession(pst.ctx, session, func(sc mongo.SessionContext) error {
+		err := queryFunc()
+
+		if err != nil {
+			return err
+		}
+
+		if err = session.CommitTransaction(sc); err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return err
+	}
+	session.EndSession(pst.ctx)
+
+	return nil
 }
