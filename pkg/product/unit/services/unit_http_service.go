@@ -2,7 +2,6 @@ package services
 
 import (
 	"errors"
-	"fmt"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/unit/models"
 	"smlcloudplatform/pkg/product/unit/repositories"
@@ -204,10 +203,8 @@ func (svc UnitHttpService) SearchUnitLimit(shopID string, langCode string, q str
 	}
 
 	if langCode != "" {
-		fmt.Println("lang...")
 		projectQuery["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
 	} else {
-		fmt.Println("empty...")
 		projectQuery["names"] = 1
 	}
 
