@@ -2665,6 +2665,11 @@ definitions:
       module:
         type: string
     type: object
+  models.RequestDocumentImageReject:
+    properties:
+      isreject:
+        type: boolean
+    type: object
   models.ResponseSuccess:
     properties:
       success:
@@ -3981,9 +3986,7 @@ paths:
         name: DocumentImage
         required: true
         schema:
-          items:
-            $ref: '#/definitions/models.DocumentImage'
-          type: array
+          $ref: '#/definitions/models.DocumentImage'
       responses:
         "200":
           description: OK
@@ -3998,15 +4001,15 @@ paths:
       summary: Create Document Image
       tags:
       - DocumentImage
-  /documentimage/{id}:
+  /documentimage/{guid}:
     delete:
       consumes:
       - application/json
       description: Delete Document Image
       parameters:
-      - description: ID
+      - description: document image guid
         in: path
-        name: id
+        name: guid
         required: true
         type: string
       responses:
@@ -4028,9 +4031,9 @@ paths:
       - application/json
       description: Get Document Image Infomation
       parameters:
-      - description: Id
+      - description: document image guid
         in: path
-        name: id
+        name: guid
         required: true
         type: string
       responses:
@@ -4052,9 +4055,9 @@ paths:
       - application/json
       description: Update Document Image
       parameters:
-      - description: ID
+      - description: document image guid
         in: path
-        name: id
+        name: guid
         required: true
         type: string
       - description: DocumentImage
@@ -4075,6 +4078,65 @@ paths:
       security:
       - AccessToken: []
       summary: Update Document Image
+      tags:
+      - DocumentImage
+  /documentimage/{guid}/reject:
+    put:
+      consumes:
+      - application/json
+      description: Update Reject Document Image
+      parameters:
+      - description: document image guid
+        in: path
+        name: guid
+        required: true
+        type: string
+      - description: Document Image Reject
+        in: body
+        name: RequestDocumentImageReject
+        required: true
+        schema:
+          $ref: '#/definitions/models.RequestDocumentImageReject'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: Update Reject Document Image
+      tags:
+      - DocumentImage
+  /documentimage/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Document Image
+      parameters:
+      - description: DocumentImage
+        in: body
+        name: DocumentImage
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.DocumentImage'
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: Create Document Image
       tags:
       - DocumentImage
   /documentimage/upload:
@@ -4179,7 +4241,7 @@ paths:
       - application/json
       description: Get Document Image Group
       parameters:
-      - description: GUID
+      - description: document image group guid
         in: path
         name: guid
         required: true
@@ -4202,7 +4264,7 @@ paths:
       - application/json
       description: Update Document Image Group
       parameters:
-      - description: GUID
+      - description: document image group guid
         in: path
         name: guid
         required: true
@@ -4226,7 +4288,7 @@ paths:
       - application/json
       description: Update Document Image Group
       parameters:
-      - description: GUID
+      - description: document image group guid
         in: path
         name: guid
         required: true
@@ -4250,7 +4312,7 @@ paths:
       - application/json
       description: Ungroup Document Image Group
       parameters:
-      - description: GUID
+      - description: document image group guid
         in: path
         name: guid
         required: true

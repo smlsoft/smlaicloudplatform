@@ -4,6 +4,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/models"
 	"smlcloudplatform/pkg/repositories"
+	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
@@ -62,6 +63,19 @@ func (repo DocumentImageRepository) FindInGUIDs(shopID string, docImageGUIDs []s
 	}
 
 	return docList, nil
+}
+
+func (repo DocumentImageRepository) UpdateReject(shopID string, authUsername string, updatedAt time.Time, docImageGUID string, isReject bool) error {
+	fillter := bson.M{
+		"shopid":    shopID,
+		"guidfixed": docImageGUID,
+	}
+
+	data := bson.M{
+		"$set": bson.M{"isreject": isReject, "updatedby": authUsername, "updatedat": updatedAt},
+	}
+
+	return repo.pst.Update(models.DocumentImageDoc{}, fillter, data)
 }
 
 /*

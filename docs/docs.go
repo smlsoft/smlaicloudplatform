@@ -535,6 +535,48 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "$ref": "#/definitions/models.DocumentImage"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimage/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Document Image",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImage"
+                ],
+                "summary": "Create Document Image",
+                "parameters": [
+                    {
+                        "description": "DocumentImage",
+                        "name": "DocumentImage",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/models.DocumentImage"
@@ -619,7 +661,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/documentimage/{id}": {
+        "/documentimage/{guid}": {
             "get": {
                 "security": [
                     {
@@ -637,8 +679,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Id",
-                        "name": "id",
+                        "description": "document image guid",
+                        "name": "guid",
                         "in": "path",
                         "required": true
                     }
@@ -675,8 +717,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID",
-                        "name": "id",
+                        "description": "document image guid",
+                        "name": "guid",
                         "in": "path",
                         "required": true
                     },
@@ -722,10 +764,59 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID",
-                        "name": "id",
+                        "description": "document image guid",
+                        "name": "guid",
                         "in": "path",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimage/{guid}/reject": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Reject Document Image",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImage"
+                ],
+                "summary": "Update Reject Document Image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document image guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Document Image Reject",
+                        "name": "RequestDocumentImageReject",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RequestDocumentImageReject"
+                        }
                     }
                 ],
                 "responses": {
@@ -852,7 +943,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "GUID",
+                        "description": "document image group guid",
                         "name": "guid",
                         "in": "path",
                         "required": true
@@ -889,7 +980,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "GUID",
+                        "description": "document image group guid",
                         "name": "guid",
                         "in": "path",
                         "required": true
@@ -928,7 +1019,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "GUID",
+                        "description": "document image group guid",
                         "name": "guid",
                         "in": "path",
                         "required": true
@@ -967,7 +1058,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "GUID",
+                        "description": "document image group guid",
                         "name": "guid",
                         "in": "path",
                         "required": true
@@ -12237,6 +12328,14 @@ const docTemplate = `{
                 },
                 "module": {
                     "type": "string"
+                }
+            }
+        },
+        "models.RequestDocumentImageReject": {
+            "type": "object",
+            "properties": {
+                "isreject": {
+                    "type": "boolean"
                 }
             }
         },

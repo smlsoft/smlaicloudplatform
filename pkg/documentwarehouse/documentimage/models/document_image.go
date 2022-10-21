@@ -72,6 +72,10 @@ type DocumentImagePageResponse struct {
 	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
 }
 
+type RequestDocumentImageReject struct {
+	IsReject bool `json:"isreject" bson:"isreject"`
+}
+
 type DocumentImageStatus struct {
 	DocGUIDRef string `json:"docguidref" bson:"docguidref"`
 	Status     int8   `json:"status" bson:"status"`

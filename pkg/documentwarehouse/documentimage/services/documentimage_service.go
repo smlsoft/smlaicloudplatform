@@ -21,6 +21,7 @@ type IDocumentImageService interface {
 	CreateDocumentImage(shopID string, authUsername string, doc models.DocumentImage) (string, error)
 	BulkCreateDocumentImage(shopID string, authUsername string, docs []models.DocumentImage) error
 	UpdateDocumentImage(shopID string, guid string, authUsername string, doc models.DocumentImage) error
+	UpdateDocumentImageReject(shopID string, guid string, authUsername string, isReject bool) error
 	DeleteDocumentImage(shopID string, authUsername string, imageGUID string) error
 
 	InfoDocumentImage(shopID string, guid string) (models.DocumentImageInfo, error)
@@ -180,6 +181,34 @@ func (svc DocumentImageService) UpdateDocumentImage(shopID string, guid string, 
 
 	findDoc.References = &[]models.Reference{}
 
+	findDoc.UpdatedBy = authUsername
+	findDoc.UpdatedAt = time.Now()
+
+	err = svc.repoImage.Update(shopID, guid, findDoc)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (svc DocumentImageService) UpdateDocumentImageReject(shopID string, guid string, authUsername string, isReject bool) error {
+
+	findDoc, err := svc.repoImage.FindByGuid(shopID, guid)
+
+	if svc.isDocumentImageHasReferenced(findDoc) {
+		return errors.New("document has referenced")
+	}
+
+	if err != nil {
+		return err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return errors.New("document not found")
+	}
+
+	findDoc.IsReject = isReject
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
