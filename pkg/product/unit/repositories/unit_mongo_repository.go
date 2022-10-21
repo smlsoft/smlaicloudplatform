@@ -14,6 +14,7 @@ type IUnitRepository interface {
 	CreateInBatch(docList []models.UnitDoc) error
 	Update(shopID string, guid string, doc models.UnitDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
+	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.UnitInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.UnitDoc, error)
 
