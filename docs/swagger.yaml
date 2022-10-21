@@ -2065,7 +2065,6 @@ definitions:
         type: boolean
       name:
         maxLength: 255
-        minLength: 1
         type: string
     required:
     - code
@@ -3658,6 +3657,7 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+        uniqueItems: true
       unitcode:
         maxLength: 100
         type: string
@@ -8489,6 +8489,32 @@ paths:
       tags:
       - Synchronize
   /unit:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Unit
+      parameters:
+      - description: Unit GUIDs
+        in: body
+        name: Unit
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
     get:
       consumes:
       - application/json

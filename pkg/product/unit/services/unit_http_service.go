@@ -19,6 +19,7 @@ type IUnitHttpService interface {
 	UpdateUnit(shopID string, guid string, authUsername string, doc models.Unit) error
 	UpdateFieldUnit(shopID string, guid string, authUsername string, doc models.Unit) error
 	DeleteUnit(shopID string, guid string, authUsername string) error
+	DeleteUnitByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoUnit(shopID string, guid string) (models.UnitInfo, error)
 	SearchUnit(shopID string, q string, page int, limit int, sort map[string]int) ([]models.UnitInfo, mongopagination.PaginationData, error)
 	SearchUnitLimit(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.UnitInfo, int, error)
@@ -153,6 +154,20 @@ func (svc UnitHttpService) DeleteUnit(shopID string, guid string, authUsername s
 	}
 
 	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc UnitHttpService) DeleteUnitByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+
+	deleteFilterQuery := map[string]interface{}{
+		"guidfixed": bson.M{"$in": GUIDs},
+	}
+
+	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}

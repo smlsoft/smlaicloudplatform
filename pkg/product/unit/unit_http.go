@@ -44,6 +44,7 @@ func (h UnitHttp) RouteSetup() {
 	h.ms.PUT("/unit/:id", h.UpdateUnit)
 	h.ms.PATCH("/unit/:id", h.UpdateFieldUnit)
 	h.ms.DELETE("/unit/:id", h.DeleteUnit)
+	h.ms.DELETE("/unit", h.DeleteByGUIDs)
 }
 
 // Create Unit godoc
@@ -183,42 +184,6 @@ func (h UnitHttp) UpdateFieldUnit(ctx microservice.IContext) error {
 	}
 
 	ctx.Response(http.StatusCreated, common.ApiResponse{
-		Success: true,
-		ID:      id,
-	})
-
-	return nil
-}
-
-// Delete Unit godoc
-// @Description Delete Unit
-// @Tags		Unit
-// @Param		id  path      string  true  "Unit ID"
-// @Accept 		json
-// @Success		200	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /unit/{id} [delete]
-func (h UnitHttp) DeleteUnit(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-	authUsername := userInfo.Username
-
-	id := ctx.Param("id")
-
-	if len(id) < 1 {
-		ctx.ResponseError(http.StatusBadRequest, "unit guid is empty")
-		return nil
-	}
-
-	err := h.svc.DeleteUnit(shopID, id, authUsername)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		ID:      id,
 	})
@@ -370,6 +335,80 @@ func (h UnitHttp) SaveBulk(ctx microservice.IContext) error {
 			BulkImport: bulkResponse,
 		},
 	)
+
+	return nil
+}
+
+// Delete Unit godoc
+// @Description Delete Unit
+// @Tags		Unit
+// @Param		id  path      string  true  "Unit ID"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /unit/{id} [delete]
+func (h UnitHttp) DeleteUnit(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	id := ctx.Param("id")
+
+	if len(id) < 1 {
+		ctx.ResponseError(http.StatusBadRequest, "unit guid is empty")
+		return nil
+	}
+
+	err := h.svc.DeleteUnit(shopID, id, authUsername)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		ID:      id,
+	})
+
+	return nil
+}
+
+// Delete Unit By GUIDs godoc
+// @Description Delete Unit
+// @Tags		Unit
+// @Param		Unit  body      []string  true  "Unit GUIDs"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /unit [delete]
+func (h UnitHttp) DeleteByGUIDs(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	docReq := []string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.DeleteUnitByGUIDs(shopID, authUsername, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+	})
 
 	return nil
 }
