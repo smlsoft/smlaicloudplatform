@@ -74,6 +74,7 @@ definitions:
       pagination: {}
       success:
         type: boolean
+      total: {}
     type: object
   models.AuthResponse:
     properties:
@@ -3677,6 +3678,23 @@ definitions:
         type: array
       unitcode:
         type: string
+      unitname1:
+        maxLength: 255
+        type: string
+      unitname2:
+        maxLength: 255
+        type: string
+      unitname3:
+        maxLength: 255
+        type: string
+      unitname4:
+        maxLength: 255
+        type: string
+      unitname5:
+        maxLength: 255
+        type: string
+    required:
+    - unitname1
     type: object
 info:
   contact:
@@ -8501,11 +8519,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: 'Add '
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: 'Add '
         in: query
         name: limit
         type: integer
@@ -8595,6 +8613,35 @@ paths:
       - AccessToken: []
       tags:
       - Unit
+    patch:
+      consumes:
+      - application/json
+      description: Update Unit
+      parameters:
+      - description: Unit ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Unit
+        in: body
+        name: Unit
+        required: true
+        schema:
+          $ref: '#/definitions/smlcloudplatform_pkg_product_unit_models.Unit'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
     put:
       consumes:
       - application/json
@@ -8643,6 +8690,39 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
+  /unit/limit:
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: skip
+        in: query
+        name: skip
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
         "401":
           description: Unauthorized
           schema:
