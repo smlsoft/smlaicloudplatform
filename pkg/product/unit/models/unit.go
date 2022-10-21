@@ -10,9 +10,9 @@ const unitCollectionName = "units"
 
 type Unit struct {
 	models.PartitionIdentity `bson:"inline"`
-	UnitCode                 string `json:"unitcode" bson:"unitcode" `
+	UnitCode                 string `json:"unitcode" bson:"unitcode" validate:"required,max=100"`
 	models.UnitName          `bson:"inline"`
-	Names                    *[]models.NameX `json:"names" bson:"names"`
+	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,dive,unique=Code"`
 }
 
 type UnitInfo struct {

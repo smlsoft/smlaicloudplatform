@@ -7739,13 +7739,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Add ",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Add ",
                         "name": "limit",
                         "in": "query"
                     }
@@ -7841,6 +7841,59 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/unit/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
                         }
                     },
                     "401": {
@@ -7961,6 +8014,52 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Unit",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Unit ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Unit",
+                        "name": "Unit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_product_unit_models.Unit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
@@ -8501,7 +8600,8 @@ const docTemplate = `{
                 "pagination": {},
                 "success": {
                     "type": "boolean"
-                }
+                },
+                "total": {}
             }
         },
         "models.AuthResponse": {
@@ -8654,8 +8754,7 @@ const docTemplate = `{
         "models.Barcode": {
             "type": "object",
             "required": [
-                "name1",
-                "unitname1"
+                "name1"
             ],
             "properties": {
                 "barcode": {
@@ -8727,24 +8826,19 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "unitname1": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname2": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname3": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname4": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname5": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 }
             }
         },
@@ -11428,14 +11522,16 @@ const docTemplate = `{
             "properties": {
                 "code": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "isauto": {
                     "type": "boolean"
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "minLength": 1
                 }
             }
         },
@@ -13508,9 +13604,6 @@ const docTemplate = `{
         },
         "models.UnitUse": {
             "type": "object",
-            "required": [
-                "unitname1"
-            ],
             "properties": {
                 "description1": {
                     "type": "string",
@@ -13551,24 +13644,19 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "unitname1": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname2": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname3": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname4": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname5": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 }
             }
         },
@@ -13757,37 +13845,33 @@ const docTemplate = `{
         },
         "smlcloudplatform_pkg_product_inventory_models.Unit": {
             "type": "object",
-            "required": [
-                "unitname1"
-            ],
             "properties": {
                 "unitcode": {
                     "type": "string"
                 },
                 "unitname1": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname2": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname3": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname4": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname5": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 }
             }
         },
         "smlcloudplatform_pkg_product_unit_models.Unit": {
             "type": "object",
+            "required": [
+                "names",
+                "unitcode"
+            ],
             "properties": {
                 "names": {
                     "type": "array",
@@ -13796,6 +13880,22 @@ const docTemplate = `{
                     }
                 },
                 "unitcode": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "unitname1": {
+                    "type": "string"
+                },
+                "unitname2": {
+                    "type": "string"
+                },
+                "unitname3": {
+                    "type": "string"
+                },
+                "unitname4": {
+                    "type": "string"
+                },
+                "unitname5": {
                     "type": "string"
                 }
             }

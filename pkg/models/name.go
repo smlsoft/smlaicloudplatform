@@ -9,11 +9,11 @@ type Name struct {
 }
 
 type UnitName struct {
-	UnitName1 string  `json:"unitname1" bson:"unitname1" gorm:"unitname1" validate:"required,max=255"`
-	UnitName2 *string `json:"unitname2,omitempty" bson:"unitname2,omitempty" gorm:"unitname2,omitempty" validate:"omitempty,max=255"`
-	UnitName3 *string `json:"unitname3,omitempty" bson:"unitname3,omitempty" gorm:"unitname3,omitempty" validate:"omitempty,max=255"`
-	UnitName4 *string `json:"unitname4,omitempty" bson:"unitname4,omitempty" gorm:"unitname4,omitempty" validate:"omitempty,max=255"`
-	UnitName5 *string `json:"unitname5,omitempty" bson:"unitname5,omitempty" gorm:"unitname5,omitempty" validate:"omitempty,max=255"`
+	UnitName1 string  `json:"unitname1" bson:"unitname1" gorm:"unitname1"`
+	UnitName2 *string `json:"unitname2,omitempty" bson:"unitname2,omitempty" gorm:"unitname2,omitempty"`
+	UnitName3 *string `json:"unitname3,omitempty" bson:"unitname3,omitempty" gorm:"unitname3,omitempty"`
+	UnitName4 *string `json:"unitname4,omitempty" bson:"unitname4,omitempty" gorm:"unitname4,omitempty"`
+	UnitName5 *string `json:"unitname5,omitempty" bson:"unitname5,omitempty" gorm:"unitname5,omitempty"`
 }
 
 type Description struct {
@@ -25,7 +25,7 @@ type Description struct {
 }
 
 type NameX struct {
-	Code   *string `json:"code" bson:"code" validate:"required,max=255"`
-	Name   *string `json:"name" bson:"name" validate:"required,max=255"`
+	Code   *string `json:"code" bson:"code" validate:"required,min=1,max=255"`
+	Name   *string `json:"name" bson:"name" validate:"required,min=1,max=255"`
 	IsAuto bool    `json:"isauto" bson:"isauto"`
 }

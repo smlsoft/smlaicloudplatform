@@ -68,6 +68,11 @@ func (h UnitHttp) CreateUnit(ctx microservice.IContext) error {
 		return err
 	}
 
+	if err = ctx.Validate(docReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
 	idx, err := h.svc.CreateUnit(shopID, authUsername, *docReq)
 
 	if err != nil {
@@ -98,12 +103,22 @@ func (h UnitHttp) UpdateUnit(ctx microservice.IContext) error {
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
+	if len(id) < 1 {
+		ctx.ResponseError(http.StatusBadRequest, "guid is empty")
+		return nil
+	}
+
 	input := ctx.ReadInput()
 
 	docReq := &models.Unit{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(docReq); err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
@@ -139,12 +154,23 @@ func (h UnitHttp) UpdateFieldUnit(ctx microservice.IContext) error {
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
+
+	if len(id) < 1 {
+		ctx.ResponseError(http.StatusBadRequest, "guid is empty")
+		return nil
+	}
+
 	input := ctx.ReadInput()
 
 	docReq := &models.Unit{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(docReq); err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
@@ -180,6 +206,11 @@ func (h UnitHttp) DeleteUnit(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
+	if len(id) < 1 {
+		ctx.ResponseError(http.StatusBadRequest, "unit guid is empty")
+		return nil
+	}
+
 	err := h.svc.DeleteUnit(shopID, id, authUsername)
 
 	if err != nil {
@@ -209,6 +240,11 @@ func (h UnitHttp) InfoUnit(ctx microservice.IContext) error {
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
+
+	if len(id) < 1 {
+		ctx.ResponseError(http.StatusBadRequest, "guid is empty")
+		return nil
+	}
 
 	h.ms.Logger.Debugf("Get Unit %v", id)
 	doc, err := h.svc.InfoUnit(shopID, id)
@@ -263,13 +299,13 @@ func (h UnitHttp) SearchUnit(ctx microservice.IContext) error {
 // @Description get struct array by ID
 // @Tags		Unit
 // @Param		q		query	string		false  "Search Value"
-// @Param		skip	query	integer		false  "skip"
+// @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /unit/limit [get]
+// @Router /unit/list [get]
 func (h UnitHttp) SearchUnitLimit(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
