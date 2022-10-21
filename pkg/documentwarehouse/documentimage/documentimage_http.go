@@ -446,7 +446,7 @@ func (h DocumentImageHttp) UpdateDocumentImageStatusByDocumentRef(ctx microservi
 // Delete Document Image godoc
 // @Summary		Delete Document Image
 // @Description Delete Document Image
-// @Tags		GL
+// @Tags		DocumentImage
 // @Param		guid  path      string  true  "document image guid"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID

@@ -2,6 +2,7 @@ package models
 
 import (
 	"smlcloudplatform/pkg/models"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -14,11 +15,17 @@ type DocumentImageGroup struct {
 	References      *[]Reference      `json:"references,omitempty" bson:"references,omitempty"`
 	Tags            *[]string         `json:"tags,omitempty" bson:"tags,omitempty"`
 	ImageReferences *[]ImageReference `json:"imagereferences,omitempty" bson:"imagereferences,omitempty"`
+	UploadedBy      string            `json:"uploadedby" bson:"uploadedby"`
+	UploadedAt      time.Time         `json:"uploadedat" bson:"uploadedat"`
 }
 
 type ImageReference struct {
-	XOrder            int    `json:"xorder" bson:"xorder"`
-	DocumentImageGUID string `json:"documentimageguid" bson:"documentimageguid"`
+	XOrder            int       `json:"xorder" bson:"xorder"`
+	DocumentImageGUID string    `json:"documentimageguid" bson:"documentimageguid"`
+	ImageURI          string    `json:"imageuri" bson:"imageuri"`
+	UploadedBy        string    `json:"uploadedby" bson:"uploadedby"`
+	UploadedAt        time.Time `json:"uploadedat" bson:"uploadedat"`
+	MetaFileAt        time.Time `json:"metafileat" bson:"metafileat"`
 }
 
 func (DocumentImageGroup) CollectionName() string {
