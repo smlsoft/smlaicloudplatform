@@ -664,6 +664,23 @@ definitions:
       suggestcode:
         type: string
     type: object
+  models.Color:
+    properties:
+      code:
+        type: string
+      colorselect:
+        type: string
+      colorsystem:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - names
+    type: object
   models.Comment:
     properties:
       comment:
@@ -3656,6 +3673,7 @@ definitions:
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
         uniqueItems: true
       unitcode:
@@ -3941,6 +3959,166 @@ paths:
       summary: รับข้อมูล sms
       tags:
       - SMS
+  /color:
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Color
+    post:
+      consumes:
+      - application/json
+      description: Create Color
+      parameters:
+      - description: Color
+        in: body
+        name: Color
+        required: true
+        schema:
+          $ref: '#/definitions/models.Color'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Color
+  /color/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Color
+      parameters:
+      - description: Color ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Color
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Color ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Color
+    put:
+      consumes:
+      - application/json
+      description: Update Color
+      parameters:
+      - description: Color ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Color
+        in: body
+        name: Color
+        required: true
+        schema:
+          $ref: '#/definitions/models.Color'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Color
+  /color/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Color
+      parameters:
+      - description: Color
+        in: body
+        name: Color
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Color'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Color
   /create-shop:
     post:
       consumes:

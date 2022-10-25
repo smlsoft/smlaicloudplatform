@@ -14,6 +14,7 @@ import (
 	"smlcloudplatform/pkg/member"
 	"smlcloudplatform/pkg/paymentmaster"
 	"smlcloudplatform/pkg/product/category"
+	"smlcloudplatform/pkg/product/color"
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
 	"smlcloudplatform/pkg/product/optionpattern"
@@ -135,6 +136,7 @@ func main() {
 		journalreport.NewJournalReportHttp(ms, cfg),
 
 		optionpattern.NewOptionPatternHttp(ms, cfg),
+		color.NewColorHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)
