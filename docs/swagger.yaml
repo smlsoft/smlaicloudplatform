@@ -644,15 +644,26 @@ definitions:
       itemunit:
         type: string
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       price:
         type: number
       qty:
@@ -663,6 +674,9 @@ definitions:
         type: boolean
       suggestcode:
         type: string
+    required:
+    - name1
+    - names
     type: object
   models.Color:
     properties:
@@ -1455,15 +1469,26 @@ definitions:
       maxselect:
         type: integer
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       optiondetails:
         items:
           $ref: '#/definitions/models.OptionDetail'
@@ -1472,6 +1497,9 @@ definitions:
         type: boolean
       xorder:
         type: integer
+    required:
+    - name1
+    - names
     type: object
   models.InventoryOptionMainImport:
     properties:
@@ -1488,15 +1516,26 @@ definitions:
       maxselect:
         type: integer
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       optiondetails:
         items:
           $ref: '#/definitions/models.OptionDetail'
@@ -1505,6 +1544,9 @@ definitions:
         type: boolean
       xorder:
         type: integer
+    required:
+    - name1
+    - names
     type: object
   models.InventoryOptionMainInfo:
     properties:
@@ -1523,15 +1565,26 @@ definitions:
       maxselect:
         type: integer
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       optiondetails:
         items:
           $ref: '#/definitions/models.OptionDetail'
@@ -1540,6 +1593,9 @@ definitions:
         type: boolean
       xorder:
         type: integer
+    required:
+    - name1
+    - names
     type: object
   models.InventoryOptionPageResponse:
     properties:
@@ -2102,15 +2158,26 @@ definitions:
       maxselect:
         type: integer
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       optiondetails:
         items:
           $ref: '#/definitions/models.OptionDetail'
@@ -2119,6 +2186,9 @@ definitions:
         type: boolean
       xorder:
         type: integer
+    required:
+    - name1
+    - names
     type: object
   models.OptionDetail:
     properties:
@@ -2129,17 +2199,31 @@ definitions:
       image:
         type: string
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       optiondetailcode:
         type: string
+    required:
+    - name1
+    - names
     type: object
   models.OptionPattern:
     properties:
@@ -2158,6 +2242,12 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       optionpatterndetails:
         items:
           $ref: '#/definitions/models.OptionPatternDetail'
@@ -2166,6 +2256,7 @@ definitions:
         type: string
     required:
     - name1
+    - names
     type: object
   models.OptionPatternDetail:
     properties:
@@ -2182,15 +2273,26 @@ definitions:
       maxselect:
         type: integer
       name1:
+        maxLength: 255
         type: string
       name2:
+        maxLength: 255
         type: string
       name3:
+        maxLength: 255
         type: string
       name4:
+        maxLength: 255
         type: string
       name5:
+        maxLength: 255
         type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       optioncode:
         type: string
       optiondetails:
@@ -2201,6 +2303,9 @@ definitions:
         type: boolean
       xorder:
         type: integer
+    required:
+    - name1
+    - names
     type: object
   models.PaginationDataResponse:
     properties:

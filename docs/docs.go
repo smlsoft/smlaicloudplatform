@@ -9699,6 +9699,10 @@ const docTemplate = `{
         },
         "models.Choice": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "barcode": {
                     "type": "string"
@@ -9719,19 +9723,32 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "price": {
                     "type": "number"
@@ -10885,6 +10902,10 @@ const docTemplate = `{
         },
         "models.InventoryOptionMain": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "choices": {
                     "type": "array",
@@ -10905,19 +10926,32 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "optiondetails": {
                     "type": "array",
@@ -10935,6 +10969,10 @@ const docTemplate = `{
         },
         "models.InventoryOptionMainImport": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "choices": {
                     "type": "array",
@@ -10955,19 +10993,32 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "optiondetails": {
                     "type": "array",
@@ -10985,6 +11036,10 @@ const docTemplate = `{
         },
         "models.InventoryOptionMainInfo": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "choices": {
                     "type": "array",
@@ -11008,19 +11063,32 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "optiondetails": {
                     "type": "array",
@@ -11861,6 +11929,10 @@ const docTemplate = `{
         },
         "models.Option": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "choices": {
                     "type": "array",
@@ -11881,19 +11953,32 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "optiondetails": {
                     "type": "array",
@@ -11911,6 +11996,10 @@ const docTemplate = `{
         },
         "models.OptionDetail": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "choicedetails": {
                     "type": "array",
@@ -11922,19 +12011,32 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "optiondetailcode": {
                     "type": "string"
@@ -11944,7 +12046,8 @@ const docTemplate = `{
         "models.OptionPattern": {
             "type": "object",
             "required": [
-                "name1"
+                "name1",
+                "names"
             ],
             "properties": {
                 "name1": {
@@ -11967,6 +12070,14 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "optionpatterndetails": {
                     "type": "array",
                     "items": {
@@ -11980,6 +12091,10 @@ const docTemplate = `{
         },
         "models.OptionPatternDetail": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "choices": {
                     "type": "array",
@@ -12000,19 +12115,32 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "optioncode": {
                     "type": "string"
