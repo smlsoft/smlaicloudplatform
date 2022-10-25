@@ -9959,6 +9959,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.ImageReference"
                     }
                 },
+                "isreject": {
+                    "type": "boolean"
+                },
                 "references": {
                     "type": "array",
                     "items": {
@@ -10173,6 +10176,9 @@ const docTemplate = `{
                 },
                 "imageuri": {
                     "type": "string"
+                },
+                "isreject": {
+                    "type": "boolean"
                 },
                 "metafileat": {
                     "type": "string"

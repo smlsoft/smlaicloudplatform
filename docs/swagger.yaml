@@ -740,6 +740,8 @@ definitions:
         items:
           $ref: '#/definitions/models.ImageReference'
         type: array
+      isreject:
+        type: boolean
       references:
         items:
           $ref: '#/definitions/models.Reference'
@@ -880,6 +882,8 @@ definitions:
         type: string
       imageuri:
         type: string
+      isreject:
+        type: boolean
       metafileat:
         type: string
       uploadedat:
