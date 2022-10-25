@@ -743,17 +743,7 @@ func (h DocumentImageHttp) UngroupDocumentImageGroup(ctx microservice.IContext) 
 
 	docImageGroupGUID := ctx.Param("guid")
 
-	input := ctx.ReadInput()
-
-	docImages := &[]models.ImageReference{}
-
-	err := json.Unmarshal([]byte(input), &docImages)
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	err = h.service.UnGroupDocumentImageGroup(userInfo.ShopID, userInfo.Username, docImageGroupGUID)
+	err := h.service.UnGroupDocumentImageGroup(userInfo.ShopID, userInfo.Username, docImageGroupGUID)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
