@@ -2227,6 +2227,8 @@ definitions:
     type: object
   models.OptionPattern:
     properties:
+      colorcode:
+        type: string
       name1:
         maxLength: 255
         type: string

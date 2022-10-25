@@ -12050,6 +12050,9 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
+                "colorcode": {
+                    "type": "string"
+                },
                 "name1": {
                     "type": "string",
                     "maxLength": 255
