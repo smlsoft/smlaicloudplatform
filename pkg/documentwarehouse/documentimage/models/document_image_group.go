@@ -17,15 +17,20 @@ type DocumentImageGroup struct {
 	ImageReferences *[]ImageReference `json:"imagereferences,omitempty" bson:"imagereferences,omitempty"`
 	UploadedBy      string            `json:"uploadedby" bson:"uploadedby"`
 	UploadedAt      time.Time         `json:"uploadedat" bson:"uploadedat"`
+	IsReject        bool              `json:"isreject" bson:"isreject"`
 }
 
+type ImageReferenceBody struct {
+	XOrder            int    `json:"xorder" bson:"xorder"`
+	DocumentImageGUID string `json:"documentimageguid" bson:"documentimageguid"`
+}
 type ImageReference struct {
-	XOrder            int       `json:"xorder" bson:"xorder"`
-	DocumentImageGUID string    `json:"documentimageguid" bson:"documentimageguid"`
-	ImageURI          string    `json:"imageuri" bson:"imageuri"`
-	UploadedBy        string    `json:"uploadedby" bson:"uploadedby"`
-	UploadedAt        time.Time `json:"uploadedat" bson:"uploadedat"`
-	MetaFileAt        time.Time `json:"metafileat" bson:"metafileat"`
+	ImageReferenceBody `bson:",inline"`
+	ImageURI           string    `json:"imageuri" bson:"imageuri"`
+	IsReject           bool      `json:"isreject" bson:"isreject"`
+	UploadedBy         string    `json:"uploadedby" bson:"uploadedby"`
+	UploadedAt         time.Time `json:"uploadedat" bson:"uploadedat"`
+	MetaFileAt         time.Time `json:"metafileat" bson:"metafileat"`
 }
 
 func (DocumentImageGroup) CollectionName() string {

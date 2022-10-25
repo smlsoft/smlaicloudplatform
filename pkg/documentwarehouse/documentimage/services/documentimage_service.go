@@ -35,7 +35,7 @@ type IDocumentImageService interface {
 	CreateDocumentImageGroup(shopID string, authUsername string, docImageGroup models.DocumentImageGroup) (string, error)
 	GetDocumentImageDocRefGroup(shopID string, docImageGroupGUID string) (models.DocumentImageGroupInfo, error)
 	UpdateDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImageGroup models.DocumentImageGroup) error
-	UpdateImageReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImages []models.ImageReference) error
+	UpdateImageReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImages []models.ImageReferenceBody) error
 	UnGroupDocumentImageGroup(shopID string, authUsername string, groupGUID string) error
 	ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable common.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
 }
@@ -92,12 +92,14 @@ func (svc DocumentImageService) CreateDocumentImage(shopID string, authUsername 
 
 	// image group
 	docImageRef := models.ImageReference{
-		XOrder:            1,
-		DocumentImageGUID: documentImageGUID,
-		ImageURI:          doc.ImageURI,
-		UploadedBy:        authUsername,
-		UploadedAt:        createdAt,
-		MetaFileAt:        doc.MetaFileAt,
+		ImageReferenceBody: models.ImageReferenceBody{
+			XOrder:            1,
+			DocumentImageGUID: documentImageGUID,
+		},
+		ImageURI:   doc.ImageURI,
+		UploadedBy: authUsername,
+		UploadedAt: createdAt,
+		MetaFileAt: doc.MetaFileAt,
 	}
 	docDataImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, docImageRef, doc.ImageURI, createdAt)
 
@@ -152,12 +154,14 @@ func (svc DocumentImageService) BulkCreateDocumentImage(shopID string, authUsern
 
 		// image group
 		docImageRef := models.ImageReference{
-			XOrder:            1,
-			DocumentImageGUID: documentImageGUID,
-			ImageURI:          doc.ImageURI,
-			UploadedBy:        authUsername,
-			UploadedAt:        createdAt,
-			MetaFileAt:        doc.MetaFileAt,
+			ImageReferenceBody: models.ImageReferenceBody{
+				XOrder:            1,
+				DocumentImageGUID: documentImageGUID,
+			},
+			ImageURI:   doc.ImageURI,
+			UploadedBy: authUsername,
+			UploadedAt: createdAt,
+			MetaFileAt: doc.MetaFileAt,
 		}
 
 		docDataImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, docImageRef, doc.ImageURI, createdAt)
@@ -415,7 +419,7 @@ func (svc DocumentImageService) UploadDocumentImage(shopID string, authUsername 
 
 // Group
 
-func (svc DocumentImageService) getDocumentImageNotReferencedInGroup(shopID string, currentGroupGUID string, docImageRefs []models.ImageReference) ([]models.ImageReference, []string, error) {
+func (svc DocumentImageService) getDocumentImageNotReferencedInGroup(shopID string, currentGroupGUID string, docImageRefs []models.ImageReferenceBody) ([]models.ImageReference, []string, error) {
 
 	docImageGUIDs := []string{}
 
@@ -433,7 +437,7 @@ func (svc DocumentImageService) getDocumentImageNotReferencedInGroup(shopID stri
 
 	for _, imageGroup := range findGroups {
 		for _, imageRef := range *imageGroup.ImageReferences {
-			_, isFound := lo.Find[models.ImageReference](docImageRefs, func(tempImageRef models.ImageReference) bool {
+			_, isFound := lo.Find[models.ImageReferenceBody](docImageRefs, func(tempImageRef models.ImageReferenceBody) bool {
 				return imageRef.DocumentImageGUID == tempImageRef.DocumentImageGUID
 			})
 
@@ -467,7 +471,11 @@ func (svc DocumentImageService) CreateDocumentImageGroup(shopID string, authUser
 
 	docImageGroupData := models.DocumentImageGroupDoc{}
 
-	passDocImagesRef, docImageGroupGUIDs, err := svc.getDocumentImageNotReferencedInGroup(shopID, "", *docImageGroup.ImageReferences)
+	tempImageRefs := lo.Map[models.ImageReference, models.ImageReferenceBody](*docImageGroup.ImageReferences, func(temp models.ImageReference, index int) models.ImageReferenceBody {
+		return temp.ImageReferenceBody
+	})
+
+	passDocImagesRef, docImageGroupGUIDs, err := svc.getDocumentImageNotReferencedInGroup(shopID, "", tempImageRefs)
 	if err != nil {
 		return "", err
 	}
@@ -491,10 +499,16 @@ func (svc DocumentImageService) CreateDocumentImageGroup(shopID string, authUser
 
 	docImageGroupData.ImageReferences = &passDocImagesRef
 
+	groupIsReject := false
 	tempGUIDDocumentImages := []string{}
 	for _, imageRef := range passDocImagesRef {
 		tempGUIDDocumentImages = append(tempGUIDDocumentImages, imageRef.DocumentImageGUID)
+		if imageRef.IsReject {
+			groupIsReject = true
+		}
 	}
+
+	docImageGroup.IsReject = groupIsReject
 
 	err = svc.clearCreateDocumentImageGroupByDocumentGUIDs(shopID, docImageGroupGUIDs, tempGUIDDocumentImages)
 	if err != nil {
@@ -531,7 +545,11 @@ func (svc DocumentImageService) UpdateDocumentImageGroup(shopID string, authUser
 
 	docImages := *docImageGroup.ImageReferences
 
-	passDocImagesRef, docImageGroupGUIDs, err := svc.getDocumentImageNotReferencedInGroup(shopID, groupGUID, docImages)
+	tempImageRefs := lo.Map[models.ImageReference, models.ImageReferenceBody](*docImageGroup.ImageReferences, func(temp models.ImageReference, index int) models.ImageReferenceBody {
+		return temp.ImageReferenceBody
+	})
+
+	passDocImagesRef, docImageGroupGUIDs, err := svc.getDocumentImageNotReferencedInGroup(shopID, groupGUID, tempImageRefs)
 	if err != nil {
 		return err
 	}
@@ -558,13 +576,15 @@ func (svc DocumentImageService) UpdateDocumentImageGroup(shopID string, authUser
 	}
 
 	tempGUIDDocumentImages := []string{}
-	for _, imageRef := range updateDocImagesRef {
-		tempGUIDDocumentImages = append(tempGUIDDocumentImages, imageRef.DocumentImageGUID)
-	}
-
+	groupIsReject := false
 	tempDocImageRef := []models.ImageReference{}
+
 	for _, docImageRef := range updateDocImagesRef {
+		tempGUIDDocumentImages = append(tempGUIDDocumentImages, docImageRef.DocumentImageGUID)
 		tempDocImageRef = append(tempDocImageRef, docImageRef)
+		if docImageRef.IsReject {
+			groupIsReject = true
+		}
 	}
 
 	timeAt := svc.timeNowFnc()
@@ -573,6 +593,8 @@ func (svc DocumentImageService) UpdateDocumentImageGroup(shopID string, authUser
 	findDoc.ImageReferences = &tempDocImageRef
 	findDoc.UpdatedAt = timeAt
 	findDoc.UpdatedBy = authUsername
+
+	findDoc.IsReject = groupIsReject
 
 	if err = svc.repoImageGroup.Update(shopID, groupGUID, findDoc); err != nil {
 		return err
@@ -594,7 +616,7 @@ func (svc DocumentImageService) UpdateDocumentImageGroup(shopID string, authUser
 	return nil
 }
 
-func (svc DocumentImageService) UpdateImageReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImages []models.ImageReference) error {
+func (svc DocumentImageService) UpdateImageReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImages []models.ImageReferenceBody) error {
 	findDoc, err := svc.repoImageGroup.FindByGuid(shopID, groupGUID)
 
 	if err != nil {
@@ -636,12 +658,13 @@ func (svc DocumentImageService) UpdateImageReferenceByDocumentImageGroup(shopID 
 	// check exist from current document image group
 	if findDoc.ImageReferences != nil {
 		for _, imageRef := range *findDoc.ImageReferences {
-			tempImageRef, isFound := lo.Find[models.ImageReference](docImages, func(tempImageRef models.ImageReference) bool {
+			tempImageRef, isFound := lo.Find[models.ImageReferenceBody](docImages, func(tempImageRef models.ImageReferenceBody) bool {
 				return imageRef.DocumentImageGUID == tempImageRef.DocumentImageGUID
 			})
 
 			if isFound {
-				updateDocImagesRef[tempImageRef.DocumentImageGUID] = tempImageRef
+				imageRef.XOrder = tempImageRef.XOrder
+				updateDocImagesRef[tempImageRef.DocumentImageGUID] = imageRef
 			} else {
 				tempRemoveDocImageFromGroup = append(tempRemoveDocImageFromGroup, imageRef)
 			}

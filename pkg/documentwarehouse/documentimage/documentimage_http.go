@@ -707,7 +707,7 @@ func (h DocumentImageHttp) UpdateImageReferenceByDocumentImageGroup(ctx microser
 
 	input := ctx.ReadInput()
 
-	docImages := &[]models.ImageReference{}
+	docImages := &[]models.ImageReferenceBody{}
 
 	err := json.Unmarshal([]byte(input), &docImages)
 	if err != nil {
