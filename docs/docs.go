@@ -434,6 +434,305 @@ const docTemplate = `{
                 }
             }
         },
+        "/color": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Color"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Color",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Color"
+                ],
+                "parameters": [
+                    {
+                        "description": "Color",
+                        "name": "Color",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Color"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/color/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Color",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Color"
+                ],
+                "parameters": [
+                    {
+                        "description": "Color",
+                        "name": "Color",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Color"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/color/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Color"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Color ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Color",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Color"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Color ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Color",
+                        "name": "Color",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Color"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Color",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Color"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Color ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/create-shop": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Shop on login",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "parameters": [
+                    {
+                        "description": "Add Shop",
+                        "name": "Shop",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Shop"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Shop"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/documentimage": {
             "get": {
                 "security": [
@@ -758,7 +1057,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "GL"
+                    "DocumentImage"
                 ],
                 "summary": "Delete Document Image",
                 "parameters": [
@@ -3792,6 +4091,39 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Logout Current Profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.UserProfileReponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
                         }
@@ -6918,7 +7250,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Create Shop",
+                "description": "Create Shop rt1wer11",
                 "consumes": [
                     "application/json"
                 ],
@@ -7763,13 +8095,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Add ",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Add ",
                         "name": "limit",
                         "in": "query"
                     }
@@ -7830,6 +8162,48 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Unit",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "description": "Unit GUIDs",
+                        "name": "Unit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
             }
         },
         "/unit/bulk": {
@@ -7865,6 +8239,59 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/unit/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
                         }
                     },
                     "401": {
@@ -7985,6 +8412,52 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Unit",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Unit ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Unit",
+                        "name": "Unit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_product_unit_models.Unit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
@@ -8525,7 +8998,8 @@ const docTemplate = `{
                 "pagination": {},
                 "success": {
                     "type": "boolean"
-                }
+                },
+                "total": {}
             }
         },
         "models.AuthResponse": {
@@ -8678,8 +9152,7 @@ const docTemplate = `{
         "models.Barcode": {
             "type": "object",
             "required": [
-                "name1",
-                "unitname1"
+                "name1"
             ],
             "properties": {
                 "barcode": {
@@ -8751,24 +9224,19 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "unitname1": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname2": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname3": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname4": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname5": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 }
             }
         },
@@ -9329,6 +9797,10 @@ const docTemplate = `{
         },
         "models.Choice": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "barcode": {
                     "type": "string"
@@ -9349,19 +9821,32 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "price": {
                     "type": "number"
@@ -9377,6 +9862,31 @@ const docTemplate = `{
                 },
                 "suggestcode": {
                     "type": "string"
+                }
+            }
+        },
+        "models.Color": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "colorselect": {
+                    "type": "string"
+                },
+                "colorsystem": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 }
             }
         },
@@ -9420,6 +9930,9 @@ const docTemplate = `{
                 "isreject": {
                     "type": "boolean"
                 },
+                "metafileat": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -9461,6 +9974,12 @@ const docTemplate = `{
                 "title": {
                     "description": "DocumentRef     string            ` + "`" + `json:\"documentref\" bson:\"documentref\"` + "`" + `",
                     "type": "string"
+                },
+                "uploadedat": {
+                    "type": "string"
+                },
+                "uploadedby": {
+                    "type": "string"
                 }
             }
         },
@@ -9475,6 +9994,9 @@ const docTemplate = `{
                 },
                 "isreject": {
                     "type": "boolean"
+                },
+                "metafileat": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
@@ -9647,6 +10169,18 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "documentimageguid": {
+                    "type": "string"
+                },
+                "imageuri": {
+                    "type": "string"
+                },
+                "metafileat": {
+                    "type": "string"
+                },
+                "uploadedat": {
+                    "type": "string"
+                },
+                "uploadedby": {
                     "type": "string"
                 },
                 "xorder": {
@@ -10442,6 +10976,10 @@ const docTemplate = `{
         },
         "models.InventoryOptionMain": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "choices": {
                     "type": "array",
@@ -10462,19 +11000,32 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "optiondetails": {
                     "type": "array",
@@ -10492,6 +11043,10 @@ const docTemplate = `{
         },
         "models.InventoryOptionMainImport": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "choices": {
                     "type": "array",
@@ -10512,19 +11067,32 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "optiondetails": {
                     "type": "array",
@@ -10542,6 +11110,10 @@ const docTemplate = `{
         },
         "models.InventoryOptionMainInfo": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "choices": {
                     "type": "array",
@@ -10565,19 +11137,32 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "optiondetails": {
                     "type": "array",
@@ -10667,6 +11252,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "documentref": {
+                    "type": "string"
+                },
+                "exdocrefdate": {
+                    "type": "string"
+                },
+                "exdocrefno": {
                     "type": "string"
                 },
                 "journaldetail": {
@@ -10836,6 +11427,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "documentref": {
+                    "type": "string"
+                },
+                "exdocrefdate": {
+                    "type": "string"
+                },
+                "exdocrefno": {
                     "type": "string"
                 },
                 "guidfixed": {
@@ -11383,8 +11980,33 @@ const docTemplate = `{
                 }
             }
         },
+        "models.NameX": {
+            "type": "object",
+            "required": [
+                "code",
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "isauto": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255
+                }
+            }
+        },
         "models.Option": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "choices": {
                     "type": "array",
@@ -11405,19 +12027,32 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "optiondetails": {
                     "type": "array",
@@ -11435,6 +12070,10 @@ const docTemplate = `{
         },
         "models.OptionDetail": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "choicedetails": {
                     "type": "array",
@@ -11446,19 +12085,32 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "optiondetailcode": {
                     "type": "string"
@@ -11468,9 +12120,13 @@ const docTemplate = `{
         "models.OptionPattern": {
             "type": "object",
             "required": [
-                "name1"
+                "name1",
+                "names"
             ],
             "properties": {
+                "colorcode": {
+                    "type": "string"
+                },
                 "name1": {
                     "type": "string",
                     "maxLength": 255
@@ -11490,6 +12146,14 @@ const docTemplate = `{
                 "name5": {
                     "type": "string",
                     "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "optionpatterndetails": {
                     "type": "array",
@@ -11504,6 +12168,10 @@ const docTemplate = `{
         },
         "models.OptionPatternDetail": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "choices": {
                     "type": "array",
@@ -11524,19 +12192,32 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "optioncode": {
                     "type": "string"
@@ -13471,9 +14152,6 @@ const docTemplate = `{
         },
         "models.UnitUse": {
             "type": "object",
-            "required": [
-                "unitname1"
-            ],
             "properties": {
                 "description1": {
                     "type": "string",
@@ -13514,24 +14192,19 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "unitname1": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname2": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname3": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname4": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname5": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 }
             }
         },
@@ -13720,75 +14393,60 @@ const docTemplate = `{
         },
         "smlcloudplatform_pkg_product_inventory_models.Unit": {
             "type": "object",
-            "required": [
-                "unitname1"
-            ],
             "properties": {
                 "unitcode": {
                     "type": "string"
                 },
                 "unitname1": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname2": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname3": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname4": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname5": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 }
             }
         },
         "smlcloudplatform_pkg_product_unit_models.Unit": {
             "type": "object",
             "required": [
-                "unitname1"
+                "names",
+                "unitcode"
             ],
             "properties": {
-                "isunitcost": {
-                    "type": "boolean"
-                },
-                "isunitstandard": {
-                    "type": "boolean"
-                },
-                "itemunitdiv": {
-                    "type": "number"
-                },
-                "itemunitstd": {
-                    "type": "number"
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "unitcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "unitname1": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname2": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname3": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname4": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 },
                 "unitname5": {
-                    "type": "string",
-                    "maxLength": 255
+                    "type": "string"
                 }
             }
         }

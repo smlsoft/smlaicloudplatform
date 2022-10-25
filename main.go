@@ -13,6 +13,7 @@ import (
 	"smlcloudplatform/pkg/member"
 	"smlcloudplatform/pkg/paymentmaster"
 	"smlcloudplatform/pkg/product/category"
+	"smlcloudplatform/pkg/product/color"
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
 	"smlcloudplatform/pkg/product/inventorysearchconsumer"
@@ -136,6 +137,7 @@ func main() {
 			option.NewOptionHttp(ms, cfg),
 			unit.NewUnitHttp(ms, cfg),
 			optionpattern.NewOptionPatternHttp(ms, cfg),
+			color.NewColorHttp(ms, cfg),
 
 			inventoryimport.NewInventoryImportHttp(ms, cfg),
 			inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg),

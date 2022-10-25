@@ -13,10 +13,11 @@ const optionpatternCollectionName = "optionPattern"
 type OptionPattern struct {
 	models.PartitionIdentity `bson:"inline"`
 
-	PatternCode string `json:"patterncode" bson:"patterncode"`
-	models.Name `bson:"inline"`
-
+	PatternCode          string `json:"patterncode" bson:"patterncode"`
+	models.Name          `bson:"inline"`
+	Names                *[]models.NameX        `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	OptionPatternDetails *[]OptionPatternDetail `json:"optionpatterndetails" bson:"optionpatterndetails"`
+	ColorCode            string                 `json:"colorcode" bson:"colorcode"`
 }
 
 type OptionPatternDetail struct {

@@ -264,6 +264,9 @@ func (r JournalReportHttp) ProcessReportLedgerAccount(ctx microservice.IContext)
 	endDateStr := ctx.QueryParam("enddate")
 	timeZone := ctx.QueryParam("timezone") // +07
 
+	accountGroup := ctx.QueryParam("accountgroup")
+	consolidateAccountCode := ctx.QueryParam("consolidateaccountcode")
+
 	if timeZone != "" {
 		// phase with timezone
 		startDateStr = startDateStr + " " + timeZone + "00"
@@ -309,7 +312,7 @@ func (r JournalReportHttp) ProcessReportLedgerAccount(ctx microservice.IContext)
 
 	r.ms.Logger.Debugf("Start Process Ledger Account %v:%v", startDate, endDate)
 	// reportData, err := r.svc.ProcessLedgerAccount(shopID, accRanges, startDate.UTC(), endDate.UTC())
-	reportData, err := r.svc.ProcessLedgerAccount(shopID, accRanges, startDate.UTC(), endDate.UTC())
+	reportData, err := r.svc.ProcessLedgerAccount(shopID, accountGroup, consolidateAccountCode, accRanges, startDate.UTC(), endDate.UTC())
 	if err != nil {
 		ctx.ResponseError(500, fmt.Sprintf("Failed on Process Report : %v.", err.Error()))
 		return err

@@ -124,23 +124,27 @@ type LostAndProfitSheetReportResponse struct {
 }
 
 type LedgerAccountRaw struct {
-	RowMode            int8      `json:"rowmode" gorm:"column:rowmode"`
-	DocDate            time.Time `json:"docdate" gorm:"column:docdate"`
-	DocNo              string    `json:"docno" gorm:"column:docno"`
-	AccountCode        string    `json:"accountcode" gorm:"column:accountcode"`
-	AccountName        string    `json:"accountname" gorm:"column:accountname"`
-	AccountDescription string    `json:"accountdescription" gorm:"column:accountdescription"`
-	DebitAmount        float64   `json:"debitamount" gorm:"column:debitamount"`
-	CreditAmount       float64   `json:"creditamount" gorm:"column:creditamount"`
-	Amount             float64   `json:"amount" gorm:"column:amount"`
+	RowMode                int8      `json:"rowmode" gorm:"column:rowmode"`
+	DocDate                time.Time `json:"docdate" gorm:"column:docdate"`
+	DocNo                  string    `json:"docno" gorm:"column:docno"`
+	AccountCode            string    `json:"accountcode" gorm:"column:accountcode"`
+	AccountName            string    `json:"accountname" gorm:"column:accountname"`
+	AccountDescription     string    `json:"accountdescription" gorm:"column:accountdescription"`
+	AccountGroup           string    `json:"accountgroup" gorm:"column:accountgroup"`
+	ConsolidateAccountCode string    `json:"consolidateaccountcode" gorm:"column:consolidateaccountcode"`
+	DebitAmount            float64   `json:"debitamount" gorm:"column:debitamount"`
+	CreditAmount           float64   `json:"creditamount" gorm:"column:creditamount"`
+	Amount                 float64   `json:"amount" gorm:"column:amount"`
 }
 
 type LedgerAccount struct {
-	AccountCode string                 `json:"accountcode" gorm:"column:accountcode"`
-	AccountName string                 `json:"accountname" gorm:"column:accountname"`
-	Balance     float64                `json:"balance" gorm:"column:balance"`
-	NextBalance float64                `json:"nextbalance" gorm:"column:nextbalance"`
-	Details     *[]LedgerAccountDetail `json:"details" gorm:"column:details"`
+	AccountCode            string                 `json:"accountcode" gorm:"column:accountcode"`
+	AccountName            string                 `json:"accountname" gorm:"column:accountname"`
+	AccountGroup           string                 `json:"accountgroup" gorm:"column:accountgroup"`
+	ConsolidateAccountCode string                 `json:"consolidateaccountcode" gorm:"column:consolidateaccountcode"`
+	Balance                float64                `json:"balance" gorm:"column:balance"`
+	NextBalance            float64                `json:"nextbalance" gorm:"column:nextbalance"`
+	Details                *[]LedgerAccountDetail `json:"details" gorm:"column:details"`
 }
 
 type LedgerAccountDetail struct {

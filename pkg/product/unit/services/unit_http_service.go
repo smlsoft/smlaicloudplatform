@@ -10,15 +10,19 @@ import (
 	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type IUnitHttpService interface {
 	CreateUnit(shopID string, authUsername string, doc models.Unit) (string, error)
 	UpdateUnit(shopID string, guid string, authUsername string, doc models.Unit) error
+	UpdateFieldUnit(shopID string, guid string, authUsername string, doc models.Unit) error
 	DeleteUnit(shopID string, guid string, authUsername string) error
+	DeleteUnitByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoUnit(shopID string, guid string) (models.UnitInfo, error)
 	SearchUnit(shopID string, q string, page int, limit int, sort map[string]int) ([]models.UnitInfo, mongopagination.PaginationData, error)
+	SearchUnitLimit(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.UnitInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Unit) (common.BulkImport, error)
 }
 
@@ -76,7 +80,54 @@ func (svc UnitHttpService) UpdateUnit(shopID string, guid string, authUsername s
 		return errors.New("document not found")
 	}
 
+	tempCode := findDoc.UnitCode
+
 	findDoc.Unit = doc
+
+	//
+	findDoc.UnitCode = tempCode
+
+	findDoc.UpdatedBy = authUsername
+	findDoc.UpdatedAt = time.Now()
+
+	err = svc.repo.Update(shopID, guid, findDoc)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc UnitHttpService) UpdateFieldUnit(shopID string, guid string, authUsername string, doc models.Unit) error {
+
+	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+
+	if err != nil {
+		return err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return errors.New("document not found")
+	}
+
+	temp := map[string]common.NameX{}
+
+	for _, v := range *findDoc.Names {
+		temp[*v.Code] = v
+	}
+
+	for _, v := range *doc.Names {
+		temp[*v.Code] = v
+	}
+
+	tempNames := []common.NameX{}
+
+	for _, v := range temp {
+		tempNames = append(tempNames, v)
+	}
+
+	findDoc.Unit.Names = &tempNames
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
@@ -103,6 +154,20 @@ func (svc UnitHttpService) DeleteUnit(shopID string, guid string, authUsername s
 	}
 
 	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc UnitHttpService) DeleteUnitByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+
+	deleteFilterQuery := map[string]interface{}{
+		"guidfixed": bson.M{"$in": GUIDs},
+	}
+
+	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
@@ -139,6 +204,32 @@ func (svc UnitHttpService) SearchUnit(shopID string, q string, page int, limit i
 	}
 
 	return docList, pagination, nil
+}
+
+func (svc UnitHttpService) SearchUnitLimit(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.UnitInfo, int, error) {
+	searchCols := []string{
+		"guidfixed",
+		"unitcode",
+	}
+
+	projectQuery := map[string]interface{}{
+		"guidfixed": 1,
+		"unitcode":  1,
+	}
+
+	if langCode != "" {
+		projectQuery["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
+	} else {
+		projectQuery["names"] = 1
+	}
+
+	docList, total, err := svc.repo.FindLimit(shopID, searchCols, q, skip, limit, sort, map[string]interface{}{})
+
+	if err != nil {
+		return []models.UnitInfo{}, 0, err
+	}
+
+	return docList, total, nil
 }
 
 func (svc UnitHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.Unit) (common.BulkImport, error) {

@@ -7,12 +7,13 @@ type Name struct {
 	Name4 *string `json:"name4,omitempty" bson:"name4" validate:"omitempty,max=255"`
 	Name5 *string `json:"name5,omitempty" bson:"name5" validate:"omitempty,max=255"`
 }
+
 type UnitName struct {
-	UnitName1 string  `json:"unitname1" bson:"unitname1" gorm:"unitname1" validate:"required,max=255"`
-	UnitName2 *string `json:"unitname2,omitempty" bson:"unitname2,omitempty" gorm:"unitname2,omitempty" validate:"omitempty,max=255"`
-	UnitName3 *string `json:"unitname3,omitempty" bson:"unitname3,omitempty" gorm:"unitname3,omitempty" validate:"omitempty,max=255"`
-	UnitName4 *string `json:"unitname4,omitempty" bson:"unitname4,omitempty" gorm:"unitname4,omitempty" validate:"omitempty,max=255"`
-	UnitName5 *string `json:"unitname5,omitempty" bson:"unitname5,omitempty" gorm:"unitname5,omitempty" validate:"omitempty,max=255"`
+	UnitName1 string  `json:"unitname1" bson:"unitname1" gorm:"unitname1"`
+	UnitName2 *string `json:"unitname2,omitempty" bson:"unitname2,omitempty" gorm:"unitname2,omitempty"`
+	UnitName3 *string `json:"unitname3,omitempty" bson:"unitname3,omitempty" gorm:"unitname3,omitempty"`
+	UnitName4 *string `json:"unitname4,omitempty" bson:"unitname4,omitempty" gorm:"unitname4,omitempty"`
+	UnitName5 *string `json:"unitname5,omitempty" bson:"unitname5,omitempty" gorm:"unitname5,omitempty"`
 }
 
 type Description struct {
@@ -21,4 +22,10 @@ type Description struct {
 	Description3 *string `json:"description3,omitempty" bson:"description3,omitempty" gorm:"description3,omitempty" validate:"omitempty,max=255"`
 	Description4 *string `json:"description4,omitempty" bson:"description4,omitempty" gorm:"description4,omitempty" validate:"omitempty,max=255"`
 	Description5 *string `json:"description5,omitempty" bson:"description5,omitempty" gorm:"description5,omitempty" validate:"omitempty,max=255"`
+}
+
+type NameX struct {
+	Code   *string `json:"code" bson:"code" validate:"required,min=1,max=255"`
+	Name   *string `json:"name" bson:"name" validate:"required,max=255"`
+	IsAuto bool    `json:"isauto" bson:"isauto"`
 }

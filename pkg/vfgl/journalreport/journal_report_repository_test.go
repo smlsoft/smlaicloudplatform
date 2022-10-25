@@ -88,7 +88,7 @@ func TestGetDataLedgerAccount(t *testing.T) {
 	pst := microservice.NewPersister(pstConfig)
 
 	repo := journalreport.NewJournalReportRepository(pst)
-	results, err := repo.GetDataLedgerAccount("27dcEdktOoaSBYFmnN6G6ett4Jb", []models.LedgerAccountCodeRange{
+	results, err := repo.GetDataLedgerAccount("27dcEdktOoaSBYFmnN6G6ett4Jb", "", "", []models.LedgerAccountCodeRange{
 		{
 			Start: "100000",
 			End:   "150000",

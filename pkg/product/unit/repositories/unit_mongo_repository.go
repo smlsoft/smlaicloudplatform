@@ -14,12 +14,14 @@ type IUnitRepository interface {
 	CreateInBatch(docList []models.UnitDoc) error
 	Update(shopID string, guid string, doc models.UnitDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
+	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.UnitInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.UnitDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.UnitItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.UnitDoc, error)
 	FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.UnitInfo, mongopagination.PaginationData, error)
+	FindLimit(shopID string, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.UnitInfo, int, error)
 }
 
 type UnitRepository struct {

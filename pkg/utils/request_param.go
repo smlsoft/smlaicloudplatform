@@ -14,6 +14,9 @@ const RequestSearchMinLimit = 1
 const RequestSearchDefaultPage = 1
 const RequestSearchDefaultLimit = 20
 
+const RequestMaxOffset = 2147483647
+const RequestMinOffset = 0
+
 func GetSearchQueryParam(fnGetParam func(string) string) string {
 	q := strings.Trim(fnGetParam("q"), " ")
 	return q
@@ -52,6 +55,41 @@ func GetPaginationParam(fnGetParam func(string) string) (int, int) {
 	}
 
 	return page, limit
+}
+
+func GetParamOffsetLimit(fnGetParam func(string) string) (int, int) {
+
+	pageRawText := fnGetParam("offset")
+	limitRawText := fnGetParam("limit")
+
+	offset, err := strconv.Atoi(pageRawText) //strconv.ParseUint(pageRawText, 10, 32)
+	if err != nil {
+		offset = RequestSearchDefaultPage
+	}
+
+	limit, err := strconv.Atoi(limitRawText) //strconv.ParseUint(limitRawText, 10, 32)
+
+	if err != nil {
+		limit = RequestSearchDefaultLimit
+	}
+
+	if offset < 0 {
+		offset = RequestMinOffset
+	}
+
+	if offset > RequestSearchMaxPage {
+		offset = RequestMaxOffset
+	}
+
+	if limit < RequestSearchMinLimit {
+		limit = RequestSearchMinLimit
+	}
+
+	if limit > RequestSearchMaxLimit {
+		limit = RequestSearchMaxLimit
+	}
+
+	return offset, limit
 }
 
 func GetSortParam(fnGetParam func(string) string) map[string]int {
