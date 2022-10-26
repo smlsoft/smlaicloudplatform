@@ -27,6 +27,7 @@ type ImageReferenceBody struct {
 type ImageReference struct {
 	ImageReferenceBody `bson:",inline"`
 	ImageURI           string    `json:"imageuri" bson:"imageuri"`
+	Name               string    `json:"name" bson:"name"`
 	IsReject           bool      `json:"isreject" bson:"isreject"`
 	UploadedBy         string    `json:"uploadedby" bson:"uploadedby"`
 	UploadedAt         time.Time `json:"uploadedat" bson:"uploadedat"`
