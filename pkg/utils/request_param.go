@@ -11,7 +11,7 @@ const RequestSearchMinPage = 1
 const RequestSearchMaxLimit = 1000
 const RequestSearchMinLimit = 1
 
-const RequestSearchDefaultPage = 1
+const RequestSearchDefaultOffset = 0
 const RequestSearchDefaultLimit = 20
 
 const RequestMaxOffset = 2147483647
@@ -29,7 +29,7 @@ func GetPaginationParam(fnGetParam func(string) string) (int, int) {
 
 	page, err := strconv.Atoi(pageRawText) //strconv.ParseUint(pageRawText, 10, 32)
 	if err != nil {
-		page = RequestSearchDefaultPage
+		page = RequestSearchDefaultOffset
 	}
 
 	limit, err := strconv.Atoi(limitRawText) //strconv.ParseUint(limitRawText, 10, 32)
@@ -59,12 +59,12 @@ func GetPaginationParam(fnGetParam func(string) string) (int, int) {
 
 func GetParamOffsetLimit(fnGetParam func(string) string) (int, int) {
 
-	pageRawText := fnGetParam("offset")
+	offsetRawText := fnGetParam("offset")
 	limitRawText := fnGetParam("limit")
 
-	offset, err := strconv.Atoi(pageRawText) //strconv.ParseUint(pageRawText, 10, 32)
+	offset, err := strconv.Atoi(offsetRawText) //strconv.ParseUint(pageRawText, 10, 32)
 	if err != nil {
-		offset = RequestSearchDefaultPage
+		offset = RequestSearchDefaultOffset
 	}
 
 	limit, err := strconv.Atoi(limitRawText) //strconv.ParseUint(limitRawText, 10, 32)

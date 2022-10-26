@@ -150,8 +150,13 @@ func (svc ColorHttpService) SearchColorLimit(shopID string, langCode string, q s
 	}
 
 	projectQuery := map[string]interface{}{
-		"guidfixed": 1,
-		"code":      1,
+		"guidfixed":      1,
+		"code":           1,
+		"colorselect":    1,
+		"colorsystem":    1,
+		"colorhex":       1,
+		"colorselecthex": 1,
+		"colorsystemhex": 1,
 	}
 
 	if langCode != "" {
