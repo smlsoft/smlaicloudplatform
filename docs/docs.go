@@ -9939,10 +9939,19 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "colorhex": {
+                    "type": "string"
+                },
                 "colorselect": {
                     "type": "string"
                 },
+                "colorselecthex": {
+                    "type": "string"
+                },
                 "colorsystem": {
+                    "type": "string"
+                },
+                "colorsystemhex": {
                     "type": "string"
                 },
                 "names": {
@@ -10246,6 +10255,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "metafileat": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 },
                 "uploadedat": {
