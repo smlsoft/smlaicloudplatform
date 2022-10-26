@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const colorCollectionName = "color"
+const colorCollectionName = "colors"
 
 type Color struct {
 	models.PartitionIdentity `bson:"inline"`

@@ -19,6 +19,7 @@ import (
 	"smlcloudplatform/pkg/product/inventorysearchconsumer"
 	"smlcloudplatform/pkg/product/option"
 	"smlcloudplatform/pkg/product/optionpattern"
+	"smlcloudplatform/pkg/product/productcategory"
 	"smlcloudplatform/pkg/product/unit"
 	"smlcloudplatform/pkg/restaurant/kitchen"
 	"smlcloudplatform/pkg/restaurant/shopprinter"
@@ -138,6 +139,7 @@ func main() {
 			unit.NewUnitHttp(ms, cfg),
 			optionpattern.NewOptionPatternHttp(ms, cfg),
 			color.NewColorHttp(ms, cfg),
+			productcategory.NewProductCategoryHttp(ms, cfg),
 
 			inventoryimport.NewInventoryImportHttp(ms, cfg),
 			inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg),

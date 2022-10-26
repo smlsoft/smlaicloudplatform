@@ -5439,6 +5439,323 @@
                 }
             }
         },
+        "/product/category": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ProductCategory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductCategory",
+                        "name": "ProductCategory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductCategory"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/category/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ProductCategory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductCategory",
+                        "name": "ProductCategory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ProductCategory"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/category/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Color"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/category/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductCategory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update ProductCategory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductCategory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ProductCategory",
+                        "name": "ProductCategory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductCategory"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductCategory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductCategory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/profile": {
             "get": {
                 "security": [
@@ -12666,6 +12983,31 @@
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.ProductCategory": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "imageuri": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "parentcode": {
+                    "type": "string"
                 }
             }
         },
