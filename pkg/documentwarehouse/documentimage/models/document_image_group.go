@@ -20,6 +20,11 @@ type DocumentImageGroup struct {
 	IsReject        bool              `json:"isreject" bson:"isreject"`
 }
 
+type DocumentImageGroupBody struct {
+	DocumentImageGroup `bson:"inline"`
+	ImageReferences    *[]ImageReferenceBody `json:"imagereferences,omitempty" bson:"imagereferences,omitempty"`
+}
+
 type ImageReferenceBody struct {
 	XOrder            int    `json:"xorder" bson:"xorder"`
 	DocumentImageGUID string `json:"documentimageguid" bson:"documentimageguid"`
