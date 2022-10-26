@@ -235,16 +235,17 @@ func (h DocumentImageHttp) CreateDocumentImage(ctx microservice.IContext) error 
 		return err
 	}
 
-	idx, err := h.service.CreateDocumentImage(shopID, authUsername, *docReq)
+	idx, imageGroupGUID, err := h.service.CreateDocumentImage(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, common.ApiResponse{
-		Success: true,
-		ID:      idx,
+	ctx.Response(http.StatusCreated, map[string]interface{}{
+		"success": true,
+		"id":      idx,
+		"groupid": imageGroupGUID,
 	})
 	return nil
 }
