@@ -794,12 +794,10 @@ func (svc DocumentImageService) createImageGroupByDocumentImage(shopID string, a
 	docDataImageGroup.ShopID = shopID
 	docDataImageGroup.GuidFixed = newGuidFixedImageGroup
 	docDataImageGroup.Title = documentImageRef.Name
-	docDataImageGroup.DocumentImageGroup = models.DocumentImageGroup{
-		References: &[]models.Reference{},
-		Tags:       &[]string{},
-		ImageReferences: &[]models.ImageReference{
-			documentImageRef,
-		},
+	docDataImageGroup.References = &[]models.Reference{}
+	docDataImageGroup.Tags = &[]string{}
+	docDataImageGroup.ImageReferences = &[]models.ImageReference{
+		documentImageRef,
 	}
 
 	docDataImageGroup.IsReject = documentImageRef.IsReject
