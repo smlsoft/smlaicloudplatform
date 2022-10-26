@@ -14,6 +14,9 @@ type Color struct {
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	ColorSelect              string          `json:"colorselect" bson:"colorselect"`
 	ColorSystem              string          `json:"colorsystem" bson:"colorsystem"`
+	ColorHex                 string          `json:"colorhex" bson:"colorhex"`
+	ColorSelectHex           string          `json:"colorselecthex" bson:"colorselecthex"`
+	ColorSystemHex           string          `json:"colorsystemhex" bson:"colorsystemhex"`
 }
 
 type ColorInfo struct {
