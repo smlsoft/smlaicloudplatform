@@ -1,26 +1,6 @@
 package services_test
 
-import (
-	"bytes"
-	"fmt"
-	"image"
-	"image/color"
-	"image/png"
-	"mime/multipart"
-	"os"
-	"smlcloudplatform/pkg/documentwarehouse/documentimage/models"
-	"smlcloudplatform/pkg/documentwarehouse/documentimage/services"
-	"smlcloudplatform/pkg/utils"
-	"testing"
-	"time"
-
-	mongopagination "github.com/gobeam/mongo-go-pagination"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
-
-	common "smlcloudplatform/pkg/models"
-)
-
+/*
 type MockDocumentImageRepository struct {
 	mock.Mock
 }
@@ -206,3 +186,4 @@ func TestDocumentImageUploadService(t *testing.T) {
 	assert.Nil(t, err, fmt.Sprintf("Failed After Service Upload Document Image"))
 	assert.Equal(t, get, &wantCreateDocumentImage.DocumentImageInfo, "Failed After Service Upload Document Image Are Not Equal Given Test Data.")
 }
+*/

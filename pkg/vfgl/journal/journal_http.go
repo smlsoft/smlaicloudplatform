@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	modelDocumentimage "smlcloudplatform/pkg/documentwarehouse/documentimage/models"
-	repoDocumentimage "smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
 	serviceDocumentimage "smlcloudplatform/pkg/documentwarehouse/documentimage/services"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
@@ -38,14 +36,14 @@ func NewJournalHttp(ms *microservice.Microservice, cfg microservice.IConfig) Jou
 	// cacheRepo := repositories.NewJournalCacheRepository(cache)
 	// svcWebsocket := services.NewJournalWebsocketService(repo, cacheRepo, time.Duration(30)*time.Minute)
 
-	repoDocImage := repoDocumentimage.NewDocumentImageRepository(pst)
-	svcDocImage := serviceDocumentimage.NewDocumentImageService(repoDocImage, nil)
+	// repoDocImage := repoDocumentimage.NewDocumentImageRepository(pst)
+	// svcDocImage := serviceDocumentimage.NewDocumentImageService(repoDocImage, nil)
 
 	return JournalHttp{
-		ms:          ms,
-		cfg:         cfg,
-		svc:         svc,
-		svcDocImage: svcDocImage,
+		ms:  ms,
+		cfg: cfg,
+		svc: svc,
+		// svcDocImage: svcDocImage,
 		// svcWebsocket: svcWebsocket,
 	}
 }
@@ -75,36 +73,36 @@ func (h JournalHttp) RouteSetup() {
 // @Security     AccessToken
 // @Router /gl/journal [post]
 func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
-	authUsername := ctx.UserInfo().Username
-	shopID := ctx.UserInfo().ShopID
-	input := ctx.ReadInput()
+	// authUsername := ctx.UserInfo().Username
+	// shopID := ctx.UserInfo().ShopID
+	// input := ctx.ReadInput()
 
-	docReq := &models.Journal{}
-	err := json.Unmarshal([]byte(input), &docReq)
+	// docReq := &models.Journal{}
+	// err := json.Unmarshal([]byte(input), &docReq)
 
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
+	// if err != nil {
+	// 	ctx.ResponseError(400, err.Error())
+	// 	return err
+	// }
 
-	idx, err := h.svc.CreateJournal(shopID, authUsername, *docReq)
+	// idx, err := h.svc.CreateJournal(shopID, authUsername, *docReq)
 
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
+	// if err != nil {
+	// 	ctx.ResponseError(http.StatusBadRequest, err.Error())
+	// 	return err
+	// }
 
-	err = h.svcDocImage.UpdateDocumentImageStatusByDocumentRef(shopID, docReq.DocumentRef, docReq.DocNo, modelDocumentimage.ImageCompleted)
+	// err = h.svcDocImage.UpdateDocumentImageStatusByDocumentRef(shopID, docReq.DocumentRef, docReq.DocNo, modelDocumentimage.ImageCompleted)
 
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
+	// if err != nil {
+	// 	ctx.ResponseError(http.StatusBadRequest, err.Error())
+	// 	return err
+	// }
 
-	ctx.Response(http.StatusCreated, common.ApiResponse{
-		Success: true,
-		ID:      idx,
-	})
+	// ctx.Response(http.StatusCreated, common.ApiResponse{
+	// 	Success: true,
+	// 	ID:      idx,
+	// })
 	return nil
 }
 
@@ -120,55 +118,55 @@ func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
 // @Security     AccessToken
 // @Router /gl/journal/{id} [put]
 func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	shopID := userInfo.ShopID
+	// userInfo := ctx.UserInfo()
+	// authUsername := userInfo.Username
+	// shopID := userInfo.ShopID
 
-	id := ctx.Param("id")
-	input := ctx.ReadInput()
+	// id := ctx.Param("id")
+	// input := ctx.ReadInput()
 
-	docReq := &models.Journal{}
-	err := json.Unmarshal([]byte(input), &docReq)
+	// docReq := &models.Journal{}
+	// err := json.Unmarshal([]byte(input), &docReq)
 
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
+	// if err != nil {
+	// 	ctx.ResponseError(400, err.Error())
+	// 	return err
+	// }
 
-	journalInfo, _ := h.svc.InfoJournal(shopID, id)
+	// journalInfo, _ := h.svc.InfoJournal(shopID, id)
 
-	err = h.svc.UpdateJournal(id, shopID, authUsername, *docReq)
+	// err = h.svc.UpdateJournal(id, shopID, authUsername, *docReq)
 
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
+	// if err != nil {
+	// 	ctx.ResponseError(http.StatusBadRequest, err.Error())
+	// 	return err
+	// }
 
-	if journalInfo.DocumentRef != docReq.DocumentRef {
+	// if journalInfo.DocumentRef != docReq.DocumentRef {
 
-		if len(journalInfo.DocumentRef) > 0 {
-			err = h.svcDocImage.UpdateDocumentImageStatusByDocumentRef(shopID, journalInfo.DocumentRef, journalInfo.DocNo, modelDocumentimage.ImageReject)
+	// 	if len(journalInfo.DocumentRef) > 0 {
+	// 		err = h.svcDocImage.UpdateDocumentImageStatusByDocumentRef(shopID, journalInfo.DocumentRef, journalInfo.DocNo, modelDocumentimage.ImageReject)
 
-			if err != nil {
-				ctx.ResponseError(http.StatusBadRequest, err.Error())
-				return err
-			}
-		}
+	// 		if err != nil {
+	// 			ctx.ResponseError(http.StatusBadRequest, err.Error())
+	// 			return err
+	// 		}
+	// 	}
 
-		if len(docReq.DocumentRef) > 0 {
-			err = h.svcDocImage.UpdateDocumentImageStatusByDocumentRef(shopID, docReq.DocumentRef, journalInfo.DocNo, modelDocumentimage.ImageCompleted)
+	// 	if len(docReq.DocumentRef) > 0 {
+	// 		err = h.svcDocImage.UpdateDocumentImageStatusByDocumentRef(shopID, docReq.DocumentRef, journalInfo.DocNo, modelDocumentimage.ImageCompleted)
 
-			if err != nil {
-				ctx.ResponseError(http.StatusBadRequest, err.Error())
-				return err
-			}
-		}
-	}
+	// 		if err != nil {
+	// 			ctx.ResponseError(http.StatusBadRequest, err.Error())
+	// 			return err
+	// 		}
+	// 	}
+	// }
 
-	ctx.Response(http.StatusCreated, common.ApiResponse{
-		Success: true,
-		ID:      id,
-	})
+	// ctx.Response(http.StatusCreated, common.ApiResponse{
+	// 	Success: true,
+	// 	ID:      id,
+	// })
 
 	return nil
 }

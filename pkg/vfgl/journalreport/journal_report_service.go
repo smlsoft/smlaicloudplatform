@@ -216,7 +216,7 @@ func (svc JournalReportService) ProcessLedgerAccount(shopID string, accountGroup
 			docList = append(docList, tempDoc)
 		}
 
-		if doc.RowMode == 0 {
+		if doc.RowMode == 0 && currentIndexAccount != -1 {
 			lastAmount = (lastAmount + doc.DebitAmount) - doc.CreditAmount
 			docList[currentIndexAccount].NextBalance = lastAmount
 

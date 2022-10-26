@@ -1,34 +1,63 @@
 package models
 
-import "time"
+import (
+	"smlcloudplatform/pkg/models"
+	"time"
 
-const documentImageGroupCollectionName = "documentImages"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+const documentImageGroupCollectionName = "documentImageGroup"
 
 type DocumentImageGroup struct {
-	DocumentRef    string                      `json:"documentref" bson:"documentref"`
-	DocumentImages *[]DocumentImageGroupDetail `json:"documentimages" bson:"documentimages"`
+	// DocumentRef     string            `json:"documentref" bson:"documentref"`
+	Title           string            `json:"title" bson:"title"`
+	References      *[]Reference      `json:"references,omitempty" bson:"references,omitempty"`
+	Tags            *[]string         `json:"tags,omitempty" bson:"tags,omitempty"`
+	ImageReferences *[]ImageReference `json:"imagereferences,omitempty" bson:"imagereferences,omitempty"`
+	UploadedBy      string            `json:"uploadedby" bson:"uploadedby"`
+	UploadedAt      time.Time         `json:"uploadedat" bson:"uploadedat"`
+	IsReject        bool              `json:"isreject" bson:"isreject"`
+}
+
+type ImageReferenceBody struct {
+	XOrder            int    `json:"xorder" bson:"xorder"`
+	DocumentImageGUID string `json:"documentimageguid" bson:"documentimageguid"`
+}
+type ImageReference struct {
+	ImageReferenceBody `bson:",inline"`
+	ImageURI           string    `json:"imageuri" bson:"imageuri"`
+	IsReject           bool      `json:"isreject" bson:"isreject"`
+	UploadedBy         string    `json:"uploadedby" bson:"uploadedby"`
+	UploadedAt         time.Time `json:"uploadedat" bson:"uploadedat"`
+	MetaFileAt         time.Time `json:"metafileat" bson:"metafileat"`
 }
 
 func (DocumentImageGroup) CollectionName() string {
 	return documentImageGroupCollectionName
 }
 
-type DocumentImageGroupDetail struct {
-	GuidFixed  string    `json:"guidfixed" bson:"guidfixed"`
-	Name       string    `json:"name" bson:"name"`
-	ImageUri   string    `json:"imageuri" bson:"imageuri"`
-	Module     string    `json:"module" bson:"module"`
-	DocGUIDRef string    `json:"docguidref" bson:"docguidref"`
-	Status     int8      `json:"status" bson:"status"`
-	UploadedBy string    `json:"uploadedby" bson:"uploadedby"`
-	UploadedAt time.Time `json:"uploadedat" bson:"uploadedat"`
+type DocumentImageGroupInfo struct {
+	models.DocIdentity `bson:"inline"`
+	DocumentImageGroup `bson:"inline"`
 }
 
-type DocumentImageGroupRequest struct {
-	DocumentRef    string   `json:"documentref" bson:"documentref"`
-	DocumentImages []string `json:"documentimages" bson:"documentimages"`
+func (DocumentImageGroupInfo) CollectionName() string {
+	return documentImageGroupCollectionName
 }
 
-func (DocumentImageGroupRequest) CollectionName() string {
+type DocumentImageGroupData struct {
+	models.ShopIdentity    `bson:"inline"`
+	DocumentImageGroupInfo `bson:"inline"`
+}
+
+type DocumentImageGroupDoc struct {
+	ID                     primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	DocumentImageGroupData `bson:"inline"`
+	models.ActivityDoc     `bson:"inline"`
+	models.LastUpdate      `bson:"inline"`
+}
+
+func (DocumentImageGroupDoc) CollectionName() string {
 	return documentImageGroupCollectionName
 }
