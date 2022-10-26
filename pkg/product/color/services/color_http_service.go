@@ -10,6 +10,7 @@ import (
 	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -19,6 +20,7 @@ type IColorHttpService interface {
 	DeleteColor(shopID string, guid string, authUsername string) error
 	InfoColor(shopID string, guid string) (models.ColorInfo, error)
 	SearchColor(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ColorInfo, mongopagination.PaginationData, error)
+	SearchColorLimit(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ColorInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Color) (common.BulkImport, error)
 }
 
@@ -139,6 +141,32 @@ func (svc ColorHttpService) SearchColor(shopID string, q string, page int, limit
 	}
 
 	return docList, pagination, nil
+}
+
+func (svc ColorHttpService) SearchColorLimit(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ColorInfo, int, error) {
+	searchCols := []string{
+		"guidfixed",
+		"code",
+	}
+
+	projectQuery := map[string]interface{}{
+		"guidfixed": 1,
+		"code":      1,
+	}
+
+	if langCode != "" {
+		projectQuery["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
+	} else {
+		projectQuery["names"] = 1
+	}
+
+	docList, total, err := svc.repo.FindLimit(shopID, searchCols, q, skip, limit, sort, projectQuery)
+
+	if err != nil {
+		return []models.ColorInfo{}, 0, err
+	}
+
+	return docList, total, nil
 }
 
 func (svc ColorHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.Color) (common.BulkImport, error) {

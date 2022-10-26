@@ -261,11 +261,12 @@ func (h UnitHttp) SearchUnit(ctx microservice.IContext) error {
 }
 
 // List Unit godoc
-// @Description get struct array by ID
+// @Description search limit offset
 // @Tags		Unit
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
+// @Param		lang	query	string		false  "lang"
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed

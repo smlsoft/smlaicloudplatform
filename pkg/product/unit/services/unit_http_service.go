@@ -223,7 +223,7 @@ func (svc UnitHttpService) SearchUnitLimit(shopID string, langCode string, q str
 		projectQuery["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindLimit(shopID, searchCols, q, skip, limit, sort, map[string]interface{}{})
+	docList, total, err := svc.repo.FindLimit(shopID, searchCols, q, skip, limit, sort, projectQuery)
 
 	if err != nil {
 		return []models.UnitInfo{}, 0, err

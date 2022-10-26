@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"fmt"
 	"smlcloudplatform/internal/microservice"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
@@ -75,8 +74,6 @@ func (repo SearchRepository[T]) FindLimit(shopID string, colNameSearch []string,
 		projectOptions[key] = val
 	}
 	tempOptions.SetProjection(projectOptions)
-
-	fmt.Println(projectOptions)
 
 	tempSorts := bson.M{}
 	for key, val := range sorts {
