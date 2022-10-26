@@ -91,16 +91,7 @@ func (svc DocumentImageService) CreateDocumentImage(shopID string, authUsername 
 	docData.UploadedAt = createdAt
 
 	// image group
-	docImageRef := models.ImageReference{
-		ImageReferenceBody: models.ImageReferenceBody{
-			XOrder:            1,
-			DocumentImageGUID: documentImageGUID,
-		},
-		ImageURI:   doc.ImageURI,
-		UploadedBy: authUsername,
-		UploadedAt: createdAt,
-		MetaFileAt: doc.MetaFileAt,
-	}
+	docImageRef := svc.documentImageToImageReference(documentImageGUID, doc, authUsername, createdAt)
 	docDataImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, docImageRef, doc.ImageURI, createdAt)
 
 	svc.repoImageGroup.Transaction(func() error {
@@ -153,16 +144,7 @@ func (svc DocumentImageService) BulkCreateDocumentImage(shopID string, authUsern
 		docData.UploadedAt = createdAt
 
 		// image group
-		docImageRef := models.ImageReference{
-			ImageReferenceBody: models.ImageReferenceBody{
-				XOrder:            1,
-				DocumentImageGUID: documentImageGUID,
-			},
-			ImageURI:   doc.ImageURI,
-			UploadedBy: authUsername,
-			UploadedAt: createdAt,
-			MetaFileAt: doc.MetaFileAt,
-		}
+		docImageRef := svc.documentImageToImageReference(documentImageGUID, doc, authUsername, createdAt)
 
 		docDataImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, docImageRef, doc.ImageURI, createdAt)
 
@@ -757,6 +739,20 @@ func (svc DocumentImageService) isDocumentImageGroupHasReferenced(doc models.Doc
 
 func (svc DocumentImageService) isDocumentImageHasReferenced(doc models.DocumentImageDoc) bool {
 	return doc.References != nil && len(*doc.References) > 0
+}
+
+func (svc DocumentImageService) documentImageToImageReference(documentImageGUID string, documentImage models.DocumentImage, authUsername string, createdAt time.Time) models.ImageReference {
+	return models.ImageReference{
+		ImageReferenceBody: models.ImageReferenceBody{
+			XOrder:            1,
+			DocumentImageGUID: documentImageGUID,
+		},
+		ImageURI:   documentImage.ImageURI,
+		Name:       documentImage.Name,
+		UploadedBy: authUsername,
+		UploadedAt: createdAt,
+		MetaFileAt: documentImage.MetaFileAt,
+	}
 }
 
 func (svc DocumentImageService) createImageGroupByDocumentImage(shopID string, authUsername string, documentImageRef models.ImageReference, imageURI string, createdAt time.Time) models.DocumentImageGroupDoc {
