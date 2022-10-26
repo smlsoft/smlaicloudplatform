@@ -38,6 +38,7 @@ func (h ColorHttp) RouteSetup() {
 	h.ms.POST("/color/bulk", h.SaveBulk)
 
 	h.ms.GET("/color", h.SearchColor)
+	h.ms.GET("/color/list", h.SearchColorLimit)
 	h.ms.POST("/color", h.CreateColor)
 	h.ms.GET("/color/:id", h.InfoColor)
 	h.ms.PUT("/color/:id", h.UpdateColor)
@@ -222,6 +223,43 @@ func (h ColorHttp) SearchColor(ctx microservice.IContext) error {
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
+	})
+	return nil
+}
+
+// List Color godoc
+// @Description search limit offset
+// @Tags		Color
+// @Param		q		query	string		false  "Search Value"
+// @Param		offset	query	integer		false  "offset"
+// @Param		limit	query	integer		false  "limit"
+// @Param		lang	query	string		false  "lang"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /color/list [get]
+func (h ColorHttp) SearchColorLimit(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	q := ctx.QueryParam("q")
+	offset, limit := utils.GetParamOffsetLimit(ctx.QueryParam)
+	sorts := utils.GetSortParam(ctx.QueryParam)
+
+	lang := ctx.QueryParam("lang")
+
+	docList, total, err := h.svc.SearchColorLimit(shopID, lang, q, offset, limit, sorts)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docList,
+		Total:   total,
 	})
 	return nil
 }
