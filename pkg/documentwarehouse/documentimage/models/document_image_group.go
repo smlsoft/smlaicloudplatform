@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const documentImageGroupCollectionName = "documentImageGroup"
+const documentImageGroupCollectionName = "documentImageGroups"
 
 type DocumentImageGroup struct {
 	// DocumentRef     string            `json:"documentref" bson:"documentref"`
