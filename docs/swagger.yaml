@@ -4227,6 +4227,43 @@ paths:
       - AccessToken: []
       tags:
       - Color
+  /color/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Color
   /create-shop:
     post:
       consumes:
@@ -9052,7 +9089,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: get struct array by ID
+      description: search limit offset
       parameters:
       - description: Search Value
         in: query
@@ -9066,6 +9103,10 @@ paths:
         in: query
         name: limit
         type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
       responses:
         "200":
           description: OK
