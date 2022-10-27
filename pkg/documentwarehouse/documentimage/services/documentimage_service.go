@@ -36,6 +36,7 @@ type IDocumentImageService interface {
 	GetDocumentImageDocRefGroup(shopID string, docImageGroupGUID string) (models.DocumentImageGroupInfo, error)
 	UpdateDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImageGroup models.DocumentImageGroup) error
 	UpdateImageReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImages []models.ImageReferenceBody) error
+	UpdateReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error
 	UnGroupDocumentImageGroup(shopID string, authUsername string, groupGUID string) error
 	ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable common.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
 }
@@ -749,6 +750,59 @@ func (svc DocumentImageService) UpdateImageReferenceByDocumentImageGroup(shopID 
 		_, err = svc.repoImageGroup.Create(docImageGroup)
 
 		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (svc DocumentImageService) UpdateReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error {
+	findDoc, err := svc.repoImageGroup.FindByGuid(shopID, groupGUID)
+
+	if err != nil {
+		return err
+	}
+
+	_, isExistsModule := lo.Find[models.Reference](*findDoc.References, func(tempDoc models.Reference) bool {
+		return tempDoc.Module == docRef.Module
+	})
+
+	if isExistsModule {
+		return errors.New("document has referenced")
+	}
+
+	tempDocImageGUIDs := []string{}
+
+	for _, imageRef := range *findDoc.ImageReferences {
+		tempDocImageGUIDs = append(tempDocImageGUIDs, imageRef.DocumentImageGUID)
+	}
+
+	findDocImages, err := svc.repoImage.FindInGUIDs(shopID, tempDocImageGUIDs)
+
+	if err != nil {
+		return err
+	}
+
+	*findDoc.References = append(*findDoc.References, docRef)
+
+	timeAt := svc.timeNowFnc()
+
+	findDoc.UpdatedAt = timeAt
+	findDoc.UpdatedBy = authUsername
+
+	if err = svc.repoImageGroup.Update(shopID, groupGUID, findDoc); err != nil {
+		return err
+	}
+
+	for _, docImage := range findDocImages {
+
+		docImage.UpdatedAt = timeAt
+		docImage.UpdatedBy = authUsername
+
+		*docImage.References = append(*docImage.References, docRef)
+
+		if err = svc.repoImage.Update(shopID, docImage.GuidFixed, docImage); err != nil {
 			return err
 		}
 	}

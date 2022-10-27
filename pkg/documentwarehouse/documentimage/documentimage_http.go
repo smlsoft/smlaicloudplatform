@@ -31,10 +31,10 @@ type IDocumentImageHttp interface {
 }
 
 type DocumentImageHttp struct {
-	ms      *microservice.Microservice
-	cfg     microservice.IConfig
-	service services.IDocumentImageService
-
+	Module       string
+	ms           *microservice.Microservice
+	cfg          microservice.IConfig
+	service      services.IDocumentImageService
 	svcWsJournal journalSvc.IJournalWebsocketService
 }
 
@@ -55,6 +55,7 @@ func NewDocumentImageHttp(ms *microservice.Microservice, cfg microservice.IConfi
 	svcWsJournal := journalSvc.NewJournalWebsocketService(docImageRepo, cacheRepo, time.Duration(30)*time.Minute)
 
 	return &DocumentImageHttp{
+		Module:       "GL",
 		ms:           ms,
 		cfg:          cfg,
 		service:      svc,
@@ -79,6 +80,7 @@ func (h DocumentImageHttp) RouteSetup() {
 	h.ms.POST("/documentimagegroup", h.CreateDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid", h.UpdateDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid/documentimages", h.UpdateImageReferenceByDocumentImageGroup)
+	h.ms.PUT("/documentimagegroup/:guid/reference", h.UpdateReferenceByDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid/ungroup", h.UngroupDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid/images", h.UpdateDocumentImageGroup)
 }
@@ -526,6 +528,8 @@ func (h DocumentImageHttp) UploadDocumentImage(ctx microservice.IContext) error 
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
+// @Param		guid-reserve	query	integer		false  "0 not filter, 1 filter"
+// @Param		reject	query	integer		false  "empty not filter, 0 not reject, 1 reject"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -541,12 +545,21 @@ func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) err
 	matchFilters := map[string]interface{}{}
 
 	docRefReserve := strings.TrimSpace(ctx.QueryParam("guid-reserve"))
-	status := strings.TrimSpace(ctx.QueryParam("status"))
+	isreject := strings.TrimSpace(ctx.QueryParam("reject"))
+	isref := strings.TrimSpace(ctx.QueryParam("ref"))
 
-	if len(status) > 0 {
-		tempStatus, err := strconv.Atoi(status)
+	if len(isreject) > 0 {
+		tempStatus, err := strconv.Atoi(isreject)
 		if err == nil {
-			matchFilters["status"] = tempStatus
+			matchFilters["isreject"] = tempStatus != 0
+		}
+	}
+
+	if len(isref) > 0 && isref != "0" {
+		if isref == "1" {
+			matchFilters["references.module"] = bson.M{"$ne": h.Module}
+		} else if isref == "2" {
+			matchFilters["references.module"] = h.Module
 		}
 	}
 
@@ -717,6 +730,44 @@ func (h DocumentImageHttp) UpdateImageReferenceByDocumentImageGroup(ctx microser
 	}
 
 	err = h.service.UpdateImageReferenceByDocumentImageGroup(userInfo.ShopID, userInfo.Username, docImageGroupGUID, *docImages)
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+	})
+
+	return nil
+}
+
+// Update Reference In Document Image Group
+// @Description Update Reference In Document Image Group
+// @Tags		DocumentImageGroup
+// @Accept 		json
+// @Param		guid  path      string  true  "document image group guid"
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /documentimagegroup/{guid}/reference [put]
+func (h DocumentImageHttp) UpdateReferenceByDocumentImageGroup(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+
+	docImageGroupGUID := ctx.Param("guid")
+
+	input := ctx.ReadInput()
+
+	docImages := &models.Reference{}
+
+	err := json.Unmarshal([]byte(input), &docImages)
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.service.UpdateReferenceByDocumentImageGroup(userInfo.ShopID, userInfo.Username, docImageGroupGUID, *docImages)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err

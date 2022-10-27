@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	documentImageModel "smlcloudplatform/pkg/documentwarehouse/documentimage/models"
 	serviceDocumentimage "smlcloudplatform/pkg/documentwarehouse/documentimage/services"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
@@ -21,6 +22,7 @@ type JournalHttp struct {
 	cfg         microservice.IConfig
 	svc         services.IJournalHttpService
 	svcDocImage serviceDocumentimage.DocumentImageService
+	Module      string
 	// svcWebsocket services.IJournalWebsocketService
 }
 
@@ -40,9 +42,10 @@ func NewJournalHttp(ms *microservice.Microservice, cfg microservice.IConfig) Jou
 	// svcDocImage := serviceDocumentimage.NewDocumentImageService(repoDocImage, nil)
 
 	return JournalHttp{
-		ms:  ms,
-		cfg: cfg,
-		svc: svc,
+		Module: "GL",
+		ms:     ms,
+		cfg:    cfg,
+		svc:    svc,
 		// svcDocImage: svcDocImage,
 		// svcWebsocket: svcWebsocket,
 	}
@@ -90,19 +93,24 @@ func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
 		return err
 	}
 
+	if len(docReq.DocumentRef) > 0 {
+		err = h.svcDocImage.UpdateReferenceByDocumentImageGroup(shopID, authUsername, docReq.DocumentRef, documentImageModel.Reference{
+			Module: h.Module,
+			DocNo:  docReq.DocNo,
+		})
+
+		if err != nil {
+			ctx.ResponseError(http.StatusBadRequest, err.Error())
+			return err
+		}
+	}
+
 	idx, err := h.svc.CreateJournal(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}
-
-	// err = h.svcDocImage.UpdateDocumentImageStatusByDocumentRef(shopID, docReq.DocumentRef, docReq.DocNo, modelDocumentimage.ImageCompleted)
-
-	// if err != nil {
-	// 	ctx.ResponseError(http.StatusBadRequest, err.Error())
-	// 	return err
-	// }
 
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
@@ -143,8 +151,7 @@ func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
 		return err
 	}
 
-	// journalInfo, _ := h.svc.InfoJournal(shopID, id)
-	h.svc.InfoJournal(shopID, id)
+	journalInfo, _ := h.svc.InfoJournal(shopID, id)
 
 	err = h.svc.UpdateJournal(id, shopID, authUsername, *docReq)
 
@@ -153,26 +160,19 @@ func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
 		return err
 	}
 
-	// if journalInfo.DocumentRef != docReq.DocumentRef {
+	if journalInfo.DocumentRef != docReq.DocumentRef {
 
-	// 	if len(journalInfo.DocumentRef) > 0 {
-	// 		err = h.svcDocImage.UpdateDocumentImageStatusByDocumentRef(shopID, journalInfo.DocumentRef, journalInfo.DocNo, modelDocumentimage.ImageReject)
-
-	// 		if err != nil {
-	// 			ctx.ResponseError(http.StatusBadRequest, err.Error())
-	// 			return err
-	// 		}
-	// 	}
-
-	// 	if len(docReq.DocumentRef) > 0 {
-	// 		err = h.svcDocImage.UpdateDocumentImageStatusByDocumentRef(shopID, docReq.DocumentRef, journalInfo.DocNo, modelDocumentimage.ImageCompleted)
-
-	// 		if err != nil {
-	// 			ctx.ResponseError(http.StatusBadRequest, err.Error())
-	// 			return err
-	// 		}
-	// 	}
-	// }
+		if len(docReq.DocumentRef) > 0 {
+			err = h.svcDocImage.UpdateReferenceByDocumentImageGroup(shopID, authUsername, docReq.DocumentRef, documentImageModel.Reference{
+				Module: h.Module,
+				DocNo:  docReq.DocNo,
+			})
+			if err != nil {
+				ctx.ResponseError(http.StatusBadRequest, err.Error())
+				return err
+			}
+		}
+	}
 
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
