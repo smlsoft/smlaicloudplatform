@@ -73,24 +73,29 @@ func (h JournalHttp) RouteSetup() {
 // @Security     AccessToken
 // @Router /gl/journal [post]
 func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
-	// authUsername := ctx.UserInfo().Username
-	// shopID := ctx.UserInfo().ShopID
-	// input := ctx.ReadInput()
+	authUsername := ctx.UserInfo().Username
+	shopID := ctx.UserInfo().ShopID
+	input := ctx.ReadInput()
 
-	// docReq := &models.Journal{}
-	// err := json.Unmarshal([]byte(input), &docReq)
+	docReq := &models.Journal{}
+	err := json.Unmarshal([]byte(input), &docReq)
 
-	// if err != nil {
-	// 	ctx.ResponseError(400, err.Error())
-	// 	return err
-	// }
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
 
-	// idx, err := h.svc.CreateJournal(shopID, authUsername, *docReq)
+	if len(docReq.DocumentRef) > 0 {
+		ctx.ResponseError(400, "method not implemented")
+		return err
+	}
 
-	// if err != nil {
-	// 	ctx.ResponseError(http.StatusBadRequest, err.Error())
-	// 	return err
-	// }
+	idx, err := h.svc.CreateJournal(shopID, authUsername, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
 
 	// err = h.svcDocImage.UpdateDocumentImageStatusByDocumentRef(shopID, docReq.DocumentRef, docReq.DocNo, modelDocumentimage.ImageCompleted)
 
@@ -99,10 +104,10 @@ func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
 	// 	return err
 	// }
 
-	// ctx.Response(http.StatusCreated, common.ApiResponse{
-	// 	Success: true,
-	// 	ID:      idx,
-	// })
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+		ID:      idx,
+	})
 	return nil
 }
 
@@ -118,29 +123,35 @@ func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
 // @Security     AccessToken
 // @Router /gl/journal/{id} [put]
 func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
-	// userInfo := ctx.UserInfo()
-	// authUsername := userInfo.Username
-	// shopID := userInfo.ShopID
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
 
-	// id := ctx.Param("id")
-	// input := ctx.ReadInput()
+	id := ctx.Param("id")
+	input := ctx.ReadInput()
 
-	// docReq := &models.Journal{}
-	// err := json.Unmarshal([]byte(input), &docReq)
+	docReq := &models.Journal{}
+	err := json.Unmarshal([]byte(input), &docReq)
 
-	// if err != nil {
-	// 	ctx.ResponseError(400, err.Error())
-	// 	return err
-	// }
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if len(docReq.DocumentRef) > 0 {
+		ctx.ResponseError(400, "method not implemented")
+		return err
+	}
 
 	// journalInfo, _ := h.svc.InfoJournal(shopID, id)
+	h.svc.InfoJournal(shopID, id)
 
-	// err = h.svc.UpdateJournal(id, shopID, authUsername, *docReq)
+	err = h.svc.UpdateJournal(id, shopID, authUsername, *docReq)
 
-	// if err != nil {
-	// 	ctx.ResponseError(http.StatusBadRequest, err.Error())
-	// 	return err
-	// }
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
 
 	// if journalInfo.DocumentRef != docReq.DocumentRef {
 
@@ -163,10 +174,10 @@ func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
 	// 	}
 	// }
 
-	// ctx.Response(http.StatusCreated, common.ApiResponse{
-	// 	Success: true,
-	// 	ID:      id,
-	// })
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+		ID:      id,
+	})
 
 	return nil
 }
