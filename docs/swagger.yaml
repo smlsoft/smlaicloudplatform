@@ -4587,6 +4587,18 @@ paths:
         in: query
         name: limit
         type: integer
+      - description: เอกสารที่มีการจอง,0 not filter, 1 filter
+        in: query
+        name: reserve
+        type: integer
+      - description: empty not filter, 0 not reject, 1 reject
+        in: query
+        name: reject
+        type: integer
+      - description: 'document reference: empty not filter, 0 not reference, 1 referenced'
+        in: query
+        name: ref
+        type: integer
       responses:
         "200":
           description: OK
@@ -4677,6 +4689,30 @@ paths:
       consumes:
       - application/json
       description: Update Document Image Group
+      parameters:
+      - description: document image group guid
+        in: path
+        name: guid
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentImageGroup
+  /documentimagegroup/{guid}/reference:
+    put:
+      consumes:
+      - application/json
+      description: Update Reference In Document Image Group
       parameters:
       - description: document image group guid
         in: path
