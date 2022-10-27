@@ -14027,6 +14027,9 @@ const docTemplate = `{
         "models.ShopUserInfo": {
             "type": "object",
             "properties": {
+                "branchcode": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },

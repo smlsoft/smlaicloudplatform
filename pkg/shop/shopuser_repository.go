@@ -149,10 +149,11 @@ func (repo ShopUserRepository) FindByUsernamePage(username string, q string, pag
 		},
 		bson.M{
 			"$project": bson.M{
-				"_id":    1,
-				"role":   1,
-				"shopid": 1,
-				"name":   bson.M{"$first": "$shopInfo.name1"},
+				"_id":        1,
+				"role":       1,
+				"shopid":     1,
+				"name":       bson.M{"$first": "$shopInfo.name1"},
+				"branchcode": bson.M{"$first": "$shopInfo.branchcode"},
 			},
 		},
 		bson.M{
