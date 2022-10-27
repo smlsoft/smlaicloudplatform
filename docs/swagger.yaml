@@ -3103,6 +3103,8 @@ definitions:
     type: object
   models.Shop:
     properties:
+      branchcode:
+        type: string
       name1:
         type: string
       telephone:
@@ -3110,6 +3112,8 @@ definitions:
     type: object
   models.ShopInfo:
     properties:
+      branchcode:
+        type: string
       guidfixed:
         type: string
       name1:

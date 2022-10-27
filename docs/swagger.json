@@ -13795,6 +13795,9 @@
         "models.Shop": {
             "type": "object",
             "properties": {
+                "branchcode": {
+                    "type": "string"
+                },
                 "name1": {
                     "type": "string"
                 },
@@ -13806,6 +13809,9 @@
         "models.ShopInfo": {
             "type": "object",
             "properties": {
+                "branchcode": {
+                    "type": "string"
+                },
                 "guidfixed": {
                     "type": "string"
                 },
