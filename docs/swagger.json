@@ -1221,6 +1221,24 @@
                         "description": "Size",
                         "name": "limit",
                         "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "เอกสารที่มีการจอง,0 not filter, 1 filter",
+                        "name": "reserve",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "empty not filter, 0 not reject, 1 reject",
+                        "name": "reject",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "document reference: empty not filter, 0 not reference, 1 referenced",
+                        "name": "ref",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1362,6 +1380,45 @@
                     }
                 ],
                 "description": "Update Document Image Group",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImageGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document image group guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimagegroup/{guid}/reference": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Reference In Document Image Group",
                 "consumes": [
                     "application/json"
                 ],

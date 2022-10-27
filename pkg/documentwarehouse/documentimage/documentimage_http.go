@@ -528,8 +528,9 @@ func (h DocumentImageHttp) UploadDocumentImage(ctx microservice.IContext) error 
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
-// @Param		guid-reserve	query	integer		false  "0 not filter, 1 filter"
+// @Param		reserve	query	integer		false  "เอกสารที่มีการจอง,0 not filter, 1 filter"
 // @Param		reject	query	integer		false  "empty not filter, 0 not reject, 1 reject"
+// @Param		ref	query	integer		false  "document reference: empty not filter, 0 not reference, 1 referenced"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -544,7 +545,7 @@ func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) err
 
 	matchFilters := map[string]interface{}{}
 
-	docRefReserve := strings.TrimSpace(ctx.QueryParam("guid-reserve"))
+	docRefReserve := strings.TrimSpace(ctx.QueryParam("reserve"))
 	isreject := strings.TrimSpace(ctx.QueryParam("reject"))
 	isref := strings.TrimSpace(ctx.QueryParam("ref"))
 
