@@ -229,7 +229,7 @@ func (h ProductCategoryHttp) SearchProductCategoryPage(ctx microservice.IContext
 
 // List ProductCategory godoc
 // @Description search limit offset
-// @Tags		Color
+// @Tags		ProductCategory
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"

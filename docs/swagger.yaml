@@ -7421,7 +7421,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Color
+      - ProductCategory
   /profile:
     get:
       consumes:

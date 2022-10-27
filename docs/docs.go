@@ -5593,7 +5593,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Color"
+                    "ProductCategory"
                 ],
                 "parameters": [
                     {
