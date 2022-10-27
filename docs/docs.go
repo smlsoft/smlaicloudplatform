@@ -13801,6 +13801,9 @@ const docTemplate = `{
         "models.Shop": {
             "type": "object",
             "properties": {
+                "branchcode": {
+                    "type": "string"
+                },
                 "name1": {
                     "type": "string"
                 },
@@ -13812,6 +13815,9 @@ const docTemplate = `{
         "models.ShopInfo": {
             "type": "object",
             "properties": {
+                "branchcode": {
+                    "type": "string"
+                },
                 "guidfixed": {
                     "type": "string"
                 },
@@ -14021,6 +14027,9 @@ const docTemplate = `{
         "models.ShopUserInfo": {
             "type": "object",
             "properties": {
+                "branchcode": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
