@@ -2544,8 +2544,8 @@ definitions:
     type: object
   models.ProductCategory:
     properties:
-      code:
-        type: string
+      childcount:
+        type: integer
       imageuri:
         type: string
       names:
@@ -2554,7 +2554,9 @@ definitions:
         minItems: 1
         type: array
         uniqueItems: true
-      parentcode:
+      parentguid:
+        type: string
+      parentguidall:
         type: string
     required:
     - names

@@ -13049,8 +13049,8 @@
                 "names"
             ],
             "properties": {
-                "code": {
-                    "type": "string"
+                "childcount": {
+                    "type": "integer"
                 },
                 "imageuri": {
                     "type": "string"
@@ -13063,7 +13063,10 @@
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
-                "parentcode": {
+                "parentguid": {
+                    "type": "string"
+                },
+                "parentguidall": {
                     "type": "string"
                 }
             }

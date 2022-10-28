@@ -13055,8 +13055,8 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
-                "code": {
-                    "type": "string"
+                "childcount": {
+                    "type": "integer"
                 },
                 "imageuri": {
                     "type": "string"
@@ -13069,7 +13069,10 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
-                "parentcode": {
+                "parentguid": {
+                    "type": "string"
+                },
+                "parentguidall": {
                     "type": "string"
                 }
             }
