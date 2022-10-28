@@ -10,9 +10,10 @@ const productcategoryCollectionName = "productCategories"
 
 type ProductCategory struct {
 	models.PartitionIdentity `bson:"inline"`
-	Code                     string          `json:"code" bson:"code"`
-	ParentCode               string          `json:"parentcode" bson:"parentcode"`
+	ParentGUID               string          `json:"parentguid" bson:"parentguid"`
+	ParentGUIDAll            string          `json:"parentguidall" bson:"parentguidall"`
 	ImageUri                 string          `json:"imageuri" bson:"imageuri"`
+	ChildCount               int             `json:"childcount" bson:"childcount"`
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 }
 

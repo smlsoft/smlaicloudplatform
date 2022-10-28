@@ -289,7 +289,7 @@ func (h ProductCategoryHttp) SaveBulk(ctx microservice.IContext) error {
 		return err
 	}
 
-	bulkResponse, err := h.svc.SaveInBatch(shopID, authUsername, dataReq)
+	err = h.svc.SaveInBatch(shopID, authUsername, dataReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -298,9 +298,8 @@ func (h ProductCategoryHttp) SaveBulk(ctx microservice.IContext) error {
 
 	ctx.Response(
 		http.StatusCreated,
-		common.BulkReponse{
-			Success:    true,
-			BulkImport: bulkResponse,
+		common.ApiResponse{
+			Success: true,
 		},
 	)
 
