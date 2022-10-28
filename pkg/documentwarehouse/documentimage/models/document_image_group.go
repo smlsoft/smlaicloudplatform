@@ -12,9 +12,9 @@ const documentImageGroupCollectionName = "documentImageGroups"
 type DocumentImageGroup struct {
 	// DocumentRef     string            `json:"documentref" bson:"documentref"`
 	Title           string            `json:"title" bson:"title"`
-	References      *[]Reference      `json:"references,omitempty" bson:"references,omitempty"`
+	References      *[]Reference      `json:"references" bson:"references"`
 	Tags            *[]string         `json:"tags,omitempty" bson:"tags,omitempty"`
-	ImageReferences *[]ImageReference `json:"imagereferences,omitempty" bson:"imagereferences,omitempty"`
+	ImageReferences *[]ImageReference `json:"imagereferences" bson:"imagereferences"`
 	UploadedBy      string            `json:"uploadedby" bson:"uploadedby"`
 	UploadedAt      time.Time         `json:"uploadedat" bson:"uploadedat"`
 	IsReject        bool              `json:"isreject" bson:"isreject"`

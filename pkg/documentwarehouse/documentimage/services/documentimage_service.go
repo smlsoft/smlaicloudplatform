@@ -482,11 +482,12 @@ func (svc DocumentImageService) getDocumentImageNotReferencedInGroup(shopID stri
 
 	for _, imageGroup := range findGroups {
 		for _, imageRef := range *imageGroup.ImageReferences {
-			_, isFound := lo.Find[models.ImageReferenceBody](docImageRefs, func(tempImageRef models.ImageReferenceBody) bool {
+			foundImageRef, isFound := lo.Find[models.ImageReferenceBody](docImageRefs, func(tempImageRef models.ImageReferenceBody) bool {
 				return imageRef.DocumentImageGUID == tempImageRef.DocumentImageGUID
 			})
 
 			if isFound && (imageGroup.References == nil || len(*imageGroup.References) < 1) {
+				imageRef.XOrder = foundImageRef.XOrder
 				passDocImagesRef = append(passDocImagesRef, imageRef)
 			} else if imageGroup.References != nil && len(*imageGroup.References) > 0 {
 				return []models.ImageReference{}, []string{}, fmt.Errorf("document image guid %s has referenced in %s", imageRef.DocumentImageGUID, imageGroup.GuidFixed)
