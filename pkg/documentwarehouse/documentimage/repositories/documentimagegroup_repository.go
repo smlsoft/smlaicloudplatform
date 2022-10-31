@@ -27,6 +27,7 @@ type IDocumentImageGroupRepository interface {
 	FindByReference(shopID string, reference models.Reference) (models.DocumentImageGroupDoc, error)
 	FindOneByDocumentImageGUID(shopID string, documentImageGUID string) (models.DocumentImageGroupDoc, error)
 	FindByDocumentImageGUIDs(shopID string, documentImageGUIDs []string) ([]models.DocumentImageGroupInfo, error)
+	FindByReferenceDocNo(shopID string, docNo string) ([]models.DocumentImageGroupDoc, error)
 	Transaction(fnc func() error) error
 }
 
@@ -143,6 +144,20 @@ func (repo DocumentImageGroupRepository) FindByDocumentImageGUIDs(shopID string,
 	}
 
 	return results, nil
+}
+
+func (repo DocumentImageGroupRepository) FindByReferenceDocNo(shopID string, docNo string) ([]models.DocumentImageGroupDoc, error) {
+	docList := []models.DocumentImageGroupDoc{}
+	err := repo.pst.Find(models.DocumentImageGroupDoc{}, bson.M{
+		"references.docno": docNo,
+		"deletedat":        bson.M{"$exists": false},
+	}, &docList)
+
+	if err != nil {
+		return []models.DocumentImageGroupDoc{}, err
+	}
+
+	return docList, nil
 }
 
 func (repo DocumentImageGroupRepository) DeleteByGuidfixed(shopID string, guid string) error {

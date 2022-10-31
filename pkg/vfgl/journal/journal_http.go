@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	documentImageModel "smlcloudplatform/pkg/documentwarehouse/documentimage/models"
+	repoDocumentimage "smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
 	serviceDocumentimage "smlcloudplatform/pkg/documentwarehouse/documentimage/services"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
@@ -38,15 +39,16 @@ func NewJournalHttp(ms *microservice.Microservice, cfg microservice.IConfig) Jou
 	// cacheRepo := repositories.NewJournalCacheRepository(cache)
 	// svcWebsocket := services.NewJournalWebsocketService(repo, cacheRepo, time.Duration(30)*time.Minute)
 
-	// repoDocImage := repoDocumentimage.NewDocumentImageRepository(pst)
-	// svcDocImage := serviceDocumentimage.NewDocumentImageService(repoDocImage, nil)
+	repoDocImage := repoDocumentimage.NewDocumentImageRepository(pst)
+	repoDocImageGroup := repoDocumentimage.NewDocumentImageGroupRepository(pst)
+	svcDocImage := serviceDocumentimage.NewDocumentImageService(repoDocImage, repoDocImageGroup, nil)
 
 	return JournalHttp{
-		Module: "GL",
-		ms:     ms,
-		cfg:    cfg,
-		svc:    svc,
-		// svcDocImage: svcDocImage,
+		Module:      "GL",
+		ms:          ms,
+		cfg:         cfg,
+		svc:         svc,
+		svcDocImage: svcDocImage,
 		// svcWebsocket: svcWebsocket,
 	}
 }
@@ -89,6 +91,26 @@ func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
 	}
 
 	if len(docReq.DocumentRef) > 0 {
+		docImageGroup, err := h.svcDocImage.GetDocumentImageDocRefGroup(shopID, docReq.DocumentRef)
+		if err != nil {
+			messageError := ""
+			if err.Error() == "document not found" {
+				messageError = "document image group not found"
+			} else {
+				messageError = err.Error()
+			}
+
+			ctx.ResponseError(400, messageError)
+			return err
+		}
+
+		if len(docImageGroup.GuidFixed) < 1 {
+			if err != nil {
+				ctx.ResponseError(400, "document image group not found")
+				return err
+			}
+		}
+
 		err = h.svcDocImage.UpdateReferenceByDocumentImageGroup(shopID, authUsername, docReq.DocumentRef, documentImageModel.Reference{
 			Module: h.Module,
 			DocNo:  docReq.DocNo,
@@ -141,7 +163,34 @@ func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
 		return err
 	}
 
-	journalInfo, _ := h.svc.InfoJournal(shopID, id)
+	if len(docReq.DocumentRef) > 0 {
+		docImageGroup, err := h.svcDocImage.GetDocumentImageDocRefGroup(shopID, docReq.DocumentRef)
+		if err != nil {
+			messageError := ""
+			if err.Error() == "document not found" {
+				messageError = "document image group not found"
+			} else {
+				messageError = err.Error()
+			}
+
+			ctx.ResponseError(400, messageError)
+			return err
+		}
+
+		if len(docImageGroup.GuidFixed) < 1 {
+			if err != nil {
+				ctx.ResponseError(400, "document image group not found")
+				return err
+			}
+		}
+	}
+
+	journalInfo, err := h.svc.InfoJournal(shopID, id)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
 
 	err = h.svc.UpdateJournal(id, shopID, authUsername, *docReq)
 
