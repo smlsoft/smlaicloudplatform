@@ -16,6 +16,7 @@ type IDocumentImageRepository interface {
 	Update(shopID string, guid string, doc models.DocumentImageDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindOne(shopID string, filters map[string]interface{}) (models.DocumentImageDoc, error)
+	FindByReferenceDocNo(shopID string, docNo string) ([]models.DocumentImageDoc, error)
 	FindByGuid(shopID string, guid string) (models.DocumentImageDoc, error)
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
 	FindPageFilterSort(shopID string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
@@ -56,6 +57,20 @@ func (repo DocumentImageRepository) FindInGUIDs(shopID string, docImageGUIDs []s
 			"$in": docImageGUIDs,
 		},
 		"deletedat": bson.M{"$exists": false},
+	}, &docList)
+
+	if err != nil {
+		return []models.DocumentImageDoc{}, err
+	}
+
+	return docList, nil
+}
+
+func (repo DocumentImageRepository) FindByReferenceDocNo(shopID string, docNo string) ([]models.DocumentImageDoc, error) {
+	docList := []models.DocumentImageDoc{}
+	err := repo.pst.Find(models.DocumentImageDoc{}, bson.M{
+		"references.docno": docNo,
+		"deletedat":        bson.M{"$exists": false},
 	}, &docList)
 
 	if err != nil {

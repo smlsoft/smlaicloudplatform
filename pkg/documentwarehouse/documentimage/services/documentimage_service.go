@@ -222,6 +222,7 @@ func (svc DocumentImageService) UpdateDocumentImage(shopID string, guid string, 
 			tempDocImage := &tempImageRefs[idx]
 
 			tempDocImage.ImageURI = doc.ImageURI
+			tempDocImage.Name = doc.Name
 			tempDocImage.UploadedBy = authUsername
 			tempDocImage.UploadedAt = updatedAt
 			tempDocImage.MetaFileAt = doc.MetaFileAt
@@ -765,12 +766,49 @@ func (svc DocumentImageService) UpdateReferenceByDocumentImageGroup(shopID strin
 		return err
 	}
 
-	_, isExistsModule := lo.Find[models.Reference](*findDoc.References, func(tempDoc models.Reference) bool {
-		return tempDoc.Module == docRef.Module
-	})
+	if findDoc.ID == primitive.NilObjectID {
+		return errors.New("document image group not found")
+	}
 
-	if isExistsModule {
-		return errors.New("document has referenced")
+	if findDoc.References != nil {
+		_, isExistsModule := lo.Find[models.Reference](*findDoc.References, func(tempDoc models.Reference) bool {
+			return tempDoc.Module == docRef.Module
+		})
+
+		if isExistsModule {
+			return errors.New("document has referenced")
+		}
+	}
+
+	// Clear references
+	docImageClearRefs, err := svc.repoImage.FindByReferenceDocNo(shopID, docRef.DocNo)
+	if err != nil {
+		return err
+	}
+
+	docImageGroupClearRefs, err := svc.repoImageGroup.FindByReferenceDocNo(shopID, docRef.DocNo)
+	if err != nil {
+		return err
+	}
+
+	for _, docImage := range docImageClearRefs {
+		tempDocRefs := lo.Filter[models.Reference](*docImage.References, func(tempDocRef models.Reference, idx int) bool {
+			return docRef.DocNo != tempDocRef.DocNo
+		})
+
+		docImage.References = &tempDocRefs
+
+		svc.repoImage.Update(shopID, docImage.GuidFixed, docImage)
+	}
+
+	for _, docImageGroup := range docImageGroupClearRefs {
+		tempDocRefs := lo.Filter[models.Reference](*docImageGroup.References, func(tempDocRef models.Reference, idx int) bool {
+			return docRef.DocNo != tempDocRef.DocNo
+		})
+
+		docImageGroup.References = &tempDocRefs
+
+		svc.repoImageGroup.Update(shopID, docImageGroup.GuidFixed, docImageGroup)
 	}
 
 	tempDocImageGUIDs := []string{}
