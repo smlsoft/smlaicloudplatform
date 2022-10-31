@@ -89,11 +89,6 @@ func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
 	}
 
 	if len(docReq.DocumentRef) > 0 {
-		ctx.ResponseError(400, "method not implemented")
-		return err
-	}
-
-	if len(docReq.DocumentRef) > 0 {
 		err = h.svcDocImage.UpdateReferenceByDocumentImageGroup(shopID, authUsername, docReq.DocumentRef, documentImageModel.Reference{
 			Module: h.Module,
 			DocNo:  docReq.DocNo,
@@ -143,11 +138,6 @@ func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	if len(docReq.DocumentRef) > 0 {
-		ctx.ResponseError(400, "method not implemented")
 		return err
 	}
 
