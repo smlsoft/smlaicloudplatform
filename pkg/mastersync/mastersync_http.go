@@ -42,7 +42,7 @@ type MasterSyncHttp struct {
 	svcShopTable      shoptable.ShopTableService
 	svcShopZone       shopzone.ShopZoneService
 	svcEmployee       employee.EmployeeService
-	svcProductBarcode productbarcodeService.ProductBarcodeService
+	svcProductBarcode productbarcodeService.ProductBarcodeHttpService
 }
 
 func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) MasterSyncHttp {
@@ -95,8 +95,8 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 
 	// Product Barcode
 	repoProductBarcode := productbarcodeRepo.NewProductBarcodeRepository(pst)
-	barcodeMasterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "inventory")
-	svcProductBarcode := productbarcodeService.NewProductBarcodeService(repoProductBarcode, barcodeMasterCacheSyncRepo)
+	barcodeMasterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "productbarcode")
+	svcProductBarcode := productbarcodeService.NewProductBarcodeHttpService(repoProductBarcode, barcodeMasterCacheSyncRepo)
 
 	masterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "mastersync")
 	svcMasterSync := services.NewMasterSyncService(masterCacheSyncRepo)
@@ -113,7 +113,7 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 		svcShopTable:      svcShopTable,
 		svcShopZone:       svcShopZone,
 		svcEmployee:       *svcEmployee,
-		svcProductBarcode: svcProductBarcode,
+		svcProductBarcode: *svcProductBarcode,
 	}
 }
 

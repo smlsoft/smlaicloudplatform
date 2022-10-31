@@ -10,6 +10,7 @@ const productcategoryCollectionName = "productCategories"
 
 type ProductCategory struct {
 	models.PartitionIdentity `bson:"inline"`
+	XOrder                   int8            `json:"xorder" bson:"xorder,omitempty" validate:"min=-125,max=125"`
 	ParentGUID               string          `json:"parentguid" bson:"parentguid"`
 	ParentGUIDAll            string          `json:"parentguidall" bson:"parentguidall"`
 	ImageUri                 string          `json:"imageuri" bson:"imageuri"`

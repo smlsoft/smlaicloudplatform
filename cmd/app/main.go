@@ -18,6 +18,7 @@ import (
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
 	"smlcloudplatform/pkg/product/optionpattern"
+	"smlcloudplatform/pkg/product/productbarcode"
 	"smlcloudplatform/pkg/product/productcategory"
 	"smlcloudplatform/pkg/product/unit"
 	"smlcloudplatform/pkg/restaurant/kitchen"
@@ -139,6 +140,7 @@ func main() {
 		optionpattern.NewOptionPatternHttp(ms, cfg),
 		color.NewColorHttp(ms, cfg),
 		productcategory.NewProductCategoryHttp(ms, cfg),
+		productbarcode.NewProductBarcodeHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)

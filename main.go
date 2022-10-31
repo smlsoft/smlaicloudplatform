@@ -19,6 +19,7 @@ import (
 	"smlcloudplatform/pkg/product/inventorysearchconsumer"
 	"smlcloudplatform/pkg/product/option"
 	"smlcloudplatform/pkg/product/optionpattern"
+	"smlcloudplatform/pkg/product/productbarcode"
 	"smlcloudplatform/pkg/product/productcategory"
 	"smlcloudplatform/pkg/product/unit"
 	"smlcloudplatform/pkg/restaurant/kitchen"
@@ -168,6 +169,7 @@ func main() {
 			smstransaction.NewSmsTransactionHttp(ms, cfg),
 			paymentmaster.NewPaymentMasterHttp(ms, cfg),
 			warehouse.NewWarehouseHttp(ms, cfg),
+			productbarcode.NewProductBarcodeHttp(ms, cfg),
 		}
 
 		startHttpServices(httpServices...)
