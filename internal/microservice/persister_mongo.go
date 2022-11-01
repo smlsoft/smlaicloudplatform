@@ -3,6 +3,7 @@ package microservice
 import (
 	"context"
 	"fmt"
+	"sort"
 	"sync"
 	"time"
 
@@ -237,9 +238,17 @@ func (pst *PersisterMongo) FindPageSort(model interface{}, limit int, page int, 
 
 	pagingQuery := mongopagination.New(db.Collection(collectionName)).Context(pst.ctx).Limit(limit64).Page(page64).Filter(filter)
 
-	for sortKey, sortVal := range sorts {
+	sortKeys := []string{}
+
+	for sortKey, _ := range sorts {
+		sortKeys = append(sortKeys, sortKey)
+	}
+
+	sort.Strings(sortKeys)
+
+	for _, sortKey := range sortKeys {
 		tempSortVal := 1
-		if sortVal < 1 {
+		if sorts[sortKey] < 1 {
 			tempSortVal = -1
 		}
 		pagingQuery = pagingQuery.Sort(sortKey, tempSortVal)
