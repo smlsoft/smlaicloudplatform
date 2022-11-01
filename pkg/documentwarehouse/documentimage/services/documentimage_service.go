@@ -539,6 +539,8 @@ func (svc DocumentImageService) CreateDocumentImageGroup(shopID string, authUser
 	docImageGroupData.DocumentImageGroup = docImageGroup
 	docImageGroupData.GuidFixed = docImageGroupGUIDFixed
 
+	docImageGroup.References = []models.Reference{}
+
 	docImageGroupData.CreatedBy = authUsername
 	docImageGroupData.CreatedAt = createdAt
 
