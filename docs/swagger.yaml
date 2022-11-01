@@ -2133,6 +2133,8 @@ definitions:
         type: string
       isauto:
         type: boolean
+      isdelete:
+        type: boolean
       name:
         maxLength: 255
         type: string
@@ -2573,7 +2575,7 @@ definitions:
         type: array
       prices:
         items:
-          type: number
+          $ref: '#/definitions/models.ProductPrice'
         type: array
     required:
     - barcode
@@ -2605,6 +2607,10 @@ definitions:
     type: object
   models.ProductChoice:
     properties:
+      guid:
+        type: string
+      isstock:
+        type: boolean
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -2619,6 +2625,8 @@ definitions:
         type: number
       refbarcode:
         type: string
+      refproductcode:
+        type: string
       refunitcode:
         type: string
     required:
@@ -2630,9 +2638,13 @@ definitions:
         items:
           $ref: '#/definitions/models.ProductChoice'
         type: array
-      isrequired:
-        type: boolean
+      guid:
+        type: string
       maxselect:
+        maximum: 60000
+        minimum: 0
+        type: integer
+      minselect:
         maximum: 60000
         minimum: 0
         type: integer
@@ -2644,6 +2656,13 @@ definitions:
         uniqueItems: true
     required:
     - names
+    type: object
+  models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
     type: object
   models.ProfitAndLossSheetAccountDetail:
     properties:

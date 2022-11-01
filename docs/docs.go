@@ -12769,6 +12769,9 @@ const docTemplate = `{
                 "isauto": {
                     "type": "boolean"
                 },
+                "isdelete": {
+                    "type": "boolean"
+                },
                 "name": {
                     "type": "string",
                     "maxLength": 255
@@ -13415,7 +13418,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "type": "number"
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
                 }
             }
@@ -13459,6 +13462,12 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
+                "guid": {
+                    "type": "string"
+                },
+                "isstock": {
+                    "type": "boolean"
+                },
                 "names": {
                     "type": "array",
                     "minItems": 1,
@@ -13479,6 +13488,9 @@ const docTemplate = `{
                 "refbarcode": {
                     "type": "string"
                 },
+                "refproductcode": {
+                    "type": "string"
+                },
                 "refunitcode": {
                     "type": "string"
                 }
@@ -13496,10 +13508,15 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.ProductChoice"
                     }
                 },
-                "isrequired": {
-                    "type": "boolean"
+                "guid": {
+                    "type": "string"
                 },
                 "maxselect": {
+                    "type": "integer",
+                    "maximum": 60000,
+                    "minimum": 0
+                },
+                "minselect": {
                     "type": "integer",
                     "maximum": 60000,
                     "minimum": 0
@@ -13511,6 +13528,17 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                }
+            }
+        },
+        "models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
                 }
             }
         },
