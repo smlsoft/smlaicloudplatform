@@ -79,7 +79,7 @@ func (svc DocumentImageService) CreateDocumentImage(shopID string, authUsername 
 	docData.DocumentImage = doc
 
 	docData.IsReject = false
-	docData.References = &[]models.Reference{}
+	docData.References = []models.Reference{}
 	docData.MetaFileAt = doc.MetaFileAt
 
 	docData.CreatedBy = authUsername
@@ -133,7 +133,7 @@ func (svc DocumentImageService) BulkCreateDocumentImage(shopID string, authUsern
 		docData.DocumentImage = doc
 
 		docData.IsReject = false
-		docData.References = &[]models.Reference{}
+		docData.References = []models.Reference{}
 		docData.MetaFileAt = doc.MetaFileAt
 
 		docData.CreatedBy = authUsername
@@ -194,7 +194,7 @@ func (svc DocumentImageService) UpdateDocumentImage(shopID string, guid string, 
 
 	findDoc.DocumentImage = doc
 
-	findDoc.References = &[]models.Reference{}
+	findDoc.References = []models.Reference{}
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = updatedAt
@@ -487,10 +487,10 @@ func (svc DocumentImageService) getDocumentImageNotReferencedInGroup(shopID stri
 				return imageRef.DocumentImageGUID == tempImageRef.DocumentImageGUID
 			})
 
-			if isFound && (imageGroup.References == nil || len(*imageGroup.References) < 1) {
+			if isFound && (imageGroup.References == nil || len(imageGroup.References) < 1) {
 				imageRef.XOrder = foundImageRef.XOrder
 				passDocImagesRef = append(passDocImagesRef, imageRef)
-			} else if imageGroup.References != nil && len(*imageGroup.References) > 0 {
+			} else if imageGroup.References != nil && len(imageGroup.References) > 0 {
 				return []models.ImageReference{}, []string{}, fmt.Errorf("document image guid %s has referenced in %s", imageRef.DocumentImageGUID, imageGroup.GuidFixed)
 			} else {
 				return []models.ImageReference{}, []string{}, fmt.Errorf("document image guid \"%s\" has referenced in %s", imageRef.DocumentImageGUID, imageGroup.GuidFixed)
@@ -771,7 +771,7 @@ func (svc DocumentImageService) UpdateReferenceByDocumentImageGroup(shopID strin
 	}
 
 	if findDoc.References != nil {
-		_, isExistsModule := lo.Find[models.Reference](*findDoc.References, func(tempDoc models.Reference) bool {
+		_, isExistsModule := lo.Find[models.Reference](findDoc.References, func(tempDoc models.Reference) bool {
 			return tempDoc.Module == docRef.Module
 		})
 
@@ -792,21 +792,21 @@ func (svc DocumentImageService) UpdateReferenceByDocumentImageGroup(shopID strin
 	}
 
 	for _, docImage := range docImageClearRefs {
-		tempDocRefs := lo.Filter[models.Reference](*docImage.References, func(tempDocRef models.Reference, idx int) bool {
+		tempDocRefs := lo.Filter[models.Reference](docImage.References, func(tempDocRef models.Reference, idx int) bool {
 			return docRef.DocNo != tempDocRef.DocNo
 		})
 
-		docImage.References = &tempDocRefs
+		docImage.References = tempDocRefs
 
 		svc.repoImage.Update(shopID, docImage.GuidFixed, docImage)
 	}
 
 	for _, docImageGroup := range docImageGroupClearRefs {
-		tempDocRefs := lo.Filter[models.Reference](*docImageGroup.References, func(tempDocRef models.Reference, idx int) bool {
+		tempDocRefs := lo.Filter[models.Reference](docImageGroup.References, func(tempDocRef models.Reference, idx int) bool {
 			return docRef.DocNo != tempDocRef.DocNo
 		})
 
-		docImageGroup.References = &tempDocRefs
+		docImageGroup.References = tempDocRefs
 
 		svc.repoImageGroup.Update(shopID, docImageGroup.GuidFixed, docImageGroup)
 	}
@@ -823,7 +823,7 @@ func (svc DocumentImageService) UpdateReferenceByDocumentImageGroup(shopID strin
 		return err
 	}
 
-	*findDoc.References = append(*findDoc.References, docRef)
+	findDoc.References = append(findDoc.References, docRef)
 
 	timeAt := svc.timeNowFnc()
 
@@ -839,7 +839,7 @@ func (svc DocumentImageService) UpdateReferenceByDocumentImageGroup(shopID strin
 		docImage.UpdatedAt = timeAt
 		docImage.UpdatedBy = authUsername
 
-		*docImage.References = append(*docImage.References, docRef)
+		docImage.References = append(docImage.References, docRef)
 
 		if err = svc.repoImage.Update(shopID, docImage.GuidFixed, docImage); err != nil {
 			return err
@@ -897,11 +897,11 @@ func (svc DocumentImageService) GetDocumentImageDocRefGroup(shopID string, docIm
 }
 
 func (svc DocumentImageService) isDocumentImageGroupHasReferenced(doc models.DocumentImageGroupDoc) bool {
-	return doc.References != nil && len(*doc.References) > 0
+	return doc.References != nil && len(doc.References) > 0
 }
 
 func (svc DocumentImageService) isDocumentImageHasReferenced(doc models.DocumentImageDoc) bool {
-	return doc.References != nil && len(*doc.References) > 0
+	return doc.References != nil && len(doc.References) > 0
 }
 
 func (svc DocumentImageService) documentImageToImageReference(documentImageGUID string, documentImage models.DocumentImage, authUsername string, createdAt time.Time) models.ImageReference {
@@ -923,7 +923,7 @@ func (svc DocumentImageService) createImageGroupByDocumentImage(shopID string, a
 	docDataImageGroup.ShopID = shopID
 	docDataImageGroup.GuidFixed = imageGroupGUID
 	docDataImageGroup.Title = documentImageRef.Name
-	docDataImageGroup.References = &[]models.Reference{}
+	docDataImageGroup.References = []models.Reference{}
 	docDataImageGroup.Tags = &[]string{}
 	docDataImageGroup.ImageReferences = &[]models.ImageReference{
 		documentImageRef,

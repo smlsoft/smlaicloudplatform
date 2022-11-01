@@ -12,7 +12,7 @@ const documentImageGroupCollectionName = "documentImageGroups"
 type DocumentImageGroup struct {
 	// DocumentRef     string            `json:"documentref" bson:"documentref"`
 	Title           string            `json:"title" bson:"title"`
-	References      *[]Reference      `json:"references" bson:"references"`
+	References      []Reference       `json:"references" bson:"references"`
 	Tags            *[]string         `json:"tags,omitempty" bson:"tags,omitempty"`
 	ImageReferences *[]ImageReference `json:"imagereferences" bson:"imagereferences"`
 	UploadedBy      string            `json:"uploadedby" bson:"uploadedby"`
