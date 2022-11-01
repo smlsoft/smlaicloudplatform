@@ -1242,7 +1242,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "document reference: empty not filter, 0 not reference, 1 referenced",
+                        "description": "document reference: empty not filter, 1 not reference, 2 referenced",
                         "name": "ref",
                         "in": "query"
                     }

@@ -155,7 +155,7 @@ func (repo SearchRepository[T]) FindPageSort(shopID string, colNameSearch []stri
 
 func (repo SearchRepository[T]) FindPageFilterSort(shopID string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]T, mongopagination.PaginationData, error) {
 
-	sorts["guidfixed"] = 1
+	sorts["_id"] = 1
 
 	matchFilterList := []interface{}{}
 

@@ -4687,7 +4687,7 @@ paths:
         in: query
         name: reject
         type: integer
-      - description: 'document reference: empty not filter, 0 not reference, 1 referenced'
+      - description: 'document reference: empty not filter, 1 not reference, 2 referenced'
         in: query
         name: ref
         type: integer

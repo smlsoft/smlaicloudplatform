@@ -24,9 +24,10 @@ type IDocumentImageGroupRepository interface {
 	FindByGuid(shopID string, guid string) (models.DocumentImageGroupDoc, error)
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
 	FindPageFilterSort(shopID string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
-	FindByReference(shopID string, reference models.Reference) (models.DocumentImageGroupDoc, error)
+	FindOneByReference(shopID string, reference models.Reference) (models.DocumentImageGroupDoc, error)
 	FindOneByDocumentImageGUID(shopID string, documentImageGUID string) (models.DocumentImageGroupDoc, error)
 	FindByDocumentImageGUIDs(shopID string, documentImageGUIDs []string) ([]models.DocumentImageGroupInfo, error)
+	FindByReference(shopID string, reference models.Reference) ([]models.DocumentImageGroupDoc, error)
 	FindByReferenceDocNo(shopID string, docNo string) ([]models.DocumentImageGroupDoc, error)
 	Transaction(fnc func() error) error
 }
@@ -52,7 +53,7 @@ func (repo DocumentImageGroupRepository) Transaction(fnc func() error) error {
 	return repo.pst.Transaction(fnc)
 }
 
-func (repo DocumentImageGroupRepository) FindByReference(shopID string, reference models.Reference) (models.DocumentImageGroupDoc, error) {
+func (repo DocumentImageGroupRepository) FindOneByReference(shopID string, reference models.Reference) (models.DocumentImageGroupDoc, error) {
 
 	results := []models.DocumentImageGroupDoc{}
 	err := repo.pst.Aggregate(models.DocumentImageGroupDoc{}, []interface{}{
@@ -151,6 +152,21 @@ func (repo DocumentImageGroupRepository) FindByReferenceDocNo(shopID string, doc
 	err := repo.pst.Find(models.DocumentImageGroupDoc{}, bson.M{
 		"references.docno": docNo,
 		"deletedat":        bson.M{"$exists": false},
+	}, &docList)
+
+	if err != nil {
+		return []models.DocumentImageGroupDoc{}, err
+	}
+
+	return docList, nil
+}
+
+func (repo DocumentImageGroupRepository) FindByReference(shopID string, reference models.Reference) ([]models.DocumentImageGroupDoc, error) {
+	docList := []models.DocumentImageGroupDoc{}
+	err := repo.pst.Find(models.DocumentImageGroupDoc{}, bson.M{
+		"references.module": reference.Module,
+		"references.docno":  reference.DocNo,
+		"deletedat":         bson.M{"$exists": false},
 	}, &docList)
 
 	if err != nil {

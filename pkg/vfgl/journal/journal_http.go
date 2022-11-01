@@ -238,11 +238,26 @@ func (h JournalHttp) DeleteJournal(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	err := h.svc.DeleteJournal(id, shopID, authUsername)
+	journal, err := h.svc.InfoJournal(shopID, id)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
+	}
+
+	err = h.svc.DeleteJournal(id, shopID, authUsername)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	if len(journal.DocumentRef) > 0 {
+		imageRef := documentImageModel.Reference{
+			Module: h.Module,
+			DocNo:  journal.DocNo,
+		}
+		h.svcDocImage.DeleteReferenceByDocumentImageGroup(shopID, authUsername, journal.DocumentRef, imageRef)
 	}
 
 	ctx.Response(http.StatusOK, common.ApiResponse{

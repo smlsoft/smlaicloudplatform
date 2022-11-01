@@ -17,6 +17,7 @@ type IDocumentImageRepository interface {
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindOne(shopID string, filters map[string]interface{}) (models.DocumentImageDoc, error)
 	FindByReferenceDocNo(shopID string, docNo string) ([]models.DocumentImageDoc, error)
+	FindByReference(shopID string, reference models.Reference) ([]models.DocumentImageDoc, error)
 	FindByGuid(shopID string, guid string) (models.DocumentImageDoc, error)
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
 	FindPageFilterSort(shopID string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
@@ -71,6 +72,21 @@ func (repo DocumentImageRepository) FindByReferenceDocNo(shopID string, docNo st
 	err := repo.pst.Find(models.DocumentImageDoc{}, bson.M{
 		"references.docno": docNo,
 		"deletedat":        bson.M{"$exists": false},
+	}, &docList)
+
+	if err != nil {
+		return []models.DocumentImageDoc{}, err
+	}
+
+	return docList, nil
+}
+
+func (repo DocumentImageRepository) FindByReference(shopID string, reference models.Reference) ([]models.DocumentImageDoc, error) {
+	docList := []models.DocumentImageDoc{}
+	err := repo.pst.Find(models.DocumentImageDoc{}, bson.M{
+		"references.module": reference.Module,
+		"references.docno":  reference.DocNo,
+		"deletedat":         bson.M{"$exists": false},
 	}, &docList)
 
 	if err != nil {

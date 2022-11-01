@@ -39,6 +39,7 @@ type IDocumentImageService interface {
 	UpdateReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error
 	UnGroupDocumentImageGroup(shopID string, authUsername string, groupGUID string) error
 	ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable common.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
+	DeleteReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error
 }
 
 type DocumentImageService struct {
@@ -781,12 +782,12 @@ func (svc DocumentImageService) UpdateReferenceByDocumentImageGroup(shopID strin
 	}
 
 	// Clear references
-	docImageClearRefs, err := svc.repoImage.FindByReferenceDocNo(shopID, docRef.DocNo)
+	docImageClearRefs, err := svc.repoImage.FindByReference(shopID, docRef)
 	if err != nil {
 		return err
 	}
 
-	docImageGroupClearRefs, err := svc.repoImageGroup.FindByReferenceDocNo(shopID, docRef.DocNo)
+	docImageGroupClearRefs, err := svc.repoImageGroup.FindByReference(shopID, docRef)
 	if err != nil {
 		return err
 	}
@@ -844,6 +845,51 @@ func (svc DocumentImageService) UpdateReferenceByDocumentImageGroup(shopID strin
 		if err = svc.repoImage.Update(shopID, docImage.GuidFixed, docImage); err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (svc DocumentImageService) DeleteReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error {
+	findDoc, err := svc.repoImageGroup.FindByGuid(shopID, groupGUID)
+
+	if err != nil {
+		return err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return errors.New("document image group not found")
+	}
+
+	// Clear references
+	docImageClearRefs, err := svc.repoImage.FindByReference(shopID, docRef)
+	if err != nil {
+		return err
+	}
+
+	docImageGroupClearRefs, err := svc.repoImageGroup.FindByReference(shopID, docRef)
+	if err != nil {
+		return err
+	}
+
+	for _, docImage := range docImageClearRefs {
+		tempDocRefs := lo.Filter[models.Reference](docImage.References, func(tempDocRef models.Reference, idx int) bool {
+			return docRef.Module != tempDocRef.Module && docRef.DocNo != tempDocRef.DocNo
+		})
+
+		docImage.References = tempDocRefs
+
+		svc.repoImage.Update(shopID, docImage.GuidFixed, docImage)
+	}
+
+	for _, docImageGroup := range docImageGroupClearRefs {
+		tempDocRefs := lo.Filter[models.Reference](docImageGroup.References, func(tempDocRef models.Reference, idx int) bool {
+			return docRef.Module != tempDocRef.Module && docRef.DocNo != tempDocRef.DocNo
+		})
+
+		docImageGroup.References = tempDocRefs
+
+		svc.repoImageGroup.Update(shopID, docImageGroup.GuidFixed, docImageGroup)
 	}
 
 	return nil
