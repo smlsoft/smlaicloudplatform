@@ -190,6 +190,7 @@ func (repo DocumentImageGroupRepository) DeleteByGUIDsIsDocumentImageEmpty(shopI
 		"$or": []interface{}{
 			bson.M{"references": bson.M{"$exists": false}},
 			bson.M{"references": bson.M{"$size": 0}},
+			bson.M{"references": nil},
 		},
 	})
 }
@@ -215,6 +216,7 @@ func (repo DocumentImageGroupRepository) RemoveDocumentImageByDocumentImageGUIDs
 		"$or": []interface{}{
 			bson.M{"references": bson.M{"$exists": false}},
 			bson.M{"references": bson.M{"$size": 0}},
+			bson.M{"references": nil},
 		},
 	}
 

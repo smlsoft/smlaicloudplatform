@@ -9,6 +9,7 @@ import (
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
+	"sort"
 	"strings"
 	"time"
 
@@ -529,7 +530,7 @@ func (svc DocumentImageService) CreateDocumentImageGroup(shopID string, authUser
 	}
 
 	if len(passDocImagesRef) < 1 {
-		return "", fmt.Errorf("document images  invalid")
+		return "", fmt.Errorf("document images invalid")
 	}
 
 	createdAt := svc.timeNowFnc()
@@ -539,13 +540,17 @@ func (svc DocumentImageService) CreateDocumentImageGroup(shopID string, authUser
 	docImageGroupData.DocumentImageGroup = docImageGroup
 	docImageGroupData.GuidFixed = docImageGroupGUIDFixed
 
-	docImageGroup.References = []models.Reference{}
+	docImageGroupData.References = []models.Reference{}
 
 	docImageGroupData.CreatedBy = authUsername
 	docImageGroupData.CreatedAt = createdAt
 
 	docImageGroupData.UploadedBy = authUsername
 	docImageGroupData.UploadedAt = createdAt
+
+	sort.Slice(passDocImagesRef, func(i, j int) bool {
+		return passDocImagesRef[i].XOrder < passDocImagesRef[j].XOrder
+	})
 
 	docImageGroupData.ImageReferences = &passDocImagesRef
 
@@ -636,6 +641,10 @@ func (svc DocumentImageService) UpdateDocumentImageGroup(shopID string, authUser
 			groupIsReject = true
 		}
 	}
+
+	sort.Slice(tempDocImageRef, func(i, j int) bool {
+		return tempDocImageRef[i].XOrder < tempDocImageRef[j].XOrder
+	})
 
 	timeAt := svc.timeNowFnc()
 
