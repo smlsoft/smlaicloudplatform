@@ -545,12 +545,14 @@ func (svc DocumentImageService) CreateDocumentImageGroup(shopID string, authUser
 	docImageGroupData.CreatedBy = authUsername
 	docImageGroupData.CreatedAt = createdAt
 
-	docImageGroupData.UploadedBy = authUsername
-	docImageGroupData.UploadedAt = createdAt
-
 	sort.Slice(passDocImagesRef, func(i, j int) bool {
 		return passDocImagesRef[i].XOrder < passDocImagesRef[j].XOrder
 	})
+
+	if len(passDocImagesRef) > 0 {
+		docImageGroupData.UploadedBy = passDocImagesRef[0].UploadedBy
+		docImageGroupData.UploadedAt = passDocImagesRef[0].UploadedAt
+	}
 
 	docImageGroupData.ImageReferences = &passDocImagesRef
 
@@ -646,6 +648,11 @@ func (svc DocumentImageService) UpdateDocumentImageGroup(shopID string, authUser
 		return tempDocImageRef[i].XOrder < tempDocImageRef[j].XOrder
 	})
 
+	if len(tempDocImageRef) > 0 {
+		findDoc.UploadedBy = tempDocImageRef[0].UploadedBy
+		findDoc.UploadedAt = tempDocImageRef[0].UploadedAt
+	}
+
 	timeAt := svc.timeNowFnc()
 
 	findDoc.DocumentImageGroup = docImageGroup
@@ -740,6 +747,11 @@ func (svc DocumentImageService) UpdateImageReferenceByDocumentImageGroup(shopID 
 		if docImageRef.IsReject {
 			groupIsReject = true
 		}
+	}
+
+	if len(tempDocImageRef) > 0 {
+		findDoc.UploadedBy = tempDocImageRef[0].UploadedBy
+		findDoc.UploadedAt = tempDocImageRef[0].UploadedAt
 	}
 
 	timeAt := svc.timeNowFnc()
