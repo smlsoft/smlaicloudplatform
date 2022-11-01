@@ -17,9 +17,14 @@ type ProductBarcode struct {
 
 	ItemUnitCode  string           `json:"itemunitcode" bson:"itemunitcode"`
 	ItemUnitNames *[]models.NameX  `json:"itemunitnames" bson:"itemunitnames" validate:"required,min=1,unique=Code,dive"`
-	Prices        *[]float64       `json:"prices" bson:"prices"`
+	Prices        *[]ProductPrice  `json:"prices" bson:"prices"`
 	ImageURI      string           `json:"imageuri" bson:"imageuri"`
 	Options       *[]ProductOption `json:"options" bson:"options"`
+}
+
+type ProductPrice struct {
+	KeyNumber int     `json:"keynumber" bson:"keynumber"`
+	Price     float64 `json:"price" bson:"price"`
 }
 
 type ProductBarcodeInfo struct {

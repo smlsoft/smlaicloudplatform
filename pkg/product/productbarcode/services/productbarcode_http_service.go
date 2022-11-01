@@ -62,6 +62,22 @@ func (svc ProductBarcodeHttpService) CreateProductBarcode(shopID string, authUse
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
+	options := *doc.Options
+	for idxOpt := range options {
+		option := &options[idxOpt]
+		if len(option.GUID) < 1 {
+			option.GUID = utils.NewGUID()
+		}
+
+		choices := *option.Choices
+		for idxChoice := range choices {
+			choice := &choices[idxChoice]
+			if len(choice.GUID) < 1 {
+				choice.GUID = utils.NewGUID()
+			}
+		}
+	}
+
 	_, err = svc.repo.Create(docData)
 
 	if err != nil {
