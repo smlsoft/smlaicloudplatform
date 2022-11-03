@@ -157,7 +157,7 @@ func (h MasterSyncHttp) LastActivitySync(ctx microservice.IContext) error {
 	shopID := userInfo.ShopID
 
 	layout := "2006-01-02T15:04"
-	lastUpdateStr := ctx.QueryParam("lastUpdate")
+	lastUpdateStr := ctx.QueryParam("lastupdate")
 
 	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
 	if len(lastUpdateStr) < 1 {
@@ -220,7 +220,7 @@ func (h MasterSyncHttp) LastActivitySyncOffset(ctx microservice.IContext) error 
 	shopID := userInfo.ShopID
 
 	layout := "2006-01-02T15:04"
-	lastUpdateStr := ctx.QueryParam("lastUpdate")
+	lastUpdateStr := ctx.QueryParam("lastupdate")
 
 	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
 	if len(lastUpdateStr) < 1 {
