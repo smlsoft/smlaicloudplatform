@@ -38,10 +38,12 @@ type ProductBarcodeHttpService struct {
 
 func NewProductBarcodeHttpService(repo repositories.IProductBarcodeRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *ProductBarcodeHttpService {
 
-	return &ProductBarcodeHttpService{
+	insSvc := &ProductBarcodeHttpService{
 		repo:          repo,
 		syncCacheRepo: syncCacheRepo,
 	}
+	insSvc.ActivityService = services.NewActivityService[models.ProductBarcodeActivity, models.ProductBarcodeDeleteActivity](repo)
+	return insSvc
 }
 
 func (svc ProductBarcodeHttpService) CreateProductBarcode(shopID string, authUsername string, doc models.ProductBarcode) (string, error) {
