@@ -749,6 +749,10 @@ func (svc DocumentImageService) UpdateImageReferenceByDocumentImageGroup(shopID 
 		}
 	}
 
+	sort.Slice(tempDocImageRef, func(i, j int) bool {
+		return tempDocImageRef[i].XOrder < tempDocImageRef[j].XOrder
+	})
+
 	if len(tempDocImageRef) > 0 {
 		findDoc.UploadedBy = tempDocImageRef[0].UploadedBy
 		findDoc.UploadedAt = tempDocImageRef[0].UploadedAt
