@@ -10,6 +10,7 @@ import (
 	"smlcloudplatform/pkg/vfgl/chartofaccount/repositories"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/services"
 	journalRepo "smlcloudplatform/pkg/vfgl/journal/repositories"
+	"strings"
 )
 
 type IChartOfAccountHttp interface{}
@@ -66,7 +67,29 @@ func (h ChartOfAccountHttp) Search(ctx microservice.IContext) error {
 	q := ctx.QueryParam("q")
 	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 	sort := utils.GetSortParam(ctx.QueryParam)
-	docList, pagination, err := h.svc.Search(shopID, q, page, limit, sort)
+
+	accountCodeRangeRaw := strings.TrimSpace(ctx.QueryParam("accountcode"))
+
+	accRanges := []models.AccountCodeRange{}
+	if len(accountCodeRangeRaw) > 0 {
+		accSplitRaw := strings.Split(accountCodeRangeRaw, ",")
+		for _, accRaw := range accSplitRaw {
+			if len(accRaw) > 0 {
+				accRangeRaw := strings.Split(accRaw, ":")
+				if len(accRangeRaw) == 2 {
+
+					accRanges = append(accRanges, models.AccountCodeRange{
+						Start: accRangeRaw[0],
+						End:   accRangeRaw[1],
+					})
+				}
+			}
+
+		}
+
+	}
+
+	docList, pagination, err := h.svc.Search(shopID, accRanges, q, page, limit, sort)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

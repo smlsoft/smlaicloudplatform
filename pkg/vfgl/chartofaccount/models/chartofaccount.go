@@ -103,3 +103,8 @@ type ChartOfAccountPG struct {
 func (ChartOfAccountPG) TableName() string {
 	return "chartofaccounts"
 }
+
+type AccountCodeRange struct {
+	Start string
+	End   string
+}

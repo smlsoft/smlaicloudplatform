@@ -11,6 +11,7 @@ import (
 	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -19,7 +20,7 @@ type IChartOfAccountHttpService interface {
 	Update(guid string, shopID string, authUsername string, doc models.ChartOfAccount) error
 	Delete(guid string, shopID string, authUsername string) error
 	Info(guid string, shopID string) (models.ChartOfAccountInfo, error)
-	Search(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ChartOfAccountInfo, mongopagination.PaginationData, error)
+	Search(shopID string, accountCodeRanges []models.AccountCodeRange, q string, page int, limit int, sort map[string]int) ([]models.ChartOfAccountInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ChartOfAccount) (common.BulkImport, error)
 }
 
@@ -168,13 +169,28 @@ func (svc ChartOfAccountHttpService) Info(guid string, shopID string) (models.Ch
 
 }
 
-func (svc ChartOfAccountHttpService) Search(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ChartOfAccountInfo, mongopagination.PaginationData, error) {
+func (svc ChartOfAccountHttpService) Search(shopID string, accountCodeRanges []models.AccountCodeRange, q string, page int, limit int, sort map[string]int) ([]models.ChartOfAccountInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
 		"accountcode",
 		"accountname",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	filterQuery := map[string]interface{}{}
+	accountCodeRangeQuery := []bson.M{}
+	for _, aaccountCodeRange := range accountCodeRanges {
+		accountCodeRangeQuery = append(accountCodeRangeQuery, bson.M{
+			"accountcode": map[string]interface{}{
+				"$gte": aaccountCodeRange.Start,
+				"$lte": aaccountCodeRange.End,
+			},
+		})
+	}
+
+	if len(accountCodeRangeQuery) > 0 {
+		filterQuery["$or"] = accountCodeRangeQuery
+	}
+
+	docList, pagination, err := svc.repo.FindPageFilterSort(shopID, filterQuery, searchCols, q, page, limit, sort)
 
 	if err != nil {
 		return []models.ChartOfAccountInfo{}, pagination, err
@@ -184,9 +200,6 @@ func (svc ChartOfAccountHttpService) Search(shopID string, q string, page int, l
 }
 
 func (svc ChartOfAccountHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.ChartOfAccount) (common.BulkImport, error) {
-
-	createDataList := []models.ChartOfAccountDoc{}
-	duplicateDataList := []models.ChartOfAccount{}
 
 	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.ChartOfAccount](dataList, svc.getDocIDKey)
 
@@ -206,7 +219,7 @@ func (svc ChartOfAccountHttpService) SaveInBatch(shopID string, authUsername str
 		foundItemGuidList = append(foundItemGuidList, doc.AccountCode)
 	}
 
-	duplicateDataList, createDataList = importdata.PreparePayloadData[models.ChartOfAccount, models.ChartOfAccountDoc](
+	duplicateDataList, createDataList := importdata.PreparePayloadData[models.ChartOfAccount, models.ChartOfAccountDoc](
 		shopID,
 		authUsername,
 		foundItemGuidList,
