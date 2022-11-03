@@ -26,7 +26,7 @@ func NewShopZoneHttp(ms *microservice.Microservice, cfg microservice.IConfig) Sh
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := NewShopZoneRepository(pst)
-	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "shopzone")
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
 	svc := NewShopZoneService(repo, masterSyncCacheRepo)
 
 	return ShopZoneHttp{

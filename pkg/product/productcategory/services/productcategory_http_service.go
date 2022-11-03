@@ -2,10 +2,14 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"smlcloudplatform/pkg/product/productcategory/models"
 	"smlcloudplatform/pkg/product/productcategory/repositories"
+	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"time"
+
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
@@ -20,17 +24,27 @@ type IProductCategoryHttpService interface {
 	SearchProductCategory(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ProductCategoryInfo, mongopagination.PaginationData, error)
 	SearchProductCategoryStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ProductCategoryInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ProductCategory) error
+
+	GetModuleName() string
 }
 
 type ProductCategoryHttpService struct {
-	repo repositories.IProductCategoryRepository
+	repo          repositories.IProductCategoryRepository
+	syncCacheRepo mastersync.IMasterSyncCacheRepository
+
+	services.ActivityService[models.ProductCategoryActivity, models.ProductCategoryDeleteActivity]
 }
 
-func NewProductCategoryHttpService(repo repositories.IProductCategoryRepository) *ProductCategoryHttpService {
+func NewProductCategoryHttpService(repo repositories.IProductCategoryRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *ProductCategoryHttpService {
 
-	return &ProductCategoryHttpService{
-		repo: repo,
+	insSvc := &ProductCategoryHttpService{
+		repo:          repo,
+		syncCacheRepo: syncCacheRepo,
 	}
+
+	insSvc.ActivityService = services.NewActivityService[models.ProductCategoryActivity, models.ProductCategoryDeleteActivity](repo)
+
+	return insSvc
 }
 
 func (svc ProductCategoryHttpService) CreateProductCategory(shopID string, authUsername string, doc models.ProductCategory) (string, error) {
@@ -188,4 +202,18 @@ func (svc ProductCategoryHttpService) SaveInBatch(shopID string, authUsername st
 	}
 
 	return nil
+}
+
+func (svc ProductCategoryHttpService) saveMasterSync(shopID string) {
+	if svc.syncCacheRepo != nil {
+		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
+
+		if err != nil {
+			fmt.Printf("save %s cache error :: %s", svc.GetModuleName(), err.Error())
+		}
+	}
+}
+
+func (svc ProductCategoryHttpService) GetModuleName() string {
+	return "productcategory"
 }

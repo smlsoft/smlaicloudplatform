@@ -25,7 +25,7 @@ func NewShopPrinterHttp(ms *microservice.Microservice, cfg microservice.IConfig)
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := NewShopPrinterRepository(pst)
-	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "shopprinter")
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
 	svc := NewShopPrinterService(repo, masterSyncCacheRepo)
 
 	return ShopPrinterHttp{

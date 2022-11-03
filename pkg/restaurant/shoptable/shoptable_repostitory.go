@@ -18,8 +18,11 @@ type IShopTableRepository interface {
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.ShopTableInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.ShopTableDoc, error)
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.ShopTableItemGuid, error)
+
 	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.ShopTableDeleteActivity, mongopagination.PaginationData, error)
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.ShopTableActivity, mongopagination.PaginationData, error)
+	FindDeletedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.ShopTableDeleteActivity, error)
+	FindCreatedOrUpdatedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.ShopTableActivity, error)
 }
 
 type ShopTableRepository struct {

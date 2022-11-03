@@ -18,8 +18,11 @@ type IKitchenRepository interface {
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.KitchenInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.KitchenDoc, error)
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.KitchenItemGuid, error)
+
 	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.KitchenDeleteActivity, mongopagination.PaginationData, error)
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.KitchenActivity, mongopagination.PaginationData, error)
+	FindDeletedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.KitchenDeleteActivity, error)
+	FindCreatedOrUpdatedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.KitchenActivity, error)
 }
 
 type KitchenRepository struct {

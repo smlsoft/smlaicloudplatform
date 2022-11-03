@@ -7,9 +7,9 @@ import (
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/productbarcode/models"
 	"smlcloudplatform/pkg/product/productbarcode/repositories"
+	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
-	"sync"
 	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
@@ -25,18 +25,22 @@ type IProductBarcodeHttpService interface {
 	SearchProductBarcode(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 	SearchProductBarcodeStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ProductBarcodeInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ProductBarcode) (common.BulkImport, error)
+
+	GetModuleName() string
 }
 
 type ProductBarcodeHttpService struct {
-	repo      repositories.IProductBarcodeRepository
-	cacheRepo mastersync.IMasterSyncCacheRepository
+	repo          repositories.IProductBarcodeRepository
+	syncCacheRepo mastersync.IMasterSyncCacheRepository
+
+	services.ActivityService[models.ProductBarcodeActivity, models.ProductBarcodeDeleteActivity]
 }
 
-func NewProductBarcodeHttpService(repo repositories.IProductBarcodeRepository, cacheRepo mastersync.IMasterSyncCacheRepository) *ProductBarcodeHttpService {
+func NewProductBarcodeHttpService(repo repositories.IProductBarcodeRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *ProductBarcodeHttpService {
 
 	return &ProductBarcodeHttpService{
-		repo:      repo,
-		cacheRepo: cacheRepo,
+		repo:          repo,
+		syncCacheRepo: syncCacheRepo,
 	}
 }
 
@@ -317,59 +321,16 @@ func (svc ProductBarcodeHttpService) getDocIDKey(doc models.ProductBarcode) stri
 	return doc.Barcode
 }
 
-func (svc ProductBarcodeHttpService) LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error) {
-	var wg sync.WaitGroup
-
-	wg.Add(1)
-	var deleteDocList []models.ProductBarcodeDeleteActivity
-	var pagination1 mongopagination.PaginationData
-	var err1 error
-
-	go func() {
-		deleteDocList, pagination1, err1 = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
-		wg.Done()
-	}()
-
-	wg.Add(1)
-	var createAndUpdateDocList []models.ProductBarcodeActivity
-	var pagination2 mongopagination.PaginationData
-	var err2 error
-
-	go func() {
-		createAndUpdateDocList, pagination2, err2 = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
-		wg.Done()
-	}()
-
-	wg.Wait()
-
-	if err1 != nil {
-		return common.LastActivity{}, pagination1, err1
-	}
-
-	if err2 != nil {
-		return common.LastActivity{}, pagination2, err2
-	}
-
-	lastActivity := common.LastActivity{}
-
-	lastActivity.Remove = &deleteDocList
-	lastActivity.New = &createAndUpdateDocList
-
-	pagination := pagination1
-
-	if pagination.Total < pagination2.Total {
-		pagination = pagination2
-	}
-
-	return lastActivity, pagination, nil
-}
-
 func (svc ProductBarcodeHttpService) saveMasterSync(shopID string) {
-	if svc.cacheRepo != nil {
-		err := svc.cacheRepo.Save(shopID)
+	if svc.syncCacheRepo != nil {
+		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
 
 		if err != nil {
-			fmt.Println("save member master cache error :: " + err.Error())
+			fmt.Printf("save %s cache error :: %s", svc.GetModuleName(), err.Error())
 		}
 	}
+}
+
+func (svc ProductBarcodeHttpService) GetModuleName() string {
+	return "productbarcode"
 }

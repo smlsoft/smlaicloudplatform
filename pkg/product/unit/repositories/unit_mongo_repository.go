@@ -4,6 +4,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/product/unit/models"
 	"smlcloudplatform/pkg/repositories"
+	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 )
@@ -22,6 +23,11 @@ type IUnitRepository interface {
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.UnitDoc, error)
 	FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.UnitInfo, mongopagination.PaginationData, error)
 	FindLimit(shopID string, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.UnitInfo, int, error)
+
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.UnitDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.UnitActivity, mongopagination.PaginationData, error)
+	FindDeletedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.UnitDeleteActivity, error)
+	FindCreatedOrUpdatedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.UnitActivity, error)
 }
 
 type UnitRepository struct {
@@ -29,6 +35,7 @@ type UnitRepository struct {
 	repositories.CrudRepository[models.UnitDoc]
 	repositories.SearchRepository[models.UnitInfo]
 	repositories.GuidRepository[models.UnitItemGuid]
+	repositories.ActivityRepository[models.UnitActivity, models.UnitDeleteActivity]
 }
 
 func NewUnitRepository(pst microservice.IPersisterMongo) *UnitRepository {
@@ -40,6 +47,7 @@ func NewUnitRepository(pst microservice.IPersisterMongo) *UnitRepository {
 	insRepo.CrudRepository = repositories.NewCrudRepository[models.UnitDoc](pst)
 	insRepo.SearchRepository = repositories.NewSearchRepository[models.UnitInfo](pst)
 	insRepo.GuidRepository = repositories.NewGuidRepository[models.UnitItemGuid](pst)
+	insRepo.ActivityRepository = repositories.NewActivityRepository[models.UnitActivity, models.UnitDeleteActivity](pst)
 
 	return insRepo
 }

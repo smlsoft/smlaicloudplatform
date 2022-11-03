@@ -25,7 +25,7 @@ func NewKitchenHttp(ms *microservice.Microservice, cfg microservice.IConfig) Kit
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := NewKitchenRepository(pst)
-	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "kitchen")
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
 	svc := NewKitchenService(repo, masterSyncCacheRepo)
 
 	return KitchenHttp{

@@ -22,7 +22,7 @@ func NewEmployeeHttp(ms *microservice.Microservice, cfg microservice.IConfig) Em
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	empRepo := NewEmployeeRepository(pst)
-	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "employee")
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
 	empService := NewEmployeeService(empRepo, masterSyncCacheRepo)
 
 	return EmployeeHttp{

@@ -27,8 +27,8 @@ type ActivityTime struct {
 }
 
 type LastActivity struct {
-	New    interface{} `json:"new" `
-	Remove interface{} `json:"remove"`
+	New    interface{} `json:"new,omitempty" `
+	Remove interface{} `json:"remove,omitempty"`
 }
 
 type LastUpdate struct {

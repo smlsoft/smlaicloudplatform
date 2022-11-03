@@ -26,7 +26,7 @@ func NewShopTableHttp(ms *microservice.Microservice, cfg microservice.IConfig) S
 
 	repo := NewShopTableRepository(pst)
 
-	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "shoptable")
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
 	svc := NewShopTableService(repo, masterSyncCacheRepo)
 
 	return ShopTableHttp{

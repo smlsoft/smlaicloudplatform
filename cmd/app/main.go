@@ -13,7 +13,6 @@ import (
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
 	"smlcloudplatform/pkg/paymentmaster"
-	"smlcloudplatform/pkg/product/category"
 	"smlcloudplatform/pkg/product/color"
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
@@ -99,7 +98,6 @@ func main() {
 		authentication.NewAuthenticationHttp(ms, cfg),
 		shop.NewShopHttp(ms, cfg),
 		shop.NewShopMemberHttp(ms, cfg),
-		category.NewCategoryHttp(ms, cfg),
 		inventory.NewInventoryHttp(ms, cfg),
 		saleinvoice.NewSaleinvoiceHttp(ms, cfg),
 		purchase.NewPurchaseHttp(ms, cfg),

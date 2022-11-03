@@ -8,8 +8,8 @@ import (
 	// "smlcloudplatform/pkg/models"
 
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/product/category"
 	"smlcloudplatform/pkg/product/inventory"
+	"smlcloudplatform/pkg/product/productcategory"
 )
 
 func main() {
@@ -27,7 +27,7 @@ func main() {
 	inventoryapi := inventory.NewInventoryHttp(ms, cfg)
 	inventoryapi.RouteSetup()
 
-	categoryHttp := category.NewCategoryHttp(ms, cfg)
+	categoryHttp := productcategory.NewProductCategoryHttp(ms, cfg)
 	categoryHttp.RouteSetup()
 	ms.Start()
 

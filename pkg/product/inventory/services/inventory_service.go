@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -29,22 +29,25 @@ type IInventoryService interface {
 	InfoInventoryItemCode(shopID string, itemCode string) (models.InventoryInfo, error)
 	InfoMongoInventory(id string) (models.InventoryInfo, error)
 	InfoInventoryBarcode(shopID string, barcode string) (models.InventoryInfo, error)
-	SearchInventory(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
-	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, paginate.PaginationData, error)
+	SearchInventory(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.InventoryInfo, mongopagination.PaginationData, error)
 	UpdateProductCategory(shopID string, authUsername string, catId string, guid []string) error
+
+	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error)
+	LastActivityOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) (common.LastActivity, error)
+	GetModuleName() string
 }
 
 type InventoryService struct {
-	invRepo   repositories.IInventoryRepository
-	invMqRepo repositories.IInventoryMQRepository
-	cacheRepo mastersync.IMasterSyncCacheRepository
+	invRepo       repositories.IInventoryRepository
+	invMqRepo     repositories.IInventoryMQRepository
+	syncCacheRepo mastersync.IMasterSyncCacheRepository
 }
 
-func NewInventoryService(inventoryRepo repositories.IInventoryRepository, inventoryMqRepo repositories.IInventoryMQRepository, cacheRepo mastersync.IMasterSyncCacheRepository) InventoryService {
+func NewInventoryService(inventoryRepo repositories.IInventoryRepository, inventoryMqRepo repositories.IInventoryMQRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) InventoryService {
 	return InventoryService{
-		invRepo:   inventoryRepo,
-		invMqRepo: inventoryMqRepo,
-		cacheRepo: cacheRepo,
+		invRepo:       inventoryRepo,
+		invMqRepo:     inventoryMqRepo,
+		syncCacheRepo: syncCacheRepo,
 	}
 }
 
@@ -503,7 +506,7 @@ func (svc InventoryService) InfoInventoryItemCode(shopID string, itemCode string
 	return findDoc.InventoryInfo, nil
 }
 
-func (svc InventoryService) SearchInventory(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error) {
+func (svc InventoryService) SearchInventory(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.InventoryInfo, mongopagination.PaginationData, error) {
 	docList, pagination, err := svc.invRepo.FindPage(shopID, filters, q, page, limit)
 
 	if err != nil {
@@ -511,54 +514,6 @@ func (svc InventoryService) SearchInventory(shopID string, filters map[string]in
 	}
 
 	return docList, pagination, nil
-}
-
-func (svc InventoryService) LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, paginate.PaginationData, error) {
-
-	var wg sync.WaitGroup
-
-	wg.Add(1)
-	var deleteDocList []models.InventoryDeleteActivity
-	var pagination1 paginate.PaginationData
-	var err1 error
-
-	go func() {
-		deleteDocList, pagination1, err1 = svc.invRepo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
-		wg.Done()
-	}()
-
-	wg.Add(1)
-	var createAndUpdateDocList []models.InventoryActivity
-	var pagination2 paginate.PaginationData
-	var err2 error
-
-	go func() {
-		createAndUpdateDocList, pagination2, err2 = svc.invRepo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
-		wg.Done()
-	}()
-
-	wg.Wait()
-
-	if err1 != nil {
-		return common.LastActivity{}, pagination1, err1
-	}
-
-	if err2 != nil {
-		return common.LastActivity{}, pagination2, err2
-	}
-
-	lastActivity := common.LastActivity{}
-
-	lastActivity.Remove = &deleteDocList
-	lastActivity.New = &createAndUpdateDocList
-
-	pagination := pagination1
-
-	if pagination.Total < pagination2.Total {
-		pagination = pagination2
-	}
-
-	return lastActivity, pagination, nil
 }
 
 func (svc InventoryService) UpdateProductCategory(shopID string, authUsername string, catId string, guids []string) error {
@@ -599,10 +554,103 @@ func (svc InventoryService) UpdateProductCategory(shopID string, authUsername st
 	return nil
 }
 
-func (svc InventoryService) saveMasterSync(shopID string) {
-	err := svc.cacheRepo.Save(shopID)
+func (svc InventoryService) LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error) {
+	var wg sync.WaitGroup
 
-	if err != nil {
-		fmt.Println("save inventory master cache error :: " + err.Error())
+	wg.Add(1)
+	var deleteDocList []models.InventoryDeleteActivity
+	var pagination1 mongopagination.PaginationData
+	var err1 error
+
+	go func() {
+		deleteDocList, pagination1, err1 = svc.invRepo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	var createAndUpdateDocList []models.InventoryActivity
+	var pagination2 mongopagination.PaginationData
+	var err2 error
+
+	go func() {
+		createAndUpdateDocList, pagination2, err2 = svc.invRepo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
+		wg.Done()
+	}()
+
+	wg.Wait()
+
+	if err1 != nil {
+		return common.LastActivity{}, pagination1, err1
 	}
+
+	if err2 != nil {
+		return common.LastActivity{}, pagination2, err2
+	}
+
+	lastActivity := common.LastActivity{}
+
+	lastActivity.Remove = &deleteDocList
+	lastActivity.New = &createAndUpdateDocList
+
+	pagination := pagination1
+
+	if pagination.Total < pagination2.Total {
+		pagination = pagination2
+	}
+
+	return lastActivity, pagination, nil
+}
+
+func (svc InventoryService) LastActivityOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) (common.LastActivity, error) {
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	var deleteDocList []models.InventoryDeleteActivity
+	var err1 error
+
+	go func() {
+		deleteDocList, err1 = svc.invRepo.FindDeletedOffset(shopID, lastUpdatedDate, skip, limit)
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	var createAndUpdateDocList []models.InventoryActivity
+
+	var err2 error
+
+	go func() {
+		createAndUpdateDocList, err2 = svc.invRepo.FindCreatedOrUpdatedOffset(shopID, lastUpdatedDate, skip, limit)
+		wg.Done()
+	}()
+
+	wg.Wait()
+
+	if err1 != nil {
+		return common.LastActivity{}, err1
+	}
+
+	if err2 != nil {
+		return common.LastActivity{}, err2
+	}
+
+	lastActivity := common.LastActivity{}
+
+	lastActivity.Remove = &deleteDocList
+	lastActivity.New = &createAndUpdateDocList
+
+	return lastActivity, nil
+}
+
+func (svc InventoryService) saveMasterSync(shopID string) {
+	if svc.syncCacheRepo != nil {
+		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
+
+		if err != nil {
+			fmt.Printf("save %s cache error :: %s", svc.GetModuleName(), err.Error())
+		}
+	}
+}
+
+func (svc InventoryService) GetModuleName() string {
+	return "inventory"
 }

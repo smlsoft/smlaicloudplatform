@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/unit/models"
 	"smlcloudplatform/pkg/product/unit/repositories"
@@ -21,10 +22,12 @@ type UnitHttp struct {
 
 func NewUnitHttp(ms *microservice.Microservice, cfg microservice.IConfig) UnitHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := repositories.NewUnitRepository(pst)
 
-	svc := services.NewUnitHttpService(repo)
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
+	svc := services.NewUnitHttpService(repo, masterSyncCacheRepo)
 
 	return UnitHttp{
 		ms:  ms,

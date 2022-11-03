@@ -12,7 +12,6 @@ import (
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
 	"smlcloudplatform/pkg/paymentmaster"
-	"smlcloudplatform/pkg/product/category"
 	"smlcloudplatform/pkg/product/color"
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
@@ -135,7 +134,6 @@ func main() {
 			employee.NewEmployeeHttp(ms, cfg), member.NewMemberHttp(ms, cfg),
 
 			inventory.NewInventoryHttp(ms, cfg),
-			category.NewCategoryHttp(ms, cfg),
 			option.NewOptionHttp(ms, cfg),
 			unit.NewUnitHttp(ms, cfg),
 			optionpattern.NewOptionPatternHttp(ms, cfg),

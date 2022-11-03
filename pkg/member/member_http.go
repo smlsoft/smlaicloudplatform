@@ -35,7 +35,7 @@ func NewMemberHttp(ms *microservice.Microservice, cfg microservice.IConfig) Memb
 
 	memberRepo := NewMemberRepository(pst)
 	memberPgRepo := NewMemberPGRepository(pstPg)
-	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "member")
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
 	service := NewMemberService(memberRepo, memberPgRepo, masterSyncCacheRepo)
 
 	return MemberHttp{
