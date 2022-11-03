@@ -20,6 +20,8 @@ type IEmployeeRepository interface {
 
 	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.EmployeeDeleteActivity, mongopagination.PaginationData, error)
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.EmployeeActivity, mongopagination.PaginationData, error)
+	FindDeletedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.EmployeeDeleteActivity, error)
+	FindCreatedOrUpdatedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.EmployeeActivity, error)
 }
 
 type EmployeeRepository struct {

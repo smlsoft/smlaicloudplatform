@@ -6,10 +6,10 @@ import (
 	"smlcloudplatform/internal/microservice"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
-	categoryRepo "smlcloudplatform/pkg/product/category/repositories"
 	"smlcloudplatform/pkg/product/inventory/models"
 	"smlcloudplatform/pkg/product/inventory/repositories"
 	"smlcloudplatform/pkg/product/inventory/services"
+	categoryRepo "smlcloudplatform/pkg/product/productcategory/repositories"
 	"smlcloudplatform/pkg/utils"
 	"strings"
 	"time"
@@ -45,11 +45,11 @@ func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) *
 
 	invRepo := repositories.NewInventoryRepository(pst)
 	invMqRepo := repositories.NewInventoryMQRepository(prod)
-	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "inventory")
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
 	invService := services.NewInventoryService(invRepo, invMqRepo, masterSyncCacheRepo)
 
-	categoryRepo := categoryRepo.NewCategoryRepository(pst)
-	inventoryCategoryService := services.NewInventorycategoryService(invRepo, categoryRepo, invMqRepo)
+	categoryRepo := categoryRepo.NewProductCategoryRepository(pst)
+	inventoryCategoryService := services.NewInventorycategoryService(invRepo, *categoryRepo, invMqRepo)
 
 	return &InventoryHttp{
 		ms:                       ms,

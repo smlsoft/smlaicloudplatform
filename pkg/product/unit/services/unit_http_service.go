@@ -2,14 +2,18 @@ package services
 
 import (
 	"errors"
+	"fmt"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/unit/models"
 	"smlcloudplatform/pkg/product/unit/repositories"
+	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
 	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/samber/lo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -24,17 +28,26 @@ type IUnitHttpService interface {
 	SearchUnit(shopID string, q string, page int, limit int, sort map[string]int) ([]models.UnitInfo, mongopagination.PaginationData, error)
 	SearchUnitLimit(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.UnitInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Unit) (common.BulkImport, error)
+
+	GetModuleName() string
 }
 
 type UnitHttpService struct {
-	repo repositories.IUnitRepository
+	repo          repositories.IUnitRepository
+	syncCacheRepo mastersync.IMasterSyncCacheRepository
+
+	services.ActivityService[models.UnitActivity, models.UnitDeleteActivity]
 }
 
-func NewUnitHttpService(repo repositories.IUnitRepository) *UnitHttpService {
+func NewUnitHttpService(repo repositories.IUnitRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *UnitHttpService {
 
-	return &UnitHttpService{
-		repo: repo,
+	insSvc := &UnitHttpService{
+		repo:          repo,
+		syncCacheRepo: syncCacheRepo,
 	}
+
+	insSvc.ActivityService = services.NewActivityService[models.UnitActivity, models.UnitDeleteActivity](repo)
+	return insSvc
 }
 
 func (svc UnitHttpService) CreateUnit(shopID string, authUsername string, doc models.Unit) (string, error) {
@@ -64,6 +77,8 @@ func (svc UnitHttpService) CreateUnit(shopID string, authUsername string, doc mo
 	if err != nil {
 		return "", err
 	}
+
+	svc.saveMasterSync(shopID)
 
 	return newGuidFixed, nil
 }
@@ -96,6 +111,8 @@ func (svc UnitHttpService) UpdateUnit(shopID string, guid string, authUsername s
 		return err
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -127,6 +144,11 @@ func (svc UnitHttpService) UpdateFieldUnit(shopID string, guid string, authUsern
 		tempNames = append(tempNames, v)
 	}
 
+	lo.Filter[common.NameX](tempNames, func(n common.NameX, i int) bool {
+		notDelete := !n.IsDelete
+		return notDelete
+	})
+
 	findDoc.Unit.Names = &tempNames
 
 	findDoc.UpdatedBy = authUsername
@@ -137,6 +159,8 @@ func (svc UnitHttpService) UpdateFieldUnit(shopID string, guid string, authUsern
 	if err != nil {
 		return err
 	}
+
+	svc.saveMasterSync(shopID)
 
 	return nil
 }
@@ -158,6 +182,8 @@ func (svc UnitHttpService) DeleteUnit(shopID string, guid string, authUsername s
 		return err
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -171,6 +197,8 @@ func (svc UnitHttpService) DeleteUnitByGUIDs(shopID string, authUsername string,
 	if err != nil {
 		return err
 	}
+
+	svc.saveMasterSync(shopID)
 
 	return nil
 }
@@ -330,6 +358,8 @@ func (svc UnitHttpService) SaveInBatch(shopID string, authUsername string, dataL
 		updateFailDataKey = append(updateFailDataKey, svc.getDocIDKey(doc))
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return common.BulkImport{
 		Created:          createDataKey,
 		Updated:          updateDataKey,
@@ -340,4 +370,105 @@ func (svc UnitHttpService) SaveInBatch(shopID string, authUsername string, dataL
 
 func (svc UnitHttpService) getDocIDKey(doc models.Unit) string {
 	return doc.UnitCode
+}
+
+// func (svc UnitHttpService) LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error) {
+// 	var wg sync.WaitGroup
+
+// 	wg.Add(1)
+// 	var deleteDocList []models.UnitDeleteActivity
+// 	var pagination1 mongopagination.PaginationData
+// 	var err1 error
+
+// 	go func() {
+// 		deleteDocList, pagination1, err1 = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
+// 		wg.Done()
+// 	}()
+
+// 	wg.Add(1)
+// 	var createAndUpdateDocList []models.UnitActivity
+// 	var pagination2 mongopagination.PaginationData
+// 	var err2 error
+
+// 	go func() {
+// 		createAndUpdateDocList, pagination2, err2 = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
+// 		wg.Done()
+// 	}()
+
+// 	wg.Wait()
+
+// 	if err1 != nil {
+// 		return common.LastActivity{}, pagination1, err1
+// 	}
+
+// 	if err2 != nil {
+// 		return common.LastActivity{}, pagination2, err2
+// 	}
+
+// 	lastActivity := common.LastActivity{}
+
+// 	lastActivity.Remove = &deleteDocList
+// 	lastActivity.New = &createAndUpdateDocList
+
+// 	pagination := pagination1
+
+// 	if pagination.Total < pagination2.Total {
+// 		pagination = pagination2
+// 	}
+
+// 	return lastActivity, pagination, nil
+// }
+
+// func (svc UnitHttpService) LastActivityOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) (common.LastActivity, error) {
+// 	lastActivity := common.LastActivity{}
+// 	var wg sync.WaitGroup
+
+// 	wg.Add(1)
+// 	var deleteDocList []models.UnitDeleteActivity
+// 	var err1 error
+
+// 	go func() {
+// 		deleteDocList, err1 = svc.repo.FindDeletedOffset(shopID, lastUpdatedDate, skip, limit)
+// 		wg.Done()
+// 	}()
+
+// 	wg.Add(1)
+// 	var createAndUpdateDocList []models.UnitActivity
+
+// 	var err2 error
+
+// 	go func() {
+// 		createAndUpdateDocList, err2 = svc.repo.FindCreatedOrUpdatedOffset(shopID, lastUpdatedDate, skip, limit)
+// 		wg.Done()
+// 	}()
+
+// 	wg.Wait()
+
+// 	if err1 != nil {
+// 		return common.LastActivity{}, err1
+// 	}
+
+// 	lastActivity.Remove = &deleteDocList
+
+// 	if err2 != nil {
+// 		return common.LastActivity{}, err2
+// 	}
+
+// 	lastActivity.New = &createAndUpdateDocList
+
+// 	return lastActivity, nil
+// }
+
+func (svc UnitHttpService) saveMasterSync(shopID string) {
+	if svc.syncCacheRepo != nil {
+		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
+
+		if err != nil {
+			fmt.Printf("save %s cache error :: %s", svc.GetModuleName(), err.Error())
+		}
+	}
+}
+
+func (svc UnitHttpService) GetModuleName() string {
+	return "productunit"
 }

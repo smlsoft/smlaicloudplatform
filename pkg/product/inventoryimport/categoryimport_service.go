@@ -31,8 +31,7 @@ func (svc CategoryImportService) CreateInBatch(shopID string, authUsername strin
 	tempInvDataList := []models.CategoryImportDoc{}
 
 	for _, category := range categories {
-		codeList = append(codeList, category.Code)
-
+		codeList = append(codeList, category.GuidFixed)
 		newGuid := utils.NewGUID()
 
 		invDoc := models.CategoryImportDoc{}

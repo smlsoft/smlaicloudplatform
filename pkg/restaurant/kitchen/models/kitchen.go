@@ -2,8 +2,8 @@ package models
 
 import (
 	"smlcloudplatform/pkg/models"
-	categoryModel "smlcloudplatform/pkg/product/category/models"
 	inventoryModel "smlcloudplatform/pkg/product/inventory/models"
+	categoryModel "smlcloudplatform/pkg/product/productcategory/models"
 	shopprinterModel "smlcloudplatform/pkg/restaurant/shopprinter/models"
 	shopzoneModel "smlcloudplatform/pkg/restaurant/shopzone/models"
 
@@ -22,7 +22,7 @@ type Kitchen struct {
 	Printers   *[]shopprinterModel.PrinterTerminal `json:"printers" bson:"printers"`
 	Products   *[]inventoryModel.Inventory         `json:"products" bson:"products"`
 	Zones      *[]shopzoneModel.ShopZone           `json:"zones" bson:"zones"`
-	Categories *[]categoryModel.Category           `json:"categories" bson:"categories"`
+	Categories *[]categoryModel.ProductCategory    `json:"categories" bson:"categories"`
 }
 
 type KitchenInfo struct {

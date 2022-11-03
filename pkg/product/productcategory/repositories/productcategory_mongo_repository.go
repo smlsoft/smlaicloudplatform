@@ -4,6 +4,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/product/productcategory/models"
 	"smlcloudplatform/pkg/repositories"
+	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 )
@@ -21,6 +22,11 @@ type IProductCategoryRepository interface {
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.ProductCategoryDoc, error)
 	FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.ProductCategoryInfo, mongopagination.PaginationData, error)
 	FindLimit(shopID string, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.ProductCategoryInfo, int, error)
+
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.ProductCategoryDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.ProductCategoryActivity, mongopagination.PaginationData, error)
+	FindDeletedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.ProductCategoryDeleteActivity, error)
+	FindCreatedOrUpdatedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.ProductCategoryActivity, error)
 }
 
 type ProductCategoryRepository struct {
@@ -28,6 +34,7 @@ type ProductCategoryRepository struct {
 	repositories.CrudRepository[models.ProductCategoryDoc]
 	repositories.SearchRepository[models.ProductCategoryInfo]
 	repositories.GuidRepository[models.ProductCategoryItemGuid]
+	repositories.ActivityRepository[models.ProductCategoryActivity, models.ProductCategoryDeleteActivity]
 }
 
 func NewProductCategoryRepository(pst microservice.IPersisterMongo) *ProductCategoryRepository {
@@ -39,6 +46,7 @@ func NewProductCategoryRepository(pst microservice.IPersisterMongo) *ProductCate
 	insRepo.CrudRepository = repositories.NewCrudRepository[models.ProductCategoryDoc](pst)
 	insRepo.SearchRepository = repositories.NewSearchRepository[models.ProductCategoryInfo](pst)
 	insRepo.GuidRepository = repositories.NewGuidRepository[models.ProductCategoryItemGuid](pst)
+	insRepo.ActivityRepository = repositories.NewActivityRepository[models.ProductCategoryActivity, models.ProductCategoryDeleteActivity](pst)
 
 	return insRepo
 }

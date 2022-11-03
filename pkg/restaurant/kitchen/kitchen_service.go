@@ -24,18 +24,20 @@ type IKitchenService interface {
 	SearchKitchen(shopID string, q string, page int, limit int) ([]models.KitchenInfo, mongopagination.PaginationData, error)
 	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Kitchen) (common.BulkImport, error)
+
+	GetModuleName() string
 }
 
 type KitchenService struct {
-	repo      KitchenRepository
-	cacheRepo mastersync.IMasterSyncCacheRepository
+	repo          KitchenRepository
+	syncCacheRepo mastersync.IMasterSyncCacheRepository
 }
 
-func NewKitchenService(repo KitchenRepository, cacheRepo mastersync.IMasterSyncCacheRepository) KitchenService {
+func NewKitchenService(repo KitchenRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) KitchenService {
 
 	return KitchenService{
-		repo:      repo,
-		cacheRepo: cacheRepo,
+		repo:          repo,
+		syncCacheRepo: syncCacheRepo,
 	}
 }
 
@@ -136,53 +138,6 @@ func (svc KitchenService) SearchKitchen(shopID string, q string, page int, limit
 	}
 
 	return docList, pagination, nil
-}
-
-func (svc KitchenService) LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error) {
-	var wg sync.WaitGroup
-
-	wg.Add(1)
-	var deleteDocList []models.KitchenDeleteActivity
-	var pagination1 mongopagination.PaginationData
-	var err1 error
-
-	go func() {
-		deleteDocList, pagination1, err1 = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
-		wg.Done()
-	}()
-
-	wg.Add(1)
-	var createAndUpdateDocList []models.KitchenActivity
-	var pagination2 mongopagination.PaginationData
-	var err2 error
-
-	go func() {
-		createAndUpdateDocList, pagination2, err2 = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
-		wg.Done()
-	}()
-
-	wg.Wait()
-
-	if err1 != nil {
-		return common.LastActivity{}, pagination1, err1
-	}
-
-	if err2 != nil {
-		return common.LastActivity{}, pagination2, err2
-	}
-
-	lastActivity := common.LastActivity{}
-
-	lastActivity.Remove = &deleteDocList
-	lastActivity.New = &createAndUpdateDocList
-
-	pagination := pagination1
-
-	if pagination.Total < pagination2.Total {
-		pagination = pagination2
-	}
-
-	return lastActivity, pagination, nil
 }
 
 func (svc KitchenService) SaveInBatch(shopID string, authUsername string, dataList []models.Kitchen) (common.BulkImport, error) {
@@ -290,10 +245,103 @@ func (svc KitchenService) getDocIDKey(doc models.Kitchen) string {
 	return doc.Code
 }
 
-func (svc KitchenService) saveMasterSync(shopID string) {
-	err := svc.cacheRepo.Save(shopID)
+func (svc KitchenService) LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error) {
+	var wg sync.WaitGroup
 
-	if err != nil {
-		fmt.Println("save kitchen master cache error :: " + err.Error())
+	wg.Add(1)
+	var deleteDocList []models.KitchenDeleteActivity
+	var pagination1 mongopagination.PaginationData
+	var err1 error
+
+	go func() {
+		deleteDocList, pagination1, err1 = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	var createAndUpdateDocList []models.KitchenActivity
+	var pagination2 mongopagination.PaginationData
+	var err2 error
+
+	go func() {
+		createAndUpdateDocList, pagination2, err2 = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
+		wg.Done()
+	}()
+
+	wg.Wait()
+
+	if err1 != nil {
+		return common.LastActivity{}, pagination1, err1
 	}
+
+	if err2 != nil {
+		return common.LastActivity{}, pagination2, err2
+	}
+
+	lastActivity := common.LastActivity{}
+
+	lastActivity.Remove = &deleteDocList
+	lastActivity.New = &createAndUpdateDocList
+
+	pagination := pagination1
+
+	if pagination.Total < pagination2.Total {
+		pagination = pagination2
+	}
+
+	return lastActivity, pagination, nil
+}
+
+func (svc KitchenService) LastActivityOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) (common.LastActivity, error) {
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	var deleteDocList []models.KitchenDeleteActivity
+	var err1 error
+
+	go func() {
+		deleteDocList, err1 = svc.repo.FindDeletedOffset(shopID, lastUpdatedDate, skip, limit)
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	var createAndUpdateDocList []models.KitchenActivity
+
+	var err2 error
+
+	go func() {
+		createAndUpdateDocList, err2 = svc.repo.FindCreatedOrUpdatedOffset(shopID, lastUpdatedDate, skip, limit)
+		wg.Done()
+	}()
+
+	wg.Wait()
+
+	if err1 != nil {
+		return common.LastActivity{}, err1
+	}
+
+	if err2 != nil {
+		return common.LastActivity{}, err2
+	}
+
+	lastActivity := common.LastActivity{}
+
+	lastActivity.Remove = &deleteDocList
+	lastActivity.New = &createAndUpdateDocList
+
+	return lastActivity, nil
+}
+
+func (svc KitchenService) saveMasterSync(shopID string) {
+	if svc.syncCacheRepo != nil {
+		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
+
+		if err != nil {
+			fmt.Printf("save %s cache error :: %s", svc.GetModuleName(), err.Error())
+		}
+	}
+}
+
+func (svc KitchenService) GetModuleName() string {
+	return "kitchen"
 }

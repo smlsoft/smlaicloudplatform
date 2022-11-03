@@ -2,9 +2,9 @@ package models
 
 import (
 	common "smlcloudplatform/pkg/models"
-	categoryModel "smlcloudplatform/pkg/product/category/models"
 	inventoryModel "smlcloudplatform/pkg/product/inventory/models"
 	optionModel "smlcloudplatform/pkg/product/option/models"
+	categoryModel "smlcloudplatform/pkg/product/productcategory/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -76,7 +76,7 @@ func (InventoryOptionMainImportDoc) CollectionName() string {
 const categoryImportCollectionName string = "categoryImports"
 
 type CategoryImport struct {
-	categoryModel.Category `bson:"inline"`
+	categoryModel.ProductCategoryDoc `bson:"inline"`
 }
 
 type CategoryImportInfo struct {

@@ -3,8 +3,8 @@ package models
 import (
 	"smlcloudplatform/pkg/models"
 	common "smlcloudplatform/pkg/models"
-	categoryModel "smlcloudplatform/pkg/product/category/models"
 	optionModel "smlcloudplatform/pkg/product/option/models"
+	categoryModel "smlcloudplatform/pkg/product/productcategory/models"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -50,12 +50,12 @@ type Inventory struct {
 
 	BarcodeDescriptionFromProduct bool `json:"barcodedescriptionfromproduct,omitempty" bson:"barcodedescriptionfromproduct,omitempty" gorm:"barcodedescriptionfromproduct,omitempty,type:bool,default:false"`
 
-	Options  *[]optionModel.Option   `json:"options,omitempty" bson:"options,omitempty" gorm:"many2many:inventoryoptions;foreignKey:GuidFixed;joinForeignKey:DocID;References:Code;joinReferences:OptID"`
-	Images   *[]InventoryImage       `json:"images,omitempty" bson:"images,omitempty" gorm:"images;foreignKey:DocID"`
-	Tags     *[]InventoryTag         `json:"tags,omitempty" bson:"tags" gorm:"tags;foreignKey:DocID"`
-	Category *categoryModel.Category `json:"category,omitempty" bson:"category,omitempty"`
-	Barcodes *[]Barcode              `json:"barcodes" bson:"barcodes" gorm:"barcodes"`
-	UnitUses *[]UnitUse              `json:"unituses" bson:"unituses" gorm:"units"`
+	Options  *[]optionModel.Option          `json:"options,omitempty" bson:"options,omitempty" gorm:"many2many:inventoryoptions;foreignKey:GuidFixed;joinForeignKey:DocID;References:Code;joinReferences:OptID"`
+	Images   *[]InventoryImage              `json:"images,omitempty" bson:"images,omitempty" gorm:"images;foreignKey:DocID"`
+	Tags     *[]InventoryTag                `json:"tags,omitempty" bson:"tags" gorm:"tags;foreignKey:DocID"`
+	Category *categoryModel.ProductCategory `json:"category,omitempty" bson:"category,omitempty"`
+	Barcodes *[]Barcode                     `json:"barcodes" bson:"barcodes" gorm:"barcodes"`
+	UnitUses *[]UnitUse                     `json:"unituses" bson:"unituses" gorm:"units"`
 
 	UnitCost     string `json:"unitcost,omitempty" bson:"unitcost,omitempty" gorm:"unitcost,omitempty" validate:"omitempty,max=100"`
 	UnitStandard string `json:"unitstandard,omitempty" bson:"unitstandard,omitempty" gorm:"unitstandard,omitempty" validate:"omitempty,max=100"`

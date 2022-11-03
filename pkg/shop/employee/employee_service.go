@@ -23,17 +23,19 @@ type IEmployeeService interface {
 	List(shopID string, q string, page int, limit int) ([]models.EmployeeInfo, mongopagination.PaginationData, error)
 	Update(shopID string, authUsername string, emp models.EmployeeRequestUpdate) error
 	UpdatePassword(shopID string, authUsername string, emp models.EmployeeRequestPassword) error
+
+	GetModuleName() string
 }
 
 type EmployeeService struct {
-	empRepo   IEmployeeRepository
-	cacheRepo mastersync.IMasterSyncCacheRepository
+	repo          IEmployeeRepository
+	syncCacheRepo mastersync.IMasterSyncCacheRepository
 }
 
-func NewEmployeeService(empRepo IEmployeeRepository, cacheRepo mastersync.IMasterSyncCacheRepository) *EmployeeService {
+func NewEmployeeService(repo IEmployeeRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *EmployeeService {
 	return &EmployeeService{
-		empRepo:   empRepo,
-		cacheRepo: cacheRepo,
+		repo:          repo,
+		syncCacheRepo: syncCacheRepo,
 	}
 }
 
@@ -41,7 +43,7 @@ func (svc EmployeeService) Login(shopID string, loginReq models.EmployeeRequestL
 
 	loginReq.Username = strings.TrimSpace(loginReq.Username)
 
-	findUser, err := svc.empRepo.FindEmployeeByUsername(shopID, loginReq.Username)
+	findUser, err := svc.repo.FindEmployeeByUsername(shopID, loginReq.Username)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return nil, errors.New("auth: database connect error")
@@ -62,7 +64,7 @@ func (svc EmployeeService) Login(shopID string, loginReq models.EmployeeRequestL
 
 func (svc EmployeeService) Register(shopID string, authUsername string, emp models.EmployeeRequestRegister) (string, error) {
 
-	findUserCode, err := svc.empRepo.FindEmployeeByCode(shopID, emp.Code)
+	findUserCode, err := svc.repo.FindEmployeeByCode(shopID, emp.Code)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return "", errors.New("auth: database connect error")
@@ -72,7 +74,7 @@ func (svc EmployeeService) Register(shopID string, authUsername string, emp mode
 		return "", errors.New("code is exists")
 	}
 
-	userFind, err := svc.empRepo.FindEmployeeByUsername(shopID, emp.Username)
+	userFind, err := svc.repo.FindEmployeeByUsername(shopID, emp.Username)
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return "", err
 	}
@@ -99,7 +101,7 @@ func (svc EmployeeService) Register(shopID string, authUsername string, emp mode
 	empDoc.CreatedBy = authUsername
 	empDoc.CreatedAt = time.Now()
 
-	_, err = svc.empRepo.Create(empDoc)
+	_, err = svc.repo.Create(empDoc)
 
 	if err != nil {
 		return "", err
@@ -111,7 +113,7 @@ func (svc EmployeeService) Register(shopID string, authUsername string, emp mode
 }
 
 func (svc EmployeeService) Get(shopID string, username string) (models.EmployeeInfo, error) {
-	doc, err := svc.empRepo.FindEmployeeByUsername(shopID, username)
+	doc, err := svc.repo.FindEmployeeByUsername(shopID, username)
 
 	if err != nil {
 		return models.EmployeeInfo{}, err
@@ -122,7 +124,7 @@ func (svc EmployeeService) Get(shopID string, username string) (models.EmployeeI
 
 func (svc EmployeeService) List(shopID string, q string, page int, limit int) ([]models.EmployeeInfo, mongopagination.PaginationData, error) {
 
-	docList, pagination, err := svc.empRepo.FindEmployeeByShopIDPage(shopID, q, page, limit)
+	docList, pagination, err := svc.repo.FindEmployeeByShopIDPage(shopID, q, page, limit)
 
 	if err != nil {
 		return []models.EmployeeInfo{}, pagination, err
@@ -133,7 +135,7 @@ func (svc EmployeeService) List(shopID string, q string, page int, limit int) ([
 
 func (svc EmployeeService) Update(shopID string, authUsername string, emp models.EmployeeRequestUpdate) error {
 
-	userFind, err := svc.empRepo.FindEmployeeByUsername(shopID, emp.Username)
+	userFind, err := svc.repo.FindEmployeeByUsername(shopID, emp.Username)
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return err
 	}
@@ -149,7 +151,7 @@ func (svc EmployeeService) Update(shopID string, authUsername string, emp models
 	userFind.UpdatedBy = authUsername
 	userFind.UpdatedAt = time.Now()
 
-	err = svc.empRepo.Update(shopID, userFind.GuidFixed, userFind)
+	err = svc.repo.Update(shopID, userFind.GuidFixed, userFind)
 
 	if err != nil {
 		return err
@@ -162,7 +164,7 @@ func (svc EmployeeService) Update(shopID string, authUsername string, emp models
 
 func (svc EmployeeService) UpdatePassword(shopID string, authUsername string, emp models.EmployeeRequestPassword) error {
 
-	userFind, err := svc.empRepo.FindEmployeeByUsername(shopID, emp.Username)
+	userFind, err := svc.repo.FindEmployeeByUsername(shopID, emp.Username)
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return err
 	}
@@ -182,7 +184,7 @@ func (svc EmployeeService) UpdatePassword(shopID string, authUsername string, em
 	userFind.UpdatedBy = authUsername
 	userFind.UpdatedAt = time.Now()
 
-	err = svc.empRepo.Update(shopID, userFind.GuidFixed, userFind)
+	err = svc.repo.Update(shopID, userFind.GuidFixed, userFind)
 
 	if err != nil {
 		return err
@@ -202,7 +204,7 @@ func (svc EmployeeService) LastActivity(shopID string, lastUpdatedDate time.Time
 	var err1 error
 
 	go func() {
-		deleteDocList, pagination1, err1 = svc.empRepo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
+		deleteDocList, pagination1, err1 = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
 		wg.Done()
 	}()
 
@@ -212,7 +214,7 @@ func (svc EmployeeService) LastActivity(shopID string, lastUpdatedDate time.Time
 	var err2 error
 
 	go func() {
-		createAndUpdateDocList, pagination2, err2 = svc.empRepo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
+		createAndUpdateDocList, pagination2, err2 = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
 		wg.Done()
 	}()
 
@@ -240,10 +242,56 @@ func (svc EmployeeService) LastActivity(shopID string, lastUpdatedDate time.Time
 	return lastActivity, pagination, nil
 }
 
-func (svc EmployeeService) saveMasterSync(shopID string) {
-	err := svc.cacheRepo.Save(shopID)
+func (svc EmployeeService) LastActivityOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) (common.LastActivity, error) {
+	var wg sync.WaitGroup
 
-	if err != nil {
-		fmt.Println("save category master cache error :: " + err.Error())
+	wg.Add(1)
+	var deleteDocList []models.EmployeeDeleteActivity
+	var err1 error
+
+	go func() {
+		deleteDocList, err1 = svc.repo.FindDeletedOffset(shopID, lastUpdatedDate, skip, limit)
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	var createAndUpdateDocList []models.EmployeeActivity
+
+	var err2 error
+
+	go func() {
+		createAndUpdateDocList, err2 = svc.repo.FindCreatedOrUpdatedOffset(shopID, lastUpdatedDate, skip, limit)
+		wg.Done()
+	}()
+
+	wg.Wait()
+
+	if err1 != nil {
+		return common.LastActivity{}, err1
 	}
+
+	if err2 != nil {
+		return common.LastActivity{}, err2
+	}
+
+	lastActivity := common.LastActivity{}
+
+	lastActivity.Remove = &deleteDocList
+	lastActivity.New = &createAndUpdateDocList
+
+	return lastActivity, nil
+}
+
+func (svc EmployeeService) saveMasterSync(shopID string) {
+	if svc.syncCacheRepo != nil {
+		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
+
+		if err != nil {
+			fmt.Printf("save %s cache error :: %s", svc.GetModuleName(), err.Error())
+		}
+	}
+}
+
+func (svc EmployeeService) GetModuleName() string {
+	return "employee"
 }

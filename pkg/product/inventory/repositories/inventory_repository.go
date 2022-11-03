@@ -4,11 +4,12 @@ import (
 	"errors"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/product/inventory/models"
+	"smlcloudplatform/pkg/repositories"
 	"time"
 
 	"smlcloudplatform/pkg/utils/mogoutil"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -22,23 +23,30 @@ type IInventoryRepository interface {
 	FindByID(id primitive.ObjectID) (models.InventoryDoc, error)
 	FindByGuid(shopID string, guid string) (models.InventoryDoc, error)
 	FindByItemCode(shopID string, itemCode string) (models.InventoryDoc, error)
-	FindPage(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error)
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryDeleteActivity, paginate.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryActivity, paginate.PaginationData, error)
+	FindPage(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.InventoryInfo, mongopagination.PaginationData, error)
 	FindByItemGuid(shopId string, itemguid string) (models.InventoryDoc, error)
 	FindByItemGuidList(shopID string, guidList []string) ([]models.InventoryDoc, error)
 	FindByItemBarcode(shopId string, barcode string) (models.InventoryDoc, error)
 	FindByBarcodes(shopID string, barcodes []string) ([]models.InventoryDoc, error)
+
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryActivity, mongopagination.PaginationData, error)
+	FindDeletedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.InventoryDeleteActivity, error)
+	FindCreatedOrUpdatedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.InventoryActivity, error)
 }
 
 type InventoryRepository struct {
 	pst microservice.IPersisterMongo
+	repositories.ActivityRepository[models.InventoryActivity, models.InventoryDeleteActivity]
 }
 
 func NewInventoryRepository(pst microservice.IPersisterMongo) InventoryRepository {
-	return InventoryRepository{
+
+	insRepo := InventoryRepository{
 		pst: pst,
 	}
+	insRepo.ActivityRepository = repositories.NewActivityRepository[models.InventoryActivity, models.InventoryDeleteActivity](pst)
+	return insRepo
 }
 
 func (repo InventoryRepository) CreateInBatch(inventories []models.InventoryDoc) error {
@@ -237,7 +245,7 @@ func (repo InventoryRepository) FindByItemCode(shopID string, itemCode string) (
 	return findDocList[0], nil
 }
 
-func (repo InventoryRepository) FindPage(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.InventoryInfo, paginate.PaginationData, error) {
+func (repo InventoryRepository) FindPage(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.InventoryInfo, mongopagination.PaginationData, error) {
 
 	filterQuery := bson.M{
 		"shopid":    shopID,
@@ -263,19 +271,19 @@ func (repo InventoryRepository) FindPage(shopID string, filters map[string]inter
 	aggData, err := repo.pst.AggregatePage(models.InventoryInfo{}, limit, page, matchQuery, repo.unitLookupQuery(shopID), repo.unitUnwindQuery())
 
 	if err != nil {
-		return []models.InventoryInfo{}, paginate.PaginationData{}, err
+		return []models.InventoryInfo{}, mongopagination.PaginationData{}, err
 	}
 
 	docList, err := mogoutil.AggregatePageDecode[models.InventoryInfo](aggData)
 
 	if err != nil {
-		return []models.InventoryInfo{}, paginate.PaginationData{}, err
+		return []models.InventoryInfo{}, mongopagination.PaginationData{}, err
 	}
 
 	return docList, aggData.Pagination, nil
 }
 
-func (repo InventoryRepository) FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryDeleteActivity, paginate.PaginationData, error) {
+func (repo InventoryRepository) FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryDeleteActivity, mongopagination.PaginationData, error) {
 
 	docList := []models.InventoryDeleteActivity{}
 	pagination, err := repo.pst.FindPage(&models.InventoryInfo{}, limit, page, bson.M{
@@ -284,13 +292,13 @@ func (repo InventoryRepository) FindDeletedPage(shopID string, lastUpdatedDate t
 	}, &docList)
 
 	if err != nil {
-		return []models.InventoryDeleteActivity{}, paginate.PaginationData{}, err
+		return []models.InventoryDeleteActivity{}, mongopagination.PaginationData{}, err
 	}
 
 	return docList, pagination, nil
 }
 
-func (repo InventoryRepository) FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryActivity, paginate.PaginationData, error) {
+func (repo InventoryRepository) FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.InventoryActivity, mongopagination.PaginationData, error) {
 
 	matchQuery := bson.M{
 		"$match": bson.M{
@@ -306,13 +314,13 @@ func (repo InventoryRepository) FindCreatedOrUpdatedPage(shopID string, lastUpda
 	aggData, err := repo.pst.AggregatePage(models.InventoryActivity{}, limit, page, matchQuery, repo.unitLookupQuery(shopID), repo.unitUnwindQuery())
 
 	if err != nil {
-		return []models.InventoryActivity{}, paginate.PaginationData{}, err
+		return []models.InventoryActivity{}, mongopagination.PaginationData{}, err
 	}
 
 	docList, err := mogoutil.AggregatePageDecode[models.InventoryActivity](aggData)
 
 	if err != nil {
-		return []models.InventoryActivity{}, paginate.PaginationData{}, err
+		return []models.InventoryActivity{}, mongopagination.PaginationData{}, err
 	}
 
 	return docList, aggData.Pagination, nil

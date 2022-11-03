@@ -18,8 +18,11 @@ type IShopPrinterRepository interface {
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.PrinterTerminalInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.PrinterTerminalDoc, error)
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.PrinterTerminalItemGuid, error)
+
 	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.PrinterTerminalDeleteActivity, mongopagination.PaginationData, error)
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.PrinterTerminalActivity, mongopagination.PaginationData, error)
+	FindDeletedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.PrinterTerminalDeleteActivity, error)
+	FindCreatedOrUpdatedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.PrinterTerminalActivity, error)
 }
 
 type ShopPrinterRepository struct {

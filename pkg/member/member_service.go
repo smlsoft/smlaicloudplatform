@@ -23,26 +23,29 @@ type IMemberService interface {
 	Delete(shopID string, guid string, username string) error
 	Info(shopID string, guid string) (models.MemberInfo, error)
 	Search(shopID string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error)
+
 	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, paginate.PaginationData, error)
+	LastActivityOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) (common.LastActivity, error)
+	GetModuleName() string
 }
 
 type MemberService struct {
-	memberRepo   IMemberRepository
-	memberPgRepo IMemberPGRepository
-	cacheRepo    mastersync.IMasterSyncCacheRepository
+	repo          IMemberRepository
+	memberPgRepo  IMemberPGRepository
+	syncCacheRepo mastersync.IMasterSyncCacheRepository
 }
 
-func NewMemberService(memberRepo IMemberRepository, memberPgRepo IMemberPGRepository, cacheRepo mastersync.IMasterSyncCacheRepository) MemberService {
+func NewMemberService(repo IMemberRepository, memberPgRepo IMemberPGRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) MemberService {
 	return MemberService{
-		memberRepo:   memberRepo,
-		memberPgRepo: memberPgRepo,
-		cacheRepo:    cacheRepo,
+		repo:          repo,
+		memberPgRepo:  memberPgRepo,
+		syncCacheRepo: syncCacheRepo,
 	}
 }
 
 func (svc MemberService) IsExistsGuid(shopID string, guidFixed string) (bool, error) {
 
-	findDoc, err := svc.memberRepo.FindByGuid(shopID, guidFixed)
+	findDoc, err := svc.repo.FindByGuid(shopID, guidFixed)
 
 	if err != nil {
 		return false, err
@@ -80,7 +83,7 @@ func (svc MemberService) CreateWithGuid(shopID string, username string, guid str
 
 	dataDoc.Member = doc
 
-	_, err := svc.memberRepo.Create(dataDoc)
+	_, err := svc.repo.Create(dataDoc)
 
 	if err != nil {
 		return "", err
@@ -102,7 +105,7 @@ func (svc MemberService) Create(shopID string, username string, doc models.Membe
 
 	dataDoc.Member = doc
 
-	_, err := svc.memberRepo.Create(dataDoc)
+	_, err := svc.repo.Create(dataDoc)
 
 	if err != nil {
 		return "", err
@@ -115,7 +118,7 @@ func (svc MemberService) Create(shopID string, username string, doc models.Membe
 
 func (svc MemberService) Update(shopID string, guid string, username string, doc models.Member) error {
 
-	findDoc, err := svc.memberRepo.FindByGuid(shopID, guid)
+	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return err
@@ -131,7 +134,7 @@ func (svc MemberService) Update(shopID string, guid string, username string, doc
 
 	findDoc.LastUpdatedAt = time.Now()
 
-	err = svc.memberRepo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -144,7 +147,7 @@ func (svc MemberService) Update(shopID string, guid string, username string, doc
 
 func (svc MemberService) Delete(shopID string, guid string, username string) error {
 
-	err := svc.memberRepo.Delete(shopID, guid, username)
+	err := svc.repo.Delete(shopID, guid, username)
 	if err != nil {
 		return err
 	}
@@ -155,7 +158,7 @@ func (svc MemberService) Delete(shopID string, guid string, username string) err
 }
 
 func (svc MemberService) Info(shopID string, guid string) (models.MemberInfo, error) {
-	doc, err := svc.memberRepo.FindByGuid(shopID, guid)
+	doc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return models.MemberInfo{}, err
@@ -165,7 +168,7 @@ func (svc MemberService) Info(shopID string, guid string) (models.MemberInfo, er
 }
 
 func (svc MemberService) Search(shopID string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error) {
-	docList, pagination, err := svc.memberRepo.FindPage(shopID, q, page, limit)
+	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
 
 	if err != nil {
 		return docList, pagination, err
@@ -183,7 +186,7 @@ func (svc MemberService) LastActivity(shopID string, lastUpdatedDate time.Time, 
 	var err1 error
 
 	go func() {
-		deleteDocList, pagination1, err1 = svc.memberRepo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
+		deleteDocList, pagination1, err1 = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
 		wg.Done()
 	}()
 
@@ -193,7 +196,7 @@ func (svc MemberService) LastActivity(shopID string, lastUpdatedDate time.Time, 
 	var err2 error
 
 	go func() {
-		createAndUpdateDocList, pagination2, err2 = svc.memberRepo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
+		createAndUpdateDocList, pagination2, err2 = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
 		wg.Done()
 	}()
 
@@ -221,10 +224,56 @@ func (svc MemberService) LastActivity(shopID string, lastUpdatedDate time.Time, 
 	return lastActivity, pagination, nil
 }
 
-func (svc MemberService) saveMasterSync(shopID string) {
-	err := svc.cacheRepo.Save(shopID)
+func (svc MemberService) LastActivityOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) (common.LastActivity, error) {
+	var wg sync.WaitGroup
 
-	if err != nil {
-		fmt.Println("save member master cache error :: " + err.Error())
+	wg.Add(1)
+	var deleteDocList []models.MemberDeleteActivity
+	var err1 error
+
+	go func() {
+		deleteDocList, err1 = svc.repo.FindDeletedOffset(shopID, lastUpdatedDate, skip, limit)
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	var createAndUpdateDocList []models.MemberActivity
+
+	var err2 error
+
+	go func() {
+		createAndUpdateDocList, err2 = svc.repo.FindCreatedOrUpdatedOffset(shopID, lastUpdatedDate, skip, limit)
+		wg.Done()
+	}()
+
+	wg.Wait()
+
+	if err1 != nil {
+		return common.LastActivity{}, err1
 	}
+
+	if err2 != nil {
+		return common.LastActivity{}, err2
+	}
+
+	lastActivity := common.LastActivity{}
+
+	lastActivity.Remove = &deleteDocList
+	lastActivity.New = &createAndUpdateDocList
+
+	return lastActivity, nil
+}
+
+func (svc MemberService) saveMasterSync(shopID string) {
+	if svc.syncCacheRepo != nil {
+		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
+
+		if err != nil {
+			fmt.Printf("save %s cache error :: %s", svc.GetModuleName(), err.Error())
+		}
+	}
+}
+
+func (svc MemberService) GetModuleName() string {
+	return "member"
 }

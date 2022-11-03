@@ -26,7 +26,7 @@ func NewProductBarcodeHttp(ms *microservice.Microservice, cfg microservice.IConf
 
 	repo := repositories.NewProductBarcodeRepository(pst)
 
-	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "productbarcode")
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
 	svc := services.NewProductBarcodeHttpService(repo, masterSyncCacheRepo)
 
 	return ProductBarcodeHttp{
