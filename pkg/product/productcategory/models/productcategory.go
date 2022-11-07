@@ -10,12 +10,13 @@ const productcategoryCollectionName = "productCategories"
 
 type ProductCategory struct {
 	models.PartitionIdentity `bson:"inline"`
-	XOrder                   int8            `json:"xorder" bson:"xorder,omitempty" validate:"min=-125,max=125"`
+	ChildCount               int             `json:"childcount" bson:"childcount"`
 	ParentGUID               string          `json:"parentguid" bson:"parentguid"`
 	ParentGUIDAll            string          `json:"parentguidall" bson:"parentguidall"`
 	ImageUri                 string          `json:"imageuri" bson:"imageuri"`
-	ChildCount               int             `json:"childcount" bson:"childcount"`
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	XSort                    *[]models.XSort `json:"xsort" bson:"xsort" validate:"unique=Code,dive"`
+	Barcodes                 *[]models.XSort `json:"barcodes" bson:"barcodes" validate:"unique=Code,dive"`
 }
 
 type ProductCategoryInfo struct {

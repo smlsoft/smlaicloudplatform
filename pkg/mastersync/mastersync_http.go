@@ -156,8 +156,14 @@ func (h MasterSyncHttp) LastActivitySync(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	layout := "2006-01-02T15:04"
+	layout := "2006-01-02T15:04:05"
 	lastUpdateStr := ctx.QueryParam("lastupdate")
+
+	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
+	if len(lastUpdateStr) < 1 {
+		ctx.ResponseError(400, "lastupdate format invalid.")
+		return nil
+	}
 
 	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
 	if len(lastUpdateStr) < 1 {
@@ -219,12 +225,12 @@ func (h MasterSyncHttp) LastActivitySyncOffset(ctx microservice.IContext) error 
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	layout := "2006-01-02T15:04"
+	layout := "2006-01-02T15:04:05"
 	lastUpdateStr := ctx.QueryParam("lastupdate")
 
 	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
 	if len(lastUpdateStr) < 1 {
-		ctx.ResponseError(400, "lastUpdate format invalid.")
+		ctx.ResponseError(400, "lastupdate format invalid.")
 		return nil
 	}
 
