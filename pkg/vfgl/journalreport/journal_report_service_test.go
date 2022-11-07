@@ -1,6 +1,7 @@
 package journalreport_test
 
 import (
+	"fmt"
 	chartofaccountModel "smlcloudplatform/pkg/vfgl/chartofaccount/models"
 	"smlcloudplatform/pkg/vfgl/journalreport"
 	"smlcloudplatform/pkg/vfgl/journalreport/models"
@@ -111,7 +112,7 @@ func TestProcessBalanceSheetReport(t *testing.T) {
 
 func TestLedgerAccount(t *testing.T) {
 	repo := new(MockJournalreportRepository)
-	repo.On("GetDataLedgerAccount", "TESTSHOP", []models.LedgerAccountCodeRange{
+	repo.On("GetDataLedgerAccount", "TESTSHOP", "accGroup", "conAcc", []models.LedgerAccountCodeRange{
 		{
 			Start: "100000",
 			End:   "150000",
@@ -207,10 +208,40 @@ func TestLedgerAccount(t *testing.T) {
 			CreditAmount: 100,
 			Amount:       0,
 		},
+		{
+			RowMode:      -1,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC005",
+			AccountName:  "AC Name 5",
+			DebitAmount:  0,
+			CreditAmount: 0,
+			Amount:       0,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC005",
+			AccountName:  "AC Name 5",
+			DebitAmount:  100.35,
+			CreditAmount: 0,
+			Amount:       0,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC005",
+			AccountName:  "AC Name 5",
+			DebitAmount:  0,
+			CreditAmount: 100.35,
+			Amount:       0,
+		},
 	}, nil)
 
 	service := journalreport.NewJournalReportService(repo)
-	docList, err := service.ProcessLedgerAccount("TESTSHOP", "", "", []models.LedgerAccountCodeRange{
+	docList, err := service.ProcessLedgerAccount("TESTSHOP", "accGroup", "conAcc", []models.LedgerAccountCodeRange{
 		{
 			Start: "100000",
 			End:   "150000",
@@ -218,11 +249,182 @@ func TestLedgerAccount(t *testing.T) {
 	}, mocktest.MockTime(), mocktest.MockTime())
 
 	assert.Nil(t, err)
-	assert.Equal(t, 4, len(docList))
+	assert.Equal(t, 5, len(docList))
 
 	assert.Equal(t, 175.0, docList[0].NextBalance)
 	assert.Equal(t, -50.0, docList[1].NextBalance)
 	assert.Equal(t, 50.0, docList[2].NextBalance)
 	assert.Equal(t, -150.0, docList[3].NextBalance)
 
+	for _, detail := range *docList[4].Details {
+		fmt.Printf("%f \n", detail.Amount)
+	}
+}
+
+func TestLedgerAccount2(t *testing.T) {
+	repo := new(MockJournalreportRepository)
+	repo.On("GetDataLedgerAccount", "TESTSHOP", "accGroup", "conAcc", []models.LedgerAccountCodeRange{
+		{
+			Start: "100000",
+			End:   "150000",
+		},
+	}, mocktest.MockTime(), mocktest.MockTime()).Return([]models.LedgerAccountRaw{
+		{
+			RowMode:      -1,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC005",
+			AccountName:  "AC Name 5",
+			DebitAmount:  0,
+			CreditAmount: 0,
+			Amount:       0,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC005",
+			AccountName:  "AC Name 5",
+			DebitAmount:  0,
+			CreditAmount: 511.67,
+			Amount:       0,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC005",
+			AccountName:  "AC Name 5",
+			DebitAmount:  2391.0,
+			CreditAmount: 0,
+			Amount:       0,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC005",
+			AccountName:  "AC Name 5",
+			DebitAmount:  0,
+			CreditAmount: 1879.33,
+			Amount:       0,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC005",
+			AccountName:  "AC Name 5",
+			DebitAmount:  0,
+			CreditAmount: 151.30,
+			Amount:       0,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC005",
+			AccountName:  "AC Name 5",
+			DebitAmount:  707.0,
+			CreditAmount: 0,
+			Amount:       0,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC005",
+			AccountName:  "AC Name 5",
+			DebitAmount:  0,
+			CreditAmount: 555.70,
+			Amount:       0,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC005",
+			AccountName:  "AC Name 5",
+			DebitAmount:  961.0,
+			CreditAmount: 0,
+			Amount:       0,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC005",
+			AccountName:  "AC Name 5",
+			DebitAmount:  0,
+			CreditAmount: 104.0,
+			Amount:       0,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC005",
+			AccountName:  "AC Name 5",
+			DebitAmount:  0,
+			CreditAmount: 205.65,
+			Amount:       0,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC005",
+			AccountName:  "AC Name 5",
+			DebitAmount:  486.0,
+			CreditAmount: 0,
+			Amount:       0,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC005",
+			AccountName:  "AC Name 5",
+			DebitAmount:  0,
+			CreditAmount: 755.35,
+			Amount:       0,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC005",
+			AccountName:  "AC Name 5",
+			DebitAmount:  0,
+			CreditAmount: 382.0,
+			Amount:       0,
+		},
+		{
+			RowMode:      0,
+			DocNo:        "",
+			DocDate:      mocktest.MockTime(),
+			AccountCode:  "AC005",
+			AccountName:  "AC Name 5",
+			DebitAmount:  787.0,
+			CreditAmount: 0,
+			Amount:       0,
+		},
+	}, nil)
+
+	service := journalreport.NewJournalReportService(repo)
+	docList, err := service.ProcessLedgerAccount("TESTSHOP", "accGroup", "conAcc", []models.LedgerAccountCodeRange{
+		{
+			Start: "100000",
+			End:   "150000",
+		},
+	}, mocktest.MockTime(), mocktest.MockTime())
+
+	assert.Nil(t, err)
+	assert.Equal(t, 1, len(docList))
+
+	// assert.Equal(t, 0.0, docList[0].NextBalance)
+
+	for _, detail := range *docList[0].Details {
+		fmt.Printf("%f \n", detail.Amount)
+	}
 }

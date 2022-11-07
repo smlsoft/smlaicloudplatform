@@ -5,6 +5,8 @@ import (
 	chartofaccountModel "smlcloudplatform/pkg/vfgl/chartofaccount/models"
 	"smlcloudplatform/pkg/vfgl/journalreport/models"
 	"time"
+
+	"github.com/shopspring/decimal"
 )
 
 type IJournalReportService interface {
@@ -194,7 +196,7 @@ func (svc JournalReportService) ProcessLedgerAccount(shopID string, accountGroup
 	docList := []models.LedgerAccount{}
 
 	lastAccountCode := ""
-	lastAmount := 0.0
+	lastAmount := decimal.NewFromFloat(0.0)
 	tempDoc := models.LedgerAccount{}
 
 	currentIndexAccount := -1
@@ -209,16 +211,21 @@ func (svc JournalReportService) ProcessLedgerAccount(shopID string, accountGroup
 			tempDoc.AccountGroup = doc.AccountGroup
 			tempDoc.ConsolidateAccountCode = doc.ConsolidateAccountCode
 
-			lastAmount = doc.Amount
-			tempDoc.Balance = lastAmount
-			tempDoc.NextBalance = lastAmount
+			lastAmount = decimal.NewFromFloat(doc.Amount)
+			tempDoc.Balance, _ = lastAmount.Float64()
+			tempDoc.NextBalance, _ = lastAmount.Float64()
 
 			docList = append(docList, tempDoc)
 		}
 
 		if doc.RowMode == 0 && currentIndexAccount != -1 {
-			lastAmount = (lastAmount + doc.DebitAmount) - doc.CreditAmount
-			docList[currentIndexAccount].NextBalance = lastAmount
+			debDecimal := decimal.NewFromFloat(doc.DebitAmount)
+			credDecimal := decimal.NewFromFloat(doc.CreditAmount)
+
+			lastAmount = lastAmount.Add(debDecimal).Sub(credDecimal)
+			tempLastAmount, _ := lastAmount.Float64()
+
+			docList[currentIndexAccount].NextBalance = tempLastAmount
 
 			detail := models.LedgerAccountDetail{
 				DocNo:              doc.DocNo,
@@ -226,7 +233,7 @@ func (svc JournalReportService) ProcessLedgerAccount(shopID string, accountGroup
 				DocDate:            doc.DocDate,
 				Debit:              doc.DebitAmount,
 				Credit:             doc.CreditAmount,
-				Amount:             lastAmount,
+				Amount:             tempLastAmount,
 			}
 			*tempDoc.Details = append(*tempDoc.Details, detail)
 		}
