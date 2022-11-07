@@ -26,6 +26,8 @@ type IProductBarcodeHttpService interface {
 	SearchProductBarcodeStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ProductBarcodeInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ProductBarcode) (common.BulkImport, error)
 
+	XSortSave(shopID string, xsorts []common.XSortModifyReqesut) error
+
 	GetModuleName() string
 }
 
@@ -68,18 +70,20 @@ func (svc ProductBarcodeHttpService) CreateProductBarcode(shopID string, authUse
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	options := *doc.Options
-	for idxOpt := range options {
-		option := &options[idxOpt]
-		if len(option.GUID) < 1 {
-			option.GUID = utils.NewGUID()
-		}
+	if doc.Options != nil {
+		options := *doc.Options
+		for idxOpt := range options {
+			option := &options[idxOpt]
+			if len(option.GUID) < 1 {
+				option.GUID = utils.NewGUID()
+			}
 
-		choices := *option.Choices
-		for idxChoice := range choices {
-			choice := &choices[idxChoice]
-			if len(choice.GUID) < 1 {
-				choice.GUID = utils.NewGUID()
+			choices := *option.Choices
+			for idxChoice := range choices {
+				choice := &choices[idxChoice]
+				if len(choice.GUID) < 1 {
+					choice.GUID = utils.NewGUID()
+				}
 			}
 		}
 	}
@@ -321,6 +325,48 @@ func (svc ProductBarcodeHttpService) SaveInBatch(shopID string, authUsername str
 
 func (svc ProductBarcodeHttpService) getDocIDKey(doc models.ProductBarcode) string {
 	return doc.Barcode
+}
+
+func (svc ProductBarcodeHttpService) XSortSave(shopID string, xsorts []common.XSortModifyReqesut) error {
+	for _, xsort := range xsorts {
+		if len(xsort.GUIDFixed) < 1 {
+			continue
+		}
+		findDoc, err := svc.repo.FindByGuid(shopID, xsort.GUIDFixed)
+
+		if err != nil {
+			return err
+		}
+
+		dictXSorts := map[string]common.XSort{}
+
+		for _, tempXSort := range *findDoc.XSorts {
+			dictXSorts[tempXSort.Code] = tempXSort
+		}
+
+		dictXSorts[xsort.Code] = common.XSort{
+			Code:   xsort.Code,
+			XOrder: xsort.XOrder,
+		}
+
+		tempXSorts := []common.XSort{}
+
+		for _, tempXSort := range dictXSorts {
+			tempXSorts = append(tempXSorts, tempXSort)
+		}
+
+		findDoc.XSorts = &tempXSorts
+
+		err = svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
+
+		if err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+
 }
 
 func (svc ProductBarcodeHttpService) saveMasterSync(shopID string) {

@@ -11,6 +11,8 @@ import (
 
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 
+	common "smlcloudplatform/pkg/models"
+
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -24,6 +26,7 @@ type IProductCategoryHttpService interface {
 	SearchProductCategory(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ProductCategoryInfo, mongopagination.PaginationData, error)
 	SearchProductCategoryStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ProductCategoryInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ProductCategory) error
+	XSortSave(shopID string, xsorts []common.XSortModifyReqesut) error
 
 	GetModuleName() string
 }
@@ -202,6 +205,48 @@ func (svc ProductCategoryHttpService) SaveInBatch(shopID string, authUsername st
 	}
 
 	return nil
+}
+
+func (svc ProductCategoryHttpService) XSortSave(shopID string, xsorts []common.XSortModifyReqesut) error {
+	for _, xsort := range xsorts {
+		if len(xsort.GUIDFixed) < 1 {
+			continue
+		}
+		findDoc, err := svc.repo.FindByGuid(shopID, xsort.GUIDFixed)
+
+		if err != nil {
+			return err
+		}
+
+		dictXSorts := map[string]common.XSort{}
+
+		for _, tempXSort := range *findDoc.XSorts {
+			dictXSorts[tempXSort.Code] = tempXSort
+		}
+
+		dictXSorts[xsort.Code] = common.XSort{
+			Code:   xsort.Code,
+			XOrder: xsort.XOrder,
+		}
+
+		tempXSorts := []common.XSort{}
+
+		for _, tempXSort := range dictXSorts {
+			tempXSorts = append(tempXSorts, tempXSort)
+		}
+
+		findDoc.XSorts = &tempXSorts
+
+		err = svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
+
+		if err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+
 }
 
 func (svc ProductCategoryHttpService) saveMasterSync(shopID string) {

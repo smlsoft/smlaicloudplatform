@@ -15,7 +15,7 @@ type ProductCategory struct {
 	ParentGUIDAll            string          `json:"parentguidall" bson:"parentguidall"`
 	ImageUri                 string          `json:"imageuri" bson:"imageuri"`
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	XSort                    *[]models.XSort `json:"xsort" bson:"xsort" validate:"unique=Code,dive"`
+	XSorts                   *[]models.XSort `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
 	Barcodes                 *[]models.XSort `json:"barcodes" bson:"barcodes" validate:"unique=Code,dive"`
 }
 

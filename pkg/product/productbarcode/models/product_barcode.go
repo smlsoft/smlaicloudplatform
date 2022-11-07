@@ -14,7 +14,7 @@ type ProductBarcode struct {
 	Barcode                  string          `json:"barcode" bson:"barcode" validate:"required,min=1"`
 	CategoryGUID             string          `json:"categoryguid" bson:"categoryguid"`
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	XSort                    *[]models.XSort `json:"xsort" bson:"xsort" validate:"unique=Code,dive"`
+	XSorts                   *[]models.XSort `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
 
 	ItemUnitCode  string           `json:"itemunitcode" bson:"itemunitcode"`
 	ItemUnitNames *[]models.NameX  `json:"itemunitnames" bson:"itemunitnames" validate:"required,min=1,unique=Code,dive"`

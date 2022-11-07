@@ -44,6 +44,7 @@ func (h ProductBarcodeHttp) RouteSetup() {
 	h.ms.GET("/product/barcode/list", h.SearchProductBarcodeLimit)
 	h.ms.POST("/product/barcode", h.CreateProductBarcode)
 	h.ms.GET("/product/barcode/:id", h.InfoProductBarcode)
+	h.ms.PUT("/product/barcode/xsort", h.UpdateProductBarcodeXSort)
 	h.ms.PUT("/product/barcode/:id", h.UpdateProductBarcode)
 	h.ms.DELETE("/product/barcode/:id", h.DeleteProductBarcode)
 }
@@ -68,6 +69,10 @@ func (h ProductBarcodeHttp) CreateProductBarcode(ctx microservice.IContext) erro
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
+	}
+
+	if docReq.XSorts == nil {
+		docReq.XSorts = &[]common.XSort{}
 	}
 
 	if err = ctx.Validate(docReq); err != nil {
@@ -115,6 +120,10 @@ func (h ProductBarcodeHttp) UpdateProductBarcode(ctx microservice.IContext) erro
 		return err
 	}
 
+	if docReq.XSorts == nil {
+		docReq.XSorts = &[]common.XSort{}
+	}
+
 	if err = ctx.Validate(docReq); err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
@@ -130,6 +139,48 @@ func (h ProductBarcodeHttp) UpdateProductBarcode(ctx microservice.IContext) erro
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      id,
+	})
+
+	return nil
+}
+
+// Update XSort	 ProductBarcode godoc
+// @Description Update XSort ProductBarcode
+// @Tags		ProductBarcode
+// @Param		XSort  body      []common.XSortModifyReqesut  true  "XSort"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/barcode/xsort [put]
+func (h ProductBarcodeHttp) UpdateProductBarcodeXSort(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	req := &[]common.XSortModifyReqesut{}
+	err := json.Unmarshal([]byte(input), &req)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(req); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.XSortSave(shopID, *req)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
 	})
 
 	return nil

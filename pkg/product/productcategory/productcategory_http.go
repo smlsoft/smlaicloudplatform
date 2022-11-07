@@ -44,6 +44,7 @@ func (h ProductCategoryHttp) RouteSetup() {
 	h.ms.GET("/product/category/list", h.SearchProductCategoryLimit)
 	h.ms.POST("/product/category", h.CreateProductCategory)
 	h.ms.GET("/product/category/:id", h.InfoProductCategory)
+	h.ms.PUT("/product/category/xsort", h.UpdateProductCategoryXSort)
 	h.ms.PUT("/product/category/:id", h.UpdateProductCategory)
 	h.ms.DELETE("/product/category/:id", h.DeleteProductCategory)
 }
@@ -68,6 +69,14 @@ func (h ProductCategoryHttp) CreateProductCategory(ctx microservice.IContext) er
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
+	}
+
+	if docReq.XSorts == nil {
+		docReq.XSorts = &[]common.XSort{}
+	}
+
+	if docReq.Barcodes == nil {
+		docReq.Barcodes = &[]common.XSort{}
 	}
 
 	if err = ctx.Validate(docReq); err != nil {
@@ -115,6 +124,14 @@ func (h ProductCategoryHttp) UpdateProductCategory(ctx microservice.IContext) er
 		return err
 	}
 
+	if docReq.XSorts == nil {
+		docReq.XSorts = &[]common.XSort{}
+	}
+
+	if docReq.Barcodes == nil {
+		docReq.Barcodes = &[]common.XSort{}
+	}
+
 	if err = ctx.Validate(docReq); err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
@@ -130,6 +147,48 @@ func (h ProductCategoryHttp) UpdateProductCategory(ctx microservice.IContext) er
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      id,
+	})
+
+	return nil
+}
+
+// Update XSort	 Category godoc
+// @Description Update XSort Category
+// @Tags		ProductCategory
+// @Param		XSort  body      []common.XSortModifyReqesut  true  "XSort"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/category/xsort [put]
+func (h ProductCategoryHttp) UpdateProductCategoryXSort(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	req := &[]common.XSortModifyReqesut{}
+	err := json.Unmarshal([]byte(input), &req)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(req); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.XSortSave(shopID, *req)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
 	})
 
 	return nil
