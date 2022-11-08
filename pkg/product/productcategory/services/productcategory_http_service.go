@@ -159,6 +159,8 @@ func (svc ProductCategoryHttpService) SearchProductCategoryStep(shopID string, l
 		"parentguid":    1,
 		"parentguidall": 1,
 		"imageuri":      1,
+		"xsorts":        1,
+		"barcodes":      1,
 	}
 
 	if langCode != "" {

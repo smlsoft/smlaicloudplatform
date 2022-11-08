@@ -196,6 +196,7 @@ func (svc ProductBarcodeHttpService) SearchProductBarcodeStep(shopID string, lan
 		"prices":       1,
 		"imageuri":     1,
 		"options":      1,
+		"xsorts":       1,
 	}
 
 	if langCode != "" {
