@@ -26,7 +26,7 @@ type IProductBarcodeHttpService interface {
 	SearchProductBarcodeStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ProductBarcodeInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ProductBarcode) (common.BulkImport, error)
 
-	XSortsSave(shopID string, xsorts []common.XSortModifyReqesut) error
+	XSortsSave(shopID string, authUsername string, xsorts []common.XSortModifyReqesut) error
 
 	GetModuleName() string
 }
@@ -328,7 +328,7 @@ func (svc ProductBarcodeHttpService) getDocIDKey(doc models.ProductBarcode) stri
 	return doc.Barcode
 }
 
-func (svc ProductBarcodeHttpService) XSortsSave(shopID string, xsorts []common.XSortModifyReqesut) error {
+func (svc ProductBarcodeHttpService) XSortsSave(shopID string, authUsername string, xsorts []common.XSortModifyReqesut) error {
 	for _, xsort := range xsorts {
 		if len(xsort.GUIDFixed) < 1 {
 			continue
@@ -365,6 +365,8 @@ func (svc ProductBarcodeHttpService) XSortsSave(shopID string, xsorts []common.X
 		}
 
 		findDoc.XSorts = &tempXSorts
+		findDoc.UpdatedBy = authUsername
+		findDoc.UpdatedAt = time.Now()
 
 		err = svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
 
@@ -373,6 +375,8 @@ func (svc ProductBarcodeHttpService) XSortsSave(shopID string, xsorts []common.X
 		}
 
 	}
+
+	svc.saveMasterSync(shopID)
 
 	return nil
 

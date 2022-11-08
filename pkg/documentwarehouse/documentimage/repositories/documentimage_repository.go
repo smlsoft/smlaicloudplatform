@@ -25,6 +25,9 @@ type IDocumentImageRepository interface {
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.DocumentImageItemGuid, error)
 	FindInGUIDs(shopID string, docImageGUIDs []string) ([]models.DocumentImageDoc, error)
 
+	FindAll() ([]models.DocumentImageDoc, error)
+	UpdateAll(doc models.DocumentImageDoc) error
+
 	// UpdateDocumentImageStatus(shopID string, guid string, docnoGUIDRef string, status int8) error
 	// UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, docnoGUIDRef string, status int8) error
 	// SaveDocumentImageDocRefGroup(shopID string, docRef string, docImages []models.DocumentImageGroup) error
@@ -107,6 +110,31 @@ func (repo DocumentImageRepository) UpdateReject(shopID string, authUsername str
 	}
 
 	return repo.pst.Update(models.DocumentImageDoc{}, fillter, data)
+}
+
+func (repo DocumentImageRepository) FindAll() ([]models.DocumentImageDoc, error) {
+	docList := []models.DocumentImageDoc{}
+	err := repo.pst.Find(models.DocumentImageDoc{}, bson.M{}, &docList)
+
+	if err != nil {
+		return []models.DocumentImageDoc{}, err
+	}
+
+	return docList, nil
+}
+
+func (repo DocumentImageRepository) UpdateAll(doc models.DocumentImageDoc) error {
+	filterDoc := map[string]interface{}{
+		"guidfixed": doc.GuidFixed,
+	}
+
+	err := repo.pst.UpdateOne(models.DocumentImageDoc{}, filterDoc, doc)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 /*

@@ -30,6 +30,8 @@ type IDocumentImageGroupRepository interface {
 	FindByReference(shopID string, reference models.Reference) ([]models.DocumentImageGroupDoc, error)
 	FindByReferenceDocNo(shopID string, docNo string) ([]models.DocumentImageGroupDoc, error)
 	Transaction(fnc func() error) error
+
+	FindOneByDocumentImageGUIDAll(documentImageGUID string) (models.DocumentImageGroupDoc, error)
 }
 
 type DocumentImageGroupRepository struct {
@@ -76,6 +78,29 @@ func (repo DocumentImageGroupRepository) FindOneByReference(shopID string, refer
 
 	return results[0], nil
 
+}
+
+func (repo DocumentImageGroupRepository) FindOneByDocumentImageGUIDAll(documentImageGUID string) (models.DocumentImageGroupDoc, error) {
+
+	matchQuery := bson.M{"$match": bson.M{
+		"imagereferences.documentimageguid": documentImageGUID,
+	}}
+
+	results := []models.DocumentImageGroupDoc{}
+	err := repo.pst.Aggregate(models.DocumentImageGroupDoc{}, []interface{}{
+		matchQuery,
+		bson.M{"$limit": 1},
+	}, &results)
+
+	if err != nil {
+		return models.DocumentImageGroupDoc{}, err
+	}
+
+	if len(results) < 1 {
+		return models.DocumentImageGroupDoc{}, nil
+	}
+
+	return results[0], nil
 }
 
 func (repo DocumentImageGroupRepository) FindOneByDocumentImageGUID(shopID string, documentImageGUID string) (models.DocumentImageGroupDoc, error) {

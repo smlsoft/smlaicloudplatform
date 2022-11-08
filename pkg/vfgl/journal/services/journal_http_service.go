@@ -23,6 +23,8 @@ type IJournalHttpService interface {
 	InfoJournalByDocumentRef(shopID string, documentRef string) (models.JournalInfo, error)
 	SearchJournal(shopID string, q string, page int, limit int, sort map[string]int, startDate time.Time, endDate time.Time, accountGroup string) ([]models.JournalInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Journal) (common.BulkImport, error)
+
+	FindLastDocnoFromFormat(shopID string, docFormat string) (string, error)
 }
 
 type JournalHttpService struct {
@@ -86,7 +88,11 @@ func (svc JournalHttpService) UpdateJournal(guid string, shopID string, authUser
 		return errors.New("document not found")
 	}
 
+	tempDocNo := findDoc.DocNo
+
 	findDoc.Journal = doc
+
+	findDoc.DocNo = tempDocNo
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
@@ -328,4 +334,16 @@ func (svc JournalHttpService) SaveInBatch(shopID string, authUsername string, da
 
 func (svc JournalHttpService) getDocIDKey(doc models.Journal) string {
 	return doc.DocNo
+}
+
+func (svc JournalHttpService) FindLastDocnoFromFormat(shopID string, docFormat string) (string, error) {
+
+	lastDocNo, err := svc.repo.FindLastDocno(shopID, docFormat)
+
+	if err != nil {
+		return "", err
+	}
+
+	return lastDocNo, nil
+
 }

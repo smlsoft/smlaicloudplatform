@@ -27,6 +27,7 @@ type JournalBody struct {
 	JournalType        int       `json:"journaltype" bson:"journaltype" gorm:"column:journaltype"` // ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)
 	ExDocRefNo         string    `json:"exdocrefno" bson:"exdocrefno" gorm:"column:exdocrefno" `
 	ExDocRefDate       time.Time `json:"exdocrefdate" bson:"exdocrefdate" gorm:"exdocrefdate"`
+	DocFormat          string    `json:"docformat" bson:"docformat" gorm:"column:docformat"`
 }
 
 type Journal struct {

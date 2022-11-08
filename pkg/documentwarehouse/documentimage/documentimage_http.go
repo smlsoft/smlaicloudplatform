@@ -65,6 +65,7 @@ func NewDocumentImageHttp(ms *microservice.Microservice, cfg microservice.IConfi
 
 func (h DocumentImageHttp) RouteSetup() {
 	h.ms.GET("/documentimage", h.SearchDocumentImage)
+	// h.ms.GET("/documentimage/special", h.DocumentImageSpecial)
 	h.ms.GET("/documentimage/:guid", h.GetDocumentImageInfo)
 	h.ms.POST("/documentimage/upload", h.UploadDocumentImage)
 	h.ms.POST("/documentimage", h.CreateDocumentImage)
@@ -83,6 +84,20 @@ func (h DocumentImageHttp) RouteSetup() {
 	h.ms.PUT("/documentimagegroup/:guid/reference", h.UpdateReferenceByDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid/ungroup", h.UngroupDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid/images", h.UpdateDocumentImageGroup)
+}
+
+func (h DocumentImageHttp) DocumentImageSpecial(ctx microservice.IContext) error {
+
+	err := h.service.UpdateDocumentImageRederenceGroup()
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+	})
+	return nil
 }
 
 // List Document Image

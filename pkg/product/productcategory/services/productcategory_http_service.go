@@ -26,8 +26,8 @@ type IProductCategoryHttpService interface {
 	SearchProductCategory(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ProductCategoryInfo, mongopagination.PaginationData, error)
 	SearchProductCategoryStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ProductCategoryInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ProductCategory) error
-	XSortsSave(shopID string, xsorts []common.XSortModifyReqesut) error
-	XBarcodesSave(shopID string, xsorts []common.XSortModifyReqesut) error
+	XSortsSave(shopID string, authUsername string, xsorts []common.XSortModifyReqesut) error
+	XBarcodesSave(shopID string, authUsername string, xsorts []common.XSortModifyReqesut) error
 
 	GetModuleName() string
 }
@@ -69,6 +69,8 @@ func (svc ProductCategoryHttpService) CreateProductCategory(shopID string, authU
 		return "", err
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return newGuidFixed, nil
 }
 
@@ -95,6 +97,8 @@ func (svc ProductCategoryHttpService) UpdateProductCategory(shopID string, guid 
 		return err
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -114,6 +118,8 @@ func (svc ProductCategoryHttpService) DeleteProductCategory(shopID string, guid 
 	if err != nil {
 		return err
 	}
+
+	svc.saveMasterSync(shopID)
 
 	return nil
 }
@@ -207,10 +213,12 @@ func (svc ProductCategoryHttpService) SaveInBatch(shopID string, authUsername st
 
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
-func (svc ProductCategoryHttpService) XSortsSave(shopID string, xsorts []common.XSortModifyReqesut) error {
+func (svc ProductCategoryHttpService) XSortsSave(shopID string, authUsername string, xsorts []common.XSortModifyReqesut) error {
 	for _, xsort := range xsorts {
 		if len(xsort.GUIDFixed) < 1 {
 			continue
@@ -248,19 +256,23 @@ func (svc ProductCategoryHttpService) XSortsSave(shopID string, xsorts []common.
 
 		findDoc.XSorts = &tempXSorts
 
+		findDoc.UpdatedBy = authUsername
+		findDoc.UpdatedAt = time.Now()
+
 		err = svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
 
 		if err != nil {
 			return err
 		}
-
 	}
+
+	svc.saveMasterSync(shopID)
 
 	return nil
 
 }
 
-func (svc ProductCategoryHttpService) XBarcodesSave(shopID string, xsorts []common.XSortModifyReqesut) error {
+func (svc ProductCategoryHttpService) XBarcodesSave(shopID string, authUsername string, xsorts []common.XSortModifyReqesut) error {
 	for _, xsort := range xsorts {
 		if len(xsort.GUIDFixed) < 1 {
 			continue
@@ -298,6 +310,9 @@ func (svc ProductCategoryHttpService) XBarcodesSave(shopID string, xsorts []comm
 
 		findDoc.Barcodes = &tempXSorts
 
+		findDoc.UpdatedBy = authUsername
+		findDoc.UpdatedAt = time.Now()
+
 		err = svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
 
 		if err != nil {
@@ -305,6 +320,8 @@ func (svc ProductCategoryHttpService) XBarcodesSave(shopID string, xsorts []comm
 		}
 
 	}
+
+	svc.saveMasterSync(shopID)
 
 	return nil
 

@@ -164,6 +164,7 @@ func (h ProductCategoryHttp) UpdateProductCategory(ctx microservice.IContext) er
 // @Router /product/category/xsort [put]
 func (h ProductCategoryHttp) UpdateProductCategoryXSort(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
 
 	input := ctx.ReadInput()
@@ -181,7 +182,7 @@ func (h ProductCategoryHttp) UpdateProductCategoryXSort(ctx microservice.IContex
 		return err
 	}
 
-	err = h.svc.XSortsSave(shopID, *req)
+	err = h.svc.XSortsSave(shopID, authUsername, *req)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -206,6 +207,7 @@ func (h ProductCategoryHttp) UpdateProductCategoryXSort(ctx microservice.IContex
 // @Router /product/category/barcodes [put]
 func (h ProductCategoryHttp) UpdateProductCategoryBarcodes(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
 
 	input := ctx.ReadInput()
@@ -223,7 +225,7 @@ func (h ProductCategoryHttp) UpdateProductCategoryBarcodes(ctx microservice.ICon
 		return err
 	}
 
-	err = h.svc.XBarcodesSave(shopID, *req)
+	err = h.svc.XBarcodesSave(shopID, authUsername, *req)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

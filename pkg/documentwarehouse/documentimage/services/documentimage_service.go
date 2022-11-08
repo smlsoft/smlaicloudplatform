@@ -41,6 +41,8 @@ type IDocumentImageService interface {
 	UnGroupDocumentImageGroup(shopID string, authUsername string, groupGUID string) error
 	ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable common.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
 	DeleteReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error
+
+	UpdateDocumentImageRederenceGroup() error
 }
 
 type DocumentImageService struct {
@@ -463,6 +465,64 @@ func (svc DocumentImageService) UploadDocumentImage(shopID string, authUsername 
 	}
 
 	return &doc.DocumentImageInfo, err
+}
+
+func (svc DocumentImageService) UpdateDocumentImageRederenceGroup() error {
+	// findGroupDoc, err := svc.repoImageGroup.FindOneByDocumentImageGUIDAll("2GcTSCfk0JCzxclxidLyCFUx8wo")
+
+	// if err != nil {
+	// 	return err
+	// }
+
+	// fmt.Printf("%v", findGroupDoc.GuidFixed)
+
+	findDocList, err := svc.repoImage.FindAll()
+
+	if err != nil {
+		return err
+	}
+
+	// for _, findDoc := range findDocList {
+	// 	if findDoc.GuidFixed == "2GcTSCfk0JCzxclxidLyCFUx8wo" {
+	// 		fmt.Printf("%v", findDoc)
+	// 	}
+
+	// }
+
+	for _, findDoc := range findDocList {
+		findGroupDoc, err := svc.repoImageGroup.FindOneByDocumentImageGUIDAll(findDoc.GuidFixed)
+
+		if err != nil {
+			return err
+		}
+
+		if findGroupDoc.ID != primitive.NilObjectID {
+			fmt.Printf("image:: %v\n", findDoc.GuidFixed)
+			fmt.Printf("group:: %v\n", findGroupDoc.GuidFixed)
+		}
+
+		refGroups := []models.ReferenceGroup{}
+		if findGroupDoc.ID == primitive.NilObjectID {
+			refGroup := models.ReferenceGroup{}
+			refGroup.GroupType = ""
+			refGroup.ParentGUID = ""
+			refGroup.XOder = 1
+			refGroup.XType = 0
+
+			refGroups = append(refGroups, refGroup)
+
+		}
+
+		findDoc.ReferenceGroups = refGroups
+
+		err = svc.repoImage.UpdateAll(findDoc)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // Group

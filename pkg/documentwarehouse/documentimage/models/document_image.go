@@ -10,14 +10,22 @@ import (
 const documentImageCollectionName = "documentImages"
 
 type DocumentImage struct {
-	ImageURI   string      `json:"imageuri" bson:"imageuri"`
-	Name       string      `json:"name" bson:"name"`
-	IsReject   bool        `json:"isreject" bson:"isreject"`
-	References []Reference `json:"references" bson:"references"`
+	ImageURI        string           `json:"imageuri" bson:"imageuri"`
+	Name            string           `json:"name" bson:"name"`
+	IsReject        bool             `json:"isreject" bson:"isreject"`
+	References      []Reference      `json:"references" bson:"references"`
+	ReferenceGroups []ReferenceGroup `json:"referencegroups" bson:"referencegroups"`
 
 	UploadedBy string    `json:"uploadedby" bson:"uploadedby"`
 	UploadedAt time.Time `json:"uploadedat" bson:"uploadedat"`
 	MetaFileAt time.Time `json:"metafileat" bson:"metafileat"`
+}
+
+type ReferenceGroup struct {
+	GroupType  string `json:"grouptype" bson:"grouptype"`
+	ParentGUID string `json:"parentguid" bson:"parentguid"`
+	XOder      int    `json:"xorder" bson:"xorder"`
+	XType      int    `json:"xtype" bson:"xtype"`
 }
 
 type Reference struct {

@@ -59,6 +59,7 @@ func (h JournalHttp) RouteSetup() {
 
 	h.ms.GET("/gl/journal", h.SearchJournal)
 	h.ms.POST("/gl/journal", h.CreateJournal)
+	h.ms.GET("/gl/journal/last-docno", h.GetLastDocNo)
 	h.ms.GET("/gl/journal/:id", h.InfoJournal)
 	h.ms.GET("/gl/journal/docno/:docno", h.InfoJournalByDocno)
 	h.ms.GET("/gl/journal/docref/:doc", h.InfoJournalByDocumentRef)
@@ -466,5 +467,34 @@ func (h JournalHttp) SaveBulk(ctx microservice.IContext) error {
 		},
 	)
 
+	return nil
+}
+
+// Get Journal Last DocNo godoc
+// @Summary		แสดงรายละเอียดข้อมูลรายวัน
+// @Description แสดงรายละเอียดข้อมูลรายวัน
+// @Tags		GL
+// @Accept 		json
+// @Success		200	{object}	models.JournalInfoResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /gl/journal/last-docno [get]
+func (h JournalHttp) GetLastDocNo(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	docFormat := ctx.QueryParam("docformat")
+
+	doc, err := h.svc.FindLastDocnoFromFormat(shopID, docFormat)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
 	return nil
 }

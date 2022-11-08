@@ -8,6 +8,7 @@ import (
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type IJournalRepository interface {
@@ -20,6 +21,8 @@ type IJournalRepository interface {
 	FindByGuid(shopID string, guid string) (models.JournalDoc, error)
 	FindOne(shopID string, filters map[string]interface{}) (models.JournalDoc, error)
 	IsAccountCodeUsed(shopID string, accountCode string) (bool, error)
+
+	FindLastDocno(shopID string, docFormat string) (string, error)
 }
 
 type JournalRepository struct {
@@ -59,5 +62,42 @@ func (repo *JournalRepository) IsAccountCodeUsed(shopID string, accountCode stri
 	}
 
 	return findDoc.ID != primitive.NilObjectID, nil
+
+}
+
+func (repo *JournalRepository) FindLastDocno(shopID string, docFormat string) (string, error) {
+
+	findDocList := []models.JournalDoc{}
+
+	filters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+	}
+
+	if len(docFormat) < 1 {
+		filters["$or"] = []interface{}{
+			bson.M{"docformat": ""},
+			bson.M{"docformat": bson.M{"$exists": false}},
+		}
+	} else {
+		filters["docformat"] = docFormat
+	}
+
+	findOptions := options.Find()
+
+	findOptions.SetSort(bson.M{"docformat": -1})
+	findOptions.SetLimit(1)
+
+	err := repo.pst.Find(models.JournalDoc{}, filters, &findDocList, findOptions)
+
+	if err != nil {
+		return "", nil
+	}
+
+	if len(findDocList) < 1 {
+		return "", nil
+	}
+
+	return findDocList[0].DocNo, nil
 
 }
