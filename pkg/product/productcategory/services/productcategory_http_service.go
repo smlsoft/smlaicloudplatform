@@ -223,6 +223,10 @@ func (svc ProductCategoryHttpService) XSortsSave(shopID string, xsorts []common.
 			continue
 		}
 
+		if findDoc.XSorts == nil {
+			findDoc.XSorts = &[]common.XSort{}
+		}
+
 		dictXSorts := map[string]common.XSort{}
 
 		for _, tempXSort := range *findDoc.XSorts {
@@ -267,6 +271,10 @@ func (svc ProductCategoryHttpService) XBarcodesSave(shopID string, xsorts []comm
 
 		if len(findDoc.GuidFixed) < 1 {
 			continue
+		}
+
+		if findDoc.Barcodes == nil {
+			findDoc.Barcodes = &[]common.XSort{}
 		}
 
 		dictXSorts := map[string]common.XSort{}

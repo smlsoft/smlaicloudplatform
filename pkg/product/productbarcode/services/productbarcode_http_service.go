@@ -342,6 +342,10 @@ func (svc ProductBarcodeHttpService) XSortsSave(shopID string, xsorts []common.X
 			continue
 		}
 
+		if findDoc.XSorts == nil {
+			findDoc.XSorts = &[]common.XSort{}
+		}
+
 		dictXSorts := map[string]common.XSort{}
 
 		for _, tempXSort := range *findDoc.XSorts {
