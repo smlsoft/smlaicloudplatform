@@ -549,10 +549,13 @@ func (svc DocumentImageService) CreateDocumentImageGroup(shopID string, authUser
 		return passDocImagesRef[i].XOrder < passDocImagesRef[j].XOrder
 	})
 
-	if len(passDocImagesRef) > 0 {
-		docImageGroupData.UploadedBy = passDocImagesRef[0].UploadedBy
-		docImageGroupData.UploadedAt = passDocImagesRef[0].UploadedAt
-	}
+	// if len(passDocImagesRef) > 0 {
+	// 	docImageGroupData.UploadedBy = passDocImagesRef[0].UploadedBy
+	// 	docImageGroupData.UploadedAt = passDocImagesRef[0].UploadedAt
+	// }
+
+	docImageGroupData.UploadedBy = authUsername
+	docImageGroupData.UploadedAt = docImageGroup.UploadedAt
 
 	docImageGroupData.ImageReferences = &passDocImagesRef
 
