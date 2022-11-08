@@ -26,7 +26,8 @@ type IProductCategoryHttpService interface {
 	SearchProductCategory(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ProductCategoryInfo, mongopagination.PaginationData, error)
 	SearchProductCategoryStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ProductCategoryInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ProductCategory) error
-	XSortSave(shopID string, xsorts []common.XSortModifyReqesut) error
+	XSortsSave(shopID string, xsorts []common.XSortModifyReqesut) error
+	XBarcodesSave(shopID string, xsorts []common.XSortModifyReqesut) error
 
 	GetModuleName() string
 }
@@ -207,7 +208,7 @@ func (svc ProductCategoryHttpService) SaveInBatch(shopID string, authUsername st
 	return nil
 }
 
-func (svc ProductCategoryHttpService) XSortSave(shopID string, xsorts []common.XSortModifyReqesut) error {
+func (svc ProductCategoryHttpService) XSortsSave(shopID string, xsorts []common.XSortModifyReqesut) error {
 	for _, xsort := range xsorts {
 		if len(xsort.GUIDFixed) < 1 {
 			continue
@@ -216,6 +217,10 @@ func (svc ProductCategoryHttpService) XSortSave(shopID string, xsorts []common.X
 
 		if err != nil {
 			return err
+		}
+
+		if len(findDoc.GuidFixed) < 1 {
+			continue
 		}
 
 		dictXSorts := map[string]common.XSort{}
@@ -236,6 +241,52 @@ func (svc ProductCategoryHttpService) XSortSave(shopID string, xsorts []common.X
 		}
 
 		findDoc.XSorts = &tempXSorts
+
+		err = svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
+
+		if err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+
+}
+
+func (svc ProductCategoryHttpService) XBarcodesSave(shopID string, xsorts []common.XSortModifyReqesut) error {
+	for _, xsort := range xsorts {
+		if len(xsort.GUIDFixed) < 1 {
+			continue
+		}
+		findDoc, err := svc.repo.FindByGuid(shopID, xsort.GUIDFixed)
+
+		if err != nil {
+			return err
+		}
+
+		if len(findDoc.GuidFixed) < 1 {
+			continue
+		}
+
+		dictXSorts := map[string]common.XSort{}
+
+		for _, tempXSort := range *findDoc.Barcodes {
+			dictXSorts[tempXSort.Code] = tempXSort
+		}
+
+		dictXSorts[xsort.Code] = common.XSort{
+			Code:   xsort.Code,
+			XOrder: xsort.XOrder,
+		}
+
+		tempXSorts := []common.XSort{}
+
+		for _, tempXSort := range dictXSorts {
+			tempXSorts = append(tempXSorts, tempXSort)
+		}
+
+		findDoc.Barcodes = &tempXSorts
 
 		err = svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
 

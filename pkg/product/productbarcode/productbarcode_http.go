@@ -172,7 +172,7 @@ func (h ProductBarcodeHttp) UpdateProductBarcodeXSort(ctx microservice.IContext)
 		return err
 	}
 
-	err = h.svc.XSortSave(shopID, *req)
+	err = h.svc.XSortsSave(shopID, *req)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

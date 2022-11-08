@@ -45,6 +45,7 @@ func (h ProductCategoryHttp) RouteSetup() {
 	h.ms.POST("/product/category", h.CreateProductCategory)
 	h.ms.GET("/product/category/:id", h.InfoProductCategory)
 	h.ms.PUT("/product/category/xsort", h.UpdateProductCategoryXSort)
+	h.ms.PUT("/product/category/barcodes", h.UpdateProductCategoryBarcodes)
 	h.ms.PUT("/product/category/:id", h.UpdateProductCategory)
 	h.ms.DELETE("/product/category/:id", h.DeleteProductCategory)
 }
@@ -180,7 +181,49 @@ func (h ProductCategoryHttp) UpdateProductCategoryXSort(ctx microservice.IContex
 		return err
 	}
 
-	err = h.svc.XSortSave(shopID, *req)
+	err = h.svc.XSortsSave(shopID, *req)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+	})
+
+	return nil
+}
+
+// Update Barcodes	 Category godoc
+// @Description Update Barcodes Category
+// @Tags		ProductCategory
+// @Param		Barcodes  body      []common.BarcodesModifyReqesut  true  "Barcodes"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/category/barcodes [put]
+func (h ProductCategoryHttp) UpdateProductCategoryBarcodes(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	req := &[]common.XSortModifyReqesut{}
+	err := json.Unmarshal([]byte(input), &req)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(req); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.XBarcodesSave(shopID, *req)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
