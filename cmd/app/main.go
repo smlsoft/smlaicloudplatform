@@ -9,6 +9,8 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/apikeyservice"
 	"smlcloudplatform/pkg/authentication"
+	"smlcloudplatform/pkg/customershop/customer"
+	"smlcloudplatform/pkg/customershop/customergroup"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
@@ -139,6 +141,9 @@ func main() {
 		color.NewColorHttp(ms, cfg),
 		productcategory.NewProductCategoryHttp(ms, cfg),
 		productbarcode.NewProductBarcodeHttp(ms, cfg),
+
+		customer.NewCustomerHttp(ms, cfg),
+		customergroup.NewCustomerGroupHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)
