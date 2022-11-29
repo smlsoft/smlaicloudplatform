@@ -71,3 +71,6 @@ type ProductCategoryDeleteActivity struct {
 func (ProductCategoryDeleteActivity) CollectionName() string {
 	return productcategoryCollectionName
 }
+
+type BarcodesModifyReqesut struct {
+}

@@ -199,7 +199,7 @@ func (h ProductCategoryHttp) UpdateProductCategoryXSort(ctx microservice.IContex
 // Update Barcodes	 Category godoc
 // @Description Update Barcodes Category
 // @Tags		ProductCategory
-// @Param		Barcodes  body      []common.BarcodesModifyReqesut  true  "Barcodes"
+// @Param		Barcodes  body      []models.BarcodesModifyReqesut  true  "Barcodes"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
