@@ -93,7 +93,7 @@ func (svc DocumentImageService) CreateDocumentImage(shopID string, authUsername 
 	// docData.UpdatedAt = createdAt
 
 	docData.UploadedBy = authUsername
-	docData.UploadedAt = createdAt
+	// docData.UploadedAt = createdAt
 
 	// image group
 	imageGroupGUID := svc.newDocumentImageGroupGUIDFnc()
@@ -147,7 +147,7 @@ func (svc DocumentImageService) BulkCreateDocumentImage(shopID string, authUsern
 		// docData.UpdatedAt = createdAt
 
 		docData.UploadedBy = authUsername
-		docData.UploadedAt = createdAt
+		// docData.UploadedAt = createdAt
 
 		// image group
 		imageGroupGUID := svc.newDocumentImageGroupGUIDFnc()
