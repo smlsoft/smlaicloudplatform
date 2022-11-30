@@ -16,7 +16,7 @@ type Product struct {
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	MultiUnit                bool            `json:"multiunit" bson:"multiunit"`
 	UseSerialNumber          bool            `json:"useserialnumber" bson:"useserialnumber"`
-	Units                    *[]ProductUnit  `json:"units" bson:"units" validate:"required,min=1,dive"`
+	Units                    *[]ProductUnit  `json:"units" bson:"units"`
 
 	UnitCost      string          `json:"unitcost" bson:"unitcost"`
 	ItemStockType int8            `json:"itemstocktype" bson:"itemstocktype"`
