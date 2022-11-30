@@ -201,8 +201,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -218,14 +218,7 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -541,6 +534,7 @@ definitions:
           $ref: '#/definitions/models.CustomerAddress'
         type: array
       code:
+        minLength: 1
         type: string
       email:
         type: string
@@ -559,6 +553,7 @@ definitions:
       taxid:
         type: string
     required:
+    - code
     - names
     type: object
   models.CustomerAddress:
@@ -599,6 +594,7 @@ definitions:
   models.CustomerGroup:
     properties:
       customercode:
+        minLength: 1
         type: string
       guid:
         type: string
@@ -609,6 +605,7 @@ definitions:
         type: array
         uniqueItems: true
     required:
+    - customercode
     - names
     type: object
   models.Device:
@@ -876,8 +873,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -895,8 +892,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -912,11 +907,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1025,8 +1015,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1044,8 +1034,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1061,11 +1049,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1224,8 +1207,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1243,8 +1226,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1260,11 +1241,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -2448,6 +2424,56 @@ definitions:
       success:
         type: boolean
     type: object
+  models.Product:
+    properties:
+      barcodes:
+        items:
+          type: string
+        type: array
+      categoryguid:
+        type: string
+      images:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductImage'
+        type: array
+      issumpoint:
+        type: boolean
+      itemcode:
+        maxLength: 100
+        minLength: 1
+        type: string
+      itemstocktype:
+        type: integer
+      itemtype:
+        type: integer
+      multiunit:
+        type: boolean
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      prices:
+        items:
+          $ref: '#/definitions/models.ProductPrice'
+        type: array
+      unitcost:
+        type: string
+      units:
+        items:
+          $ref: '#/definitions/models.ProductUnit'
+        minItems: 1
+        type: array
+      useserialnumber:
+        type: boolean
+      vattype:
+        type: integer
+    required:
+    - itemcode
+    - names
+    - units
+    type: object
   models.ProductBarcode:
     properties:
       barcode:
@@ -2457,7 +2483,7 @@ definitions:
         type: string
       images:
         items:
-          $ref: '#/definitions/models.ProductImage'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'
         type: array
       imageuri:
         type: string
@@ -2557,13 +2583,6 @@ definitions:
     required:
     - names
     type: object
-  models.ProductImage:
-    properties:
-      uri:
-        type: string
-      xorder:
-        type: integer
-    type: object
   models.ProductOption:
     properties:
       choices:
@@ -2595,6 +2614,21 @@ definitions:
         type: integer
       price:
         type: number
+    type: object
+  models.ProductUnit:
+    properties:
+      divider:
+        type: number
+      stand:
+        type: number
+      stockcount:
+        type: boolean
+      unitcode:
+        type: string
+      unitname:
+        type: string
+      xorder:
+        type: integer
     type: object
   models.ProfitAndLossSheetAccountDetail:
     properties:
@@ -2762,10 +2796,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -2783,8 +2817,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -2800,10 +2832,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -3024,10 +3052,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -3045,8 +3073,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3062,10 +3088,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -3886,6 +3908,20 @@ definitions:
         type: string
       unitname5:
         type: string
+    type: object
+  smlcloudplatform_pkg_product_product_models.ProductImage:
+    properties:
+      uri:
+        type: string
+      xorder:
+        type: integer
+    type: object
+  smlcloudplatform_pkg_product_productbarcode_models.ProductImage:
+    properties:
+      uri:
+        type: string
+      xorder:
+        type: integer
     type: object
   smlcloudplatform_pkg_product_unit_models.Unit:
     properties:
@@ -7570,6 +7606,139 @@ paths:
       summary: นำเข้าข้อมูล payment master
       tags:
       - PaymentMaster
+  /product:
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+    post:
+      consumes:
+      - application/json
+      description: Create Product
+      parameters:
+      - description: Product
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/models.Product'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+  /product/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+    put:
+      consumes:
+      - application/json
+      description: Update Product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Product
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/models.Product'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
   /product/barcode:
     get:
       consumes:
@@ -7794,6 +7963,33 @@ paths:
       - AccessToken: []
       tags:
       - ProductBarcode
+  /product/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Product
+      parameters:
+      - description: Product
+        in: body
+        name: Product
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Product'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
   /product/category:
     get:
       consumes:
@@ -8045,6 +8241,43 @@ paths:
       - AccessToken: []
       tags:
       - ProductCategory
+  /product/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
   /profile:
     get:
       consumes:

@@ -20,6 +20,7 @@ import (
 	"smlcloudplatform/pkg/product/inventorysearchconsumer"
 	"smlcloudplatform/pkg/product/option"
 	"smlcloudplatform/pkg/product/optionpattern"
+	"smlcloudplatform/pkg/product/product"
 	"smlcloudplatform/pkg/product/productbarcode"
 	"smlcloudplatform/pkg/product/productcategory"
 	"smlcloudplatform/pkg/product/unit"
@@ -173,6 +174,7 @@ func main() {
 
 			customer.NewCustomerHttp(ms, cfg),
 			customergroup.NewCustomerGroupHttp(ms, cfg),
+			product.NewProductHttp(ms, cfg),
 		}
 
 		startHttpServices(httpServices...)

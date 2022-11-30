@@ -19,6 +19,7 @@ import (
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
 	"smlcloudplatform/pkg/product/optionpattern"
+	"smlcloudplatform/pkg/product/product"
 	"smlcloudplatform/pkg/product/productbarcode"
 	"smlcloudplatform/pkg/product/productcategory"
 	"smlcloudplatform/pkg/product/unit"
@@ -144,6 +145,7 @@ func main() {
 
 		customer.NewCustomerHttp(ms, cfg),
 		customergroup.NewCustomerGroupHttp(ms, cfg),
+		product.NewProductHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)
