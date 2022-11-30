@@ -150,8 +150,21 @@ func (svc ProductHttpService) SearchProductStep(shopID string, langCode string, 
 	}
 
 	projectQuery := map[string]interface{}{
-		"guidfixed": 1,
-		"itemcode":  1,
+		"guidfixed":       1,
+		"itemcode":        1,
+		"categoryguid":    1,
+		"barcodes":        1,
+		"names":           1,
+		"multiunit":       1,
+		"useserialnumber": 1,
+		"units":           1,
+		"unitcost":        1,
+		"itemstocktype":   1,
+		"itemtype":        1,
+		"vattype":         1,
+		"issumpoint":      1,
+		"images":          1,
+		"prices":          1,
 	}
 
 	if langCode != "" {
