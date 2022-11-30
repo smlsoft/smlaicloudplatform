@@ -2463,8 +2463,9 @@ definitions:
       units:
         items:
           $ref: '#/definitions/models.ProductUnit'
-        minItems: 1
         type: array
+      unitstandard:
+        type: string
       useserialnumber:
         type: boolean
       vattype:
@@ -2472,7 +2473,6 @@ definitions:
     required:
     - itemcode
     - names
-    - units
     type: object
   models.ProductBarcode:
     properties:

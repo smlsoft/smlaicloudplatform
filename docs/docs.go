@@ -14018,8 +14018,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "itemcode",
-                "names",
-                "units"
+                "names"
             ],
             "properties": {
                 "barcodes": {
@@ -14073,10 +14072,12 @@ const docTemplate = `{
                 },
                 "units": {
                     "type": "array",
-                    "minItems": 1,
                     "items": {
                         "$ref": "#/definitions/models.ProductUnit"
                     }
+                },
+                "unitstandard": {
+                    "type": "string"
                 },
                 "useserialnumber": {
                     "type": "boolean"

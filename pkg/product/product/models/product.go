@@ -19,6 +19,7 @@ type Product struct {
 	Units                    *[]ProductUnit  `json:"units" bson:"units"`
 
 	UnitCost      string          `json:"unitcost" bson:"unitcost"`
+	UnitStandard  string          `json:"unitstandard" bson:"unitstandard"`
 	ItemStockType int8            `json:"itemstocktype" bson:"itemstocktype"`
 	ItemType      int8            `json:"itemtype" bson:"itemtype"`
 	VatType       int8            `json:"vattype" bson:"vattype"`
