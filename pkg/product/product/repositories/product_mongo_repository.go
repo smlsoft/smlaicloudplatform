@@ -14,6 +14,7 @@ type IProductRepository interface {
 	CreateInBatch(docList []models.ProductDoc) error
 	Update(shopID string, guid string, doc models.ProductDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
+	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.ProductInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.ProductDoc, error)
 

@@ -43,6 +43,7 @@ func (h ProductHttp) RouteSetup() {
 	h.ms.GET("/product/:id", h.InfoProduct)
 	h.ms.PUT("/product/:id", h.UpdateProduct)
 	h.ms.DELETE("/product/:id", h.DeleteProduct)
+	h.ms.DELETE("/product", h.DeleteByGUIDs)
 }
 
 // Create Product godoc
@@ -303,6 +304,44 @@ func (h ProductHttp) SaveBulk(ctx microservice.IContext) error {
 			BulkImport: bulkResponse,
 		},
 	)
+
+	return nil
+}
+
+// Delete Product By GUIDs godoc
+// @Description Delete Product
+// @Tags		Product
+// @Param		Product  body      []string  true  "Product GUIDs"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product [delete]
+func (h ProductHttp) DeleteByGUIDs(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	docReq := []string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.DeleteProductByGUIDs(shopID, authUsername, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+	})
 
 	return nil
 }
