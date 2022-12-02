@@ -18,6 +18,7 @@ type IProductHttpService interface {
 	CreateProduct(shopID string, authUsername string, doc models.Product) (string, error)
 	UpdateProduct(shopID string, guid string, authUsername string, doc models.Product) error
 	DeleteProduct(shopID string, guid string, authUsername string) error
+	DeleteProductByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoProduct(shopID string, guid string) (models.ProductInfo, error)
 	SearchProduct(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ProductInfo, mongopagination.PaginationData, error)
 	SearchProductStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ProductInfo, int, error)
@@ -105,6 +106,20 @@ func (svc ProductHttpService) DeleteProduct(shopID string, guid string, authUser
 	}
 
 	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc ProductHttpService) DeleteProductByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+
+	deleteFilterQuery := map[string]interface{}{
+		"guidfixed": bson.M{"$in": GUIDs},
+	}
+
+	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
