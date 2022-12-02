@@ -18,6 +18,7 @@ type ICustomerHttpService interface {
 	CreateCustomer(shopID string, authUsername string, doc models.Customer) (string, error)
 	UpdateCustomer(shopID string, guid string, authUsername string, doc models.Customer) error
 	DeleteCustomer(shopID string, guid string, authUsername string) error
+	DeleteCustomerByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoCustomer(shopID string, guid string) (models.CustomerInfo, error)
 	SearchCustomer(shopID string, q string, page int, limit int, sort map[string]int) ([]models.CustomerInfo, mongopagination.PaginationData, error)
 	SearchCustomerStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.CustomerInfo, int, error)
@@ -280,6 +281,20 @@ func (svc CustomerHttpService) SaveInBatch(shopID string, authUsername string, d
 		UpdateFailed:     updateFailDataKey,
 		PayloadDuplicate: payloadDuplicateDataKey,
 	}, nil
+}
+
+func (svc CustomerHttpService) DeleteCustomerByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+
+	deleteFilterQuery := map[string]interface{}{
+		"guidfixed": bson.M{"$in": GUIDs},
+	}
+
+	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (svc CustomerHttpService) getDocIDKey(doc models.Customer) string {

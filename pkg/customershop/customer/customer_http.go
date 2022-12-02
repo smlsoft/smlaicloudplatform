@@ -43,6 +43,7 @@ func (h CustomerHttp) RouteSetup() {
 	h.ms.GET("customershop/customer/:id", h.InfoCustomer)
 	h.ms.PUT("customershop/customer/:id", h.UpdateCustomer)
 	h.ms.DELETE("customershop/customer/:id", h.DeleteCustomer)
+	h.ms.DELETE("customershop/customer", h.DeleteCustomerByGUIDs)
 }
 
 // Create Customer godoc
@@ -303,6 +304,44 @@ func (h CustomerHttp) SaveBulk(ctx microservice.IContext) error {
 			BulkImport: bulkResponse,
 		},
 	)
+
+	return nil
+}
+
+// Delete Customer By GUIDs godoc
+// @Description Delete Customer
+// @Tags		Customer
+// @Param		Customer  body      []string  true  "Customer GUIDs"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /customershop/customer [delete]
+func (h CustomerHttp) DeleteCustomerByGUIDs(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	docReq := []string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.DeleteCustomerByGUIDs(shopID, authUsername, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+	})
 
 	return nil
 }

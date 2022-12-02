@@ -22,6 +22,7 @@ type IProductCategoryHttpService interface {
 	CreateProductCategory(shopID string, authUsername string, doc models.ProductCategory) (string, error)
 	UpdateProductCategory(shopID string, guid string, authUsername string, doc models.ProductCategory) error
 	DeleteProductCategory(shopID string, guid string, authUsername string) error
+	DeleteProductCategoryByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoProductCategory(shopID string, guid string) (models.ProductCategoryInfo, error)
 	SearchProductCategory(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ProductCategoryInfo, mongopagination.PaginationData, error)
 	SearchProductCategoryStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ProductCategoryInfo, int, error)
@@ -325,6 +326,22 @@ func (svc ProductCategoryHttpService) XBarcodesSave(shopID string, authUsername 
 
 	return nil
 
+}
+
+func (svc ProductCategoryHttpService) DeleteProductCategoryByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+
+	deleteFilterQuery := map[string]interface{}{
+		"guidfixed": bson.M{"$in": GUIDs},
+	}
+
+	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	if err != nil {
+		return err
+	}
+
+	svc.saveMasterSync(shopID)
+
+	return nil
 }
 
 func (svc ProductCategoryHttpService) saveMasterSync(shopID string) {

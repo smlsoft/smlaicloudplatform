@@ -18,6 +18,7 @@ type ICustomerGroupHttpService interface {
 	CreateCustomerGroup(shopID string, authUsername string, doc models.CustomerGroup) (string, error)
 	UpdateCustomerGroup(shopID string, guid string, authUsername string, doc models.CustomerGroup) error
 	DeleteCustomerGroup(shopID string, guid string, authUsername string) error
+	DeleteCustomerGroupByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoCustomerGroup(shopID string, guid string) (models.CustomerGroupInfo, error)
 	SearchCustomerGroup(shopID string, q string, page int, limit int, sort map[string]int) ([]models.CustomerGroupInfo, mongopagination.PaginationData, error)
 	SearchCustomerGroupStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.CustomerGroupInfo, int, error)
@@ -275,6 +276,20 @@ func (svc CustomerGroupHttpService) SaveInBatch(shopID string, authUsername stri
 		UpdateFailed:     updateFailDataKey,
 		PayloadDuplicate: payloadDuplicateDataKey,
 	}, nil
+}
+
+func (svc CustomerGroupHttpService) DeleteCustomerGroupByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+
+	deleteFilterQuery := map[string]interface{}{
+		"guidfixed": bson.M{"$in": GUIDs},
+	}
+
+	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (svc CustomerGroupHttpService) getDocIDKey(doc models.CustomerGroup) string {

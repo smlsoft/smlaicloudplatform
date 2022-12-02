@@ -15,6 +15,7 @@ type IProductBarcodeRepository interface {
 	CreateInBatch(docList []models.ProductBarcodeDoc) error
 	Update(shopID string, guid string, doc models.ProductBarcodeDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
+	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.ProductBarcodeDoc, error)
 

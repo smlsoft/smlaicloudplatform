@@ -14,6 +14,7 @@ type ICustomerGroupRepository interface {
 	CreateInBatch(docList []models.CustomerGroupDoc) error
 	Update(shopID string, guid string, doc models.CustomerGroupDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
+	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.CustomerGroupInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.CustomerGroupDoc, error)
 
