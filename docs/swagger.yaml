@@ -4247,6 +4247,32 @@ paths:
       tags:
       - Authentication
   /customershop/customer:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Customer
+      parameters:
+      - description: Customer GUIDs
+        in: body
+        name: Customer
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Customer
     get:
       consumes:
       - application/json
@@ -4444,6 +4470,32 @@ paths:
       tags:
       - CustomerShop
   /customershop/customergroup:
+    delete:
+      consumes:
+      - application/json
+      description: Delete CustomerGroup
+      parameters:
+      - description: CustomerGroup GUIDs
+        in: body
+        name: CustomerGroup
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CustomerGroup
     get:
       consumes:
       - application/json
@@ -7740,6 +7792,32 @@ paths:
       tags:
       - Product
   /product/barcode:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ProductBarcode
+      parameters:
+      - description: ProductBarcode GUIDs
+        in: body
+        name: ProductBarcode
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductBarcode
     get:
       consumes:
       - application/json
@@ -7991,6 +8069,32 @@ paths:
       tags:
       - Product
   /product/category:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ProductCategory
+      parameters:
+      - description: ProductCategory GUIDs
+        in: body
+        name: ProductCategory
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductCategory
     get:
       consumes:
       - application/json
