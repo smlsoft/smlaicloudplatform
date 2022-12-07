@@ -120,7 +120,9 @@ func main() {
 		accountgroup.NewAccountGroupHttp(ms, cfg),
 		journalbook.NewJournalBookHttp(ms, cfg),
 		zonedesign.NewZoneDesignHttp(ms, cfg),
+
 		mastersync.NewMasterSyncHttp(ms, cfg),
+
 		documentimage.NewDocumentImageHttp(ms, cfg),
 		chartofaccount.NewChartOfAccountHttp(ms, cfg),
 		//new
