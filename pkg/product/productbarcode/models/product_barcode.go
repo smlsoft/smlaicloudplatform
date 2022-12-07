@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const posProductBarcodeCollectionName = "posProductBarcode"
+const posProductBarcodeCollectionName = "productBarcodes"
 
 type ProductBarcode struct {
 	models.PartitionIdentity `bson:"inline"`
