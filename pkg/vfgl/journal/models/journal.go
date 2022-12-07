@@ -46,6 +46,9 @@ type JournalDetail struct {
 type JournalInfo struct {
 	models.DocIdentity `bson:"inline"`
 	Journal            `bson:"inline"`
+
+	CreatedBy string    `json:"createdby" bson:"createdby" gorm:"column:createdby"`
+	CreatedAt time.Time `json:"createdat" bson:"createdat" gorm:"column:createdat"`
 }
 
 func (JournalInfo) CollectionName() string {
