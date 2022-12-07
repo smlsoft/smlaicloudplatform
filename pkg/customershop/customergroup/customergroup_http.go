@@ -1,70 +1,66 @@
-package productbarcode
+package customergroup
 
 import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	mastersync "smlcloudplatform/pkg/mastersync/repositories"
+	"smlcloudplatform/pkg/customershop/customergroup/models"
+	"smlcloudplatform/pkg/customershop/customergroup/repositories"
+	"smlcloudplatform/pkg/customershop/customergroup/services"
 	common "smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/product/productbarcode/models"
-	"smlcloudplatform/pkg/product/productbarcode/repositories"
-	"smlcloudplatform/pkg/product/productbarcode/services"
 	"smlcloudplatform/pkg/utils"
 )
 
-type IProductBarcodeHttp interface{}
+type ICustomerGroupHttp interface{}
 
-type ProductBarcodeHttp struct {
+type CustomerGroupHttp struct {
 	ms  *microservice.Microservice
 	cfg microservice.IConfig
-	svc services.IProductBarcodeHttpService
+	svc services.ICustomerGroupHttpService
 }
 
-func NewProductBarcodeHttp(ms *microservice.Microservice, cfg microservice.IConfig) ProductBarcodeHttp {
+func NewCustomerGroupHttp(ms *microservice.Microservice, cfg microservice.IConfig) CustomerGroupHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
-	cache := ms.Cacher(cfg.CacherConfig())
 
-	repo := repositories.NewProductBarcodeRepository(pst)
+	repo := repositories.NewCustomerGroupRepository(pst)
 
-	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewProductBarcodeHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewCustomerGroupHttpService(repo)
 
-	return ProductBarcodeHttp{
+	return CustomerGroupHttp{
 		ms:  ms,
 		cfg: cfg,
 		svc: svc,
 	}
 }
 
-func (h ProductBarcodeHttp) RouteSetup() {
+func (h CustomerGroupHttp) RouteSetup() {
 
-	h.ms.POST("/product/barcode/bulk", h.SaveBulk)
+	h.ms.POST("customershop/customergroup/bulk", h.SaveBulk)
 
-	h.ms.GET("/product/barcode", h.SearchProductBarcodePage)
-	h.ms.GET("/product/barcode/list", h.SearchProductBarcodeLimit)
-	h.ms.POST("/product/barcode", h.CreateProductBarcode)
-	h.ms.GET("/product/barcode/:id", h.InfoProductBarcode)
-	h.ms.PUT("/product/barcode/xsort", h.UpdateProductBarcodeXSort)
-	h.ms.PUT("/product/barcode/:id", h.UpdateProductBarcode)
-	h.ms.DELETE("/product/barcode/:id", h.DeleteProductBarcode)
-	h.ms.DELETE("/product/barcode", h.DeleteProductBarcodeByGUIDs)
+	h.ms.GET("customershop/customergroup", h.SearchCustomerGroupPage)
+	h.ms.GET("customershop/customergroup/list", h.SearchCustomerGroupLimit)
+	h.ms.POST("customershop/customergroup", h.CreateCustomerGroup)
+	h.ms.GET("customershop/customergroup/:id", h.InfoCustomerGroup)
+	h.ms.PUT("customershop/customergroup/:id", h.UpdateCustomerGroup)
+	h.ms.DELETE("customershop/customergroup/:id", h.DeleteCustomerGroup)
+	h.ms.DELETE("customershop/customergroup", h.DeleteCustomerGroupByGUIDs)
 }
 
-// Create ProductBarcode godoc
-// @Description Create ProductBarcode
-// @Tags		ProductBarcode
-// @Param		ProductBarcode  body      models.ProductBarcode  true  "ProductBarcode"
+// Create CustomerGroup godoc
+// @Description Create CustomerGroup
+// @Tags		CustomerShop
+// @Param		CustomerGroup  body      models.CustomerGroup  true  "CustomerGroup"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/barcode [post]
-func (h ProductBarcodeHttp) CreateProductBarcode(ctx microservice.IContext) error {
+// @Router /customershop/customergroup [post]
+func (h CustomerGroupHttp) CreateCustomerGroup(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &models.ProductBarcode{}
+	docReq := &models.CustomerGroup{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -72,16 +68,12 @@ func (h ProductBarcodeHttp) CreateProductBarcode(ctx microservice.IContext) erro
 		return err
 	}
 
-	if docReq.XSorts == nil {
-		docReq.XSorts = &[]common.XSort{}
-	}
-
 	if err = ctx.Validate(docReq); err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	idx, err := h.svc.CreateProductBarcode(shopID, authUsername, *docReq)
+	idx, err := h.svc.CreateCustomerGroup(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -95,17 +87,17 @@ func (h ProductBarcodeHttp) CreateProductBarcode(ctx microservice.IContext) erro
 	return nil
 }
 
-// Update ProductBarcode godoc
-// @Description Update ProductBarcode
-// @Tags		ProductBarcode
-// @Param		id  path      string  true  "ProductBarcode ID"
-// @Param		ProductBarcode  body      models.ProductBarcode  true  "ProductBarcode"
+// Update CustomerGroup godoc
+// @Description Update CustomerGroup
+// @Tags		CustomerShop
+// @Param		id  path      string  true  "CustomerGroup ID"
+// @Param		CustomerGroup  body      models.CustomerGroup  true  "CustomerGroup"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/barcode/{id} [put]
-func (h ProductBarcodeHttp) UpdateProductBarcode(ctx microservice.IContext) error {
+// @Router /customershop/customergroup/{id} [put]
+func (h CustomerGroupHttp) UpdateCustomerGroup(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -113,7 +105,7 @@ func (h ProductBarcodeHttp) UpdateProductBarcode(ctx microservice.IContext) erro
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &models.ProductBarcode{}
+	docReq := &models.CustomerGroup{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -121,16 +113,12 @@ func (h ProductBarcodeHttp) UpdateProductBarcode(ctx microservice.IContext) erro
 		return err
 	}
 
-	if docReq.XSorts == nil {
-		docReq.XSorts = &[]common.XSort{}
-	}
-
 	if err = ctx.Validate(docReq); err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	err = h.svc.UpdateProductBarcode(shopID, id, authUsername, *docReq)
+	err = h.svc.UpdateCustomerGroup(shopID, id, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -145,66 +133,23 @@ func (h ProductBarcodeHttp) UpdateProductBarcode(ctx microservice.IContext) erro
 	return nil
 }
 
-// Update XSort	 ProductBarcode godoc
-// @Description Update XSort ProductBarcode
-// @Tags		ProductBarcode
-// @Param		XSort  body      []common.XSortModifyReqesut  true  "XSort"
-// @Accept 		json
-// @Success		201	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /product/barcode/xsort [put]
-func (h ProductBarcodeHttp) UpdateProductBarcodeXSort(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	shopID := userInfo.ShopID
-
-	input := ctx.ReadInput()
-
-	req := &[]common.XSortModifyReqesut{}
-	err := json.Unmarshal([]byte(input), &req)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	if err = ctx.Validate(req); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	err = h.svc.XSortsSave(shopID, authUsername, *req)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusCreated, common.ApiResponse{
-		Success: true,
-	})
-
-	return nil
-}
-
-// Delete ProductBarcode godoc
-// @Description Delete ProductBarcode
-// @Tags		ProductBarcode
-// @Param		id  path      string  true  "ProductBarcode ID"
+// Delete CustomerGroup godoc
+// @Description Delete CustomerGroup
+// @Tags		CustomerShop
+// @Param		id  path      string  true  "CustomerGroup ID"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/barcode/{id} [delete]
-func (h ProductBarcodeHttp) DeleteProductBarcode(ctx microservice.IContext) error {
+// @Router /customershop/customergroup/{id} [delete]
+func (h CustomerGroupHttp) DeleteCustomerGroup(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
 
 	id := ctx.Param("id")
 
-	err := h.svc.DeleteProductBarcode(shopID, id, authUsername)
+	err := h.svc.DeleteCustomerGroup(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -219,23 +164,23 @@ func (h ProductBarcodeHttp) DeleteProductBarcode(ctx microservice.IContext) erro
 	return nil
 }
 
-// Get ProductBarcode godoc
+// Get CustomerGroup godoc
 // @Description get struct array by ID
-// @Tags		ProductBarcode
-// @Param		id  path      string  true  "ProductBarcode ID"
+// @Tags		CustomerShop
+// @Param		id  path      string  true  "CustomerGroup ID"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/barcode/{id} [get]
-func (h ProductBarcodeHttp) InfoProductBarcode(ctx microservice.IContext) error {
+// @Router /customershop/customergroup/{id} [get]
+func (h CustomerGroupHttp) InfoCustomerGroup(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	h.ms.Logger.Debugf("Get ProductBarcode %v", id)
-	doc, err := h.svc.InfoProductBarcode(shopID, id)
+	h.ms.Logger.Debugf("Get CustomerGroup %v", id)
+	doc, err := h.svc.InfoCustomerGroup(shopID, id)
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
@@ -250,9 +195,9 @@ func (h ProductBarcodeHttp) InfoProductBarcode(ctx microservice.IContext) error 
 	return nil
 }
 
-// List ProductBarcode godoc
+// List CustomerGroup godoc
 // @Description get struct array by ID
-// @Tags		ProductBarcode
+// @Tags		CustomerShop
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Add Category"
 // @Param		limit	query	integer		false  "Add Category"
@@ -260,15 +205,15 @@ func (h ProductBarcodeHttp) InfoProductBarcode(ctx microservice.IContext) error 
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/barcode [get]
-func (h ProductBarcodeHttp) SearchProductBarcodePage(ctx microservice.IContext) error {
+// @Router /customershop/customergroup [get]
+func (h CustomerGroupHttp) SearchCustomerGroupPage(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	q := ctx.QueryParam("q")
 	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 	sort := utils.GetSortParam(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchProductBarcode(shopID, q, page, limit, sort)
+	docList, pagination, err := h.svc.SearchCustomerGroup(shopID, q, page, limit, sort)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -283,9 +228,9 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage(ctx microservice.IContext) 
 	return nil
 }
 
-// List ProductBarcode godoc
+// List CustomerGroup godoc
 // @Description search limit offset
-// @Tags		ProductBarcode
+// @Tags		CustomerShop
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
@@ -294,8 +239,8 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage(ctx microservice.IContext) 
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/barcode/list [get]
-func (h ProductBarcodeHttp) SearchProductBarcodeLimit(ctx microservice.IContext) error {
+// @Router /customershop/customergroup/list [get]
+func (h CustomerGroupHttp) SearchCustomerGroupLimit(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -305,7 +250,7 @@ func (h ProductBarcodeHttp) SearchProductBarcodeLimit(ctx microservice.IContext)
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchProductBarcodeStep(shopID, lang, q, offset, limit, sorts)
+	docList, total, err := h.svc.SearchCustomerGroupStep(shopID, lang, q, offset, limit, sorts)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -320,16 +265,16 @@ func (h ProductBarcodeHttp) SearchProductBarcodeLimit(ctx microservice.IContext)
 	return nil
 }
 
-// Create ProductBarcode Bulk godoc
-// @Description Create ProductBarcode
-// @Tags		ProductBarcode
-// @Param		ProductBarcode  body      []models.ProductBarcode  true  "ProductBarcode"
+// Create CustomerGroup Bulk godoc
+// @Description Create CustomerGroup
+// @Tags		CustomerShop
+// @Param		CustomerGroup  body      []models.CustomerGroup  true  "CustomerGroup"
 // @Accept 		json
 // @Success		201	{object}	common.BulkReponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/barcode/bulk [post]
-func (h ProductBarcodeHttp) SaveBulk(ctx microservice.IContext) error {
+// @Router /customershop/customergroup/bulk [post]
+func (h CustomerGroupHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -337,7 +282,7 @@ func (h ProductBarcodeHttp) SaveBulk(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	dataReq := []models.ProductBarcode{}
+	dataReq := []models.CustomerGroup{}
 	err := json.Unmarshal([]byte(input), &dataReq)
 
 	if err != nil {
@@ -363,16 +308,16 @@ func (h ProductBarcodeHttp) SaveBulk(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete ProductBarcode By GUIDs godoc
-// @Description Delete ProductBarcode
-// @Tags		ProductBarcode
-// @Param		ProductBarcode  body      []string  true  "ProductBarcode GUIDs"
+// Delete CustomerGroup By GUIDs godoc
+// @Description Delete CustomerGroup
+// @Tags		CustomerGroup
+// @Param		CustomerGroup  body      []string  true  "CustomerGroup GUIDs"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/barcode [delete]
-func (h ProductBarcodeHttp) DeleteProductBarcodeByGUIDs(ctx microservice.IContext) error {
+// @Router /customershop/customergroup [delete]
+func (h CustomerGroupHttp) DeleteCustomerGroupByGUIDs(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
@@ -387,7 +332,7 @@ func (h ProductBarcodeHttp) DeleteProductBarcodeByGUIDs(ctx microservice.IContex
 		return err
 	}
 
-	err = h.svc.DeleteProductBarcodeByGUIDs(shopID, authUsername, docReq)
+	err = h.svc.DeleteCustomerGroupByGUIDs(shopID, authUsername, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

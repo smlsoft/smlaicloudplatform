@@ -48,6 +48,7 @@ func (h ProductCategoryHttp) RouteSetup() {
 	h.ms.PUT("/product/category/barcodes", h.UpdateProductCategoryBarcodes)
 	h.ms.PUT("/product/category/:id", h.UpdateProductCategory)
 	h.ms.DELETE("/product/category/:id", h.DeleteProductCategory)
+	h.ms.DELETE("/product/category", h.DeleteProductCategoryByGUIDs)
 }
 
 // Create ProductCategory godoc
@@ -199,7 +200,7 @@ func (h ProductCategoryHttp) UpdateProductCategoryXSort(ctx microservice.IContex
 // Update Barcodes	 Category godoc
 // @Description Update Barcodes Category
 // @Tags		ProductCategory
-// @Param		Barcodes  body      []common.BarcodesModifyReqesut  true  "Barcodes"
+// @Param		Barcodes  body      []models.BarcodesModifyReqesut  true  "Barcodes"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -409,6 +410,44 @@ func (h ProductCategoryHttp) SaveBulk(ctx microservice.IContext) error {
 			Success: true,
 		},
 	)
+
+	return nil
+}
+
+// Delete ProductCategory By GUIDs godoc
+// @Description Delete ProductCategory
+// @Tags		ProductCategory
+// @Param		ProductCategory  body      []string  true  "ProductCategory GUIDs"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/category [delete]
+func (h ProductCategoryHttp) DeleteProductCategoryByGUIDs(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	docReq := []string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.DeleteProductCategoryByGUIDs(shopID, authUsername, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+	})
 
 	return nil
 }

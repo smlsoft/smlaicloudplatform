@@ -7,6 +7,8 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/apikeyservice"
 	"smlcloudplatform/pkg/authentication"
+	"smlcloudplatform/pkg/customershop/customer"
+	"smlcloudplatform/pkg/customershop/customergroup"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/images"
 	"smlcloudplatform/pkg/mastersync"
@@ -18,6 +20,7 @@ import (
 	"smlcloudplatform/pkg/product/inventorysearchconsumer"
 	"smlcloudplatform/pkg/product/option"
 	"smlcloudplatform/pkg/product/optionpattern"
+	"smlcloudplatform/pkg/product/product"
 	"smlcloudplatform/pkg/product/productbarcode"
 	"smlcloudplatform/pkg/product/productcategory"
 	"smlcloudplatform/pkg/product/unit"
@@ -168,6 +171,10 @@ func main() {
 			paymentmaster.NewPaymentMasterHttp(ms, cfg),
 			warehouse.NewWarehouseHttp(ms, cfg),
 			productbarcode.NewProductBarcodeHttp(ms, cfg),
+
+			customer.NewCustomerHttp(ms, cfg),
+			customergroup.NewCustomerGroupHttp(ms, cfg),
+			product.NewProductHttp(ms, cfg),
 		}
 
 		startHttpServices(httpServices...)

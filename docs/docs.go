@@ -77,312 +77,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/category": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "List Inventory Category",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Add Category",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Add Category",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.CategoryPageResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Inventory Category",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "description": "Add Category",
-                        "name": "Category",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Category"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/category/bulk": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Category",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "description": "Category",
-                        "name": "Category",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Category"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.CategoryBulkReponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/category/fetchupdate": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Fetch Update Category By Date",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "DateTime",
-                        "name": "lastUpdate",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.CategoryFetchUpdateResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/category/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Get Inventory Category",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Category Id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.CategoryInfoResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update Inventory",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Category ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Category",
-                        "name": "Category",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Category"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete Category",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Category ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/checksms": {
             "get": {
                 "security": [
@@ -781,6 +475,724 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.Shop"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/customershop/customer": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "description": "Customer",
+                        "name": "Customer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Customer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customer"
+                ],
+                "parameters": [
+                    {
+                        "description": "Customer GUIDs",
+                        "name": "Customer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/customershop/customer/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "description": "Customer",
+                        "name": "Customer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Customer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/customershop/customer/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/customershop/customer/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Customer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Customer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Customer",
+                        "name": "Customer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Customer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Customer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/customershop/customergroup": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create CustomerGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "description": "CustomerGroup",
+                        "name": "CustomerGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CustomerGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete CustomerGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "CustomerGroup GUIDs",
+                        "name": "CustomerGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/customershop/customergroup/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create CustomerGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "description": "CustomerGroup",
+                        "name": "CustomerGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CustomerGroup"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/customershop/customergroup/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/customershop/customergroup/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CustomerGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update CustomerGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CustomerGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "CustomerGroup",
+                        "name": "CustomerGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CustomerGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete CustomerGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CustomerGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
@@ -2550,6 +2962,37 @@ const docTemplate = `{
                         "required": true
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journal/last-docno": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายละเอียดข้อมูลรายวัน",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แสดงรายละเอียดข้อมูลรายวัน",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -5502,6 +5945,140 @@ const docTemplate = `{
                 }
             }
         },
+        "/product": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "description": "Product",
+                        "name": "Product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Product"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "description": "Product GUIDs",
+                        "name": "Product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/product/barcode": {
             "get": {
                 "security": [
@@ -5581,6 +6158,48 @@ const docTemplate = `{
                 "responses": {
                     "201": {
                         "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductBarcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductBarcode GUIDs",
+                        "name": "ProductBarcode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
@@ -5686,6 +6305,50 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/models.ApiResponse"
                             }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/barcode/xsort": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update XSort ProductBarcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "description": "XSort",
+                        "name": "XSort",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.XSortModifyReqesut"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
@@ -5819,6 +6482,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/product/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "description": "Product",
+                        "name": "Product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Product"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/product/category": {
             "get": {
                 "security": [
@@ -5892,6 +6599,92 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/models.ProductCategory"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductCategory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductCategory GUIDs",
+                        "name": "ProductCategory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/category/barcodes": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Barcodes Category",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "description": "Barcodes",
+                        "name": "Barcodes",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.BarcodesModifyReqesut"
+                            }
                         }
                     }
                 ],
@@ -6014,6 +6807,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/product/category/xsort": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update XSort Category",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "description": "XSort",
+                        "name": "XSort",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.XSortModifyReqesut"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/product/category/{id}": {
             "get": {
                 "security": [
@@ -6115,6 +6952,187 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "ProductCategory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Product",
+                        "name": "Product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Product"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -9256,7 +10274,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Image"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_images_models.Image"
                             }
                         }
                     },
@@ -9310,7 +10328,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Image"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_images_models.Image"
                             }
                         }
                     },
@@ -9996,6 +11014,9 @@ const docTemplate = `{
                 }
             }
         },
+        "models.BarcodesModifyReqesut": {
+            "type": "object"
+        },
         "models.BulkInsertResponse": {
             "type": "object",
             "properties": {
@@ -10060,283 +11081,123 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Category": {
-            "type": "object",
-            "required": [
-                "categoryguid",
-                "name1"
-            ],
-            "properties": {
-                "categoryguid": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "code": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "image": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "parentguid": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "xorder": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                }
-            }
-        },
-        "models.CategoryActivity": {
-            "type": "object",
-            "required": [
-                "categoryguid",
-                "name1"
-            ],
-            "properties": {
-                "categoryguid": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "code": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "image": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "parentguid": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                },
-                "xorder": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                }
-            }
-        },
-        "models.CategoryBulkReponse": {
-            "type": "object",
-            "properties": {
-                "created": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "payloadDuplicate": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "success": {
-                    "type": "boolean"
-                },
-                "updateFailed": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "updated": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "models.CategoryDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.CategoryFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.CategoryLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
         "models.CategoryImport": {
             "type": "object",
             "required": [
-                "categoryguid",
-                "name1"
+                "names"
             ],
             "properties": {
-                "categoryguid": {
-                    "type": "string",
-                    "maxLength": 100
+                "barcodes": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
                 },
-                "code": {
-                    "type": "string",
-                    "maxLength": 100
+                "childcount": {
+                    "type": "integer"
                 },
-                "image": {
+                "colorselect": {
                     "type": "string"
                 },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
+                "colorselecthex": {
+                    "type": "string"
                 },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
+                "guidfixed": {
+                    "type": "string"
                 },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
+                "id": {
+                    "type": "string"
                 },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
+                "imageuri": {
+                    "type": "string"
                 },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "parentguid": {
-                    "type": "string",
-                    "maxLength": 100
+                    "type": "string"
                 },
-                "xorder": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
+                "parentguidall": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "useimageorcolor": {
+                    "type": "boolean"
+                },
+                "xsorts": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
                 }
             }
         },
         "models.CategoryImportInfo": {
             "type": "object",
             "required": [
-                "categoryguid",
-                "name1"
+                "names"
             ],
             "properties": {
-                "categoryguid": {
-                    "type": "string",
-                    "maxLength": 100
+                "barcodes": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
                 },
-                "code": {
-                    "type": "string",
-                    "maxLength": 100
+                "childcount": {
+                    "type": "integer"
+                },
+                "colorselect": {
+                    "type": "string"
+                },
+                "colorselecthex": {
+                    "type": "string"
                 },
                 "guidfixed": {
                     "type": "string"
                 },
-                "image": {
+                "id": {
                     "type": "string"
                 },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
+                "imageuri": {
+                    "type": "string"
                 },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "parentguid": {
-                    "type": "string",
-                    "maxLength": 100
+                    "type": "string"
                 },
-                "xorder": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
+                "parentguidall": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "useimageorcolor": {
+                    "type": "boolean"
+                },
+                "xsorts": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
                 }
             }
         },
@@ -10347,103 +11208,6 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.CategoryImportInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.CategoryInfo": {
-            "type": "object",
-            "required": [
-                "categoryguid",
-                "name1"
-            ],
-            "properties": {
-                "categoryguid": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "code": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "image": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "parentguid": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "xorder": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                }
-            }
-        },
-        "models.CategoryInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.CategoryInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.CategoryLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.CategoryActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.CategoryDeleteActivity"
-                    }
-                }
-            }
-        },
-        "models.CategoryPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.CategoryInfo"
                     }
                 },
                 "pagination": {
@@ -10675,6 +11439,127 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Customer": {
+            "type": "object",
+            "required": [
+                "code",
+                "names"
+            ],
+            "properties": {
+                "addressforbilling": {
+                    "$ref": "#/definitions/models.CustomerAddress"
+                },
+                "addressforshipping": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CustomerAddress"
+                    }
+                },
+                "code": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "email": {
+                    "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_customershop_customer_models.Image"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "personaltype": {
+                    "type": "integer"
+                },
+                "taxid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CustomerAddress": {
+            "type": "object",
+            "required": [
+                "contactnames"
+            ],
+            "properties": {
+                "address": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "contactnames": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "guid": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phoneprimary": {
+                    "type": "string"
+                },
+                "phonesecondary": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CustomerGroup": {
+            "type": "object",
+            "required": [
+                "customercode",
+                "names"
+            ],
+            "properties": {
+                "customercode": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "guid": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "models.Device": {
             "type": "object",
             "properties": {
@@ -10700,6 +11585,12 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "referencegroups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ReferenceGroup"
+                    }
                 },
                 "references": {
                     "type": "array",
@@ -10768,6 +11659,12 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "referencegroups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ReferenceGroup"
+                    }
                 },
                 "references": {
                     "type": "array",
@@ -10925,14 +11822,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Image": {
-            "type": "object",
-            "properties": {
-                "uri": {
-                    "type": "string"
-                }
-            }
-        },
         "models.ImageReference": {
             "type": "object",
             "properties": {
@@ -11006,7 +11895,7 @@ const docTemplate = `{
                     }
                 },
                 "category": {
-                    "$ref": "#/definitions/models.Category"
+                    "$ref": "#/definitions/models.ProductCategory"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
@@ -11206,7 +12095,7 @@ const docTemplate = `{
                     }
                 },
                 "category": {
-                    "$ref": "#/definitions/models.Category"
+                    "$ref": "#/definitions/models.ProductCategory"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
@@ -11498,7 +12387,7 @@ const docTemplate = `{
                     }
                 },
                 "category": {
-                    "$ref": "#/definitions/models.Category"
+                    "$ref": "#/definitions/models.ProductCategory"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
@@ -12022,6 +12911,9 @@ const docTemplate = `{
                     "type": "string",
                     "format": "dateTime"
                 },
+                "docformat": {
+                    "type": "string"
+                },
                 "docno": {
                     "type": "string"
                 },
@@ -12197,6 +13089,9 @@ const docTemplate = `{
                     "type": "string",
                     "format": "dateTime"
                 },
+                "docformat": {
+                    "type": "string"
+                },
                 "docno": {
                     "type": "string"
                 },
@@ -12278,7 +13173,7 @@ const docTemplate = `{
                 "categories": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Category"
+                        "$ref": "#/definitions/models.ProductCategory"
                     }
                 },
                 "code": {
@@ -12325,7 +13220,7 @@ const docTemplate = `{
                 "categories": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Category"
+                        "$ref": "#/definitions/models.ProductCategory"
                     }
                 },
                 "code": {
@@ -12421,7 +13316,7 @@ const docTemplate = `{
                 "categories": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Category"
+                        "$ref": "#/definitions/models.ProductCategory"
                     }
                 },
                 "code": {
@@ -13369,6 +14264,79 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Product": {
+            "type": "object",
+            "required": [
+                "itemcode",
+                "names"
+            ],
+            "properties": {
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "categoryguid": {
+                    "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductImage"
+                    }
+                },
+                "issumpoint": {
+                    "type": "boolean"
+                },
+                "itemcode": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "itemstocktype": {
+                    "type": "integer"
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "multiunit": {
+                    "type": "boolean"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "prices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductPrice"
+                    }
+                },
+                "unitcost": {
+                    "type": "string"
+                },
+                "units": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductUnit"
+                    }
+                },
+                "unitstandard": {
+                    "type": "string"
+                },
+                "useserialnumber": {
+                    "type": "boolean"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.ProductBarcode": {
             "type": "object",
             "required": [
@@ -13383,6 +14351,12 @@ const docTemplate = `{
                 },
                 "categoryguid": {
                     "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage"
+                    }
                 },
                 "imageuri": {
                     "type": "string"
@@ -13420,6 +14394,13 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.ProductPrice"
                     }
+                },
+                "xsorts": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
                 }
             }
         },
@@ -13429,8 +14410,21 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
+                "barcodes": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
+                },
                 "childcount": {
                     "type": "integer"
+                },
+                "colorselect": {
+                    "type": "string"
+                },
+                "colorselecthex": {
+                    "type": "string"
                 },
                 "imageuri": {
                     "type": "string"
@@ -13449,10 +14443,15 @@ const docTemplate = `{
                 "parentguidall": {
                     "type": "string"
                 },
-                "xorder": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
+                "useimageorcolor": {
+                    "type": "boolean"
+                },
+                "xsorts": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
                 }
             }
         },
@@ -13465,7 +14464,11 @@ const docTemplate = `{
                 "guid": {
                     "type": "string"
                 },
+                "isdefault": {
+                    "type": "boolean"
+                },
                 "isstock": {
+                    "description": "QtyMax         float64         ` + "`" + `json:\"qtymax\" bson:\"qtymax\"` + "`" + `",
                     "type": "boolean"
                 },
                 "names": {
@@ -13477,12 +14480,9 @@ const docTemplate = `{
                     }
                 },
                 "price": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "qty": {
-                    "type": "number"
-                },
-                "qtymax": {
                     "type": "number"
                 },
                 "refbarcode": {
@@ -13507,6 +14507,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.ProductChoice"
                     }
+                },
+                "choicetype": {
+                    "type": "integer"
                 },
                 "guid": {
                     "type": "string"
@@ -13534,11 +14537,44 @@ const docTemplate = `{
         "models.ProductPrice": {
             "type": "object",
             "properties": {
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
+                },
+                "normalprice": {
+                    "type": "number"
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
                     "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.ProductUnit": {
+            "type": "object",
+            "properties": {
+                "divider": {
+                    "type": "number"
+                },
+                "stand": {
+                    "type": "number"
+                },
+                "stockcount": {
+                    "type": "boolean"
+                },
+                "unitcode": {
+                    "type": "string"
+                },
+                "unitname": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -13706,7 +14742,7 @@ const docTemplate = `{
                     }
                 },
                 "category": {
-                    "$ref": "#/definitions/models.Category"
+                    "$ref": "#/definitions/models.ProductCategory"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
@@ -13962,6 +14998,23 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ReferenceGroup": {
+            "type": "object",
+            "properties": {
+                "grouptype": {
+                    "type": "string"
+                },
+                "parentguid": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                },
+                "xtype": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.RequestDocumentImageReject": {
             "type": "object",
             "properties": {
@@ -14071,7 +15124,7 @@ const docTemplate = `{
                     }
                 },
                 "category": {
-                    "$ref": "#/definitions/models.Category"
+                    "$ref": "#/definitions/models.ProductCategory"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
@@ -15350,6 +16403,54 @@ const docTemplate = `{
                 }
             }
         },
+        "models.XSort": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer",
+                    "maximum": 4294967295,
+                    "minimum": 0
+                }
+            }
+        },
+        "models.XSortModifyReqesut": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer",
+                    "maximum": 4294967295,
+                    "minimum": 0
+                }
+            }
+        },
+        "smlcloudplatform_pkg_customershop_customer_models.Image": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_images_models.Image": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                }
+            }
+        },
         "smlcloudplatform_pkg_product_inventory_models.Unit": {
             "type": "object",
             "properties": {
@@ -15370,6 +16471,28 @@ const docTemplate = `{
                 },
                 "unitname5": {
                     "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_product_models.ProductImage": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_productbarcode_models.ProductImage": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },

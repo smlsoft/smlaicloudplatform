@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const posProductBarcodeCollectionName = "posProductBarcode"
+const posProductBarcodeCollectionName = "productBarcodes"
 
 type ProductBarcode struct {
 	models.PartitionIdentity `bson:"inline"`
@@ -21,6 +21,12 @@ type ProductBarcode struct {
 	Prices        *[]ProductPrice  `json:"prices" bson:"prices"`
 	ImageURI      string           `json:"imageuri" bson:"imageuri"`
 	Options       *[]ProductOption `json:"options" bson:"options"`
+	Images        *[]ProductImage  `json:"images" bson:"images"`
+}
+
+type ProductImage struct {
+	XOrder int    `json:"xorder" bson:"xorder"`
+	URI    string `json:"uri" bson:"uri"`
 }
 
 type ProductPrice struct {

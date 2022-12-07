@@ -17,6 +17,9 @@ type ProductCategory struct {
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	XSorts                   *[]models.XSort `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
 	Barcodes                 *[]models.XSort `json:"barcodes" bson:"barcodes" validate:"unique=Code,dive"`
+	UseImageOrColor          bool            `json:"useimageorcolor" bson:"useimageorcolor"`
+	ColorSelect              string          `json:"colorselect" bson:"colorselect"`
+	ColorSelectHex           string          `json:"colorselecthex" bson:"colorselecthex"`
 }
 
 type ProductCategoryInfo struct {
@@ -67,4 +70,7 @@ type ProductCategoryDeleteActivity struct {
 
 func (ProductCategoryDeleteActivity) CollectionName() string {
 	return productcategoryCollectionName
+}
+
+type BarcodesModifyReqesut struct {
 }

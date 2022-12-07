@@ -242,6 +242,8 @@ definitions:
     required:
     - name1
     type: object
+  models.BarcodesModifyReqesut:
+    type: object
   models.BulkInsertResponse:
     properties:
       created:
@@ -284,277 +286,93 @@ definitions:
           type: string
         type: array
     type: object
-  models.Category:
-    properties:
-      categoryguid:
-        maxLength: 100
-        type: string
-      code:
-        maxLength: 100
-        type: string
-      image:
-        type: string
-      name1:
-        maxLength: 255
-        type: string
-      name2:
-        maxLength: 255
-        type: string
-      name3:
-        maxLength: 255
-        type: string
-      name4:
-        maxLength: 255
-        type: string
-      name5:
-        maxLength: 255
-        type: string
-      parentguid:
-        maxLength: 100
-        type: string
-      xorder:
-        maximum: 125
-        minimum: -125
-        type: integer
-    required:
-    - categoryguid
-    - name1
-    type: object
-  models.CategoryActivity:
-    properties:
-      categoryguid:
-        maxLength: 100
-        type: string
-      code:
-        maxLength: 100
-        type: string
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      image:
-        type: string
-      name1:
-        maxLength: 255
-        type: string
-      name2:
-        maxLength: 255
-        type: string
-      name3:
-        maxLength: 255
-        type: string
-      name4:
-        maxLength: 255
-        type: string
-      name5:
-        maxLength: 255
-        type: string
-      parentguid:
-        maxLength: 100
-        type: string
-      shopid:
-        type: string
-      updatedat:
-        type: string
-      xorder:
-        maximum: 125
-        minimum: -125
-        type: integer
-    required:
-    - categoryguid
-    - name1
-    type: object
-  models.CategoryBulkReponse:
-    properties:
-      created:
-        items:
-          type: string
-        type: array
-      payloadDuplicate:
-        items:
-          type: string
-        type: array
-      success:
-        type: boolean
-      updateFailed:
-        items:
-          type: string
-        type: array
-      updated:
-        items:
-          type: string
-        type: array
-    type: object
-  models.CategoryDeleteActivity:
-    properties:
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      shopid:
-        type: string
-      updatedat:
-        type: string
-    type: object
-  models.CategoryFetchUpdateResponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.CategoryLastActivityResponse'
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
   models.CategoryImport:
     properties:
-      categoryguid:
-        maxLength: 100
-        type: string
-      code:
-        maxLength: 100
-        type: string
-      image:
-        type: string
-      name1:
-        maxLength: 255
-        type: string
-      name2:
-        maxLength: 255
-        type: string
-      name3:
-        maxLength: 255
-        type: string
-      name4:
-        maxLength: 255
-        type: string
-      name5:
-        maxLength: 255
-        type: string
-      parentguid:
-        maxLength: 100
-        type: string
-      xorder:
-        maximum: 125
-        minimum: -125
+      barcodes:
+        items:
+          $ref: '#/definitions/models.XSort'
+        type: array
+        uniqueItems: true
+      childcount:
         type: integer
+      colorselect:
+        type: string
+      colorselecthex:
+        type: string
+      guidfixed:
+        type: string
+      id:
+        type: string
+      imageuri:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      parentguid:
+        type: string
+      parentguidall:
+        type: string
+      shopid:
+        type: string
+      useimageorcolor:
+        type: boolean
+      xsorts:
+        items:
+          $ref: '#/definitions/models.XSort'
+        type: array
+        uniqueItems: true
     required:
-    - categoryguid
-    - name1
+    - names
     type: object
   models.CategoryImportInfo:
     properties:
-      categoryguid:
-        maxLength: 100
+      barcodes:
+        items:
+          $ref: '#/definitions/models.XSort'
+        type: array
+        uniqueItems: true
+      childcount:
+        type: integer
+      colorselect:
         type: string
-      code:
-        maxLength: 100
+      colorselecthex:
         type: string
       guidfixed:
         type: string
-      image:
+      id:
         type: string
-      name1:
-        maxLength: 255
+      imageuri:
         type: string
-      name2:
-        maxLength: 255
-        type: string
-      name3:
-        maxLength: 255
-        type: string
-      name4:
-        maxLength: 255
-        type: string
-      name5:
-        maxLength: 255
-        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       parentguid:
-        maxLength: 100
         type: string
-      xorder:
-        maximum: 125
-        minimum: -125
-        type: integer
+      parentguidall:
+        type: string
+      shopid:
+        type: string
+      useimageorcolor:
+        type: boolean
+      xsorts:
+        items:
+          $ref: '#/definitions/models.XSort'
+        type: array
+        uniqueItems: true
     required:
-    - categoryguid
-    - name1
+    - names
     type: object
   models.CategoryImportPageResponse:
     properties:
       data:
         items:
           $ref: '#/definitions/models.CategoryImportInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
-  models.CategoryInfo:
-    properties:
-      categoryguid:
-        maxLength: 100
-        type: string
-      code:
-        maxLength: 100
-        type: string
-      guidfixed:
-        type: string
-      image:
-        type: string
-      name1:
-        maxLength: 255
-        type: string
-      name2:
-        maxLength: 255
-        type: string
-      name3:
-        maxLength: 255
-        type: string
-      name4:
-        maxLength: 255
-        type: string
-      name5:
-        maxLength: 255
-        type: string
-      parentguid:
-        maxLength: 100
-        type: string
-      xorder:
-        maximum: 125
-        minimum: -125
-        type: integer
-    required:
-    - categoryguid
-    - name1
-    type: object
-  models.CategoryInfoResponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.CategoryInfo'
-      success:
-        type: boolean
-    type: object
-  models.CategoryLastActivityResponse:
-    properties:
-      new:
-        items:
-          $ref: '#/definitions/models.CategoryActivity'
-        type: array
-      remove:
-        items:
-          $ref: '#/definitions/models.CategoryDeleteActivity'
-        type: array
-    type: object
-  models.CategoryPageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/models.CategoryInfo'
         type: array
       pagination:
         $ref: '#/definitions/models.PaginationDataResponse'
@@ -714,6 +532,89 @@ definitions:
       remark:
         type: string
     type: object
+  models.Customer:
+    properties:
+      addressforbilling:
+        $ref: '#/definitions/models.CustomerAddress'
+      addressforshipping:
+        items:
+          $ref: '#/definitions/models.CustomerAddress'
+        type: array
+      code:
+        minLength: 1
+        type: string
+      email:
+        type: string
+      images:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_customershop_customer_models.Image'
+        type: array
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      personaltype:
+        type: integer
+      taxid:
+        type: string
+    required:
+    - code
+    - names
+    type: object
+  models.CustomerAddress:
+    properties:
+      address:
+        items:
+          type: string
+        type: array
+      contactnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      guid:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phoneprimary:
+        type: string
+      phonesecondary:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
+    required:
+    - contactnames
+    type: object
+  models.CustomerGroup:
+    properties:
+      customercode:
+        minLength: 1
+        type: string
+      guid:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - customercode
+    - names
+    type: object
   models.Device:
     properties:
       os:
@@ -731,6 +632,10 @@ definitions:
         type: string
       name:
         type: string
+      referencegroups:
+        items:
+          $ref: '#/definitions/models.ReferenceGroup'
+        type: array
       references:
         items:
           $ref: '#/definitions/models.Reference'
@@ -776,6 +681,10 @@ definitions:
         type: string
       name:
         type: string
+      referencegroups:
+        items:
+          $ref: '#/definitions/models.ReferenceGroup'
+        type: array
       references:
         items:
           $ref: '#/definitions/models.Reference'
@@ -877,11 +786,6 @@ definitions:
       username:
         type: string
     type: object
-  models.Image:
-    properties:
-      uri:
-        type: string
-    type: object
   models.ImageReference:
     properties:
       documentimageguid:
@@ -929,7 +833,7 @@ definitions:
           $ref: '#/definitions/models.Barcode'
         type: array
       category:
-        $ref: '#/definitions/models.Category'
+        $ref: '#/definitions/models.ProductCategory'
       categoryguid:
         description: Guid กลุ่มสินค้า
         maxLength: 100
@@ -1072,7 +976,7 @@ definitions:
           $ref: '#/definitions/models.Barcode'
         type: array
       category:
-        $ref: '#/definitions/models.Category'
+        $ref: '#/definitions/models.ProductCategory'
       categoryguid:
         description: Guid กลุ่มสินค้า
         maxLength: 100
@@ -1275,7 +1179,7 @@ definitions:
           $ref: '#/definitions/models.Barcode'
         type: array
       category:
-        $ref: '#/definitions/models.Category'
+        $ref: '#/definitions/models.ProductCategory'
       categoryguid:
         description: Guid กลุ่มสินค้า
         maxLength: 100
@@ -1640,6 +1544,8 @@ definitions:
       docdate:
         format: dateTime
         type: string
+      docformat:
+        type: string
       docno:
         type: string
       documentref:
@@ -1759,6 +1665,8 @@ definitions:
       docdate:
         format: dateTime
         type: string
+      docformat:
+        type: string
       docno:
         type: string
       documentref:
@@ -1812,7 +1720,7 @@ definitions:
     properties:
       categories:
         items:
-          $ref: '#/definitions/models.Category'
+          $ref: '#/definitions/models.ProductCategory'
         type: array
       code:
         type: string
@@ -1843,7 +1751,7 @@ definitions:
     properties:
       categories:
         items:
-          $ref: '#/definitions/models.Category'
+          $ref: '#/definitions/models.ProductCategory'
         type: array
       code:
         type: string
@@ -1906,7 +1814,7 @@ definitions:
     properties:
       categories:
         items:
-          $ref: '#/definitions/models.Category'
+          $ref: '#/definitions/models.ProductCategory'
         type: array
       code:
         type: string
@@ -2544,6 +2452,56 @@ definitions:
       success:
         type: boolean
     type: object
+  models.Product:
+    properties:
+      barcodes:
+        items:
+          type: string
+        type: array
+      categoryguid:
+        type: string
+      images:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductImage'
+        type: array
+      issumpoint:
+        type: boolean
+      itemcode:
+        maxLength: 100
+        minLength: 1
+        type: string
+      itemstocktype:
+        type: integer
+      itemtype:
+        type: integer
+      multiunit:
+        type: boolean
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      prices:
+        items:
+          $ref: '#/definitions/models.ProductPrice'
+        type: array
+      unitcost:
+        type: string
+      units:
+        items:
+          $ref: '#/definitions/models.ProductUnit'
+        type: array
+      unitstandard:
+        type: string
+      useserialnumber:
+        type: boolean
+      vattype:
+        type: integer
+    required:
+    - itemcode
+    - names
+    type: object
   models.ProductBarcode:
     properties:
       barcode:
@@ -2551,6 +2509,10 @@ definitions:
         type: string
       categoryguid:
         type: string
+      images:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'
+        type: array
       imageuri:
         type: string
       itemcode:
@@ -2577,6 +2539,11 @@ definitions:
         items:
           $ref: '#/definitions/models.ProductPrice'
         type: array
+      xsorts:
+        items:
+          $ref: '#/definitions/models.XSort'
+        type: array
+        uniqueItems: true
     required:
     - barcode
     - itemunitnames
@@ -2584,8 +2551,17 @@ definitions:
     type: object
   models.ProductCategory:
     properties:
+      barcodes:
+        items:
+          $ref: '#/definitions/models.XSort'
+        type: array
+        uniqueItems: true
       childcount:
         type: integer
+      colorselect:
+        type: string
+      colorselecthex:
+        type: string
       imageuri:
         type: string
       names:
@@ -2598,10 +2574,13 @@ definitions:
         type: string
       parentguidall:
         type: string
-      xorder:
-        maximum: 125
-        minimum: -125
-        type: integer
+      useimageorcolor:
+        type: boolean
+      xsorts:
+        items:
+          $ref: '#/definitions/models.XSort'
+        type: array
+        uniqueItems: true
     required:
     - names
     type: object
@@ -2609,7 +2588,10 @@ definitions:
     properties:
       guid:
         type: string
+      isdefault:
+        type: boolean
       isstock:
+        description: QtyMax         float64         `json:"qtymax" bson:"qtymax"`
         type: boolean
       names:
         items:
@@ -2618,10 +2600,8 @@ definitions:
         type: array
         uniqueItems: true
       price:
-        type: number
+        type: string
       qty:
-        type: number
-      qtymax:
         type: number
       refbarcode:
         type: string
@@ -2638,6 +2618,8 @@ definitions:
         items:
           $ref: '#/definitions/models.ProductChoice'
         type: array
+      choicetype:
+        type: integer
       guid:
         type: string
       maxselect:
@@ -2659,10 +2641,32 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      keynumber:
-        type: integer
-      price:
+      memberprice:
         type: number
+      normalprice:
+        type: number
+      price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
+    type: object
+  models.ProductUnit:
+    properties:
+      divider:
+        type: number
+      stand:
+        type: number
+      stockcount:
+        type: boolean
+      unitcode:
+        type: string
+      unitname:
+        type: string
+      xorder:
+        type: integer
     type: object
   models.ProfitAndLossSheetAccountDetail:
     properties:
@@ -2777,7 +2781,7 @@ definitions:
           $ref: '#/definitions/models.Barcode'
         type: array
       category:
-        $ref: '#/definitions/models.Category'
+        $ref: '#/definitions/models.ProductCategory'
       categoryguid:
         description: Guid กลุ่มสินค้า
         maxLength: 100
@@ -2957,6 +2961,17 @@ definitions:
       module:
         type: string
     type: object
+  models.ReferenceGroup:
+    properties:
+      grouptype:
+        type: string
+      parentguid:
+        type: string
+      xorder:
+        type: integer
+      xtype:
+        type: integer
+    type: object
   models.RequestDocumentImageReject:
     properties:
       isreject:
@@ -3028,7 +3043,7 @@ definitions:
           $ref: '#/definitions/models.Barcode'
         type: array
       category:
-        $ref: '#/definitions/models.Category'
+        $ref: '#/definitions/models.ProductCategory'
       categoryguid:
         description: Guid กลุ่มสินค้า
         maxLength: 100
@@ -3897,6 +3912,38 @@ definitions:
     required:
     - name1
     type: object
+  models.XSort:
+    properties:
+      code:
+        type: string
+      xorder:
+        maximum: 4294967295
+        minimum: 0
+        type: integer
+    type: object
+  models.XSortModifyReqesut:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      xorder:
+        maximum: 4294967295
+        minimum: 0
+        type: integer
+    type: object
+  smlcloudplatform_pkg_customershop_customer_models.Image:
+    properties:
+      uri:
+        type: string
+      xorder:
+        type: integer
+    type: object
+  smlcloudplatform_pkg_images_models.Image:
+    properties:
+      uri:
+        type: string
+    type: object
   smlcloudplatform_pkg_product_inventory_models.Unit:
     properties:
       unitcode:
@@ -3911,6 +3958,20 @@ definitions:
         type: string
       unitname5:
         type: string
+    type: object
+  smlcloudplatform_pkg_product_product_models.ProductImage:
+    properties:
+      uri:
+        type: string
+      xorder:
+        type: integer
+    type: object
+  smlcloudplatform_pkg_product_productbarcode_models.ProductImage:
+    properties:
+      uri:
+        type: string
+      xorder:
+        type: integer
     type: object
   smlcloudplatform_pkg_product_unit_models.Unit:
     properties:
@@ -3981,196 +4042,6 @@ paths:
       - AccessToken: []
       tags:
       - XApiKey
-  /category:
-    get:
-      consumes:
-      - application/json
-      description: List Inventory Category
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: Add Category
-        in: query
-        name: page
-        type: integer
-      - description: Add Category
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.CategoryPageResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-    post:
-      consumes:
-      - application/json
-      description: Create Inventory Category
-      parameters:
-      - description: Add Category
-        in: body
-        name: Category
-        required: true
-        schema:
-          $ref: '#/definitions/models.Category'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-  /category/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete Category
-      parameters:
-      - description: Category ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-    get:
-      consumes:
-      - application/json
-      description: Get Inventory Category
-      parameters:
-      - description: Category Id
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.CategoryInfoResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-    put:
-      consumes:
-      - application/json
-      description: Update Inventory
-      parameters:
-      - description: Category ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Category
-        in: body
-        name: Category
-        required: true
-        schema:
-          $ref: '#/definitions/models.Category'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-  /category/bulk:
-    post:
-      consumes:
-      - application/json
-      description: Create Category
-      parameters:
-      - description: Category
-        in: body
-        name: Category
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.Category'
-          type: array
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.CategoryBulkReponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
-  /category/fetchupdate:
-    get:
-      consumes:
-      - application/json
-      description: Fetch Update Category By Date
-      parameters:
-      - description: DateTime
-        in: query
-        name: lastUpdate
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.CategoryFetchUpdateResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Inventory
   /checksms:
     get:
       consumes:
@@ -4425,6 +4296,452 @@ paths:
       - AccessToken: []
       tags:
       - Authentication
+  /customershop/customer:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Customer
+      parameters:
+      - description: Customer GUIDs
+        in: body
+        name: Customer
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Customer
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CustomerShop
+    post:
+      consumes:
+      - application/json
+      description: Create Customer
+      parameters:
+      - description: Customer
+        in: body
+        name: Customer
+        required: true
+        schema:
+          $ref: '#/definitions/models.Customer'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CustomerShop
+  /customershop/customer/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Customer
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CustomerShop
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CustomerShop
+    put:
+      consumes:
+      - application/json
+      description: Update Customer
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Customer
+        in: body
+        name: Customer
+        required: true
+        schema:
+          $ref: '#/definitions/models.Customer'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CustomerShop
+  /customershop/customer/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Customer
+      parameters:
+      - description: Customer
+        in: body
+        name: Customer
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Customer'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CustomerShop
+  /customershop/customer/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CustomerShop
+  /customershop/customergroup:
+    delete:
+      consumes:
+      - application/json
+      description: Delete CustomerGroup
+      parameters:
+      - description: CustomerGroup GUIDs
+        in: body
+        name: CustomerGroup
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CustomerGroup
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CustomerShop
+    post:
+      consumes:
+      - application/json
+      description: Create CustomerGroup
+      parameters:
+      - description: CustomerGroup
+        in: body
+        name: CustomerGroup
+        required: true
+        schema:
+          $ref: '#/definitions/models.CustomerGroup'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CustomerShop
+  /customershop/customergroup/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete CustomerGroup
+      parameters:
+      - description: CustomerGroup ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CustomerShop
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: CustomerGroup ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CustomerShop
+    put:
+      consumes:
+      - application/json
+      description: Update CustomerGroup
+      parameters:
+      - description: CustomerGroup ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: CustomerGroup
+        in: body
+        name: CustomerGroup
+        required: true
+        schema:
+          $ref: '#/definitions/models.CustomerGroup'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CustomerShop
+  /customershop/customergroup/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create CustomerGroup
+      parameters:
+      - description: CustomerGroup
+        in: body
+        name: CustomerGroup
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.CustomerGroup'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CustomerShop
+  /customershop/customergroup/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CustomerShop
   /documentimage:
     get:
       consumes:
@@ -5616,6 +5933,25 @@ paths:
       summary: List Document Ref selected
       tags:
       - WSDocumentRef
+  /gl/journal/last-docno:
+    get:
+      consumes:
+      - application/json
+      description: แสดงรายละเอียดข้อมูลรายวัน
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JournalInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: แสดงรายละเอียดข้อมูลรายวัน
+      tags:
+      - GL
   /gl/journalbook:
     get:
       consumes:
@@ -7372,7 +7708,192 @@ paths:
       summary: นำเข้าข้อมูล payment master
       tags:
       - PaymentMaster
+  /product:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Product
+      parameters:
+      - description: Product GUIDs
+        in: body
+        name: Product
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+    post:
+      consumes:
+      - application/json
+      description: Create Product
+      parameters:
+      - description: Product
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/models.Product'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+  /product/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+    put:
+      consumes:
+      - application/json
+      description: Update Product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Product
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/models.Product'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
   /product/barcode:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ProductBarcode
+      parameters:
+      - description: ProductBarcode GUIDs
+        in: body
+        name: ProductBarcode
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductBarcode
     get:
       consumes:
       - application/json
@@ -7569,7 +8090,87 @@ paths:
       - AccessToken: []
       tags:
       - ProductBarcode
+  /product/barcode/xsort:
+    put:
+      consumes:
+      - application/json
+      description: Update XSort ProductBarcode
+      parameters:
+      - description: XSort
+        in: body
+        name: XSort
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.XSortModifyReqesut'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductBarcode
+  /product/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Product
+      parameters:
+      - description: Product
+        in: body
+        name: Product
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Product'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
   /product/category:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ProductCategory
+      parameters:
+      - description: ProductCategory GUIDs
+        in: body
+        name: ProductCategory
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductCategory
     get:
       consumes:
       - application/json
@@ -7702,6 +8303,33 @@ paths:
       - AccessToken: []
       tags:
       - ProductCategory
+  /product/category/barcodes:
+    put:
+      consumes:
+      - application/json
+      description: Update Barcodes Category
+      parameters:
+      - description: Barcodes
+        in: body
+        name: Barcodes
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.BarcodesModifyReqesut'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductCategory
   /product/category/bulk:
     post:
       consumes:
@@ -7766,6 +8394,70 @@ paths:
       - AccessToken: []
       tags:
       - ProductCategory
+  /product/category/xsort:
+    put:
+      consumes:
+      - application/json
+      description: Update XSort Category
+      parameters:
+      - description: XSort
+        in: body
+        name: XSort
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.XSortModifyReqesut'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductCategory
+  /product/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
   /profile:
     get:
       consumes:
@@ -9704,7 +10396,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Image'
+              $ref: '#/definitions/smlcloudplatform_pkg_images_models.Image'
             type: array
         "400":
           description: Bad Request
@@ -9738,7 +10430,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Image'
+              $ref: '#/definitions/smlcloudplatform_pkg_images_models.Image'
             type: array
         "400":
           description: Bad Request

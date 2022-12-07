@@ -8,8 +8,9 @@ type ProductChoice struct {
 	RefProductCode string          `json:"refproductcode" bson:"refproductcode"`
 	RefUnitCode    string          `json:"refunitcode" bson:"refunitcode"`
 	Names          *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	Price          float64         `json:"price" bson:"price"`
+	Price          *string         `json:"price" bson:"price"`
 	Qty            float64         `json:"qty" bson:"qty"`
-	QtyMax         float64         `json:"qtymax" bson:"qtymax"`
-	IsStock        bool            `json:"isstock" bson:"isstock"`
+	// QtyMax         float64         `json:"qtymax" bson:"qtymax"`
+	IsStock   bool `json:"isstock" bson:"isstock"`
+	IsDefault bool `json:"isdefault" bson:"isdefault"`
 }

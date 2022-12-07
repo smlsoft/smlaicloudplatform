@@ -9,6 +9,8 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/apikeyservice"
 	"smlcloudplatform/pkg/authentication"
+	"smlcloudplatform/pkg/customershop/customer"
+	"smlcloudplatform/pkg/customershop/customergroup"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
@@ -17,6 +19,7 @@ import (
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
 	"smlcloudplatform/pkg/product/optionpattern"
+	"smlcloudplatform/pkg/product/product"
 	"smlcloudplatform/pkg/product/productbarcode"
 	"smlcloudplatform/pkg/product/productcategory"
 	"smlcloudplatform/pkg/product/unit"
@@ -117,7 +120,9 @@ func main() {
 		accountgroup.NewAccountGroupHttp(ms, cfg),
 		journalbook.NewJournalBookHttp(ms, cfg),
 		zonedesign.NewZoneDesignHttp(ms, cfg),
+
 		mastersync.NewMasterSyncHttp(ms, cfg),
+
 		documentimage.NewDocumentImageHttp(ms, cfg),
 		chartofaccount.NewChartOfAccountHttp(ms, cfg),
 		//new
@@ -139,6 +144,10 @@ func main() {
 		color.NewColorHttp(ms, cfg),
 		productcategory.NewProductCategoryHttp(ms, cfg),
 		productbarcode.NewProductBarcodeHttp(ms, cfg),
+
+		customer.NewCustomerHttp(ms, cfg),
+		customergroup.NewCustomerGroupHttp(ms, cfg),
+		product.NewProductHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)
