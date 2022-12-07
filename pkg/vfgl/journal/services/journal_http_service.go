@@ -146,6 +146,9 @@ func (svc JournalHttpService) InfoJournal(shopID string, guid string) (models.Jo
 		return models.JournalInfo{}, errors.New("document not found")
 	}
 
+	findDoc.JournalInfo.CreatedBy = findDoc.ActivityDoc.CreatedBy
+	findDoc.JournalInfo.CreatedAt = findDoc.ActivityDoc.CreatedAt
+
 	return findDoc.JournalInfo, nil
 
 }
