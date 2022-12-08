@@ -26,6 +26,7 @@ type IDocumentImageService interface {
 	DeleteDocumentImage(shopID string, authUsername string, imageGUID string) error
 
 	InfoDocumentImage(shopID string, guid string) (models.DocumentImageInfo, error)
+	InfoDocumentImageByDocRef(shopID string, docRef string) (models.DocumentImageInfo, error)
 	SearchDocumentImage(shopID string, matchFilters map[string]interface{}, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
 	UploadDocumentImage(shopID string, authUsername string, fh *multipart.FileHeader) (*models.DocumentImageInfo, error)
 
@@ -408,6 +409,21 @@ func (svc DocumentImageService) RejectDocumentImage(shopID string, guid string, 
 func (svc DocumentImageService) InfoDocumentImage(shopID string, guid string) (models.DocumentImageInfo, error) {
 
 	findDoc, err := svc.repoImage.FindByGuid(shopID, guid)
+
+	if err != nil {
+		return models.DocumentImageInfo{}, err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return models.DocumentImageInfo{}, errors.New("document not found")
+	}
+
+	return findDoc.DocumentImageInfo, nil
+}
+
+func (svc DocumentImageService) InfoDocumentImageByDocRef(shopID string, docRef string) (models.DocumentImageInfo, error) {
+
+	findDoc, err := svc.repoImage.FindOne(shopID, map[string]interface{}{"references.docno": docRef})
 
 	if err != nil {
 		return models.DocumentImageInfo{}, err

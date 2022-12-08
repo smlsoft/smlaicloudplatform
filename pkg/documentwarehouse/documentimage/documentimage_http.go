@@ -66,6 +66,7 @@ func NewDocumentImageHttp(ms *microservice.Microservice, cfg microservice.IConfi
 func (h DocumentImageHttp) RouteSetup() {
 	h.ms.GET("/documentimage", h.SearchDocumentImage)
 	// h.ms.GET("/documentimage/special", h.DocumentImageSpecial)
+	h.ms.GET("/documentimage/docref/:docref", h.GetDocumentImageByDocRefInfo)
 	h.ms.GET("/documentimage/:guid", h.GetDocumentImageInfo)
 	h.ms.POST("/documentimage/upload", h.UploadDocumentImage)
 	h.ms.POST("/documentimage", h.CreateDocumentImage)
@@ -218,6 +219,36 @@ func (h DocumentImageHttp) GetDocumentImageInfo(ctx microservice.IContext) error
 	doc, err := h.service.InfoDocumentImage(shopID, id)
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// Get Document Image By document reference Infomation godoc
+// @Summary		Get Document Image By document reference Infomation
+// @Description Get Document Image By document reference Infomation
+// @Tags		DocumentImage
+// @Param		docref  path      string  true  "document reference"
+// @Accept 		json
+// @Success		200	{object}	models.DocumentImageInfoResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /documentimage/docref/:docref [get]
+func (h DocumentImageHttp) GetDocumentImageByDocRefInfo(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	docRef := ctx.Param("docref")
+	doc, err := h.service.InfoDocumentImageByDocRef(shopID, docRef)
+	if err != nil {
+		h.ms.Logger.Errorf("Error getting document %v: %v", docRef, err)
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}
