@@ -4914,6 +4914,31 @@ paths:
       summary: Create Document Image
       tags:
       - DocumentImage
+  /documentimage/docref/:docref:
+    get:
+      consumes:
+      - application/json
+      description: Get Document Image By document reference Infomation
+      parameters:
+      - description: document reference
+        in: path
+        name: docref
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.DocumentImageInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: Get Document Image By document reference Infomation
+      tags:
+      - DocumentImage
   /documentimage/upload:
     post:
       consumes:

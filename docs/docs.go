@@ -1370,6 +1370,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/documentimage/docref/:docref": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Document Image By document reference Infomation",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImage"
+                ],
+                "summary": "Get Document Image By document reference Infomation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document reference",
+                        "name": "docref",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.DocumentImageInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/documentimage/upload": {
             "post": {
                 "security": [
