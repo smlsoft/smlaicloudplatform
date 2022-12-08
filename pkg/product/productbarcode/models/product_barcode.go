@@ -16,12 +16,15 @@ type ProductBarcode struct {
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	XSorts                   *[]models.XSort `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
 
-	ItemUnitCode  string           `json:"itemunitcode" bson:"itemunitcode"`
-	ItemUnitNames *[]models.NameX  `json:"itemunitnames" bson:"itemunitnames" validate:"required,min=1,unique=Code,dive"`
-	Prices        *[]ProductPrice  `json:"prices" bson:"prices"`
-	ImageURI      string           `json:"imageuri" bson:"imageuri"`
-	Options       *[]ProductOption `json:"options" bson:"options"`
-	Images        *[]ProductImage  `json:"images" bson:"images"`
+	ItemUnitCode    string           `json:"itemunitcode" bson:"itemunitcode"`
+	ItemUnitNames   *[]models.NameX  `json:"itemunitnames" bson:"itemunitnames" validate:"required,min=1,unique=Code,dive"`
+	Prices          *[]ProductPrice  `json:"prices" bson:"prices"`
+	ImageURI        string           `json:"imageuri" bson:"imageuri"`
+	Options         *[]ProductOption `json:"options" bson:"options"`
+	Images          *[]ProductImage  `json:"images" bson:"images"`
+	UseImageOrColor bool             `json:"useimageorcolor" bson:"useimageorcolor"`
+	ColorSelect     string           `json:"colorselect" bson:"colorselect"`
+	ColorSelectHex  string           `json:"colorselecthex" bson:"colorselecthex"`
 }
 
 type ProductImage struct {
