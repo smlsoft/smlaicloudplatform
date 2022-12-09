@@ -65,6 +65,19 @@ definitions:
       success:
         type: boolean
     type: object
+  models.AccountPeriodMaster:
+    properties:
+      description:
+        type: string
+      enddate:
+        $ref: '#/definitions/models.ISODate'
+      isdisabled:
+        type: boolean
+      period:
+        type: string
+      startdate:
+        $ref: '#/definitions/models.ISODate'
+    type: object
   models.ApiResponse:
     properties:
       data: {}
@@ -777,6 +790,13 @@ definitions:
           type: string
         type: array
       username:
+        type: string
+    type: object
+  models.ISODate:
+    properties:
+      format:
+        type: string
+      time.Time:
         type: string
     type: object
   models.ImageReference:
@@ -3966,6 +3986,202 @@ info:
   title: SML Cloud Platform API
   version: "1.0"
 paths:
+  /accountperiodmaster:
+    delete:
+      consumes:
+      - application/json
+      description: Delete AccountPeriodMaster
+      parameters:
+      - description: AccountPeriodMaster GUIDs
+        in: body
+        name: AccountPeriodMaster
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - AccountPeriodMaster
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - AccountPeriodMaster
+    post:
+      consumes:
+      - application/json
+      description: Create AccountPeriodMaster
+      parameters:
+      - description: AccountPeriodMaster
+        in: body
+        name: AccountPeriodMaster
+        required: true
+        schema:
+          $ref: '#/definitions/models.AccountPeriodMaster'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - AccountPeriodMaster
+  /accountperiodmaster/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete AccountPeriodMaster
+      parameters:
+      - description: AccountPeriodMaster ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - AccountPeriodMaster
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: AccountPeriodMaster ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - AccountPeriodMaster
+    put:
+      consumes:
+      - application/json
+      description: Update AccountPeriodMaster
+      parameters:
+      - description: AccountPeriodMaster ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: AccountPeriodMaster
+        in: body
+        name: AccountPeriodMaster
+        required: true
+        schema:
+          $ref: '#/definitions/models.AccountPeriodMaster'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - AccountPeriodMaster
+  /accountperiodmaster/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - AccountPeriodMaster
   /apikeyservice:
     delete:
       consumes:
@@ -4914,31 +5130,6 @@ paths:
       summary: Create Document Image
       tags:
       - DocumentImage
-  /documentimage/docref/:docref:
-    get:
-      consumes:
-      - application/json
-      description: Get Document Image By document reference Infomation
-      parameters:
-      - description: document reference
-        in: path
-        name: docref
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.DocumentImageInfoResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      summary: Get Document Image By document reference Infomation
-      tags:
-      - DocumentImage
   /documentimage/upload:
     post:
       consumes:
@@ -5164,6 +5355,31 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      tags:
+      - DocumentImageGroup
+  /documentimagegroup/docref/:docref:
+    get:
+      consumes:
+      - application/json
+      description: Get Document Image Group By document reference Infomation
+      parameters:
+      - description: document reference
+        in: path
+        name: docref
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.DocumentImageInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: Get Document Image Group By document reference Infomation
       tags:
       - DocumentImageGroup
   /employee:
