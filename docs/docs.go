@@ -11022,7 +11022,7 @@ const docTemplate = `{
                     "maxLength": 255
                 },
                 "price": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "unitcode": {
                     "type": "string"
@@ -12036,7 +12036,7 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
@@ -12235,7 +12235,7 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
@@ -12511,7 +12511,7 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
@@ -14358,6 +14358,12 @@ const docTemplate = `{
                 "categoryguid": {
                     "type": "string"
                 },
+                "colorselect": {
+                    "type": "string"
+                },
+                "colorselecthex": {
+                    "type": "string"
+                },
                 "images": {
                     "type": "array",
                     "items": {
@@ -14400,6 +14406,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.ProductPrice"
                     }
+                },
+                "useimageorcolor": {
+                    "type": "boolean"
                 },
                 "xsorts": {
                     "type": "array",
@@ -14547,7 +14556,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "price": {
-                    "type": "number"
+                    "type": "string"
                 }
             }
         },

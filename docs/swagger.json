@@ -11016,7 +11016,7 @@
                     "maxLength": 255
                 },
                 "price": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "unitcode": {
                     "type": "string"
@@ -12030,7 +12030,7 @@
                     "maxLength": 50
                 },
                 "price": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
@@ -12229,7 +12229,7 @@
                     "maxLength": 50
                 },
                 "price": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
@@ -12505,7 +12505,7 @@
                     "maxLength": 50
                 },
                 "price": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
@@ -14352,6 +14352,12 @@
                 "categoryguid": {
                     "type": "string"
                 },
+                "colorselect": {
+                    "type": "string"
+                },
+                "colorselecthex": {
+                    "type": "string"
+                },
                 "images": {
                     "type": "array",
                     "items": {
@@ -14394,6 +14400,9 @@
                     "items": {
                         "$ref": "#/definitions/models.ProductPrice"
                     }
+                },
+                "useimageorcolor": {
+                    "type": "boolean"
                 },
                 "xsorts": {
                     "type": "array",
@@ -14541,7 +14550,7 @@
                     "type": "integer"
                 },
                 "price": {
-                    "type": "number"
+                    "type": "string"
                 }
             }
         },

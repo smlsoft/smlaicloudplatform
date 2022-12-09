@@ -219,7 +219,7 @@ definitions:
         maxLength: 255
         type: string
       price:
-        type: number
+        type: string
       unitcode:
         type: string
       unitname1:
@@ -907,7 +907,7 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
+        type: string
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1049,7 +1049,7 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
+        type: string
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1241,7 +1241,7 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
+        type: string
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -2485,6 +2485,10 @@ definitions:
         type: string
       categoryguid:
         type: string
+      colorselect:
+        type: string
+      colorselecthex:
+        type: string
       images:
         items:
           $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'
@@ -2515,6 +2519,8 @@ definitions:
         items:
           $ref: '#/definitions/models.ProductPrice'
         type: array
+      useimageorcolor:
+        type: boolean
       xsorts:
         items:
           $ref: '#/definitions/models.XSort'
@@ -2620,7 +2626,7 @@ definitions:
       keynumber:
         type: integer
       price:
-        type: number
+        type: string
     type: object
   models.ProductUnit:
     properties:
