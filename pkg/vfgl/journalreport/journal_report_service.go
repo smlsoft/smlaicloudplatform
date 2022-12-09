@@ -4,6 +4,7 @@ import (
 	"fmt"
 	chartofaccountModel "smlcloudplatform/pkg/vfgl/chartofaccount/models"
 	"smlcloudplatform/pkg/vfgl/journalreport/models"
+	"smlcloudplatform/pkg/vfgl/journalreport/usecase"
 	"time"
 
 	"github.com/shopspring/decimal"
@@ -17,12 +18,17 @@ type IJournalReportService interface {
 }
 
 type JournalReportService struct {
-	repo IJournalReportRepository
+	repo    IJournalReportRepository
+	usecase usecase.ITrialBalanceSheetReportUsecase
 }
 
 func NewJournalReportService(repo IJournalReportRepository) JournalReportService {
+
+	usecase := &usecase.TrialBalanceSheetReportUsecase{}
+
 	return JournalReportService{
-		repo: repo,
+		repo:    repo,
+		usecase: usecase,
 	}
 }
 
@@ -38,13 +44,35 @@ func (svc JournalReportService) ProcessTrialBalanceSheetReport(shopId string, ac
 	var totalNextBalanceDebit float64
 	var totalnextBalanceCredit float64
 
-	for _, v := range details {
+	for index, v := range details {
 		totalBalanceDebit += v.BalanceDebitAmount
 		totalBalanceCredit += v.BalanceCreditAmount
 		totalAmountDebit += v.DebitAmount
 		totalAmountCredit += v.CreditAmount
 		totalNextBalanceDebit += v.NextBalanceDebitAmount
 		totalnextBalanceCredit += v.NextBalanceCreditAmount
+
+		// is lower than zero
+		isBalanceDebit := svc.usecase.IsAmountDebitSide(v.AccountCategory, v.BalanceAmount)
+		if isBalanceDebit {
+			details[index].BalanceDebitAmount = svc.usecase.DisplayAmount(v.BalanceAmount)
+		} else {
+			details[index].BalanceCreditAmount = svc.usecase.DisplayAmount(v.BalanceAmount)
+		}
+
+		isDebit := svc.usecase.IsAmountDebitSide(v.AccountCategory, v.Amount)
+		if isDebit {
+			details[index].DebitAmount = svc.usecase.DisplayAmount(v.Amount)
+		} else {
+			details[index].CreditAmount = svc.usecase.DisplayAmount(v.Amount)
+		}
+
+		isNextDebit := svc.usecase.IsAmountDebitSide(v.AccountCategory, v.NextBalanceAmount)
+		if isNextDebit {
+			details[index].NextBalanceDebitAmount = svc.usecase.DisplayAmount(v.NextBalanceAmount)
+		} else {
+			details[index].NextBalanceCreditAmount = svc.usecase.DisplayAmount(v.NextBalanceAmount)
+		}
 	}
 
 	result := &models.TrialBalanceSheetReport{

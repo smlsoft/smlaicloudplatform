@@ -24,321 +24,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/accountperiodmaster": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get struct array by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AccountPeriodMaster"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Add Category",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Add Category",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.ApiResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create AccountPeriodMaster",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AccountPeriodMaster"
-                ],
-                "parameters": [
-                    {
-                        "description": "AccountPeriodMaster",
-                        "name": "AccountPeriodMaster",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.AccountPeriodMaster"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete AccountPeriodMaster",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AccountPeriodMaster"
-                ],
-                "parameters": [
-                    {
-                        "description": "AccountPeriodMaster GUIDs",
-                        "name": "AccountPeriodMaster",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/accountperiodmaster/list": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "search limit offset",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AccountPeriodMaster"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "offset",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "limit",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "lang",
-                        "name": "lang",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.ApiResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/accountperiodmaster/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get struct array by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AccountPeriodMaster"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "AccountPeriodMaster ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update AccountPeriodMaster",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AccountPeriodMaster"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "AccountPeriodMaster ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "AccountPeriodMaster",
-                        "name": "AccountPeriodMaster",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.AccountPeriodMaster"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete AccountPeriodMaster",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AccountPeriodMaster"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "AccountPeriodMaster ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/apikeyservice": {
             "post": {
                 "security": [
@@ -11116,26 +10801,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.AccountPeriodMaster": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "enddate": {
-                    "$ref": "#/definitions/models.ISODate"
-                },
-                "isdisabled": {
-                    "type": "boolean"
-                },
-                "period": {
-                    "type": "string"
-                },
-                "startdate": {
-                    "$ref": "#/definitions/models.ISODate"
-                }
-            }
-        },
         "models.ApiResponse": {
             "type": "object",
             "properties": {
@@ -12183,17 +11848,6 @@ const docTemplate = `{
                     }
                 },
                 "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.ISODate": {
-            "type": "object",
-            "properties": {
-                "format": {
-                    "type": "string"
-                },
-                "time.Time": {
                     "type": "string"
                 }
             }
@@ -16429,6 +16083,26 @@ const docTemplate = `{
                 },
                 "shopid": {
                     "type": "string"
+                },
+                "sumbalancecredit": {
+                    "type": "number"
+                },
+                "sumbalancedebit": {
+                    "type": "number"
+                },
+                "sumcredit": {
+                    "description": "ยอดเครดิต",
+                    "type": "number"
+                },
+                "sumdebit": {
+                    "description": "ยอดเครดิต",
+                    "type": "number"
+                },
+                "sumnextbalancecredit": {
+                    "type": "number"
+                },
+                "sumnextbalancedebit": {
+                    "type": "number"
                 }
             }
         },
