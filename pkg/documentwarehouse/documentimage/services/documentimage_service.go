@@ -26,7 +26,6 @@ type IDocumentImageService interface {
 	DeleteDocumentImage(shopID string, authUsername string, imageGUID string) error
 
 	InfoDocumentImage(shopID string, guid string) (models.DocumentImageInfo, error)
-	InfoDocumentImageByDocRef(shopID string, docRef string) (models.DocumentImageInfo, error)
 	SearchDocumentImage(shopID string, matchFilters map[string]interface{}, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
 	UploadDocumentImage(shopID string, authUsername string, fh *multipart.FileHeader) (*models.DocumentImageInfo, error)
 
@@ -36,6 +35,7 @@ type IDocumentImageService interface {
 
 	CreateDocumentImageGroup(shopID string, authUsername string, docImageGroup models.DocumentImageGroup) (string, error)
 	GetDocumentImageDocRefGroup(shopID string, docImageGroupGUID string) (models.DocumentImageGroupInfo, error)
+	GetDocumentImageGroupByDocRef(shopID string, docRef string) (models.DocumentImageGroupInfo, error)
 	UpdateDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImageGroup models.DocumentImageGroup) error
 	UpdateImageReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImages []models.ImageReferenceBody) error
 	UpdateReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error
@@ -419,22 +419,6 @@ func (svc DocumentImageService) InfoDocumentImage(shopID string, guid string) (m
 	}
 
 	return findDoc.DocumentImageInfo, nil
-}
-
-func (svc DocumentImageService) InfoDocumentImageByDocRef(shopID string, docRef string) (models.DocumentImageInfo, error) {
-
-	findDoc, err := svc.repoImage.FindOne(shopID, map[string]interface{}{"references.docno": docRef})
-
-	if err != nil {
-		return models.DocumentImageInfo{}, err
-	}
-
-	if findDoc.ID == primitive.NilObjectID {
-		return models.DocumentImageInfo{}, errors.New("document not found")
-	}
-
-	return findDoc.DocumentImageInfo, nil
-
 }
 
 func (svc DocumentImageService) SearchDocumentImage(shopID string, matchFilters map[string]interface{}, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error) {
@@ -1046,6 +1030,22 @@ func (svc DocumentImageService) GetDocumentImageDocRefGroup(shopID string, docIm
 	}
 
 	return doc.DocumentImageGroupInfo, nil
+}
+
+func (svc DocumentImageService) GetDocumentImageGroupByDocRef(shopID string, docRef string) (models.DocumentImageGroupInfo, error) {
+
+	findDoc, err := svc.repoImageGroup.FindOne(shopID, map[string]interface{}{"references.docno": docRef})
+
+	if err != nil {
+		return models.DocumentImageGroupInfo{}, err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return models.DocumentImageGroupInfo{}, errors.New("document not found")
+	}
+
+	return findDoc.DocumentImageGroupInfo, nil
+
 }
 
 func (svc DocumentImageService) isDocumentImageGroupHasReferenced(doc models.DocumentImageGroupDoc) bool {
