@@ -45,12 +45,6 @@ func (svc JournalReportService) ProcessTrialBalanceSheetReport(shopId string, ac
 	var totalnextBalanceCredit float64
 
 	for index, v := range details {
-		totalBalanceDebit += v.BalanceDebitAmount
-		totalBalanceCredit += v.BalanceCreditAmount
-		totalAmountDebit += v.DebitAmount
-		totalAmountCredit += v.CreditAmount
-		totalNextBalanceDebit += v.NextBalanceDebitAmount
-		totalnextBalanceCredit += v.NextBalanceCreditAmount
 
 		// is lower than zero
 		isBalanceDebit := svc.usecase.IsAmountDebitSide(v.AccountCategory, v.BalanceAmount)
@@ -73,6 +67,13 @@ func (svc JournalReportService) ProcessTrialBalanceSheetReport(shopId string, ac
 		} else {
 			details[index].NextBalanceCreditAmount = svc.usecase.DisplayAmount(v.NextBalanceAmount)
 		}
+
+		totalBalanceDebit += v.BalanceDebitAmount
+		totalBalanceCredit += v.BalanceCreditAmount
+		totalAmountDebit += v.DebitAmount
+		totalAmountCredit += v.CreditAmount
+		totalNextBalanceDebit += v.NextBalanceDebitAmount
+		totalnextBalanceCredit += v.NextBalanceCreditAmount
 	}
 
 	result := &models.TrialBalanceSheetReport{
