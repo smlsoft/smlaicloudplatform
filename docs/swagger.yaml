@@ -65,18 +65,18 @@ definitions:
       success:
         type: boolean
     type: object
-  models.AccountPeriodMasterRequest:
+  models.AccountPeriodMaster:
     properties:
       description:
         type: string
       enddate:
-        $ref: '#/definitions/models.ISODate'
+        type: string
       isdisabled:
         type: boolean
       period:
         type: string
       startdate:
-        $ref: '#/definitions/models.ISODate'
+        type: string
     type: object
   models.ApiResponse:
     properties:
@@ -790,13 +790,6 @@ definitions:
           type: string
         type: array
       username:
-        type: string
-    type: object
-  models.ISODate:
-    properties:
-      format:
-        type: string
-      time.Time:
         type: string
     type: object
   models.ImageReference:
@@ -4075,7 +4068,7 @@ paths:
         name: AccountPeriodMaster
         required: true
         schema:
-          $ref: '#/definitions/models.AccountPeriodMasterRequest'
+          $ref: '#/definitions/models.AccountPeriodMaster'
       responses:
         "201":
           description: Created
@@ -4151,7 +4144,7 @@ paths:
         name: AccountPeriodMaster
         required: true
         schema:
-          $ref: '#/definitions/models.AccountPeriodMasterRequest'
+          $ref: '#/definitions/models.AccountPeriodMaster'
       responses:
         "201":
           description: Created

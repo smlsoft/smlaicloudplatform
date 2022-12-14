@@ -96,7 +96,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.AccountPeriodMasterRequest"
+                            "$ref": "#/definitions/models.AccountPeriodMaster"
                         }
                     }
                 ],
@@ -282,7 +282,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.AccountPeriodMasterRequest"
+                            "$ref": "#/definitions/models.AccountPeriodMaster"
                         }
                     }
                 ],
@@ -11128,14 +11128,14 @@ const docTemplate = `{
                 }
             }
         },
-        "models.AccountPeriodMasterRequest": {
+        "models.AccountPeriodMaster": {
             "type": "object",
             "properties": {
                 "description": {
                     "type": "string"
                 },
                 "enddate": {
-                    "$ref": "#/definitions/models.ISODate"
+                    "type": "string"
                 },
                 "isdisabled": {
                     "type": "boolean"
@@ -11144,7 +11144,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "startdate": {
-                    "$ref": "#/definitions/models.ISODate"
+                    "type": "string"
                 }
             }
         },
@@ -12195,17 +12195,6 @@ const docTemplate = `{
                     }
                 },
                 "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.ISODate": {
-            "type": "object",
-            "properties": {
-                "format": {
-                    "type": "string"
-                },
-                "time.Time": {
                     "type": "string"
                 }
             }
