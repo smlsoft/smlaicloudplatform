@@ -548,6 +548,8 @@ func (h DocumentImageHttp) UploadDocumentImage(ctx microservice.IContext) error 
 // @Param		reserve	query	integer		false  "เอกสารที่มีการจอง,0 not filter, 1 filter"
 // @Param		reject	query	integer		false  "empty not filter, 0 not reject, 1 reject"
 // @Param		ref	query	integer		false  "document reference: empty not filter, 1 not reference, 2 referenced"
+// @Param		fromdate		query	string		false  "From Date"
+// @Param		todate		query	string		false  "To Date"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -565,6 +567,9 @@ func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) err
 	docRefReserve := strings.TrimSpace(ctx.QueryParam("reserve"))
 	isreject := strings.TrimSpace(ctx.QueryParam("reject"))
 	isref := strings.TrimSpace(ctx.QueryParam("ref"))
+
+	fromDateStr := strings.TrimSpace(ctx.QueryParam("fromdate"))
+	toDateStr := strings.TrimSpace(ctx.QueryParam("todate"))
 
 	if len(isreject) > 0 {
 		tempStatus, err := strconv.Atoi(isreject)
@@ -598,6 +603,18 @@ func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) err
 			matchFilters["guidfixed"] = bson.M{"$nin": docRefList}
 		}
 
+	}
+
+	if len(fromDateStr) > 0 && len(toDateStr) > 0 {
+		fromDate, err1 := time.Parse("2006-01-02", fromDateStr)
+		toDate, err2 := time.Parse("2006-01-02", toDateStr)
+
+		if err1 == nil && err2 == nil {
+			matchFilters["uploadedat"] = bson.M{
+				"$gte": fromDate,
+				"$lte": toDate,
+			}
+		}
 	}
 
 	docList, pagination, err := h.service.ListDocumentImageGroup(shopID, matchFilters, pageable)
