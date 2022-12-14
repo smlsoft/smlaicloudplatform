@@ -609,10 +609,13 @@ func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) err
 		fromDate, err1 := time.Parse("2006-01-02", fromDateStr)
 		toDate, err2 := time.Parse("2006-01-02", toDateStr)
 
+		fromDate = fromDate.AddDate(0, 0, 1)
+		toDate = toDate.AddDate(0, 0, 1)
+
 		if err1 == nil && err2 == nil {
 			matchFilters["uploadedat"] = bson.M{
-				"$gte": fromDate,
-				"$lte": toDate,
+				"$gt": fromDate,
+				"$lt": toDate,
 			}
 		}
 	}
