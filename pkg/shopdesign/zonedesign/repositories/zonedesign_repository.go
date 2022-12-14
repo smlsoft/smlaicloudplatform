@@ -14,7 +14,7 @@ type IZoneDesignRepository interface {
 	CreateInBatch(docList []models.ZoneDesignDoc) error
 	Update(shopID string, guid string, category models.ZoneDesignDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindOne(shopID string, filters map[string]interface{}) (models.ZoneDesignDoc, error)
+	FindOne(shopID string, filters interface{}) (models.ZoneDesignDoc, error)
 	FindByGuid(shopID string, guid string) (models.ZoneDesignDoc, error)
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.ZoneDesignInfo, mongopagination.PaginationData, error)
 }

@@ -39,6 +39,7 @@ import (
 	"smlcloudplatform/pkg/transaction/purchase"
 	"smlcloudplatform/pkg/transaction/saleinvoice"
 	"smlcloudplatform/pkg/vfgl/accountgroup"
+	"smlcloudplatform/pkg/vfgl/accountperiodmaster"
 	"smlcloudplatform/pkg/vfgl/chartofaccount"
 	"smlcloudplatform/pkg/vfgl/journal"
 	"smlcloudplatform/pkg/vfgl/journalbook"
@@ -148,6 +149,7 @@ func main() {
 		customer.NewCustomerHttp(ms, cfg),
 		customergroup.NewCustomerGroupHttp(ms, cfg),
 		product.NewProductHttp(ms, cfg),
+		accountperiodmaster.NewAccountPeriodMasterHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)

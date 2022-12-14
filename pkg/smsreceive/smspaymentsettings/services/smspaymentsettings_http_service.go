@@ -10,6 +10,7 @@ import (
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -44,7 +45,7 @@ func (svc SmsPaymentSettingsHttpService) SaveSmsPaymentSettings(shopID string, a
 		return errors.New("pattern code not found")
 	}
 
-	findDoc, err := svc.repo.FindOne(shopID, map[string]interface{}{})
+	findDoc, err := svc.repo.FindOne(shopID, bson.M{})
 
 	if err != nil {
 		return err
@@ -123,10 +124,7 @@ func (svc SmsPaymentSettingsHttpService) updateSmsPaymentSettings(shopID string,
 
 func (svc SmsPaymentSettingsHttpService) InfoSmsPaymentSettings(shopID string, storefrontGUID string) (models.SmsPaymentSettingsInfo, error) {
 
-	findDoc, err := svc.repo.FindOne(shopID,
-		map[string]interface{}{
-			"storefrontguid": storefrontGUID,
-		})
+	findDoc, err := svc.repo.FindOne(shopID, bson.M{"storefrontguid": storefrontGUID})
 
 	if err != nil {
 		return models.SmsPaymentSettingsInfo{}, err

@@ -14,7 +14,7 @@ type ISmsPaymentSettingsRepository interface {
 	CreateInBatch(docList []models.SmsPaymentSettingsDoc) error
 	Update(shopID string, guid string, doc models.SmsPaymentSettingsDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindOne(shopID string, filters map[string]interface{}) (models.SmsPaymentSettingsDoc, error)
+	FindOne(shopID string, filters interface{}) (models.SmsPaymentSettingsDoc, error)
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.SmsPaymentSettingsInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.SmsPaymentSettingsDoc, error)
 }

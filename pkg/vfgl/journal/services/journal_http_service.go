@@ -155,9 +155,8 @@ func (svc JournalHttpService) InfoJournal(shopID string, guid string) (models.Jo
 
 func (svc JournalHttpService) InfoJournalByDocNo(shopID string, docNo string) (models.JournalInfo, error) {
 
-	filters := map[string]interface{}{
-		"docno": docNo,
-	}
+	filters := bson.M{"docno": docNo}
+	
 	findDoc, err := svc.repo.FindOne(shopID, filters)
 
 	if err != nil {

@@ -20,7 +20,7 @@ type IDocumentImageGroupRepository interface {
 	DeleteByDocumentImageGUIDsHasOneWithoutDocumentImageGroupGUID(shopID string, withoutGUID string, imageGUIDs []string) error
 	DeleteByGUIDsIsDocumentImageEmptyWithoutDocumentImageGroupGUID(shopID string, withoutGUID string, GUIDs []string) error
 	RemoveDocumentImageByDocumentImageGUIDsWithoutDocumentImageGroupGUID(shopID string, withoutGUID string, imageGUIDs []string) error
-	FindOne(shopID string, filters map[string]interface{}) (models.DocumentImageGroupDoc, error)
+	FindOne(shopID string, filters interface{}) (models.DocumentImageGroupDoc, error)
 	FindByGuid(shopID string, guid string) (models.DocumentImageGroupDoc, error)
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
 	FindPageFilterSort(shopID string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
