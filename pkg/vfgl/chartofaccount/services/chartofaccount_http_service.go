@@ -40,9 +40,7 @@ func NewChartOfAccountHttpService(repo repositories.ChartOfAccountRepository, re
 
 func (svc ChartOfAccountHttpService) Create(shopID string, authUsername string, doc models.ChartOfAccount) (string, error) {
 
-	findDoc, err := svc.repo.FindOne(shopID, map[string]interface{}{
-		"accountcode": doc.AccountCode,
-	})
+	findDoc, err := svc.repo.FindOne(shopID, bson.M{"accountcode": doc.AccountCode})
 
 	if err != nil {
 		return "", err
@@ -88,9 +86,7 @@ func (svc ChartOfAccountHttpService) Update(guid string, shopID string, authUser
 		return errors.New("document not found")
 	}
 
-	findDocCode, err := svc.repo.FindOne(shopID, map[string]interface{}{
-		"accountcode": doc.AccountCode,
-	})
+	findDocCode, err := svc.repo.FindOne(shopID, bson.M{"accountcode": doc.AccountCode})
 
 	if err != nil {
 		return err

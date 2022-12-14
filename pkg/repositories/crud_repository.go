@@ -1,10 +1,23 @@
 package repositories
 
 import (
+	"errors"
 	"smlcloudplatform/internal/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
+
+type ICRUDRepository[T any] interface {
+	Count(shopID string) (int, error)
+	Create(doc T) (string, error)
+	CreateInBatch(docList []T) error
+	Update(shopID string, guid string, doc T) error
+	Delete(shopID string, username string, filters map[string]interface{}) error
+	DeleteByGuidfixed(shopID string, guid string, username string) error
+	FindOne(shopID string, filters interface{}) (T, error)
+	FindByGuid(shopID string, guid string) (T, error)
+	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (T, error)
+}
 
 type CrudRepository[T any] struct {
 	pst microservice.IPersisterMongo
@@ -95,18 +108,27 @@ func (repo CrudRepository[T]) DeleteByGuidfixed(shopID string, guid string, user
 	return nil
 }
 
-func (repo CrudRepository[T]) FindOne(shopID string, filters map[string]interface{}) (T, error) {
+func (repo CrudRepository[T]) FindOne(shopID string, filters interface{}) (T, error) {
 
-	doc := new(T)
+	var filterQuery interface{}
 
-	filterQuery := bson.M{}
+	switch filters.(type) {
+	case bson.M:
+		tempFilterQuery := filters.(bson.M)
+		tempFilterQuery["shopid"] = shopID
+		tempFilterQuery["deletedat"] = bson.M{"$exists": false}
+		filterQuery = tempFilterQuery
+	case bson.D:
+		tempFilterQuery := filters.(bson.D)
+		tempFilterQuery = append(tempFilterQuery, bson.E{"shopid", shopID})
+		tempFilterQuery = append(tempFilterQuery, bson.E{"deletedat", bson.D{{"$exists", false}}})
 
-	for col, val := range filters {
-		filterQuery[col] = val
+		filterQuery = tempFilterQuery
+	default:
+		return *new(T), errors.New("invalid filter type")
 	}
 
-	filterQuery["shopid"] = shopID
-	filterQuery["deletedat"] = bson.M{"$exists": false}
+	doc := new(T)
 
 	err := repo.pst.FindOne(new(T), filterQuery, doc)
 

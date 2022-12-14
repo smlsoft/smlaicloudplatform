@@ -11,6 +11,7 @@ import (
 	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -161,10 +162,7 @@ func (svc SmsTransactionHttpService) SearchSmsTransaction(shopID string, q strin
 
 func (svc SmsTransactionHttpService) CheckSMS(shopID string, storefrontGUID string, amountCheck float64, checkTime time.Time) (models.SmsTransactionCheck, error) {
 
-	storefrontSmsPaymentSettingDoc, err := svc.smsSetingsRepo.FindOne(shopID,
-		map[string]interface{}{
-			"storefrontguid": storefrontGUID,
-		})
+	storefrontSmsPaymentSettingDoc, err := svc.smsSetingsRepo.FindOne(shopID, bson.M{"storefrontguid": storefrontGUID})
 
 	if err != nil {
 		return models.SmsTransactionCheck{

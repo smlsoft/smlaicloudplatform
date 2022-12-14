@@ -11,6 +11,7 @@ import (
 	common "smlcloudplatform/pkg/models"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -38,9 +39,7 @@ func NewJournalBookHttpService(repo repositories.JournalBookMongoRepository, mqR
 
 func (svc JournalBookHttpService) Create(shopID string, authUsername string, doc models.JournalBook) (string, error) {
 
-	findDoc, err := svc.repo.FindOne(shopID, map[string]interface{}{
-		"code": doc.Code,
-	})
+	findDoc, err := svc.repo.FindOne(shopID, bson.M{"code": doc.Code})
 
 	if err != nil {
 		return "", err
@@ -86,9 +85,7 @@ func (svc JournalBookHttpService) Update(guid string, shopID string, authUsernam
 		return errors.New("document not found")
 	}
 
-	findDocCode, err := svc.repo.FindOne(shopID, map[string]interface{}{
-		"code": doc.Code,
-	})
+	findDocCode, err := svc.repo.FindOne(shopID, bson.M{"code": doc.Code})
 
 	if err != nil {
 		return err

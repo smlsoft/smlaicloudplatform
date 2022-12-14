@@ -15,7 +15,7 @@ type IDocumentImageRepository interface {
 	CreateInBatch(doc []models.DocumentImageDoc) error
 	Update(shopID string, guid string, doc models.DocumentImageDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindOne(shopID string, filters map[string]interface{}) (models.DocumentImageDoc, error)
+	FindOne(shopID string, filters interface{}) (models.DocumentImageDoc, error)
 	FindByReferenceDocNo(shopID string, docNo string) ([]models.DocumentImageDoc, error)
 	FindByReference(shopID string, reference models.Reference) ([]models.DocumentImageDoc, error)
 	FindByGuid(shopID string, guid string) (models.DocumentImageDoc, error)
