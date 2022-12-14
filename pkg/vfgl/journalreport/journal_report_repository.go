@@ -23,7 +23,6 @@ func NewJournalReportRepository(pst microservice.IPersister) JournalReportReposi
 	return JournalReportRepository{
 		pst: pst,
 	}
-
 }
 
 /* Full Query

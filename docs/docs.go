@@ -16497,6 +16497,26 @@ const docTemplate = `{
                 },
                 "shopid": {
                     "type": "string"
+                },
+                "sumbalancecredit": {
+                    "type": "number"
+                },
+                "sumbalancedebit": {
+                    "type": "number"
+                },
+                "sumcredit": {
+                    "description": "ยอดเครดิต",
+                    "type": "number"
+                },
+                "sumdebit": {
+                    "description": "ยอดเครดิต",
+                    "type": "number"
+                },
+                "sumnextbalancecredit": {
+                    "type": "number"
+                },
+                "sumnextbalancedebit": {
+                    "type": "number"
                 }
             }
         },
