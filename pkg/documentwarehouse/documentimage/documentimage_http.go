@@ -548,8 +548,8 @@ func (h DocumentImageHttp) UploadDocumentImage(ctx microservice.IContext) error 
 // @Param		reserve	query	integer		false  "เอกสารที่มีการจอง,0 not filter, 1 filter"
 // @Param		reject	query	integer		false  "empty not filter, 0 not reject, 1 reject"
 // @Param		ref	query	integer		false  "document reference: empty not filter, 1 not reference, 2 referenced"
-// @Param		fromdate		query	string		false  "From Date"
-// @Param		todate		query	string		false  "To Date"
+// @Param		fromdate		query	string		false  "From Date (YYYY-MM-DD)"
+// @Param		todate		query	string		false  "To Date (YYYY-MM-DD)"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
