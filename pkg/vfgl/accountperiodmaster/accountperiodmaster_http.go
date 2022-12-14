@@ -35,19 +35,19 @@ func NewAccountPeriodMasterHttp(ms *microservice.Microservice, cfg microservice.
 
 func (h AccountPeriodMasterHttp) RouteSetup() {
 
-	h.ms.GET("/accountperiodmaster", h.SearchAccountPeriodMasterPage)
-	h.ms.GET("/accountperiodmaster/list", h.SearchAccountPeriodMasterLimit)
-	h.ms.POST("/accountperiodmaster", h.CreateAccountPeriodMaster)
-	h.ms.GET("/accountperiodmaster/:id", h.InfoAccountPeriodMaster)
-	h.ms.PUT("/accountperiodmaster/:id", h.UpdateAccountPeriodMaster)
-	h.ms.DELETE("/accountperiodmaster/:id", h.DeleteAccountPeriodMaster)
-	h.ms.DELETE("/accountperiodmaster", h.DeleteAccountPeriodMasterByGUIDs)
+	h.ms.GET("/gl/accountperiodmaster", h.SearchAccountPeriodMasterPage)
+	h.ms.GET("/gl/accountperiodmaster/list", h.SearchAccountPeriodMasterLimit)
+	h.ms.POST("/gl/accountperiodmaster", h.CreateAccountPeriodMaster)
+	h.ms.GET("/gl/accountperiodmaster/:id", h.InfoAccountPeriodMaster)
+	h.ms.PUT("/gl/accountperiodmaster/:id", h.UpdateAccountPeriodMaster)
+	h.ms.DELETE("/gl/accountperiodmaster/:id", h.DeleteAccountPeriodMaster)
+	h.ms.DELETE("/gl/accountperiodmaster", h.DeleteAccountPeriodMasterByGUIDs)
 }
 
 // Create AccountPeriodMaster godoc
 // @Description Create AccountPeriodMaster
 // @Tags		AccountPeriodMaster
-// @Param		AccountPeriodMaster  body      models.AccountPeriodMasterRequest  true  "AccountPeriodMaster"
+// @Param		AccountPeriodMaster  body      models.AccountPeriodMaster true  "AccountPeriodMaster"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -89,7 +89,7 @@ func (h AccountPeriodMasterHttp) CreateAccountPeriodMaster(ctx microservice.ICon
 // @Description Update AccountPeriodMaster
 // @Tags		AccountPeriodMaster
 // @Param		id  path      string  true  "AccountPeriodMaster ID"
-// @Param		AccountPeriodMaster  body      models.AccountPeriodMasterRequest  true  "AccountPeriodMaster"
+// @Param		AccountPeriodMaster  body      models.AccountPeriodMaster true  "AccountPeriodMaster"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
