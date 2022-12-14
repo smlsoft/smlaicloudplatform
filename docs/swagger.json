@@ -90,7 +90,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.AccountPeriodMasterRequest"
+                            "$ref": "#/definitions/models.AccountPeriodMaster"
                         }
                     }
                 ],
@@ -276,7 +276,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.AccountPeriodMasterRequest"
+                            "$ref": "#/definitions/models.AccountPeriodMaster"
                         }
                     }
                 ],
@@ -11110,14 +11110,14 @@
                 }
             }
         },
-        "models.AccountPeriodMasterRequest": {
+        "models.AccountPeriodMaster": {
             "type": "object",
             "properties": {
                 "description": {
                     "type": "string"
                 },
                 "enddate": {
-                    "$ref": "#/definitions/models.ISODate"
+                    "type": "string"
                 },
                 "isdisabled": {
                     "type": "boolean"
@@ -11126,7 +11126,7 @@
                     "type": "string"
                 },
                 "startdate": {
-                    "$ref": "#/definitions/models.ISODate"
+                    "type": "string"
                 }
             }
         },
@@ -12187,17 +12187,6 @@
                     }
                 },
                 "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.ISODate": {
-            "type": "object",
-            "properties": {
-                "format": {
-                    "type": "string"
-                },
-                "time.Time": {
                     "type": "string"
                 }
             }
