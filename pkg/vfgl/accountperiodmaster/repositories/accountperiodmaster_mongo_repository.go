@@ -49,7 +49,7 @@ func NewAccountPeriodMasterRepository(pst microservice.IPersisterMongo) *Account
 }
 
 func (repo AccountPeriodMasterRepository) FindByDateRange(shopID string, startDate time.Time, endDate time.Time) (models.AccountPeriodMasterDoc, error) {
-	// endDate = endDate.AddDate(0, 0, 1)
+	endDate = endDate.AddDate(0, 0, 1)
 
 	filterQuery := bson.D{
 		bson.E{Key: "$or", Value: bson.A{
