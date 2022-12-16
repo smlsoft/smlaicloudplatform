@@ -76,7 +76,7 @@ func (svc AccountPeriodMasterHttpService) CreateAccountPeriodMaster(shopID strin
 
 func (svc AccountPeriodMasterHttpService) UpdateAccountPeriodMaster(shopID string, guid string, authUsername string, doc models.AccountPeriodMaster) error {
 
-	findDoc, err := svc.repo.FindByPeriod(shopID, doc.Period)
+	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
 		return err
@@ -86,7 +86,13 @@ func (svc AccountPeriodMasterHttpService) UpdateAccountPeriodMaster(shopID strin
 		return errors.New("document not found")
 	}
 
-	if len(findDoc.GuidFixed) > 0 && findDoc.GuidFixed != guid {
+	findDocPeriod, err := svc.repo.FindByPeriod(shopID, doc.Period)
+
+	if err != nil {
+		return err
+	}
+
+	if len(findDocPeriod.GuidFixed) > 0 && findDocPeriod.GuidFixed != guid {
 		return errors.New("period already exists")
 	}
 
