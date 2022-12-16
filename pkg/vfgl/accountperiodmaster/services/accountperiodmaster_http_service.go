@@ -20,6 +20,7 @@ type IAccountPeriodMasterHttpService interface {
 	InfoAccountPeriodMaster(shopID string, guid string) (models.AccountPeriodMasterInfo, error)
 	SearchAccountPeriodMaster(shopID string, q string, page int, limit int, sort map[string]int) ([]models.AccountPeriodMasterInfo, mongopagination.PaginationData, error)
 	SearchAccountPeriodMasterStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.AccountPeriodMasterInfo, int, error)
+	SaveInBatch(shopID string, authUsername string, dataList []models.AccountPeriodMaster) error
 }
 
 type AccountPeriodMasterHttpService struct {
@@ -34,6 +35,15 @@ func NewAccountPeriodMasterHttpService(repo repositories.IAccountPeriodMasterRep
 }
 
 func (svc AccountPeriodMasterHttpService) CreateAccountPeriodMaster(shopID string, authUsername string, doc models.AccountPeriodMaster) (string, error) {
+	findDoc, err := svc.repo.FindByPeriod(shopID, doc.Period)
+
+	if err != nil {
+		return "", err
+	}
+
+	if len(findDoc.GuidFixed) > 0 {
+		return "", errors.New("period already exists")
+	}
 
 	findDocExists, err := svc.repo.FindByDateRange(shopID, doc.StartDate, doc.EndDate)
 
@@ -66,6 +76,20 @@ func (svc AccountPeriodMasterHttpService) CreateAccountPeriodMaster(shopID strin
 
 func (svc AccountPeriodMasterHttpService) UpdateAccountPeriodMaster(shopID string, guid string, authUsername string, doc models.AccountPeriodMaster) error {
 
+	findDoc, err := svc.repo.FindByPeriod(shopID, doc.Period)
+
+	if err != nil {
+		return err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return errors.New("document not found")
+	}
+
+	if len(findDoc.GuidFixed) > 0 && findDoc.GuidFixed != guid {
+		return errors.New("period already exists")
+	}
+
 	findDocExists, err := svc.repo.FindByDateRange(shopID, doc.StartDate, doc.EndDate)
 
 	if err != nil {
@@ -76,18 +100,7 @@ func (svc AccountPeriodMasterHttpService) UpdateAccountPeriodMaster(shopID strin
 		return errors.New("date range already exists")
 	}
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
-
-	if err != nil {
-		return err
-	}
-
-	if findDoc.ID == primitive.NilObjectID {
-		return errors.New("document not found")
-	}
-
 	findDoc.AccountPeriodMaster = doc
-
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
@@ -189,4 +202,91 @@ func (svc AccountPeriodMasterHttpService) SearchAccountPeriodMasterStep(shopID s
 	}
 
 	return docList, total, nil
+}
+
+func (svc AccountPeriodMasterHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.AccountPeriodMaster) error {
+
+	err := ValidatePeriod(dataList)
+	if err != nil {
+		return err
+	}
+
+	docList := []models.AccountPeriodMasterDoc{}
+
+	for _, doc := range dataList {
+
+		findDoc, err := svc.repo.FindByPeriod(shopID, doc.Period)
+
+		if err != nil {
+			return err
+		}
+
+		if len(findDoc.GuidFixed) > 0 {
+			return errors.New("period already exists")
+		}
+
+		findDocExists, err := svc.repo.FindByDateRange(shopID, doc.StartDate, doc.EndDate)
+
+		if err != nil {
+			return err
+		}
+
+		if len(findDocExists.GuidFixed) > 0 {
+			return errors.New("date range already exists")
+		}
+
+		newGuidFixed := utils.NewGUID()
+
+		docData := models.AccountPeriodMasterDoc{}
+		docData.ShopID = shopID
+		docData.GuidFixed = newGuidFixed
+		docData.AccountPeriodMaster = doc
+
+		docData.CreatedBy = authUsername
+		docData.CreatedAt = time.Now()
+
+		docList = append(docList, docData)
+	}
+
+	err = svc.repo.CreateInBatch(docList)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func ValidatePeriod(dataList []models.AccountPeriodMaster) error {
+	periodData := map[int]models.AccountPeriodMaster{}
+
+	for _, doc := range dataList {
+		if _, ok := periodData[doc.Period]; ok {
+			return errors.New("period is duplicate")
+		}
+		periodData[doc.Period] = doc
+	}
+
+	for periodKey, doc := range periodData {
+		for periodKeyCheck, docCheck := range periodData {
+			if periodKey == periodKeyCheck {
+				continue
+			}
+
+			if InDateTimeSpan(docCheck.StartDate, docCheck.EndDate, doc.StartDate, doc.EndDate) {
+				return errors.New("date range invalid")
+			}
+		}
+	}
+	return nil
+}
+
+func InDateTimeSpan(fromDate, toDate, checkFromDate time.Time, checkToDate time.Time) bool {
+	toDate = toDate.AddDate(0, 0, 1)
+
+	rangeFrom := (checkFromDate.Equal(fromDate) || checkFromDate.After(fromDate)) || (checkToDate.Equal(fromDate) || checkToDate.After(fromDate))
+	rangeTo := (checkFromDate.Before(toDate)) || (checkToDate.Before(toDate))
+
+	return rangeFrom && rangeTo
+
 }

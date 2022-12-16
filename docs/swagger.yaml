@@ -74,7 +74,7 @@ definitions:
       isdisabled:
         type: boolean
       period:
-        type: string
+        type: integer
       startdate:
         type: string
     type: object
@@ -214,8 +214,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       name1:
         maxLength: 255
         type: string
@@ -231,8 +231,15 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       unitcode:
         type: string
       unitname1:
@@ -886,8 +893,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -905,6 +912,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -920,7 +929,12 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1028,8 +1042,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1047,6 +1061,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1062,7 +1078,12 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1220,8 +1241,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1239,6 +1260,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1254,7 +1277,12 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -2636,10 +2664,17 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
+      normalprice:
+        type: number
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
     type: object
   models.ProductUnit:
     properties:
@@ -2822,10 +2857,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
       linenumber:
         type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -2843,6 +2878,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -2858,6 +2895,10 @@ definitions:
         maxLength: 50
         type: string
       price:
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       qty:
         type: number
@@ -3078,10 +3119,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
       linenumber:
         type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -3099,6 +3140,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3114,6 +3157,10 @@ definitions:
         maxLength: 50
         type: string
       price:
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       qty:
         type: number
@@ -3999,202 +4046,6 @@ info:
   title: SML Cloud Platform API
   version: "1.0"
 paths:
-  /accountperiodmaster:
-    delete:
-      consumes:
-      - application/json
-      description: Delete AccountPeriodMaster
-      parameters:
-      - description: AccountPeriodMaster GUIDs
-        in: body
-        name: AccountPeriodMaster
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - AccountPeriodMaster
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: Add Category
-        in: query
-        name: page
-        type: integer
-      - description: Add Category
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.ApiResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - AccountPeriodMaster
-    post:
-      consumes:
-      - application/json
-      description: Create AccountPeriodMaster
-      parameters:
-      - description: AccountPeriodMaster
-        in: body
-        name: AccountPeriodMaster
-        required: true
-        schema:
-          $ref: '#/definitions/models.AccountPeriodMaster'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - AccountPeriodMaster
-  /accountperiodmaster/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete AccountPeriodMaster
-      parameters:
-      - description: AccountPeriodMaster ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - AccountPeriodMaster
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: AccountPeriodMaster ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - AccountPeriodMaster
-    put:
-      consumes:
-      - application/json
-      description: Update AccountPeriodMaster
-      parameters:
-      - description: AccountPeriodMaster ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: AccountPeriodMaster
-        in: body
-        name: AccountPeriodMaster
-        required: true
-        schema:
-          $ref: '#/definitions/models.AccountPeriodMaster'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - AccountPeriodMaster
-  /accountperiodmaster/list:
-    get:
-      consumes:
-      - application/json
-      description: search limit offset
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: offset
-        in: query
-        name: offset
-        type: integer
-      - description: limit
-        in: query
-        name: limit
-        type: integer
-      - description: lang
-        in: query
-        name: lang
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.ApiResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - AccountPeriodMaster
   /apikeyservice:
     delete:
       consumes:
@@ -5703,6 +5554,229 @@ paths:
       summary: แก้ไขกลุ่มบัญชี
       tags:
       - GL
+  /gl/accountperiodmaster:
+    delete:
+      consumes:
+      - application/json
+      description: Delete AccountPeriodMaster
+      parameters:
+      - description: AccountPeriodMaster GUIDs
+        in: body
+        name: AccountPeriodMaster
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - AccountPeriodMaster
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - AccountPeriodMaster
+    post:
+      consumes:
+      - application/json
+      description: Create AccountPeriodMaster
+      parameters:
+      - description: AccountPeriodMaster
+        in: body
+        name: AccountPeriodMaster
+        required: true
+        schema:
+          $ref: '#/definitions/models.AccountPeriodMaster'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - AccountPeriodMaster
+  /gl/accountperiodmaster/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete AccountPeriodMaster
+      parameters:
+      - description: AccountPeriodMaster ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - AccountPeriodMaster
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: AccountPeriodMaster ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - AccountPeriodMaster
+    put:
+      consumes:
+      - application/json
+      description: Update AccountPeriodMaster
+      parameters:
+      - description: AccountPeriodMaster ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: AccountPeriodMaster
+        in: body
+        name: AccountPeriodMaster
+        required: true
+        schema:
+          $ref: '#/definitions/models.AccountPeriodMaster'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - AccountPeriodMaster
+  /gl/accountperiodmaster/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Bulk Create AccountPeriodMaster
+      parameters:
+      - description: Array AccountPeriodMaster
+        in: body
+        name: AccountPeriodMaster
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.AccountPeriodMaster'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - AccountPeriodMaster
+  /gl/accountperiodmaster/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - AccountPeriodMaster
   /gl/chartofaccount:
     get:
       consumes:

@@ -12,7 +12,7 @@ const accountperiodmasterCollectionName = "accountPeriodMaster"
 
 // Request
 type AccountPeriodMasterRequest struct {
-	Period      string         `json:"period" bson:"period"`
+	Period      int            `json:"period" bson:"period"`
 	StartDate   models.ISODate `json:"startdate" bson:"startdate"`
 	EndDate     models.ISODate `json:"enddate" bson:"enddate"`
 	Description string         `json:"description" bson:"description"`
@@ -32,7 +32,7 @@ func (apm *AccountPeriodMasterRequest) ToAccountPeriodMaster() AccountPeriodMast
 // Account Period Master
 type AccountPeriodMaster struct {
 	models.PartitionIdentity `bson:"inline"`
-	Period                   string    `json:"period" bson:"period"`
+	Period                   int       `json:"period" bson:"period"`
 	StartDate                time.Time `json:"startdate" bson:"startdate"`
 	EndDate                  time.Time `json:"enddate" bson:"enddate"`
 	Description              string    `json:"description" bson:"description"`

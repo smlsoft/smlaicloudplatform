@@ -20,6 +20,7 @@ type IAccountPeriodMasterRepository interface {
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.AccountPeriodMasterInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.AccountPeriodMasterDoc, error)
 	FindByDateRange(shopID string, startDate time.Time, endDate time.Time) (models.AccountPeriodMasterDoc, error)
+	FindByPeriod(shopID string, period int) (models.AccountPeriodMasterDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.AccountPeriodMasterItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.AccountPeriodMasterDoc, error)
@@ -48,6 +49,7 @@ func NewAccountPeriodMasterRepository(pst microservice.IPersisterMongo) *Account
 }
 
 func (repo AccountPeriodMasterRepository) FindByDateRange(shopID string, startDate time.Time, endDate time.Time) (models.AccountPeriodMasterDoc, error) {
+	// endDate = endDate.AddDate(0, 0, 1)
 
 	filterQuery := bson.D{
 		bson.E{Key: "$or", Value: bson.A{
@@ -55,9 +57,24 @@ func (repo AccountPeriodMasterRepository) FindByDateRange(shopID string, startDa
 			bson.D{{"enddate", bson.D{{"$gte", startDate}}}},
 		}},
 		bson.E{Key: "$or", Value: bson.A{
-			bson.D{{"startdate", bson.D{{"$lte", endDate}}}},
-			bson.D{{"enddate", bson.D{{"$lte", endDate}}}},
+			bson.D{{"startdate", bson.D{{"$lt", endDate}}}},
+			bson.D{{"enddate", bson.D{{"$lt", endDate}}}},
 		}},
+	}
+
+	finDoc, err := repo.FindOne(shopID, filterQuery)
+
+	if err != nil {
+		return models.AccountPeriodMasterDoc{}, err
+	}
+
+	return finDoc, nil
+}
+
+func (repo AccountPeriodMasterRepository) FindByPeriod(shopID string, period int) (models.AccountPeriodMasterDoc, error) {
+
+	filterQuery := bson.D{
+		bson.E{"period", period},
 	}
 
 	finDoc, err := repo.FindOne(shopID, filterQuery)
