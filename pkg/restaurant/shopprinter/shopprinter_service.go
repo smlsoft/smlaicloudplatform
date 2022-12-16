@@ -24,6 +24,7 @@ type IShopPrinterService interface {
 	SearchShopPrinter(shopID string, q string, page int, limit int) ([]models.PrinterTerminalInfo, mongopagination.PaginationData, error)
 	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.PrinterTerminal) (common.BulkImport, error)
+	SearchShopPrinterStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.PrinterTerminalInfo, int, error)
 
 	GetModuleName() string
 }
@@ -137,6 +138,23 @@ func (svc ShopPrinterService) SearchShopPrinter(shopID string, q string, page in
 	}
 
 	return docList, pagination, nil
+}
+
+func (svc ShopPrinterService) SearchShopPrinterStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.PrinterTerminalInfo, int, error) {
+	searchCols := []string{
+		"guidfixed",
+		"code",
+	}
+
+	projectQuery := map[string]interface{}{}
+
+	docList, total, err := svc.repo.FindLimit(shopID, searchCols, q, skip, limit, sort, projectQuery)
+
+	if err != nil {
+		return []models.PrinterTerminalInfo{}, 0, err
+	}
+
+	return docList, total, nil
 }
 
 func (svc ShopPrinterService) SaveInBatch(shopID string, authUsername string, dataList []models.PrinterTerminal) (common.BulkImport, error) {

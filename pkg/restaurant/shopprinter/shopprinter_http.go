@@ -41,6 +41,7 @@ func (h ShopPrinterHttp) RouteSetup() {
 	h.ms.GET("/restaurant/printer/fetchupdate", h.FetchUpdate)
 
 	h.ms.GET("/restaurant/printer", h.SearchShopPrinter)
+	h.ms.GET("/restaurant/printer/list", h.SearchShopPrinterLimit)
 	h.ms.POST("/restaurant/printer", h.CreateShopPrinter)
 	h.ms.GET("/restaurant/printer/:id", h.InfoShopPrinter)
 	h.ms.PUT("/restaurant/printer/:id", h.UpdateShopPrinter)
@@ -215,6 +216,40 @@ func (h ShopPrinterHttp) SearchShopPrinter(ctx microservice.IContext) error {
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
+	})
+	return nil
+}
+
+// List Restaurant Printer Search Step godoc
+// @Description search limit offset
+// @Tags		Restaurant
+// @Param		q		query	string		false  "Search Value"
+// @Param		offset	query	integer		false  "offset"
+// @Param		limit	query	integer		false  "limit"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/printer/list [get]
+func (h ShopPrinterHttp) SearchShopPrinterLimit(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	q := ctx.QueryParam("q")
+	offset, limit := utils.GetParamOffsetLimit(ctx.QueryParam)
+	sorts := utils.GetSortParam(ctx.QueryParam)
+
+	docList, total, err := h.svc.SearchShopPrinterStep(shopID, "", q, offset, limit, sorts)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docList,
+		Total:   total,
 	})
 	return nil
 }
