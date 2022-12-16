@@ -38,6 +38,7 @@ func (h AccountPeriodMasterHttp) RouteSetup() {
 	h.ms.GET("/gl/accountperiodmaster", h.SearchAccountPeriodMasterPage)
 	h.ms.GET("/gl/accountperiodmaster/list", h.SearchAccountPeriodMasterLimit)
 	h.ms.POST("/gl/accountperiodmaster", h.CreateAccountPeriodMaster)
+	h.ms.POST("/gl/accountperiodmaster/bulk", h.SaveBulkAccountPeriodMaster)
 	h.ms.GET("/gl/accountperiodmaster/:id", h.InfoAccountPeriodMaster)
 	h.ms.PUT("/gl/accountperiodmaster/:id", h.UpdateAccountPeriodMaster)
 	h.ms.DELETE("/gl/accountperiodmaster/:id", h.DeleteAccountPeriodMaster)
@@ -52,7 +53,7 @@ func (h AccountPeriodMasterHttp) RouteSetup() {
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /accountperiodmaster [post]
+// @Router /gl/accountperiodmaster [post]
 func (h AccountPeriodMasterHttp) CreateAccountPeriodMaster(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
@@ -94,7 +95,7 @@ func (h AccountPeriodMasterHttp) CreateAccountPeriodMaster(ctx microservice.ICon
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /accountperiodmaster/{id} [put]
+// @Router /gl/accountperiodmaster/{id} [put]
 func (h AccountPeriodMasterHttp) UpdateAccountPeriodMaster(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -139,7 +140,7 @@ func (h AccountPeriodMasterHttp) UpdateAccountPeriodMaster(ctx microservice.ICon
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /accountperiodmaster/{id} [delete]
+// @Router /gl/accountperiodmaster/{id} [delete]
 func (h AccountPeriodMasterHttp) DeleteAccountPeriodMaster(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -170,7 +171,7 @@ func (h AccountPeriodMasterHttp) DeleteAccountPeriodMaster(ctx microservice.ICon
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /accountperiodmaster [delete]
+// @Router /gl/accountperiodmaster [delete]
 func (h AccountPeriodMasterHttp) DeleteAccountPeriodMasterByGUIDs(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -208,7 +209,7 @@ func (h AccountPeriodMasterHttp) DeleteAccountPeriodMasterByGUIDs(ctx microservi
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /accountperiodmaster/{id} [get]
+// @Router /gl/accountperiodmaster/{id} [get]
 func (h AccountPeriodMasterHttp) InfoAccountPeriodMaster(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -241,7 +242,7 @@ func (h AccountPeriodMasterHttp) InfoAccountPeriodMaster(ctx microservice.IConte
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /accountperiodmaster [get]
+// @Router /gl/accountperiodmaster [get]
 func (h AccountPeriodMasterHttp) SearchAccountPeriodMasterPage(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -275,7 +276,7 @@ func (h AccountPeriodMasterHttp) SearchAccountPeriodMasterPage(ctx microservice.
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /accountperiodmaster/list [get]
+// @Router /gl/accountperiodmaster/list [get]
 func (h AccountPeriodMasterHttp) SearchAccountPeriodMasterLimit(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -297,6 +298,51 @@ func (h AccountPeriodMasterHttp) SearchAccountPeriodMasterLimit(ctx microservice
 		Success: true,
 		Data:    docList,
 		Total:   total,
+	})
+	return nil
+}
+
+// Create AccountPeriodMaster godoc
+// @Description Create AccountPeriodMaster
+// @Tags		AccountPeriodMaster
+// @Param		AccountPeriodMaster  body      models.AccountPeriodMaster true  "AccountPeriodMaster"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /gl/accountperiodmaster/bulk [post]
+func (h AccountPeriodMasterHttp) SaveBulkAccountPeriodMaster(ctx microservice.IContext) error {
+	authUsername := ctx.UserInfo().Username
+	shopID := ctx.UserInfo().ShopID
+	input := ctx.ReadInput()
+
+	docReq := &[]models.AccountPeriodMasterRequest{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(docReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	tempDocListReq := []models.AccountPeriodMaster{}
+	for _, doc := range *docReq {
+		tempDocListReq = append(tempDocListReq, doc.ToAccountPeriodMaster())
+	}
+
+	err = h.svc.SaveInBatch(shopID, authUsername, tempDocListReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
 	})
 	return nil
 }
