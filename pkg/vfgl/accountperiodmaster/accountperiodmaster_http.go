@@ -302,10 +302,10 @@ func (h AccountPeriodMasterHttp) SearchAccountPeriodMasterLimit(ctx microservice
 	return nil
 }
 
-// Create AccountPeriodMaster godoc
-// @Description Create AccountPeriodMaster
+// Bulk Create AccountPeriodMaster godoc
+// @Description Bulk Create AccountPeriodMaster
 // @Tags		AccountPeriodMaster
-// @Param		AccountPeriodMaster  body      models.AccountPeriodMaster true  "AccountPeriodMaster"
+// @Param		AccountPeriodMaster  body      []models.AccountPeriodMaster true  "Array AccountPeriodMaster"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
