@@ -1660,13 +1660,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "From Date",
+                        "description": "From Date (YYYY-MM-DD)",
                         "name": "fromdate",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "To Date",
+                        "description": "To Date (YYYY-MM-DD)",
                         "name": "todate",
                         "in": "query"
                     }
@@ -8360,6 +8360,59 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.PrinterTerminalFetchUpdateResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/printer/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
                         }
                     },
                     "401": {

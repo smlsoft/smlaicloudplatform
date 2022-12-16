@@ -5064,11 +5064,11 @@ paths:
         in: query
         name: ref
         type: integer
-      - description: From Date
+      - description: From Date (YYYY-MM-DD)
         in: query
         name: fromdate
         type: string
-      - description: To Date
+      - description: To Date (YYYY-MM-DD)
         in: query
         name: todate
         type: string
@@ -9320,6 +9320,39 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.PrinterTerminalFetchUpdateResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/printer/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
         "401":
           description: Unauthorized
           schema:
