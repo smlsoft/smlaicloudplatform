@@ -5718,6 +5718,29 @@ paths:
       - AccessToken: []
       tags:
       - AccountPeriodMaster
+  /gl/accountperiodmaster/bydate:
+    get:
+      consumes:
+      - application/json
+      description: Get AccountPeriodMaster by date
+      parameters:
+      - description: date
+        in: query
+        name: date
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - AccountPeriodMaster
   /gl/accountperiodmaster/list:
     get:
       consumes:
