@@ -2610,6 +2610,44 @@
                 }
             }
         },
+        "/gl/accountperiodmaster/bydate": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get AccountPeriodMaster by date",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "date",
+                        "name": "date",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/gl/accountperiodmaster/list": {
             "get": {
                 "security": [
