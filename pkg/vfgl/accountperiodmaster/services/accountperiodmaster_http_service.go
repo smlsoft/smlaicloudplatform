@@ -18,6 +18,7 @@ type IAccountPeriodMasterHttpService interface {
 	DeleteAccountPeriodMaster(shopID string, guid string, authUsername string) error
 	DeleteAccountPeriodMasterByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoAccountPeriodMaster(shopID string, guid string) (models.AccountPeriodMasterInfo, error)
+	InfoAccountPeriodMasterByDate(shopID string, findDate time.Time) (models.AccountPeriodMasterInfo, error)
 	SearchAccountPeriodMaster(shopID string, q string, page int, limit int, sort map[string]int) ([]models.AccountPeriodMasterInfo, mongopagination.PaginationData, error)
 	SearchAccountPeriodMasterStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.AccountPeriodMasterInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.AccountPeriodMaster) error
@@ -156,6 +157,21 @@ func (svc AccountPeriodMasterHttpService) DeleteAccountPeriodMasterByGUIDs(shopI
 func (svc AccountPeriodMasterHttpService) InfoAccountPeriodMaster(shopID string, guid string) (models.AccountPeriodMasterInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+
+	if err != nil {
+		return models.AccountPeriodMasterInfo{}, err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return models.AccountPeriodMasterInfo{}, errors.New("document not found")
+	}
+
+	return findDoc.AccountPeriodMasterInfo, nil
+
+}
+func (svc AccountPeriodMasterHttpService) InfoAccountPeriodMasterByDate(shopID string, findDate time.Time) (models.AccountPeriodMasterInfo, error) {
+
+	findDoc, err := svc.repo.FindByDateRange(shopID, findDate, findDate)
 
 	if err != nil {
 		return models.AccountPeriodMasterInfo{}, err

@@ -9,6 +9,8 @@ import (
 	"smlcloudplatform/pkg/vfgl/accountperiodmaster/models"
 	"smlcloudplatform/pkg/vfgl/accountperiodmaster/repositories"
 	"smlcloudplatform/pkg/vfgl/accountperiodmaster/services"
+	"strings"
+	"time"
 )
 
 type IAccountPeriodMasterHttp interface{}
@@ -40,6 +42,7 @@ func (h AccountPeriodMasterHttp) RouteSetup() {
 	h.ms.POST("/gl/accountperiodmaster", h.CreateAccountPeriodMaster)
 	h.ms.POST("/gl/accountperiodmaster/bulk", h.SaveBulkAccountPeriodMaster)
 	h.ms.GET("/gl/accountperiodmaster/:id", h.InfoAccountPeriodMaster)
+	h.ms.GET("/gl/accountperiodmaster/bydate", h.InfoAccountPeriodMasterByDate)
 	h.ms.PUT("/gl/accountperiodmaster/:id", h.UpdateAccountPeriodMaster)
 	h.ms.DELETE("/gl/accountperiodmaster/:id", h.DeleteAccountPeriodMaster)
 	h.ms.DELETE("/gl/accountperiodmaster", h.DeleteAccountPeriodMasterByGUIDs)
@@ -221,6 +224,45 @@ func (h AccountPeriodMasterHttp) InfoAccountPeriodMaster(ctx microservice.IConte
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// Get AccountPeriodMaster godoc
+// @Description Get AccountPeriodMaster by date
+// @Tags		AccountPeriodMaster
+// @Param		date		query	string		false  "date"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /gl/accountperiodmaster/bydate [get]
+func (h AccountPeriodMasterHttp) InfoAccountPeriodMasterByDate(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	layout := "2006-01-02"
+	dateStr := ctx.QueryParam("date")
+
+	dateStr = strings.Trim(dateStr, " ")
+	if len(dateStr) < 1 {
+		ctx.ResponseError(400, "date format invalid.")
+		return nil
+	}
+
+	findDate, err := time.Parse(layout, dateStr)
+
+	h.ms.Logger.Debugf("Get AccountPeriodMaster %v", findDate)
+	doc, err := h.svc.InfoAccountPeriodMasterByDate(shopID, findDate)
+
+	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}
