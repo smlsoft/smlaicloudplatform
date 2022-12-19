@@ -17,8 +17,6 @@ import (
 	"smlcloudplatform/pkg/restaurant/shopzone"
 
 	"smlcloudplatform/pkg/mastersync/services"
-	inventoryRepo "smlcloudplatform/pkg/product/inventory/repositories"
-	inventoryService "smlcloudplatform/pkg/product/inventory/services"
 
 	productcategoryRepo "smlcloudplatform/pkg/product/productcategory/repositories"
 	productcategoryService "smlcloudplatform/pkg/product/productcategory/services"
@@ -39,65 +37,20 @@ type MasterSyncHttp struct {
 	cfg                   microservice.IConfig
 	activityModuleManager *ActivityModuleManager
 
-	svcMasterSync  services.IMasterSyncService
-	svcMember      member.IMemberService
-	svcInventory   inventoryService.IInventoryService
-	svcKitchen     kitchen.IKitchenService
-	svcShopPrinter shopprinter.IShopPrinterService
-	svcShopTable   shoptable.ShopTableService
-	svcShopZone    shopzone.ShopZoneService
-	svcEmployee    employee.EmployeeService
+	svcMasterSync services.IMasterSyncService
+	svcEmployee   employee.EmployeeService
 	// svcProductBarcode productbarcodeService.ProductBarcodeHttpService
 }
 
 func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) MasterSyncHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	pstPg := ms.Persister(cfg.PersisterConfig())
-	prod := ms.Producer(cfg.MQConfig())
+	// prod := ms.Producer(cfg.MQConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	activityModuleManager := NewActivityModuleManager()
 
 	masterSyncCacheRepo := repositories.NewMasterSyncCacheRepository(cache)
-
-	// Category
-
-	// Member
-	repoMember := member.NewMemberRepository(pst)
-	pgRepoMember := member.NewMemberPGRepository(pstPg)
-	repoCacheSyncMember := repositories.NewMasterSyncCacheRepository(cache)
-	svcMember := member.NewMemberService(repoMember, pgRepoMember, repoCacheSyncMember)
-
-	// Inventory
-	repoInv := inventoryRepo.NewInventoryRepository(pst)
-	mqRepoInv := inventoryRepo.NewInventoryMQRepository(prod)
-	invCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache)
-	svcInventory := inventoryService.NewInventoryService(repoInv, mqRepoInv, invCacheSyncRepo)
-
-	// Kitchen
-	repoKitchen := kitchen.NewKitchenRepository(pst)
-	kitchenCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache)
-	svcKitchen := kitchen.NewKitchenService(repoKitchen, kitchenCacheSyncRepo)
-
-	// Shop Printer
-	// repoShopPrinter := shopprinter.NewShopPrinterRepository(pst)
-	// shopPrinterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache)
-	// svcShopPrinter := shopprinter.NewShopPrinterService(repoShopPrinter, shopPrinterCacheSyncRepo)
-
-	// Shop Table
-	repoShopTable := shoptable.NewShopTableRepository(pst)
-	shopTableCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache)
-	svcShopTable := shoptable.NewShopTableService(repoShopTable, shopTableCacheSyncRepo)
-
-	// Shop Zone
-	repoShopZone := shopzone.NewShopZoneRepository(pst)
-	shopZoneCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache)
-	svcShopZone := shopzone.NewShopZoneService(repoShopZone, shopZoneCacheSyncRepo)
-
-	// Employee
-	repoEmployee := employee.NewEmployeeRepository(pst)
-	employeeCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache)
-	svcEmployee := employee.NewEmployeeService(repoEmployee, employeeCacheSyncRepo)
 
 	//############
 
@@ -113,10 +66,35 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	svcProductUnit := productunitService.NewUnitHttpService(productunitRepo.NewUnitRepository(pst), masterSyncCacheRepo)
 	activityModuleManager.Add(svcProductUnit)
 
+	// Kitchen
+	repoKitchen := kitchen.NewKitchenRepository(pst)
+	svcKitchen := kitchen.NewKitchenService(repoKitchen, masterSyncCacheRepo)
+	activityModuleManager.Add(svcKitchen)
+
 	// Shop Printer
 	repoShopPrinter := shopprinter.NewShopPrinterRepository(pst)
 	svcShopPrinter := shopprinter.NewShopPrinterService(repoShopPrinter, masterSyncCacheRepo)
 	activityModuleManager.Add(svcShopPrinter)
+
+	// Shop Table
+	repoShopTable := shoptable.NewShopTableRepository(pst)
+	svcShopTable := shoptable.NewShopTableService(repoShopTable, masterSyncCacheRepo)
+	activityModuleManager.Add(svcShopTable)
+
+	// Shop Zone
+	repoShopZone := shopzone.NewShopZoneRepository(pst)
+	svcShopZone := shopzone.NewShopZoneService(repoShopZone, masterSyncCacheRepo)
+	activityModuleManager.Add(svcShopZone)
+
+	// Member
+	repoMember := member.NewMemberRepository(pst)
+	pgRepoMember := member.NewMemberPGRepository(pstPg)
+	svcMember := member.NewMemberService(repoMember, pgRepoMember, masterSyncCacheRepo)
+	activityModuleManager.Add(svcMember)
+
+	// Employee
+	repoEmployee := employee.NewEmployeeRepository(pst)
+	svcEmployee := employee.NewEmployeeService(repoEmployee, masterSyncCacheRepo)
 
 	masterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache)
 	svcMasterSync := services.NewMasterSyncService(masterCacheSyncRepo)
@@ -126,14 +104,8 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 		cfg:                   cfg,
 		activityModuleManager: activityModuleManager,
 
-		svcMasterSync:  svcMasterSync,
-		svcInventory:   svcInventory,
-		svcMember:      svcMember,
-		svcKitchen:     svcKitchen,
-		svcShopPrinter: svcShopPrinter,
-		svcShopTable:   svcShopTable,
-		svcShopZone:    svcShopZone,
-		svcEmployee:    *svcEmployee,
+		svcMasterSync: svcMasterSync,
+		svcEmployee:   *svcEmployee,
 		// svcProductBarcode: *svcProductBarcode,
 	}
 }
@@ -144,6 +116,13 @@ func (h MasterSyncHttp) RouteSetup() {
 	h.ms.GET("/master-sync/list", h.LastActivitySyncOffset)
 }
 
+// List Master Sync Status godoc
+// @Description  Master Sync Status
+// @Tags		MasterSync
+// @Success		200	{array}		interface{}
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /master-sync/status [get]
 func (h MasterSyncHttp) SyncStatus(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -157,6 +136,16 @@ func (h MasterSyncHttp) SyncStatus(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Master Sync godoc
+// @Description  Master Sync
+// @Tags		MasterSync
+// @Param		lastupdate		query	string		false  "last update date ex: 2020-01-01T00:00:00"
+// @Param		module		query	string		false  "module code ex: product,productcategory,productbarcode"
+// @Param		action		query	string		false  "action code (all, new, remove)"
+// @Success		200	{array}		models.ApiResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /master-sync [get]
 func (h MasterSyncHttp) LastActivitySync(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -226,6 +215,16 @@ func (h MasterSyncHttp) LastActivitySync(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Master Sync Offset godoc
+// @Description  Master Sync Offset
+// @Tags		MasterSync
+// @Param		lastupdate		query	string		false  "last update date ex: 2020-01-01T00:00:00"
+// @Param		module		query	string		false  "module code ex: product,productcategory,productbarcode"
+// @Param		action		query	string		false  "action code (all, new, remove)"
+// @Success		200	{array}		models.ApiResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /master-sync/list [get]
 func (h MasterSyncHttp) LastActivitySyncOffset(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID

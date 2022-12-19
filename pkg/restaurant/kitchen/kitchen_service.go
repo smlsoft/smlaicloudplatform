@@ -6,9 +6,9 @@ import (
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/kitchen/models"
+	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
-	"sync"
 	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
@@ -22,8 +22,9 @@ type IKitchenService interface {
 	DeleteKitchen(shopID string, guid string, authUsername string) error
 	InfoKitchen(shopID string, guid string) (models.KitchenInfo, error)
 	SearchKitchen(shopID string, q string, page int, limit int) ([]models.KitchenInfo, mongopagination.PaginationData, error)
-	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Kitchen) (common.BulkImport, error)
+
+	LastActivity(shopID string, action string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error)
 
 	GetModuleName() string
 }
@@ -31,14 +32,18 @@ type IKitchenService interface {
 type KitchenService struct {
 	repo          KitchenRepository
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
+	services.ActivityService[models.KitchenActivity, models.KitchenDeleteActivity]
 }
 
 func NewKitchenService(repo KitchenRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) KitchenService {
 
-	return KitchenService{
+	insSvc := KitchenService{
 		repo:          repo,
 		syncCacheRepo: syncCacheRepo,
 	}
+
+	insSvc.ActivityService = services.NewActivityService[models.KitchenActivity, models.KitchenDeleteActivity](repo)
+	return insSvc
 }
 
 func (svc KitchenService) CreateKitchen(shopID string, authUsername string, doc models.Kitchen) (string, error) {
@@ -243,93 +248,6 @@ func (svc KitchenService) SaveInBatch(shopID string, authUsername string, dataLi
 
 func (svc KitchenService) getDocIDKey(doc models.Kitchen) string {
 	return doc.Code
-}
-
-func (svc KitchenService) LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error) {
-	var wg sync.WaitGroup
-
-	wg.Add(1)
-	var deleteDocList []models.KitchenDeleteActivity
-	var pagination1 mongopagination.PaginationData
-	var err1 error
-
-	go func() {
-		deleteDocList, pagination1, err1 = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
-		wg.Done()
-	}()
-
-	wg.Add(1)
-	var createAndUpdateDocList []models.KitchenActivity
-	var pagination2 mongopagination.PaginationData
-	var err2 error
-
-	go func() {
-		createAndUpdateDocList, pagination2, err2 = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
-		wg.Done()
-	}()
-
-	wg.Wait()
-
-	if err1 != nil {
-		return common.LastActivity{}, pagination1, err1
-	}
-
-	if err2 != nil {
-		return common.LastActivity{}, pagination2, err2
-	}
-
-	lastActivity := common.LastActivity{}
-
-	lastActivity.Remove = &deleteDocList
-	lastActivity.New = &createAndUpdateDocList
-
-	pagination := pagination1
-
-	if pagination.Total < pagination2.Total {
-		pagination = pagination2
-	}
-
-	return lastActivity, pagination, nil
-}
-
-func (svc KitchenService) LastActivityOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) (common.LastActivity, error) {
-	var wg sync.WaitGroup
-
-	wg.Add(1)
-	var deleteDocList []models.KitchenDeleteActivity
-	var err1 error
-
-	go func() {
-		deleteDocList, err1 = svc.repo.FindDeletedOffset(shopID, lastUpdatedDate, skip, limit)
-		wg.Done()
-	}()
-
-	wg.Add(1)
-	var createAndUpdateDocList []models.KitchenActivity
-
-	var err2 error
-
-	go func() {
-		createAndUpdateDocList, err2 = svc.repo.FindCreatedOrUpdatedOffset(shopID, lastUpdatedDate, skip, limit)
-		wg.Done()
-	}()
-
-	wg.Wait()
-
-	if err1 != nil {
-		return common.LastActivity{}, err1
-	}
-
-	if err2 != nil {
-		return common.LastActivity{}, err2
-	}
-
-	lastActivity := common.LastActivity{}
-
-	lastActivity.Remove = &deleteDocList
-	lastActivity.New = &createAndUpdateDocList
-
-	return lastActivity, nil
 }
 
 func (svc KitchenService) saveMasterSync(shopID string) {
