@@ -80,9 +80,9 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	svcKitchen := kitchen.NewKitchenService(repoKitchen, kitchenCacheSyncRepo)
 
 	// Shop Printer
-	repoShopPrinter := shopprinter.NewShopPrinterRepository(pst)
-	shopPrinterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache)
-	svcShopPrinter := shopprinter.NewShopPrinterService(repoShopPrinter, shopPrinterCacheSyncRepo)
+	// repoShopPrinter := shopprinter.NewShopPrinterRepository(pst)
+	// shopPrinterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache)
+	// svcShopPrinter := shopprinter.NewShopPrinterService(repoShopPrinter, shopPrinterCacheSyncRepo)
 
 	// Shop Table
 	repoShopTable := shoptable.NewShopTableRepository(pst)
@@ -112,6 +112,11 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	// Product Unit
 	svcProductUnit := productunitService.NewUnitHttpService(productunitRepo.NewUnitRepository(pst), masterSyncCacheRepo)
 	activityModuleManager.Add(svcProductUnit)
+
+	// Shop Printer
+	repoShopPrinter := shopprinter.NewShopPrinterRepository(pst)
+	svcShopPrinter := shopprinter.NewShopPrinterService(repoShopPrinter, masterSyncCacheRepo)
+	activityModuleManager.Add(svcShopPrinter)
 
 	masterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache)
 	svcMasterSync := services.NewMasterSyncService(masterCacheSyncRepo)
