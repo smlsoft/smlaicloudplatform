@@ -92,6 +92,11 @@ func (repo JournalReportRepository) GetDataTrialBalance(shopId string, accountGr
 
 	var closeDocFilter string
 
+	accountGroupFilter := ``
+	if len(accountGroup) > 0 {
+		accountGroupFilter = ` and h.accountgroup = @accountgroup `
+	}
+
 	if includeCloseAccountMode == true {
 		closeDocFilter = ` 
 		union all 
@@ -115,7 +120,7 @@ func (repo JournalReportRepository) GetDataTrialBalance(shopId string, accountGr
 			from journals_detail as d
 			join journals as h on h.shopid = d.shopid and h.docno = d.docno
 			left join chartofaccounts as acc on acc.shopid = d.shopid and acc.accountcode = d.accountcode
-			where h.shopid= @shopid and h.accountgroup = @accountgroup  and h.docdate < @enddate 
+			where h.shopid= @shopid ` + accountGroupFilter + `  and h.docdate < @enddate 
 			 and (( h.journaltype = 0) or (h.journaltype=1 and h.docdate < @startdate ))
 		
 		` + closeDocFilter + `
@@ -175,10 +180,13 @@ func (repo JournalReportRepository) GetDataTrialBalance(shopId string, accountGr
 	var details []models.TrialBalanceSheetAccountDetail
 
 	condition := map[string]interface{}{
-		"shopid":       shopId,
-		"accountgroup": accountGroup,
-		"startdate":    startDate,
-		"enddate":      endDate,
+		"shopid":    shopId,
+		"startdate": startDate,
+		"enddate":   endDate,
+	}
+
+	if len(accountGroup) > 0 {
+		condition["accountgroup"] = accountGroup
 	}
 
 	_, err := repo.pst.Raw(query, condition, &details)
@@ -192,6 +200,11 @@ func (repo JournalReportRepository) GetDataTrialBalance(shopId string, accountGr
 func (repo JournalReportRepository) GetDataProfitAndLoss(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.ProfitAndLossSheetAccountDetail, error) {
 
 	var closeDocFilter string
+
+	accountGroupFilter := ``
+	if len(accountGroup) > 0 {
+		accountGroupFilter = ` and h.accountgroup = @accountgroup `
+	}
 
 	if includeCloseAccountMode == true {
 		closeDocFilter = ` 
@@ -218,7 +231,7 @@ func (repo JournalReportRepository) GetDataProfitAndLoss(shopId string, accountG
 			join journals as h on h.shopid = d.shopid and h.docno = d.docno
 			left join chartofaccounts as acc on acc.shopid = d.shopid and acc.accountcode = d.accountcode 
 
-			where h.shopid= @shopid and h.accountgroup = @accountgroup and h.docdate < @enddate 
+			where h.shopid= @shopid ` + accountGroupFilter + ` and h.docdate < @enddate 
 			and (( h.journaltype = 0) or (h.journaltype=1 and h.docdate < @startdate ))
 
 		` + closeDocFilter + `
@@ -252,10 +265,13 @@ func (repo JournalReportRepository) GetDataProfitAndLoss(shopId string, accountG
 	var details []models.ProfitAndLossSheetAccountDetail
 
 	condition := map[string]interface{}{
-		"shopid":       shopId,
-		"accountgroup": accountGroup,
-		"startdate":    startDate,
-		"enddate":      endDate,
+		"shopid":    shopId,
+		"startdate": startDate,
+		"enddate":   endDate,
+	}
+
+	if len(accountGroup) > 0 {
+		condition["accountgroup"] = accountGroup
 	}
 
 	_, err := repo.pst.Raw(query, condition, &details)
@@ -270,6 +286,11 @@ func (repo JournalReportRepository) GetDataBalanceSheet(shopId string, accountGr
 
 	reportYear := endDate.Year()
 	var closeDocFilter string
+
+	accountGroupFilter := ``
+	if len(accountGroup) > 0 {
+		accountGroupFilter = ` and h.accountgroup = @accountgroup `
+	}
 
 	if includeCloseAccountMode == true {
 		closeDocFilter = ` 
@@ -308,7 +329,7 @@ func (repo JournalReportRepository) GetDataBalanceSheet(shopId string, accountGr
 			join journals as h on h.shopid = d.shopid and h.docno = d.docno
 			left join chartofaccounts as acc on acc.shopid = d.shopid and acc.accountcode = d.accountcode 
 
-			where h.shopid= @shopid and h.accountgroup = @accountgroup  and h.docdate < @enddate 
+			where h.shopid= @shopid ` + accountGroupFilter + `  and h.docdate < @enddate 
 			and ( 
 				acc.accountcategory in (1,2,3) or (acc.accountcategory in (4,5) and (extract (year from h.docdate)) = @reportyear)
 			)
@@ -346,10 +367,13 @@ func (repo JournalReportRepository) GetDataBalanceSheet(shopId string, accountGr
 	var details []models.BalanceSheetAccountDetail
 
 	condition := map[string]interface{}{
-		"shopid":       shopId,
-		"accountgroup": accountGroup,
-		"enddate":      endDate,
-		"reportyear":   reportYear,
+		"shopid":     shopId,
+		"enddate":    endDate,
+		"reportyear": reportYear,
+	}
+
+	if len(accountGroup) > 0 {
+		condition["accountgroup"] = accountGroup
 	}
 
 	_, err := repo.pst.Raw(query, condition, &details)
