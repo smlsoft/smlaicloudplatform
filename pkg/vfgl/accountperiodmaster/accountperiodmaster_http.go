@@ -258,6 +258,10 @@ func (h AccountPeriodMasterHttp) InfoAccountPeriodMasterByDate(ctx microservice.
 	}
 
 	findDate, err := time.Parse(layout, dateStr)
+	if err != nil {
+		ctx.ResponseError(400, "date format invalid.")
+		return nil
+	}
 
 	h.ms.Logger.Debugf("Get AccountPeriodMaster %v", findDate)
 	doc, err := h.svc.InfoAccountPeriodMasterByDate(shopID, findDate)
