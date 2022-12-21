@@ -15,6 +15,7 @@ import (
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"github.com/samber/lo"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -1034,7 +1035,7 @@ func (svc DocumentImageService) GetDocumentImageDocRefGroup(shopID string, docIm
 
 func (svc DocumentImageService) GetDocumentImageGroupByDocRef(shopID string, docRef string) (models.DocumentImageGroupInfo, error) {
 
-	findDoc, err := svc.repoImageGroup.FindOne(shopID, map[string]interface{}{"references.docno": docRef})
+	findDoc, err := svc.repoImageGroup.FindOne(shopID, bson.M{"references.docno": docRef})
 
 	if err != nil {
 		return models.DocumentImageGroupInfo{}, err
