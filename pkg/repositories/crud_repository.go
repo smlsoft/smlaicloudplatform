@@ -125,7 +125,7 @@ func (repo CrudRepository[T]) FindOne(shopID string, filters interface{}) (T, er
 
 		filterQuery = tempFilterQuery
 	default:
-		return *new(T), errors.New("invalid filter type")
+		return *new(T), errors.New("invalid query filter type")
 	}
 
 	doc := new(T)

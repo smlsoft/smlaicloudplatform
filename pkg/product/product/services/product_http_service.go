@@ -20,8 +20,8 @@ type IProductHttpService interface {
 	DeleteProduct(shopID string, guid string, authUsername string) error
 	DeleteProductByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoProduct(shopID string, guid string) (models.ProductInfo, error)
-	SearchProduct(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ProductInfo, mongopagination.PaginationData, error)
-	SearchProductStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ProductInfo, int, error)
+	SearchProduct(shopID string, filters map[string]interface{}, q string, page int, limit int, sort map[string]int) ([]models.ProductInfo, mongopagination.PaginationData, error)
+	SearchProductStep(shopID string, langCode string, filters map[string]interface{}, q string, skip int, limit int, sort map[string]int) ([]models.ProductInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Product) (common.BulkImport, error)
 }
 
@@ -143,13 +143,13 @@ func (svc ProductHttpService) InfoProduct(shopID string, guid string) (models.Pr
 
 }
 
-func (svc ProductHttpService) SearchProduct(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ProductInfo, mongopagination.PaginationData, error) {
+func (svc ProductHttpService) SearchProduct(shopID string, filters map[string]interface{}, q string, page int, limit int, sort map[string]int) ([]models.ProductInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
 		"guidfixed",
 		"itemcode",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPageFilterSort(shopID, filters, searchCols, q, page, limit, sort)
 
 	if err != nil {
 		return []models.ProductInfo{}, pagination, err
@@ -158,7 +158,7 @@ func (svc ProductHttpService) SearchProduct(shopID string, q string, page int, l
 	return docList, pagination, nil
 }
 
-func (svc ProductHttpService) SearchProductStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ProductInfo, int, error) {
+func (svc ProductHttpService) SearchProductStep(shopID string, langCode string, filters map[string]interface{}, q string, skip int, limit int, sort map[string]int) ([]models.ProductInfo, int, error) {
 	searchCols := []string{
 		"guidfixed",
 		"itemcode",
@@ -188,7 +188,7 @@ func (svc ProductHttpService) SearchProductStep(shopID string, langCode string, 
 		projectQuery["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindLimit(shopID, searchCols, q, skip, limit, sort, projectQuery)
+	docList, total, err := svc.repo.FindLimit(shopID, filters, searchCols, q, skip, limit, sort, projectQuery)
 
 	if err != nil {
 		return []models.ProductInfo{}, 0, err

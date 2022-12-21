@@ -176,7 +176,7 @@ func (svc ProductCategoryHttpService) SearchProductCategoryStep(shopID string, l
 		projectQuery["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindLimit(shopID, searchCols, q, skip, limit, sort, projectQuery)
+	docList, total, err := svc.repo.FindLimit(shopID, map[string]interface{}{}, searchCols, q, skip, limit, sort, projectQuery)
 
 	if err != nil {
 		return []models.ProductCategoryInfo{}, 0, err

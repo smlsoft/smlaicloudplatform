@@ -21,7 +21,7 @@ type ICustomerGroupRepository interface {
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.CustomerGroupItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.CustomerGroupDoc, error)
 	FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.CustomerGroupInfo, mongopagination.PaginationData, error)
-	FindLimit(shopID string, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.CustomerGroupInfo, int, error)
+	FindLimit(shopID string, filters map[string]interface{}, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.CustomerGroupInfo, int, error)
 }
 
 type CustomerGroupRepository struct {

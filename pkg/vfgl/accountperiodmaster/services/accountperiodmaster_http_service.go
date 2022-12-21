@@ -217,7 +217,7 @@ func (svc AccountPeriodMasterHttpService) SearchAccountPeriodMasterStep(shopID s
 		projectQuery["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindLimit(shopID, searchCols, q, skip, limit, sort, projectQuery)
+	docList, total, err := svc.repo.FindLimit(shopID, map[string]interface{}{}, searchCols, q, skip, limit, sort, projectQuery)
 
 	if err != nil {
 		return []models.AccountPeriodMasterInfo{}, 0, err

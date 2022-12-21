@@ -44,7 +44,7 @@ func (repo SearchRepository[T]) Find(shopID string, colNameSearch []string, q st
 	return docList, nil
 }
 
-func (repo SearchRepository[T]) FindLimit(shopID string, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]T, int, error) {
+func (repo SearchRepository[T]) FindLimit(shopID string, filters map[string]interface{}, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]T, int, error) {
 
 	searchFilterList := []interface{}{}
 
@@ -59,6 +59,16 @@ func (repo SearchRepository[T]) FindLimit(shopID string, colNameSearch []string,
 		"shopid":    shopID,
 		"deletedat": bson.M{"$exists": false},
 		"$or":       searchFilterList,
+	}
+
+	matchFilterList := []interface{}{}
+
+	for key, value := range filters {
+		matchFilterList = append(matchFilterList, bson.M{key: value})
+	}
+
+	if len(matchFilterList) > 0 {
+		filterQuery["$and"] = matchFilterList
 	}
 
 	tempSkip := int64(skip)

@@ -22,7 +22,7 @@ type IProductCategoryRepository interface {
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.ProductCategoryItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.ProductCategoryDoc, error)
 	FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.ProductCategoryInfo, mongopagination.PaginationData, error)
-	FindLimit(shopID string, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.ProductCategoryInfo, int, error)
+	FindLimit(shopID string, filters map[string]interface{}, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.ProductCategoryInfo, int, error)
 
 	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.ProductCategoryDeleteActivity, mongopagination.PaginationData, error)
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.ProductCategoryActivity, mongopagination.PaginationData, error)

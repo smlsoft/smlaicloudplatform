@@ -22,7 +22,7 @@ type IProductBarcodeRepository interface {
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.ProductBarcodeItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.ProductBarcodeDoc, error)
 	FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
-	FindLimit(shopID string, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.ProductBarcodeInfo, int, error)
+	FindLimit(shopID string, filters map[string]interface{}, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.ProductBarcodeInfo, int, error)
 
 	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.ProductBarcodeDeleteActivity, mongopagination.PaginationData, error)
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.ProductBarcodeActivity, mongopagination.PaginationData, error)

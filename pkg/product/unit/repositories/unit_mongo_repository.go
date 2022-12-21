@@ -22,7 +22,7 @@ type IUnitRepository interface {
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.UnitItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.UnitDoc, error)
 	FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.UnitInfo, mongopagination.PaginationData, error)
-	FindLimit(shopID string, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.UnitInfo, int, error)
+	FindLimit(shopID string, filters map[string]interface{}, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.UnitInfo, int, error)
 
 	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.UnitDeleteActivity, mongopagination.PaginationData, error)
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.UnitActivity, mongopagination.PaginationData, error)

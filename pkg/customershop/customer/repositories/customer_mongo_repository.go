@@ -21,7 +21,7 @@ type ICustomerRepository interface {
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.CustomerItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.CustomerDoc, error)
 	FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.CustomerInfo, mongopagination.PaginationData, error)
-	FindLimit(shopID string, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.CustomerInfo, int, error)
+	FindLimit(shopID string, filters map[string]interface{}, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.CustomerInfo, int, error)
 }
 
 type CustomerRepository struct {

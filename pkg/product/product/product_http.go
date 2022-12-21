@@ -9,6 +9,7 @@ import (
 	"smlcloudplatform/pkg/product/product/repositories"
 	"smlcloudplatform/pkg/product/product/services"
 	"smlcloudplatform/pkg/utils"
+	"strings"
 )
 
 type IProductHttp interface{}
@@ -201,6 +202,7 @@ func (h ProductHttp) InfoProduct(ctx microservice.IContext) error {
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Add Category"
 // @Param		limit	query	integer		false  "Add Category"
+// @Param		category	query	string		false  "category guid"
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -213,7 +215,15 @@ func (h ProductHttp) SearchProductPage(ctx microservice.IContext) error {
 	q := ctx.QueryParam("q")
 	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 	sort := utils.GetSortParam(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchProduct(shopID, q, page, limit, sort)
+
+	filters := map[string]interface{}{}
+
+	category := strings.Trim(ctx.QueryParam("category"), " ")
+	if len(category) > 0 {
+		filters["categoryguid"] = category
+	}
+
+	docList, pagination, err := h.svc.SearchProduct(shopID, filters, q, page, limit, sort)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -235,6 +245,7 @@ func (h ProductHttp) SearchProductPage(ctx microservice.IContext) error {
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
 // @Param		lang	query	string		false  "lang"
+// @Param		category	query	string		false  "category guid"
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -250,7 +261,14 @@ func (h ProductHttp) SearchProductLimit(ctx microservice.IContext) error {
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchProductStep(shopID, lang, q, offset, limit, sorts)
+	filters := map[string]interface{}{}
+
+	category := strings.Trim(ctx.QueryParam("category"), " ")
+	if len(category) > 0 {
+		filters["categoryguid"] = category
+	}
+
+	docList, total, err := h.svc.SearchProductStep(shopID, lang, filters, q, offset, limit, sorts)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

@@ -208,7 +208,7 @@ func (svc ProductBarcodeHttpService) SearchProductBarcodeStep(shopID string, lan
 		projectQuery["itemunitnames"] = 1
 	}
 
-	docList, total, err := svc.repo.FindLimit(shopID, searchCols, q, skip, limit, sort, projectQuery)
+	docList, total, err := svc.repo.FindLimit(shopID, map[string]interface{}{}, searchCols, q, skip, limit, sort, projectQuery)
 
 	if err != nil {
 		return []models.ProductBarcodeInfo{}, 0, err
