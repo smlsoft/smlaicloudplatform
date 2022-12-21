@@ -20,8 +20,12 @@ func NewJournalReportHttp(ms *microservice.Microservice, cfg microservice.IConfi
 
 	pstConfig := microservice.NewPersisterConfig()
 	pst := microservice.NewPersister(pstConfig)
-	repo := NewJournalReportRepository(pst)
-	jouralReportService := NewJournalReportService(repo)
+	repoPg := NewJournalReportPgRepository(pst)
+
+	pstMongo := microservice.NewPersisterMongo(microservice.NewMongoPersisterConfig())
+	repoMongo := NewJournalMongoRepository(pstMongo)
+
+	jouralReportService := NewJournalReportService(repoPg, repoMongo)
 	return JournalReportHttp{
 		ms:  ms,
 		cfg: cfg,

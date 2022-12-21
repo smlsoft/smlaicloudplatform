@@ -8,19 +8,19 @@ import (
 	"time"
 )
 
-type IJournalReportRepository interface {
+type IJournalReportPgRepository interface {
 	GetDataTrialBalance(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.TrialBalanceSheetAccountDetail, error)
 	GetDataProfitAndLoss(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.ProfitAndLossSheetAccountDetail, error)
 	GetDataBalanceSheet(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) ([]models.BalanceSheetAccountDetail, error)
 	GetDataLedgerAccount(shopId string, accountGroup string, consolidateAccountCode string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error)
 }
 
-type JournalReportRepository struct {
+type JournalReportPgRepository struct {
 	pst microservice.IPersister
 }
 
-func NewJournalReportRepository(pst microservice.IPersister) JournalReportRepository {
-	return JournalReportRepository{
+func NewJournalReportPgRepository(pst microservice.IPersister) JournalReportPgRepository {
+	return JournalReportPgRepository{
 		pst: pst,
 	}
 }
@@ -87,7 +87,7 @@ WITH journal_doc as (
 
 */
 
-func (repo JournalReportRepository) GetDataTrialBalance(shopId string, accountGroup string, includeCloseAccountMode bool,
+func (repo JournalReportPgRepository) GetDataTrialBalance(shopId string, accountGroup string, includeCloseAccountMode bool,
 	startDate time.Time, endDate time.Time) ([]models.TrialBalanceSheetAccountDetail, error) {
 
 	var closeDocFilter string
@@ -197,7 +197,7 @@ func (repo JournalReportRepository) GetDataTrialBalance(shopId string, accountGr
 	return details, nil
 }
 
-func (repo JournalReportRepository) GetDataProfitAndLoss(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.ProfitAndLossSheetAccountDetail, error) {
+func (repo JournalReportPgRepository) GetDataProfitAndLoss(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) ([]models.ProfitAndLossSheetAccountDetail, error) {
 
 	var closeDocFilter string
 
@@ -282,7 +282,7 @@ func (repo JournalReportRepository) GetDataProfitAndLoss(shopId string, accountG
 	return details, nil
 }
 
-func (repo JournalReportRepository) GetDataBalanceSheet(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) ([]models.BalanceSheetAccountDetail, error) {
+func (repo JournalReportPgRepository) GetDataBalanceSheet(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) ([]models.BalanceSheetAccountDetail, error) {
 
 	reportYear := endDate.Year()
 	var closeDocFilter string
@@ -387,7 +387,7 @@ func (repo JournalReportRepository) GetDataBalanceSheet(shopId string, accountGr
 	return details, nil
 }
 
-func (repo JournalReportRepository) GetDataLedgerAccount(shopID string, accountGroup string, consolidateAccountCode string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error) {
+func (repo JournalReportPgRepository) GetDataLedgerAccount(shopID string, accountGroup string, consolidateAccountCode string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccountRaw, error) {
 
 	accountCodeQuery := ""
 	accountGroupQuery := ""

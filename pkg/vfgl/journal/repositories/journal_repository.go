@@ -22,7 +22,7 @@ type IJournalRepository interface {
 	FindOne(shopID string, filters interface{}) (models.JournalDoc, error)
 	IsAccountCodeUsed(shopID string, accountCode string) (bool, error)
 
-	FindLastDocno(shopID string, docFormat string) (string, error)
+	// FindLastDocno(shopID string, docFormat string) (string, error)
 }
 
 type JournalRepository struct {

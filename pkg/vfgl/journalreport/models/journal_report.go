@@ -147,9 +147,31 @@ type LedgerAccountDetail struct {
 	Debit              float64   `json:"debit" gorm:"column:debit"`
 	Credit             float64   `json:"credit" gorm:"column:credit"`
 	Amount             float64   `json:"amount" gorm:"column:amount"`
+	CountVat           int       `json:"countvat"`
+	CountTax           int       `json:"counttax"`
+	CountImage         int       `json:"countimage"`
 }
 
 type LedgerAccountCodeRange struct {
 	Start string
 	End   string
+}
+
+type JournalSummary struct {
+	DocNo    string `json:"docno" bson:"docno"`
+	CountVat int    `json:"countvat" bson:"countvat"`
+	CountTax int    `json:"counttax" bson:"counttax"`
+}
+
+func (JournalSummary) CollectionName() string {
+	return "journals"
+}
+
+type JournalImageSummary struct {
+	DocNo      string `json:"docno" bson:"docno"`
+	CountImage int    `json:"countimage" bson:"countimage"`
+}
+
+func (JournalImageSummary) CollectionName() string {
+	return "documentImageGroups"
 }

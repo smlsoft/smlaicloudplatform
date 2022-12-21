@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetDataTrialBalanceReportRepository(t *testing.T) {
+func TestGetDataTrialBalanceReportPgRepository(t *testing.T) {
 
 	if os.Getenv("SERVERLESS") == "serverless" {
 		t.Skip()
@@ -24,7 +24,7 @@ func TestGetDataTrialBalanceReportRepository(t *testing.T) {
 	pst := microservice.NewPersister(pstConfig)
 
 	assert.NotNil(pst)
-	repo := journalreport.NewJournalReportRepository(pst)
+	repo := journalreport.NewJournalReportPgRepository(pst)
 
 	shopId := "27dcEdktOoaSBYFmnN6G6ett4Jb"
 	accGroup := "01"
@@ -36,7 +36,7 @@ func TestGetDataTrialBalanceReportRepository(t *testing.T) {
 	assert.NotNil(get)
 }
 
-func TestGetDataProfitAndLossReportRepository(t *testing.T) {
+func TestGetDataProfitAndLossReportPgRepository(t *testing.T) {
 	if os.Getenv("SERVERLESS") == "serverless" {
 		t.Skip()
 	}
@@ -46,7 +46,7 @@ func TestGetDataProfitAndLossReportRepository(t *testing.T) {
 	pst := microservice.NewPersister(pstConfig)
 
 	assert.NotNil(pst)
-	repo := journalreport.NewJournalReportRepository(pst)
+	repo := journalreport.NewJournalReportPgRepository(pst)
 
 	shopId := "27dcEdktOoaSBYFmnN6G6ett4Jb"
 	accGroup := "01"
@@ -58,7 +58,7 @@ func TestGetDataProfitAndLossReportRepository(t *testing.T) {
 	assert.NotNil(get)
 }
 
-func TestGetDataBalanceSheetReportRepository(t *testing.T) {
+func TestGetDataBalanceSheetReportPgRepository(t *testing.T) {
 	if os.Getenv("SERVERLESS") == "serverless" {
 		t.Skip()
 	}
@@ -68,7 +68,7 @@ func TestGetDataBalanceSheetReportRepository(t *testing.T) {
 	pst := microservice.NewPersister(pstConfig)
 
 	assert.NotNil(pst)
-	repo := journalreport.NewJournalReportRepository(pst)
+	repo := journalreport.NewJournalReportPgRepository(pst)
 
 	shopId := "27dcEdktOoaSBYFmnN6G6ett4Jb"
 	accGroup := "01"
@@ -87,7 +87,7 @@ func TestGetDataLedgerAccount(t *testing.T) {
 	pstConfig := mock.NewPersisterPostgresqlConfig()
 	pst := microservice.NewPersister(pstConfig)
 
-	repo := journalreport.NewJournalReportRepository(pst)
+	repo := journalreport.NewJournalReportPgRepository(pst)
 	results, err := repo.GetDataLedgerAccount("27dcEdktOoaSBYFmnN6G6ett4Jb", "", "", []models.LedgerAccountCodeRange{
 		{
 			Start: "100000",

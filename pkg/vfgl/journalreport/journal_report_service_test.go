@@ -102,7 +102,7 @@ func TestProcessBalanceSheetReport(t *testing.T) {
 		TotalLiabilityAndOwnersEquityAmount: 30020,
 	}
 
-	service := journalreport.NewJournalReportService(repo)
+	service := journalreport.NewJournalReportService(repo, nil)
 	get, err := service.ProcessBalanceSheetReport("TESTSHOP", "01", false, endDate)
 	get.ReportDate = fixReportDate
 	assert.Nil(t, err, "Error should be nil")
@@ -240,7 +240,7 @@ func TestLedgerAccount(t *testing.T) {
 		},
 	}, nil)
 
-	service := journalreport.NewJournalReportService(repo)
+	service := journalreport.NewJournalReportService(repo, nil)
 	docList, err := service.ProcessLedgerAccount("TESTSHOP", "accGroup", "conAcc", []models.LedgerAccountCodeRange{
 		{
 			Start: "100000",
@@ -411,7 +411,7 @@ func TestLedgerAccount2(t *testing.T) {
 		},
 	}, nil)
 
-	service := journalreport.NewJournalReportService(repo)
+	service := journalreport.NewJournalReportService(repo, nil)
 	docList, err := service.ProcessLedgerAccount("TESTSHOP", "accGroup", "conAcc", []models.LedgerAccountCodeRange{
 		{
 			Start: "100000",
