@@ -1,4 +1,4 @@
-package shopprinter
+package printer
 
 import (
 	"encoding/json"
@@ -6,64 +6,64 @@ import (
 	"smlcloudplatform/internal/microservice"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/restaurant/shopprinter/models"
+	"smlcloudplatform/pkg/restaurant/printer/models"
 	"smlcloudplatform/pkg/utils"
 	"strings"
 	"time"
 )
 
-type IShopPrinterHttp interface{}
+type IPrinterHttp interface{}
 
-type ShopPrinterHttp struct {
+type PrinterHttp struct {
 	ms  *microservice.Microservice
 	cfg microservice.IConfig
-	svc IShopPrinterService
+	svc IPrinterService
 }
 
-func NewShopPrinterHttp(ms *microservice.Microservice, cfg microservice.IConfig) ShopPrinterHttp {
+func NewPrinterHttp(ms *microservice.Microservice, cfg microservice.IConfig) PrinterHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
-	repo := NewShopPrinterRepository(pst)
+	repo := NewPrinterRepository(pst)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := NewShopPrinterService(repo, masterSyncCacheRepo)
+	svc := NewPrinterService(repo, masterSyncCacheRepo)
 
-	return ShopPrinterHttp{
+	return PrinterHttp{
 		ms:  ms,
 		cfg: cfg,
 		svc: svc,
 	}
 }
 
-func (h ShopPrinterHttp) RouteSetup() {
+func (h PrinterHttp) RouteSetup() {
 
 	h.ms.POST("/restaurant/printer/bulk", h.SaveBulk)
 	h.ms.GET("/restaurant/printer/fetchupdate", h.FetchUpdate)
 
-	h.ms.GET("/restaurant/printer", h.SearchShopPrinter)
-	h.ms.GET("/restaurant/printer/list", h.SearchShopPrinterLimit)
-	h.ms.POST("/restaurant/printer", h.CreateShopPrinter)
-	h.ms.GET("/restaurant/printer/:id", h.InfoShopPrinter)
-	h.ms.PUT("/restaurant/printer/:id", h.UpdateShopPrinter)
-	h.ms.DELETE("/restaurant/printer/:id", h.DeleteShopPrinter)
+	h.ms.GET("/restaurant/printer", h.SearchPrinter)
+	h.ms.GET("/restaurant/printer/list", h.SearchPrinterLimit)
+	h.ms.POST("/restaurant/printer", h.CreatePrinter)
+	h.ms.GET("/restaurant/printer/:id", h.InfoPrinter)
+	h.ms.PUT("/restaurant/printer/:id", h.UpdatePrinter)
+	h.ms.DELETE("/restaurant/printer/:id", h.DeletePrinter)
 
 }
 
 // Create Restaurant Printer godoc
 // @Description Restaurant Printer
 // @Tags		Restaurant
-// @Param		Printer  body      models.PrinterTerminal  true  "Printer"
+// @Param		Printer  body      models.Printer  true  "Printer"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /restaurant/printer [post]
-func (h ShopPrinterHttp) CreateShopPrinter(ctx microservice.IContext) error {
+func (h PrinterHttp) CreatePrinter(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &models.PrinterTerminal{}
+	docReq := &models.Printer{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -71,7 +71,7 @@ func (h ShopPrinterHttp) CreateShopPrinter(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.svc.CreateShopPrinter(shopID, authUsername, *docReq)
+	idx, err := h.svc.CreatePrinter(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -89,13 +89,13 @@ func (h ShopPrinterHttp) CreateShopPrinter(ctx microservice.IContext) error {
 // @Description Restaurant Printer
 // @Tags		Restaurant
 // @Param		id  path      string  true  "Printer ID"
-// @Param		Printer  body      models.PrinterTerminal  true  "Printer"
+// @Param		Printer  body      models.Printer  true  "Printer"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /restaurant/printer/{id} [put]
-func (h ShopPrinterHttp) UpdateShopPrinter(ctx microservice.IContext) error {
+func (h PrinterHttp) UpdatePrinter(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -103,7 +103,7 @@ func (h ShopPrinterHttp) UpdateShopPrinter(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &models.PrinterTerminal{}
+	docReq := &models.Printer{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -111,7 +111,7 @@ func (h ShopPrinterHttp) UpdateShopPrinter(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svc.UpdateShopPrinter(shopID, id, authUsername, *docReq)
+	err = h.svc.UpdatePrinter(shopID, id, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -135,14 +135,14 @@ func (h ShopPrinterHttp) UpdateShopPrinter(ctx microservice.IContext) error {
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /restaurant/printer/{id} [delete]
-func (h ShopPrinterHttp) DeleteShopPrinter(ctx microservice.IContext) error {
+func (h PrinterHttp) DeletePrinter(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
 
 	id := ctx.Param("id")
 
-	err := h.svc.DeleteShopPrinter(shopID, id, authUsername)
+	err := h.svc.DeletePrinter(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -162,18 +162,18 @@ func (h ShopPrinterHttp) DeleteShopPrinter(ctx microservice.IContext) error {
 // @Tags		Restaurant
 // @Param		id  path      string  true  "Printer Id"
 // @Accept 		json
-// @Success		200	{object}	models.PrinterTerminalInfoResponse
+// @Success		200	{object}	models.PrinterInfoResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /restaurant/printer/{id} [get]
-func (h ShopPrinterHttp) InfoShopPrinter(ctx microservice.IContext) error {
+func (h PrinterHttp) InfoPrinter(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	h.ms.Logger.Debugf("Get ShopPrinter %v", id)
-	doc, err := h.svc.InfoShopPrinter(shopID, id)
+	h.ms.Logger.Debugf("Get Printer %v", id)
+	doc, err := h.svc.InfoPrinter(shopID, id)
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
@@ -195,17 +195,17 @@ func (h ShopPrinterHttp) InfoShopPrinter(ctx microservice.IContext) error {
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
 // @Accept 		json
-// @Success		200	{object}	models.PrinterTerminalPageResponse
+// @Success		200	{object}	models.PrinterPageResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /restaurant/printer [get]
-func (h ShopPrinterHttp) SearchShopPrinter(ctx microservice.IContext) error {
+func (h PrinterHttp) SearchPrinter(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	q := ctx.QueryParam("q")
 	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchShopPrinter(shopID, q, page, limit)
+	docList, pagination, err := h.svc.SearchPrinter(shopID, q, page, limit)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -231,7 +231,7 @@ func (h ShopPrinterHttp) SearchShopPrinter(ctx microservice.IContext) error {
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /restaurant/printer/list [get]
-func (h ShopPrinterHttp) SearchShopPrinterLimit(ctx microservice.IContext) error {
+func (h PrinterHttp) SearchPrinterLimit(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -239,7 +239,7 @@ func (h ShopPrinterHttp) SearchShopPrinterLimit(ctx microservice.IContext) error
 	offset, limit := utils.GetParamOffsetLimit(ctx.QueryParam)
 	sorts := utils.GetSortParam(ctx.QueryParam)
 
-	docList, total, err := h.svc.SearchShopPrinterStep(shopID, "", q, offset, limit, sorts)
+	docList, total, err := h.svc.SearchPrinterStep(shopID, "", q, offset, limit, sorts)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -261,11 +261,11 @@ func (h ShopPrinterHttp) SearchShopPrinterLimit(ctx microservice.IContext) error
 // @Param		page	query	integer		false  "Add Category"
 // @Param		limit	query	integer		false  "Add Category"
 // @Accept		json
-// @Success		200 {object} models.PrinterTerminalFetchUpdateResponse
+// @Success		200 {object} models.PrinterFetchUpdateResponse
 // @Failure		401 {object} common.AuthResponseFailed
 // @Security	AccessToken
 // @Router		/restaurant/printer/fetchupdate [get]
-func (h ShopPrinterHttp) FetchUpdate(ctx microservice.IContext) error {
+func (h PrinterHttp) FetchUpdate(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -308,13 +308,13 @@ func (h ShopPrinterHttp) FetchUpdate(ctx microservice.IContext) error {
 // Create Printer Bulk godoc
 // @Description Printer ShopZone
 // @Tags		Restaurant
-// @Param		Printer  body      []models.PrinterTerminal  true  "Printer"
+// @Param		Printer  body      []models.Printer  true  "Printer"
 // @Accept 		json
 // @Success		201	{object}	common.BulkInsertResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /restaurant/printer/bulk [post]
-func (h ShopPrinterHttp) SaveBulk(ctx microservice.IContext) error {
+func (h PrinterHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -322,7 +322,7 @@ func (h ShopPrinterHttp) SaveBulk(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	dataReq := []models.PrinterTerminal{}
+	dataReq := []models.Printer{}
 	err := json.Unmarshal([]byte(input), &dataReq)
 
 	if err != nil {

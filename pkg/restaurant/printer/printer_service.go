@@ -1,11 +1,11 @@
-package shopprinter
+package printer
 
 import (
 	"errors"
 	"fmt"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/restaurant/shopprinter/models"
+	"smlcloudplatform/pkg/restaurant/printer/models"
 	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
@@ -16,46 +16,46 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type IShopPrinterService interface {
-	CreateShopPrinter(shopID string, authUsername string, doc models.PrinterTerminal) (string, error)
-	UpdateShopPrinter(shopID string, guid string, authUsername string, doc models.PrinterTerminal) error
-	DeleteShopPrinter(shopID string, guid string, authUsername string) error
-	InfoShopPrinter(shopID string, guid string) (models.PrinterTerminalInfo, error)
-	SearchShopPrinter(shopID string, q string, page int, limit int) ([]models.PrinterTerminalInfo, mongopagination.PaginationData, error)
-	SaveInBatch(shopID string, authUsername string, dataList []models.PrinterTerminal) (common.BulkImport, error)
-	SearchShopPrinterStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.PrinterTerminalInfo, int, error)
+type IPrinterService interface {
+	CreatePrinter(shopID string, authUsername string, doc models.Printer) (string, error)
+	UpdatePrinter(shopID string, guid string, authUsername string, doc models.Printer) error
+	DeletePrinter(shopID string, guid string, authUsername string) error
+	InfoPrinter(shopID string, guid string) (models.PrinterInfo, error)
+	SearchPrinter(shopID string, q string, page int, limit int) ([]models.PrinterInfo, mongopagination.PaginationData, error)
+	SaveInBatch(shopID string, authUsername string, dataList []models.Printer) (common.BulkImport, error)
+	SearchPrinterStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.PrinterInfo, int, error)
 
 	LastActivity(shopID string, action string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error)
 
 	GetModuleName() string
 }
 
-type ShopPrinterService struct {
-	repo          ShopPrinterRepository
+type PrinterService struct {
+	repo          PrinterRepository
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 
-	services.ActivityService[models.PrinterTerminalActivity, models.PrinterTerminalDeleteActivity]
+	services.ActivityService[models.PrinterActivity, models.PrinterDeleteActivity]
 }
 
-func NewShopPrinterService(repo ShopPrinterRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) ShopPrinterService {
+func NewPrinterService(repo PrinterRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) PrinterService {
 
-	insSvc := ShopPrinterService{
+	insSvc := PrinterService{
 		repo:          repo,
 		syncCacheRepo: syncCacheRepo,
 	}
 
-	insSvc.ActivityService = services.NewActivityService[models.PrinterTerminalActivity, models.PrinterTerminalDeleteActivity](repo)
+	insSvc.ActivityService = services.NewActivityService[models.PrinterActivity, models.PrinterDeleteActivity](repo)
 	return insSvc
 }
 
-func (svc ShopPrinterService) CreateShopPrinter(shopID string, authUsername string, doc models.PrinterTerminal) (string, error) {
+func (svc PrinterService) CreatePrinter(shopID string, authUsername string, doc models.Printer) (string, error) {
 
 	newGuidFixed := utils.NewGUID()
 
-	docData := models.PrinterTerminalDoc{}
+	docData := models.PrinterDoc{}
 	docData.ShopID = shopID
 	docData.GuidFixed = newGuidFixed
-	docData.PrinterTerminal = doc
+	docData.Printer = doc
 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
@@ -71,7 +71,7 @@ func (svc ShopPrinterService) CreateShopPrinter(shopID string, authUsername stri
 	return newGuidFixed, nil
 }
 
-func (svc ShopPrinterService) UpdateShopPrinter(shopID string, guid string, authUsername string, doc models.PrinterTerminal) error {
+func (svc PrinterService) UpdatePrinter(shopID string, guid string, authUsername string, doc models.Printer) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -83,7 +83,7 @@ func (svc ShopPrinterService) UpdateShopPrinter(shopID string, guid string, auth
 		return errors.New("document not found")
 	}
 
-	findDoc.PrinterTerminal = doc
+	findDoc.Printer = doc
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
@@ -99,7 +99,7 @@ func (svc ShopPrinterService) UpdateShopPrinter(shopID string, guid string, auth
 	return nil
 }
 
-func (svc ShopPrinterService) DeleteShopPrinter(shopID string, guid string, authUsername string) error {
+func (svc PrinterService) DeletePrinter(shopID string, guid string, authUsername string) error {
 	err := svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
 
 	if err != nil {
@@ -111,23 +111,23 @@ func (svc ShopPrinterService) DeleteShopPrinter(shopID string, guid string, auth
 	return nil
 }
 
-func (svc ShopPrinterService) InfoShopPrinter(shopID string, guid string) (models.PrinterTerminalInfo, error) {
+func (svc PrinterService) InfoPrinter(shopID string, guid string) (models.PrinterInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
-		return models.PrinterTerminalInfo{}, err
+		return models.PrinterInfo{}, err
 	}
 
 	if findDoc.ID == primitive.NilObjectID {
-		return models.PrinterTerminalInfo{}, errors.New("document not found")
+		return models.PrinterInfo{}, errors.New("document not found")
 	}
 
-	return findDoc.PrinterTerminalInfo, nil
+	return findDoc.PrinterInfo, nil
 
 }
 
-func (svc ShopPrinterService) SearchShopPrinter(shopID string, q string, page int, limit int) ([]models.PrinterTerminalInfo, mongopagination.PaginationData, error) {
+func (svc PrinterService) SearchPrinter(shopID string, q string, page int, limit int) ([]models.PrinterInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
 		"guidfixed",
 		"code",
@@ -140,13 +140,13 @@ func (svc ShopPrinterService) SearchShopPrinter(shopID string, q string, page in
 	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
 
 	if err != nil {
-		return []models.PrinterTerminalInfo{}, pagination, err
+		return []models.PrinterInfo{}, pagination, err
 	}
 
 	return docList, pagination, nil
 }
 
-func (svc ShopPrinterService) SearchShopPrinterStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.PrinterTerminalInfo, int, error) {
+func (svc PrinterService) SearchPrinterStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.PrinterInfo, int, error) {
 	searchCols := []string{
 		"guidfixed",
 		"code",
@@ -157,18 +157,18 @@ func (svc ShopPrinterService) SearchShopPrinterStep(shopID string, langCode stri
 	docList, total, err := svc.repo.FindLimit(shopID, map[string]interface{}{}, searchCols, q, skip, limit, sort, projectQuery)
 
 	if err != nil {
-		return []models.PrinterTerminalInfo{}, 0, err
+		return []models.PrinterInfo{}, 0, err
 	}
 
 	return docList, total, nil
 }
 
-func (svc ShopPrinterService) SaveInBatch(shopID string, authUsername string, dataList []models.PrinterTerminal) (common.BulkImport, error) {
+func (svc PrinterService) SaveInBatch(shopID string, authUsername string, dataList []models.Printer) (common.BulkImport, error) {
 
-	// createDataList := []models.PrinterTerminalDoc{}
-	// duplicateDataList := []models.PrinterTerminal{}
+	// createDataList := []models.PrinterDoc{}
+	// duplicateDataList := []models.Printer{}
 
-	payloadCategoryList, payloadDuplicateCategoryList := importdata.FilterDuplicate[models.PrinterTerminal](dataList, svc.getDocIDKey)
+	payloadCategoryList, payloadDuplicateCategoryList := importdata.FilterDuplicate[models.Printer](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
 	for _, doc := range payloadCategoryList {
@@ -186,20 +186,20 @@ func (svc ShopPrinterService) SaveInBatch(shopID string, authUsername string, da
 		foundItemGuidList = append(foundItemGuidList, doc.Code)
 	}
 
-	duplicateDataList, createDataList := importdata.PreparePayloadData[models.PrinterTerminal, models.PrinterTerminalDoc](
+	duplicateDataList, createDataList := importdata.PreparePayloadData[models.Printer, models.PrinterDoc](
 		shopID,
 		authUsername,
 		foundItemGuidList,
 		payloadCategoryList,
 		svc.getDocIDKey,
-		func(shopID string, authUsername string, doc models.PrinterTerminal) models.PrinterTerminalDoc {
+		func(shopID string, authUsername string, doc models.Printer) models.PrinterDoc {
 			newGuid := utils.NewGUID()
 
-			dataDoc := models.PrinterTerminalDoc{}
+			dataDoc := models.PrinterDoc{}
 
 			dataDoc.GuidFixed = newGuid
 			dataDoc.ShopID = shopID
-			dataDoc.PrinterTerminal = doc
+			dataDoc.Printer = doc
 
 			currentTime := time.Now()
 			dataDoc.CreatedBy = authUsername
@@ -209,18 +209,18 @@ func (svc ShopPrinterService) SaveInBatch(shopID string, authUsername string, da
 		},
 	)
 
-	updateSuccessDataList, updateFailDataList := importdata.UpdateOnDuplicate[models.PrinterTerminal, models.PrinterTerminalDoc](
+	updateSuccessDataList, updateFailDataList := importdata.UpdateOnDuplicate[models.Printer, models.PrinterDoc](
 		shopID,
 		authUsername,
 		duplicateDataList,
 		svc.getDocIDKey,
-		func(shopID string, guid string) (models.PrinterTerminalDoc, error) {
+		func(shopID string, guid string) (models.PrinterDoc, error) {
 			return svc.repo.FindByGuid(shopID, guid)
 		},
-		func(doc models.PrinterTerminalDoc) bool {
+		func(doc models.PrinterDoc) bool {
 			return false
 		},
-		func(shopID string, authUsername string, data models.PrinterTerminal, doc models.PrinterTerminalDoc) error {
+		func(shopID string, authUsername string, data models.Printer, doc models.PrinterDoc) error {
 
 			return nil
 		},
@@ -264,11 +264,11 @@ func (svc ShopPrinterService) SaveInBatch(shopID string, authUsername string, da
 	}, nil
 }
 
-func (svc ShopPrinterService) getDocIDKey(doc models.PrinterTerminal) string {
+func (svc PrinterService) getDocIDKey(doc models.Printer) string {
 	return doc.Code
 }
 
-func (svc ShopPrinterService) saveMasterSync(shopID string) {
+func (svc PrinterService) saveMasterSync(shopID string) {
 	if svc.syncCacheRepo != nil {
 		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
 
@@ -278,6 +278,6 @@ func (svc ShopPrinterService) saveMasterSync(shopID string) {
 	}
 }
 
-func (svc ShopPrinterService) GetModuleName() string {
-	return "printer_terminal"
+func (svc PrinterService) GetModuleName() string {
+	return "printer"
 }

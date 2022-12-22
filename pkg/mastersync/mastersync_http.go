@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"smlcloudplatform/pkg/restaurant/kitchen"
-	"smlcloudplatform/pkg/restaurant/shopprinter"
+	"smlcloudplatform/pkg/restaurant/printer"
 	"smlcloudplatform/pkg/restaurant/shoptable"
 	"smlcloudplatform/pkg/restaurant/shopzone"
 
@@ -72,8 +72,8 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	activityModuleManager.Add(svcKitchen)
 
 	// Shop Printer
-	repoShopPrinter := shopprinter.NewShopPrinterRepository(pst)
-	svcShopPrinter := shopprinter.NewShopPrinterService(repoShopPrinter, masterSyncCacheRepo)
+	repoShopPrinter := printer.NewPrinterRepository(pst)
+	svcShopPrinter := printer.NewPrinterService(repoShopPrinter, masterSyncCacheRepo)
 	activityModuleManager.Add(svcShopPrinter)
 
 	// Shop Table
