@@ -41,6 +41,7 @@ func (h KitchenHttp) RouteSetup() {
 	h.ms.GET("/restaurant/kitchen/fetchupdate", h.FetchUpdate)
 
 	h.ms.GET("/restaurant/kitchen", h.SearchKitchen)
+	h.ms.GET("/restaurant/kitchen/list", h.SearchKitchenStep)
 	h.ms.POST("/restaurant/kitchen", h.CreateKitchen)
 	h.ms.GET("/restaurant/kitchen/:id", h.InfoKitchen)
 	h.ms.PUT("/restaurant/kitchen/:id", h.UpdateKitchen)
@@ -214,6 +215,40 @@ func (h KitchenHttp) SearchKitchen(ctx microservice.IContext) error {
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
+	})
+	return nil
+}
+
+// List Restaurant Kitchen Search Step godoc
+// @Description search limit offset
+// @Tags		Restaurant
+// @Param		q		query	string		false  "Search Value"
+// @Param		offset	query	integer		false  "offset"
+// @Param		limit	query	integer		false  "limit"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/kitchen/list [get]
+func (h KitchenHttp) SearchKitchenStep(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	q := ctx.QueryParam("q")
+	offset, limit := utils.GetParamOffsetLimit(ctx.QueryParam)
+	sorts := utils.GetSortParam(ctx.QueryParam)
+
+	docList, total, err := h.svc.SearchKitchenStep(shopID, "", q, offset, limit, sorts)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docList,
+		Total:   total,
 	})
 	return nil
 }

@@ -23,6 +23,7 @@ type IKitchenRepository interface {
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.KitchenActivity, mongopagination.PaginationData, error)
 	FindDeletedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.KitchenDeleteActivity, error)
 	FindCreatedOrUpdatedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.KitchenActivity, error)
+	FindLimit(shopID string, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.KitchenInfo, int, error)
 }
 
 type KitchenRepository struct {

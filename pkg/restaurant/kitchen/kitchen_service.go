@@ -22,6 +22,7 @@ type IKitchenService interface {
 	DeleteKitchen(shopID string, guid string, authUsername string) error
 	InfoKitchen(shopID string, guid string) (models.KitchenInfo, error)
 	SearchKitchen(shopID string, q string, page int, limit int) ([]models.KitchenInfo, mongopagination.PaginationData, error)
+	SearchKitchenStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.KitchenInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Kitchen) (common.BulkImport, error)
 
 	LastActivity(shopID string, action string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error)
@@ -143,6 +144,23 @@ func (svc KitchenService) SearchKitchen(shopID string, q string, page int, limit
 	}
 
 	return docList, pagination, nil
+}
+
+func (svc KitchenService) SearchKitchenStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.KitchenInfo, int, error) {
+	searchCols := []string{
+		"guidfixed",
+		"code",
+	}
+
+	projectQuery := map[string]interface{}{}
+
+	docList, total, err := svc.repo.FindLimit(shopID, map[string]interface{}{}, searchCols, q, skip, limit, sort, projectQuery)
+
+	if err != nil {
+		return []models.KitchenInfo{}, 0, err
+	}
+
+	return docList, total, nil
 }
 
 func (svc KitchenService) SaveInBatch(shopID string, authUsername string, dataList []models.Kitchen) (common.BulkImport, error) {
