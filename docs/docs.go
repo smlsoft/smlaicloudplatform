@@ -8405,7 +8405,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.PrinterTerminalPageResponse"
+                            "$ref": "#/definitions/models.PrinterPageResponse"
                         }
                     },
                     "401": {
@@ -8436,7 +8436,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.PrinterTerminal"
+                            "$ref": "#/definitions/models.Printer"
                         }
                     }
                 ],
@@ -8479,7 +8479,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.PrinterTerminal"
+                                "$ref": "#/definitions/models.Printer"
                             }
                         }
                     }
@@ -8539,7 +8539,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.PrinterTerminalFetchUpdateResponse"
+                            "$ref": "#/definitions/models.PrinterFetchUpdateResponse"
                         }
                     },
                     "401": {
@@ -8631,7 +8631,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.PrinterTerminalInfoResponse"
+                            "$ref": "#/definitions/models.PrinterInfoResponse"
                         }
                     },
                     "401": {
@@ -8669,7 +8669,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.PrinterTerminal"
+                            "$ref": "#/definitions/models.Printer"
                         }
                     }
                 ],
@@ -11622,8 +11622,8 @@ const docTemplate = `{
                 "isprimary": {
                     "type": "boolean"
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "name1": {
                     "type": "string",
@@ -11645,18 +11645,8 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "unitcode": {
                     "type": "string"
@@ -12623,8 +12613,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -12649,9 +12639,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -12673,14 +12660,7 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
@@ -12832,8 +12812,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -12858,9 +12838,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -12882,14 +12859,7 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
@@ -13118,8 +13088,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -13144,9 +13114,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -13168,14 +13135,7 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
@@ -13840,12 +13800,6 @@ const docTemplate = `{
         "models.Kitchen": {
             "type": "object",
             "properties": {
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductCategory"
-                    }
-                },
                 "code": {
                     "type": "string"
                 },
@@ -13867,19 +13821,19 @@ const docTemplate = `{
                 "printers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.PrinterTerminal"
+                        "type": "string"
                     }
                 },
                 "products": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Inventory"
+                        "type": "string"
                     }
                 },
                 "zones": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ShopZone"
+                        "type": "string"
                     }
                 }
             }
@@ -13887,12 +13841,6 @@ const docTemplate = `{
         "models.KitchenActivity": {
             "type": "object",
             "properties": {
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductCategory"
-                    }
-                },
                 "code": {
                     "type": "string"
                 },
@@ -13923,13 +13871,13 @@ const docTemplate = `{
                 "printers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.PrinterTerminal"
+                        "type": "string"
                     }
                 },
                 "products": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Inventory"
+                        "type": "string"
                     }
                 },
                 "shopid": {
@@ -13941,7 +13889,7 @@ const docTemplate = `{
                 "zones": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ShopZone"
+                        "type": "string"
                     }
                 }
             }
@@ -13983,12 +13931,6 @@ const docTemplate = `{
         "models.KitchenInfo": {
             "type": "object",
             "properties": {
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductCategory"
-                    }
-                },
                 "code": {
                     "type": "string"
                 },
@@ -14013,19 +13955,19 @@ const docTemplate = `{
                 "printers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.PrinterTerminal"
+                        "type": "string"
                     }
                 },
                 "products": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Inventory"
+                        "type": "string"
                     }
                 },
                 "zones": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ShopZone"
+                        "type": "string"
                     }
                 }
             }
@@ -14750,7 +14692,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.PrinterTerminal": {
+        "models.Printer": {
             "type": "object",
             "properties": {
                 "address": {
@@ -14779,7 +14721,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.PrinterTerminalActivity": {
+        "models.PrinterActivity": {
             "type": "object",
             "properties": {
                 "address": {
@@ -14823,7 +14765,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.PrinterTerminalDeleteActivity": {
+        "models.PrinterDeleteActivity": {
             "type": "object",
             "properties": {
                 "createdat": {
@@ -14843,11 +14785,11 @@ const docTemplate = `{
                 }
             }
         },
-        "models.PrinterTerminalFetchUpdateResponse": {
+        "models.PrinterFetchUpdateResponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/models.PrinterTerminalLastActivityResponse"
+                    "$ref": "#/definitions/models.PrinterLastActivityResponse"
                 },
                 "pagination": {
                     "$ref": "#/definitions/models.PaginationDataResponse"
@@ -14857,7 +14799,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.PrinterTerminalInfo": {
+        "models.PrinterInfo": {
             "type": "object",
             "properties": {
                 "address": {
@@ -14889,41 +14831,41 @@ const docTemplate = `{
                 }
             }
         },
-        "models.PrinterTerminalInfoResponse": {
+        "models.PrinterInfoResponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/models.PrinterTerminalInfo"
+                    "$ref": "#/definitions/models.PrinterInfo"
                 },
                 "success": {
                     "type": "boolean"
                 }
             }
         },
-        "models.PrinterTerminalLastActivityResponse": {
+        "models.PrinterLastActivityResponse": {
             "type": "object",
             "properties": {
                 "new": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.PrinterTerminalActivity"
+                        "$ref": "#/definitions/models.PrinterActivity"
                     }
                 },
                 "remove": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.PrinterTerminalDeleteActivity"
+                        "$ref": "#/definitions/models.PrinterDeleteActivity"
                     }
                 }
             }
         },
-        "models.PrinterTerminalPageResponse": {
+        "models.PrinterPageResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.PrinterTerminalInfo"
+                        "$ref": "#/definitions/models.PrinterInfo"
                     }
                 },
                 "pagination": {
@@ -15216,21 +15158,11 @@ const docTemplate = `{
         "models.ProductPrice": {
             "type": "object",
             "properties": {
-                "memberprice": {
-                    "type": "number"
-                },
-                "normalprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
-                    "type": "number"
+                    "type": "string"
                 }
             }
         },
@@ -15494,11 +15426,11 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "linenumber": {
+                "keynumber": {
                     "type": "integer"
                 },
-                "memberprice": {
-                    "type": "number"
+                "linenumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -15523,9 +15455,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -15547,12 +15476,6 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "qty": {
@@ -15876,11 +15799,11 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "linenumber": {
+                "keynumber": {
                     "type": "integer"
                 },
-                "memberprice": {
-                    "type": "number"
+                "linenumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -15905,9 +15828,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -15929,12 +15849,6 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "qty": {
@@ -16320,7 +16234,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "printer": {
-                    "$ref": "#/definitions/models.PrinterTerminal"
+                    "$ref": "#/definitions/models.Printer"
                 }
             }
         },
@@ -16355,7 +16269,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "printer": {
-                    "$ref": "#/definitions/models.PrinterTerminal"
+                    "$ref": "#/definitions/models.Printer"
                 },
                 "shopid": {
                     "type": "string"
@@ -16424,7 +16338,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "printer": {
-                    "$ref": "#/definitions/models.PrinterTerminal"
+                    "$ref": "#/definitions/models.Printer"
                 }
             }
         },

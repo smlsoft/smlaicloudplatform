@@ -214,8 +214,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -231,15 +231,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       unitcode:
         type: string
       unitname1:
@@ -893,8 +886,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -912,8 +905,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -929,12 +920,7 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1042,8 +1028,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1061,8 +1047,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1078,12 +1062,7 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1241,8 +1220,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1260,8 +1239,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1277,12 +1254,7 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1735,10 +1707,6 @@ definitions:
     type: object
   models.Kitchen:
     properties:
-      categories:
-        items:
-          $ref: '#/definitions/models.ProductCategory'
-        type: array
       code:
         type: string
       name1:
@@ -1753,23 +1721,19 @@ definitions:
         type: string
       printers:
         items:
-          $ref: '#/definitions/models.PrinterTerminal'
+          type: string
         type: array
       products:
         items:
-          $ref: '#/definitions/models.Inventory'
+          type: string
         type: array
       zones:
         items:
-          $ref: '#/definitions/models.ShopZone'
+          type: string
         type: array
     type: object
   models.KitchenActivity:
     properties:
-      categories:
-        items:
-          $ref: '#/definitions/models.ProductCategory'
-        type: array
       code:
         type: string
       createdat:
@@ -1790,11 +1754,11 @@ definitions:
         type: string
       printers:
         items:
-          $ref: '#/definitions/models.PrinterTerminal'
+          type: string
         type: array
       products:
         items:
-          $ref: '#/definitions/models.Inventory'
+          type: string
         type: array
       shopid:
         type: string
@@ -1802,7 +1766,7 @@ definitions:
         type: string
       zones:
         items:
-          $ref: '#/definitions/models.ShopZone'
+          type: string
         type: array
     type: object
   models.KitchenDeleteActivity:
@@ -1829,10 +1793,6 @@ definitions:
     type: object
   models.KitchenInfo:
     properties:
-      categories:
-        items:
-          $ref: '#/definitions/models.ProductCategory'
-        type: array
       code:
         type: string
       guidfixed:
@@ -1849,15 +1809,15 @@ definitions:
         type: string
       printers:
         items:
-          $ref: '#/definitions/models.PrinterTerminal'
+          type: string
         type: array
       products:
         items:
-          $ref: '#/definitions/models.Inventory'
+          type: string
         type: array
       zones:
         items:
-          $ref: '#/definitions/models.ShopZone'
+          type: string
         type: array
     type: object
   models.KitchenInfoResponse:
@@ -2349,7 +2309,7 @@ definitions:
       success:
         type: boolean
     type: object
-  models.PrinterTerminal:
+  models.Printer:
     properties:
       address:
         type: string
@@ -2368,7 +2328,7 @@ definitions:
       type:
         type: integer
     type: object
-  models.PrinterTerminalActivity:
+  models.PrinterActivity:
     properties:
       address:
         type: string
@@ -2397,7 +2357,7 @@ definitions:
       updatedat:
         type: string
     type: object
-  models.PrinterTerminalDeleteActivity:
+  models.PrinterDeleteActivity:
     properties:
       createdat:
         type: string
@@ -2410,16 +2370,16 @@ definitions:
       updatedat:
         type: string
     type: object
-  models.PrinterTerminalFetchUpdateResponse:
+  models.PrinterFetchUpdateResponse:
     properties:
       data:
-        $ref: '#/definitions/models.PrinterTerminalLastActivityResponse'
+        $ref: '#/definitions/models.PrinterLastActivityResponse'
       pagination:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
     type: object
-  models.PrinterTerminalInfo:
+  models.PrinterInfo:
     properties:
       address:
         type: string
@@ -2440,29 +2400,29 @@ definitions:
       type:
         type: integer
     type: object
-  models.PrinterTerminalInfoResponse:
+  models.PrinterInfoResponse:
     properties:
       data:
-        $ref: '#/definitions/models.PrinterTerminalInfo'
+        $ref: '#/definitions/models.PrinterInfo'
       success:
         type: boolean
     type: object
-  models.PrinterTerminalLastActivityResponse:
+  models.PrinterLastActivityResponse:
     properties:
       new:
         items:
-          $ref: '#/definitions/models.PrinterTerminalActivity'
+          $ref: '#/definitions/models.PrinterActivity'
         type: array
       remove:
         items:
-          $ref: '#/definitions/models.PrinterTerminalDeleteActivity'
+          $ref: '#/definitions/models.PrinterDeleteActivity'
         type: array
     type: object
-  models.PrinterTerminalPageResponse:
+  models.PrinterPageResponse:
     properties:
       data:
         items:
-          $ref: '#/definitions/models.PrinterTerminalInfo'
+          $ref: '#/definitions/models.PrinterInfo'
         type: array
       pagination:
         $ref: '#/definitions/models.PaginationDataResponse'
@@ -2664,17 +2624,10 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
+      keynumber:
+        type: integer
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
     type: object
   models.ProductUnit:
     properties:
@@ -2857,10 +2810,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -2878,8 +2831,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -2895,10 +2846,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -3119,10 +3066,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -3140,8 +3087,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3157,10 +3102,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -3417,7 +3358,7 @@ definitions:
       name5:
         type: string
       printer:
-        $ref: '#/definitions/models.PrinterTerminal'
+        $ref: '#/definitions/models.Printer'
     type: object
   models.ShopZoneActivity:
     properties:
@@ -3440,7 +3381,7 @@ definitions:
       name5:
         type: string
       printer:
-        $ref: '#/definitions/models.PrinterTerminal'
+        $ref: '#/definitions/models.Printer'
       shopid:
         type: string
       updatedat:
@@ -3485,7 +3426,7 @@ definitions:
       name5:
         type: string
       printer:
-        $ref: '#/definitions/models.PrinterTerminal'
+        $ref: '#/definitions/models.Printer'
     type: object
   models.ShopZoneInfoResponse:
     properties:
@@ -9271,7 +9212,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.PrinterTerminalPageResponse'
+            $ref: '#/definitions/models.PrinterPageResponse'
         "401":
           description: Unauthorized
           schema:
@@ -9290,7 +9231,7 @@ paths:
         name: Printer
         required: true
         schema:
-          $ref: '#/definitions/models.PrinterTerminal'
+          $ref: '#/definitions/models.Printer'
       responses:
         "200":
           description: OK
@@ -9342,7 +9283,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.PrinterTerminalInfoResponse'
+            $ref: '#/definitions/models.PrinterInfoResponse'
         "401":
           description: Unauthorized
           schema:
@@ -9366,7 +9307,7 @@ paths:
         name: Printer
         required: true
         schema:
-          $ref: '#/definitions/models.PrinterTerminal'
+          $ref: '#/definitions/models.Printer'
       responses:
         "200":
           description: OK
@@ -9392,7 +9333,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/models.PrinterTerminal'
+            $ref: '#/definitions/models.Printer'
           type: array
       responses:
         "201":
@@ -9430,7 +9371,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.PrinterTerminalFetchUpdateResponse'
+            $ref: '#/definitions/models.PrinterFetchUpdateResponse'
         "401":
           description: Unauthorized
           schema:
