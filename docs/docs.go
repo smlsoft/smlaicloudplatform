@@ -8245,6 +8245,59 @@ const docTemplate = `{
                 }
             }
         },
+        "/restaurant/kitchen/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/restaurant/kitchen/{id}": {
             "get": {
                 "security": [
@@ -11622,8 +11675,8 @@ const docTemplate = `{
                 "isprimary": {
                     "type": "boolean"
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "name1": {
                     "type": "string",
@@ -11645,8 +11698,18 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "price": {
-                    "type": "string"
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
                 },
                 "unitcode": {
                     "type": "string"
@@ -12613,8 +12676,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -12639,6 +12702,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -12660,7 +12726,14 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "type": "string"
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
                 },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
@@ -12812,8 +12885,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -12838,6 +12911,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -12859,7 +12935,14 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "type": "string"
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
                 },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
@@ -13088,8 +13171,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -13114,6 +13197,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -13135,7 +13221,14 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "type": "string"
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
                 },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
@@ -15158,11 +15251,21 @@ const docTemplate = `{
         "models.ProductPrice": {
             "type": "object",
             "properties": {
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
+                },
+                "normalprice": {
+                    "type": "number"
                 },
                 "price": {
-                    "type": "string"
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
                 }
             }
         },
@@ -15426,11 +15529,11 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
-                },
                 "linenumber": {
                     "type": "integer"
+                },
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -15455,6 +15558,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -15476,6 +15582,12 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "qty": {
@@ -15799,11 +15911,11 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
-                },
                 "linenumber": {
                     "type": "integer"
+                },
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -15828,6 +15940,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -15849,6 +15964,12 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "qty": {
