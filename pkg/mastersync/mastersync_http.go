@@ -38,7 +38,6 @@ type MasterSyncHttp struct {
 	activityModuleManager *ActivityModuleManager
 
 	svcMasterSync services.IMasterSyncService
-	svcEmployee   employee.EmployeeService
 	// svcProductBarcode productbarcodeService.ProductBarcodeHttpService
 }
 
@@ -95,6 +94,7 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	// Employee
 	repoEmployee := employee.NewEmployeeRepository(pst)
 	svcEmployee := employee.NewEmployeeService(repoEmployee, masterSyncCacheRepo)
+	activityModuleManager.Add(svcEmployee)
 
 	masterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache)
 	svcMasterSync := services.NewMasterSyncService(masterCacheSyncRepo)
@@ -105,7 +105,6 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 		activityModuleManager: activityModuleManager,
 
 		svcMasterSync: svcMasterSync,
-		svcEmployee:   *svcEmployee,
 		// svcProductBarcode: *svcProductBarcode,
 	}
 }
