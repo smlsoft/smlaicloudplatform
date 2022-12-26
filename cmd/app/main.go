@@ -25,6 +25,7 @@ import (
 	"smlcloudplatform/pkg/product/unit"
 	"smlcloudplatform/pkg/restaurant/kitchen"
 	"smlcloudplatform/pkg/restaurant/printer"
+	"smlcloudplatform/pkg/restaurant/restaurantsettings"
 	"smlcloudplatform/pkg/restaurant/shoptable"
 	"smlcloudplatform/pkg/restaurant/shopzone"
 	"smlcloudplatform/pkg/shop"
@@ -115,6 +116,7 @@ func main() {
 		shoptable.NewShopTableHttp(ms, cfg),
 		printer.NewPrinterHttp(ms, cfg),
 		kitchen.NewKitchenHttp(ms, cfg),
+		restaurantsettings.NewRestaurantSettingsHttp(ms, cfg),
 		//Journal
 		journal.NewJournalHttp(ms, cfg),
 		journal.NewJournalWs(ms, cfg),
