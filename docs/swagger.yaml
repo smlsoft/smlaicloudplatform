@@ -2999,6 +2999,87 @@ definitions:
       success:
         type: boolean
     type: object
+  models.RestaurantSettings:
+    properties:
+      body: {}
+      code:
+        type: string
+    type: object
+  models.RestaurantSettingsActivity:
+    properties:
+      body: {}
+      code:
+        type: string
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      shopid:
+        type: string
+      updatedat:
+        type: string
+    type: object
+  models.RestaurantSettingsDeleteActivity:
+    properties:
+      createdat:
+        type: string
+      deletedat:
+        type: string
+      guidfixed:
+        type: string
+      shopid:
+        type: string
+      updatedat:
+        type: string
+    type: object
+  models.RestaurantSettingsFetchUpdateResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.RestaurantSettingsLastActivityResponse'
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
+  models.RestaurantSettingsInfo:
+    properties:
+      body: {}
+      code:
+        type: string
+      guidfixed:
+        type: string
+    type: object
+  models.RestaurantSettingsInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.RestaurantSettingsInfo'
+      success:
+        type: boolean
+    type: object
+  models.RestaurantSettingsLastActivityResponse:
+    properties:
+      new:
+        items:
+          $ref: '#/definitions/models.RestaurantSettingsActivity'
+        type: array
+      remove:
+        items:
+          $ref: '#/definitions/models.RestaurantSettingsDeleteActivity'
+        type: array
+    type: object
+  models.RestaurantSettingsPageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.RestaurantSettingsInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
   models.Saleinvoice:
     properties:
       discountamount:
@@ -9485,6 +9566,196 @@ paths:
             items:
               $ref: '#/definitions/models.ApiResponse'
             type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/settings:
+    get:
+      consumes:
+      - application/json
+      description: List Restaurant Settings Category
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.RestaurantSettingsPageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+    post:
+      consumes:
+      - application/json
+      description: Restaurant Settings
+      parameters:
+      - description: Settings
+        in: body
+        name: Settings
+        required: true
+        schema:
+          $ref: '#/definitions/models.RestaurantSettings'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/settings/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Restaurant Settings
+      parameters:
+      - description: RestaurantSettings ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+    get:
+      consumes:
+      - application/json
+      description: Get Restaurant Settings
+      parameters:
+      - description: RestaurantSettings Id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.RestaurantSettingsInfoResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+    put:
+      consumes:
+      - application/json
+      description: Restaurant Settings
+      parameters:
+      - description: Settings ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Settings
+        in: body
+        name: Settings
+        required: true
+        schema:
+          $ref: '#/definitions/models.RestaurantSettings'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/settings/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create RestaurantSettings
+      parameters:
+      - description: RestaurantSettings
+        in: body
+        name: RestaurantSettings
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.RestaurantSettings'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkInsertResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/settings/fetchupdate:
+    get:
+      consumes:
+      - application/json
+      description: Fetch Restaurant RestaurantSettings Update By Date
+      parameters:
+      - description: DateTime YYYY-MM-DDTHH:mm
+        in: query
+        name: lastUpdate
+        required: true
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.RestaurantSettingsFetchUpdateResponse'
         "401":
           description: Unauthorized
           schema:
