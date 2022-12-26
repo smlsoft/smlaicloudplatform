@@ -44,6 +44,7 @@ func (h RestaurantSettingsHttp) RouteSetup() {
 	h.ms.GET("/restaurant/settings", h.SearchRestaurantSettings)
 	h.ms.POST("/restaurant/settings", h.CreateRestaurantSettings)
 	h.ms.GET("/restaurant/settings/:id", h.InfoRestaurantSettings)
+	h.ms.GET("/restaurant/settings/code/:code", h.InfoRestaurantSettingsByCode)
 	h.ms.PUT("/restaurant/settings/:id", h.UpdateRestaurantSettings)
 	h.ms.DELETE("/restaurant/settings/:id", h.DeleteRestaurantSettings)
 
@@ -177,6 +178,37 @@ func (h RestaurantSettingsHttp) InfoRestaurantSettings(ctx microservice.IContext
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// Get Restaurant Settings By Code Infomation godoc
+// @Description Get Restaurant Settings By Code
+// @Tags		Restaurant
+// @Param		code  path      string  true  "RestaurantSettings Code"
+// @Accept 		json
+// @Success		200	{object}	models.RestaurantSettingsInfoResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/settings/code/{code} [get]
+func (h RestaurantSettingsHttp) InfoRestaurantSettingsByCode(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	code := ctx.Param("code")
+
+	h.ms.Logger.Debugf("Get RestaurantSettings %v", code)
+	doc, err := h.svc.InfoRestaurantSettingsByCode(shopID, code)
+
+	if err != nil {
+		h.ms.Logger.Errorf("Error getting document %v: %v", code, err)
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}

@@ -18,6 +18,7 @@ type IRestaurantSettingsRepository interface {
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.RestaurantSettingsDoc, error)
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.RestaurantSettingsItemGuid, error)
+	FindOne(shopID string, filters interface{}) (models.RestaurantSettingsDoc, error)
 
 	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.RestaurantSettingsDeleteActivity, mongopagination.PaginationData, error)
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.RestaurantSettingsActivity, mongopagination.PaginationData, error)
