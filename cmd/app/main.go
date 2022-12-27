@@ -14,6 +14,9 @@ import (
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
+	"smlcloudplatform/pkg/payment/bankmaster"
+	"smlcloudplatform/pkg/payment/bookbank"
+	"smlcloudplatform/pkg/payment/qrpayment"
 	"smlcloudplatform/pkg/paymentmaster"
 	"smlcloudplatform/pkg/product/color"
 	"smlcloudplatform/pkg/product/inventory"
@@ -152,6 +155,10 @@ func main() {
 		customergroup.NewCustomerGroupHttp(ms, cfg),
 		product.NewProductHttp(ms, cfg),
 		accountperiodmaster.NewAccountPeriodMasterHttp(ms, cfg),
+
+		bankmaster.NewBankMasterHttp(ms, cfg),
+		bookbank.NewBookBankHttp(ms, cfg),
+		qrpayment.NewQrPaymentHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)

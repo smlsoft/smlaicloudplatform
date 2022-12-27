@@ -191,6 +191,21 @@ definitions:
       success:
         type: boolean
     type: object
+  models.BankMaster:
+    properties:
+      code:
+        type: string
+      logo:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - names
+    type: object
   models.Barcode:
     properties:
       barcode:
@@ -214,8 +229,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       name1:
         maxLength: 255
         type: string
@@ -231,8 +246,15 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       unitcode:
         type: string
       unitname1:
@@ -249,6 +271,21 @@ definitions:
     - name1
     type: object
   models.BarcodesModifyReqesut:
+    type: object
+  models.BookBank:
+    properties:
+      bankcode:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      passbook:
+        type: string
+    required:
+    - names
     type: object
   models.BulkInsertResponse:
     properties:
@@ -886,8 +923,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -905,6 +942,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -920,7 +959,12 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1028,8 +1072,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1047,6 +1091,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1062,7 +1108,12 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1220,8 +1271,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1239,6 +1290,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1254,7 +1307,12 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -2624,10 +2682,17 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
+      normalprice:
+        type: number
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
     type: object
   models.ProductUnit:
     properties:
@@ -2810,10 +2875,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
       linenumber:
         type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -2831,6 +2896,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -2846,6 +2913,10 @@ definitions:
         maxLength: 50
         type: string
       price:
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       qty:
         type: number
@@ -2923,6 +2994,33 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
+    type: object
+  models.QrPayment:
+    properties:
+      bankcode:
+        type: string
+      bookbankcode:
+        type: string
+      countrycode:
+        type: string
+      feerate:
+        type: number
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      paymentcode:
+        type: string
+      paymentlogo:
+        type: string
+      paymenttype:
+        type: integer
+      wallettype:
+        type: integer
+    required:
+    - names
     type: object
   models.Reference:
     properties:
@@ -3147,10 +3245,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
       linenumber:
         type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -3168,6 +3266,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3183,6 +3283,10 @@ definitions:
         maxLength: 50
         type: string
       price:
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       qty:
         type: number
@@ -7943,6 +8047,675 @@ paths:
       - AccessToken: []
       tags:
       - OptionPattern
+  /payment/bankmaster:
+    delete:
+      consumes:
+      - application/json
+      description: Delete BankMaster
+      parameters:
+      - description: BankMaster GUIDs
+        in: body
+        name: BankMaster
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BankMaster
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BankMaster
+    post:
+      consumes:
+      - application/json
+      description: Create BankMaster
+      parameters:
+      - description: BankMaster
+        in: body
+        name: BankMaster
+        required: true
+        schema:
+          $ref: '#/definitions/models.BankMaster'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BankMaster
+  /payment/bankmaster/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete BankMaster
+      parameters:
+      - description: BankMaster ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BankMaster
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: BankMaster ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BankMaster
+    put:
+      consumes:
+      - application/json
+      description: Update BankMaster
+      parameters:
+      - description: BankMaster ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: BankMaster
+        in: body
+        name: BankMaster
+        required: true
+        schema:
+          $ref: '#/definitions/models.BankMaster'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BankMaster
+  /payment/bankmaster/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create BankMaster
+      parameters:
+      - description: BankMaster
+        in: body
+        name: BankMaster
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.BankMaster'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BankMaster
+  /payment/bankmaster/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BankMaster
+  /payment/bookbank:
+    delete:
+      consumes:
+      - application/json
+      description: Delete BookBank
+      parameters:
+      - description: BookBank GUIDs
+        in: body
+        name: BookBank
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BookBank
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BookBank
+    post:
+      consumes:
+      - application/json
+      description: Create BookBank
+      parameters:
+      - description: BookBank
+        in: body
+        name: BookBank
+        required: true
+        schema:
+          $ref: '#/definitions/models.BookBank'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BookBank
+  /payment/bookbank/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete BookBank
+      parameters:
+      - description: BookBank ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BookBank
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: BookBank ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BookBank
+    put:
+      consumes:
+      - application/json
+      description: Update BookBank
+      parameters:
+      - description: BookBank ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: BookBank
+        in: body
+        name: BookBank
+        required: true
+        schema:
+          $ref: '#/definitions/models.BookBank'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BookBank
+  /payment/bookbank/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create BookBank
+      parameters:
+      - description: BookBank
+        in: body
+        name: BookBank
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.BookBank'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BookBank
+  /payment/bookbank/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - BookBank
+  /payment/qrpayment:
+    delete:
+      consumes:
+      - application/json
+      description: Delete QrPayment
+      parameters:
+      - description: QrPayment GUIDs
+        in: body
+        name: QrPayment
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - QrPayment
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - QrPayment
+    post:
+      consumes:
+      - application/json
+      description: Create QrPayment
+      parameters:
+      - description: QrPayment
+        in: body
+        name: QrPayment
+        required: true
+        schema:
+          $ref: '#/definitions/models.QrPayment'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - QrPayment
+  /payment/qrpayment/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete QrPayment
+      parameters:
+      - description: QrPayment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - QrPayment
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: QrPayment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - QrPayment
+    put:
+      consumes:
+      - application/json
+      description: Update QrPayment
+      parameters:
+      - description: QrPayment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: QrPayment
+        in: body
+        name: QrPayment
+        required: true
+        schema:
+          $ref: '#/definitions/models.QrPayment'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - QrPayment
+  /payment/qrpayment/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create QrPayment
+      parameters:
+      - description: QrPayment
+        in: body
+        name: QrPayment
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.QrPayment'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - QrPayment
+  /payment/qrpayment/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - QrPayment
   /paymentmaster:
     get:
       consumes:

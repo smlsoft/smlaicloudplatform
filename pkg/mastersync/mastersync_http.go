@@ -27,6 +27,15 @@ import (
 	productunitRepo "smlcloudplatform/pkg/product/unit/repositories"
 	productunitService "smlcloudplatform/pkg/product/unit/services"
 
+	bankmasterRepo "smlcloudplatform/pkg/payment/bankmaster/repositories"
+	bankmasterService "smlcloudplatform/pkg/payment/bankmaster/services"
+
+	bookbankRepo "smlcloudplatform/pkg/payment/bookbank/repositories"
+	bookbankService "smlcloudplatform/pkg/payment/bookbank/services"
+
+	qrpaymentRepo "smlcloudplatform/pkg/payment/qrpayment/repositories"
+	qrpaymentService "smlcloudplatform/pkg/payment/qrpayment/services"
+
 	"smlcloudplatform/pkg/mastersync/repositories"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
@@ -95,6 +104,21 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	repoEmployee := employee.NewEmployeeRepository(pst)
 	svcEmployee := employee.NewEmployeeService(repoEmployee, masterSyncCacheRepo)
 	activityModuleManager.Add(svcEmployee)
+
+	// Bank Master
+	repoBankMaster := bankmasterRepo.NewBankMasterRepository(pst)
+	svcBankMaster := bankmasterService.NewBankMasterHttpService(repoBankMaster, masterSyncCacheRepo)
+	activityModuleManager.Add(svcBankMaster)
+
+	// Book Bank
+	repoBookBank := bookbankRepo.NewBookBankRepository(pst)
+	svcBookBank := bookbankService.NewBookBankHttpService(repoBookBank, masterSyncCacheRepo)
+	activityModuleManager.Add(svcBookBank)
+
+	// Qr Payment
+	qrpaymentRepo := qrpaymentRepo.NewQrPaymentRepository(pst)
+	svcQrPayment := qrpaymentService.NewQrPaymentHttpService(qrpaymentRepo, masterSyncCacheRepo)
+	activityModuleManager.Add(svcQrPayment)
 
 	masterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache)
 	svcMasterSync := services.NewMasterSyncService(masterCacheSyncRepo)
