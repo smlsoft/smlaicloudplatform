@@ -9,8 +9,8 @@ import (
 const shopSettingsCollectionName = "restaurantSettings"
 
 type RestaurantSettings struct {
-	Code string      `json:"code" bson:"code"`
-	Body interface{} `json:"body" bson:"body"`
+	Code string `json:"code" bson:"code"`
+	Body string `json:"body" bson:"body"`
 }
 
 type RestaurantSettingsInfo struct {
