@@ -12393,7 +12393,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_pkg_images_models.Image"
+                                "$ref": "#/definitions/models.Image"
                             }
                         }
                     },
@@ -12447,7 +12447,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_pkg_images_models.Image"
+                                "$ref": "#/definitions/models.Image"
                             }
                         }
                     },
@@ -13181,11 +13181,26 @@ const docTemplate = `{
         "models.BookBank": {
             "type": "object",
             "required": [
+                "banknames",
                 "names"
             ],
             "properties": {
                 "bankcode": {
                     "type": "string"
+                },
+                "banknames": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Image"
+                    }
                 },
                 "names": {
                     "type": "array",
@@ -13648,7 +13663,7 @@ const docTemplate = `{
                 "images": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_customershop_customer_models.Image"
+                        "$ref": "#/definitions/models.Image"
                     }
                 },
                 "names": {
@@ -14002,6 +14017,17 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "models.Image": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -17952,6 +17978,12 @@ const docTemplate = `{
                 "branchcode": {
                     "type": "string"
                 },
+                "isfavorite": {
+                    "type": "boolean"
+                },
+                "lastaccessedat": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -18793,25 +18825,6 @@ const docTemplate = `{
                     "type": "integer",
                     "maximum": 4294967295,
                     "minimum": 0
-                }
-            }
-        },
-        "smlcloudplatform_pkg_customershop_customer_models.Image": {
-            "type": "object",
-            "properties": {
-                "uri": {
-                    "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_images_models.Image": {
-            "type": "object",
-            "properties": {
-                "uri": {
-                    "type": "string"
                 }
             }
         },
