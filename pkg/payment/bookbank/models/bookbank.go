@@ -19,7 +19,7 @@ type BookBank struct {
 
 type Image struct {
 	XOrder int    `json:"xorder" bson:"xorder"`
-	Url    string `json:"url" bson:"url"`
+	Uri    string `json:"uri" bson:"uri"`
 }
 
 type BookBankInfo struct {

@@ -187,6 +187,8 @@ func (svc BookBankHttpService) SearchBookBankStep(shopID string, langCode string
 		"guidfixed": 1,
 		"passbook":  1,
 		"bankcode":  1,
+		"banknames": 1,
+		"images":    1,
 	}
 
 	if langCode != "" {
