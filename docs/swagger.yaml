@@ -276,6 +276,16 @@ definitions:
     properties:
       bankcode:
         type: string
+      banknames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      images:
+        items:
+          $ref: '#/definitions/models.Image'
+        type: array
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -285,6 +295,7 @@ definitions:
       passbook:
         type: string
     required:
+    - banknames
     - names
     type: object
   models.BulkInsertResponse:
@@ -590,7 +601,7 @@ definitions:
         type: string
       images:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_customershop_customer_models.Image'
+          $ref: '#/definitions/models.Image'
         type: array
       names:
         items:
@@ -828,6 +839,13 @@ definitions:
         type: array
       username:
         type: string
+    type: object
+  models.Image:
+    properties:
+      url:
+        type: string
+      xorder:
+        type: integer
     type: object
   models.ImageReference:
     properties:
@@ -3521,6 +3539,10 @@ definitions:
     properties:
       branchcode:
         type: string
+      isfavorite:
+        type: boolean
+      lastaccessedat:
+        type: string
       name:
         type: string
       role:
@@ -4094,18 +4116,6 @@ definitions:
         maximum: 4294967295
         minimum: 0
         type: integer
-    type: object
-  smlcloudplatform_pkg_customershop_customer_models.Image:
-    properties:
-      uri:
-        type: string
-      xorder:
-        type: integer
-    type: object
-  smlcloudplatform_pkg_images_models.Image:
-    properties:
-      uri:
-        type: string
     type: object
   smlcloudplatform_pkg_product_inventory_models.Unit:
     properties:
@@ -11875,7 +11885,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/smlcloudplatform_pkg_images_models.Image'
+              $ref: '#/definitions/models.Image'
             type: array
         "400":
           description: Bad Request
@@ -11909,7 +11919,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/smlcloudplatform_pkg_images_models.Image'
+              $ref: '#/definitions/models.Image'
             type: array
         "400":
           description: Bad Request

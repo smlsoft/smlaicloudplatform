@@ -13,6 +13,13 @@ type BookBank struct {
 	PassBook                 string          `json:"passbook" bson:"passbook"`
 	BankCode                 string          `json:"bankcode" bson:"bankcode"`
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	BankNames                *[]models.NameX `json:"banknames" bson:"banknames" validate:"required,min=1,unique=Code,dive"`
+	Images                   *[]Image        `json:"images" bson:"images" `
+}
+
+type Image struct {
+	XOrder int    `json:"xorder" bson:"xorder"`
+	Url    string `json:"url" bson:"url"`
 }
 
 type BookBankInfo struct {

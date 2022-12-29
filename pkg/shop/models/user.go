@@ -84,10 +84,12 @@ const (
 )
 
 type ShopUser struct {
-	ID       primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Username string             `json:"username" bson:"username"`
-	ShopID   string             `json:"shopid" bson:"shopid"`
-	Role     UserRole           `json:"role" bson:"role"`
+	ID             primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Username       string             `json:"username" bson:"username"`
+	ShopID         string             `json:"shopid" bson:"shopid"`
+	Role           UserRole           `json:"role" bson:"role"`
+	IsFavorite     bool               `json:"isfavorite" bson:"isfavorite"`
+	LastAccessedAt time.Time          `json:"lastaccessedat" bson:"lastaccessedat"`
 }
 
 func (*ShopUser) CollectionName() string {
@@ -95,10 +97,12 @@ func (*ShopUser) CollectionName() string {
 }
 
 type ShopUserInfo struct {
-	ShopID     string   `json:"shopid" bson:"shopid"`
-	Name       string   `json:"name" bson:"name"`
-	BranchCode string   `json:"branchcode" bson:"branchcode"`
-	Role       UserRole `json:"role" bson:"role"`
+	ShopID         string    `json:"shopid" bson:"shopid"`
+	Name           string    `json:"name" bson:"name"`
+	BranchCode     string    `json:"branchcode" bson:"branchcode"`
+	Role           UserRole  `json:"role" bson:"role"`
+	IsFavorite     bool      `json:"isfavorite" bson:"isfavorite"`
+	LastAccessedAt time.Time `json:"lastaccessedat" bson:"lastaccessedat"`
 }
 
 func (*ShopUserInfo) CollectionName() string {
