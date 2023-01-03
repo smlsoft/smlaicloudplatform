@@ -146,7 +146,7 @@ func (svc RestaurantSettingsService) InfoRestaurantSettings(shopID string, guid 
 
 func (svc RestaurantSettingsService) ListRestaurantSettingsByCode(shopID string, code string, pagable common.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error) {
 
-	docList, pagination, err := svc.repo.FindPageFilterSort(shopID, map[string]interface{}{"code": code}, []string{}, pagable.Q, pagable.Page, pagable.Limit, pagable.Sorts)
+	docList, pagination, err := svc.repo.FindPageFilterSort(shopID, map[string]interface{}{"code": code}, []string{"body"}, pagable.Q, pagable.Page, pagable.Limit, pagable.Sorts)
 
 	if err != nil {
 		return []models.RestaurantSettingsInfo{}, mongopagination.PaginationData{}, err
