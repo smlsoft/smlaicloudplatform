@@ -205,7 +205,9 @@ func (h RestaurantSettingsHttp) InfoRestaurantSettingsByCode(ctx microservice.IC
 	code := ctx.Param("code")
 
 	h.ms.Logger.Debugf("Get RestaurantSettings %v", code)
-	doc, err := h.svc.InfoRestaurantSettingsByCode(shopID, code)
+	pageable := utils.GetSearchPageable(ctx.QueryParam)
+
+	docList, pagination, err := h.svc.ListRestaurantSettingsByCode(shopID, code, pageable)
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", code, err)
@@ -214,8 +216,9 @@ func (h RestaurantSettingsHttp) InfoRestaurantSettingsByCode(ctx microservice.IC
 	}
 
 	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success: true,
-		Data:    doc,
+		Success:    true,
+		Data:       docList,
+		Pagination: pagination,
 	})
 	return nil
 }

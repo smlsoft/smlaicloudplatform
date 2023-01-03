@@ -13,7 +13,6 @@ import (
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -24,7 +23,7 @@ type IRestaurantSettingsService interface {
 	InfoRestaurantSettings(shopID string, guid string) (models.RestaurantSettingsInfo, error)
 	SearchRestaurantSettings(shopID string, q string, page int, limit int) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.RestaurantSettings) (common.BulkImport, error)
-	InfoRestaurantSettingsByCode(shopID string, code string) (models.RestaurantSettingsInfo, error)
+	ListRestaurantSettingsByCode(shopID string, code string, pagable common.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
 
 	LastActivity(shopID string, action string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error)
 	GetModuleName() string
@@ -49,16 +48,6 @@ func NewRestaurantSettingsService(repo IRestaurantSettingsRepository, syncCacheR
 
 func (svc RestaurantSettingsService) CreateRestaurantSettings(shopID string, authUsername string, doc models.RestaurantSettings) (string, error) {
 
-	findDoc, err := svc.repo.FindOne(shopID, bson.M{"code": doc.Code})
-
-	if err != nil {
-		return "", err
-	}
-
-	if findDoc.ID != primitive.NilObjectID {
-		return "", fmt.Errorf("restaurant settings with code %s already exists", doc.Code)
-	}
-
 	newGuidFixed := utils.NewGUID()
 
 	docData := models.RestaurantSettingsDoc{}
@@ -71,7 +60,7 @@ func (svc RestaurantSettingsService) CreateRestaurantSettings(shopID string, aut
 
 	docData.LastUpdatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err := svc.repo.Create(docData)
 
 	if err != nil {
 		return "", err
@@ -92,16 +81,6 @@ func (svc RestaurantSettingsService) UpdateRestaurantSettings(shopID string, gui
 
 	if findDoc.ID == primitive.NilObjectID {
 		return errors.New("document not found")
-	}
-
-	findDocExists, err := svc.repo.FindOne(shopID, bson.M{"code": doc.Code})
-
-	if err != nil {
-		return err
-	}
-
-	if findDocExists.GuidFixed != findDoc.GuidFixed {
-		return fmt.Errorf("restaurant settings with code %s already exists", doc.Code)
 	}
 
 	findDoc.RestaurantSettings = doc
@@ -149,19 +128,15 @@ func (svc RestaurantSettingsService) InfoRestaurantSettings(shopID string, guid 
 	return findDoc.RestaurantSettingsInfo, nil
 }
 
-func (svc RestaurantSettingsService) InfoRestaurantSettingsByCode(shopID string, code string) (models.RestaurantSettingsInfo, error) {
+func (svc RestaurantSettingsService) ListRestaurantSettingsByCode(shopID string, code string, pagable common.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error) {
 
-	findDoc, err := svc.repo.FindOne(shopID, bson.M{"code": code})
+	docList, pagination, err := svc.repo.FindPageFilterSort(shopID, map[string]interface{}{"code": code}, []string{}, pagable.Q, pagable.Page, pagable.Limit, pagable.Sorts)
 
 	if err != nil {
-		return models.RestaurantSettingsInfo{}, err
+		return []models.RestaurantSettingsInfo{}, mongopagination.PaginationData{}, err
 	}
 
-	if findDoc.ID == primitive.NilObjectID {
-		return models.RestaurantSettingsInfo{}, errors.New("document not found")
-	}
-
-	return findDoc.RestaurantSettingsInfo, nil
+	return docList, pagination, nil
 
 }
 
