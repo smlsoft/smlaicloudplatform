@@ -13,12 +13,14 @@ import (
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type IRestaurantSettingsService interface {
 	CreateRestaurantSettings(shopID string, authUsername string, doc models.RestaurantSettings) (string, error)
 	UpdateRestaurantSettings(shopID string, guid string, authUsername string, doc models.RestaurantSettings) error
+	DeleteByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	DeleteRestaurantSettings(shopID string, guid string, authUsername string) error
 	InfoRestaurantSettings(shopID string, guid string) (models.RestaurantSettingsInfo, error)
 	SearchRestaurantSettings(shopID string, q string, page int, limit int) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
@@ -109,6 +111,20 @@ func (svc RestaurantSettingsService) DeleteRestaurantSettings(shopID string, gui
 	}
 
 	svc.saveMasterSync(shopID)
+
+	return nil
+}
+
+func (svc RestaurantSettingsService) DeleteByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+
+	deleteFilterQuery := map[string]interface{}{
+		"guidfixed": bson.M{"$in": GUIDs},
+	}
+
+	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

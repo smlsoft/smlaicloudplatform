@@ -14,6 +14,7 @@ type IRestaurantSettingsRepository interface {
 	Create(category models.RestaurantSettingsDoc) (string, error)
 	CreateInBatch(docList []models.RestaurantSettingsDoc) error
 	Update(shopID string, guid string, category models.RestaurantSettingsDoc) error
+	Delete(shopID string, username string, filters map[string]interface{}) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.RestaurantSettingsDoc, error)
