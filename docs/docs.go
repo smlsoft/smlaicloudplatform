@@ -9943,6 +9943,48 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Restaurant Settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "Restaurant Settings GUIDs",
+                        "name": "Settings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
             }
         },
         "/restaurant/settings/bulk": {
@@ -17289,7 +17331,9 @@ const docTemplate = `{
         "models.RestaurantSettings": {
             "type": "object",
             "properties": {
-                "body": {},
+                "body": {
+                    "type": "string"
+                },
                 "code": {
                     "type": "string"
                 }
@@ -17298,7 +17342,9 @@ const docTemplate = `{
         "models.RestaurantSettingsActivity": {
             "type": "object",
             "properties": {
-                "body": {},
+                "body": {
+                    "type": "string"
+                },
                 "code": {
                     "type": "string"
                 },
@@ -17356,7 +17402,9 @@ const docTemplate = `{
         "models.RestaurantSettingsInfo": {
             "type": "object",
             "properties": {
-                "body": {},
+                "body": {
+                    "type": "string"
+                },
                 "code": {
                     "type": "string"
                 },

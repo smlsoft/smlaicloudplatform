@@ -47,6 +47,7 @@ func (h RestaurantSettingsHttp) RouteSetup() {
 	h.ms.GET("/restaurant/settings/code/:code", h.InfoRestaurantSettingsByCode)
 	h.ms.PUT("/restaurant/settings/:id", h.UpdateRestaurantSettings)
 	h.ms.DELETE("/restaurant/settings/:id", h.DeleteRestaurantSettings)
+	h.ms.DELETE("/restaurant/settings", h.DeleteByGUIDs)
 
 }
 
@@ -153,6 +154,44 @@ func (h RestaurantSettingsHttp) DeleteRestaurantSettings(ctx microservice.IConte
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		ID:      id,
+	})
+
+	return nil
+}
+
+// Delete Restaurant Settings godoc
+// @Description Delete Restaurant Settings
+// @Tags		Restaurant
+// @Param		Restaurant Settings  body      []string  true  "Restaurant Settings GUIDs"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/settings [delete]
+func (h RestaurantSettingsHttp) DeleteByGUIDs(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	docReq := []string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.DeleteByGUIDs(shopID, authUsername, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
 	})
 
 	return nil
