@@ -158,12 +158,7 @@ func (svc RestaurantSettingsService) ListRestaurantSettingsByCode(shopID string,
 
 func (svc RestaurantSettingsService) SearchRestaurantSettings(shopID string, q string, page int, limit int) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
-		"guidfixed",
-		"code",
-	}
-
-	for i := range [5]bool{} {
-		searchCols = append(searchCols, fmt.Sprintf("name%d", (i+1)))
+		"body",
 	}
 
 	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
