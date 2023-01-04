@@ -34,8 +34,9 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 
 	shopRepo := shop.NewShopRepository(pst)
 	shopUserRepo := shop.NewShopUserRepository(pst)
+	shopUserAccessLogRepo := shop.NewShopUserAccessLogRepository(pst)
 	authRepo := NewAuthenticationRepository(pst)
-	authenticationService := NewAuthenticationService(authRepo, shopUserRepo, authService, utils.HashPassword, utils.CheckHashPassword, ms.TimeNow)
+	authenticationService := NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, authService, utils.HashPassword, utils.CheckHashPassword, ms.TimeNow)
 
 	shopService := shop.NewShopService(shopRepo, shopUserRepo, utils.NewGUID, ms.TimeNow)
 	shopUserService := shop.NewShopUserService(shopUserRepo)
@@ -93,7 +94,11 @@ func (h AuthenticationHttp) Login(ctx microservice.IContext) error {
 		return err
 	}
 
-	tokenString, err := h.authenticationService.Login(userReq)
+	authContext := AuthenticationContext{
+		Ip: ctx.RealIp(),
+	}
+
+	tokenString, err := h.authenticationService.Login(userReq, authContext)
 
 	if err != nil {
 		ctx.ResponseError(400, "login failed.")
@@ -363,7 +368,11 @@ func (h AuthenticationHttp) SelectShop(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.authenticationService.AccessShop(shopSelectReq.ShopID, authUsername, authorizationHeader)
+	authContext := AuthenticationContext{
+		Ip: ctx.RealIp(),
+	}
+
+	err = h.authenticationService.AccessShop(shopSelectReq.ShopID, authUsername, authorizationHeader, authContext)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, common.ApiResponse{
@@ -380,7 +389,7 @@ func (h AuthenticationHttp) SelectShop(ctx microservice.IContext) error {
 	return nil
 }
 
-// List Merchant godoc
+// List Shop godoc
 // @Description List Merchant In My Account
 // @Tags		Authentication
 // @Accept 		json
@@ -415,6 +424,43 @@ func (h AuthenticationHttp) ListShopCanAccess(ctx microservice.IContext) error {
 			Success:    true,
 			Data:       docList,
 			Pagination: pagination,
+		},
+	)
+
+	return nil
+}
+
+// Favorite Shop godoc
+// @Description Favorite Shop In Account
+// @Tags		Authentication
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.ApiResponse
+// @Security     AccessToken
+// @Router /favorite-shop [put]
+func (h AuthenticationHttp) UpdateShopFavorite(ctx microservice.IContext) error {
+	authUsername := ctx.UserInfo().Username
+
+	input := ctx.ReadInput()
+
+	reqBody := ShopFavoriteRequest{}
+	err := json.Unmarshal([]byte(input), &reqBody)
+
+	if err != nil {
+		ctx.ResponseError(400, "request payload invalid")
+		return err
+	}
+
+	err = h.authenticationService.UpdateFavoriteShop(reqBody.ShopID, authUsername, reqBody.IsFavorite)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return nil
+	}
+
+	ctx.Response(http.StatusOK,
+		common.ApiResponse{
+			Success: true,
 		},
 	)
 

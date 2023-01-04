@@ -115,6 +115,18 @@ type UserRoleRequest struct {
 	Role     UserRole `json:"role" bson:"role"`
 }
 
+type ShopUserAccessLog struct {
+	ID             primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	ShopID         string             `json:"shopid" bson:"shopid"`
+	Username       string             `json:"username" bson:"username"`
+	Ip             string             `json:"ip" bson:"ip"`
+	LastAccessedAt time.Time          `json:"lastaccessedat" bson:"lastaccessedat"`
+}
+
+func (*ShopUserAccessLog) CollectionName() string {
+	return "shopUserAccessLogs"
+}
+
 // func (u UserRole) EqualString(userRoleStr string)  bool {
 // 	switch u {
 // 		case

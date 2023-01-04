@@ -67,6 +67,7 @@ func TestAuthService_Login(t *testing.T) {
 
 	authRepo := new(AuthenticationRepositoryMock)
 	shopUserRepo := new(ShopUserRepositoryMock)
+	shopUserAccessLogRepo := new(ShopUserAccessLogRepositoryMock)
 	microAuthServiceMock := &AuthServiceMock{}
 
 	mockLoginData(authRepo, shopUserRepo, microAuthServiceMock)
@@ -144,7 +145,7 @@ func TestAuthService_Login(t *testing.T) {
 		},
 	}
 
-	authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
+	authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
 
@@ -153,7 +154,11 @@ func TestAuthService_Login(t *testing.T) {
 			userReq.Password = tt.args.password
 			userReq.ShopID = tt.args.shopID
 
-			tokenResult, err := authService.Login(userReq)
+			authContext := authentication.AuthenticationContext{
+				Ip: "localhost",
+			}
+
+			tokenResult, err := authService.Login(userReq, authContext)
 
 			if tt.wantErr {
 				assert.NotNil(t, err)
@@ -170,6 +175,7 @@ func TestAuthService_Login(t *testing.T) {
 func TestAuthService_Register(t *testing.T) {
 	authRepo := new(AuthenticationRepositoryMock)
 	shopUserRepo := new(ShopUserRepositoryMock)
+	shopUserAccessLogRepo := new(ShopUserAccessLogRepositoryMock)
 	microAuthServiceMock := &AuthServiceMock{}
 
 	mockLoginData(authRepo, shopUserRepo, microAuthServiceMock)
@@ -210,7 +216,7 @@ func TestAuthService_Register(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
+			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
 
 			userReq := models.UserRequest{}
 			userReq.Username = tt.args.username
@@ -234,6 +240,7 @@ func TestAuthService_Register(t *testing.T) {
 func TestAuthService_Update(t *testing.T) {
 	authRepo := new(AuthenticationRepositoryMock)
 	shopUserRepo := new(ShopUserRepositoryMock)
+	shopUserAccessLogRepo := new(ShopUserAccessLogRepositoryMock)
 	microAuthServiceMock := &AuthServiceMock{}
 
 	userDoc := &models.UserDoc{}
@@ -273,7 +280,7 @@ func TestAuthService_Update(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
+			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
 
 			userReq := models.UserProfileRequest{}
 			userReq.Name = tt.args.name
@@ -293,6 +300,7 @@ func TestAuthService_Update(t *testing.T) {
 func TestAuthService_UpdatePassword(t *testing.T) {
 	authRepo := new(AuthenticationRepositoryMock)
 	shopUserRepo := new(ShopUserRepositoryMock)
+	shopUserAccessLogRepo := new(ShopUserAccessLogRepositoryMock)
 	microAuthServiceMock := &AuthServiceMock{}
 
 	userDoc := &models.UserDoc{}
@@ -343,7 +351,7 @@ func TestAuthService_UpdatePassword(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
+			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
 
 			err := authService.UpdatePassword(tt.args.username, tt.args.currentPassword, tt.args.newPassword)
 
@@ -360,6 +368,7 @@ func TestAuthService_UpdatePassword(t *testing.T) {
 func TestAuthService_AccessShop(t *testing.T) {
 	authRepo := new(AuthenticationRepositoryMock)
 	shopUserRepo := new(ShopUserRepositoryMock)
+	shopUserAccessLogRepo := new(ShopUserAccessLogRepositoryMock)
 	microAuthServiceMock := &AuthServiceMock{}
 
 	microAuthServiceMock.On("GetTokenFromAuthorizationHeader", "authorization_header_valid").Return("valid_token", nil)
@@ -426,11 +435,14 @@ func TestAuthService_AccessShop(t *testing.T) {
 		},
 	}
 
+	authContext := authentication.AuthenticationContext{
+		Ip: "localhost",
+	}
+
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
-
-			err := authService.AccessShop(tt.args.shopID, tt.args.username, tt.args.authorizationHeader)
+			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
+			err := authService.AccessShop(tt.args.shopID, tt.args.username, tt.args.authorizationHeader, authContext)
 
 			if tt.wantErr {
 				assert.NotNil(t, err)
@@ -470,6 +482,16 @@ func (m *ShopUserRepositoryMock) Save(shopID string, username string, role model
 	return args.Error(0)
 }
 
+func (m *ShopUserRepositoryMock) UpdateLastAccess(shopID string, username string, lastAccessedAt time.Time) error {
+	args := m.Called(shopID, username, lastAccessedAt)
+	return args.Error(0)
+}
+
+func (m *ShopUserRepositoryMock) SaveFavorite(shopID string, username string, isFavorite bool) error {
+	args := m.Called(shopID, username, isFavorite)
+	return args.Error(0)
+}
+
 func (m *ShopUserRepositoryMock) Delete(shopID string, username string) error {
 	args := m.Called(shopID, username)
 	return args.Error(0)
@@ -505,6 +527,16 @@ func (m *ShopUserRepositoryMock) FindByUsernamePage(username string, q string, p
 func (m *ShopUserRepositoryMock) FindByUserInShopPage(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, paginate.PaginationData, error) {
 	args := m.Called(shopID, q, page, limit, sort)
 	return args.Get(0).([]models.ShopUser), args.Get(1).(paginate.PaginationData), args.Error(2)
+}
+
+// Shop User Access Log
+type ShopUserAccessLogRepositoryMock struct {
+	mock.Mock
+}
+
+func (m *ShopUserAccessLogRepositoryMock) Create(shopUserAccessLog models.ShopUserAccessLog) error {
+	args := m.Called(shopUserAccessLog)
+	return args.Error(0)
 }
 
 type AuthServiceMock struct {

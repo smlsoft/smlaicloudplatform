@@ -12,6 +12,7 @@ type IContext interface {
 	Log(message string)
 	UserInfo() models.UserInfo
 	Header(attribute string) string
+	RealIp() string
 	Param(name string) string
 	QueryParam(name string) string
 	ReadInput() string

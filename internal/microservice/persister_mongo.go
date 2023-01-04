@@ -3,6 +3,7 @@ package microservice
 import (
 	"context"
 	"fmt"
+	"log"
 	"sort"
 	"sync"
 	"time"
@@ -10,6 +11,7 @@ import (
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/event"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -110,14 +112,14 @@ func (pst *PersisterMongo) getClient() (*mongo.Database, error) {
 		return nil, err
 	}
 
-	// cmdMonitor := &event.CommandMonitor{
-	// 	Started: func(_ context.Context, evt *event.CommandStartedEvent) {
-	// 		log.Print(evt.Command)
-	// 	},
-	// }
+	cmdMonitor := &event.CommandMonitor{
+		Started: func(_ context.Context, evt *event.CommandStartedEvent) {
+			log.Print(evt.Command)
+		},
+	}
 
-	// client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr).SetMonitor(cmdMonitor))
-	client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr))
+	client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr).SetMonitor(cmdMonitor))
+	// client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr))
 	if err != nil {
 		return nil, err
 	}

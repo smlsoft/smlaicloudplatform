@@ -6,6 +6,7 @@ import (
 	"smlcloudplatform/pkg/shop"
 	"smlcloudplatform/pkg/shop/models"
 	"testing"
+	"time"
 
 	paginate "github.com/gobeam/mongo-go-pagination"
 	"github.com/stretchr/testify/mock"
@@ -115,6 +116,16 @@ type ShopUserRepositoryMock struct {
 
 func (m *ShopUserRepositoryMock) Save(shopID string, username string, role models.UserRole) error {
 	args := m.Called(shopID, username, role)
+	return args.Error(0)
+}
+
+func (m *ShopUserRepositoryMock) UpdateLastAccess(shopID string, username string, lastAccessedAt time.Time) error {
+	args := m.Called(shopID, username, lastAccessedAt)
+	return args.Error(0)
+}
+
+func (m *ShopUserRepositoryMock) SaveFavorite(shopID string, username string, isFavorite bool) error {
+	args := m.Called(shopID, username, isFavorite)
 	return args.Error(0)
 }
 

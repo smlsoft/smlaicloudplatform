@@ -75,6 +75,10 @@ func (ctx *ConsumerContext) Header(attribute string) string {
 	return ""
 }
 
+func (ctx *ConsumerContext) RealIp() string {
+	return ""
+}
+
 func (ctx *ConsumerContext) FormFile(attribute string) (*multipart.FileHeader, error) {
 	return nil, nil
 }

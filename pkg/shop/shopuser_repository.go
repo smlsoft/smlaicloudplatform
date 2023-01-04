@@ -3,6 +3,7 @@ package shop
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/shop/models"
+	"time"
 
 	paginate "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
@@ -12,6 +13,8 @@ import (
 
 type IShopUserRepository interface {
 	Save(shopID string, username string, role models.UserRole) error
+	UpdateLastAccess(shopID string, username string, lastAccessedAt time.Time) error
+	SaveFavorite(shopID string, username string, isFavorite bool) error
 	Delete(shopID string, username string) error
 	FindByShopIDAndUsernameInfo(shopID string, username string) (models.ShopUserInfo, error)
 	FindByShopIDAndUsername(shopID string, username string) (models.ShopUser, error)
@@ -36,6 +39,30 @@ func (svc ShopUserRepository) Save(shopID string, username string, role models.U
 
 	optUpdate := options.Update().SetUpsert(true)
 	err := svc.pst.Update(&models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, bson.M{"$set": bson.M{"role": role}}, optUpdate)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc ShopUserRepository) UpdateLastAccess(shopID string, username string, lastAccessedAt time.Time) error {
+
+	optUpdate := options.Update().SetUpsert(true)
+	err := svc.pst.Update(&models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, bson.M{"$set": bson.M{"lastaccessedat": lastAccessedAt}}, optUpdate)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc ShopUserRepository) SaveFavorite(shopID string, username string, isFavorite bool) error {
+
+	optUpdate := options.Update().SetUpsert(true)
+	err := svc.pst.Update(&models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, bson.M{"$set": bson.M{"isfavorite": isFavorite}}, optUpdate)
 
 	if err != nil {
 		return err
@@ -149,16 +176,23 @@ func (repo ShopUserRepository) FindByUsernamePage(username string, q string, pag
 		},
 		bson.M{
 			"$project": bson.M{
-				"_id":        1,
-				"role":       1,
-				"shopid":     1,
-				"name":       bson.M{"$first": "$shopInfo.name1"},
-				"branchcode": bson.M{"$first": "$shopInfo.branchcode"},
+				"_id":            1,
+				"role":           1,
+				"shopid":         1,
+				"isfavorite":     1,
+				"lastaccessedat": 1,
+				"name":           bson.M{"$first": "$shopInfo.name1"},
+				"branchcode":     bson.M{"$first": "$shopInfo.branchcode"},
 			},
 		},
 		bson.M{
 			"$match": bson.M{
 				"$or": searchFilterList,
+			},
+		},
+		bson.M{
+			"$sort": bson.M{
+				"lastaccessedat": -1,
 			},
 		},
 	)

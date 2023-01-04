@@ -2,6 +2,7 @@ package authentication
 
 import (
 	"errors"
+	"fmt"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/shop"
 	"smlcloudplatform/pkg/shop/models"
@@ -14,36 +15,39 @@ import (
 )
 
 type IAuthenticationService interface {
-	Login(userReq *models.UserLoginRequest) (string, error)
+	Login(userReq *models.UserLoginRequest, authContext AuthenticationContext) (string, error)
 	Register(userRequest models.UserRequest) (string, error)
 	Update(username string, userRequest models.UserProfileRequest) error
 	UpdatePassword(username string, currentPassword string, newPassword string) error
 	Logout(authorizationHeader string) error
 	Profile(username string) (models.UserProfile, error)
-	AccessShop(shopID string, username string, authorizationHeader string) error
+	AccessShop(shopID string, username string, authorizationHeader string, authContext AuthenticationContext) error
+	UpdateFavoriteShop(shopID string, username string, isFavorite bool) error
 }
 
 type AuthenticationService struct {
-	authService       microservice.IAuthService
-	authRepo          IAuthenticationRepository
-	shopUserRepo      shop.IShopUserRepository
-	passwordEncoder   func(string) (string, error)
-	checkHashPassword func(password string, hash string) bool
-	timeNow           func() time.Time
+	authService           microservice.IAuthService
+	authRepo              IAuthenticationRepository
+	shopUserRepo          shop.IShopUserRepository
+	shopUserAccessLogRepo shop.IShopUserAccessLogRepository
+	passwordEncoder       func(string) (string, error)
+	checkHashPassword     func(password string, hash string) bool
+	timeNow               func() time.Time
 }
 
-func NewAuthenticationService(authRepo IAuthenticationRepository, shopUserRepo shop.IShopUserRepository, authService microservice.IAuthService, passwordEncoder func(string) (string, error), checkHashPassword func(password string, hash string) bool, timeNow func() time.Time) AuthenticationService {
+func NewAuthenticationService(authRepo IAuthenticationRepository, shopUserRepo shop.IShopUserRepository, shopUserAccessLogRepo shop.IShopUserAccessLogRepository, authService microservice.IAuthService, passwordEncoder func(string) (string, error), checkHashPassword func(password string, hash string) bool, timeNow func() time.Time) AuthenticationService {
 	return AuthenticationService{
-		authRepo:          authRepo,
-		authService:       authService,
-		shopUserRepo:      shopUserRepo,
-		passwordEncoder:   passwordEncoder,
-		checkHashPassword: checkHashPassword,
-		timeNow:           timeNow,
+		authRepo:              authRepo,
+		authService:           authService,
+		shopUserRepo:          shopUserRepo,
+		shopUserAccessLogRepo: shopUserAccessLogRepo,
+		passwordEncoder:       passwordEncoder,
+		checkHashPassword:     checkHashPassword,
+		timeNow:               timeNow,
 	}
 }
 
-func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest) (string, error) {
+func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, authContext AuthenticationContext) (string, error) {
 
 	userLoginReq.Username = strings.TrimSpace(userLoginReq.Username)
 	userLoginReq.ShopID = strings.TrimSpace(userLoginReq.ShopID)
@@ -86,6 +90,26 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest) (s
 
 		if err != nil {
 			return "", errors.New("failed shop select")
+		}
+
+		lastAccessedAt := svc.timeNow()
+
+		err = svc.shopUserRepo.UpdateLastAccess(userLoginReq.ShopID, userLoginReq.Username, lastAccessedAt)
+		if err != nil {
+			// implement log
+			fmt.Println("error :: ", err.Error())
+		}
+
+		err = svc.shopUserAccessLogRepo.Create(models.ShopUserAccessLog{
+			ShopID:         userLoginReq.ShopID,
+			Username:       userLoginReq.Username,
+			Ip:             authContext.Ip,
+			LastAccessedAt: lastAccessedAt,
+		})
+
+		if err != nil {
+			// implement log
+			fmt.Println("error :: ", err.Error())
 		}
 	}
 
@@ -206,7 +230,7 @@ func (svc AuthenticationService) Profile(username string) (models.UserProfile, e
 	return userProfile, nil
 }
 
-func (svc AuthenticationService) AccessShop(shopID string, username string, authorizationHeader string) error {
+func (svc AuthenticationService) AccessShop(shopID string, username string, authorizationHeader string, authContext AuthenticationContext) error {
 
 	if shopID == "" {
 		return errors.New("shop invalid")
@@ -241,5 +265,53 @@ func (svc AuthenticationService) AccessShop(shopID string, username string, auth
 	if err != nil {
 		return errors.New("failed shop select")
 	}
+
+	lastAccessedAt := svc.timeNow()
+	err = svc.shopUserRepo.UpdateLastAccess(shopID, username, lastAccessedAt)
+	if err != nil {
+		// implement log
+		fmt.Println("error :: ", err.Error())
+	}
+
+	err = svc.shopUserAccessLogRepo.Create(models.ShopUserAccessLog{
+		ShopID:         shopID,
+		Username:       username,
+		Ip:             authContext.Ip,
+		LastAccessedAt: lastAccessedAt,
+	})
+
+	if err != nil {
+		// implement log
+		fmt.Println("error :: ", err.Error())
+	}
+
+	return nil
+}
+
+func (svc AuthenticationService) UpdateFavoriteShop(shopID string, username string, isFavorite bool) error {
+
+	if shopID == "" {
+		return errors.New("shop invalid")
+	}
+
+	if username == "" {
+		return errors.New("username invalid")
+	}
+
+	shopUser, err := svc.shopUserRepo.FindByShopIDAndUsername(shopID, username)
+
+	if err != nil {
+		return err
+	}
+
+	if shopUser.ID == primitive.NilObjectID {
+		return errors.New("shop invalid")
+	}
+
+	err = svc.shopUserRepo.SaveFavorite(shopID, username, isFavorite)
+	if err != nil {
+		return errors.New("favorite failed")
+	}
+
 	return nil
 }
