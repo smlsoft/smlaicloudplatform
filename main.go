@@ -121,6 +121,7 @@ func main() {
 			"/list-shop",
 			"/select-shop",
 			"/create-shop",
+			"/favorite-shop",
 		}
 		ms.HttpMiddleware(authService.MWFuncWithRedisMixShop(cacher, exceptShopPath, publicPath...))
 		ms.RegisterLivenessProbeEndpoint("/healthz")
