@@ -2222,6 +2222,36 @@ const docTemplate = `{
                 }
             }
         },
+        "/favorite-shop": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Favorite Shop In Account",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/gl/accountgroup": {
             "get": {
                 "security": [
@@ -14065,7 +14095,7 @@ const docTemplate = `{
         "models.Image": {
             "type": "object",
             "properties": {
-                "url": {
+                "uri": {
                     "type": "string"
                 },
                 "xorder": {
@@ -17803,6 +17833,9 @@ const docTemplate = `{
                 "name1": {
                     "type": "string"
                 },
+                "profilepicture": {
+                    "type": "string"
+                },
                 "telephone": {
                     "type": "string"
                 }
@@ -17818,6 +17851,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name1": {
+                    "type": "string"
+                },
+                "profilepicture": {
                     "type": "string"
                 },
                 "telephone": {

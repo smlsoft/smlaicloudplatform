@@ -2216,6 +2216,36 @@
                 }
             }
         },
+        "/favorite-shop": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Favorite Shop In Account",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/gl/accountgroup": {
             "get": {
                 "security": [
@@ -14059,7 +14089,7 @@
         "models.Image": {
             "type": "object",
             "properties": {
-                "url": {
+                "uri": {
                     "type": "string"
                 },
                 "xorder": {
@@ -17797,6 +17827,9 @@
                 "name1": {
                     "type": "string"
                 },
+                "profilepicture": {
+                    "type": "string"
+                },
                 "telephone": {
                     "type": "string"
                 }
@@ -17812,6 +17845,9 @@
                     "type": "string"
                 },
                 "name1": {
+                    "type": "string"
+                },
+                "profilepicture": {
                     "type": "string"
                 },
                 "telephone": {

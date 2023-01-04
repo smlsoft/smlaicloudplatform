@@ -842,7 +842,7 @@ definitions:
     type: object
   models.Image:
     properties:
-      url:
+      uri:
         type: string
       xorder:
         type: integer
@@ -3397,6 +3397,8 @@ definitions:
         type: string
       name1:
         type: string
+      profilepicture:
+        type: string
       telephone:
         type: string
     type: object
@@ -3407,6 +3409,8 @@ definitions:
       guidfixed:
         type: string
       name1:
+        type: string
+      profilepicture:
         type: string
       telephone:
         type: string
@@ -5557,6 +5561,24 @@ paths:
       summary: Register An Account
       tags:
       - Employee
+  /favorite-shop:
+    put:
+      consumes:
+      - application/json
+      description: Favorite Shop In Account
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      security:
+      - AccessToken: []
+      tags:
+      - Authentication
   /gl/accountgroup:
     get:
       consumes:
