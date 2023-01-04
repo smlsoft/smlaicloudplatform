@@ -66,7 +66,7 @@ func Docs() {
 }
 
 // Create Shop godoc
-// @Description Create Shop rt1wer11
+// @Description Create Shop
 // @Tags		Shop
 // @Accept 		json
 // @Param		Shop  body      models.Shop  true  "Add Shop"
@@ -109,6 +109,16 @@ func (h ShopHttp) CreateShop(ctx microservice.IContext) error {
 	return nil
 }
 
+// Update Shop godoc
+// @Description Update Shop
+// @Tags		Shop
+// @Accept 		json
+// @Param		id	path     string  true  "Shop ID"
+// @Param		Shop  body      models.Shop  true  "Shop Body"
+// @Success		200	{object}		models.Shop
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /shop/{id} [put]
 func (h ShopHttp) UpdateShop(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -149,6 +159,15 @@ func (h ShopHttp) UpdateShop(ctx microservice.IContext) error {
 	return nil
 }
 
+// Delete Shop godoc
+// @Description Delete Shop
+// @Tags		Shop
+// @Accept 		json
+// @Param		id	path     string  true  "Shop ID"
+// @Success		200	{object}		models.Shop
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /shop/{id} [delete]
 func (h ShopHttp) DeleteShop(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
@@ -181,14 +200,15 @@ func (h ShopHttp) DeleteShop(ctx microservice.IContext) error {
 	return nil
 }
 
-// List Merchant godoc
-// @Description Access to Merchant
-// @Tags		Merchant
+// Info Shop godoc
+// @Description Infomation Shop Profile
+// @Tags		Shop
 // @Accept 		json
+// @Param		id	path     string  true  "Shop ID"
 // @Success		200	{array}	models.ShopInfo
 // @Failure		401 {object}	common.ApiResponse
 // @Security     AccessToken
-// @Router /merchant [get]
+// @Router /shop/{id} [get]
 func (h ShopHttp) InfoShop(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	id := ctx.Param("id")

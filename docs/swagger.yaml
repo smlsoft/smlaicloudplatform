@@ -851,6 +851,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageReference:
     properties:
@@ -7652,26 +7654,6 @@ paths:
       - AccessToken: []
       tags:
       - Member
-  /merchant:
-    get:
-      consumes:
-      - application/json
-      description: Access to Merchant
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.ShopInfo'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-      security:
-      - AccessToken: []
-      tags:
-      - Merchant
   /optgroup:
     get:
       consumes:
@@ -11167,9 +11149,87 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create Shop rt1wer11
+      description: Create Shop
       parameters:
       - description: Add Shop
+        in: body
+        name: Shop
+        required: true
+        schema:
+          $ref: '#/definitions/models.Shop'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Shop'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Shop
+  /shop/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Shop
+      parameters:
+      - description: Shop ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Shop'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Shop
+    get:
+      consumes:
+      - application/json
+      description: Infomation Shop Profile
+      parameters:
+      - description: Shop ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ShopInfo'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+      security:
+      - AccessToken: []
+      tags:
+      - Shop
+    put:
+      consumes:
+      - application/json
+      description: Update Shop
+      parameters:
+      - description: Shop ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Shop Body
         in: body
         name: Shop
         required: true
