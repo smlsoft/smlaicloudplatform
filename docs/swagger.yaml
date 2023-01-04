@@ -1,4 +1,11 @@
 definitions:
+  authentication.ShopFavoriteRequest:
+    properties:
+      isfavorite:
+        type: boolean
+      shopid:
+        type: string
+    type: object
   models.AccountGroup:
     properties:
       code:
@@ -844,8 +851,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageReference:
     properties:
@@ -5566,6 +5571,13 @@ paths:
       consumes:
       - application/json
       description: Favorite Shop In Account
+      parameters:
+      - description: Shop Favorite Request
+        in: body
+        name: ShopFavoriteRequest
+        required: true
+        schema:
+          $ref: '#/definitions/authentication.ShopFavoriteRequest'
       responses:
         "200":
           description: OK

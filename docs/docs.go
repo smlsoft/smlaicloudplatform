@@ -2236,6 +2236,17 @@ const docTemplate = `{
                 "tags": [
                     "Authentication"
                 ],
+                "parameters": [
+                    {
+                        "description": "Shop Favorite Request",
+                        "name": "ShopFavoriteRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/authentication.ShopFavoriteRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -12857,6 +12868,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "authentication.ShopFavoriteRequest": {
+            "type": "object",
+            "properties": {
+                "isfavorite": {
+                    "type": "boolean"
+                },
+                "shopid": {
+                    "type": "string"
+                }
+            }
+        },
         "models.AccountGroup": {
             "type": "object",
             "required": [
@@ -14097,9 +14119,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },

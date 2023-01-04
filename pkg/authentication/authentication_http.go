@@ -435,6 +435,7 @@ func (h AuthenticationHttp) ListShopCanAccess(ctx microservice.IContext) error {
 // @Description Favorite Shop In Account
 // @Tags		Authentication
 // @Accept 		json
+// @Param		ShopFavoriteRequest  body      ShopFavoriteRequest  true  "Shop Favorite Request"
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.ApiResponse
 // @Security     AccessToken
