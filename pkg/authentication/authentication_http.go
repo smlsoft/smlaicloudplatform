@@ -62,12 +62,13 @@ func (h AuthenticationHttp) RouteSetup() {
 	h.ms.PUT("/profile", h.Update)
 	h.ms.PUT("/profile/password", h.UpdatePassword)
 
-	h.ms.GET("/list-shop", h.ListShopCanAccess, h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig())))
-	h.ms.POST("/select-shop", h.SelectShop, h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig())))
-	h.ms.PUT("/favorite-shop", h.UpdateShopFavorite)
+	middlewareShop := h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig()))
+	h.ms.GET("/list-shop", h.ListShopCanAccess, middlewareShop)
+	h.ms.POST("/select-shop", h.SelectShop, middlewareShop)
+	h.ms.PUT("/favorite-shop", h.UpdateShopFavorite, middlewareShop)
 
 	shopHttp := shop.NewShopHttp(h.ms, h.cfg)
-	h.ms.POST("/create-shop", shopHttp.CreateShop, h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig())))
+	h.ms.POST("/create-shop", shopHttp.CreateShop, middlewareShop)
 }
 
 // Login login
