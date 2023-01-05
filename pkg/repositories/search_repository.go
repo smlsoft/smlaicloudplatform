@@ -90,6 +90,10 @@ func (repo SearchRepository[T]) FindLimit(shopID string, filters map[string]inte
 		tempSorts[key] = val
 	}
 
+	if len(tempSorts) > 0 {
+		tempSorts["guidfixed"] = 1
+	}
+
 	tempOptions.SetSort(tempSorts)
 
 	docList := []T{}
@@ -153,6 +157,10 @@ func (repo SearchRepository[T]) FindPageSort(shopID string, colNameSearch []stri
 		filters["$or"] = searchFilterList
 	}
 
+	if len(sorts) > 0 {
+		sorts["guidfixed"] = 1
+	}
+
 	docList := []T{}
 	pagination, err := repo.pst.FindPageSort(new(T), limit, page, filters, sorts, &docList)
 
@@ -191,6 +199,10 @@ func (repo SearchRepository[T]) FindPageFilterSort(shopID string, filters map[st
 
 	if len(matchFilterList) > 0 {
 		queryFilters["$and"] = matchFilterList
+	}
+
+	if len(sorts) > 0 {
+		sorts["guidfixed"] = 1
 	}
 
 	docList := []T{}
