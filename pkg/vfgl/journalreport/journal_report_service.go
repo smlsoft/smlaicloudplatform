@@ -70,12 +70,12 @@ func (svc JournalReportService) ProcessTrialBalanceSheetReport(shopId string, ac
 			details[index].NextBalanceCreditAmount = svc.usecase.DisplayAmount(v.NextBalanceAmount)
 		}
 
-		totalBalanceDebit += v.BalanceDebitAmount
-		totalBalanceCredit += v.BalanceCreditAmount
-		totalAmountDebit += v.DebitAmount
-		totalAmountCredit += v.CreditAmount
-		totalNextBalanceDebit += v.NextBalanceDebitAmount
-		totalnextBalanceCredit += v.NextBalanceCreditAmount
+		totalBalanceDebit += details[index].BalanceDebitAmount
+		totalBalanceCredit += details[index].BalanceCreditAmount
+		totalAmountDebit += details[index].DebitAmount
+		totalAmountCredit += details[index].CreditAmount
+		totalNextBalanceDebit += details[index].NextBalanceDebitAmount
+		totalnextBalanceCredit += details[index].NextBalanceCreditAmount
 	}
 
 	result := &models.TrialBalanceSheetReport{
