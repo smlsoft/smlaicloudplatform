@@ -6,43 +6,36 @@ import (
 )
 
 type TrialBalanceSheetReport struct {
-	ReportDate     time.Time                         `json:"reportdate"`     // วันที่ทำรายการ
-	StartDate      time.Time                         `json:"startdate"`      // วันที่เริ่มต้น
-	EndDate        time.Time                         `json:"enddate"`        // วันที่สิ้นสุด
-	AccountGroup   string                            `json:"accountgroup"`   // เล่มบัญชี
-	AccountDetails *[]TrialBalanceSheetAccountDetail `json:"accountdetails"` // รายละเอียดบัญชี
-	// รวมยอดยกมาเดบิต
-	TotalBalanceDebit float64 `json:"totalbalancedebit"`
-	// รวมยอดยกมาเครดิต
-	TotalBalanceCredit float64 `json:"totalbalancecredit"`
-	// รวมเดบิต
-	TotalAmountDebit float64 `json:"totalamountdebit"`
-	// รวมเครดิต
-	TotalAmountCredit float64 `json:"totalamountcredit"`
-	// รวมยอดสะสมเดบิต
-	TotalNextBalanceDebit float64 `json:"totalnextbalancedebit"`
-	// รวมยอดสะสมเครดิต
-	TotalNextBalanceCredit float64 `json:"totalnextbalancecredit"`
+	ReportDate             time.Time                         `json:"reportdate"`             // วันที่ทำรายการ
+	StartDate              time.Time                         `json:"startdate"`              // วันที่เริ่มต้น
+	EndDate                time.Time                         `json:"enddate"`                // วันที่สิ้นสุด
+	AccountGroup           string                            `json:"accountgroup"`           // เล่มบัญชี
+	AccountDetails         *[]TrialBalanceSheetAccountDetail `json:"accountdetails"`         // รายละเอียดบัญชี
+	TotalBalanceDebit      float64                           `json:"totalbalancedebit"`      // รวมยอดยกมาเดบิต
+	TotalBalanceCredit     float64                           `json:"totalbalancecredit"`     // รวมยอดยกมาเครดิต
+	TotalAmountDebit       float64                           `json:"totalamountdebit"`       // รวมเดบิต
+	TotalAmountCredit      float64                           `json:"totalamountcredit"`      // รวมเครดิต
+	TotalNextBalanceDebit  float64                           `json:"totalnextbalancedebit"`  // รวมยอดสะสมเดบิต
+	TotalNextBalanceCredit float64                           `json:"totalnextbalancecredit"` // รวมยอดสะสมเครดิต
 }
 
 type TrialBalanceSheetAccountDetail struct {
 	chartofaccountModel.ChartOfAccountPG
-
-	Amount                  float64 `json:"amount" gorm:"column:amount"`                       // ยอดคงเหลือ(ประจำงวด)
-	BalanceAmount           float64 `json:"balanceamount" gorm:"column:balanceamount"`         // ยอดคงเหลือยกมา
-	NextBalanceAmount       float64 `json:"nextbalanceamount" gorm:"column:nextbalanceamount"` // ยอดคงเหลือสะสม
-	DebitAmount             float64 `json:"debitamount" gorm:"-"`                              // ยอดเดบิต
-	CreditAmount            float64 `json:"creditamount" gorm:"-"`                             // ยอดเครดิต
-	SumDebit                float64 `json:"sumdebit" gorm:"column:debitamount"`                // ยอดเครดิต
-	SumCredit               float64 `json:"sumcredit" gorm:"column:creditamount"`              // ยอดเครดิต
-	BalanceDebitAmount      float64 `json:"balancedebitamount" gorm:"-"`                       // ยอดยกมาเดบิต
-	BalanceCreditAmount     float64 `json:"balancecreditamount" gorm:"-"`                      // ยอดยกมาเครดิต
-	SumBalanceDebit         float64 `json:"sumbalancedebit" gorm:"column:balancedebitamount"`
-	SumBalanceCredit        float64 `json:"sumbalancecredit" gorm:"column:balancecreditamount"`
-	NextBalanceDebitAmount  float64 `json:"nextbalancedebitamount" gorm:"-"`  // ยอดสะสมเดบิต
-	NextBalanceCreditAmount float64 `json:"nextbalancecreditamount" gorm:"-"` // ยอดสะสมเครดิต
-	SumNextBalanceDebit     float64 `json:"sumnextbalancedebit" gorm:"column:nextbalancedebitamount"`
-	SumNextBalanceCredit    float64 `json:"sumnextbalancecredit" gorm:"column:nextbalancecreditamount"`
+	Amount                  float64 `json:"amount" gorm:"column:amount"`                                // ยอดคงเหลือ(ประจำงวด)
+	BalanceAmount           float64 `json:"balanceamount" gorm:"column:balanceamount"`                  // ยอดคงเหลือยกมา
+	NextBalanceAmount       float64 `json:"nextbalanceamount" gorm:"column:nextbalanceamount"`          // ยอดคงเหลือสะสม
+	DebitAmount             float64 `json:"debitamount" gorm:"-"`                                       // ยอดเดบิต
+	CreditAmount            float64 `json:"creditamount" gorm:"-"`                                      // ยอดเครดิต
+	SumDebit                float64 `json:"sumdebit" gorm:"column:debitamount"`                         // ยอดเครดิต
+	SumCredit               float64 `json:"sumcredit" gorm:"column:creditamount"`                       // ยอดเครดิต
+	BalanceDebitAmount      float64 `json:"balancedebitamount" gorm:"-"`                                // ยอดยกมาเดบิต
+	BalanceCreditAmount     float64 `json:"balancecreditamount" gorm:"-"`                               // ยอดยกมาเครดิต
+	SumBalanceDebit         float64 `json:"sumbalancedebit" gorm:"column:balancedebitamount"`           //
+	SumBalanceCredit        float64 `json:"sumbalancecredit" gorm:"column:balancecreditamount"`         //
+	NextBalanceDebitAmount  float64 `json:"nextbalancedebitamount" gorm:"-"`                            // ยอดสะสมเดบิต
+	NextBalanceCreditAmount float64 `json:"nextbalancecreditamount" gorm:"-"`                           // ยอดสะสมเครดิต
+	SumNextBalanceDebit     float64 `json:"sumnextbalancedebit" gorm:"column:nextbalancedebitamount"`   //
+	SumNextBalanceCredit    float64 `json:"sumnextbalancecredit" gorm:"column:nextbalancecreditamount"` //
 }
 
 type BalanceSheetReport struct {
