@@ -51,7 +51,7 @@ func (h DeviceHttp) RouteSetup() {
 
 // Create Device godoc
 // @Description Create Device
-// @Tags		Device
+// @Tags		Restaurant
 // @Param		Device  body      models.Device  true  "Device"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
@@ -92,7 +92,7 @@ func (h DeviceHttp) CreateDevice(ctx microservice.IContext) error {
 
 // Update Device godoc
 // @Description Update Device
-// @Tags		Device
+// @Tags		Restaurant
 // @Param		id  path      string  true  "Device ID"
 // @Param		Device  body      models.Device  true  "Device"
 // @Accept 		json
@@ -138,7 +138,7 @@ func (h DeviceHttp) UpdateDevice(ctx microservice.IContext) error {
 
 // Delete Device godoc
 // @Description Delete Device
-// @Tags		Device
+// @Tags		Restaurant
 // @Param		id  path      string  true  "Device ID"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
@@ -169,7 +169,7 @@ func (h DeviceHttp) DeleteDevice(ctx microservice.IContext) error {
 
 // Delete Device godoc
 // @Description Delete Device
-// @Tags		Device
+// @Tags		Restaurant
 // @Param		Device  body      []string  true  "Device GUIDs"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
@@ -207,7 +207,7 @@ func (h DeviceHttp) DeleteDeviceByGUIDs(ctx microservice.IContext) error {
 
 // Get Device godoc
 // @Description get struct array by ID
-// @Tags		Device
+// @Tags		Restaurant
 // @Param		id  path      string  true  "Device ID"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
@@ -238,7 +238,7 @@ func (h DeviceHttp) InfoDevice(ctx microservice.IContext) error {
 
 // List Device godoc
 // @Description get struct array by ID
-// @Tags		Device
+// @Tags		Restaurant
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Add Category"
 // @Param		limit	query	integer		false  "Add Category"
@@ -271,7 +271,7 @@ func (h DeviceHttp) SearchDevicePage(ctx microservice.IContext) error {
 
 // List Device godoc
 // @Description search limit offset
-// @Tags		Device
+// @Tags		Restaurant
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
@@ -308,7 +308,7 @@ func (h DeviceHttp) SearchDeviceLimit(ctx microservice.IContext) error {
 
 // Create Device Bulk godoc
 // @Description Create Device
-// @Tags		Device
+// @Tags		Restaurant
 // @Param		Device  body      []models.Device  true  "Device"
 // @Accept 		json
 // @Success		201	{object}	common.BulkReponse
