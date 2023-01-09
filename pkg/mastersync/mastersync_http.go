@@ -36,6 +36,12 @@ import (
 	qrpaymentRepo "smlcloudplatform/pkg/payment/qrpayment/repositories"
 	qrpaymentService "smlcloudplatform/pkg/payment/qrpayment/services"
 
+	restaurantDeviceRepo "smlcloudplatform/pkg/restaurant/device/repositories"
+	restaurantDeviceService "smlcloudplatform/pkg/restaurant/device/services"
+
+	restaurantStaffRepo "smlcloudplatform/pkg/restaurant/staff/repositories"
+	restaurantStaffService "smlcloudplatform/pkg/restaurant/staff/services"
+
 	"smlcloudplatform/pkg/mastersync/repositories"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
@@ -93,6 +99,16 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	repoShopZone := shopzone.NewShopZoneRepository(pst)
 	svcShopZone := shopzone.NewShopZoneService(repoShopZone, masterSyncCacheRepo)
 	activityModuleManager.Add(svcShopZone)
+
+	// device
+	repoRestaurantDevice := restaurantDeviceRepo.NewDeviceRepository(pst)
+	svcRestaurantDevice := restaurantDeviceService.NewDeviceHttpService(repoRestaurantDevice, masterSyncCacheRepo)
+	activityModuleManager.Add(svcRestaurantDevice)
+
+	// staff
+	repoRestaurantStaff := restaurantStaffRepo.NewStaffRepository(pst)
+	svcRestaurantStaff := restaurantStaffService.NewStaffHttpService(repoRestaurantStaff, masterSyncCacheRepo)
+	activityModuleManager.Add(svcRestaurantStaff)
 
 	// Member
 	repoMember := member.NewMemberRepository(pst)

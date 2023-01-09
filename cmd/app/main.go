@@ -32,6 +32,7 @@ import (
 	"smlcloudplatform/pkg/restaurant/restaurantsettings"
 	"smlcloudplatform/pkg/restaurant/shoptable"
 	"smlcloudplatform/pkg/restaurant/shopzone"
+	"smlcloudplatform/pkg/restaurant/staff"
 	"smlcloudplatform/pkg/shop"
 	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
@@ -124,6 +125,7 @@ func main() {
 		kitchen.NewKitchenHttp(ms, cfg),
 		restaurantsettings.NewRestaurantSettingsHttp(ms, cfg),
 		device.NewDeviceHttp(ms, cfg),
+		staff.NewStaffHttp(ms, cfg),
 
 		//Journal
 		journal.NewJournalHttp(ms, cfg),
