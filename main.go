@@ -27,6 +27,7 @@ import (
 	"smlcloudplatform/pkg/product/productbarcode"
 	"smlcloudplatform/pkg/product/productcategory"
 	"smlcloudplatform/pkg/product/unit"
+	"smlcloudplatform/pkg/restaurant/device"
 	"smlcloudplatform/pkg/restaurant/kitchen"
 	"smlcloudplatform/pkg/restaurant/printer"
 	"smlcloudplatform/pkg/restaurant/restaurantsettings"
@@ -156,12 +157,14 @@ func main() {
 
 			images.NewImagesHttp(ms, cfg, imagePersister),
 
+			// restaurant
 			shopzone.NewShopZoneHttp(ms, cfg),
 			shoptable.NewShopTableHttp(ms, cfg),
 			printer.NewPrinterHttp(ms, cfg),
 			kitchen.NewKitchenHttp(ms, cfg),
 			zonedesign.NewZoneDesignHttp(ms, cfg),
 			restaurantsettings.NewRestaurantSettingsHttp(ms, cfg),
+			device.NewDeviceHttp(ms, cfg),
 
 			purchase.NewPurchaseHttp(ms, cfg),
 			saleinvoice.NewSaleinvoiceHttp(ms, cfg),
