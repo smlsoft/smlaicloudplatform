@@ -236,8 +236,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -253,15 +253,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       unitcode:
         type: string
       unitname1:
@@ -844,6 +837,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageReference:
     properties:
@@ -939,8 +934,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -958,8 +953,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -975,12 +968,7 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1088,8 +1076,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1107,8 +1095,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1124,12 +1110,7 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1287,8 +1268,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1306,8 +1287,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1323,12 +1302,7 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -2698,17 +2672,10 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
+      keynumber:
+        type: integer
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
     type: object
   models.ProductUnit:
     properties:
@@ -2891,10 +2858,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -2912,8 +2879,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -2929,10 +2894,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -3264,10 +3225,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -3285,8 +3246,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3302,10 +3261,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -3771,6 +3726,16 @@ definitions:
   models.Staff:
     properties:
       code:
+        type: string
+      name1:
+        type: string
+      name2:
+        type: string
+      name3:
+        type: string
+      name4:
+        type: string
+      name5:
         type: string
     type: object
   models.Storefront:
@@ -10865,7 +10830,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Staff
+      - Restaurant
     get:
       consumes:
       - application/json
@@ -10897,7 +10862,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Staff
+      - Restaurant
     post:
       consumes:
       - application/json
@@ -10921,7 +10886,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Staff
+      - Restaurant
   /restaurant/staff/{id}:
     delete:
       consumes:
@@ -10945,7 +10910,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Staff
+      - Restaurant
     get:
       consumes:
       - application/json
@@ -10968,7 +10933,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Staff
+      - Restaurant
     put:
       consumes:
       - application/json
@@ -10997,7 +10962,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Staff
+      - Restaurant
   /restaurant/staff/bulk:
     post:
       consumes:
@@ -11024,7 +10989,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Staff
+      - Restaurant
   /restaurant/staff/list:
     get:
       consumes:
@@ -11061,7 +11026,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Staff
+      - Restaurant
   /restaurant/table:
     get:
       consumes:
