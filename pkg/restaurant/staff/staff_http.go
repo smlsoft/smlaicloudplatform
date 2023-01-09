@@ -51,7 +51,7 @@ func (h StaffHttp) RouteSetup() {
 
 // Create Staff godoc
 // @Description Create Staff
-// @Tags		Staff
+// @Tags		Restaurant
 // @Param		Staff  body      models.Staff  true  "Staff"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
@@ -92,7 +92,7 @@ func (h StaffHttp) CreateStaff(ctx microservice.IContext) error {
 
 // Update Staff godoc
 // @Description Update Staff
-// @Tags		Staff
+// @Tags		Restaurant
 // @Param		id  path      string  true  "Staff ID"
 // @Param		Staff  body      models.Staff  true  "Staff"
 // @Accept 		json
@@ -138,7 +138,7 @@ func (h StaffHttp) UpdateStaff(ctx microservice.IContext) error {
 
 // Delete Staff godoc
 // @Description Delete Staff
-// @Tags		Staff
+// @Tags		Restaurant
 // @Param		id  path      string  true  "Staff ID"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
@@ -169,7 +169,7 @@ func (h StaffHttp) DeleteStaff(ctx microservice.IContext) error {
 
 // Delete Staff godoc
 // @Description Delete Staff
-// @Tags		Staff
+// @Tags		Restaurant
 // @Param		Staff  body      []string  true  "Staff GUIDs"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
@@ -207,7 +207,7 @@ func (h StaffHttp) DeleteStaffByGUIDs(ctx microservice.IContext) error {
 
 // Get Staff godoc
 // @Description get struct array by ID
-// @Tags		Staff
+// @Tags		Restaurant
 // @Param		id  path      string  true  "Staff ID"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
@@ -238,7 +238,7 @@ func (h StaffHttp) InfoStaff(ctx microservice.IContext) error {
 
 // List Staff godoc
 // @Description get struct array by ID
-// @Tags		Staff
+// @Tags		Restaurant
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Add Category"
 // @Param		limit	query	integer		false  "Add Category"
@@ -271,7 +271,7 @@ func (h StaffHttp) SearchStaffPage(ctx microservice.IContext) error {
 
 // List Staff godoc
 // @Description search limit offset
-// @Tags		Staff
+// @Tags		Restaurant
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
@@ -308,7 +308,7 @@ func (h StaffHttp) SearchStaffLimit(ctx microservice.IContext) error {
 
 // Create Staff Bulk godoc
 // @Description Create Staff
-// @Tags		Staff
+// @Tags		Restaurant
 // @Param		Staff  body      []models.Staff  true  "Staff"
 // @Accept 		json
 // @Success		201	{object}	common.BulkReponse
