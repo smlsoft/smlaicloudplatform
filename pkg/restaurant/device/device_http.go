@@ -57,7 +57,7 @@ func (h DeviceHttp) RouteSetup() {
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /device [post]
+// @Router /restaurant/device [post]
 func (h DeviceHttp) CreateDevice(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
@@ -99,7 +99,7 @@ func (h DeviceHttp) CreateDevice(ctx microservice.IContext) error {
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /device/{id} [put]
+// @Router /restaurant/device/{id} [put]
 func (h DeviceHttp) UpdateDevice(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -144,7 +144,7 @@ func (h DeviceHttp) UpdateDevice(ctx microservice.IContext) error {
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /device/{id} [delete]
+// @Router /restaurant/device/{id} [delete]
 func (h DeviceHttp) DeleteDevice(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -175,7 +175,7 @@ func (h DeviceHttp) DeleteDevice(ctx microservice.IContext) error {
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /device [delete]
+// @Router /restaurant/device [delete]
 func (h DeviceHttp) DeleteDeviceByGUIDs(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -213,7 +213,7 @@ func (h DeviceHttp) DeleteDeviceByGUIDs(ctx microservice.IContext) error {
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /device/{id} [get]
+// @Router /restaurant/device/{id} [get]
 func (h DeviceHttp) InfoDevice(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -246,7 +246,7 @@ func (h DeviceHttp) InfoDevice(ctx microservice.IContext) error {
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /device [get]
+// @Router /restaurant/device [get]
 func (h DeviceHttp) SearchDevicePage(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -280,7 +280,7 @@ func (h DeviceHttp) SearchDevicePage(ctx microservice.IContext) error {
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /device/list [get]
+// @Router /restaurant/device/list [get]
 func (h DeviceHttp) SearchDeviceLimit(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -314,7 +314,7 @@ func (h DeviceHttp) SearchDeviceLimit(ctx microservice.IContext) error {
 // @Success		201	{object}	common.BulkReponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /device/bulk [post]
+// @Router /restaurant/device/bulk [post]
 func (h DeviceHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
