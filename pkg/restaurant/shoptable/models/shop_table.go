@@ -10,15 +10,15 @@ import (
 const shopTableCollectionName = "shopTables"
 
 type ShopTable struct {
-	Number string       `json:"number" bson:"number"`
-	Name1  string       `json:"name1" bson:"name1" gorm:"name1"`
-	Name2  string       `json:"name2,omitempty" bson:"name2,omitempty"`
-	Name3  string       `json:"name3,omitempty" bson:"name3,omitempty"`
-	Name4  string       `json:"name4,omitempty" bson:"name4,omitempty"`
-	Name5  string       `json:"name5,omitempty" bson:"name5,omitempty"`
-	Names  models.NameX `json:"names" bson:"names"`
-	Seat   int8         `json:"seat" bson:"seat"`
-	Zone   string       `json:"zone" bson:"zone"`
+	Number string          `json:"number" bson:"number"`
+	Name1  string          `json:"name1" bson:"name1" gorm:"name1"`
+	Name2  string          `json:"name2,omitempty" bson:"name2,omitempty"`
+	Name3  string          `json:"name3,omitempty" bson:"name3,omitempty"`
+	Name4  string          `json:"name4,omitempty" bson:"name4,omitempty"`
+	Name5  string          `json:"name5,omitempty" bson:"name5,omitempty"`
+	Names  *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	Seat   int8            `json:"seat" bson:"seat"`
+	Zone   string          `json:"zone" bson:"zone"`
 	// Zone   *shopzoneModel.ShopZone `json:"zone" bson:"zone"`
 }
 
