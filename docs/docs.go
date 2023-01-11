@@ -14908,9 +14908,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -19155,24 +19152,29 @@ const docTemplate = `{
         },
         "models.Staff": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
+                "cashier": {
+                    "type": "boolean"
+                },
                 "code": {
                     "type": "string"
                 },
-                "name1": {
+                "email": {
                     "type": "string"
                 },
-                "name2": {
-                    "type": "string"
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
+                "order": {
+                    "type": "boolean"
                 }
             }
         },

@@ -837,8 +837,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageReference:
     properties:
@@ -3725,18 +3723,22 @@ definitions:
     type: object
   models.Staff:
     properties:
+      cashier:
+        type: boolean
       code:
         type: string
-      name1:
+      email:
         type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      order:
+        type: boolean
+    required:
+    - names
     type: object
   models.Storefront:
     properties:
