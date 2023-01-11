@@ -21,7 +21,7 @@ func MigrationJournalTable(ms *microservice.Microservice, cfg microservice.IConf
 
 func StartJournalComsumeCreated(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
 
-	topicCreated := config.MQ_TOPIC_JOURNAL_CREATED
+	topicCreated := config.MQ_TOPIC_CREATED
 	timeout := time.Duration(-1)
 
 	mqConfig := cfg.MQConfig()
@@ -59,7 +59,7 @@ func StartJournalComsumeCreated(ms *microservice.Microservice, cfg microservice.
 
 func StartJournalComsumeUpdated(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
 
-	topicCreated := config.MQ_TOPIC_JOURNAL_UPDATED
+	topicCreated := config.MQ_TOPIC_UPDATED
 	timeout := time.Duration(-1)
 
 	mqConfig := cfg.MQConfig()
@@ -98,7 +98,7 @@ func StartJournalComsumeUpdated(ms *microservice.Microservice, cfg microservice.
 
 func StartJournalComsumeDeleted(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
 
-	topicCreated := config.MQ_TOPIC_JOURNAL_DELETED
+	topicCreated := config.MQ_TOPIC_DELETED
 	timeout := time.Duration(-1)
 
 	mqConfig := cfg.MQConfig()
@@ -137,7 +137,7 @@ func StartJournalComsumeDeleted(ms *microservice.Microservice, cfg microservice.
 
 func StartJournalComsumeBlukCreated(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
 
-	topicCreated := config.MQ_TOPIC_JOURNAL_BULK_CREATED
+	topicCreated := config.MQ_TOPIC_BULK_CREATED
 	timeout := time.Duration(-1)
 
 	mqConfig := cfg.MQConfig()

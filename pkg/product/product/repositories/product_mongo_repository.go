@@ -17,6 +17,7 @@ type IProductRepository interface {
 	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.ProductInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.ProductDoc, error)
+	FindByGuids(shopID string, guids []string) ([]models.ProductDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.ProductItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.ProductDoc, error)

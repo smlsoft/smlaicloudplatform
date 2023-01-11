@@ -26,13 +26,15 @@ type IProductHttpService interface {
 }
 
 type ProductHttpService struct {
-	repo repositories.IProductRepository
+	repo   repositories.IProductRepository
+	mqRepo repositories.IProductMessageQueueRepository
 }
 
-func NewProductHttpService(repo repositories.IProductRepository) *ProductHttpService {
+func NewProductHttpService(repo repositories.IProductRepository, mqRepo repositories.IProductMessageQueueRepository) *ProductHttpService {
 
 	return &ProductHttpService{
-		repo: repo,
+		repo:   repo,
+		mqRepo: mqRepo,
 	}
 }
 
@@ -64,6 +66,11 @@ func (svc ProductHttpService) CreateProduct(shopID string, authUsername string, 
 		return "", err
 	}
 
+	err = svc.mqRepo.Create(docData)
+	if err != nil {
+		return "", err
+	}
+
 	return newGuidFixed, nil
 }
 
@@ -90,6 +97,12 @@ func (svc ProductHttpService) UpdateProduct(shopID string, guid string, authUser
 		return err
 	}
 
+	err = svc.mqRepo.Update(findDoc)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -110,6 +123,12 @@ func (svc ProductHttpService) DeleteProduct(shopID string, guid string, authUser
 		return err
 	}
 
+	err = svc.mqRepo.Delete(findDoc)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -120,6 +139,17 @@ func (svc ProductHttpService) DeleteProductByGUIDs(shopID string, authUsername s
 	}
 
 	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	if err != nil {
+		return err
+	}
+
+	findDocAllTemp, err := svc.repo.FindByGuids(shopID, GUIDs)
+	if err != nil {
+		return err
+	}
+
+	err = svc.mqRepo.DeleteInBatch(findDocAllTemp)
+
 	if err != nil {
 		return err
 	}
@@ -286,13 +316,24 @@ func (svc ProductHttpService) SaveInBatch(shopID string, authUsername string, da
 
 	updateDataKey := []string{}
 	for _, doc := range updateSuccessDataList {
-
 		updateDataKey = append(updateDataKey, doc.ItemCode)
 	}
 
 	updateFailDataKey := []string{}
 	for _, doc := range updateFailDataList {
 		updateFailDataKey = append(updateFailDataKey, svc.getDocIDKey(doc))
+	}
+
+	err = svc.mqRepo.CreateInBatch(createDataList)
+
+	if err != nil {
+		return common.BulkImport{}, err
+	}
+
+	err = svc.mqRepo.UpdateInBatch(updateSuccessDataList)
+
+	if err != nil {
+		return common.BulkImport{}, err
 	}
 
 	return common.BulkImport{
