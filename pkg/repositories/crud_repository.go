@@ -16,6 +16,7 @@ type ICRUDRepository[T any] interface {
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindOne(shopID string, filters interface{}) (T, error)
 	FindByGuid(shopID string, guid string) (T, error)
+	FindByGuids(shopID string, guids []string) ([]T, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (T, error)
 }
 
@@ -147,6 +148,19 @@ func (repo CrudRepository[T]) FindByGuid(shopID string, guid string) (T, error) 
 
 	if err != nil {
 		return *new(T), err
+	}
+
+	return *doc, nil
+}
+
+func (repo CrudRepository[T]) FindByGuids(shopID string, guids []string) ([]T, error) {
+
+	doc := new([]T)
+
+	err := repo.pst.FindOne(new(T), bson.M{"guidfixed": bson.M{"$in": guids}, "shopid": shopID, "deletedat": bson.M{"$exists": false}}, doc)
+
+	if err != nil {
+		return *new([]T), err
 	}
 
 	return *doc, nil

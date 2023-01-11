@@ -22,10 +22,13 @@ type ProductHttp struct {
 
 func NewProductHttp(ms *microservice.Microservice, cfg microservice.IConfig) ProductHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	prod := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewProductRepository(pst)
 
-	svc := services.NewProductHttpService(repo)
+	mqRepo := repositories.NewProductMessageQueueRepository(prod)
+
+	svc := services.NewProductHttpService(repo, mqRepo)
 
 	return ProductHttp{
 		ms:  ms,

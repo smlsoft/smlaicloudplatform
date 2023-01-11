@@ -8,7 +8,9 @@ type KafkaConfig interface {
 	TopicCreated() string
 	TopicUpdated() string
 	TopicDeleted() string
+	TopicBulkDeleted() string
 	TopicBulkCreated() string
+	TopicBulkUpdated() string
 }
 
 type KafkaRepository[T any] struct {
@@ -57,6 +59,26 @@ func (repo KafkaRepository[T]) Delete(doc T) error {
 
 func (repo KafkaRepository[T]) CreateInBatch(docList []T) error {
 	err := repo.prod.SendMessage(repo.topic.TopicBulkCreated(), repo.mqKey, docList)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repo KafkaRepository[T]) UpdateInBatch(docList []T) error {
+	err := repo.prod.SendMessage(repo.topic.TopicBulkUpdated(), repo.mqKey, docList)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repo KafkaRepository[T]) DeleteInBatch(docList []T) error {
+	err := repo.prod.SendMessage(repo.topic.TopicBulkDeleted(), repo.mqKey, docList)
 
 	if err != nil {
 		return err
