@@ -2,11 +2,7 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
-<<<<<<< HEAD
-	"smlcloudplatform/pkg/models/restaurant"
 	"strings"
-=======
->>>>>>> develop
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
@@ -165,6 +161,7 @@ func (SearchRepository[T]) SearchTextFilter(colNameSearch []string, q string) pr
 	return bson.M{
 		"$and": colFilter,
 	}
+}
 
 func (repo SearchRepository[T]) FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]T, mongopagination.PaginationData, error) {
 
