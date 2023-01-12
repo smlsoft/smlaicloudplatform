@@ -236,8 +236,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       name1:
         maxLength: 255
         type: string
@@ -253,8 +253,15 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       unitcode:
         type: string
       unitname1:
@@ -833,10 +840,31 @@ definitions:
       username:
         type: string
     type: object
+  models.FileFolder:
+    properties:
+      isfavorit:
+        type: boolean
+      name:
+        type: string
+      parentall:
+        type: string
+      parentguidfixed:
+        type: string
+      status:
+        type: integer
+      tags:
+        items:
+          type: string
+        type: array
+      type:
+        type: integer
+    type: object
   models.Image:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageReference:
     properties:
@@ -932,8 +960,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -951,6 +979,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -966,7 +996,12 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1074,8 +1109,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1093,6 +1128,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1108,7 +1145,12 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1266,8 +1308,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1285,6 +1327,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1300,7 +1344,12 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -2670,10 +2719,17 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
+      normalprice:
+        type: number
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
     type: object
   models.ProductUnit:
     properties:
@@ -2856,10 +2912,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
       linenumber:
         type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -2877,6 +2933,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -2892,6 +2950,10 @@ definitions:
         maxLength: 50
         type: string
       price:
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       qty:
         type: number
@@ -3223,10 +3285,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
       linenumber:
         type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -3244,6 +3306,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3259,6 +3323,10 @@ definitions:
         maxLength: 50
         type: string
       price:
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       qty:
         type: number
@@ -5607,6 +5675,229 @@ paths:
       - AccessToken: []
       tags:
       - Authentication
+  /file-folder:
+    delete:
+      consumes:
+      - application/json
+      description: Delete FileFolder
+      parameters:
+      - description: FileFolder GUIDs
+        in: body
+        name: FileFolder
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - FileFolder
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - FileFolder
+    post:
+      consumes:
+      - application/json
+      description: Create FileFolder
+      parameters:
+      - description: FileFolder
+        in: body
+        name: FileFolder
+        required: true
+        schema:
+          $ref: '#/definitions/models.FileFolder'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - FileFolder
+  /file-folder/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete FileFolder
+      parameters:
+      - description: FileFolder ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - FileFolder
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: FileFolder ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - FileFolder
+    put:
+      consumes:
+      - application/json
+      description: Update FileFolder
+      parameters:
+      - description: FileFolder ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: FileFolder
+        in: body
+        name: FileFolder
+        required: true
+        schema:
+          $ref: '#/definitions/models.FileFolder'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - FileFolder
+  /file-folder/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create FileFolder
+      parameters:
+      - description: FileFolder
+        in: body
+        name: FileFolder
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.FileFolder'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - FileFolder
+  /file-folder/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - FileFolder
   /gl/accountgroup:
     get:
       consumes:
