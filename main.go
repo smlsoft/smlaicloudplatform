@@ -5,22 +5,49 @@ import (
 	"os"
 	"smlcloudplatform/docs"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/authentication"
-	"smlcloudplatform/pkg/api/category"
-	"smlcloudplatform/pkg/api/images"
-	"smlcloudplatform/pkg/api/inventory"
-	"smlcloudplatform/pkg/api/inventoryimport"
-	"smlcloudplatform/pkg/api/inventorysearchconsumer"
-	"smlcloudplatform/pkg/api/member"
-	"smlcloudplatform/pkg/api/migration"
-	"smlcloudplatform/pkg/api/purchase"
-	"smlcloudplatform/pkg/api/restaurant/kitchen"
-	"smlcloudplatform/pkg/api/restaurant/shopprinter"
-	"smlcloudplatform/pkg/api/restaurant/shoptable"
-	"smlcloudplatform/pkg/api/restaurant/shopzone"
-	"smlcloudplatform/pkg/api/saleinvoice"
-	"smlcloudplatform/pkg/api/shop"
-	"smlcloudplatform/pkg/api/shop/employee"
+	"smlcloudplatform/pkg/apikeyservice"
+	"smlcloudplatform/pkg/authentication"
+	"smlcloudplatform/pkg/customershop/customer"
+	"smlcloudplatform/pkg/customershop/customergroup"
+	"smlcloudplatform/pkg/documentwarehouse/documentimage"
+	"smlcloudplatform/pkg/filefolder"
+	"smlcloudplatform/pkg/images"
+	"smlcloudplatform/pkg/mastersync"
+	"smlcloudplatform/pkg/member"
+	"smlcloudplatform/pkg/payment/bankmaster"
+	"smlcloudplatform/pkg/payment/bookbank"
+	"smlcloudplatform/pkg/payment/qrpayment"
+	"smlcloudplatform/pkg/paymentmaster"
+	"smlcloudplatform/pkg/product/color"
+	"smlcloudplatform/pkg/product/inventory"
+	"smlcloudplatform/pkg/product/inventoryimport"
+	"smlcloudplatform/pkg/product/inventorysearchconsumer"
+	"smlcloudplatform/pkg/product/option"
+	"smlcloudplatform/pkg/product/optionpattern"
+	"smlcloudplatform/pkg/product/product"
+	"smlcloudplatform/pkg/product/productbarcode"
+	"smlcloudplatform/pkg/product/productcategory"
+	"smlcloudplatform/pkg/product/unit"
+	"smlcloudplatform/pkg/restaurant/device"
+	"smlcloudplatform/pkg/restaurant/kitchen"
+	"smlcloudplatform/pkg/restaurant/printer"
+	"smlcloudplatform/pkg/restaurant/restaurantsettings"
+	"smlcloudplatform/pkg/restaurant/shoptable"
+	"smlcloudplatform/pkg/restaurant/shopzone"
+	"smlcloudplatform/pkg/restaurant/staff"
+	"smlcloudplatform/pkg/shop"
+	"smlcloudplatform/pkg/shop/employee"
+	"smlcloudplatform/pkg/shopdesign/zonedesign"
+	"smlcloudplatform/pkg/smsreceive/smstransaction"
+	"smlcloudplatform/pkg/transaction/purchase"
+	"smlcloudplatform/pkg/transaction/saleinvoice"
+	"smlcloudplatform/pkg/vfgl/accountgroup"
+	"smlcloudplatform/pkg/vfgl/accountperiodmaster"
+	"smlcloudplatform/pkg/vfgl/chartofaccount"
+	"smlcloudplatform/pkg/vfgl/journal"
+	"smlcloudplatform/pkg/vfgl/journalbook"
+	"smlcloudplatform/pkg/vfgl/journalreport"
+	"smlcloudplatform/pkg/warehouse"
 
 	"github.com/joho/godotenv"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -56,26 +83,7 @@ func init() {
 // @schemes http https
 func main() {
 
-	// old swagger run
-	// fmt.Println("Start Swagger API")
-
-	// host := os.Getenv("HOST_API")
-	// if host != "" {
-	// 	fmt.Printf("Host: %v\n", host)
-	// 	docs.SwaggerInfo.Host = host
-	// }
-
-	// e := echo.New()
-
-	// e.GET("/swagger/*", echoSwagger.WrapHandler)
-
-	// serverPort := os.Getenv("SERVER_PORT")
-	// if serverPort == "" {
-	// 	serverPort = "1323"
-	// }
-	// e.Logger.Fatal(e.Start(":" + serverPort))
 	devApiMode := os.Getenv("DEV_API_MODE")
-
 	host := os.Getenv("HOST_API")
 	if host != "" {
 		fmt.Printf("Host: %v\n", host)
@@ -87,6 +95,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	ms.HttpUsePrometheus()
 
 	if devApiMode == "" || devApiMode == "2" {
 
@@ -105,6 +115,8 @@ func main() {
 			"/productimage",
 
 			"/healthz",
+			"/ws",
+			"/metrics",
 		}
 
 		exceptShopPath := []string{
@@ -112,72 +124,119 @@ func main() {
 			"/list-shop",
 			"/select-shop",
 			"/create-shop",
+			"/favorite-shop",
 		}
 		ms.HttpMiddleware(authService.MWFuncWithRedisMixShop(cacher, exceptShopPath, publicPath...))
 		ms.RegisterLivenessProbeEndpoint("/healthz")
+		ms.HttpUseCors()
+		ms.HttpPreRemoveTrailingSlash()
+		// ms.Echo().GET("/healthz", func(c echo.Context) error {
+		// 	return c.String(http.StatusOK, "ok")
+		// })
+		azureFileBlob := microservice.NewPersisterAzureBlob()
+		imagePersister := microservice.NewPersisterImage(azureFileBlob)
 
-		migration.StartMigrateModel(ms, cfg)
+		httpServices := []HttpRouteSetup{
 
-		authHttp := authentication.NewAuthenticationHttp(ms, cfg)
-		authHttp.RouteSetup()
+			apikeyservice.NewApiKeyServiceHttp(ms, cfg),
+			authentication.NewAuthenticationHttp(ms, cfg),
+			apikeyservice.NewApiKeyServiceHttp(ms, cfg),
+			shop.NewShopHttp(ms, cfg),
 
-		shopHttp := shop.NewShopHttp(ms, cfg)
-		shopHttp.RouteSetup()
+			shop.NewShopMemberHttp(ms, cfg),
+			employee.NewEmployeeHttp(ms, cfg), member.NewMemberHttp(ms, cfg),
 
-		empHttp := employee.NewEmployeeHttp(ms, cfg)
-		empHttp.RouteSetup()
+			inventory.NewInventoryHttp(ms, cfg),
+			option.NewOptionHttp(ms, cfg),
+			unit.NewUnitHttp(ms, cfg),
+			optionpattern.NewOptionPatternHttp(ms, cfg),
+			color.NewColorHttp(ms, cfg),
+			productcategory.NewProductCategoryHttp(ms, cfg),
 
-		memberapi := member.NewMemberHttp(ms, cfg)
-		memberapi.RouteSetup()
+			inventoryimport.NewInventoryImportHttp(ms, cfg),
+			inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg),
+			inventoryimport.NewCategoryImportHttp(ms, cfg),
 
-		inventoryapi := inventory.NewInventoryHttp(ms, cfg)
-		inventoryapi.RouteSetup()
+			images.NewImagesHttp(ms, cfg, imagePersister),
 
-		categoryHttp := category.NewCategoryHttp(ms, cfg)
-		categoryHttp.RouteSetup()
+			// restaurant
+			shopzone.NewShopZoneHttp(ms, cfg),
+			shoptable.NewShopTableHttp(ms, cfg),
+			printer.NewPrinterHttp(ms, cfg),
+			kitchen.NewKitchenHttp(ms, cfg),
+			zonedesign.NewZoneDesignHttp(ms, cfg),
+			restaurantsettings.NewRestaurantSettingsHttp(ms, cfg),
+			device.NewDeviceHttp(ms, cfg),
+			staff.NewStaffHttp(ms, cfg),
 
-		invImp := inventoryimport.NewInventoryImportHttp(ms, cfg)
-		invImp.RouteSetup()
+			purchase.NewPurchaseHttp(ms, cfg),
+			saleinvoice.NewSaleinvoiceHttp(ms, cfg),
 
-		invOptionImp := inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg)
-		invOptionImp.RouteSetup()
+			chartofaccount.NewChartOfAccountHttp(ms, cfg),
+			journal.NewJournalHttp(ms, cfg),
+			journal.NewJournalWs(ms, cfg),
+			journalreport.NewJournalReportHttp(ms, cfg),
+			accountgroup.NewAccountGroupHttp(ms, cfg),
+			journalbook.NewJournalBookHttp(ms, cfg),
 
-		catImp := inventoryimport.NewCategoryImportHttp(ms, cfg)
-		catImp.RouteSetup()
+			documentimage.NewDocumentImageHttp(ms, cfg),
+			mastersync.NewMasterSyncHttp(ms, cfg),
+			smstransaction.NewSmsTransactionHttp(ms, cfg),
+			paymentmaster.NewPaymentMasterHttp(ms, cfg),
+			warehouse.NewWarehouseHttp(ms, cfg),
+			productbarcode.NewProductBarcodeHttp(ms, cfg),
 
-		filePersister := microservice.NewPersisterFile(microservice.NewStorageFileConfig())
-		imagePersister := microservice.NewPersisterImage(filePersister)
+			customer.NewCustomerHttp(ms, cfg),
+			customergroup.NewCustomerGroupHttp(ms, cfg),
+			product.NewProductHttp(ms, cfg),
+			accountperiodmaster.NewAccountPeriodMasterHttp(ms, cfg),
 
-		ms.Logger.Debugf("Store File Path %v", filePersister.StoreFilePath)
-		imageHttp := images.NewImagesHttp(ms, cfg, imagePersister)
-		imageHttp.RouteSetup()
+			bankmaster.NewBankMasterHttp(ms, cfg),
+			bookbank.NewBookBankHttp(ms, cfg),
+			qrpayment.NewQrPaymentHttp(ms, cfg),
 
-		shopzonehttp := shopzone.NewShopZoneHttp(ms, cfg)
-		shopzonehttp.RouteSetup()
+			filefolder.NewFileFolderHttp(ms, cfg),
+		}
 
-		shoptablehttp := shoptable.NewShopTableHttp(ms, cfg)
-		shoptablehttp.RouteSetup()
-
-		shopprinterhttp := shopprinter.NewShopPrinterHttp(ms, cfg)
-		shopprinterhttp.RouteSetup()
-
-		kitchenhttp := kitchen.NewKitchenHttp(ms, cfg)
-		kitchenhttp.RouteSetup()
-
-		purchase := purchase.NewPurchaseHttp(ms, cfg)
-		purchase.RouteSetup()
-
-		saleinvoiceHttp := saleinvoice.NewSaleinvoiceHttp(ms, cfg)
-		saleinvoiceHttp.RouteSetup()
+		startHttpServices(httpServices...)
 	}
 
 	if devApiMode == "1" || devApiMode == "2" {
-		inventorysearchconsumer.StartInventorySearchComsumerOnProductCreated(ms, cfg)
-		inventorysearchconsumer.StartInventorySearchComsumerOnProductUpdated(ms, cfg)
-		inventorysearchconsumer.StartInventorySearchComsumerOnProductDeleted(ms, cfg)
 
-		saleinvoice.StartSaleinvoiceComsumeCreated(ms, cfg)
+		ms.RegisterLivenessProbeEndpoint("/healthz")
+
+		consumerGroupName := os.Getenv("CONSUMER_GROUP_NAME")
+		if consumerGroupName == "" {
+			consumerGroupName = "03"
+		}
+
+		inventoryConsumer := inventorysearchconsumer.NewInventorySearchConsumer(ms, cfg)
+		inventoryConsumer.Start()
+
+		saleinvoice.StartSaleinvoiceComsumeCreated(ms, cfg, consumerGroupName)
+
+		journal.MigrationJournalTable(ms, cfg)
+		journal.StartJournalComsumeCreated(ms, cfg, consumerGroupName)
+		journal.StartJournalComsumeUpdated(ms, cfg, consumerGroupName)
+		journal.StartJournalComsumeDeleted(ms, cfg, consumerGroupName)
+		journal.StartJournalComsumeBlukCreated(ms, cfg, consumerGroupName)
+
+		chartofaccount.MigrationChartOfAccountTable(ms, cfg)
+		chartofaccount.StartChartOfAccountConsumerCreated(ms, cfg, consumerGroupName)
+		chartofaccount.StartChartOfAccountConsumerUpdated(ms, cfg, consumerGroupName)
+		chartofaccount.StartChartOfAccountConsumerDeleted(ms, cfg, consumerGroupName)
+		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, consumerGroupName)
 	}
 
 	ms.Start()
+}
+
+type HttpRouteSetup interface {
+	RouteSetup()
+}
+
+func startHttpServices(services ...HttpRouteSetup) {
+	for _, service := range services {
+		service.RouteSetup()
+	}
 }

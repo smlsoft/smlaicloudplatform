@@ -2,8 +2,8 @@ package main
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/purchase"
-	"smlcloudplatform/pkg/api/saleinvoice"
+	"smlcloudplatform/pkg/transaction/purchase"
+	"smlcloudplatform/pkg/transaction/saleinvoice"
 )
 
 func main() {

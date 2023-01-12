@@ -2,6 +2,8 @@ package microservice
 
 import (
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"os/signal"
 	"runtime"
@@ -9,7 +11,9 @@ import (
 	"strings"
 	"sync"
 	"syscall"
+	"time"
 
+	"smlcloudplatform/internal/microservice/models"
 	msValidator "smlcloudplatform/internal/validator"
 
 	_ "smlcloudplatform/logger"
@@ -17,6 +21,9 @@ import (
 	"github.com/apex/log"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/go-playground/validator/v10"
+	"github.com/gorilla/websocket"
+	"github.com/labstack/echo-contrib/jaegertracing"
+	"github.com/labstack/echo-contrib/prometheus"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -33,6 +40,8 @@ type IMicroservice interface {
 	PUT(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc)
 	PATCH(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc)
 	DELETE(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc)
+
+	TimeNow() func() time.Time
 
 	// CRUD(cfg IConfig, pathName string, modelx GenCrud)
 	ECHO() *echo.Echo
@@ -53,8 +62,10 @@ type Microservice struct {
 	persistersOpenSearchMutex sync.Mutex
 	prods                     map[string]IProducer
 	prodMutex                 sync.Mutex
+	websocketPool             *WebsocketPool
 	pathPrefix                string
 	config                    IConfig
+	jaegerCloser              io.Closer
 	Logger                    *log.Entry
 	Mode                      string
 }
@@ -76,6 +87,17 @@ func NewMicroservice(config IConfig) (*Microservice, error) {
 		"name": config.ApplicationName(),
 	})
 
+	websocketPool := WebsocketPool{
+		Handler: websocket.Upgrader{
+			ReadBufferSize:  1024,
+			WriteBufferSize: 1024,
+			CheckOrigin: func(r *http.Request) bool {
+				return true
+			},
+		},
+		Connections: map[string]*websocket.Conn{},
+	}
+
 	m := &Microservice{
 		echo:            e,
 		cachers:         map[string]ICacher{},
@@ -87,6 +109,7 @@ func NewMicroservice(config IConfig) (*Microservice, error) {
 		config:          config,
 		Logger:          logctx,
 		Mode:            os.Getenv("MODE"),
+		websocketPool:   &websocketPool,
 	}
 
 	m.Logger.Info("Initial Microservice.")
@@ -125,13 +148,28 @@ func (ms *Microservice) CheckReadyToStart() error {
 			ms.Logger.WithError(err).Error("[KAFKA]Connection Failed.")
 			return err
 		}
+
+		testInfo := models.UserInfo{}
+		producer.SendMessage("TEST-CONNECT", "", testInfo)
 		ms.Logger.Debug("[KAFKA]Connection Success.")
 	}
 
 	// redis
 	redis_clsuter_uri := ms.config.CacherConfig().Endpoint()
 	if redis_clsuter_uri != "" {
-		ms.Logger.Debug("[REDIS]Test Connection.")
+		ms.Logger.Debug("[REDIS_CACHER]Test Connection.")
+
+		cacher, ok := ms.cachers[redis_clsuter_uri]
+		if !ok {
+			cacher = NewCacher(ms.config.CacherConfig())
+			ms.cachers[redis_clsuter_uri] = cacher
+		}
+		err := cacher.Healthcheck()
+		if err != nil {
+			ms.Logger.WithError(err).Error("[REDIS_CACHER]Connection Failed.")
+			return err
+		}
+		ms.Logger.Debug("[REDIS_CACHER]Connection Success.")
 	}
 
 	// postgresql
@@ -230,7 +268,15 @@ func (ms *Microservice) Cleanup() error {
 		}
 	}
 
+	if ms.jaegerCloser != nil {
+		ms.jaegerCloser.Close()
+	}
+
 	return nil
+}
+
+func (ms *Microservice) TimeNow() time.Time {
+	return time.Now()
 }
 
 // Log log message to console
@@ -319,8 +365,62 @@ func (ms *Microservice) Producer(cfg IMQConfig) IProducer {
 	return prod
 }
 
+func (ms *Microservice) Websocket(id string, response http.ResponseWriter, request *http.Request) (*websocket.Conn, error) {
+	ws, err := ms.websocketPool.Handler.Upgrade(response, request, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	ms.websocketPool.Lock()
+	ms.websocketPool.Connections[id] = ws
+	ms.websocketPool.Unlock()
+
+	return ws, nil
+}
+
+func (ms *Microservice) WebsocketClose(id string) {
+	ms.websocketPool.Lock()
+	ms.websocketPool.Connections[id].Close()
+	delete(ms.websocketPool.Connections, id)
+	ms.websocketPool.Unlock()
+}
+
+func (ms *Microservice) WebsocketCount() int {
+	ms.websocketPool.Lock()
+
+	defer ms.websocketPool.Unlock()
+
+	return len(ms.websocketPool.Connections)
+}
+
 func (ms *Microservice) HttpMiddleware(middleware ...echo.MiddlewareFunc) {
 	ms.echo.Use(middleware...)
+}
+
+func (ms *Microservice) HttpPreRemoveTrailingSlash() {
+	ms.echo.Pre(middleware.RemoveTrailingSlash())
+	ms.Logger.Info("Use remove trailing")
+}
+
+func (ms *Microservice) HttpUsePrometheus() {
+	ms.Logger.Info("Start Prometheus.")
+	p := prometheus.NewPrometheus("smlcloudplatform", nil)
+	p.Use(ms.echo)
+}
+
+func (ms *Microservice) HttpUseJaeger() {
+	ms.Logger.Info("Start Jaeger.")
+	c := jaegertracing.New(ms.echo, nil)
+	ms.jaegerCloser = c
+}
+
+func (ms *Microservice) HttpUseCors() {
+
+	ms.echo.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: ms.config.HttpCORS(),
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
 }
 
 // newKafkaConsumer create new Kafka consumer

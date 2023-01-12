@@ -10,7 +10,7 @@ func (ms *Microservice) isCacherAlive() bool {
 
 	for _, cacher := range ms.cachers {
 
-		ms.Log("MS", "Perform healthcheck on Cacher")
+		// ms.Logger.Debug("Perform healthcheck on Cacher")
 		err := cacher.Healthcheck()
 		if err != nil {
 			return false
@@ -24,7 +24,7 @@ func (ms *Microservice) isMongoDBAlive() bool {
 
 	for _, pst := range ms.mongoPersisters {
 
-		ms.Log("MS", "Perform healthcheck on MongoDB")
+		// ms.Logger.Debug("Perform healthcheck on MongoDB")
 		err := pst.Healthcheck()
 		if err != nil {
 			return false
@@ -65,6 +65,7 @@ func (ms *Microservice) RegisterLivenessProbeEndpoint(path string) {
 	ms.echo.GET(path, func(c echo.Context) error {
 		ok, reason := ms.isAlive()
 		if !ok {
+			ms.Logger.Errorf("Failed Check Liveness : %s", reason)
 			ms.responseProbeFailed(c.Response(), reason)
 			return nil
 		}

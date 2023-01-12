@@ -1,5 +1,5 @@
 package transaction
 
-func StartSaleInvoiceTransactionConsumer() error {
+func StartSaleinvoiceTransactionConsumer() error {
 	return nil
 }

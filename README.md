@@ -1,6 +1,23 @@
 
 # SMLCLoudPlatForm
 
+## Environment Variable
+
+### MongoDB
+| Name        | Description            | Value |
+|-------------|------------------------|-------|
+| MONGODB_URI | Mongodb Connection URI | ''    |
+| MONGODB_DB  | Mongodb Database Name  | ''    |
+
+
+### Redis
+
+| Name                 | Description          | Value |
+|----------------------|----------------------|-------|
+| REDIS_CACHE_URI      | Redis connection uri | ''    |
+| REDIS_CACHE_PASSWORD | Redis Password       | ''    |
+
+
 ## For wsl(ubuntu) Please Read
 
 Install Kafkalib , Gcc
@@ -82,4 +99,28 @@ go build --tags dynamic main.go
 ```
 docker buildx create --use
 docker buildx build --platform linux/amd64 --push -t <tag_to_push> .
+```
+
+## M1 Cannot Build Install
+`https://www.baifachuan.com/posts/4862a3b1.html`
+
+error
+```
+linux_syscall.c:67:13: error: implicit declaration of function 'setresgid' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
+linux_syscall.c:67:13: note: did you mean 'setregid'?
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:593:6: note: 'setregid' declared here
+linux_syscall.c:73:13: error: implicit declaration of function 'setresuid' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
+linux_syscall.c:73:13: note: did you mean 'setreuid'?
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h:595:6: note: 'setreuid' declared here
+```
+
+fix by 
+```
+brew install FiloSottile/musl-cross/musl-cross
+
+```
+
+and build with 
+```
+CGO_ENABLED=1 GOOS=linux GOARCH=amd64 CC=x86_64-linux-musl-gcc  CXX=x86_64-linux-musl-g++  go build  -o go-app -tags musl main.go
 ```

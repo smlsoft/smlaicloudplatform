@@ -3,6 +3,7 @@ package microservice
 import (
 	"fmt"
 	"mime/multipart"
+	"net/http"
 	"runtime"
 	"smlcloudplatform/internal/microservice/models"
 	"strings"
@@ -74,6 +75,10 @@ func (ctx *ConsumerContext) Header(attribute string) string {
 	return ""
 }
 
+func (ctx *ConsumerContext) RealIp() string {
+	return ""
+}
+
 func (ctx *ConsumerContext) FormFile(attribute string) (*multipart.FileHeader, error) {
 	return nil, nil
 }
@@ -106,6 +111,14 @@ func (ctx *ConsumerContext) Producer(mqConfig IMQConfig) IProducer {
 // MQ return MQ
 func (ctx *ConsumerContext) MQ(mqConfig IMQConfig) IMQ {
 	return NewMQ(mqConfig, ctx.ms.Logger)
+}
+
+func (ctx *ConsumerContext) ResponseWriter() http.ResponseWriter {
+	return nil
+}
+
+func (ctx *ConsumerContext) Request() *http.Request {
+	return nil
 }
 
 func (ctx *ConsumerContext) EchoContext() echo.Context {

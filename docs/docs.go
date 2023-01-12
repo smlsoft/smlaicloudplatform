@@ -24,19 +24,123 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/category": {
+        "/apikeyservice": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "generate x-api-key",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "XApiKey"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete x-api-key",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "XApiKey"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/checksms": {
             "get": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "List Inventory Category",
+                "description": "รับข้อมูล sms",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Inventory"
+                    "SMS"
+                ],
+                "summary": "รับข้อมูล sms",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SmsTransactionPageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/color": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Color"
                 ],
                 "parameters": [
                     {
@@ -62,23 +166,14 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.CategoryPageResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
                         }
@@ -91,21 +186,21 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Create Inventory Category",
+                "description": "Create Color",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Inventory"
+                    "Color"
                 ],
                 "parameters": [
                     {
-                        "description": "Add Category",
-                        "name": "Category",
+                        "description": "Color",
+                        "name": "Color",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Category"
+                            "$ref": "#/definitions/models.Color"
                         }
                     }
                 ],
@@ -125,30 +220,30 @@ const docTemplate = `{
                 }
             }
         },
-        "/category/bulk": {
+        "/color/bulk": {
             "post": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Create Category",
+                "description": "Create Color",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Inventory"
+                    "Color"
                 ],
                 "parameters": [
                     {
-                        "description": "Category",
-                        "name": "Category",
+                        "description": "Color",
+                        "name": "Color",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Category"
+                                "$ref": "#/definitions/models.Color"
                             }
                         }
                     }
@@ -157,7 +252,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.CategoryBulkReponse"
+                            "$ref": "#/definitions/models.BulkReponse"
                         }
                     },
                     "401": {
@@ -169,34 +264,54 @@ const docTemplate = `{
                 }
             }
         },
-        "/category/fetchupdate": {
+        "/color/list": {
             "get": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Fetch Update Category By Date",
+                "description": "search limit offset",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Inventory"
+                    "Color"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "DateTime",
-                        "name": "lastUpdate",
-                        "in": "query",
-                        "required": true
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.CategoryFetchUpdateResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
                         }
                     },
                     "401": {
@@ -208,24 +323,24 @@ const docTemplate = `{
                 }
             }
         },
-        "/category/{id}": {
+        "/color/{id}": {
             "get": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Get Inventory Category",
+                "description": "get struct array by ID",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Inventory"
+                    "Color"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Category Id",
+                        "description": "Color ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -235,7 +350,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.CategoryInfoResponse"
+                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     },
                     "401": {
@@ -252,28 +367,28 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Update Inventory",
+                "description": "Update Color",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Inventory"
+                    "Color"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Category ID",
+                        "description": "Color ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Category",
-                        "name": "Category",
+                        "description": "Color",
+                        "name": "Color",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Category"
+                            "$ref": "#/definitions/models.Color"
                         }
                     }
                 ],
@@ -298,17 +413,17 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Delete Category",
+                "description": "Delete Color",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Inventory"
+                    "Color"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Category ID",
+                        "description": "Color ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -319,6 +434,1520 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/create-shop": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Shop on login",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "parameters": [
+                    {
+                        "description": "Add Shop",
+                        "name": "Shop",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Shop"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Shop"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/customershop/customer": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "description": "Customer",
+                        "name": "Customer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Customer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customer"
+                ],
+                "parameters": [
+                    {
+                        "description": "Customer GUIDs",
+                        "name": "Customer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/customershop/customer/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "description": "Customer",
+                        "name": "Customer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Customer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/customershop/customer/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/customershop/customer/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Customer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Customer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Customer",
+                        "name": "Customer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Customer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Customer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/customershop/customergroup": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create CustomerGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "description": "CustomerGroup",
+                        "name": "CustomerGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CustomerGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete CustomerGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "CustomerGroup GUIDs",
+                        "name": "CustomerGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/customershop/customergroup/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create CustomerGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "description": "CustomerGroup",
+                        "name": "CustomerGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CustomerGroup"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/customershop/customergroup/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/customershop/customergroup/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CustomerGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update CustomerGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CustomerGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "CustomerGroup",
+                        "name": "CustomerGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CustomerGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete CustomerGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerShop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CustomerGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimage": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "List Document Image",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImage"
+                ],
+                "summary": "List Document Image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Status Value",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Module Value",
+                        "name": "module",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Doc GUID Ref Value",
+                        "name": "docguidref",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Document Ref Value",
+                        "name": "documentref",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.DocumentImagePageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Document Image",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImage"
+                ],
+                "summary": "Create Document Image",
+                "parameters": [
+                    {
+                        "description": "DocumentImage",
+                        "name": "DocumentImage",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DocumentImage"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimage/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Document Image",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImage"
+                ],
+                "summary": "Create Document Image",
+                "parameters": [
+                    {
+                        "description": "DocumentImage",
+                        "name": "DocumentImage",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DocumentImage"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimage/upload": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Upload Document Image",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImage"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Module",
+                        "name": "module",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Image",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DocumentImageInfoResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimage/{guid}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Document Image Infomation",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImage"
+                ],
+                "summary": "Get Document Image Infomation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document image guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.DocumentImageInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Document Image",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImage"
+                ],
+                "summary": "Update Document Image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document image guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "DocumentImage",
+                        "name": "DocumentImage",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DocumentImage"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Document Image",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImage"
+                ],
+                "summary": "Delete Document Image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document image guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimage/{guid}/reject": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Reject Document Image",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImage"
+                ],
+                "summary": "Update Reject Document Image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document image guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Document Image Reject",
+                        "name": "RequestDocumentImageReject",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RequestDocumentImageReject"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimagegroup": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Document Image Group",
+                "consumes": [
+                    "application/json",
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImageGroup",
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "เอกสารที่มีการจอง,0 not filter, 1 filter",
+                        "name": "reserve",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "empty not filter, 0 not reject, 1 reject",
+                        "name": "reject",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "document reference: empty not filter, 1 not reference, 2 referenced",
+                        "name": "ref",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "From Date (YYYY-MM-DD)",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "To Date (YYYY-MM-DD)",
+                        "name": "todate",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Save Document Image Group",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImageGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "Document Image Group",
+                        "name": "DocumentImageGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DocumentImageGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimagegroup/docref/:docref": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Document Image Group By document reference Infomation",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImageGroup"
+                ],
+                "summary": "Get Document Image Group By document reference Infomation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document reference",
+                        "name": "docref",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.DocumentImageInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimagegroup/{guid}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Document Image Group",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImageGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document image group guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Document Image Group",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImageGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document image group guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimagegroup/{guid}/documentimages": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Document Image Group",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImageGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document image group guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimagegroup/{guid}/reference": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Reference In Document Image Group",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImageGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document image group guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimagegroup/{guid}/ungroup": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Ungroup Document Image Group",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImageGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document image group guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     },
                     "401": {
@@ -423,6 +2052,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/employee/login": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Validate Employee",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "parameters": [
+                    {
+                        "description": "EmployeeUserPassword",
+                        "name": "EmployeeUserPassword",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.EmployeeRequestLogin"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.EmployeeInfo"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/employee/password/{id}": {
             "put": {
                 "security": [
@@ -472,36 +2142,28 @@ const docTemplate = `{
                 }
             }
         },
-        "/employee/whois": {
-            "post": {
+        "/employee/{username}": {
+            "get": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Validate Employee",
+                "description": "List Employee",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "Employee"
                 ],
-                "parameters": [
-                    {
-                        "description": "EmployeeUserPassword",
-                        "name": "EmployeeUserPassword",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.EmployeeRequestLogin"
-                        }
-                    }
-                ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.EmployeeInfo"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.EmployeePageResponse"
+                            }
                         }
                     },
                     "401": {
@@ -511,9 +2173,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/employee/{id}": {
+            },
             "put": {
                 "security": [
                     {
@@ -531,8 +2191,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Employee ID",
-                        "name": "id",
+                        "description": "Employee username",
+                        "name": "username",
                         "in": "path",
                         "required": true
                     },
@@ -555,6 +2215,2306 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/favorite-shop": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Favorite Shop In Account",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "parameters": [
+                    {
+                        "description": "Shop Favorite Request",
+                        "name": "ShopFavoriteRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/authentication.ShopFavoriteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-folder": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileFolder"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create FileFolder",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileFolder"
+                ],
+                "parameters": [
+                    {
+                        "description": "FileFolder",
+                        "name": "FileFolder",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.FileFolder"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete FileFolder",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileFolder"
+                ],
+                "parameters": [
+                    {
+                        "description": "FileFolder GUIDs",
+                        "name": "FileFolder",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-folder/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create FileFolder",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileFolder"
+                ],
+                "parameters": [
+                    {
+                        "description": "FileFolder",
+                        "name": "FileFolder",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.FileFolder"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-folder/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileFolder"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/file-folder/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileFolder"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "FileFolder ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update FileFolder",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileFolder"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "FileFolder ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "FileFolder",
+                        "name": "FileFolder",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.FileFolder"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete FileFolder",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FileFolder"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "FileFolder ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/accountgroup": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายการกลุ่มบัญชี",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แสดงรายการกลุ่มบัญชี",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AccountGroupPageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "สร้างกลุ่มบัญชี",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "สร้างกลุ่มบัญชี",
+                "parameters": [
+                    {
+                        "description": "กลุ่มบัญชี",
+                        "name": "AccountGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AccountGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/accountgroup/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายละเอียดกลุ่มบัญชี",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แสดงรายละเอียดกลุ่มบัญชี",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AccountGroupInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แก้ไขกลุ่มบัญชี",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แก้ไขกลุ่มบัญชี",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "กลุ่มบัญชี",
+                        "name": "Journal",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AccountGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "ลบกลุ่มบัญชี",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "ลบกลุ่มบัญชี",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/accountperiodmaster": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create AccountPeriodMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "description": "AccountPeriodMaster",
+                        "name": "AccountPeriodMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AccountPeriodMaster"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete AccountPeriodMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "description": "AccountPeriodMaster GUIDs",
+                        "name": "AccountPeriodMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/accountperiodmaster/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Bulk Create AccountPeriodMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "description": "Array AccountPeriodMaster",
+                        "name": "AccountPeriodMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.AccountPeriodMaster"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/accountperiodmaster/bydate": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get AccountPeriodMaster by date",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "date",
+                        "name": "date",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/accountperiodmaster/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/accountperiodmaster/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "AccountPeriodMaster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update AccountPeriodMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "AccountPeriodMaster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "AccountPeriodMaster",
+                        "name": "AccountPeriodMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AccountPeriodMaster"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete AccountPeriodMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "AccountPeriodMaster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/chartofaccount": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายการผังบัญชี",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แสดงรายการผังบัญชี",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ChartOfAccountPageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "สร้างผังบัญชี",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "สร้างผังบัญชี",
+                "parameters": [
+                    {
+                        "description": "ChartOfAccount",
+                        "name": "ChartOfAccount",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ChartOfAccount"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/chartofaccount/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "นำเข้าผังบัญชี",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "นำเข้าผังบัญชี",
+                "parameters": [
+                    {
+                        "description": "ChartOfAccount",
+                        "name": "ChartOfAccount",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ChartOfAccount"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkInsertResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/chartofaccount/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายละเอียดผังบัญชี",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แสดงรายละเอียดผังบัญชี",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ChartOfAccountInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แก้ไขผังบัญชี",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แก้ไขผังบัญชี",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ChartOfAccount",
+                        "name": "ChartOfAccount",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ChartOfAccount"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "ลบผังบัญชี",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "ลบผังบัญชี",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journal": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายการข้อมูลรายวัน",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แสดงรายการข้อมูลรายวัน",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalPageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "บันทึกข้อมูลรายวัน",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "บันทึกข้อมูลรายวัน",
+                "parameters": [
+                    {
+                        "description": "ข้อมูลรายวัน",
+                        "name": "Journal",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Journal"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journal/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "นำเข้าข้อมูลรายวัน",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "นำเข้าข้อมูลรายวัน",
+                "parameters": [
+                    {
+                        "description": "ข้อมูลรายวัน",
+                        "name": "Journal",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Journal"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkInsertResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journal/docno/{docno}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายละเอียดข้อมูลรายวัน",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แสดงรายละเอียดข้อมูลรายวัน",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Journal DocNo",
+                        "name": "docno",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journal/docref/deselect": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "For List Document Ref selected",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WSDocumentRef"
+                ],
+                "summary": "List Document Ref selected",
+                "parameters": [
+                    {
+                        "description": "JournalRef body",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalRef"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journal/docref/next": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "For List Document Ref selected",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WSDocumentRef"
+                ],
+                "summary": "List Document Ref selected",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journal/docref/select": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "For List Document Ref selected",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WSDocumentRef"
+                ],
+                "summary": "List Document Ref selected",
+                "parameters": [
+                    {
+                        "description": "JournalRef body",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalRef"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journal/docref/{doc}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายละเอียดข้อมูลรายวัน ตามเอกสารอ้างอิง",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แสดงรายละเอียดข้อมูลรายวัน ตามเอกสารอ้างอิง",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Document Ref",
+                        "name": "doc",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journal/last-docno": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายละเอียดข้อมูลรายวัน",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แสดงรายละเอียดข้อมูลรายวัน",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journal/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายละเอียดข้อมูลรายวัน",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แสดงรายละเอียดข้อมูลรายวัน",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Journal Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แก้ไขข้อมูลรายวัน",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แก้ไขข้อมูลรายวัน",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Journal ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ข้อมูลรายวัน",
+                        "name": "Journal",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Journal"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "ลบข้อมูลรายวัน",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "ลบข้อมูลรายวัน",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Journal ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journalbook": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายการสมุดรายวัน",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แสดงรายการสมุดรายวัน",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalBookPageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "สร้างสมุดรายวัน",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "สร้างสมุดรายวัน",
+                "parameters": [
+                    {
+                        "description": "สมุดรายวัน",
+                        "name": "JournalBook",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalBook"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journalbook/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "นำเข้าสมุดรายวัน",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "นำเข้าสมุดรายวัน",
+                "parameters": [
+                    {
+                        "description": "สมุดรายวัน",
+                        "name": "JournalBook",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.JournalBook"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkInsertResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journalbook/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายละเอียดสมุดรายวัน",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แสดงรายละเอียดสมุดรายวัน",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalBookInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แก้ไขสมุดรายวัน",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แก้ไขสมุดรายวัน",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "สมุดรายวัน",
+                        "name": "Journal",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalBook"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "ลบสมุดรายวัน",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "ลบสมุดรายวัน",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/report/balancesheet": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "ดึงข้อมูลงบดุล",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GLReport"
+                ],
+                "summary": "ดึงข้อมูลงบดุล",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "กลุ่มบัญชี",
+                        "name": "accountgroup",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ณ วันที่ (Date Format: YYYY-MM-DD)",
+                        "name": "enddate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "รวมรายการปิดปัญชี",
+                        "name": "ica",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "TimeZone",
+                        "name": "timezone",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.BalanceSheetReportResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/report/ledgeraccount": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "บัญชีแยกประเภท",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GLReport"
+                ],
+                "summary": "บัญชีแยกประเภท",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "จากวันที่ (Date Format: YYYY-MM-DD)",
+                        "name": "startdate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ถึงวันที่ (Date Format: YYYY-MM-DD)",
+                        "name": "enddate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Account Code",
+                        "name": "accountcode",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "TimeZone",
+                        "name": "timezone",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.TrialBalanceSheetReportResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/report/profitandloss": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "ดึงข้อมูลงบกำไรขาดทุน",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GLReport"
+                ],
+                "summary": "ดึงข้อมูลงบกำไรขาดทุน",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "กลุ่มบัญชี",
+                        "name": "accountgroup",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "จากวันที่ (Date Format: YYYY-MM-DD)",
+                        "name": "startdate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ถึงวันที่ (Date Format: YYYY-MM-DD)",
+                        "name": "enddate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "รวมรายการปิดปัญชี",
+                        "name": "ica",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "TimeZone",
+                        "name": "timezone",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.LostAndProfitSheetReportResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/report/trialbalancesheet": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "ดึงข้อมูลงบทดลอง",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GLReport"
+                ],
+                "summary": "ดึงข้อมูลงบทดลอง",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "กลุ่มบัญชี",
+                        "name": "accountgroup",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "จากวันที่ (Date Format: YYYY-MM-DD)",
+                        "name": "startdate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ถึงวันที่ (Date Format: YYYY-MM-DD)",
+                        "name": "enddate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "รวมรายการปิดปัญชี",
+                        "name": "ica",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "TimeZone",
+                        "name": "timezone",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.TrialBalanceSheetReportResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
                         }
@@ -1044,6 +5004,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/inventory/barcode/{barcode}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by barcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Barcode",
+                        "name": "barcode",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.InventoryInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/inventory/bulk": {
             "post": {
                 "security": [
@@ -1179,6 +5178,132 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.InventoryFetchUpdateResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/inventory/itemcode/{itemcode}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by Item Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Inventory Item Code",
+                        "name": "itemcode",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.InventoryInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Inventory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Inventory Item Code",
+                        "name": "itemcode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Inventory",
+                        "name": "Inventory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Inventory"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/inventory/save": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Save Inventory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "parameters": [
+                    {
+                        "description": "Inventory",
+                        "name": "Inventory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Inventory"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
@@ -1361,7 +5486,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserRequest"
+                            "$ref": "#/definitions/models.UserLoginRequest"
                         }
                     }
                 ],
@@ -1374,6 +5499,169 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Logout Current Profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.UserProfileReponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/master-sync": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Master Sync",
+                "tags": [
+                    "MasterSync"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "last update date ex: 2020-01-01T00:00:00",
+                        "name": "lastupdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "module code ex: product,productcategory,productbarcode",
+                        "name": "module",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "action code (all, new, remove)",
+                        "name": "action",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/master-sync/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Master Sync Offset",
+                "tags": [
+                    "MasterSync"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "last update date ex: 2020-01-01T00:00:00",
+                        "name": "lastupdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "module code ex: product,productcategory,productbarcode",
+                        "name": "module",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "action code (all, new, remove)",
+                        "name": "action",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/master-sync/status": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Master Sync Status",
+                "tags": [
+                    "MasterSync"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
                         }
@@ -1626,39 +5914,6 @@ const docTemplate = `{
                         "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/merchant": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Access to Merchant",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Merchant"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.ShopInfo"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     }
                 }
@@ -2086,7 +6341,2888 @@ const docTemplate = `{
                 }
             }
         },
+        "/optionpattern": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OptionPattern"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create OptionPattern",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OptionPattern"
+                ],
+                "parameters": [
+                    {
+                        "description": "OptionPattern",
+                        "name": "OptionPattern",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.OptionPattern"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/optionpattern/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create OptionPattern",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OptionPattern"
+                ],
+                "parameters": [
+                    {
+                        "description": "OptionPattern",
+                        "name": "OptionPattern",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.OptionPattern"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/optionpattern/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OptionPattern"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "OptionPattern ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update OptionPattern",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OptionPattern"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "OptionPattern ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "OptionPattern",
+                        "name": "OptionPattern",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.OptionPattern"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete OptionPattern",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OptionPattern"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "OptionPattern ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/bankmaster": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create BankMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankMaster"
+                ],
+                "parameters": [
+                    {
+                        "description": "BankMaster",
+                        "name": "BankMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BankMaster"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete BankMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankMaster"
+                ],
+                "parameters": [
+                    {
+                        "description": "BankMaster GUIDs",
+                        "name": "BankMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/bankmaster/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create BankMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankMaster"
+                ],
+                "parameters": [
+                    {
+                        "description": "BankMaster",
+                        "name": "BankMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.BankMaster"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/bankmaster/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/bankmaster/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "BankMaster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update BankMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "BankMaster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "BankMaster",
+                        "name": "BankMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BankMaster"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete BankMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "BankMaster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/bookbank": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BookBank"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create BookBank",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BookBank"
+                ],
+                "parameters": [
+                    {
+                        "description": "BookBank",
+                        "name": "BookBank",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BookBank"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete BookBank",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BookBank"
+                ],
+                "parameters": [
+                    {
+                        "description": "BookBank GUIDs",
+                        "name": "BookBank",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/bookbank/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create BookBank",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BookBank"
+                ],
+                "parameters": [
+                    {
+                        "description": "BookBank",
+                        "name": "BookBank",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.BookBank"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/bookbank/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BookBank"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/bookbank/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BookBank"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "BookBank ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update BookBank",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BookBank"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "BookBank ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "BookBank",
+                        "name": "BookBank",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BookBank"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete BookBank",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BookBank"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "BookBank ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/qrpayment": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "QrPayment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create QrPayment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "QrPayment"
+                ],
+                "parameters": [
+                    {
+                        "description": "QrPayment",
+                        "name": "QrPayment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.QrPayment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete QrPayment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "QrPayment"
+                ],
+                "parameters": [
+                    {
+                        "description": "QrPayment GUIDs",
+                        "name": "QrPayment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/qrpayment/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create QrPayment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "QrPayment"
+                ],
+                "parameters": [
+                    {
+                        "description": "QrPayment",
+                        "name": "QrPayment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.QrPayment"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/qrpayment/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "QrPayment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/qrpayment/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "QrPayment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "QrPayment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update QrPayment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "QrPayment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "QrPayment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "QrPayment",
+                        "name": "QrPayment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.QrPayment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete QrPayment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "QrPayment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "QrPayment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/paymentmaster": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายการ payment master",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PaymentMaster"
+                ],
+                "summary": "แสดงรายการ payment master",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.PaymentMasterPageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "สร้าง payment master",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PaymentMaster"
+                ],
+                "summary": "สร้าง payment master",
+                "parameters": [
+                    {
+                        "description": "paymentmaster",
+                        "name": "PaymentMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PaymentMaster"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/paymentmaster-type": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายละเอียด payment master type",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PaymentMaster"
+                ],
+                "summary": "แสดงรายละเอียด payment master type",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/paymentmaster/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "นำเข้าข้อมูล payment master",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PaymentMaster"
+                ],
+                "summary": "นำเข้าข้อมูล payment master",
+                "parameters": [
+                    {
+                        "description": "paymentmaster",
+                        "name": "Journal",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Journal"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkInsertResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/paymentmaster/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายละเอียด payment master",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PaymentMaster"
+                ],
+                "summary": "แสดงรายละเอียด payment master",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Journal Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.PaymentMasterInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แก้ไข payment master",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PaymentMaster"
+                ],
+                "summary": "แก้ไข payment master",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Payment Master ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "paymentmaster",
+                        "name": "PaymentMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PaymentMaster"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "ลบ payment master",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PaymentMaster"
+                ],
+                "summary": "ลบ payment master",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Journal ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "category guid",
+                        "name": "category",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "description": "Product",
+                        "name": "Product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Product"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "description": "Product GUIDs",
+                        "name": "Product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/barcode": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ProductBarcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductBarcode",
+                        "name": "ProductBarcode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductBarcode"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductBarcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductBarcode GUIDs",
+                        "name": "ProductBarcode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/barcode/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ProductBarcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductBarcode",
+                        "name": "ProductBarcode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ProductBarcode"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/barcode/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/barcode/xsort": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update XSort ProductBarcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "description": "XSort",
+                        "name": "XSort",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.XSortModifyReqesut"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/barcode/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductBarcode ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update ProductBarcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductBarcode ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ProductBarcode",
+                        "name": "ProductBarcode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductBarcode"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductBarcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductBarcode ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "description": "Product",
+                        "name": "Product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Product"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/category": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ProductCategory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductCategory",
+                        "name": "ProductCategory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductCategory"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductCategory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductCategory GUIDs",
+                        "name": "ProductCategory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/category/barcodes": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Barcodes Category",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "description": "Barcodes",
+                        "name": "Barcodes",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.BarcodesModifyReqesut"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/category/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ProductCategory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductCategory",
+                        "name": "ProductCategory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ProductCategory"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/category/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/category/xsort": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update XSort Category",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "description": "XSort",
+                        "name": "XSort",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.XSortModifyReqesut"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/category/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductCategory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update ProductCategory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductCategory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ProductCategory",
+                        "name": "ProductCategory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductCategory"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductCategory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductCategory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "category guid",
+                        "name": "category",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Product",
+                        "name": "Product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Product"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/profile": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Current Profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.UserProfileReponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/profileshop": {
             "get": {
                 "security": [
                     {
@@ -2369,6 +9505,365 @@ const docTemplate = `{
                 }
             }
         },
+        "/restaurant/device": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Device",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "Device",
+                        "name": "Device",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_restaurant_device_models.Device"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Device",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "Device GUIDs",
+                        "name": "Device",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/device/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Device",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "Device",
+                        "name": "Device",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/smlcloudplatform_pkg_restaurant_device_models.Device"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/device/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/device/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Device ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Device",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Device ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Device",
+                        "name": "Device",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_restaurant_device_models.Device"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Device",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Device ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/restaurant/kitchen": {
             "get": {
                 "security": [
@@ -2407,7 +9902,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.KitchenPageResponse"
+                            "$ref": "#/definitions/models.KitchenPageResponse"
                         }
                     },
                     "401": {
@@ -2438,7 +9933,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/restaurant.Kitchen"
+                            "$ref": "#/definitions/models.Kitchen"
                         }
                     }
                 ],
@@ -2481,7 +9976,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/restaurant.Kitchen"
+                                "$ref": "#/definitions/models.Kitchen"
                             }
                         }
                     }
@@ -2541,7 +10036,60 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.KitchenFetchUpdateResponse"
+                            "$ref": "#/definitions/models.KitchenFetchUpdateResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/kitchen/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
                         }
                     },
                     "401": {
@@ -2580,7 +10128,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.KitchenInfoResponse"
+                            "$ref": "#/definitions/models.KitchenInfoResponse"
                         }
                     },
                     "401": {
@@ -2618,7 +10166,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/restaurant.Kitchen"
+                            "$ref": "#/definitions/models.Kitchen"
                         }
                     }
                 ],
@@ -2713,7 +10261,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.PrinterTerminalPageResponse"
+                            "$ref": "#/definitions/models.PrinterPageResponse"
                         }
                     },
                     "401": {
@@ -2744,7 +10292,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/restaurant.PrinterTerminal"
+                            "$ref": "#/definitions/models.Printer"
                         }
                     }
                 ],
@@ -2787,7 +10335,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/restaurant.PrinterTerminal"
+                                "$ref": "#/definitions/models.Printer"
                             }
                         }
                     }
@@ -2847,7 +10395,60 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.PrinterTerminalFetchUpdateResponse"
+                            "$ref": "#/definitions/models.PrinterFetchUpdateResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/printer/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
                         }
                     },
                     "401": {
@@ -2886,7 +10487,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.PrinterTerminalInfoResponse"
+                            "$ref": "#/definitions/models.PrinterInfoResponse"
                         }
                     },
                     "401": {
@@ -2924,7 +10525,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/restaurant.PrinterTerminal"
+                            "$ref": "#/definitions/models.Printer"
                         }
                     }
                 ],
@@ -2960,6 +10561,752 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Printer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/settings": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "List Restaurant Settings Category",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.RestaurantSettingsPageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Restaurant Settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "Settings",
+                        "name": "Settings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RestaurantSettings"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Restaurant Settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "Restaurant Settings GUIDs",
+                        "name": "Settings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/settings/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create RestaurantSettings",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "RestaurantSettings",
+                        "name": "RestaurantSettings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.RestaurantSettings"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkInsertResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/settings/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Restaurant Settings By Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "RestaurantSettings Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.RestaurantSettingsInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/settings/fetchupdate": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Fetch Restaurant RestaurantSettings Update By Date",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "DateTime YYYY-MM-DDTHH:mm",
+                        "name": "lastUpdate",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.RestaurantSettingsFetchUpdateResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/settings/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Restaurant Settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "RestaurantSettings Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.RestaurantSettingsInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Restaurant Settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Settings ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Settings",
+                        "name": "Settings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RestaurantSettings"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Restaurant Settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "RestaurantSettings ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/staff": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Staff",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "Staff",
+                        "name": "Staff",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Staff"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Staff",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "Staff GUIDs",
+                        "name": "Staff",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/staff/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Staff",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "Staff",
+                        "name": "Staff",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Staff"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/staff/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/staff/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Staff ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Staff",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Staff ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Staff",
+                        "name": "Staff",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Staff"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Staff",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Staff ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -3019,7 +11366,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopTablePageResponse"
+                            "$ref": "#/definitions/models.ShopTablePageResponse"
                         }
                     },
                     "401": {
@@ -3050,7 +11397,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopTable"
+                            "$ref": "#/definitions/models.ShopTable"
                         }
                     }
                 ],
@@ -3093,7 +11440,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/restaurant.ShopTable"
+                                "$ref": "#/definitions/models.ShopTable"
                             }
                         }
                     }
@@ -3153,7 +11500,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopTableFetchUpdateResponse"
+                            "$ref": "#/definitions/models.ShopTableFetchUpdateResponse"
                         }
                     },
                     "401": {
@@ -3192,7 +11539,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopTableInfoResponse"
+                            "$ref": "#/definitions/models.ShopTableInfoResponse"
                         }
                     },
                     "401": {
@@ -3230,7 +11577,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopTable"
+                            "$ref": "#/definitions/models.ShopTable"
                         }
                     }
                 ],
@@ -3325,7 +11672,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopZonePageResponse"
+                            "$ref": "#/definitions/models.ShopZonePageResponse"
                         }
                     },
                     "401": {
@@ -3356,7 +11703,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopZone"
+                            "$ref": "#/definitions/models.ShopZone"
                         }
                     }
                 ],
@@ -3399,7 +11746,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/restaurant.ShopZone"
+                                "$ref": "#/definitions/models.ShopZone"
                             }
                         }
                     }
@@ -3459,7 +11806,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopZoneFetchUpdateResponse"
+                            "$ref": "#/definitions/models.ShopZoneFetchUpdateResponse"
                         }
                     },
                     "401": {
@@ -3498,7 +11845,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopZoneInfoResponse"
+                            "$ref": "#/definitions/models.ShopZoneInfoResponse"
                         }
                     },
                     "401": {
@@ -3536,7 +11883,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/restaurant.ShopZone"
+                            "$ref": "#/definitions/models.ShopZone"
                         }
                     }
                 ],
@@ -3633,7 +11980,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.SaleInvoiceListPageResponse"
+                                "$ref": "#/definitions/models.SaleinvoiceListPageResponse"
                             }
                         }
                     },
@@ -3660,8 +12007,8 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "SaleInvoice",
-                        "name": "SaleInvoice",
+                        "description": "Saleinvoice",
+                        "name": "Saleinvoice",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -3848,6 +12195,37 @@ const docTemplate = `{
                 }
             }
         },
+        "/selected": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "For List Document Ref selected",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WSDocumentRef"
+                ],
+                "summary": "List Document Ref selected",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/shop": {
             "get": {
                 "security": [
@@ -3920,6 +12298,878 @@ const docTemplate = `{
                 }
             }
         },
+        "/shop/permission": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get shopuser info by username",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ShopUser"
+                ],
+                "parameters": [
+                    {
+                        "description": "UserRoleRequest",
+                        "name": "UserRoleRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserRoleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/shop/permission/{username}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get shopuser info by username",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ShopUser"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "username",
+                        "name": "username",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get shopuser info by username",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ShopUser"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "username",
+                        "name": "username",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/shop/users": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get shopuser",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ShopUser"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/shop/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Infomation Shop Profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Shop ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ShopInfo"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Shop",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Shop ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Shop Body",
+                        "name": "Shop",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Shop"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Shop"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Shop",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Shop ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Shop"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/smspaymentsettings": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "sms payment received settings service",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SmsPayment"
+                ],
+                "summary": "sms payment settings",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/smspaymentsettings/{storefrontguid}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "sms payment received settings service",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SmsPayment"
+                ],
+                "summary": "sms payment settings",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "storefront guidfixed",
+                        "name": "storefrontguid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "sms payment received settings service",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SmsPayment"
+                ],
+                "summary": "sms payment settings",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "storefront guidfixed",
+                        "name": "storefrontguid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "sms payment settings",
+                        "name": "SmsPaymentSettings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SmsPaymentSettings"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/smstransaction": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "รับข้อมูล sms",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMS"
+                ],
+                "summary": "รับข้อมูล sms",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SmsTransactionPageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "รับข้อมูล sms",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMS"
+                ],
+                "summary": "รับข้อมูล sms",
+                "parameters": [
+                    {
+                        "description": "sms data",
+                        "name": "Transaction",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SmsTransaction"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/smstransaction/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "รับข้อมูล sms",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMS"
+                ],
+                "summary": "รับข้อมูล sms",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "GIUDFIXED",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SmsTransactionInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "รับข้อมูล sms",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMS"
+                ],
+                "summary": "รับข้อมูล sms",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "GIUDFIXED",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "sms data",
+                        "name": "Journal",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SmsTransaction"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "รับข้อมูล sms",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMS"
+                ],
+                "summary": "รับข้อมูล sms",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "GIUDFIXED",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/storefront": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Storefront"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Storefront",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Storefront"
+                ],
+                "parameters": [
+                    {
+                        "description": "Storefront",
+                        "name": "Storefront",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Storefront"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/storefront/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Storefront"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Storefront ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Storefront",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Storefront"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Storefront ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Storefront",
+                        "name": "Storefront",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Storefront"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Storefront",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Storefront"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Storefront ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/syncproduct": {
             "post": {
                 "security": [
@@ -3954,6 +13204,411 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/unit": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add ",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add ",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Unit",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "description": "Unit",
+                        "name": "Unit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_product_unit_models.Unit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Unit",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "description": "Unit GUIDs",
+                        "name": "Unit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/unit/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Unit",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "description": "Unit",
+                        "name": "Unit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/smlcloudplatform_pkg_product_unit_models.Unit"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/unit/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/unit/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Unit ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Unit",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Unit ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Unit",
+                        "name": "Unit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_product_unit_models.Unit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Unit",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Unit ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Unit",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Unit ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Unit",
+                        "name": "Unit",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_product_unit_models.Unit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
                         }
@@ -4068,9 +13723,446 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/user/permissions": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get shopuser",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ShopUser"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Warehouse",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "description": "Warehouse",
+                        "name": "Warehouse",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Warehouse"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Warehouse",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "description": "Warehouse",
+                        "name": "Warehouse",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Warehouse"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Warehouse",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Warehouse",
+                        "name": "Warehouse",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Warehouse"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Warehouse",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "authentication.ShopFavoriteRequest": {
+            "type": "object",
+            "properties": {
+                "isfavorite": {
+                    "type": "boolean"
+                },
+                "shopid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.AccountGroup": {
+            "type": "object",
+            "required": [
+                "code",
+                "name1"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name2": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name3": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name4": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                }
+            }
+        },
+        "models.AccountGroupInfo": {
+            "type": "object",
+            "required": [
+                "code",
+                "name1"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name2": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name3": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name4": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                }
+            }
+        },
+        "models.AccountGroupInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.AccountGroupInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.AccountGroupPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AccountGroupInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.AccountPeriodMaster": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "enddate": {
+                    "type": "string"
+                },
+                "isdisabled": {
+                    "type": "boolean"
+                },
+                "period": {
+                    "type": "integer"
+                },
+                "startdate": {
+                    "type": "string"
+                }
+            }
+        },
         "models.ApiResponse": {
             "type": "object",
             "properties": {
@@ -4082,7 +14174,8 @@ const docTemplate = `{
                 "pagination": {},
                 "success": {
                     "type": "boolean"
-                }
+                },
+                "total": {}
             }
         },
         "models.AuthResponse": {
@@ -4104,6 +14197,284 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.AvailablePatternOption": {
+            "type": "object",
+            "properties": {
+                "optionpatterntags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "patternkey": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "qty": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.BalanceSheetAccountDetail": {
+            "type": "object",
+            "properties": {
+                "accountbalancetype": {
+                    "description": "ด้านบัญชี 1=เดบิต,2=เครดิต",
+                    "type": "integer"
+                },
+                "accountcategory": {
+                    "description": "หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย",
+                    "type": "integer"
+                },
+                "accountcode": {
+                    "description": "รหัสผังบัญชี",
+                    "type": "string"
+                },
+                "accountgroup": {
+                    "description": "กลุ่มบัญชี",
+                    "type": "string"
+                },
+                "accountlevel": {
+                    "description": "ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ",
+                    "type": "integer"
+                },
+                "accountname": {
+                    "description": "ชื่อบัญชี",
+                    "type": "string"
+                },
+                "amount": {
+                    "description": "มูลค่า",
+                    "type": "number"
+                },
+                "consolidateaccountcode": {
+                    "description": "รหัสผังบัญชีกลาง",
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.BalanceSheetReport": {
+            "type": "object",
+            "properties": {
+                "accountgroup": {
+                    "description": "เล่มบัญชี",
+                    "type": "string"
+                },
+                "assets": {
+                    "description": "สินทรัพย์",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.BalanceSheetAccountDetail"
+                    }
+                },
+                "enddate": {
+                    "description": "วันที่สิ้นสุด",
+                    "type": "string"
+                },
+                "liabilities": {
+                    "description": "หนี้สิน",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.BalanceSheetAccountDetail"
+                    }
+                },
+                "ownesequities": {
+                    "description": "ทุนและส่วนของเจ้าของ",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.BalanceSheetAccountDetail"
+                    }
+                },
+                "reportdate": {
+                    "description": "วันที่ทำรายการ",
+                    "type": "string"
+                },
+                "totalassetamount": {
+                    "description": "รวมสินทรัพย์",
+                    "type": "number"
+                },
+                "totalliabilityamount": {
+                    "description": "รวมหนี้สิน",
+                    "type": "number"
+                },
+                "totalliabilityandownersequityamount": {
+                    "description": "รวมหนี้สิน ทุน และส่วนของเจ้าของ",
+                    "type": "number"
+                },
+                "totalownersequityamount": {
+                    "description": "รวมทุนและส่วนของเจ้าของ",
+                    "type": "number"
+                }
+            }
+        },
+        "models.BalanceSheetReportResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.BalanceSheetReport"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.BankMaster": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.Barcode": {
+            "type": "object",
+            "required": [
+                "name1"
+            ],
+            "properties": {
+                "barcode": {
+                    "type": "string"
+                },
+                "description1": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "description2": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "description3": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "description4": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "description5": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "image": {
+                    "type": "string"
+                },
+                "isprimary": {
+                    "type": "boolean"
+                },
+                "memberprice": {
+                    "type": "number"
+                },
+                "name1": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name2": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name3": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name4": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "normalprice": {
+                    "type": "number"
+                },
+                "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
+                },
+                "unitcode": {
+                    "type": "string"
+                },
+                "unitname1": {
+                    "type": "string"
+                },
+                "unitname2": {
+                    "type": "string"
+                },
+                "unitname3": {
+                    "type": "string"
+                },
+                "unitname4": {
+                    "type": "string"
+                },
+                "unitname5": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.BarcodesModifyReqesut": {
+            "type": "object"
+        },
+        "models.BookBank": {
+            "type": "object",
+            "required": [
+                "banknames",
+                "names"
+            ],
+            "properties": {
+                "bankcode": {
+                    "type": "string"
+                },
+                "banknames": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Image"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "passbook": {
+                    "type": "string"
                 }
             }
         },
@@ -4139,86 +14510,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Category": {
-            "type": "object",
-            "properties": {
-                "categoryguid": {
-                    "type": "string"
-                },
-                "image": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "order": {
-                    "type": "integer"
-                },
-                "parentguid": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.CategoryActivity": {
-            "type": "object",
-            "properties": {
-                "categoryguid": {
-                    "type": "string"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "image": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "order": {
-                    "type": "integer"
-                },
-                "parentguid": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.CategoryBulkReponse": {
+        "models.BulkReponse": {
             "type": "object",
             "properties": {
                 "created": {
@@ -4250,110 +14542,123 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CategoryDeleteActivity": {
+        "models.CategoryImport": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
-                "createdat": {
+                "barcodes": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
+                },
+                "childcount": {
+                    "type": "integer"
+                },
+                "colorselect": {
                     "type": "string"
                 },
-                "deletedat": {
+                "colorselecthex": {
                     "type": "string"
                 },
                 "guidfixed": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "imageuri": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "parentguid": {
+                    "type": "string"
+                },
+                "parentguidall": {
                     "type": "string"
                 },
                 "shopid": {
                     "type": "string"
                 },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.CategoryFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.CategoryLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
+                "useimageorcolor": {
                     "type": "boolean"
-                }
-            }
-        },
-        "models.CategoryImport": {
-            "type": "object",
-            "properties": {
-                "categoryguid": {
-                    "type": "string"
                 },
-                "code": {
-                    "type": "string"
-                },
-                "image": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "order": {
-                    "type": "integer"
-                },
-                "parentguid": {
-                    "type": "string"
+                "xsorts": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
                 }
             }
         },
         "models.CategoryImportInfo": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
-                "categoryguid": {
+                "barcodes": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
+                },
+                "childcount": {
+                    "type": "integer"
+                },
+                "colorselect": {
                     "type": "string"
                 },
-                "code": {
+                "colorselecthex": {
                     "type": "string"
                 },
                 "guidfixed": {
                     "type": "string"
                 },
-                "image": {
+                "id": {
                     "type": "string"
                 },
-                "name1": {
+                "imageuri": {
                     "type": "string"
                 },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "order": {
-                    "type": "integer"
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "parentguid": {
                     "type": "string"
+                },
+                "parentguidall": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "useimageorcolor": {
+                    "type": "boolean"
+                },
+                "xsorts": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
                 }
             }
         },
@@ -4374,76 +14679,93 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CategoryInfo": {
+        "models.ChartOfAccount": {
             "type": "object",
             "properties": {
-                "categoryguid": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "image": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "order": {
+                "accountbalancetype": {
+                    "description": "ด้านบัญชี 1=เดบิต,2=เครดิต",
                     "type": "integer"
                 },
-                "parentguid": {
+                "accountcategory": {
+                    "description": "หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย",
+                    "type": "integer"
+                },
+                "accountcode": {
+                    "description": "รหัสผังบัญชี",
+                    "type": "string"
+                },
+                "accountgroup": {
+                    "description": "กลุ่มบัญชี",
+                    "type": "string"
+                },
+                "accountlevel": {
+                    "description": "ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ",
+                    "type": "integer"
+                },
+                "accountname": {
+                    "description": "ชื่อบัญชี",
+                    "type": "string"
+                },
+                "consolidateaccountcode": {
+                    "description": "รหัสผังบัญชีกลาง",
                     "type": "string"
                 }
             }
         },
-        "models.CategoryInfoResponse": {
+        "models.ChartOfAccountInfo": {
+            "type": "object",
+            "properties": {
+                "accountbalancetype": {
+                    "description": "ด้านบัญชี 1=เดบิต,2=เครดิต",
+                    "type": "integer"
+                },
+                "accountcategory": {
+                    "description": "หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย",
+                    "type": "integer"
+                },
+                "accountcode": {
+                    "description": "รหัสผังบัญชี",
+                    "type": "string"
+                },
+                "accountgroup": {
+                    "description": "กลุ่มบัญชี",
+                    "type": "string"
+                },
+                "accountlevel": {
+                    "description": "ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ",
+                    "type": "integer"
+                },
+                "accountname": {
+                    "description": "ชื่อบัญชี",
+                    "type": "string"
+                },
+                "consolidateaccountcode": {
+                    "description": "รหัสผังบัญชีกลาง",
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ChartOfAccountInfoResponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/models.CategoryInfo"
+                    "$ref": "#/definitions/models.ChartOfAccountInfo"
                 },
                 "success": {
                     "type": "boolean"
                 }
             }
         },
-        "models.CategoryLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.CategoryActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.CategoryDeleteActivity"
-                    }
-                }
-            }
-        },
-        "models.CategoryPageResponse": {
+        "models.ChartOfAccountPageResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.CategoryInfo"
+                        "$ref": "#/definitions/models.ChartOfAccountInfo"
                     }
                 },
                 "pagination": {
@@ -4456,8 +14778,21 @@ const docTemplate = `{
         },
         "models.Choice": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "barcode": {
+                    "type": "string"
+                },
+                "choicedetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.IncudeChoice"
+                    }
+                },
+                "code": {
                     "type": "string"
                 },
                 "default": {
@@ -4467,19 +14802,32 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "price": {
                     "type": "number"
@@ -4495,6 +14843,40 @@ const docTemplate = `{
                 },
                 "suggestcode": {
                     "type": "string"
+                }
+            }
+        },
+        "models.Color": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "colorhex": {
+                    "type": "string"
+                },
+                "colorselect": {
+                    "type": "string"
+                },
+                "colorselecthex": {
+                    "type": "string"
+                },
+                "colorsystem": {
+                    "type": "string"
+                },
+                "colorsystemhex": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 }
             }
         },
@@ -4518,13 +14900,274 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Employee": {
+        "models.Customer": {
+            "type": "object",
+            "required": [
+                "code",
+                "names"
+            ],
+            "properties": {
+                "addressforbilling": {
+                    "$ref": "#/definitions/models.CustomerAddress"
+                },
+                "addressforshipping": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CustomerAddress"
+                    }
+                },
+                "code": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "email": {
+                    "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Image"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "personaltype": {
+                    "type": "integer"
+                },
+                "taxid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CustomerAddress": {
+            "type": "object",
+            "required": [
+                "contactnames"
+            ],
+            "properties": {
+                "address": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "contactnames": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "guid": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phoneprimary": {
+                    "type": "string"
+                },
+                "phonesecondary": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CustomerGroup": {
+            "type": "object",
+            "required": [
+                "customercode",
+                "names"
+            ],
+            "properties": {
+                "customercode": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "guid": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.DocumentImage": {
             "type": "object",
             "properties": {
+                "imageuri": {
+                    "type": "string"
+                },
+                "isreject": {
+                    "type": "boolean"
+                },
+                "metafileat": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
-                "password": {
+                "referencegroups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ReferenceGroup"
+                    }
+                },
+                "references": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Reference"
+                    }
+                },
+                "uploadedat": {
+                    "type": "string"
+                },
+                "uploadedby": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DocumentImageGroup": {
+            "type": "object",
+            "properties": {
+                "imagereferences": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ImageReference"
+                    }
+                },
+                "isreject": {
+                    "type": "boolean"
+                },
+                "references": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Reference"
+                    }
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "description": "DocumentRef     string            ` + "`" + `json:\"documentref\" bson:\"documentref\"` + "`" + `",
+                    "type": "string"
+                },
+                "uploadedat": {
+                    "type": "string"
+                },
+                "uploadedby": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DocumentImageInfo": {
+            "type": "object",
+            "properties": {
+                "guidfixed": {
+                    "type": "string"
+                },
+                "imageuri": {
+                    "type": "string"
+                },
+                "isreject": {
+                    "type": "boolean"
+                },
+                "metafileat": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "referencegroups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ReferenceGroup"
+                    }
+                },
+                "references": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Reference"
+                    }
+                },
+                "uploadedat": {
+                    "type": "string"
+                },
+                "uploadedby": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DocumentImageInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.DocumentImageInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.DocumentImagePageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.DocumentImageInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.Employee": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "profilepicture": {
                     "type": "string"
                 },
                 "roles": {
@@ -4541,13 +15184,16 @@ const docTemplate = `{
         "models.EmployeeInfo": {
             "type": "object",
             "properties": {
+                "code": {
+                    "type": "string"
+                },
                 "guidfixed": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string"
                 },
-                "password": {
+                "profilepicture": {
                     "type": "string"
                 },
                 "roles": {
@@ -4584,6 +15230,9 @@ const docTemplate = `{
                 "password": {
                     "type": "string"
                 },
+                "shopid": {
+                    "type": "string"
+                },
                 "username": {
                     "type": "string"
                 }
@@ -4603,7 +15252,13 @@ const docTemplate = `{
         "models.EmployeeRequestUpdate": {
             "type": "object",
             "properties": {
+                "code": {
+                    "type": "string"
+                },
                 "name": {
+                    "type": "string"
+                },
+                "profilepicture": {
                     "type": "string"
                 },
                 "roles": {
@@ -4617,46 +15272,151 @@ const docTemplate = `{
                 }
             }
         },
+        "models.FileFolder": {
+            "type": "object",
+            "properties": {
+                "isfavorit": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parentall": {
+                    "type": "string"
+                },
+                "parentguidfixed": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "type": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.Image": {
             "type": "object",
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.ImageReference": {
+            "type": "object",
+            "properties": {
+                "documentimageguid": {
+                    "type": "string"
+                },
+                "imageuri": {
+                    "type": "string"
+                },
+                "isreject": {
+                    "type": "boolean"
+                },
+                "metafileat": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "uploadedat": {
+                    "type": "string"
+                },
+                "uploadedby": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.IncudeChoice": {
+            "type": "object",
+            "properties": {
+                "choicecode": {
+                    "type": "string"
+                },
+                "choicedetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.IncudeChoice"
+                    }
                 }
             }
         },
         "models.Inventory": {
             "type": "object",
+            "required": [
+                "name1"
+            ],
             "properties": {
                 "activated": {
                     "description": "เปิดใช้งานอยู่",
                     "type": "boolean"
                 },
+                "availablepatternoptions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AvailablePatternOption"
+                    }
+                },
                 "barcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "barcodedescriptionfromproduct": {
+                    "type": "boolean"
+                },
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Barcode"
+                    }
                 },
                 "category": {
-                    "$ref": "#/definitions/models.Category"
+                    "$ref": "#/definitions/models.ProductCategory"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "description1": {
-                    "description": "รายละเอียดภาษาไทย",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "havepoint": {
+                    "type": "boolean"
+                },
+                "haveserialno": {
+                    "type": "boolean"
                 },
                 "images": {
                     "type": "array",
@@ -4664,41 +15424,61 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryImage"
                     }
                 },
+                "isstockproduct": {
+                    "type": "boolean"
+                },
                 "itemcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemsku": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
-                "itemunitcode": {
-                    "type": "string"
+                "itemtype": {
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
-                "itemunitdiv": {
-                    "type": "number"
-                },
-                "itemunitstd": {
-                    "type": "number"
+                "itemvat": {
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
                 "memberprice": {
                     "type": "number"
                 },
+                "multiunit": {
+                    "type": "boolean"
+                },
                 "name1": {
-                    "description": "ชื่อภาษาไทย",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "normalprice": {
+                    "type": "number"
+                },
+                "optionpatternmaster": {
                     "type": "string"
                 },
                 "options": {
@@ -4707,16 +15487,39 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.Option"
                     }
                 },
+                "ordercount": {
+                    "type": "integer",
+                    "maximum": 100
+                },
+                "orderminimum": {
+                    "type": "number"
+                },
                 "parid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "price": {
                     "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
                     "type": "number"
                 },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
+                },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
                     "type": "boolean"
+                },
+                "shoprecommended": {
+                    "type": "boolean"
+                },
+                "starpercent": {
+                    "type": "number"
+                },
+                "stockproductguidref": {
+                    "type": "string"
                 },
                 "tags": {
                     "type": "array",
@@ -4724,39 +15527,70 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryTag"
                     }
                 },
-                "unitname1": {
-                    "type": "string"
+                "unitcode": {
+                    "type": "string",
+                    "maxLength": 100
                 },
-                "unitname2": {
-                    "type": "string"
+                "unitcost": {
+                    "type": "string",
+                    "maxLength": 100
                 },
-                "unitname3": {
-                    "type": "string"
+                "unitstandard": {
+                    "type": "string",
+                    "maxLength": 100
                 },
-                "unitname4": {
-                    "type": "string"
+                "unituses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UnitUse"
+                    }
                 },
-                "unitname5": {
-                    "type": "string"
+                "xorder": {
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 }
             }
         },
         "models.InventoryActivity": {
             "type": "object",
+            "required": [
+                "name1"
+            ],
             "properties": {
                 "activated": {
                     "description": "เปิดใช้งานอยู่",
                     "type": "boolean"
                 },
+                "availablepatternoptions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AvailablePatternOption"
+                    }
+                },
                 "barcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "barcodedescriptionfromproduct": {
+                    "type": "boolean"
+                },
+                "barcodedetail": {
+                    "$ref": "#/definitions/models.Barcode"
+                },
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Barcode"
+                    }
                 },
                 "category": {
-                    "$ref": "#/definitions/models.Category"
+                    "$ref": "#/definitions/models.ProductCategory"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "createdat": {
                     "type": "string"
@@ -4765,23 +15599,33 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "description1": {
-                    "description": "รายละเอียดภาษาไทย",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "guidfixed": {
                     "type": "string"
+                },
+                "havepoint": {
+                    "type": "boolean"
+                },
+                "haveserialno": {
+                    "type": "boolean"
                 },
                 "images": {
                     "type": "array",
@@ -4789,41 +15633,61 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryImage"
                     }
                 },
+                "isstockproduct": {
+                    "type": "boolean"
+                },
                 "itemcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemsku": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
-                "itemunitcode": {
-                    "type": "string"
+                "itemtype": {
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
-                "itemunitdiv": {
-                    "type": "number"
-                },
-                "itemunitstd": {
-                    "type": "number"
+                "itemvat": {
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
                 "memberprice": {
                     "type": "number"
                 },
+                "multiunit": {
+                    "type": "boolean"
+                },
                 "name1": {
-                    "description": "ชื่อภาษาไทย",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "normalprice": {
+                    "type": "number"
+                },
+                "optionpatternmaster": {
                     "type": "string"
                 },
                 "options": {
@@ -4832,11 +15696,25 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.Option"
                     }
                 },
+                "ordercount": {
+                    "type": "integer",
+                    "maximum": 100
+                },
+                "orderminimum": {
+                    "type": "number"
+                },
                 "parid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "price": {
                     "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -4846,29 +15724,49 @@ const docTemplate = `{
                 "shopid": {
                     "type": "string"
                 },
+                "shoprecommended": {
+                    "type": "boolean"
+                },
+                "starpercent": {
+                    "type": "number"
+                },
+                "stockproductguidref": {
+                    "type": "string"
+                },
                 "tags": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.InventoryTag"
                     }
                 },
-                "unitname1": {
-                    "type": "string"
+                "unit": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
                 },
-                "unitname2": {
-                    "type": "string"
+                "unitcode": {
+                    "type": "string",
+                    "maxLength": 100
                 },
-                "unitname3": {
-                    "type": "string"
+                "unitcost": {
+                    "type": "string",
+                    "maxLength": 100
                 },
-                "unitname4": {
-                    "type": "string"
+                "unitstandard": {
+                    "type": "string",
+                    "maxLength": 100
                 },
-                "unitname5": {
-                    "type": "string"
+                "unituses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UnitUse"
+                    }
                 },
                 "updatedat": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 }
             }
         },
@@ -4948,39 +15846,72 @@ const docTemplate = `{
         },
         "models.InventoryInfo": {
             "type": "object",
+            "required": [
+                "name1"
+            ],
             "properties": {
                 "activated": {
                     "description": "เปิดใช้งานอยู่",
                     "type": "boolean"
                 },
+                "availablepatternoptions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AvailablePatternOption"
+                    }
+                },
                 "barcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "barcodedescriptionfromproduct": {
+                    "type": "boolean"
+                },
+                "barcodedetail": {
+                    "$ref": "#/definitions/models.Barcode"
+                },
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Barcode"
+                    }
                 },
                 "category": {
-                    "$ref": "#/definitions/models.Category"
+                    "$ref": "#/definitions/models.ProductCategory"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "description1": {
-                    "description": "รายละเอียดภาษาไทย",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "guidfixed": {
                     "type": "string"
+                },
+                "havepoint": {
+                    "type": "boolean"
+                },
+                "haveserialno": {
+                    "type": "boolean"
                 },
                 "images": {
                     "type": "array",
@@ -4988,41 +15919,61 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryImage"
                     }
                 },
+                "isstockproduct": {
+                    "type": "boolean"
+                },
                 "itemcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemsku": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
-                "itemunitcode": {
-                    "type": "string"
+                "itemtype": {
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
-                "itemunitdiv": {
-                    "type": "number"
-                },
-                "itemunitstd": {
-                    "type": "number"
+                "itemvat": {
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
                 "memberprice": {
                     "type": "number"
                 },
+                "multiunit": {
+                    "type": "boolean"
+                },
                 "name1": {
-                    "description": "ชื่อภาษาไทย",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "normalprice": {
+                    "type": "number"
+                },
+                "optionpatternmaster": {
                     "type": "string"
                 },
                 "options": {
@@ -5031,16 +15982,39 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.Option"
                     }
                 },
+                "ordercount": {
+                    "type": "integer",
+                    "maximum": 100
+                },
+                "orderminimum": {
+                    "type": "number"
+                },
                 "parid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "price": {
                     "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
                     "type": "number"
                 },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
+                },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
                     "type": "boolean"
+                },
+                "shoprecommended": {
+                    "type": "boolean"
+                },
+                "starpercent": {
+                    "type": "number"
+                },
+                "stockproductguidref": {
+                    "type": "string"
                 },
                 "tags": {
                     "type": "array",
@@ -5048,20 +16022,31 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.InventoryTag"
                     }
                 },
-                "unitname1": {
-                    "type": "string"
+                "unit": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
                 },
-                "unitname2": {
-                    "type": "string"
+                "unitcode": {
+                    "type": "string",
+                    "maxLength": 100
                 },
-                "unitname3": {
-                    "type": "string"
+                "unitcost": {
+                    "type": "string",
+                    "maxLength": 100
                 },
-                "unitname4": {
-                    "type": "string"
+                "unitstandard": {
+                    "type": "string",
+                    "maxLength": 100
                 },
-                "unitname5": {
-                    "type": "string"
+                "unituses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UnitUse"
+                    }
+                },
+                "xorder": {
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 }
             }
         },
@@ -5099,7 +16084,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.InventoryOptonGroupDetail"
+                        "$ref": "#/definitions/models.InventoryOptionGroupDetail"
                     }
                 },
                 "guidfixed": {
@@ -5128,8 +16113,26 @@ const docTemplate = `{
                 }
             }
         },
+        "models.InventoryOptionGroupDetail": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "detailname1": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                }
+            }
+        },
         "models.InventoryOptionMain": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "choices": {
                     "type": "array",
@@ -5143,34 +16146,60 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "isstockcontrol": {
+                    "type": "boolean"
+                },
                 "maxselect": {
                     "type": "integer"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
-                "order": {
-                    "type": "integer"
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "optiondetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OptionDetail"
+                    }
                 },
                 "required": {
                     "type": "boolean"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
         "models.InventoryOptionMainImport": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "choices": {
                     "type": "array",
@@ -5184,34 +16213,60 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "isstockcontrol": {
+                    "type": "boolean"
+                },
                 "maxselect": {
                     "type": "integer"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
-                "order": {
-                    "type": "integer"
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "optiondetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OptionDetail"
+                    }
                 },
                 "required": {
                     "type": "boolean"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
         "models.InventoryOptionMainInfo": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "choices": {
                     "type": "array",
@@ -5228,29 +16283,51 @@ const docTemplate = `{
                 "guidfixed": {
                     "type": "string"
                 },
+                "isstockcontrol": {
+                    "type": "boolean"
+                },
                 "maxselect": {
                     "type": "integer"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
-                "order": {
-                    "type": "integer"
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "optiondetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OptionDetail"
+                    }
                 },
                 "required": {
                     "type": "boolean"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -5268,20 +16345,6 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
-                }
-            }
-        },
-        "models.InventoryOptonGroupDetail": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "number"
-                },
-                "detailname1": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
                 }
             }
         },
@@ -5307,6 +16370,558 @@ const docTemplate = `{
             "properties": {
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "models.Journal": {
+            "type": "object",
+            "properties": {
+                "accountdescription": {
+                    "type": "string"
+                },
+                "accountgroup": {
+                    "type": "string"
+                },
+                "accountperiod": {
+                    "type": "integer"
+                },
+                "accountyear": {
+                    "type": "integer"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "batchId": {
+                    "type": "string"
+                },
+                "bookcode": {
+                    "type": "string"
+                },
+                "docdate": {
+                    "type": "string",
+                    "format": "dateTime"
+                },
+                "docformat": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "documentref": {
+                    "type": "string"
+                },
+                "exdocrefdate": {
+                    "type": "string"
+                },
+                "exdocrefno": {
+                    "type": "string"
+                },
+                "journaldetail": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.JournalDetail"
+                    }
+                },
+                "journaltype": {
+                    "description": "ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)",
+                    "type": "integer"
+                },
+                "taxes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Tax"
+                    }
+                },
+                "vats": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Vat"
+                    }
+                }
+            }
+        },
+        "models.JournalBook": {
+            "type": "object",
+            "required": [
+                "name1"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name2": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name3": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name4": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                }
+            }
+        },
+        "models.JournalBookInfo": {
+            "type": "object",
+            "required": [
+                "name1"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name2": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name3": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name4": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                }
+            }
+        },
+        "models.JournalBookInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.JournalBookInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.JournalBookPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.JournalBookInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.JournalDetail": {
+            "type": "object",
+            "properties": {
+                "accountcode": {
+                    "description": "chart of account code",
+                    "type": "string"
+                },
+                "accountname": {
+                    "type": "string"
+                },
+                "creditamount": {
+                    "type": "number"
+                },
+                "debitamount": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.JournalInfo": {
+            "type": "object",
+            "properties": {
+                "accountdescription": {
+                    "type": "string"
+                },
+                "accountgroup": {
+                    "type": "string"
+                },
+                "accountperiod": {
+                    "type": "integer"
+                },
+                "accountyear": {
+                    "type": "integer"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "batchId": {
+                    "type": "string"
+                },
+                "bookcode": {
+                    "type": "string"
+                },
+                "createdat": {
+                    "type": "string"
+                },
+                "createdby": {
+                    "type": "string"
+                },
+                "docdate": {
+                    "type": "string",
+                    "format": "dateTime"
+                },
+                "docformat": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "documentref": {
+                    "type": "string"
+                },
+                "exdocrefdate": {
+                    "type": "string"
+                },
+                "exdocrefno": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "journaldetail": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.JournalDetail"
+                    }
+                },
+                "journaltype": {
+                    "description": "ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)",
+                    "type": "integer"
+                },
+                "taxes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Tax"
+                    }
+                },
+                "vats": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Vat"
+                    }
+                }
+            }
+        },
+        "models.JournalInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.JournalInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.JournalPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.JournalInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.JournalRef": {
+            "type": "object",
+            "properties": {
+                "docref": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Kitchen": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "printers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "zones": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.KitchenActivity": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "printers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                },
+                "zones": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.KitchenDeleteActivity": {
+            "type": "object",
+            "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.KitchenFetchUpdateResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.KitchenLastActivityResponse"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.KitchenInfo": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "printers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "zones": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.KitchenInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.KitchenInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.KitchenLastActivityResponse": {
+            "type": "object",
+            "properties": {
+                "new": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.KitchenActivity"
+                    }
+                },
+                "remove": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.KitchenDeleteActivity"
+                    }
+                }
+            }
+        },
+        "models.KitchenPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.KitchenInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.Location": {
+            "type": "object",
+            "required": [
+                "name1"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name2": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name3": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name4": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                }
+            }
+        },
+        "models.LostAndProfitSheetReportResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.ProfitAndLossSheetReport"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },
@@ -5512,8 +17127,36 @@ const docTemplate = `{
                 }
             }
         },
+        "models.NameX": {
+            "type": "object",
+            "required": [
+                "code",
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "isauto": {
+                    "type": "boolean"
+                },
+                "isdelete": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255
+                }
+            }
+        },
         "models.Option": {
             "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
             "properties": {
                 "choices": {
                     "type": "array",
@@ -5527,29 +17170,219 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "isstockcontrol": {
+                    "type": "boolean"
+                },
                 "maxselect": {
                     "type": "integer"
                 },
                 "name1": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
-                "order": {
-                    "type": "integer"
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "optiondetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OptionDetail"
+                    }
                 },
                 "required": {
                     "type": "boolean"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.OptionDetail": {
+            "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
+            "properties": {
+                "choicedetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.IncudeChoice"
+                    }
+                },
+                "image": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name2": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name3": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name4": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "optiondetailcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.OptionPattern": {
+            "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
+            "properties": {
+                "colorcode": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name2": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name3": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name4": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "optionpatterndetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OptionPatternDetail"
+                    }
+                },
+                "patterncode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.OptionPatternDetail": {
+            "type": "object",
+            "required": [
+                "name1",
+                "names"
+            ],
+            "properties": {
+                "choices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Choice"
+                    }
+                },
+                "choicetype": {
+                    "type": "integer"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "isstockcontrol": {
+                    "type": "boolean"
+                },
+                "maxselect": {
+                    "type": "integer"
+                },
+                "name1": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name2": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name3": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name4": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "optioncode": {
+                    "type": "string"
+                },
+                "optiondetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OptionDetail"
+                    }
+                },
+                "required": {
+                    "type": "boolean"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -5602,6 +17435,723 @@ const docTemplate = `{
                 }
             }
         },
+        "models.PaymentMaster": {
+            "type": "object",
+            "required": [
+                "name1"
+            ],
+            "properties": {
+                "countrycode": {
+                    "type": "string"
+                },
+                "feerate": {
+                    "type": "number"
+                },
+                "name1": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name2": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name3": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name4": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "paymentcode": {
+                    "type": "string"
+                },
+                "paymentlogo": {
+                    "type": "string"
+                },
+                "paymenttype": {
+                    "type": "integer"
+                },
+                "wallettype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.PaymentMasterInfo": {
+            "type": "object",
+            "required": [
+                "name1"
+            ],
+            "properties": {
+                "countrycode": {
+                    "type": "string"
+                },
+                "feerate": {
+                    "type": "number"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name2": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name3": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name4": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "paymentcode": {
+                    "type": "string"
+                },
+                "paymentlogo": {
+                    "type": "string"
+                },
+                "paymenttype": {
+                    "type": "integer"
+                },
+                "wallettype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.PaymentMasterInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.PaymentMasterInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.PaymentMasterPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PaymentMasterInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.Printer": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.PrinterActivity": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.PrinterDeleteActivity": {
+            "type": "object",
+            "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.PrinterFetchUpdateResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.PrinterLastActivityResponse"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.PrinterInfo": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.PrinterInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.PrinterInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.PrinterLastActivityResponse": {
+            "type": "object",
+            "properties": {
+                "new": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PrinterActivity"
+                    }
+                },
+                "remove": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PrinterDeleteActivity"
+                    }
+                }
+            }
+        },
+        "models.PrinterPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PrinterInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.Product": {
+            "type": "object",
+            "required": [
+                "itemcode",
+                "names"
+            ],
+            "properties": {
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "categoryguid": {
+                    "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductImage"
+                    }
+                },
+                "issumpoint": {
+                    "type": "boolean"
+                },
+                "itemcode": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "itemstocktype": {
+                    "type": "integer"
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "multiunit": {
+                    "type": "boolean"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "prices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductPrice"
+                    }
+                },
+                "unitcost": {
+                    "type": "string"
+                },
+                "units": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductUnit"
+                    }
+                },
+                "unitstandard": {
+                    "type": "string"
+                },
+                "useserialnumber": {
+                    "type": "boolean"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.ProductBarcode": {
+            "type": "object",
+            "required": [
+                "barcode",
+                "itemunitnames",
+                "names"
+            ],
+            "properties": {
+                "barcode": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "categoryguid": {
+                    "type": "string"
+                },
+                "colorselect": {
+                    "type": "string"
+                },
+                "colorselecthex": {
+                    "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage"
+                    }
+                },
+                "imageuri": {
+                    "type": "string"
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitnames": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductOption"
+                    }
+                },
+                "prices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductPrice"
+                    }
+                },
+                "useimageorcolor": {
+                    "type": "boolean"
+                },
+                "xsorts": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
+                }
+            }
+        },
+        "models.ProductCategory": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "barcodes": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
+                },
+                "childcount": {
+                    "type": "integer"
+                },
+                "colorselect": {
+                    "type": "string"
+                },
+                "colorselecthex": {
+                    "type": "string"
+                },
+                "imageuri": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "parentguid": {
+                    "type": "string"
+                },
+                "parentguidall": {
+                    "type": "string"
+                },
+                "useimageorcolor": {
+                    "type": "boolean"
+                },
+                "xsorts": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
+                }
+            }
+        },
+        "models.ProductChoice": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "guid": {
+                    "type": "string"
+                },
+                "isdefault": {
+                    "type": "boolean"
+                },
+                "isstock": {
+                    "description": "QtyMax         float64         ` + "`" + `json:\"qtymax\" bson:\"qtymax\"` + "`" + `",
+                    "type": "boolean"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "price": {
+                    "type": "string"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "refbarcode": {
+                    "type": "string"
+                },
+                "refproductcode": {
+                    "type": "string"
+                },
+                "refunitcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ProductOption": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "choices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductChoice"
+                    }
+                },
+                "choicetype": {
+                    "type": "integer"
+                },
+                "guid": {
+                    "type": "string"
+                },
+                "maxselect": {
+                    "type": "integer",
+                    "maximum": 60000,
+                    "minimum": 0
+                },
+                "minselect": {
+                    "type": "integer",
+                    "maximum": 60000,
+                    "minimum": 0
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "memberprice": {
+                    "type": "number"
+                },
+                "normalprice": {
+                    "type": "number"
+                },
+                "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.ProductUnit": {
+            "type": "object",
+            "properties": {
+                "divider": {
+                    "type": "number"
+                },
+                "stand": {
+                    "type": "number"
+                },
+                "stockcount": {
+                    "type": "boolean"
+                },
+                "unitcode": {
+                    "type": "string"
+                },
+                "unitname": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.ProfitAndLossSheetAccountDetail": {
+            "type": "object",
+            "properties": {
+                "accountbalancetype": {
+                    "description": "ด้านบัญชี 1=เดบิต,2=เครดิต",
+                    "type": "integer"
+                },
+                "accountcategory": {
+                    "description": "หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย",
+                    "type": "integer"
+                },
+                "accountcode": {
+                    "description": "รหัสผังบัญชี",
+                    "type": "string"
+                },
+                "accountgroup": {
+                    "description": "กลุ่มบัญชี",
+                    "type": "string"
+                },
+                "accountlevel": {
+                    "description": "ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ",
+                    "type": "integer"
+                },
+                "accountname": {
+                    "description": "ชื่อบัญชี",
+                    "type": "string"
+                },
+                "amount": {
+                    "description": "มูลค่า",
+                    "type": "number"
+                },
+                "consolidateaccountcode": {
+                    "description": "รหัสผังบัญชีกลาง",
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ProfitAndLossSheetReport": {
+            "type": "object",
+            "properties": {
+                "accountgroup": {
+                    "description": "เล่มบัญชี",
+                    "type": "string"
+                },
+                "enddate": {
+                    "description": "วันที่สิ้นสุด",
+                    "type": "string"
+                },
+                "expenses": {
+                    "description": "รายการค่าใช้จ่าย",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProfitAndLossSheetAccountDetail"
+                    }
+                },
+                "incomes": {
+                    "description": "รายการรายได้",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProfitAndLossSheetAccountDetail"
+                    }
+                },
+                "profitandlossamount": {
+                    "description": "กำไรขาดทุน",
+                    "type": "number"
+                },
+                "reportdate": {
+                    "description": "วันที่ทำรายการ",
+                    "type": "string"
+                },
+                "startdate": {
+                    "description": "วันที่เริ่มต้น",
+                    "type": "string"
+                },
+                "totalexpenseamount": {
+                    "description": "รวมค่าใช้จ่าย",
+                    "type": "number"
+                },
+                "totalincomeamount": {
+                    "description": "รวมรายได้",
+                    "type": "number"
+                }
+            }
+        },
         "models.Purchase": {
             "type": "object",
             "properties": {
@@ -5645,6 +18195,9 @@ const docTemplate = `{
         },
         "models.PurchaseDetail": {
             "type": "object",
+            "required": [
+                "name1"
+            ],
             "properties": {
                 "activated": {
                     "description": "เปิดใช้งานอยู่",
@@ -5653,31 +18206,55 @@ const docTemplate = `{
                 "amount": {
                     "type": "number"
                 },
+                "availablepatternoptions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AvailablePatternOption"
+                    }
+                },
                 "barcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "barcodedescriptionfromproduct": {
+                    "type": "boolean"
+                },
+                "barcodedetail": {
+                    "$ref": "#/definitions/models.Barcode"
+                },
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Barcode"
+                    }
                 },
                 "category": {
-                    "$ref": "#/definitions/models.Category"
+                    "$ref": "#/definitions/models.ProductCategory"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "description1": {
-                    "description": "รายละเอียดภาษาไทย",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "discountamount": {
                     "type": "number"
@@ -5688,29 +18265,42 @@ const docTemplate = `{
                 "guidfixed": {
                     "type": "string"
                 },
+                "havepoint": {
+                    "type": "boolean"
+                },
+                "haveserialno": {
+                    "type": "boolean"
+                },
                 "images": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.InventoryImage"
                     }
                 },
+                "isstockproduct": {
+                    "type": "boolean"
+                },
                 "itemcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemsku": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
-                "itemunitcode": {
-                    "type": "string"
+                "itemtype": {
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
-                "itemunitdiv": {
-                    "type": "number"
-                },
-                "itemunitstd": {
-                    "type": "number"
+                "itemvat": {
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
                 "linenumber": {
                     "type": "integer"
@@ -5718,20 +18308,33 @@ const docTemplate = `{
                 "memberprice": {
                     "type": "number"
                 },
+                "multiunit": {
+                    "type": "boolean"
+                },
                 "name1": {
-                    "description": "ชื่อภาษาไทย",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "normalprice": {
+                    "type": "number"
+                },
+                "optionpatternmaster": {
                     "type": "string"
                 },
                 "options": {
@@ -5740,10 +18343,24 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.Option"
                     }
                 },
+                "ordercount": {
+                    "type": "integer",
+                    "maximum": 100
+                },
+                "orderminimum": {
+                    "type": "number"
+                },
                 "parid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "price": {
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "qty": {
@@ -5753,26 +18370,46 @@ const docTemplate = `{
                     "description": "สินค้าแนะนำ",
                     "type": "boolean"
                 },
+                "shoprecommended": {
+                    "type": "boolean"
+                },
+                "starpercent": {
+                    "type": "number"
+                },
+                "stockproductguidref": {
+                    "type": "string"
+                },
                 "tags": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.InventoryTag"
                     }
                 },
-                "unitname1": {
-                    "type": "string"
+                "unit": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
                 },
-                "unitname2": {
-                    "type": "string"
+                "unitcode": {
+                    "type": "string",
+                    "maxLength": 100
                 },
-                "unitname3": {
-                    "type": "string"
+                "unitcost": {
+                    "type": "string",
+                    "maxLength": 100
                 },
-                "unitname4": {
-                    "type": "string"
+                "unitstandard": {
+                    "type": "string",
+                    "maxLength": 100
                 },
-                "unitname5": {
-                    "type": "string"
+                "unituses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UnitUse"
+                    }
+                },
+                "xorder": {
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 }
             }
         },
@@ -5837,6 +18474,82 @@ const docTemplate = `{
                 }
             }
         },
+        "models.QrPayment": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "bankcode": {
+                    "type": "string"
+                },
+                "bookbankcode": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "feerate": {
+                    "type": "number"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "paymentcode": {
+                    "type": "string"
+                },
+                "paymentlogo": {
+                    "type": "string"
+                },
+                "paymenttype": {
+                    "type": "integer"
+                },
+                "wallettype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Reference": {
+            "type": "object",
+            "properties": {
+                "docno": {
+                    "type": "string"
+                },
+                "module": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ReferenceGroup": {
+            "type": "object",
+            "properties": {
+                "grouptype": {
+                    "type": "string"
+                },
+                "parentguid": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                },
+                "xtype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.RequestDocumentImageReject": {
+            "type": "object",
+            "properties": {
+                "isreject": {
+                    "type": "boolean"
+                }
+            }
+        },
         "models.ResponseSuccess": {
             "type": "object",
             "properties": {
@@ -5854,13 +18567,126 @@ const docTemplate = `{
                 }
             }
         },
-        "models.SaleInvoiceListPageResponse": {
+        "models.RestaurantSettings": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RestaurantSettingsActivity": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RestaurantSettingsDeleteActivity": {
+            "type": "object",
+            "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RestaurantSettingsFetchUpdateResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.RestaurantSettingsLastActivityResponse"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.RestaurantSettingsInfo": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RestaurantSettingsInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.RestaurantSettingsInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.RestaurantSettingsLastActivityResponse": {
+            "type": "object",
+            "properties": {
+                "new": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.RestaurantSettingsActivity"
+                    }
+                },
+                "remove": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.RestaurantSettingsDeleteActivity"
+                    }
+                }
+            }
+        },
+        "models.RestaurantSettingsPageResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SaleinvoiceInfo"
+                        "$ref": "#/definitions/models.RestaurantSettingsInfo"
                     }
                 },
                 "pagination": {
@@ -5921,6 +18747,9 @@ const docTemplate = `{
         },
         "models.SaleinvoiceDetail": {
             "type": "object",
+            "required": [
+                "name1"
+            ],
             "properties": {
                 "activated": {
                     "description": "เปิดใช้งานอยู่",
@@ -5929,31 +18758,55 @@ const docTemplate = `{
                 "amount": {
                     "type": "number"
                 },
+                "availablepatternoptions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.AvailablePatternOption"
+                    }
+                },
                 "barcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "barcodedescriptionfromproduct": {
+                    "type": "boolean"
+                },
+                "barcodedetail": {
+                    "$ref": "#/definitions/models.Barcode"
+                },
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Barcode"
+                    }
                 },
                 "category": {
-                    "$ref": "#/definitions/models.Category"
+                    "$ref": "#/definitions/models.ProductCategory"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 100
                 },
                 "description1": {
-                    "description": "รายละเอียดภาษาไทย",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "description5": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "discountamount": {
                     "type": "number"
@@ -5964,29 +18817,42 @@ const docTemplate = `{
                 "guidfixed": {
                     "type": "string"
                 },
+                "havepoint": {
+                    "type": "boolean"
+                },
+                "haveserialno": {
+                    "type": "boolean"
+                },
                 "images": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.InventoryImage"
                     }
                 },
+                "isstockproduct": {
+                    "type": "boolean"
+                },
                 "itemcode": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemguid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "itemsku": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
-                "itemunitcode": {
-                    "type": "string"
+                "itemtype": {
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
-                "itemunitdiv": {
-                    "type": "number"
-                },
-                "itemunitstd": {
-                    "type": "number"
+                "itemvat": {
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 },
                 "linenumber": {
                     "type": "integer"
@@ -5994,20 +18860,33 @@ const docTemplate = `{
                 "memberprice": {
                     "type": "number"
                 },
+                "multiunit": {
+                    "type": "boolean"
+                },
                 "name1": {
-                    "description": "ชื่อภาษาไทย",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name2": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name3": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name4": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "normalprice": {
+                    "type": "number"
+                },
+                "optionpatternmaster": {
                     "type": "string"
                 },
                 "options": {
@@ -6016,10 +18895,24 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.Option"
                     }
                 },
+                "ordercount": {
+                    "type": "integer",
+                    "maximum": 100
+                },
+                "orderminimum": {
+                    "type": "number"
+                },
                 "parid": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "price": {
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "qty": {
@@ -6029,26 +18922,46 @@ const docTemplate = `{
                     "description": "สินค้าแนะนำ",
                     "type": "boolean"
                 },
+                "shoprecommended": {
+                    "type": "boolean"
+                },
+                "starpercent": {
+                    "type": "number"
+                },
+                "stockproductguidref": {
+                    "type": "string"
+                },
                 "tags": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.InventoryTag"
                     }
                 },
-                "unitname1": {
-                    "type": "string"
+                "unit": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
                 },
-                "unitname2": {
-                    "type": "string"
+                "unitcode": {
+                    "type": "string",
+                    "maxLength": 100
                 },
-                "unitname3": {
-                    "type": "string"
+                "unitcost": {
+                    "type": "string",
+                    "maxLength": 100
                 },
-                "unitname4": {
-                    "type": "string"
+                "unitstandard": {
+                    "type": "string",
+                    "maxLength": 100
                 },
-                "unitname5": {
-                    "type": "string"
+                "unituses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UnitUse"
+                    }
+                },
+                "xorder": {
+                    "type": "integer",
+                    "maximum": 125,
+                    "minimum": -125
                 }
             }
         },
@@ -6103,10 +19016,33 @@ const docTemplate = `{
                 }
             }
         },
+        "models.SaleinvoiceListPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SaleinvoiceInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "models.Shop": {
             "type": "object",
             "properties": {
+                "branchcode": {
+                    "type": "string"
+                },
                 "name1": {
+                    "type": "string"
+                },
+                "profilepicture": {
                     "type": "string"
                 },
                 "telephone": {
@@ -6117,10 +19053,16 @@ const docTemplate = `{
         "models.ShopInfo": {
             "type": "object",
             "properties": {
+                "branchcode": {
+                    "type": "string"
+                },
                 "guidfixed": {
                     "type": "string"
                 },
                 "name1": {
+                    "type": "string"
+                },
+                "profilepicture": {
                     "type": "string"
                 },
                 "telephone": {
@@ -6130,23 +19072,602 @@ const docTemplate = `{
         },
         "models.ShopSelectRequest": {
             "type": "object",
+            "required": [
+                "shopid"
+            ],
             "properties": {
                 "shopid": {
                     "type": "string"
                 }
             }
         },
-        "models.ShopUserInfo": {
+        "models.ShopTable": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
-                "name": {
+                "name1": {
                     "type": "string"
                 },
-                "role": {
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "number": {
+                    "type": "string"
+                },
+                "seat": {
+                    "type": "integer"
+                },
+                "zone": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ShopTableActivity": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "number": {
+                    "type": "string"
+                },
+                "seat": {
+                    "type": "integer"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                },
+                "zone": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ShopTableDeleteActivity": {
+            "type": "object",
+            "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
                     "type": "string"
                 },
                 "shopid": {
                     "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ShopTableFetchUpdateResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.ShopTableLastActivityResponse"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.ShopTableInfo": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "number": {
+                    "type": "string"
+                },
+                "seat": {
+                    "type": "integer"
+                },
+                "zone": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ShopTableInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.ShopTableInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.ShopTableLastActivityResponse": {
+            "type": "object",
+            "properties": {
+                "new": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ShopTableActivity"
+                    }
+                },
+                "remove": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ShopTableDeleteActivity"
+                    }
+                }
+            }
+        },
+        "models.ShopTablePageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ShopTableInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.ShopUserInfo": {
+            "type": "object",
+            "properties": {
+                "branchcode": {
+                    "type": "string"
+                },
+                "isfavorite": {
+                    "type": "boolean"
+                },
+                "lastaccessedat": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "integer"
+                },
+                "shopid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ShopZone": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "printer": {
+                    "$ref": "#/definitions/models.Printer"
+                }
+            }
+        },
+        "models.ShopZoneActivity": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "printer": {
+                    "$ref": "#/definitions/models.Printer"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ShopZoneDeleteActivity": {
+            "type": "object",
+            "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "deletedat": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "updatedat": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ShopZoneFetchUpdateResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.ShopZoneLastActivityResponse"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.ShopZoneInfo": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "printer": {
+                    "$ref": "#/definitions/models.Printer"
+                }
+            }
+        },
+        "models.ShopZoneInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.ShopZoneInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.ShopZoneLastActivityResponse": {
+            "type": "object",
+            "properties": {
+                "new": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ShopZoneActivity"
+                    }
+                },
+                "remove": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ShopZoneDeleteActivity"
+                    }
+                }
+            }
+        },
+        "models.ShopZonePageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ShopZoneInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.SmsPaymentSettings": {
+            "type": "object",
+            "required": [
+                "patterncode",
+                "storefrontguid"
+            ],
+            "properties": {
+                "patterncode": {
+                    "type": "string"
+                },
+                "storefrontguid": {
+                    "type": "string",
+                    "maxLength": 233
+                },
+                "timeminuteafter": {
+                    "type": "integer"
+                },
+                "timeminutebefore": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.SmsTransaction": {
+            "type": "object",
+            "required": [
+                "storefrontguid"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "deviceuuid": {
+                    "type": "string"
+                },
+                "sendedat": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "storefrontguid": {
+                    "type": "string",
+                    "maxLength": 233
+                },
+                "transid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SmsTransactionInfo": {
+            "type": "object",
+            "required": [
+                "storefrontguid"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "deviceuuid": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "sendedat": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "storefrontguid": {
+                    "type": "string",
+                    "maxLength": 233
+                },
+                "transid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SmsTransactionInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.SmsTransactionInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.SmsTransactionPageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SmsTransactionInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.Staff": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "cashier": {
+                    "type": "boolean"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "order": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.Storefront": {
+            "type": "object",
+            "required": [
+                "name1"
+            ],
+            "properties": {
+                "devices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_storefront_models.Device"
+                    }
+                },
+                "name1": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name2": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name3": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name4": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name5": {
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
@@ -6167,6 +19688,64 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Tax": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "branchcode": {
+                    "type": "string"
+                },
+                "custname": {
+                    "type": "string"
+                },
+                "custtaxid": {
+                    "type": "string"
+                },
+                "custtype": {
+                    "type": "integer"
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TaxDetail"
+                    }
+                },
+                "organization": {
+                    "type": "integer"
+                },
+                "taxamount": {
+                    "type": "number"
+                },
+                "taxdate": {
+                    "type": "string"
+                },
+                "taxdocno": {
+                    "type": "string"
+                },
+                "taxtype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.TaxDetail": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "taxamount": {
+                    "type": "number"
+                },
+                "taxbase": {
+                    "type": "number"
+                },
+                "taxrate": {
+                    "type": "number"
+                }
+            }
+        },
         "models.TransferPayment": {
             "type": "object",
             "properties": {
@@ -6178,14 +19757,255 @@ const docTemplate = `{
                 }
             }
         },
+        "models.TrialBalanceSheetAccountDetail": {
+            "type": "object",
+            "properties": {
+                "accountbalancetype": {
+                    "description": "ด้านบัญชี 1=เดบิต,2=เครดิต",
+                    "type": "integer"
+                },
+                "accountcategory": {
+                    "description": "หมวดบัญชี 1=สินทรัพย์, 2=หนี้สิน, 3=ทุน, 4=รายได้, 5=ค่าใช้จ่าย",
+                    "type": "integer"
+                },
+                "accountcode": {
+                    "description": "รหัสผังบัญชี",
+                    "type": "string"
+                },
+                "accountgroup": {
+                    "description": "กลุ่มบัญชี",
+                    "type": "string"
+                },
+                "accountlevel": {
+                    "description": "ระดับบัญชี 0=บัญชีย่อย, มากกว่า 0 คือแต่ละระดับ",
+                    "type": "integer"
+                },
+                "accountname": {
+                    "description": "ชื่อบัญชี",
+                    "type": "string"
+                },
+                "amount": {
+                    "description": "ยอดคงเหลือ(ประจำงวด)",
+                    "type": "number"
+                },
+                "balanceamount": {
+                    "description": "ยอดคงเหลือยกมา",
+                    "type": "number"
+                },
+                "balancecreditamount": {
+                    "description": "ยอดยกมาเครดิต",
+                    "type": "number"
+                },
+                "balancedebitamount": {
+                    "description": "ยอดยกมาเดบิต",
+                    "type": "number"
+                },
+                "consolidateaccountcode": {
+                    "description": "รหัสผังบัญชีกลาง",
+                    "type": "string"
+                },
+                "creditamount": {
+                    "description": "ยอดเครดิต",
+                    "type": "number"
+                },
+                "debitamount": {
+                    "description": "ยอดเดบิต",
+                    "type": "number"
+                },
+                "nextbalanceamount": {
+                    "description": "ยอดคงเหลือสะสม",
+                    "type": "number"
+                },
+                "nextbalancecreditamount": {
+                    "description": "ยอดสะสมเครดิต",
+                    "type": "number"
+                },
+                "nextbalancedebitamount": {
+                    "description": "ยอดสะสมเดบิต",
+                    "type": "number"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "sumbalancecredit": {
+                    "type": "number"
+                },
+                "sumbalancedebit": {
+                    "type": "number"
+                },
+                "sumcredit": {
+                    "description": "ยอดเครดิต",
+                    "type": "number"
+                },
+                "sumdebit": {
+                    "description": "ยอดเครดิต",
+                    "type": "number"
+                },
+                "sumnextbalancecredit": {
+                    "type": "number"
+                },
+                "sumnextbalancedebit": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.TrialBalanceSheetReport": {
+            "type": "object",
+            "properties": {
+                "accountdetails": {
+                    "description": "รายละเอียดบัญชี",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TrialBalanceSheetAccountDetail"
+                    }
+                },
+                "accountgroup": {
+                    "description": "เล่มบัญชี",
+                    "type": "string"
+                },
+                "enddate": {
+                    "description": "วันที่สิ้นสุด",
+                    "type": "string"
+                },
+                "reportdate": {
+                    "description": "วันที่ทำรายการ",
+                    "type": "string"
+                },
+                "startdate": {
+                    "description": "วันที่เริ่มต้น",
+                    "type": "string"
+                },
+                "totalamountcredit": {
+                    "description": "รวมเครดิต",
+                    "type": "number"
+                },
+                "totalamountdebit": {
+                    "description": "รวมเดบิต",
+                    "type": "number"
+                },
+                "totalbalancecredit": {
+                    "description": "รวมยอดยกมาเครดิต",
+                    "type": "number"
+                },
+                "totalbalancedebit": {
+                    "description": "รวมยอดยกมาเดบิต",
+                    "type": "number"
+                },
+                "totalnextbalancecredit": {
+                    "description": "รวมยอดสะสมเครดิต",
+                    "type": "number"
+                },
+                "totalnextbalancedebit": {
+                    "description": "รวมยอดสะสมเดบิต",
+                    "type": "number"
+                }
+            }
+        },
+        "models.TrialBalanceSheetReportResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.TrialBalanceSheetReport"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.UnitUse": {
+            "type": "object",
+            "properties": {
+                "description1": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "description2": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "description3": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "description4": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "description5": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "isprimary": {
+                    "type": "boolean"
+                },
+                "isunitcost": {
+                    "type": "boolean"
+                },
+                "isunitstandard": {
+                    "type": "boolean"
+                },
+                "itemunitdiv": {
+                    "type": "number"
+                },
+                "itemunitstd": {
+                    "type": "number"
+                },
+                "unitcode": {
+                    "type": "string"
+                },
+                "unitname1": {
+                    "type": "string"
+                },
+                "unitname2": {
+                    "type": "string"
+                },
+                "unitname3": {
+                    "type": "string"
+                },
+                "unitname4": {
+                    "type": "string"
+                },
+                "unitname5": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserLoginRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 5
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 5
+                }
+            }
+        },
         "models.UserProfile": {
             "type": "object",
+            "required": [
+                "name",
+                "username"
+            ],
             "properties": {
                 "name": {
                     "type": "string"
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 233,
+                    "minLength": 5
                 }
             }
         },
@@ -6203,6 +20023,7 @@ const docTemplate = `{
         "models.UserRequest": {
             "type": "object",
             "required": [
+                "name",
                 "password",
                 "username"
             ],
@@ -6212,258 +20033,243 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string",
-                    "minLength": 6
+                    "maxLength": 233,
+                    "minLength": 5
                 },
                 "username": {
                     "type": "string",
-                    "minLength": 3
+                    "maxLength": 233,
+                    "minLength": 5
                 }
             }
         },
-        "restaurant.Kitchen": {
+        "models.UserRoleRequest": {
             "type": "object",
             "properties": {
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Category"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "printers": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.PrinterTerminal"
-                    }
-                },
-                "products": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Inventory"
-                    }
-                },
-                "zones": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.ShopZone"
-                    }
-                }
-            }
-        },
-        "restaurant.KitchenActivity": {
-            "type": "object",
-            "properties": {
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Category"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "printers": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.PrinterTerminal"
-                    }
-                },
-                "products": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Inventory"
-                    }
+                "role": {
+                    "type": "integer"
                 },
                 "shopid": {
                     "type": "string"
                 },
-                "updatedat": {
-                    "type": "string"
-                },
-                "zones": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.ShopZone"
-                    }
-                }
-            }
-        },
-        "restaurant.KitchenDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
+                "username": {
                     "type": "string"
                 }
             }
         },
-        "restaurant.KitchenFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/restaurant.KitchenLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.KitchenInfo": {
-            "type": "object",
-            "properties": {
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Category"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "printers": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.PrinterTerminal"
-                    }
-                },
-                "products": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Inventory"
-                    }
-                },
-                "zones": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.ShopZone"
-                    }
-                }
-            }
-        },
-        "restaurant.KitchenInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/restaurant.KitchenInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.KitchenLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.KitchenActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.KitchenDeleteActivity"
-                    }
-                }
-            }
-        },
-        "restaurant.KitchenPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.KitchenInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.PrinterTerminal": {
+        "models.Vat": {
             "type": "object",
             "properties": {
                 "address": {
                     "type": "string"
                 },
+                "branchcode": {
+                    "type": "string"
+                },
+                "custname": {
+                    "type": "string"
+                },
+                "custtaxid": {
+                    "type": "string"
+                },
+                "custtype": {
+                    "type": "integer"
+                },
+                "exceptvat": {
+                    "type": "number"
+                },
+                "organization": {
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "vatamount": {
+                    "type": "number"
+                },
+                "vatbase": {
+                    "type": "number"
+                },
+                "vatdate": {
+                    "type": "string"
+                },
+                "vatdocno": {
+                    "type": "string"
+                },
+                "vatmode": {
+                    "type": "integer"
+                },
+                "vatperiod": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "number"
+                },
+                "vatsubmit": {
+                    "type": "boolean"
+                },
+                "vattype": {
+                    "type": "integer"
+                },
+                "vatyear": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Warehouse": {
+            "type": "object",
+            "required": [
+                "name1"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "locations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Location"
+                    }
+                },
+                "name1": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name2": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name3": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name4": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                }
+            }
+        },
+        "models.XSort": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer",
+                    "maximum": 4294967295,
+                    "minimum": 0
+                }
+            }
+        },
+        "models.XSortModifyReqesut": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer",
+                    "maximum": 4294967295,
+                    "minimum": 0
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_inventory_models.Unit": {
+            "type": "object",
+            "properties": {
+                "unitcode": {
+                    "type": "string"
+                },
+                "unitname1": {
+                    "type": "string"
+                },
+                "unitname2": {
+                    "type": "string"
+                },
+                "unitname3": {
+                    "type": "string"
+                },
+                "unitname4": {
+                    "type": "string"
+                },
+                "unitname5": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_product_models.ProductImage": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_productbarcode_models.ProductImage": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_unit_models.Unit": {
+            "type": "object",
+            "required": [
+                "names",
+                "unitcode"
+            ],
+            "properties": {
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "unitcode": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "unitname1": {
+                    "type": "string"
+                },
+                "unitname2": {
+                    "type": "string"
+                },
+                "unitname3": {
+                    "type": "string"
+                },
+                "unitname4": {
+                    "type": "string"
+                },
+                "unitname5": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_restaurant_device_models.Device": {
+            "type": "object",
+            "required": [
+                "code",
+                "type"
+            ],
+            "properties": {
                 "code": {
                     "type": "string"
                 },
@@ -6487,517 +20293,14 @@ const docTemplate = `{
                 }
             }
         },
-        "restaurant.PrinterTerminalActivity": {
+        "smlcloudplatform_pkg_storefront_models.Device": {
             "type": "object",
             "properties": {
-                "address": {
+                "os": {
                     "type": "string"
                 },
-                "code": {
+                "uuid": {
                     "type": "string"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "integer"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "restaurant.PrinterTerminalDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "restaurant.PrinterTerminalFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/restaurant.PrinterTerminalLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.PrinterTerminalInfo": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "integer"
-                }
-            }
-        },
-        "restaurant.PrinterTerminalInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/restaurant.PrinterTerminalInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.PrinterTerminalLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.PrinterTerminalActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.PrinterTerminalDeleteActivity"
-                    }
-                }
-            }
-        },
-        "restaurant.PrinterTerminalPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.PrinterTerminalInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.ShopTable": {
-            "type": "object",
-            "properties": {
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "number": {
-                    "type": "string"
-                },
-                "seat": {
-                    "type": "integer"
-                },
-                "zone": {
-                    "$ref": "#/definitions/restaurant.ShopZone"
-                }
-            }
-        },
-        "restaurant.ShopTableActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "number": {
-                    "type": "string"
-                },
-                "seat": {
-                    "type": "integer"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                },
-                "zone": {
-                    "$ref": "#/definitions/restaurant.ShopZone"
-                }
-            }
-        },
-        "restaurant.ShopTableDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "restaurant.ShopTableFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/restaurant.ShopTableLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.ShopTableInfo": {
-            "type": "object",
-            "properties": {
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "number": {
-                    "type": "string"
-                },
-                "seat": {
-                    "type": "integer"
-                },
-                "zone": {
-                    "$ref": "#/definitions/restaurant.ShopZone"
-                }
-            }
-        },
-        "restaurant.ShopTableInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/restaurant.ShopTableInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.ShopTableLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.ShopTableActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.ShopTableDeleteActivity"
-                    }
-                }
-            }
-        },
-        "restaurant.ShopTablePageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.ShopTableInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.ShopZone": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "printer": {
-                    "$ref": "#/definitions/restaurant.PrinterTerminal"
-                }
-            }
-        },
-        "restaurant.ShopZoneActivity": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "printer": {
-                    "$ref": "#/definitions/restaurant.PrinterTerminal"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "restaurant.ShopZoneDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "restaurant.ShopZoneFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/restaurant.ShopZoneLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.ShopZoneInfo": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "printer": {
-                    "$ref": "#/definitions/restaurant.PrinterTerminal"
-                }
-            }
-        },
-        "restaurant.ShopZoneInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/restaurant.ShopZoneInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "restaurant.ShopZoneLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.ShopZoneActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.ShopZoneDeleteActivity"
-                    }
-                }
-            }
-        },
-        "restaurant.ShopZonePageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/restaurant.ShopZoneInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
                 }
             }
         }

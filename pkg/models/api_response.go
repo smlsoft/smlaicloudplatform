@@ -6,6 +6,7 @@ type ApiResponse struct {
 	ID         interface{} `json:"id,omitempty"`
 	Data       interface{} `json:"data,omitempty"`
 	Pagination interface{} `json:"pagination,omitempty"`
+	Total      interface{} `json:"total,omitempty"`
 }
 
 type AuthResponse struct {
@@ -30,11 +31,6 @@ type PaginationDataResponse struct {
 	Prev      int64 `json:"prev"`
 	Next      int64 `json:"next"`
 	TotalPage int64 `json:"totalPage"`
-}
-
-type UserProfileReponse struct {
-	Success bool        `json:"success"`
-	Data    UserProfile `json:"data"`
 }
 
 type ResponseSuccess struct {

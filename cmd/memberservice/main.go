@@ -2,7 +2,7 @@ package main
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/member"
+	"smlcloudplatform/pkg/member"
 )
 
 func main() {

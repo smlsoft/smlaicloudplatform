@@ -2,7 +2,7 @@ package main
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/inventory"
+	"smlcloudplatform/pkg/product/inventory"
 
 	_ "net/http/pprof"
 )

@@ -65,11 +65,34 @@ run_m1_local_appdev:
 	swag init
 	PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" go run --tags dynamic main.go
 
+run_m1_local_alldev:
+	swag init
+	DEV_API_MODE=2 PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" go run --tags dynamic main.go
+
+run_m1_stagging_alldev:
+	swag init
+	DEV_API_MODE=2 PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" MODE=staging go run --tags dynamic main.go
+
+run_m1_local_comsumerdev:
+	DEV_API_MODE=1 PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" go run --tags dynamic main.go
+
 run_m1_stagging_appdev:
 	swag init
 	PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" MODE=staging go run --tags dynamic main.go
 
 docker_m1_build_api_dev:
 	swag init
-	docker build -t smlsoft/smlcloudplatform:apidev .
-	docker push smlsoft/smlcloudplatform:apidev
+	docker buildx build --platform linux/amd64 --push -t smlsoft/smlcloudplatform:apidev . -f DockerfileM1
+
+run_test_m1:
+	PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" POSTGRES_HOST=192.168.2.209 POSTGRES_PORT=5432 POSTGRES_DB_NAME=smldev POSTGRES_USERNAME=postgres POSTGRES_PASSWORD=sml go test -v --tags dynamic ./pkg/vfgl/journalreport/journal_report_repository_test.go
+
+swago-install:
+	go install github.com/swaggo/swag/cmd/swag@latest
+
+run_m1_test_all:
+	PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" go test --tags dynamic ./...
+
+run_m1_prd_alldev:
+	swag init
+	DEV_API_MODE=2 PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig" MODE=prd go run --tags dynamic main.go

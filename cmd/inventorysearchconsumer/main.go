@@ -2,7 +2,6 @@ package main
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/inventorysearchconsumer"
 )
 
 func main() {
@@ -11,10 +10,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	inventorysearchconsumer.StartInventorySearchComsumerOnProductCreated(ms, cfg)
-	inventorysearchconsumer.StartInventorySearchComsumerOnProductUpdated(ms, cfg)
-	inventorysearchconsumer.StartInventorySearchComsumerOnProductDeleted(ms, cfg)
 
 	ms.Start()
 }

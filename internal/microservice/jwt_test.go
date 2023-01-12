@@ -26,6 +26,15 @@ func (cfg *TestCacherConfig) DB() int {
 func (cfg *TestCacherConfig) ConnectionSettings() ICacherConnectionSettings {
 	return NewDefaultCacherConnectionSettings()
 }
+
+func (cfg *TestCacherConfig) UserName() string {
+	return ""
+}
+
+func (cfg *TestCacherConfig) TLS() bool {
+	return false
+}
+
 func TestGenerateToken(t *testing.T) {
 
 	cacher := NewCacher(&TestCacherConfig{})

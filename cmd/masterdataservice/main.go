@@ -2,9 +2,9 @@ package main
 
 import (
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/api/category"
-	"smlcloudplatform/pkg/api/inventory"
-	"smlcloudplatform/pkg/api/member"
+	"smlcloudplatform/pkg/member"
+	"smlcloudplatform/pkg/product/inventory"
+	"smlcloudplatform/pkg/product/productcategory"
 )
 
 func main() {
@@ -22,7 +22,7 @@ func main() {
 	inventoryapi := inventory.NewInventoryHttp(ms, cfg)
 	inventoryapi.RouteSetup()
 
-	categoryHttp := category.NewCategoryHttp(ms, cfg)
+	categoryHttp := productcategory.NewProductCategoryHttp(ms, cfg)
 	categoryHttp.RouteSetup()
 
 	memberapi := member.NewMemberHttp(ms, cfg)

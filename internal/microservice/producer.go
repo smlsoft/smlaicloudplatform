@@ -68,7 +68,7 @@ func (p *Producer) SendMessage(topic string, key string, message interface{}) er
 
 	prod := p.getProducer()
 	err = prod.Produce(&kafka.Message{
-		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+		TopicPartition: kafka.TopicPartition{Topic: &topic},
 		Value:          []byte(messageJSON),
 		Key:            keyBytes,
 	}, deliveryChan)
@@ -91,8 +91,6 @@ func (p *Producer) Close() error {
 	prod := p.prod
 	prod.Flush(5000) // 5s for flush message in queue
 	prod.Close()
-
-	p.logger.Debugf("PROD", "Close successfully")
 
 	return nil
 }

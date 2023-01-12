@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"mime/multipart"
+	"net/http"
 	"smlcloudplatform/internal/microservice/models"
 
 	"github.com/labstack/echo/v4"
@@ -51,6 +52,10 @@ func (ctx *HTTPContext) ReadInput() string {
 // Header return header value by key
 func (ctx *HTTPContext) Header(attribute string) string {
 	return ctx.c.Request().Header.Get(attribute)
+}
+
+func (ctx *HTTPContext) RealIp() string {
+	return ctx.c.RealIP()
 }
 
 func (ctx *HTTPContext) FormFile(attribute string) (*multipart.FileHeader, error) {
@@ -106,6 +111,14 @@ func (ctx *HTTPContext) Producer(mqConfig IMQConfig) IProducer {
 // MQ return MQ
 func (ctx *HTTPContext) MQ(mqConfig IMQConfig) IMQ {
 	return NewMQ(mqConfig, ctx.ms.Logger)
+}
+
+func (ctx *HTTPContext) ResponseWriter() http.ResponseWriter {
+	return ctx.c.Response()
+}
+
+func (ctx *HTTPContext) Request() *http.Request {
+	return ctx.c.Request()
 }
 
 func (ctx *HTTPContext) EchoContext() echo.Context {
