@@ -718,6 +718,7 @@ func (h DocumentImageHttp) CreateDocumentImageGroup(ctx microservice.IContext) e
 // @Tags		DocumentImageGroup
 // @Accept 		json
 // @Param		guid  path      string  true  "document image group guid"
+// @Param		DocumentImageGroup  body      models.DocumentImageGroup  true  "Document Image Group"
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
@@ -756,6 +757,7 @@ func (h DocumentImageHttp) UpdateDocumentImageGroup(ctx microservice.IContext) e
 // @Tags		DocumentImageGroup
 // @Accept 		json
 // @Param		guid  path      string  true  "document image group guid"
+// @Param		ImageReferenceBody  body      models.ImageReferenceBody  true  "Image Reference"
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
@@ -794,6 +796,7 @@ func (h DocumentImageHttp) UpdateImageReferenceByDocumentImageGroup(ctx microser
 // @Tags		DocumentImageGroup
 // @Accept 		json
 // @Param		guid  path      string  true  "document image group guid"
+// @Param		Reference  body      models.Reference  true  "Reference"
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
