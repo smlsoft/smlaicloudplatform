@@ -5,6 +5,7 @@ import (
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/utils/mogoutil"
+	"sort"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
@@ -350,16 +351,23 @@ func (repo DocumentImageGroupRepository) FindPageImageGroup(shopID string, path 
 		"$match": queryFilters,
 	}
 
+	sorts["guidfixed"] = 1
+
+	sortKeys := make([]string, 0, len(sorts))
+	for sortKey := range sorts {
+		sortKeys = append(sortKeys, sortKey)
+	}
+
+	sort.Strings(sortKeys)
+
 	sortTemp := bson.M{}
-	for sortKey, sortVal := range sorts {
+	for _, sortKey := range sortKeys {
 		tempSortVal := 1
-		if sorts[sortKey] < sortVal {
+		if sorts[sortKey] < 1 {
 			tempSortVal = -1
 		}
 		sortTemp[sortKey] = tempSortVal
 	}
-
-	sortTemp["guidfixed"] = 1
 
 	sortQuery := bson.M{
 		"$sort": sortTemp,
