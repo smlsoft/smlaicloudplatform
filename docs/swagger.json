@@ -1830,6 +1830,15 @@
                         "name": "guid",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Document Image Group",
+                        "name": "DocumentImageGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DocumentImageGroup"
+                        }
                     }
                 ],
                 "responses": {
@@ -1869,6 +1878,15 @@
                         "name": "guid",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Image Reference",
+                        "name": "ImageReferenceBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ImageReferenceBody"
+                        }
                     }
                 ],
                 "responses": {
@@ -1908,6 +1926,15 @@
                         "name": "guid",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Reference",
+                        "name": "Reference",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Reference"
+                        }
                     }
                 ],
                 "responses": {
@@ -15355,6 +15382,17 @@
                     "type": "string"
                 },
                 "uploadedby": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.ImageReferenceBody": {
+            "type": "object",
+            "properties": {
+                "documentimageguid": {
                     "type": "string"
                 },
                 "xorder": {

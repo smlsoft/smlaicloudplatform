@@ -891,6 +891,13 @@ definitions:
       xorder:
         type: integer
     type: object
+  models.ImageReferenceBody:
+    properties:
+      documentimageguid:
+        type: string
+      xorder:
+        type: integer
+    type: object
   models.IncudeChoice:
     properties:
       choicecode:
@@ -5390,6 +5397,12 @@ paths:
         name: guid
         required: true
         type: string
+      - description: Document Image Group
+        in: body
+        name: DocumentImageGroup
+        required: true
+        schema:
+          $ref: '#/definitions/models.DocumentImageGroup'
       responses:
         "200":
           description: OK
@@ -5414,6 +5427,12 @@ paths:
         name: guid
         required: true
         type: string
+      - description: Image Reference
+        in: body
+        name: ImageReferenceBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.ImageReferenceBody'
       responses:
         "200":
           description: OK
@@ -5438,6 +5457,12 @@ paths:
         name: guid
         required: true
         type: string
+      - description: Reference
+        in: body
+        name: Reference
+        required: true
+        schema:
+          $ref: '#/definitions/models.Reference'
       responses:
         "200":
           description: OK
