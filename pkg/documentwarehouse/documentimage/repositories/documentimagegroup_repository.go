@@ -4,9 +4,11 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/models"
 	"smlcloudplatform/pkg/repositories"
+	"smlcloudplatform/pkg/utils/mogoutil"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type IDocumentImageGroupRepository interface {
@@ -29,6 +31,7 @@ type IDocumentImageGroupRepository interface {
 	FindByDocumentImageGUIDs(shopID string, documentImageGUIDs []string) ([]models.DocumentImageGroupInfo, error)
 	FindByReference(shopID string, reference models.Reference) ([]models.DocumentImageGroupDoc, error)
 	FindByReferenceDocNo(shopID string, docNo string) ([]models.DocumentImageGroupDoc, error)
+	FindPageImageGroup(shopID string, path string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
 	Transaction(fnc func() error) error
 
 	FindOneByDocumentImageGUIDAll(documentImageGUID string) (models.DocumentImageGroupDoc, error)
@@ -301,4 +304,82 @@ func (repo DocumentImageGroupRepository) RemoveDocumentImageByDocumentImageGUIDs
 	}
 
 	return repo.pst.Update(models.DocumentImageGroupDoc{}, filterQuery, removeQuery)
+}
+
+func (repo DocumentImageGroupRepository) FindPageImageGroup(shopID string, path string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error) {
+
+	matchFilterList := []interface{}{}
+
+	for key, value := range filters {
+		matchFilterList = append(matchFilterList, bson.M{key: value})
+	}
+
+	searchFilterList := []interface{}{}
+
+	for _, colName := range colNameSearch {
+		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
+			Pattern: ".*" + q + ".*",
+			Options: "",
+		}}})
+	}
+
+	if len(path) > 0 {
+		searchFilterList = append(searchFilterList, bson.M{"path": path})
+	} else {
+		searchFilterList = append(searchFilterList, bson.M{"path": bson.M{"$exists": false}})
+	}
+
+	queryFilters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+	}
+
+	if len(searchFilterList) > 0 {
+		queryFilters["$or"] = searchFilterList
+	}
+
+	if len(matchFilterList) > 0 {
+		queryFilters["$and"] = matchFilterList
+	}
+
+	if len(sorts) > 0 {
+		sorts["guidfixed"] = 1
+	}
+
+	matchQuery := bson.M{
+		"$match": queryFilters,
+	}
+
+	sortTemp := bson.M{}
+	for sortKey, sortVal := range sorts {
+		tempSortVal := 1
+		if sorts[sortKey] < sortVal {
+			tempSortVal = -1
+		}
+		sortTemp[sortKey] = tempSortVal
+	}
+
+	sortTemp["guidfixed"] = 1
+
+	sortQuery := bson.M{
+		"$sort": sortTemp,
+	}
+
+	aggData, err := repo.pst.AggregatePage(models.DocumentImageGroupInfo{}, limit, page, matchQuery, sortQuery)
+
+	if err != nil {
+		return []models.DocumentImageGroupInfo{}, mongopagination.PaginationData{}, err
+	}
+
+	docList, err := mogoutil.AggregatePageDecode[models.DocumentImageGroupInfo](aggData)
+
+	if err != nil {
+		return []models.DocumentImageGroupInfo{}, mongopagination.PaginationData{}, err
+	}
+
+	if err != nil {
+		return []models.DocumentImageGroupInfo{}, mongopagination.PaginationData{}, err
+	}
+
+	return docList, aggData.Pagination, nil
 }

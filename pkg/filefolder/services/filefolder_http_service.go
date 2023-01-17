@@ -23,7 +23,7 @@ type IFileFolderHttpService interface {
 	DeleteFileFolder(shopID string, guid string, authUsername string) error
 	DeleteFileFolderByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoFileFolder(shopID string, guid string) (models.FileFolderInfo, error)
-	SearchFileFolder(shopID string, q string, page int, limit int, sort map[string]int) ([]models.FileFolderInfo, mongopagination.PaginationData, error)
+	SearchFileFolder(shopID string, module string, q string, page int, limit int, sort map[string]int) ([]models.FileFolderInfo, mongopagination.PaginationData, error)
 	SearchFileFolderStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.FileFolderInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.FileFolder) (common.BulkImport, error)
 
@@ -162,12 +162,13 @@ func (svc FileFolderHttpService) InfoFileFolder(shopID string, guid string) (mod
 
 }
 
-func (svc FileFolderHttpService) SearchFileFolder(shopID string, q string, page int, limit int, sort map[string]int) ([]models.FileFolderInfo, mongopagination.PaginationData, error) {
+func (svc FileFolderHttpService) SearchFileFolder(shopID string, module string, q string, page int, limit int, sort map[string]int) ([]models.FileFolderInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
 		"name",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	// docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPageFileFolder(shopID, module, map[string]interface{}{}, searchCols, q, page, limit, sort)
 
 	if err != nil {
 		return []models.FileFolderInfo{}, pagination, err

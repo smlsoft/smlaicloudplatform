@@ -4,9 +4,12 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/filefolder/models"
 	"smlcloudplatform/pkg/repositories"
+	"smlcloudplatform/pkg/utils/mogoutil"
 	"time"
 
 	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type IFileFolderRepository interface {
@@ -28,6 +31,8 @@ type IFileFolderRepository interface {
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.FileFolderActivity, mongopagination.PaginationData, error)
 	FindDeletedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.FileFolderDeleteActivity, error)
 	FindCreatedOrUpdatedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.FileFolderActivity, error)
+
+	FindPageFileFolder(shopID string, module string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.FileFolderInfo, mongopagination.PaginationData, error)
 }
 
 type FileFolderRepository struct {
@@ -50,4 +55,117 @@ func NewFileFolderRepository(pst microservice.IPersisterMongo) *FileFolderReposi
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.FileFolderActivity, models.FileFolderDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo *FileFolderRepository) FindPageFileFolder(shopID string, module string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.FileFolderInfo, mongopagination.PaginationData, error) {
+
+	matchFilterList := []interface{}{}
+
+	for key, value := range filters {
+		matchFilterList = append(matchFilterList, bson.M{key: value})
+	}
+
+	searchFilterList := []interface{}{}
+
+	for _, colName := range colNameSearch {
+		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
+			Pattern: ".*" + q + ".*",
+			Options: "",
+		}}})
+	}
+
+	queryFilters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+	}
+
+	if len(module) > 0 {
+		queryFilters["module"] = module
+	} else {
+		// searchFilterList = append(searchFilterList, bson.M{"module": ""})
+		// searchFilterList = append(searchFilterList, bson.M{"module": bson.M{"$exists": false}})
+	}
+
+	if len(searchFilterList) > 0 {
+		queryFilters["$or"] = searchFilterList
+	}
+
+	if len(matchFilterList) > 0 {
+		queryFilters["$and"] = matchFilterList
+	}
+
+	if len(sorts) > 0 {
+		sorts["guidfixed"] = 1
+	}
+
+	matchQuery := bson.M{
+		"$match": queryFilters,
+	}
+
+	lookupQuery := bson.M{
+		"$lookup": bson.M{
+			"from": "documentImageGroups",
+			"let":  bson.M{"shopid": "$shopid", "foreignField": "$foreignField"},
+			"pipeline": []interface{}{
+				bson.M{
+					"$match": bson.M{
+						"$expr": bson.M{"$and": []interface{}{
+							bson.M{
+								"$eq": []interface{}{"$shopid", "$$shopid"},
+							},
+							bson.M{
+								"$eq": []interface{}{"$shopid", "$$shopid"},
+							},
+						}},
+					},
+				},
+			},
+			"as": "tempDocs",
+		},
+	}
+
+	addFielsQuery := bson.M{
+		"$addFields": bson.M{
+			"total": bson.M{"$size": "$tempDocs"},
+		},
+	}
+
+	projectQuery := bson.M{
+		"$project": bson.M{
+			"tempDocs": 0,
+		},
+	}
+
+	sortTemp := bson.M{}
+	for sortKey, sortVal := range sorts {
+		tempSortVal := 1
+		if sorts[sortKey] < sortVal {
+			tempSortVal = -1
+		}
+		sortTemp[sortKey] = tempSortVal
+	}
+
+	sortTemp["guidfixed"] = 1
+
+	sortQuery := bson.M{
+		"$sort": sortTemp,
+	}
+
+	aggData, err := repo.pst.AggregatePage(models.FileFolderInfo{}, limit, page, matchQuery, lookupQuery, addFielsQuery, projectQuery, sortQuery)
+
+	if err != nil {
+		return []models.FileFolderInfo{}, mongopagination.PaginationData{}, err
+	}
+
+	docList, err := mogoutil.AggregatePageDecode[models.FileFolderInfo](aggData)
+
+	if err != nil {
+		return []models.FileFolderInfo{}, mongopagination.PaginationData{}, err
+	}
+
+	if err != nil {
+		return []models.FileFolderInfo{}, mongopagination.PaginationData{}, err
+	}
+
+	return docList, aggData.Pagination, nil
 }

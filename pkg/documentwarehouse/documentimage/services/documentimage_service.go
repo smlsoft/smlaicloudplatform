@@ -1014,7 +1014,8 @@ func (svc DocumentImageService) UnGroupDocumentImageGroup(shopID string, authUse
 }
 
 func (svc DocumentImageService) ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable common.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.repoImageGroup.FindPageFilterSort(shopID, filters, []string{"title"}, pageable.Q, pageable.Page, pageable.Limit, pageable.Sorts)
+	// docList, pagination, err := svc.repoImageGroup.FindPageFilterSort(shopID, filters, []string{"title"}, pageable.Q, pageable.Page, pageable.Limit, pageable.Sorts)
+	docList, pagination, err := svc.repoImageGroup.FindPageImageGroup(shopID, "", filters, []string{"title"}, pageable.Q, pageable.Page, pageable.Limit, pageable.Sorts)
 
 	return docList, pagination, err
 }

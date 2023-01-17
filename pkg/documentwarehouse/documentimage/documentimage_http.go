@@ -567,6 +567,7 @@ func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) err
 	docRefReserve := strings.TrimSpace(ctx.QueryParam("reserve"))
 	isreject := strings.TrimSpace(ctx.QueryParam("reject"))
 	isref := strings.TrimSpace(ctx.QueryParam("ref"))
+	path := strings.TrimSpace(ctx.QueryParam("path"))
 
 	fromDateStr := strings.TrimSpace(ctx.QueryParam("fromdate"))
 	toDateStr := strings.TrimSpace(ctx.QueryParam("todate"))
@@ -615,6 +616,11 @@ func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) err
 				"$lt":  toDate.AddDate(0, 0, 1),
 			}
 		}
+	}
+
+	if len(path) > 0 {
+
+		matchFilters["path"] = path
 	}
 
 	docList, pagination, err := h.service.ListDocumentImageGroup(shopID, matchFilters, pageable)

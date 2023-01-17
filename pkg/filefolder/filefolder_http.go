@@ -240,8 +240,9 @@ func (h FileFolderHttp) InfoFileFolder(ctx microservice.IContext) error {
 // @Description get struct array by ID
 // @Tags		FileFolder
 // @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
+// @Param		module	query	integer		false  "Module"
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -254,7 +255,10 @@ func (h FileFolderHttp) SearchFileFolderPage(ctx microservice.IContext) error {
 	q := ctx.QueryParam("q")
 	page, limit := utils.GetPaginationParam(ctx.QueryParam)
 	sort := utils.GetSortParam(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchFileFolder(shopID, q, page, limit, sort)
+
+	module := ctx.QueryParam("module")
+
+	docList, pagination, err := h.svc.SearchFileFolder(shopID, module, q, page, limit, sort)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
