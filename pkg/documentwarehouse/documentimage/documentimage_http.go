@@ -545,6 +545,8 @@ func (h DocumentImageHttp) UploadDocumentImage(ctx microservice.IContext) error 
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
+// @Param		path	query	string		false  "Filter Path"
+// @Param		folder	query	string		false  "Filter Folder"
 // @Param		reserve	query	integer		false  "เอกสารที่มีการจอง,0 not filter, 1 filter"
 // @Param		reject	query	integer		false  "empty not filter, 0 not reject, 1 reject"
 // @Param		ref	query	integer		false  "document reference: empty not filter, 1 not reference, 2 referenced"
@@ -568,6 +570,7 @@ func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) err
 	isreject := strings.TrimSpace(ctx.QueryParam("reject"))
 	isref := strings.TrimSpace(ctx.QueryParam("ref"))
 	path := strings.TrimSpace(ctx.QueryParam("path"))
+	folder := strings.TrimSpace(ctx.QueryParam("folder"))
 
 	fromDateStr := strings.TrimSpace(ctx.QueryParam("fromdate"))
 	toDateStr := strings.TrimSpace(ctx.QueryParam("todate"))
@@ -619,8 +622,11 @@ func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) err
 	}
 
 	if len(path) > 0 {
+		matchFilters["pathfilefolder"] = path
+	}
 
-		matchFilters["path"] = path
+	if len(folder) > 0 {
+		matchFilters["filefolderguid"] = folder
 	}
 
 	docList, pagination, err := h.service.ListDocumentImageGroup(shopID, matchFilters, pageable)
