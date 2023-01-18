@@ -221,8 +221,8 @@ func (svc UnitHttpService) InfoUnit(shopID string, guid string) (models.UnitInfo
 
 func (svc UnitHttpService) SearchUnit(shopID string, q string, page int, limit int, sort map[string]int) ([]models.UnitInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
-		"guidfixed",
 		"unitcode",
+		"names.name",
 	}
 
 	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
@@ -236,8 +236,8 @@ func (svc UnitHttpService) SearchUnit(shopID string, q string, page int, limit i
 
 func (svc UnitHttpService) SearchUnitLimit(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.UnitInfo, int, error) {
 	searchCols := []string{
-		"guidfixed",
 		"unitcode",
+		"names.name",
 	}
 
 	projectQuery := map[string]interface{}{

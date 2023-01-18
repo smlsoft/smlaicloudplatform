@@ -168,8 +168,8 @@ func (svc ProductBarcodeHttpService) InfoProductBarcode(shopID string, guid stri
 
 func (svc ProductBarcodeHttpService) SearchProductBarcode(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
-		"guidfixed",
 		"barcode",
+		"names.name",
 	}
 
 	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
@@ -183,8 +183,8 @@ func (svc ProductBarcodeHttpService) SearchProductBarcode(shopID string, q strin
 
 func (svc ProductBarcodeHttpService) SearchProductBarcodeStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ProductBarcodeInfo, int, error) {
 	searchCols := []string{
-		"guidfixed",
 		"barcode",
+		"names.name",
 	}
 
 	projectQuery := map[string]interface{}{

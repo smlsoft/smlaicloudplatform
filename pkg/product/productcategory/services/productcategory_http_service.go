@@ -143,8 +143,8 @@ func (svc ProductCategoryHttpService) InfoProductCategory(shopID string, guid st
 
 func (svc ProductCategoryHttpService) SearchProductCategory(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ProductCategoryInfo, mongopagination.PaginationData, error) {
 	searchCols := []string{
-		"guidfixed",
 		"code",
+		"names.name",
 	}
 
 	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
@@ -158,7 +158,8 @@ func (svc ProductCategoryHttpService) SearchProductCategory(shopID string, q str
 
 func (svc ProductCategoryHttpService) SearchProductCategoryStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ProductCategoryInfo, int, error) {
 	searchCols := []string{
-		"guidfixed",
+		"code",
+		"names.name",
 	}
 
 	projectQuery := map[string]interface{}{
