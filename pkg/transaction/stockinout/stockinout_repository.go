@@ -4,7 +4,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/transaction/stockinout/models"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -14,8 +14,8 @@ type IStockInOutRepository interface {
 	Update(shopID string, guid string, doc models.StockInOutDoc) error
 	Delete(shopID string, guid string, username string) error
 	FindByGuid(shopID string, guid string) (models.StockInOutDoc, error)
-	FindPage(shopID string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error)
-	FindItemsByGuidPage(shopID string, guid string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error)
+	FindPage(shopID string, q string, page int, limit int) ([]models.StockInOutInfo, mongopagination.PaginationData, error)
+	FindItemsByGuidPage(shopID string, guid string, q string, page int, limit int) ([]models.StockInOutInfo, mongopagination.PaginationData, error)
 }
 
 type StockInOutRepository struct {
@@ -66,7 +66,7 @@ func (repo StockInOutRepository) FindByGuid(shopID string, guid string) (models.
 	return *doc, nil
 }
 
-func (repo StockInOutRepository) FindPage(shopID string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error) {
+func (repo StockInOutRepository) FindPage(shopID string, q string, page int, limit int) ([]models.StockInOutInfo, mongopagination.PaginationData, error) {
 
 	docList := []models.StockInOutInfo{}
 	pagination, err := repo.pst.FindPage(&models.StockInOutInfo{}, limit, page, bson.M{
@@ -81,13 +81,13 @@ func (repo StockInOutRepository) FindPage(shopID string, q string, page int, lim
 	}, &docList)
 
 	if err != nil {
-		return []models.StockInOutInfo{}, paginate.PaginationData{}, err
+		return []models.StockInOutInfo{}, mongopagination.PaginationData{}, err
 	}
 
 	return docList, pagination, nil
 }
 
-func (repo StockInOutRepository) FindItemsByGuidPage(shopID string, guid string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error) {
+func (repo StockInOutRepository) FindItemsByGuidPage(shopID string, guid string, q string, page int, limit int) ([]models.StockInOutInfo, mongopagination.PaginationData, error) {
 
 	docList := []models.StockInOutInfo{}
 	pagination, err := repo.pst.FindPage(&models.StockInOutInfo{}, limit, page, bson.M{
@@ -103,7 +103,7 @@ func (repo StockInOutRepository) FindItemsByGuidPage(shopID string, guid string,
 	}, &docList)
 
 	if err != nil {
-		return []models.StockInOutInfo{}, paginate.PaginationData{}, err
+		return []models.StockInOutInfo{}, mongopagination.PaginationData{}, err
 	}
 
 	return docList, pagination, nil

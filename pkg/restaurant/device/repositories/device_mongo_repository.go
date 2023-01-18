@@ -6,7 +6,7 @@ import (
 	"smlcloudplatform/pkg/restaurant/device/models"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 )
 
 type IDeviceRepository interface {

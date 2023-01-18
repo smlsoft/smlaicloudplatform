@@ -6,7 +6,7 @@ import (
 	"smlcloudplatform/pkg/utils"
 	"time"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -15,7 +15,7 @@ type IOptionService interface {
 	UpdateOption(shopID string, guid string, authUsername string, invOpt models.InventoryOptionMain) error
 	DeleteOption(shopID string, guid string, username string) error
 	InfoOption(shopID string, guid string) (models.InventoryOptionMainInfo, error)
-	SearchOption(shopID string, q string, page int, limit int) ([]models.InventoryOptionMainInfo, paginate.PaginationData, error)
+	SearchOption(shopID string, q string, page int, limit int) ([]models.InventoryOptionMainInfo, mongopagination.PaginationData, error)
 }
 
 type OptionService struct {
@@ -109,7 +109,7 @@ func (svc OptionService) InfoOption(shopID string, guid string) (models.Inventor
 	return findDoc.InventoryOptionMainInfo, nil
 }
 
-func (svc OptionService) SearchOption(shopID string, q string, page int, limit int) ([]models.InventoryOptionMainInfo, paginate.PaginationData, error) {
+func (svc OptionService) SearchOption(shopID string, q string, page int, limit int) ([]models.InventoryOptionMainInfo, mongopagination.PaginationData, error) {
 	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
 
 	if err != nil {

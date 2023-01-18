@@ -4,7 +4,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/transaction/saleinvoice/models"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -14,8 +14,8 @@ type ISaleinvoiceRepository interface {
 	Update(shopID string, guid string, trans models.SaleinvoiceDoc) error
 	Delete(shopID string, guid string, username string) error
 	FindByGuid(shopID string, guid string) (models.SaleinvoiceDoc, error)
-	FindPage(shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, paginate.PaginationData, error)
-	FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, paginate.PaginationData, error)
+	FindPage(shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, mongopagination.PaginationData, error)
+	FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, mongopagination.PaginationData, error)
 }
 
 type SaleinvoiceRepository struct {
@@ -72,7 +72,7 @@ func (repo SaleinvoiceRepository) FindByGuid(shopID string, guid string) (models
 	return *trans, nil
 }
 
-func (repo SaleinvoiceRepository) FindPage(shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, paginate.PaginationData, error) {
+func (repo SaleinvoiceRepository) FindPage(shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, mongopagination.PaginationData, error) {
 
 	transList := []models.SaleinvoiceInfo{}
 	pagination, err := repo.pst.FindPage(&models.SaleinvoiceInfo{}, limit, page, bson.M{
@@ -87,13 +87,13 @@ func (repo SaleinvoiceRepository) FindPage(shopID string, q string, page int, li
 	}, &transList)
 
 	if err != nil {
-		return []models.SaleinvoiceInfo{}, paginate.PaginationData{}, err
+		return []models.SaleinvoiceInfo{}, mongopagination.PaginationData{}, err
 	}
 
 	return transList, pagination, nil
 }
 
-func (repo SaleinvoiceRepository) FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, paginate.PaginationData, error) {
+func (repo SaleinvoiceRepository) FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, mongopagination.PaginationData, error) {
 
 	transList := []models.SaleinvoiceInfo{}
 	pagination, err := repo.pst.FindPage(&models.Saleinvoice{}, limit, page, bson.M{
@@ -109,7 +109,7 @@ func (repo SaleinvoiceRepository) FindItemsByGuidPage(guid string, shopID string
 	}, &transList)
 
 	if err != nil {
-		return []models.SaleinvoiceInfo{}, paginate.PaginationData{}, err
+		return []models.SaleinvoiceInfo{}, mongopagination.PaginationData{}, err
 	}
 
 	return transList, pagination, nil

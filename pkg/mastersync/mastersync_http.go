@@ -44,7 +44,7 @@ import (
 
 	"smlcloudplatform/pkg/mastersync/repositories"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 )
 
 type MasterSyncHttp struct {

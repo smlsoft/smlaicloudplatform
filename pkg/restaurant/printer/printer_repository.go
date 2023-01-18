@@ -6,7 +6,7 @@ import (
 	"smlcloudplatform/pkg/restaurant/printer/models"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 )
 
 type IPrinterRepository interface {

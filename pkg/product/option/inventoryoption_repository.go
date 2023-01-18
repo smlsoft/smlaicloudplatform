@@ -4,7 +4,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/product/option/models"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -14,7 +14,7 @@ type IOptionRepository interface {
 	Update(shopID string, guid string, doc models.InventoryOptionMainDoc) error
 	Delete(shopID string, guid string, username string) error
 	FindByGuid(shopID string, guid string) (models.InventoryOptionMainDoc, error)
-	FindPage(shopID string, q string, page int, limit int) ([]models.InventoryOptionMainInfo, paginate.PaginationData, error)
+	FindPage(shopID string, q string, page int, limit int) ([]models.InventoryOptionMainInfo, mongopagination.PaginationData, error)
 }
 
 type OptionRepository struct {
@@ -75,7 +75,7 @@ func (repo OptionRepository) FindByGuid(shopID string, guid string) (models.Inve
 	return *doc, nil
 }
 
-func (repo OptionRepository) FindPage(shopID string, q string, page int, limit int) ([]models.InventoryOptionMainInfo, paginate.PaginationData, error) {
+func (repo OptionRepository) FindPage(shopID string, q string, page int, limit int) ([]models.InventoryOptionMainInfo, mongopagination.PaginationData, error) {
 
 	docList := []models.InventoryOptionMainInfo{}
 	pagination, err := repo.pst.FindPage(&models.InventoryOptionMainInfo{}, limit, page, bson.M{
@@ -98,7 +98,7 @@ func (repo OptionRepository) FindPage(shopID string, q string, page int, limit i
 	}, &docList)
 
 	if err != nil {
-		return []models.InventoryOptionMainInfo{}, paginate.PaginationData{}, err
+		return []models.InventoryOptionMainInfo{}, mongopagination.PaginationData{}, err
 	}
 
 	return docList, pagination, nil

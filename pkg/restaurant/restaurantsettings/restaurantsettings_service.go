@@ -11,7 +11,7 @@ import (
 	"smlcloudplatform/pkg/utils/importdata"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

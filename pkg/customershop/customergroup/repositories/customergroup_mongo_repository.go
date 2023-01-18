@@ -5,7 +5,7 @@ import (
 	"smlcloudplatform/pkg/customershop/customergroup/models"
 	"smlcloudplatform/pkg/repositories"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 )
 
 type ICustomerGroupRepository interface {

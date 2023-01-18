@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
 	"github.com/stretchr/testify/mock"
 	"github.com/tj/assert"
+	"github.com/userplant/mongopagination"
 )
 
 func TestShop_Create(t *testing.T) {
@@ -99,10 +99,10 @@ func (m *ShopRepositoryMock) FindByGuid(guid string) (models.ShopDoc, error) {
 	args := m.Called(guid)
 	return args.Get(0).(models.ShopDoc), args.Error(0)
 }
-func (m *ShopRepositoryMock) FindPage(q string, page int, limit int) ([]models.ShopInfo, paginate.PaginationData, error) {
+func (m *ShopRepositoryMock) FindPage(q string, page int, limit int) ([]models.ShopInfo, mongopagination.PaginationData, error) {
 	args := m.Called(q, page, limit)
 
-	return args.Get(0).([]models.ShopInfo), args.Get(1).(paginate.PaginationData), args.Error(2)
+	return args.Get(0).([]models.ShopInfo), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
 func (m *ShopRepositoryMock) Delete(guid string, username string) error {
 	args := m.Called(guid, username)
@@ -158,12 +158,12 @@ func (m *ShopUserRepositoryMock) FindByUsername(username string) (*[]models.Shop
 	return args.Get(0).(*[]models.ShopUser), args.Error(1)
 }
 
-func (m *ShopUserRepositoryMock) FindByUsernamePage(username string, q string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error) {
+func (m *ShopUserRepositoryMock) FindByUsernamePage(username string, q string, page int, limit int) ([]models.ShopUserInfo, mongopagination.PaginationData, error) {
 	args := m.Called(username, q, page, limit)
-	return args.Get(0).([]models.ShopUserInfo), args.Get(1).(paginate.PaginationData), args.Error(2)
+	return args.Get(0).([]models.ShopUserInfo), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
 
-func (m *ShopUserRepositoryMock) FindByUserInShopPage(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, paginate.PaginationData, error) {
+func (m *ShopUserRepositoryMock) FindByUserInShopPage(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, mongopagination.PaginationData, error) {
 	args := m.Called(shopID, q, page, limit, sort)
-	return args.Get(0).([]models.ShopUser), args.Get(1).(paginate.PaginationData), args.Error(2)
+	return args.Get(0).([]models.ShopUser), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }

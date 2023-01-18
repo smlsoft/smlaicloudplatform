@@ -7,7 +7,7 @@ import (
 
 	common "smlcloudplatform/pkg/models"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 )
 
 type ActivityService[TCU any, TDEL any] struct {

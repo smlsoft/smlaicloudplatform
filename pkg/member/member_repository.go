@@ -7,7 +7,7 @@ import (
 
 	"smlcloudplatform/pkg/repositories"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -17,10 +17,10 @@ type IMemberRepository interface {
 	Update(shopID string, guid string, doc models.MemberDoc) error
 	Delete(shopID string, guid string, username string) error
 	FindByGuid(shopID string, guid string) (models.MemberDoc, error)
-	FindPage(shopID string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error)
+	FindPage(shopID string, q string, page int, limit int) ([]models.MemberInfo, mongopagination.PaginationData, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.MemberDeleteActivity, paginate.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.MemberActivity, paginate.PaginationData, error)
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.MemberDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.MemberActivity, mongopagination.PaginationData, error)
 	FindDeletedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.MemberDeleteActivity, error)
 	FindCreatedOrUpdatedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.MemberActivity, error)
 }
@@ -78,7 +78,7 @@ func (repo MemberRepository) FindByGuid(shopID string, guid string) (models.Memb
 	return *doc, nil
 }
 
-func (repo MemberRepository) FindPage(shopID string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error) {
+func (repo MemberRepository) FindPage(shopID string, q string, page int, limit int) ([]models.MemberInfo, mongopagination.PaginationData, error) {
 
 	docList := []models.MemberInfo{}
 	pagination, err := repo.pst.FindPage(&models.MemberInfo{}, limit, page, bson.M{
@@ -93,7 +93,7 @@ func (repo MemberRepository) FindPage(shopID string, q string, page int, limit i
 	}, &docList)
 
 	if err != nil {
-		return []models.MemberInfo{}, paginate.PaginationData{}, err
+		return []models.MemberInfo{}, mongopagination.PaginationData{}, err
 	}
 
 	return docList, pagination, nil

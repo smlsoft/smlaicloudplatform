@@ -9,7 +9,7 @@ import (
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -156,7 +156,7 @@ func (svc JournalHttpService) InfoJournal(shopID string, guid string) (models.Jo
 func (svc JournalHttpService) InfoJournalByDocNo(shopID string, docNo string) (models.JournalInfo, error) {
 
 	filters := bson.M{"docno": docNo}
-	
+
 	findDoc, err := svc.repo.FindOne(shopID, filters)
 
 	if err != nil {

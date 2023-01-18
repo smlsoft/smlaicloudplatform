@@ -9,10 +9,10 @@ import (
 	"testing"
 	"time"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -520,13 +520,13 @@ func (m *ShopUserRepositoryMock) FindByUsername(username string) (*[]models.Shop
 	args := m.Called(username)
 	return args.Get(0).(*[]models.ShopUser), args.Error(1)
 }
-func (m *ShopUserRepositoryMock) FindByUsernamePage(username string, q string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error) {
+func (m *ShopUserRepositoryMock) FindByUsernamePage(username string, q string, page int, limit int) ([]models.ShopUserInfo, mongopagination.PaginationData, error) {
 	args := m.Called(username, q, page, limit)
-	return args.Get(0).([]models.ShopUserInfo), args.Get(1).(paginate.PaginationData), args.Error(2)
+	return args.Get(0).([]models.ShopUserInfo), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
-func (m *ShopUserRepositoryMock) FindByUserInShopPage(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, paginate.PaginationData, error) {
+func (m *ShopUserRepositoryMock) FindByUserInShopPage(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, mongopagination.PaginationData, error) {
 	args := m.Called(shopID, q, page, limit, sort)
-	return args.Get(0).([]models.ShopUser), args.Get(1).(paginate.PaginationData), args.Error(2)
+	return args.Get(0).([]models.ShopUser), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
 
 // Shop User Access Log

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"smlcloudplatform/pkg/shop/models"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 )
 
 type IShopUserService interface {
@@ -12,8 +12,8 @@ type IShopUserService interface {
 	DeleteUserPermissionShop(shopID string, authUsername string, username string) error
 
 	InfoShopByUser(shopID string, infoUsername string) (models.ShopUserInfo, error)
-	ListShopByUser(authUsername string, q string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error)
-	ListUserInShop(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, paginate.PaginationData, error)
+	ListShopByUser(authUsername string, q string, page int, limit int) ([]models.ShopUserInfo, mongopagination.PaginationData, error)
+	ListUserInShop(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, mongopagination.PaginationData, error)
 }
 
 type ShopUserService struct {
@@ -37,7 +37,7 @@ func (svc ShopUserService) InfoShopByUser(shopID string, infoUsername string) (m
 	return doc, err
 }
 
-func (svc ShopUserService) ListShopByUser(authUsername string, q string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error) {
+func (svc ShopUserService) ListShopByUser(authUsername string, q string, page int, limit int) ([]models.ShopUserInfo, mongopagination.PaginationData, error) {
 
 	docList, pagination, err := svc.repo.FindByUsernamePage(authUsername, q, page, limit)
 
@@ -48,7 +48,7 @@ func (svc ShopUserService) ListShopByUser(authUsername string, q string, page in
 	return docList, pagination, err
 }
 
-func (svc ShopUserService) ListUserInShop(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, paginate.PaginationData, error) {
+func (svc ShopUserService) ListUserInShop(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, mongopagination.PaginationData, error) {
 
 	docList, pagination, err := svc.repo.FindByUserInShopPage(shopID, q, page, limit, sort)
 

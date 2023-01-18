@@ -5,7 +5,7 @@ import (
 	"smlcloudplatform/pkg/paymentmaster/models"
 	"smlcloudplatform/pkg/repositories"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 )
 
 type IPaymentMasterRepository interface {

@@ -17,7 +17,7 @@ import (
 
 	utilmock "smlcloudplatform/mock"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

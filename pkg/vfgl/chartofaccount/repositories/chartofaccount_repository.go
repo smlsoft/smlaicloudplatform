@@ -5,7 +5,7 @@ import (
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/models"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 )
 
 type IChartOfAccountRepository interface {

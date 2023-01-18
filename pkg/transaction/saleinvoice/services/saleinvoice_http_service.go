@@ -8,7 +8,7 @@ import (
 	"smlcloudplatform/pkg/utils"
 	"time"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -17,8 +17,8 @@ type ISaleinvoiceService interface {
 	UpdateSaleinvoice(shopID string, guid string, username string, trans models.Saleinvoice) error
 	DeleteSaleinvoice(shopID string, guid string, username string) error
 	InfoSaleinvoice(shopID string, guid string) (models.SaleinvoiceInfo, error)
-	SearchSaleinvoice(shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, paginate.PaginationData, error)
-	SearchItemsSaleinvoice(guid string, shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, paginate.PaginationData, error)
+	SearchSaleinvoice(shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, mongopagination.PaginationData, error)
+	SearchItemsSaleinvoice(guid string, shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, mongopagination.PaginationData, error)
 }
 
 type SaleinvoiceService struct {
@@ -135,7 +135,7 @@ func (svc SaleinvoiceService) InfoSaleinvoice(shopID string, guid string) (model
 	return trans.SaleinvoiceInfo, nil
 }
 
-func (svc SaleinvoiceService) SearchSaleinvoice(shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, paginate.PaginationData, error) {
+func (svc SaleinvoiceService) SearchSaleinvoice(shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, mongopagination.PaginationData, error) {
 	transList, pagination, err := svc.saleinvoiceRepository.FindPage(shopID, q, page, limit)
 
 	if err != nil {
@@ -145,7 +145,7 @@ func (svc SaleinvoiceService) SearchSaleinvoice(shopID string, q string, page in
 	return transList, pagination, nil
 }
 
-func (svc SaleinvoiceService) SearchItemsSaleinvoice(guid string, shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, paginate.PaginationData, error) {
+func (svc SaleinvoiceService) SearchItemsSaleinvoice(guid string, shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, mongopagination.PaginationData, error) {
 	transList, pagination, err := svc.saleinvoiceRepository.FindItemsByGuidPage(guid, shopID, q, page, limit)
 
 	if err != nil {

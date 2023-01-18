@@ -7,7 +7,7 @@ import (
 	"smlcloudplatform/pkg/vfgl/accountperiodmaster/repositories"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

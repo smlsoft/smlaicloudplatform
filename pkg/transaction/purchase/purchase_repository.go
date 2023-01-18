@@ -4,7 +4,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/transaction/purchase/models"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -14,8 +14,8 @@ type IPurchaseRepository interface {
 	Update(shopID string, guid string, doc models.PurchaseDoc) error
 	Delete(shopID string, guid string, username string) error
 	FindByGuid(shopID string, guid string) (models.PurchaseDoc, error)
-	FindPage(shopID string, q string, page int, limit int) ([]models.PurchaseInfo, paginate.PaginationData, error)
-	FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.PurchaseInfo, paginate.PaginationData, error)
+	FindPage(shopID string, q string, page int, limit int) ([]models.PurchaseInfo, mongopagination.PaginationData, error)
+	FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.PurchaseInfo, mongopagination.PaginationData, error)
 }
 
 type PurchaseRepository struct {
@@ -66,7 +66,7 @@ func (repo PurchaseRepository) FindByGuid(shopID string, guid string) (models.Pu
 	return *doc, nil
 }
 
-func (repo PurchaseRepository) FindPage(shopID string, q string, page int, limit int) ([]models.PurchaseInfo, paginate.PaginationData, error) {
+func (repo PurchaseRepository) FindPage(shopID string, q string, page int, limit int) ([]models.PurchaseInfo, mongopagination.PaginationData, error) {
 
 	docList := []models.PurchaseInfo{}
 	pagination, err := repo.pst.FindPage(&models.PurchaseInfo{}, limit, page, bson.M{
@@ -81,13 +81,13 @@ func (repo PurchaseRepository) FindPage(shopID string, q string, page int, limit
 	}, &docList)
 
 	if err != nil {
-		return []models.PurchaseInfo{}, paginate.PaginationData{}, err
+		return []models.PurchaseInfo{}, mongopagination.PaginationData{}, err
 	}
 
 	return docList, pagination, nil
 }
 
-func (repo PurchaseRepository) FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.PurchaseInfo, paginate.PaginationData, error) {
+func (repo PurchaseRepository) FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.PurchaseInfo, mongopagination.PaginationData, error) {
 
 	docList := []models.PurchaseInfo{}
 	pagination, err := repo.pst.FindPage(&models.PurchaseInfo{}, limit, page, bson.M{
@@ -103,7 +103,7 @@ func (repo PurchaseRepository) FindItemsByGuidPage(guid string, shopID string, q
 	}, &docList)
 
 	if err != nil {
-		return []models.PurchaseInfo{}, paginate.PaginationData{}, err
+		return []models.PurchaseInfo{}, mongopagination.PaginationData{}, err
 	}
 
 	return docList, pagination, nil

@@ -4,7 +4,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/shop/models"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -13,7 +13,7 @@ type IShopRepository interface {
 	Create(shop models.ShopDoc) (string, error)
 	Update(guid string, shop models.ShopDoc) error
 	FindByGuid(guid string) (models.ShopDoc, error)
-	FindPage(q string, page int, limit int) ([]models.ShopInfo, paginate.PaginationData, error)
+	FindPage(q string, page int, limit int) ([]models.ShopInfo, mongopagination.PaginationData, error)
 	Delete(guid string, username string) error
 }
 
@@ -58,7 +58,7 @@ func (repo ShopRepository) FindByGuid(guid string) (models.ShopDoc, error) {
 	return *findShop, err
 }
 
-func (repo ShopRepository) FindPage(q string, page int, limit int) ([]models.ShopInfo, paginate.PaginationData, error) {
+func (repo ShopRepository) FindPage(q string, page int, limit int) ([]models.ShopInfo, mongopagination.PaginationData, error) {
 
 	shopList := []models.ShopInfo{}
 
@@ -70,7 +70,7 @@ func (repo ShopRepository) FindPage(q string, page int, limit int) ([]models.Sho
 		}}}, &shopList)
 
 	if err != nil {
-		return []models.ShopInfo{}, paginate.PaginationData{}, err
+		return []models.ShopInfo{}, mongopagination.PaginationData{}, err
 	}
 
 	return shopList, pagination, nil

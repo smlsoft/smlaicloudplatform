@@ -6,7 +6,7 @@ import (
 	"smlcloudplatform/pkg/restaurant/kitchen/models"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 )
 
 type IKitchenRepository interface {

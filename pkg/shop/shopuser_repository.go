@@ -5,7 +5,7 @@ import (
 	"smlcloudplatform/pkg/shop/models"
 	"time"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -21,8 +21,8 @@ type IShopUserRepository interface {
 	FindRole(shopID string, username string) (models.UserRole, error)
 	FindByShopID(shopID string) (*[]models.ShopUser, error)
 	FindByUsername(username string) (*[]models.ShopUser, error)
-	FindByUsernamePage(username string, q string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error)
-	FindByUserInShopPage(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, paginate.PaginationData, error)
+	FindByUsernamePage(username string, q string, page int, limit int) ([]models.ShopUserInfo, mongopagination.PaginationData, error)
+	FindByUserInShopPage(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, mongopagination.PaginationData, error)
 }
 
 type ShopUserRepository struct {
@@ -143,7 +143,7 @@ func (svc ShopUserRepository) FindByUsername(username string) (*[]models.ShopUse
 	return shopUsers, nil
 }
 
-func (repo ShopUserRepository) FindByUsernamePage(username string, q string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error) {
+func (repo ShopUserRepository) FindByUsernamePage(username string, q string, page int, limit int) ([]models.ShopUserInfo, mongopagination.PaginationData, error) {
 
 	docList := []models.ShopUserInfo{}
 
@@ -198,7 +198,7 @@ func (repo ShopUserRepository) FindByUsernamePage(username string, q string, pag
 	)
 
 	if err != nil {
-		return []models.ShopUserInfo{}, paginate.PaginationData{}, err
+		return []models.ShopUserInfo{}, mongopagination.PaginationData{}, err
 	}
 
 	for _, raw := range aggPaginatedData.Data {
@@ -213,7 +213,7 @@ func (repo ShopUserRepository) FindByUsernamePage(username string, q string, pag
 	return docList, aggPaginatedData.Pagination, nil
 }
 
-func (repo ShopUserRepository) FindByUserInShopPage(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, paginate.PaginationData, error) {
+func (repo ShopUserRepository) FindByUserInShopPage(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, mongopagination.PaginationData, error) {
 
 	docList := []models.ShopUser{}
 
@@ -238,7 +238,7 @@ func (repo ShopUserRepository) FindByUserInShopPage(shopID string, q string, pag
 	paginattion, err := repo.pst.FindPageSort(&models.ShopUser{}, limit, page, filtter, sort, &docList)
 
 	if err != nil {
-		return []models.ShopUser{}, paginate.PaginationData{}, err
+		return []models.ShopUser{}, mongopagination.PaginationData{}, err
 	}
 
 	return docList, paginattion, nil

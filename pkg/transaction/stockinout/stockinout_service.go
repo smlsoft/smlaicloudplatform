@@ -6,7 +6,7 @@ import (
 	"smlcloudplatform/pkg/utils"
 	"time"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -15,8 +15,8 @@ type IStockInOutService interface {
 	UpdateStockInOut(shopID string, guid string, username string, doc models.StockInOut) error
 	DeleteStockInOut(shopID string, guid string, username string) error
 	InfoStockInOut(shopID string, guid string) (models.StockInOutInfo, error)
-	SearchStockInOut(shopID string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error)
-	SearchItemsStockInOut(shopID string, guid string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error)
+	SearchStockInOut(shopID string, q string, page int, limit int) ([]models.StockInOutInfo, mongopagination.PaginationData, error)
+	SearchItemsStockInOut(shopID string, guid string, q string, page int, limit int) ([]models.StockInOutInfo, mongopagination.PaginationData, error)
 }
 
 type StockInOutService struct {
@@ -116,7 +116,7 @@ func (svc StockInOutService) InfoStockInOut(shopID string, guid string) (models.
 	return doc.StockInOutInfo, nil
 }
 
-func (svc StockInOutService) SearchStockInOut(shopID string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error) {
+func (svc StockInOutService) SearchStockInOut(shopID string, q string, page int, limit int) ([]models.StockInOutInfo, mongopagination.PaginationData, error) {
 	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
 
 	if err != nil {
@@ -126,7 +126,7 @@ func (svc StockInOutService) SearchStockInOut(shopID string, q string, page int,
 	return docList, pagination, nil
 }
 
-func (svc StockInOutService) SearchItemsStockInOut(shopID string, guid string, q string, page int, limit int) ([]models.StockInOutInfo, paginate.PaginationData, error) {
+func (svc StockInOutService) SearchItemsStockInOut(shopID string, guid string, q string, page int, limit int) ([]models.StockInOutInfo, mongopagination.PaginationData, error) {
 	docList, pagination, err := svc.repo.FindItemsByGuidPage(shopID, guid, q, page, limit)
 
 	if err != nil {

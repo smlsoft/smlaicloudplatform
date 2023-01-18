@@ -4,7 +4,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/product/inventoryimport/models"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -12,7 +12,7 @@ type IInventoryImportRepository interface {
 	CreateInBatch(inventories []models.InventoryImportDoc) error
 	DeleteInBatch(shopID string, guidList []string) error
 	DeleteInBatchCode(shopID string, codeList []string) error
-	FindPage(shopID string, page int, limit int) ([]models.InventoryImportInfo, paginate.PaginationData, error)
+	FindPage(shopID string, page int, limit int) ([]models.InventoryImportInfo, mongopagination.PaginationData, error)
 }
 
 type InventoryImportRepository struct {
@@ -66,7 +66,7 @@ func (repo InventoryImportRepository) DeleteInBatchCode(shopID string, codeList 
 	return nil
 }
 
-func (repo InventoryImportRepository) FindPage(shopID string, page int, limit int) ([]models.InventoryImportInfo, paginate.PaginationData, error) {
+func (repo InventoryImportRepository) FindPage(shopID string, page int, limit int) ([]models.InventoryImportInfo, mongopagination.PaginationData, error) {
 
 	docList := []models.InventoryImportInfo{}
 	pagination, err := repo.pst.FindPage(&models.InventoryImportInfo{}, limit, page, bson.M{
@@ -74,7 +74,7 @@ func (repo InventoryImportRepository) FindPage(shopID string, page int, limit in
 	}, &docList)
 
 	if err != nil {
-		return []models.InventoryImportInfo{}, paginate.PaginationData{}, err
+		return []models.InventoryImportInfo{}, mongopagination.PaginationData{}, err
 	}
 
 	return docList, pagination, nil

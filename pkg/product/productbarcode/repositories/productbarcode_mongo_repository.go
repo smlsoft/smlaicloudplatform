@@ -6,7 +6,7 @@ import (
 	"smlcloudplatform/pkg/repositories"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 )
 
 type IProductBarcodeRepository interface {

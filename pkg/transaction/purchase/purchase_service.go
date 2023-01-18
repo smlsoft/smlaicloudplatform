@@ -6,7 +6,7 @@ import (
 	"smlcloudplatform/pkg/utils"
 	"time"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -15,8 +15,8 @@ type IPurchaseService interface {
 	UpdatePurchase(shopID string, guid string, username string, doc models.Purchase) error
 	DeletePurchase(shopID string, guid string, username string) error
 	InfoPurchase(shopID string, guid string) (models.PurchaseInfo, error)
-	SearchPurchase(shopID string, q string, page int, limit int) ([]models.PurchaseInfo, paginate.PaginationData, error)
-	SearchItemsPurchase(guid string, shopID string, q string, page int, limit int) ([]models.PurchaseInfo, paginate.PaginationData, error)
+	SearchPurchase(shopID string, q string, page int, limit int) ([]models.PurchaseInfo, mongopagination.PaginationData, error)
+	SearchItemsPurchase(guid string, shopID string, q string, page int, limit int) ([]models.PurchaseInfo, mongopagination.PaginationData, error)
 }
 
 type PurchaseService struct {
@@ -119,7 +119,7 @@ func (svc PurchaseService) InfoPurchase(shopID string, guid string) (models.Purc
 	return doc.PurchaseInfo, nil
 }
 
-func (svc PurchaseService) SearchPurchase(shopID string, q string, page int, limit int) ([]models.PurchaseInfo, paginate.PaginationData, error) {
+func (svc PurchaseService) SearchPurchase(shopID string, q string, page int, limit int) ([]models.PurchaseInfo, mongopagination.PaginationData, error) {
 	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
 
 	if err != nil {
@@ -129,7 +129,7 @@ func (svc PurchaseService) SearchPurchase(shopID string, q string, page int, lim
 	return docList, pagination, nil
 }
 
-func (svc PurchaseService) SearchItemsPurchase(guid string, shopID string, q string, page int, limit int) ([]models.PurchaseInfo, paginate.PaginationData, error) {
+func (svc PurchaseService) SearchItemsPurchase(guid string, shopID string, q string, page int, limit int) ([]models.PurchaseInfo, mongopagination.PaginationData, error) {
 	docList, pagination, err := svc.repo.FindItemsByGuidPage(guid, shopID, q, page, limit)
 
 	if err != nil {

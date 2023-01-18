@@ -6,7 +6,7 @@ import (
 	"smlcloudplatform/pkg/utils"
 	"time"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -15,8 +15,8 @@ type IStockAdjustmentService interface {
 	UpdateStockAdjustment(guid string, shopID string, username string, doc models.StockAdjustment) error
 	DeleteStockAdjustment(guid string, shopID string, username string) error
 	InfoStockAdjustment(guid string, shopID string) (models.StockAdjustmentInfo, error)
-	SearchStockAdjustment(shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, paginate.PaginationData, error)
-	SearchItemsStockAdjustment(guid string, shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, paginate.PaginationData, error)
+	SearchStockAdjustment(shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, mongopagination.PaginationData, error)
+	SearchItemsStockAdjustment(guid string, shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, mongopagination.PaginationData, error)
 }
 
 type StockAdjustmentService struct {
@@ -118,7 +118,7 @@ func (svc StockAdjustmentService) InfoStockAdjustment(guid string, shopID string
 	return doc.StockAdjustmentInfo, nil
 }
 
-func (svc StockAdjustmentService) SearchStockAdjustment(shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, paginate.PaginationData, error) {
+func (svc StockAdjustmentService) SearchStockAdjustment(shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, mongopagination.PaginationData, error) {
 	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
 
 	if err != nil {
@@ -128,7 +128,7 @@ func (svc StockAdjustmentService) SearchStockAdjustment(shopID string, q string,
 	return docList, pagination, nil
 }
 
-func (svc StockAdjustmentService) SearchItemsStockAdjustment(guid string, shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, paginate.PaginationData, error) {
+func (svc StockAdjustmentService) SearchItemsStockAdjustment(guid string, shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, mongopagination.PaginationData, error) {
 	docList, pagination, err := svc.repo.FindItemsByGuidPage(shopID, guid, q, page, limit)
 
 	if err != nil {

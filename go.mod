@@ -50,6 +50,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
+	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
@@ -106,9 +107,10 @@ require (
 	github.com/segmentio/fasthash v1.0.3
 	github.com/segmentio/ksuid v1.0.4
 	github.com/swaggo/files v0.0.0-20220610200504-28940afbdbfe
+	github.com/userplant/mongopagination v0.0.1
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
-	go.mongodb.org/mongo-driver v1.9.1
+	go.mongodb.org/mongo-driver v1.11.1
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
 	golang.org/x/net v0.0.0-20220630215102-69896b714898
 	golang.org/x/sys v0.0.0-20220702020025-31831981b65f // indirect
