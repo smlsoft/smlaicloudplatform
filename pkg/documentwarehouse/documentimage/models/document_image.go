@@ -38,6 +38,14 @@ type Comment struct {
 	Comment     string    `json:"comment" bson:"comment"`
 	CommentedAt time.Time `json:"commentedat" bson:"commentedat"`
 }
+
+type DocumentImageRequest struct {
+	DocumentImage  `bson:"inline"`
+	Tags           *[]string `json:"tags,omitempty" bson:"tags,omitempty"`
+	FileFolderGUID string    `json:"filefolderguid" bson:"filefolderguid"`
+	PathFileFolder string    `json:"pathfilefolder" bson:"pathfilefolder"`
+}
+
 type DocumentImageInfo struct {
 	models.DocIdentity `bson:"inline"`
 	DocumentImage      `bson:"inline"`

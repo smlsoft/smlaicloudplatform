@@ -246,7 +246,7 @@ func (h DocumentImageHttp) CreateDocumentImage(ctx microservice.IContext) error 
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &models.DocumentImage{}
+	docReq := &models.DocumentImageRequest{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -284,7 +284,7 @@ func (h DocumentImageHttp) BulkCreateDocumentImage(ctx microservice.IContext) er
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &[]models.DocumentImage{}
+	docReq := &[]models.DocumentImageRequest{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -867,7 +867,7 @@ func (h DocumentImageHttp) UngroupDocumentImageGroup(ctx microservice.IContext) 
 // @Success		200	{object}	models.DocumentImageInfoResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /documentimagegroup/docref/:docref [get]
+// @Router /documentimagegroup/docref/{docref} [get]
 func (h DocumentImageHttp) GetDocumentImageGroupByDocRefInfo(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()

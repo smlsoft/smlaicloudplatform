@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"fmt"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/models"
 	"smlcloudplatform/pkg/repositories"
@@ -324,12 +325,6 @@ func (repo DocumentImageGroupRepository) FindPageImageGroup(shopID string, path 
 		}}})
 	}
 
-	if len(path) > 0 {
-		searchFilterList = append(searchFilterList, bson.M{"path": path})
-	} else {
-		searchFilterList = append(searchFilterList, bson.M{"path": bson.M{"$exists": false}})
-	}
-
 	queryFilters := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$exists": false},
@@ -341,6 +336,10 @@ func (repo DocumentImageGroupRepository) FindPageImageGroup(shopID string, path 
 
 	if len(matchFilterList) > 0 {
 		queryFilters["$and"] = matchFilterList
+	}
+
+	if len(path) > 0 {
+		queryFilters["path"] = path
 	}
 
 	if len(sorts) > 0 {
@@ -360,18 +359,22 @@ func (repo DocumentImageGroupRepository) FindPageImageGroup(shopID string, path 
 
 	sort.Strings(sortKeys)
 
-	sortTemp := bson.M{}
+	fmt.Println(sortKeys)
+
+	sortTemp := bson.D{}
 	for _, sortKey := range sortKeys {
 		tempSortVal := 1
 		if sorts[sortKey] < 1 {
 			tempSortVal = -1
 		}
-		sortTemp[sortKey] = tempSortVal
+		sortTemp = append(sortTemp, bson.E{Key: sortKey, Value: tempSortVal})
 	}
 
 	sortQuery := bson.M{
 		"$sort": sortTemp,
 	}
+
+	fmt.Printf("%v", sortTemp)
 
 	aggData, err := repo.pst.AggregatePage(models.DocumentImageGroupInfo{}, limit, page, matchQuery, sortQuery)
 

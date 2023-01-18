@@ -242,7 +242,7 @@ func (pst *PersisterMongo) FindPageSort(model interface{}, limit int, page int, 
 
 	sortKeys := []string{}
 
-	for sortKey, _ := range sorts {
+	for sortKey := range sorts {
 		sortKeys = append(sortKeys, sortKey)
 	}
 
