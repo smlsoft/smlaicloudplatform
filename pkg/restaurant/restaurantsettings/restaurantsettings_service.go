@@ -3,6 +3,7 @@ package restaurantsettings
 import (
 	"errors"
 	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/restaurantsettings/models"
@@ -23,11 +24,11 @@ type IRestaurantSettingsService interface {
 	DeleteByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	DeleteRestaurantSettings(shopID string, guid string, authUsername string) error
 	InfoRestaurantSettings(shopID string, guid string) (models.RestaurantSettingsInfo, error)
-	SearchRestaurantSettings(shopID string, q string, page int, limit int) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
+	SearchRestaurantSettings(shopID string, pageable micromodels.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.RestaurantSettings) (common.BulkImport, error)
-	ListRestaurantSettingsByCode(shopID string, code string, pagable common.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
+	ListRestaurantSettingsByCode(shopID string, code string, pagable micromodels.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
 
-	LastActivity(shopID string, action string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error)
+	LastActivity(shopID string, action string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error)
 	GetModuleName() string
 }
 
@@ -144,9 +145,9 @@ func (svc RestaurantSettingsService) InfoRestaurantSettings(shopID string, guid 
 	return findDoc.RestaurantSettingsInfo, nil
 }
 
-func (svc RestaurantSettingsService) ListRestaurantSettingsByCode(shopID string, code string, pagable common.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error) {
+func (svc RestaurantSettingsService) ListRestaurantSettingsByCode(shopID string, code string, pagable micromodels.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error) {
 
-	docList, pagination, err := svc.repo.FindPageFilterSort(shopID, map[string]interface{}{"code": code}, []string{"body"}, pagable.Q, pagable.Page, pagable.Limit, pagable.Sorts)
+	docList, pagination, err := svc.repo.FindPageFilter(shopID, map[string]interface{}{"code": code}, []string{"body"}, pagable)
 
 	if err != nil {
 		return []models.RestaurantSettingsInfo{}, mongopagination.PaginationData{}, err
@@ -156,12 +157,12 @@ func (svc RestaurantSettingsService) ListRestaurantSettingsByCode(shopID string,
 
 }
 
-func (svc RestaurantSettingsService) SearchRestaurantSettings(shopID string, q string, page int, limit int) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc RestaurantSettingsService) SearchRestaurantSettings(shopID string, pageable micromodels.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"body",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.RestaurantSettingsInfo{}, pagination, err

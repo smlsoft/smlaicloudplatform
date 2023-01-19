@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/productbarcode/models"
@@ -23,8 +24,8 @@ type IProductBarcodeHttpService interface {
 	DeleteProductBarcode(shopID string, guid string, authUsername string) error
 	DeleteProductBarcodeByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoProductBarcode(shopID string, guid string) (models.ProductBarcodeInfo, error)
-	SearchProductBarcode(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
-	SearchProductBarcodeStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ProductBarcodeInfo, int, error)
+	SearchProductBarcode(shopID string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
+	SearchProductBarcodeStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ProductBarcode) (common.BulkImport, error)
 
 	XSortsSave(shopID string, authUsername string, xsorts []common.XSortModifyReqesut) error
@@ -166,13 +167,13 @@ func (svc ProductBarcodeHttpService) InfoProductBarcode(shopID string, guid stri
 
 }
 
-func (svc ProductBarcodeHttpService) SearchProductBarcode(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc ProductBarcodeHttpService) SearchProductBarcode(shopID string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"barcode",
 		"names.name",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ProductBarcodeInfo{}, pagination, err
@@ -181,13 +182,13 @@ func (svc ProductBarcodeHttpService) SearchProductBarcode(shopID string, q strin
 	return docList, pagination, nil
 }
 
-func (svc ProductBarcodeHttpService) SearchProductBarcodeStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ProductBarcodeInfo, int, error) {
-	searchCols := []string{
+func (svc ProductBarcodeHttpService) SearchProductBarcodeStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeInfo, int, error) {
+	searchInFields := []string{
 		"barcode",
 		"names.name",
 	}
 
-	projectQuery := map[string]interface{}{
+	selectFields := map[string]interface{}{
 		"guidfixed":    1,
 		"barcode":      1,
 		"itemcode":     1,
@@ -201,14 +202,14 @@ func (svc ProductBarcodeHttpService) SearchProductBarcodeStep(shopID string, lan
 	}
 
 	if langCode != "" {
-		projectQuery["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
-		projectQuery["itemunitnames"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
+		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
+		selectFields["itemunitnames"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
 	} else {
-		projectQuery["names"] = 1
-		projectQuery["itemunitnames"] = 1
+		selectFields["names"] = 1
+		selectFields["itemunitnames"] = 1
 	}
 
-	docList, total, err := svc.repo.FindLimit(shopID, map[string]interface{}{}, searchCols, q, skip, limit, sort, projectQuery)
+	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.ProductBarcodeInfo{}, 0, err

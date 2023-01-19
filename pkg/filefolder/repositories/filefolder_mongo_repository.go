@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/filefolder/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/utils/mogoutil"
@@ -19,20 +20,19 @@ type IFileFolderRepository interface {
 	Update(shopID string, guid string, doc models.FileFolderDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	Delete(shopID string, username string, filters map[string]interface{}) error
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.FileFolderInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.FileFolderInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.FileFolderDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.FileFolderItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.FileFolderDoc, error)
-	FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.FileFolderInfo, mongopagination.PaginationData, error)
-	FindLimit(shopID string, filters map[string]interface{}, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.FileFolderInfo, int, error)
+	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.FileFolderInfo, int, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.FileFolderDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.FileFolderActivity, mongopagination.PaginationData, error)
-	FindDeletedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.FileFolderDeleteActivity, error)
-	FindCreatedOrUpdatedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.FileFolderActivity, error)
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.FileFolderDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.FileFolderActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.FileFolderDeleteActivity, error)
+	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.FileFolderActivity, error)
 
-	FindPageFileFolder(shopID string, module string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.FileFolderInfo, mongopagination.PaginationData, error)
+	FindPageFileFolder(shopID string, module string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.FileFolderInfo, mongopagination.PaginationData, error)
 }
 
 type FileFolderRepository struct {
@@ -57,7 +57,7 @@ func NewFileFolderRepository(pst microservice.IPersisterMongo) *FileFolderReposi
 	return insRepo
 }
 
-func (repo *FileFolderRepository) FindPageFileFolder(shopID string, module string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.FileFolderInfo, mongopagination.PaginationData, error) {
+func (repo *FileFolderRepository) FindPageFileFolder(shopID string, module string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.FileFolderInfo, mongopagination.PaginationData, error) {
 
 	matchFilterList := []interface{}{}
 
@@ -67,9 +67,9 @@ func (repo *FileFolderRepository) FindPageFileFolder(shopID string, module strin
 
 	searchFilterList := []interface{}{}
 
-	for _, colName := range colNameSearch {
+	for _, colName := range searchInFields {
 		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
-			Pattern: ".*" + q + ".*",
+			Pattern: ".*" + pageable.Query + ".*",
 			Options: "",
 		}}})
 	}
@@ -81,9 +81,6 @@ func (repo *FileFolderRepository) FindPageFileFolder(shopID string, module strin
 
 	if len(module) > 0 {
 		queryFilters["module"] = module
-	} else {
-		// searchFilterList = append(searchFilterList, bson.M{"module": ""})
-		// searchFilterList = append(searchFilterList, bson.M{"module": bson.M{"$exists": false}})
 	}
 
 	if len(searchFilterList) > 0 {
@@ -94,8 +91,8 @@ func (repo *FileFolderRepository) FindPageFileFolder(shopID string, module strin
 		queryFilters["$and"] = matchFilterList
 	}
 
-	if len(sorts) > 0 {
-		sorts["guidfixed"] = 1
+	if len(pageable.Sorts) > 0 {
+		pageable.Sorts = append(pageable.Sorts, micromodels.KeyInt{Key: "guidfixed", Value: 1})
 	}
 
 	matchQuery := bson.M{
@@ -136,22 +133,20 @@ func (repo *FileFolderRepository) FindPageFileFolder(shopID string, module strin
 		},
 	}
 
-	sortTemp := bson.M{}
-	for sortKey, sortVal := range sorts {
+	sortFields := bson.D{}
+	for _, sortTemp := range pageable.Sorts {
 		tempSortVal := 1
-		if sorts[sortKey] < sortVal {
+		if sortTemp.Value < 1 {
 			tempSortVal = -1
 		}
-		sortTemp[sortKey] = tempSortVal
+		sortFields = append(sortFields, bson.E{Key: sortTemp.Key, Value: tempSortVal})
 	}
-
-	sortTemp["guidfixed"] = 1
 
 	sortQuery := bson.M{
-		"$sort": sortTemp,
+		"$sort": sortFields,
 	}
 
-	aggData, err := repo.pst.AggregatePage(models.FileFolderInfo{}, limit, page, matchQuery, lookupQuery, addFielsQuery, projectQuery, sortQuery)
+	aggData, err := repo.pst.AggregatePage(models.FileFolderInfo{}, pageable, matchQuery, lookupQuery, addFielsQuery, projectQuery, sortQuery)
 
 	if err != nil {
 		return []models.FileFolderInfo{}, mongopagination.PaginationData{}, err

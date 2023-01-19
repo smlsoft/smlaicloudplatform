@@ -215,9 +215,7 @@ func (h ProductHttp) SearchProductPage(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	sort := utils.GetSortParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
 	filters := map[string]interface{}{}
 
@@ -226,7 +224,7 @@ func (h ProductHttp) SearchProductPage(ctx microservice.IContext) error {
 		filters["categoryguid"] = category
 	}
 
-	docList, pagination, err := h.svc.SearchProduct(shopID, filters, q, page, limit, sort)
+	docList, pagination, err := h.svc.SearchProduct(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -258,9 +256,7 @@ func (h ProductHttp) SearchProductLimit(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	offset, limit := utils.GetParamOffsetLimit(ctx.QueryParam)
-	sorts := utils.GetSortParam(ctx.QueryParam)
+	pageableStep := utils.GetPageableStep(ctx.QueryParam)
 
 	lang := ctx.QueryParam("lang")
 
@@ -271,7 +267,7 @@ func (h ProductHttp) SearchProductLimit(ctx microservice.IContext) error {
 		filters["categoryguid"] = category
 	}
 
-	docList, total, err := h.svc.SearchProductStep(shopID, lang, filters, q, offset, limit, sorts)
+	docList, total, err := h.svc.SearchProductStep(shopID, lang, filters, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

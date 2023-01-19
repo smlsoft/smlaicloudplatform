@@ -56,8 +56,8 @@ func (h *InventoryImportHttp) ListInventoryImport(ctx microservice.IContext) err
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	docList, pagination, err := h.svc.ListInventory(shopID, page, limit)
+	pageable := utils.GetPageable(ctx.QueryParam)
+	docList, pagination, err := h.svc.ListInventory(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

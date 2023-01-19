@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/payment/bookbank/models"
@@ -23,8 +24,8 @@ type IBookBankHttpService interface {
 	DeleteBookBank(shopID string, guid string, authUsername string) error
 	DeleteBookBankByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoBookBank(shopID string, guid string) (models.BookBankInfo, error)
-	SearchBookBank(shopID string, q string, page int, limit int, sort map[string]int) ([]models.BookBankInfo, mongopagination.PaginationData, error)
-	SearchBookBankStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.BookBankInfo, int, error)
+	SearchBookBank(shopID string, pageable micromodels.Pageable) ([]models.BookBankInfo, mongopagination.PaginationData, error)
+	SearchBookBankStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.BookBankInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.BookBank) (common.BulkImport, error)
 
 	GetModuleName() string
@@ -162,13 +163,13 @@ func (svc BookBankHttpService) InfoBookBank(shopID string, guid string) (models.
 
 }
 
-func (svc BookBankHttpService) SearchBookBank(shopID string, q string, page int, limit int, sort map[string]int) ([]models.BookBankInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc BookBankHttpService) SearchBookBank(shopID string, pageable micromodels.Pageable) ([]models.BookBankInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"passbook",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.BookBankInfo{}, pagination, err
@@ -177,13 +178,13 @@ func (svc BookBankHttpService) SearchBookBank(shopID string, q string, page int,
 	return docList, pagination, nil
 }
 
-func (svc BookBankHttpService) SearchBookBankStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.BookBankInfo, int, error) {
-	searchCols := []string{
+func (svc BookBankHttpService) SearchBookBankStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.BookBankInfo, int, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"passbook",
 	}
 
-	projectQuery := map[string]interface{}{
+	selectFields := map[string]interface{}{
 		"guidfixed": 1,
 		"passbook":  1,
 		"bankcode":  1,
@@ -192,12 +193,12 @@ func (svc BookBankHttpService) SearchBookBankStep(shopID string, langCode string
 	}
 
 	if langCode != "" {
-		projectQuery["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
+		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
 	} else {
-		projectQuery["names"] = 1
+		selectFields["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindLimit(shopID, map[string]interface{}{}, searchCols, q, skip, limit, sort, projectQuery)
+	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.BookBankInfo{}, 0, err

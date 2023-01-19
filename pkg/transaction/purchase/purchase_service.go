@@ -2,6 +2,7 @@ package purchase
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/transaction/purchase/models"
 	"smlcloudplatform/pkg/utils"
 	"time"
@@ -15,8 +16,8 @@ type IPurchaseService interface {
 	UpdatePurchase(shopID string, guid string, username string, doc models.Purchase) error
 	DeletePurchase(shopID string, guid string, username string) error
 	InfoPurchase(shopID string, guid string) (models.PurchaseInfo, error)
-	SearchPurchase(shopID string, q string, page int, limit int) ([]models.PurchaseInfo, mongopagination.PaginationData, error)
-	SearchItemsPurchase(guid string, shopID string, q string, page int, limit int) ([]models.PurchaseInfo, mongopagination.PaginationData, error)
+	SearchPurchase(shopID string, pageable micromodels.Pageable) ([]models.PurchaseInfo, mongopagination.PaginationData, error)
+	SearchItemsPurchase(guid string, shopID string, pageable micromodels.Pageable) ([]models.PurchaseInfo, mongopagination.PaginationData, error)
 }
 
 type PurchaseService struct {
@@ -119,8 +120,8 @@ func (svc PurchaseService) InfoPurchase(shopID string, guid string) (models.Purc
 	return doc.PurchaseInfo, nil
 }
 
-func (svc PurchaseService) SearchPurchase(shopID string, q string, page int, limit int) ([]models.PurchaseInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
+func (svc PurchaseService) SearchPurchase(shopID string, pageable micromodels.Pageable) ([]models.PurchaseInfo, mongopagination.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindPage(shopID, pageable)
 
 	if err != nil {
 		return docList, pagination, err
@@ -129,8 +130,8 @@ func (svc PurchaseService) SearchPurchase(shopID string, q string, page int, lim
 	return docList, pagination, nil
 }
 
-func (svc PurchaseService) SearchItemsPurchase(guid string, shopID string, q string, page int, limit int) ([]models.PurchaseInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindItemsByGuidPage(guid, shopID, q, page, limit)
+func (svc PurchaseService) SearchItemsPurchase(guid string, shopID string, pageable micromodels.Pageable) ([]models.PurchaseInfo, mongopagination.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindItemsByGuidPage(guid, shopID, pageable)
 
 	if err != nil {
 		return docList, pagination, err

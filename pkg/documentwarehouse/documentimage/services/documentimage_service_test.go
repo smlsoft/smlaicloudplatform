@@ -35,13 +35,13 @@ func (m *MockDocumentImageRepository) FindByGuid(shopID string, guid string) (mo
 	return args.Get(0).(models.DocumentImageDoc), args.Error(1)
 }
 
-func (m *MockDocumentImageRepository) FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error) {
-	args := m.Called(shopID, colNameSearch, q, page, limit)
+func (m *MockDocumentImageRepository) FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable)([]models.DocumentImageInfo, mongopagination.PaginationData, error) {
+	args := m.Called(shopID, searchInFields, pageable)
 	return args.Get(0).([]models.DocumentImageInfo), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
 
-func (m *MockDocumentImageRepository) FindPageFilterSort(shopID string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error) {
-	args := m.Called(shopID, filters, colNameSearch, q, page, limit, sorts)
+func (m *MockDocumentImageRepository) FindPageFilterSort(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.DocumentImageInfo, mongopagination.PaginationData, error) {
+	args := m.Called(shopID, filters, searchInFields, pageables)
 	return args.Get(0).([]models.DocumentImageInfo), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
 
@@ -50,8 +50,8 @@ func (m *MockDocumentImageRepository) SaveDocumentImageDocRefGroup(shopID string
 	return args.Error(0)
 }
 
-func (m *MockDocumentImageRepository) ListDocumentImageGroup(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error) {
-	args := m.Called(shopID, filters, q, page, limit)
+func (m *MockDocumentImageRepository) ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentImageGroup, mongopagination.PaginationData, error) {
+	args := m.Called(shopID, filters, pageable)
 	return args.Get(0).([]models.DocumentImageGroup), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
 

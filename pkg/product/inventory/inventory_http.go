@@ -447,8 +447,7 @@ func (h InventoryHttp) SearchInventory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
 	filters := map[string]interface{}{}
 
@@ -458,7 +457,7 @@ func (h InventoryHttp) SearchInventory(ctx microservice.IContext) error {
 		filters["isstockproduct"] = stock == "true"
 	}
 
-	docList, pagination, err := h.invService.SearchInventory(shopID, filters, q, page, limit)
+	docList, pagination, err := h.invService.SearchInventory(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -529,9 +528,9 @@ func (h InventoryHttp) LastActivityInventory(ctx microservice.IContext) error {
 		return err
 	}
 
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.invService.LastActivity(shopID, lastUpdate, page, limit)
+	docList, pagination, err := h.invService.LastActivity(shopID, lastUpdate, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

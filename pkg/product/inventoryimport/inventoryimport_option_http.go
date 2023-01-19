@@ -6,7 +6,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/inventoryimport/models"
-	"strconv"
+	"smlcloudplatform/pkg/utils"
 )
 
 type IInventoryImporOptionMaintHttp interface {
@@ -127,17 +127,8 @@ func (h InventoryImporOptionMaintHttp) ListInventoryOptionMain(ctx microservice.
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
-
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
-
-	if err != nil {
-		limit = 20
-	}
-	docList, pagination, err := h.svc.ListInventory(shopID, page, limit)
+	pageable := utils.GetPageable(ctx.QueryParam)
+	docList, pagination, err := h.svc.ListInventory(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

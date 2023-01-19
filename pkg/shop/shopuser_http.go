@@ -51,11 +51,9 @@ func (h ShopMemberHttp) ListUserInShop(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	sort := utils.GetSortParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.ListUserInShop(shopID, q, page, limit, sort)
+	docList, pagination, err := h.svc.ListUserInShop(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, "find failed")
@@ -121,10 +119,9 @@ func (h ShopMemberHttp) ListShopUser(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.ListShopByUser(authUsername, q, page, limit)
+	docList, pagination, err := h.svc.ListShopByUser(authUsername, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, "find failed")

@@ -2,6 +2,7 @@ package employee
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/repositories"
 	"time"
@@ -12,16 +13,16 @@ import (
 )
 
 type IEmployeeRepository interface {
-	FindEmployeeByShopIDPage(shopID string, q string, page int, limit int) ([]models.EmployeeInfo, mongopagination.PaginationData, error)
+	FindPageEmployeeByShopID(shopID string, pageable micromodels.Pageable) ([]models.EmployeeInfo, mongopagination.PaginationData, error)
 	FindEmployeeByCode(shopID string, code string) (models.EmployeeDoc, error)
 	FindEmployeeByUsername(shopID string, username string) (models.EmployeeDoc, error)
 	Create(models.EmployeeDoc) (primitive.ObjectID, error)
 	Update(shopID string, guidFixed string, employee models.EmployeeDoc) error
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.EmployeeDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.EmployeeActivity, mongopagination.PaginationData, error)
-	FindDeletedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.EmployeeDeleteActivity, error)
-	FindCreatedOrUpdatedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.EmployeeActivity, error)
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.EmployeeDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.EmployeeActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.EmployeeDeleteActivity, error)
+	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.EmployeeActivity, error)
 }
 
 type EmployeeRepository struct {
@@ -39,10 +40,8 @@ func NewEmployeeRepository(pst microservice.IPersisterMongo) *EmployeeRepository
 	return insRepo
 }
 
-func (r EmployeeRepository) FindEmployeeByShopIDPage(shopID string, q string, page int, limit int) ([]models.EmployeeInfo, mongopagination.PaginationData, error) {
-
-	docList := []models.EmployeeInfo{}
-	pagination, err := r.pst.FindPage(&models.EmployeeInfo{}, limit, page, bson.M{
+func (r EmployeeRepository) FindPageEmployeeByShopID(shopID string, pageable micromodels.Pageable) ([]models.EmployeeInfo, mongopagination.PaginationData, error) {
+	filterQueries := bson.M{
 		"shopid": shopID,
 		// "$or": []interface{}{
 		// 	bson.M{"username": bson.M{"$regex": primitive.Regex{
@@ -54,7 +53,9 @@ func (r EmployeeRepository) FindEmployeeByShopIDPage(shopID string, q string, pa
 		// 		Options: "",
 		// 	}}},
 		// },
-	}, &docList)
+	}
+	docList := []models.EmployeeInfo{}
+	pagination, err := r.pst.FindPage(&models.EmployeeInfo{}, filterQueries, pageable, &docList)
 
 	if err != nil {
 		return []models.EmployeeInfo{}, mongopagination.PaginationData{}, err

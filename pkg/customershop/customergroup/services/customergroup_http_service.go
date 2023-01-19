@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/customershop/customergroup/models"
 	"smlcloudplatform/pkg/customershop/customergroup/repositories"
 	common "smlcloudplatform/pkg/models"
@@ -20,8 +21,8 @@ type ICustomerGroupHttpService interface {
 	DeleteCustomerGroup(shopID string, guid string, authUsername string) error
 	DeleteCustomerGroupByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoCustomerGroup(shopID string, guid string) (models.CustomerGroupInfo, error)
-	SearchCustomerGroup(shopID string, q string, page int, limit int, sort map[string]int) ([]models.CustomerGroupInfo, mongopagination.PaginationData, error)
-	SearchCustomerGroupStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.CustomerGroupInfo, int, error)
+	SearchCustomerGroup(shopID string, pageable micromodels.Pageable) ([]models.CustomerGroupInfo, mongopagination.PaginationData, error)
+	SearchCustomerGroupStep(shopID string, langCode string, pageable micromodels.PageableStep) ([]models.CustomerGroupInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.CustomerGroup) (common.BulkImport, error)
 }
 
@@ -129,13 +130,12 @@ func (svc CustomerGroupHttpService) InfoCustomerGroup(shopID string, guid string
 
 }
 
-func (svc CustomerGroupHttpService) SearchCustomerGroup(shopID string, q string, page int, limit int, sort map[string]int) ([]models.CustomerGroupInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
-		"guidfixed",
+func (svc CustomerGroupHttpService) SearchCustomerGroup(shopID string, pageable micromodels.Pageable) ([]models.CustomerGroupInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guid",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.CustomerGroupInfo{}, pagination, err
@@ -144,13 +144,12 @@ func (svc CustomerGroupHttpService) SearchCustomerGroup(shopID string, q string,
 	return docList, pagination, nil
 }
 
-func (svc CustomerGroupHttpService) SearchCustomerGroupStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.CustomerGroupInfo, int, error) {
-	searchCols := []string{
-		"guidfixed",
+func (svc CustomerGroupHttpService) SearchCustomerGroupStep(shopID string, langCode string, pageStep micromodels.PageableStep) ([]models.CustomerGroupInfo, int, error) {
+	searchInFields := []string{
 		"guid",
 	}
 
-	projectQuery := map[string]interface{}{
+	selectFields := map[string]interface{}{
 		"guidfixed":    1,
 		"guid":         1,
 		"customercode": 1,
@@ -158,12 +157,12 @@ func (svc CustomerGroupHttpService) SearchCustomerGroupStep(shopID string, langC
 	}
 
 	if langCode != "" {
-		projectQuery["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
+		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
 	} else {
-		projectQuery["names"] = 1
+		selectFields["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindLimit(shopID, map[string]interface{}{}, searchCols, q, skip, limit, sort, projectQuery)
+	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageStep)
 
 	if err != nil {
 		return []models.CustomerGroupInfo{}, 0, err

@@ -3,6 +3,7 @@ package member
 import (
 	"errors"
 	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/member/models"
 	common "smlcloudplatform/pkg/models"
@@ -21,9 +22,9 @@ type IMemberService interface {
 	Update(shopID string, guid string, username string, doc models.Member) error
 	Delete(shopID string, guid string, username string) error
 	Info(shopID string, guid string) (models.MemberInfo, error)
-	Search(shopID string, q string, page int, limit int) ([]models.MemberInfo, mongopagination.PaginationData, error)
+	Search(shopID string, pageable micromodels.Pageable) ([]models.MemberInfo, mongopagination.PaginationData, error)
 
-	LastActivity(shopID string, action string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error)
+	LastActivity(shopID string, action string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error)
 	GetModuleName() string
 }
 
@@ -159,8 +160,8 @@ func (svc MemberService) Info(shopID string, guid string) (models.MemberInfo, er
 	return doc.MemberInfo, nil
 }
 
-func (svc MemberService) Search(shopID string, q string, page int, limit int) ([]models.MemberInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
+func (svc MemberService) Search(shopID string, pageable micromodels.Pageable) ([]models.MemberInfo, mongopagination.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindPage(shopID, pageable)
 
 	if err != nil {
 		return docList, pagination, err

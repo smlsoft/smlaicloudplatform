@@ -2,10 +2,10 @@ package member
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/member/models"
-	"time"
-
 	"smlcloudplatform/pkg/repositories"
+	"time"
 
 	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
@@ -17,12 +17,12 @@ type IMemberRepository interface {
 	Update(shopID string, guid string, doc models.MemberDoc) error
 	Delete(shopID string, guid string, username string) error
 	FindByGuid(shopID string, guid string) (models.MemberDoc, error)
-	FindPage(shopID string, q string, page int, limit int) ([]models.MemberInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, pageable micromodels.Pageable) ([]models.MemberInfo, mongopagination.PaginationData, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.MemberDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.MemberActivity, mongopagination.PaginationData, error)
-	FindDeletedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.MemberDeleteActivity, error)
-	FindCreatedOrUpdatedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.MemberActivity, error)
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.MemberDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.MemberActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.MemberDeleteActivity, error)
+	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.MemberActivity, error)
 }
 
 type MemberRepository struct {
@@ -78,19 +78,21 @@ func (repo MemberRepository) FindByGuid(shopID string, guid string) (models.Memb
 	return *doc, nil
 }
 
-func (repo MemberRepository) FindPage(shopID string, q string, page int, limit int) ([]models.MemberInfo, mongopagination.PaginationData, error) {
+func (repo MemberRepository) FindPage(shopID string, pageable micromodels.Pageable) ([]models.MemberInfo, mongopagination.PaginationData, error) {
 
-	docList := []models.MemberInfo{}
-	pagination, err := repo.pst.FindPage(&models.MemberInfo{}, limit, page, bson.M{
+	filterQueries := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$exists": false},
 		"$or": []interface{}{
 			bson.M{"name": bson.M{"$regex": primitive.Regex{
-				Pattern: ".*" + q + ".*",
+				Pattern: ".*" + pageable.Query + ".*",
 				Options: "",
 			}}},
 		},
-	}, &docList)
+	}
+
+	docList := []models.MemberInfo{}
+	pagination, err := repo.pst.FindPage(&models.MemberInfo{}, filterQueries, pageable, &docList)
 
 	if err != nil {
 		return []models.MemberInfo{}, mongopagination.PaginationData{}, err

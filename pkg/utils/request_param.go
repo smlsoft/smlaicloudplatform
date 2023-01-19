@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/internal/microservice/models"
 	"strconv"
 	"strings"
 )
@@ -22,7 +22,7 @@ func GetSearchQueryParam(fnGetParam func(string) string) string {
 	return q
 }
 
-func GetPaginationParam(fnGetParam func(string) string) (int, int) {
+func GetPageParam(fnGetParam func(string) string) (int, int) {
 
 	pageRawText := fnGetParam("page")
 	limitRawText := fnGetParam("limit")
@@ -57,7 +57,7 @@ func GetPaginationParam(fnGetParam func(string) string) (int, int) {
 	return page, limit
 }
 
-func GetParamOffsetLimit(fnGetParam func(string) string) (int, int) {
+func GetStepParam(fnGetParam func(string) string) (int, int) {
 
 	offsetRawText := fnGetParam("offset")
 	limitRawText := fnGetParam("limit")
@@ -92,8 +92,8 @@ func GetParamOffsetLimit(fnGetParam func(string) string) (int, int) {
 	return offset, limit
 }
 
-func GetSortParam(fnGetParam func(string) string) map[string]int {
-	tempSort := make(map[string]int)
+func GetSortParam(fnGetParam func(string) string) []models.KeyInt {
+	tempSort := []models.KeyInt{}
 
 	sortRawText := strings.Trim(fnGetParam("sort"), " ")
 
@@ -117,28 +117,36 @@ func GetSortParam(fnGetParam func(string) string) map[string]int {
 			sortVal = 1
 		}
 
-		tempSort[sortKey] = sortVal
+		tempSort = append(tempSort, models.KeyInt{
+			Key:   sortKey,
+			Value: int8(sortVal),
+		})
 	}
 
 	return tempSort
 }
 
-func GetSearchParam(fnGetParam func(string) string) (string, int, int, map[string]int) {
+func GetPageable(fnGetParam func(string) string) models.Pageable {
 	q := GetSearchQueryParam(fnGetParam)
-	page, limit := GetPaginationParam(fnGetParam)
-	sorts := GetSortParam(fnGetParam)
-
-	return q, page, limit, sorts
-}
-
-func GetSearchPageable(fnGetParam func(string) string) models.Pageable {
-	q := GetSearchQueryParam(fnGetParam)
-	page, limit := GetPaginationParam(fnGetParam)
+	page, limit := GetPageParam(fnGetParam)
 	sorts := GetSortParam(fnGetParam)
 
 	return models.Pageable{
-		Q:     q,
+		Query: q,
 		Page:  page,
+		Limit: limit,
+		Sorts: sorts,
+	}
+}
+
+func GetPageableStep(fnGetParam func(string) string) models.PageableStep {
+	q := GetSearchQueryParam(fnGetParam)
+	skip, limit := GetStepParam(fnGetParam)
+	sorts := GetSortParam(fnGetParam)
+
+	return models.PageableStep{
+		Query: q,
+		Skip:  skip,
 		Limit: limit,
 		Sorts: sorts,
 	}

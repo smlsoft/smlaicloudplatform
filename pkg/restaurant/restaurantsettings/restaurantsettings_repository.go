@@ -2,6 +2,7 @@ package restaurantsettings
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/restaurant/restaurantsettings/models"
 	"time"
@@ -16,16 +17,16 @@ type IRestaurantSettingsRepository interface {
 	Update(shopID string, guid string, category models.RestaurantSettingsDoc) error
 	Delete(shopID string, username string, filters map[string]interface{}) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.RestaurantSettingsDoc, error)
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.RestaurantSettingsItemGuid, error)
 	FindOne(shopID string, filters interface{}) (models.RestaurantSettingsDoc, error)
-	FindPageFilterSort(shopID string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
+	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.RestaurantSettingsDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.RestaurantSettingsActivity, mongopagination.PaginationData, error)
-	FindDeletedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.RestaurantSettingsDeleteActivity, error)
-	FindCreatedOrUpdatedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.RestaurantSettingsActivity, error)
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.RestaurantSettingsDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.RestaurantSettingsActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.RestaurantSettingsDeleteActivity, error)
+	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.RestaurantSettingsActivity, error)
 }
 
 type RestaurantSettingsRepository struct {

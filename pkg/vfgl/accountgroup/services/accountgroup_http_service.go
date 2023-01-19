@@ -2,13 +2,13 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
+	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
 	"smlcloudplatform/pkg/vfgl/accountgroup/models"
 	"smlcloudplatform/pkg/vfgl/accountgroup/repositories"
 	"time"
-
-	common "smlcloudplatform/pkg/models"
 
 	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
@@ -20,7 +20,7 @@ type IAccountGroupHttpService interface {
 	Update(guid string, shopID string, authUsername string, doc models.AccountGroup) error
 	Delete(guid string, shopID string, authUsername string) error
 	Info(guid string, shopID string) (models.AccountGroupInfo, error)
-	Search(shopID string, q string, page int, limit int, sort map[string]int) ([]models.AccountGroupInfo, mongopagination.PaginationData, error)
+	Search(shopID string, pageable micromodels.Pageable) ([]models.AccountGroupInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.AccountGroup) (common.BulkImport, error)
 }
 
@@ -133,13 +133,13 @@ func (svc AccountGroupHttpService) Info(guid string, shopID string) (models.Acco
 
 }
 
-func (svc AccountGroupHttpService) Search(shopID string, q string, page int, limit int, sort map[string]int) ([]models.AccountGroupInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc AccountGroupHttpService) Search(shopID string, pageable micromodels.Pageable) ([]models.AccountGroupInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"code",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.AccountGroupInfo{}, pagination, err

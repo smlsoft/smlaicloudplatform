@@ -3,6 +3,7 @@ package printer
 import (
 	"errors"
 	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/printer/models"
@@ -21,11 +22,11 @@ type IPrinterService interface {
 	UpdatePrinter(shopID string, guid string, authUsername string, doc models.Printer) error
 	DeletePrinter(shopID string, guid string, authUsername string) error
 	InfoPrinter(shopID string, guid string) (models.PrinterInfo, error)
-	SearchPrinter(shopID string, q string, page int, limit int) ([]models.PrinterInfo, mongopagination.PaginationData, error)
+	SearchPrinter(shopID string, pageable micromodels.Pageable) ([]models.PrinterInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Printer) (common.BulkImport, error)
-	SearchPrinterStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.PrinterInfo, int, error)
+	SearchPrinterStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.PrinterInfo, int, error)
 
-	LastActivity(shopID string, action string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error)
+	LastActivity(shopID string, action string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error)
 
 	GetModuleName() string
 }
@@ -127,17 +128,17 @@ func (svc PrinterService) InfoPrinter(shopID string, guid string) (models.Printe
 
 }
 
-func (svc PrinterService) SearchPrinter(shopID string, q string, page int, limit int) ([]models.PrinterInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc PrinterService) SearchPrinter(shopID string, pageable micromodels.Pageable) ([]models.PrinterInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"code",
 	}
 
 	for i := range [5]bool{} {
-		searchCols = append(searchCols, fmt.Sprintf("name%d", (i+1)))
+		searchInFields = append(searchInFields, fmt.Sprintf("name%d", (i+1)))
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.PrinterInfo{}, pagination, err
@@ -146,15 +147,15 @@ func (svc PrinterService) SearchPrinter(shopID string, q string, page int, limit
 	return docList, pagination, nil
 }
 
-func (svc PrinterService) SearchPrinterStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.PrinterInfo, int, error) {
-	searchCols := []string{
+func (svc PrinterService) SearchPrinterStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.PrinterInfo, int, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"code",
 	}
 
-	projectQuery := map[string]interface{}{}
+	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindLimit(shopID, map[string]interface{}{}, searchCols, q, skip, limit, sort, projectQuery)
+	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.PrinterInfo{}, 0, err

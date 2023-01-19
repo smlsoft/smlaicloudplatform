@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/warehouse/models"
 
@@ -14,12 +15,11 @@ type IWarehouseRepository interface {
 	CreateInBatch(docList []models.WarehouseDoc) error
 	Update(shopID string, guid string, doc models.WarehouseDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.WarehouseInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.WarehouseInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.WarehouseDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.WarehouseItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.WarehouseDoc, error)
-	FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.WarehouseInfo, mongopagination.PaginationData, error)
 }
 
 type WarehouseRepository struct {

@@ -64,9 +64,7 @@ func (h ChartOfAccountHttp) Search(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	sort := utils.GetSortParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
 	accountCodeRangeRaw := strings.TrimSpace(ctx.QueryParam("accountcode"))
 
@@ -89,7 +87,7 @@ func (h ChartOfAccountHttp) Search(ctx microservice.IContext) error {
 
 	}
 
-	docList, pagination, err := h.svc.Search(shopID, accRanges, q, page, limit, sort)
+	docList, pagination, err := h.svc.Search(shopID, accRanges, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

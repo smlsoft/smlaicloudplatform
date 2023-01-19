@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
@@ -20,7 +21,7 @@ type IChartOfAccountHttpService interface {
 	Update(guid string, shopID string, authUsername string, doc models.ChartOfAccount) error
 	Delete(guid string, shopID string, authUsername string) error
 	Info(guid string, shopID string) (models.ChartOfAccountInfo, error)
-	Search(shopID string, accountCodeRanges []models.AccountCodeRange, q string, page int, limit int, sort map[string]int) ([]models.ChartOfAccountInfo, mongopagination.PaginationData, error)
+	Search(shopID string, accountCodeRanges []models.AccountCodeRange, pageable micromodels.Pageable) ([]models.ChartOfAccountInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ChartOfAccount) (common.BulkImport, error)
 }
 
@@ -165,8 +166,8 @@ func (svc ChartOfAccountHttpService) Info(guid string, shopID string) (models.Ch
 
 }
 
-func (svc ChartOfAccountHttpService) Search(shopID string, accountCodeRanges []models.AccountCodeRange, q string, page int, limit int, sort map[string]int) ([]models.ChartOfAccountInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc ChartOfAccountHttpService) Search(shopID string, accountCodeRanges []models.AccountCodeRange, pageable micromodels.Pageable) ([]models.ChartOfAccountInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"accountcode",
 		"accountname",
 	}
@@ -186,7 +187,7 @@ func (svc ChartOfAccountHttpService) Search(shopID string, accountCodeRanges []m
 		filterQuery["$or"] = accountCodeRangeQuery
 	}
 
-	docList, pagination, err := svc.repo.FindPageFilterSort(shopID, filterQuery, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPageFilter(shopID, filterQuery, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ChartOfAccountInfo{}, pagination, err

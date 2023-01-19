@@ -2,6 +2,7 @@ package shoptable
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/restaurant/shoptable/models"
 	"time"
@@ -15,14 +16,14 @@ type IShopTableRepository interface {
 	CreateInBatch(docList []models.ShopTableDoc) error
 	Update(shopID string, guid string, category models.ShopTableDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.ShopTableInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ShopTableInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.ShopTableDoc, error)
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.ShopTableItemGuid, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.ShopTableDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.ShopTableActivity, mongopagination.PaginationData, error)
-	FindDeletedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.ShopTableDeleteActivity, error)
-	FindCreatedOrUpdatedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.ShopTableActivity, error)
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.ShopTableDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.ShopTableActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.ShopTableDeleteActivity, error)
+	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.ShopTableActivity, error)
 }
 
 type ShopTableRepository struct {

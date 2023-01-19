@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/vfgl/accountperiodmaster/models"
 	"smlcloudplatform/pkg/vfgl/accountperiodmaster/repositories"
@@ -19,8 +20,8 @@ type IAccountPeriodMasterHttpService interface {
 	DeleteAccountPeriodMasterByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoAccountPeriodMaster(shopID string, guid string) (models.AccountPeriodMasterInfo, error)
 	InfoAccountPeriodMasterByDate(shopID string, findDate time.Time) (models.AccountPeriodMasterInfo, error)
-	SearchAccountPeriodMaster(shopID string, q string, page int, limit int, sort map[string]int) ([]models.AccountPeriodMasterInfo, mongopagination.PaginationData, error)
-	SearchAccountPeriodMasterStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.AccountPeriodMasterInfo, int, error)
+	SearchAccountPeriodMaster(shopID string, pageable micromodels.Pageable) ([]models.AccountPeriodMasterInfo, mongopagination.PaginationData, error)
+	SearchAccountPeriodMasterStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.AccountPeriodMasterInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.AccountPeriodMaster) error
 }
 
@@ -185,13 +186,13 @@ func (svc AccountPeriodMasterHttpService) InfoAccountPeriodMasterByDate(shopID s
 
 }
 
-func (svc AccountPeriodMasterHttpService) SearchAccountPeriodMaster(shopID string, q string, page int, limit int, sort map[string]int) ([]models.AccountPeriodMasterInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc AccountPeriodMasterHttpService) SearchAccountPeriodMaster(shopID string, pageable micromodels.Pageable) ([]models.AccountPeriodMasterInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"docno",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.AccountPeriodMasterInfo{}, pagination, err
@@ -200,24 +201,24 @@ func (svc AccountPeriodMasterHttpService) SearchAccountPeriodMaster(shopID strin
 	return docList, pagination, nil
 }
 
-func (svc AccountPeriodMasterHttpService) SearchAccountPeriodMasterStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.AccountPeriodMasterInfo, int, error) {
-	searchCols := []string{
+func (svc AccountPeriodMasterHttpService) SearchAccountPeriodMasterStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.AccountPeriodMasterInfo, int, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"docno",
 	}
 
-	projectQuery := map[string]interface{}{
+	selectFields := map[string]interface{}{
 		"guidfixed": 1,
 		"docno":     1,
 	}
 
 	if langCode != "" {
-		projectQuery["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
+		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
 	} else {
-		projectQuery["names"] = 1
+		selectFields["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindLimit(shopID, map[string]interface{}{}, searchCols, q, skip, limit, sort, projectQuery)
+	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.AccountPeriodMasterInfo{}, 0, err

@@ -124,9 +124,7 @@ func (h DocumentImageHttp) SearchDocumentImage(ctx microservice.IContext) error 
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	sorts := utils.GetSortParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
 	matchFilters := map[string]interface{}{}
 
@@ -186,7 +184,7 @@ func (h DocumentImageHttp) SearchDocumentImage(ctx microservice.IContext) error 
 		matchFilters["documentref"] = documentRef
 	}
 
-	docList, pagination, err := h.service.SearchDocumentImage(shopID, matchFilters, q, page, limit, sorts)
+	docList, pagination, err := h.service.SearchDocumentImage(shopID, matchFilters, pageable)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
@@ -562,7 +560,7 @@ func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) err
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	pageable := utils.GetSearchPageable(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
 	matchFilters := map[string]interface{}{}
 

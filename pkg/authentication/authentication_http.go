@@ -8,7 +8,6 @@ import (
 	"smlcloudplatform/pkg/shop"
 	shopmodel "smlcloudplatform/pkg/shop/models"
 	"smlcloudplatform/pkg/utils"
-	"strconv"
 )
 
 type IAuthenticationHttp interface {
@@ -402,19 +401,9 @@ func (h AuthenticationHttp) SelectShop(ctx microservice.IContext) error {
 func (h AuthenticationHttp) ListShopCanAccess(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 
-	q := ctx.QueryParam("q")
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
-
-	if err != nil {
-		limit = 20
-	}
-
-	docList, pagination, err := h.shopUserService.ListShopByUser(authUsername, q, page, limit)
+	docList, pagination, err := h.shopUserService.ListShopByUser(authUsername, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

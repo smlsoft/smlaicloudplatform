@@ -38,7 +38,7 @@ func (h ColorHttp) RouteSetup() {
 	h.ms.POST("/color/bulk", h.SaveBulk)
 
 	h.ms.GET("/color", h.SearchColor)
-	h.ms.GET("/color/list", h.SearchColorLimit)
+	h.ms.GET("/color/list", h.SearchColorStep)
 	h.ms.POST("/color", h.CreateColor)
 	h.ms.GET("/color/:id", h.InfoColor)
 	h.ms.PUT("/color/:id", h.UpdateColor)
@@ -209,10 +209,8 @@ func (h ColorHttp) SearchColor(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	sort := utils.GetSortParam(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchColor(shopID, q, page, limit, sort)
+	pageable := utils.GetPageable(ctx.QueryParam)
+	docList, pagination, err := h.svc.SearchColor(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -239,17 +237,15 @@ func (h ColorHttp) SearchColor(ctx microservice.IContext) error {
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /color/list [get]
-func (h ColorHttp) SearchColorLimit(ctx microservice.IContext) error {
+func (h ColorHttp) SearchColorStep(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	offset, limit := utils.GetParamOffsetLimit(ctx.QueryParam)
-	sorts := utils.GetSortParam(ctx.QueryParam)
+	pageableStep := utils.GetPageableStep(ctx.QueryParam)
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchColorLimit(shopID, lang, q, offset, limit, sorts)
+	docList, total, err := h.svc.SearchColorStep(shopID, lang, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

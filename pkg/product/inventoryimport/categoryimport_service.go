@@ -1,10 +1,10 @@
 package inventoryimport
 
 import (
+	micromodels "smlcloudplatform/internal/microservice/models"
+	"smlcloudplatform/pkg/product/inventoryimport/models"
 	"smlcloudplatform/pkg/utils"
 	"time"
-
-	"smlcloudplatform/pkg/product/inventoryimport/models"
 
 	"github.com/userplant/mongopagination"
 )
@@ -12,7 +12,7 @@ import (
 type ICategoryImportService interface {
 	CreateInBatch(shopID string, authUsername string, options []models.CategoryImport) error
 	Delete(shopID string, guidList []string) error
-	List(shopID string, page int, limit int) ([]models.CategoryImportInfo, mongopagination.PaginationData, error)
+	List(shopID string, pageable micromodels.Pageable) ([]models.CategoryImportInfo, mongopagination.PaginationData, error)
 }
 
 type CategoryImportService struct {
@@ -69,8 +69,8 @@ func (svc CategoryImportService) Delete(shopID string, guidList []string) error 
 	return nil
 }
 
-func (svc CategoryImportService) List(shopID string, page int, limit int) ([]models.CategoryImportInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindPage(shopID, page, limit)
+func (svc CategoryImportService) List(shopID string, pageable micromodels.Pageable) ([]models.CategoryImportInfo, mongopagination.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindPage(shopID, pageable)
 
 	if err != nil {
 		return []models.CategoryImportInfo{}, pagination, err

@@ -2,6 +2,7 @@ package stockinout
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/transaction/stockinout/models"
 
 	"github.com/userplant/mongopagination"
@@ -14,8 +15,8 @@ type IStockInOutRepository interface {
 	Update(shopID string, guid string, doc models.StockInOutDoc) error
 	Delete(shopID string, guid string, username string) error
 	FindByGuid(shopID string, guid string) (models.StockInOutDoc, error)
-	FindPage(shopID string, q string, page int, limit int) ([]models.StockInOutInfo, mongopagination.PaginationData, error)
-	FindItemsByGuidPage(shopID string, guid string, q string, page int, limit int) ([]models.StockInOutInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, pageable micromodels.Pageable) ([]models.StockInOutInfo, mongopagination.PaginationData, error)
+	FindItemsByGuidPage(shopID string, guid string, pageable micromodels.Pageable) ([]models.StockInOutInfo, mongopagination.PaginationData, error)
 }
 
 type StockInOutRepository struct {
@@ -66,19 +67,19 @@ func (repo StockInOutRepository) FindByGuid(shopID string, guid string) (models.
 	return *doc, nil
 }
 
-func (repo StockInOutRepository) FindPage(shopID string, q string, page int, limit int) ([]models.StockInOutInfo, mongopagination.PaginationData, error) {
-
-	docList := []models.StockInOutInfo{}
-	pagination, err := repo.pst.FindPage(&models.StockInOutInfo{}, limit, page, bson.M{
+func (repo StockInOutRepository) FindPage(shopID string, pageable micromodels.Pageable) ([]models.StockInOutInfo, mongopagination.PaginationData, error) {
+	filterQueries := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$exists": false},
 		"$or": []interface{}{
 			bson.M{"guidfixed": bson.M{"$regex": primitive.Regex{
-				Pattern: ".*" + q + ".*",
+				Pattern: ".*" + pageable.Query + ".*",
 				Options: "",
 			}}},
 		},
-	}, &docList)
+	}
+	docList := []models.StockInOutInfo{}
+	pagination, err := repo.pst.FindPage(&models.StockInOutInfo{}, filterQueries, pageable, &docList)
 
 	if err != nil {
 		return []models.StockInOutInfo{}, mongopagination.PaginationData{}, err
@@ -87,20 +88,20 @@ func (repo StockInOutRepository) FindPage(shopID string, q string, page int, lim
 	return docList, pagination, nil
 }
 
-func (repo StockInOutRepository) FindItemsByGuidPage(shopID string, guid string, q string, page int, limit int) ([]models.StockInOutInfo, mongopagination.PaginationData, error) {
-
-	docList := []models.StockInOutInfo{}
-	pagination, err := repo.pst.FindPage(&models.StockInOutInfo{}, limit, page, bson.M{
+func (repo StockInOutRepository) FindItemsByGuidPage(shopID string, guid string, pageable micromodels.Pageable) ([]models.StockInOutInfo, mongopagination.PaginationData, error) {
+	filterQueries := bson.M{
 		"shopid":    shopID,
 		"guidfixed": guid,
 		"deletedat": bson.M{"$exists": false},
 		"$or": []interface{}{
 			bson.M{"items.itemSku": bson.M{"$regex": primitive.Regex{
-				Pattern: ".*" + q + ".*",
+				Pattern: ".*" + pageable.Query + ".*",
 				Options: "",
 			}}},
 		},
-	}, &docList)
+	}
+	docList := []models.StockInOutInfo{}
+	pagination, err := repo.pst.FindPage(&models.StockInOutInfo{}, filterQueries, pageable, &docList)
 
 	if err != nil {
 		return []models.StockInOutInfo{}, mongopagination.PaginationData{}, err

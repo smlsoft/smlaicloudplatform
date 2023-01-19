@@ -2,6 +2,7 @@ package option
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/option/models"
 
 	"github.com/userplant/mongopagination"
@@ -14,7 +15,7 @@ type IOptionRepository interface {
 	Update(shopID string, guid string, doc models.InventoryOptionMainDoc) error
 	Delete(shopID string, guid string, username string) error
 	FindByGuid(shopID string, guid string) (models.InventoryOptionMainDoc, error)
-	FindPage(shopID string, q string, page int, limit int) ([]models.InventoryOptionMainInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionMainInfo, mongopagination.PaginationData, error)
 }
 
 type OptionRepository struct {
@@ -75,27 +76,29 @@ func (repo OptionRepository) FindByGuid(shopID string, guid string) (models.Inve
 	return *doc, nil
 }
 
-func (repo OptionRepository) FindPage(shopID string, q string, page int, limit int) ([]models.InventoryOptionMainInfo, mongopagination.PaginationData, error) {
+func (repo OptionRepository) FindPage(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionMainInfo, mongopagination.PaginationData, error) {
 
-	docList := []models.InventoryOptionMainInfo{}
-	pagination, err := repo.pst.FindPage(&models.InventoryOptionMainInfo{}, limit, page, bson.M{
+	filterQueries := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$exists": false},
 		"$or": []interface{}{
 			bson.M{"guidfixed": bson.M{"$regex": primitive.Regex{
-				Pattern: ".*" + q + ".*",
+				Pattern: ".*" + pageable.Query + ".*",
 				Options: "",
 			}}},
 			bson.M{"code": bson.M{"$regex": primitive.Regex{
-				Pattern: ".*" + q + ".*",
+				Pattern: ".*" + pageable.Query + ".*",
 				Options: "",
 			}}},
 			bson.M{"name1": bson.M{"$regex": primitive.Regex{
-				Pattern: ".*" + q + ".*",
+				Pattern: ".*" + pageable.Query + ".*",
 				Options: "",
 			}}},
 		},
-	}, &docList)
+	}
+
+	docList := []models.InventoryOptionMainInfo{}
+	pagination, err := repo.pst.FindPage(&models.InventoryOptionMainInfo{}, filterQueries, pageable, &docList)
 
 	if err != nil {
 		return []models.InventoryOptionMainInfo{}, mongopagination.PaginationData{}, err

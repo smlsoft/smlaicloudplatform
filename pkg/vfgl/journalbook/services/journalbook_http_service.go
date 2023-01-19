@@ -2,13 +2,13 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
+	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
 	"smlcloudplatform/pkg/vfgl/journalbook/models"
 	"smlcloudplatform/pkg/vfgl/journalbook/repositories"
 	"time"
-
-	common "smlcloudplatform/pkg/models"
 
 	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
@@ -20,7 +20,7 @@ type IJournalBookHttpService interface {
 	Update(guid string, shopID string, authUsername string, doc models.JournalBook) error
 	Delete(guid string, shopID string, authUsername string) error
 	Info(guid string, shopID string) (models.JournalBookInfo, error)
-	Search(shopID string, q string, page int, limit int, sort map[string]int) ([]models.JournalBookInfo, mongopagination.PaginationData, error)
+	Search(shopID string, pageable micromodels.Pageable) ([]models.JournalBookInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.JournalBook) (common.BulkImport, error)
 }
 
@@ -133,13 +133,13 @@ func (svc JournalBookHttpService) Info(guid string, shopID string) (models.Journ
 
 }
 
-func (svc JournalBookHttpService) Search(shopID string, q string, page int, limit int, sort map[string]int) ([]models.JournalBookInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc JournalBookHttpService) Search(shopID string, pageable micromodels.Pageable) ([]models.JournalBookInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"code",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.JournalBookInfo{}, pagination, err

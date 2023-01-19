@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
@@ -18,7 +19,7 @@ type IWarehouseHttpService interface {
 	UpdateWarehouse(shopID string, guid string, authUsername string, doc models.Warehouse) error
 	DeleteWarehouse(shopID string, guid string, authUsername string) error
 	InfoWarehouse(shopID string, guid string) (models.WarehouseInfo, error)
-	SearchWarehouse(shopID string, q string, page int, limit int, sort map[string]int) ([]models.WarehouseInfo, mongopagination.PaginationData, error)
+	SearchWarehouse(shopID string, pageable micromodels.Pageable) ([]models.WarehouseInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Warehouse) (common.BulkImport, error)
 }
 
@@ -145,13 +146,13 @@ func (svc WarehouseHttpService) InfoWarehouse(shopID string, guid string) (model
 
 }
 
-func (svc WarehouseHttpService) SearchWarehouse(shopID string, q string, page int, limit int, sort map[string]int) ([]models.WarehouseInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc WarehouseHttpService) SearchWarehouse(shopID string, pageable micromodels.Pageable) ([]models.WarehouseInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"code",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.WarehouseInfo{}, pagination, err

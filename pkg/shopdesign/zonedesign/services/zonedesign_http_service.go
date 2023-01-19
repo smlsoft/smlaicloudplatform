@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/shopdesign/zonedesign/models"
 	"smlcloudplatform/pkg/shopdesign/zonedesign/repositories"
 	"smlcloudplatform/pkg/utils"
@@ -17,7 +18,7 @@ type IZoneDesignService interface {
 	UpdateZoneDesign(shopID string, guid string, authUsername string, category models.ZoneDesign) error
 	DeleteZoneDesign(shopID string, guid string, authUsername string) error
 	InfoZoneDesign(shopID string, guid string) (models.ZoneDesignInfo, error)
-	SearchZoneDesign(shopID string, q string, page int, limit int) ([]models.ZoneDesignInfo, mongopagination.PaginationData, error)
+	SearchZoneDesign(shopID string, pageable micromodels.Pageable) ([]models.ZoneDesignInfo, mongopagination.PaginationData, error)
 }
 
 type ZoneDesignService struct {
@@ -100,17 +101,17 @@ func (svc ZoneDesignService) InfoZoneDesign(shopID string, guid string) (models.
 
 }
 
-func (svc ZoneDesignService) SearchZoneDesign(shopID string, q string, page int, limit int) ([]models.ZoneDesignInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc ZoneDesignService) SearchZoneDesign(shopID string, pageable micromodels.Pageable) ([]models.ZoneDesignInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"guidfixed",
 	}
 
 	for i := range [5]bool{} {
-		searchCols = append(searchCols, fmt.Sprintf("name%d", (i+1)))
+		searchInFields = append(searchInFields, fmt.Sprintf("name%d", (i+1)))
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ZoneDesignInfo{}, pagination, err

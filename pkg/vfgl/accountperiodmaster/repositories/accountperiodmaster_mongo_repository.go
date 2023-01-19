@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/vfgl/accountperiodmaster/models"
 	"time"
@@ -17,15 +18,15 @@ type IAccountPeriodMasterRepository interface {
 	Update(shopID string, guid string, doc models.AccountPeriodMasterDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	Delete(shopID string, username string, filters map[string]interface{}) error
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.AccountPeriodMasterInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.AccountPeriodMasterInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.AccountPeriodMasterDoc, error)
 	FindByDateRange(shopID string, startDate time.Time, endDate time.Time) (models.AccountPeriodMasterDoc, error)
 	FindByPeriod(shopID string, period int) (models.AccountPeriodMasterDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.AccountPeriodMasterItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.AccountPeriodMasterDoc, error)
-	FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.AccountPeriodMasterInfo, mongopagination.PaginationData, error)
-	FindLimit(shopID string, filters map[string]interface{}, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.AccountPeriodMasterInfo, int, error)
+
+	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, selectFields map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.AccountPeriodMasterInfo, int, error)
 }
 
 type AccountPeriodMasterRepository struct {

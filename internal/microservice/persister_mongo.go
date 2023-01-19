@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"sort"
 	"sync"
 	"time"
 
@@ -14,15 +13,18 @@ import (
 	"go.mongodb.org/mongo-driver/event"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"smlcloudplatform/internal/microservice/models"
 )
 
 // IPersister is interface for persister
 type IPersisterMongo interface {
 	Aggregate(model interface{}, pipeline interface{}, decode interface{}) error
-	AggregatePage(model interface{}, limit int, page int, criteria ...interface{}) (*mongopagination.PaginatedData, error)
+	AggregatePage(model interface{}, pageable models.Pageable, criteria ...interface{}) (*mongopagination.PaginatedData, error)
 	Find(model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOptions) error
-	FindPage(model interface{}, limit int, page int, filter interface{}, decode interface{}) (mongopagination.PaginationData, error)
-	FindPageSort(model interface{}, limit int, page int, filter interface{}, sorts map[string]int, decode interface{}) (mongopagination.PaginationData, error)
+	FindPage(model interface{}, filter interface{}, pageable models.Pageable, decode interface{}) (mongopagination.PaginationData, error)
+	// FindPage(model interface{}, limit int, page int, filter interface{}, decode interface{}) (mongopagination.PaginationData, error)
+	// FindPageSort(model interface{}, limit int, page int, filter interface{}, sorts map[string]int, decode interface{}) (mongopagination.PaginationData, error)
 	FindOne(model interface{}, filter interface{}, decode interface{}) error
 	FindByID(model interface{}, keyName string, id interface{}, decode interface{}) error
 	Create(model interface{}, data interface{}) (primitive.ObjectID, error)
@@ -194,7 +196,7 @@ func (pst *PersisterMongo) PersisterCount(collectionName string, filter interfac
 	return int(count), nil
 }
 
-func (pst *PersisterMongo) FindPage(model interface{}, limit int, page int, filter interface{}, decode interface{}) (mongopagination.PaginationData, error) {
+func (pst *PersisterMongo) FindPage(model interface{}, filter interface{}, pageable models.Pageable, decode interface{}) (mongopagination.PaginationData, error) {
 	db, err := pst.getClient()
 
 	emptyPage := mongopagination.PaginationData{}
@@ -208,52 +210,17 @@ func (pst *PersisterMongo) FindPage(model interface{}, limit int, page int, filt
 		return emptyPage, err
 	}
 
-	var limit64 int64 = int64(limit)
-	var page64 int64 = int64(page)
+	var limit64 int64 = int64(pageable.Limit)
+	var page64 int64 = int64(pageable.Limit)
 
 	pagingQuery := mongopagination.New(db.Collection(collectionName)).Context(pst.ctx).Limit(limit64).Page(page64).Filter(filter)
 
-	paginatedData, err := pagingQuery.Decode(decode).Find()
-	if err != nil {
-		return emptyPage, err
-	}
-
-	return paginatedData.Pagination, nil
-}
-
-func (pst *PersisterMongo) FindPageSort(model interface{}, limit int, page int, filter interface{}, sorts map[string]int, decode interface{}) (mongopagination.PaginationData, error) {
-	db, err := pst.getClient()
-
-	emptyPage := mongopagination.PaginationData{}
-
-	if err != nil {
-		return emptyPage, err
-	}
-
-	collectionName, err := pst.getCollectionName(model)
-	if err != nil {
-		return emptyPage, err
-	}
-
-	var limit64 int64 = int64(limit)
-	var page64 int64 = int64(page)
-
-	pagingQuery := mongopagination.New(db.Collection(collectionName)).Context(pst.ctx).Limit(limit64).Page(page64).Filter(filter)
-
-	sortKeys := []string{}
-
-	for sortKey := range sorts {
-		sortKeys = append(sortKeys, sortKey)
-	}
-
-	sort.Strings(sortKeys)
-
-	for _, sortKey := range sortKeys {
+	for _, tempSort := range pageable.Sorts {
 		tempSortVal := 1
-		if sorts[sortKey] < 1 {
+		if tempSort.Value < 1 {
 			tempSortVal = -1
 		}
-		pagingQuery = pagingQuery.Sort(sortKey, tempSortVal)
+		pagingQuery = pagingQuery.Sort(tempSort.Key, tempSortVal)
 	}
 
 	paginatedData, err := pagingQuery.Decode(decode).Find()
@@ -639,7 +606,7 @@ func (pst *PersisterMongo) Aggregate(model interface{}, pipeline interface{}, de
 	return nil
 }
 
-func (pst *PersisterMongo) AggregatePage(model interface{}, limit int, page int, criteria ...interface{}) (*mongopagination.PaginatedData, error) {
+func (pst *PersisterMongo) AggregatePage(model interface{}, pageable models.Pageable, criteria ...interface{}) (*mongopagination.PaginatedData, error) {
 	db, err := pst.getClient()
 
 	emptyPage := &mongopagination.PaginatedData{}
@@ -653,8 +620,8 @@ func (pst *PersisterMongo) AggregatePage(model interface{}, limit int, page int,
 		return emptyPage, err
 	}
 
-	var limit64 int64 = int64(limit)
-	var page64 int64 = int64(page)
+	var page64 int64 = int64(pageable.Page)
+	var limit64 int64 = int64(pageable.Limit)
 
 	paginatedData, err := mongopagination.New(db.Collection(collectionName)).Context(pst.ctx).Limit(limit64).Page(page64).Aggregate(criteria...)
 	if err != nil {

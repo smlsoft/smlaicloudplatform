@@ -2,6 +2,7 @@ package stockadjustment
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/transaction/stockadjustment/models"
 	"smlcloudplatform/pkg/utils"
 	"time"
@@ -15,8 +16,8 @@ type IStockAdjustmentService interface {
 	UpdateStockAdjustment(guid string, shopID string, username string, doc models.StockAdjustment) error
 	DeleteStockAdjustment(guid string, shopID string, username string) error
 	InfoStockAdjustment(guid string, shopID string) (models.StockAdjustmentInfo, error)
-	SearchStockAdjustment(shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, mongopagination.PaginationData, error)
-	SearchItemsStockAdjustment(guid string, shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, mongopagination.PaginationData, error)
+	SearchStockAdjustment(shopID string, pageable micromodels.Pageable) ([]models.StockAdjustmentInfo, mongopagination.PaginationData, error)
+	SearchItemsStockAdjustment(guid string, shopID string, pageable micromodels.Pageable) ([]models.StockAdjustmentInfo, mongopagination.PaginationData, error)
 }
 
 type StockAdjustmentService struct {
@@ -118,8 +119,8 @@ func (svc StockAdjustmentService) InfoStockAdjustment(guid string, shopID string
 	return doc.StockAdjustmentInfo, nil
 }
 
-func (svc StockAdjustmentService) SearchStockAdjustment(shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
+func (svc StockAdjustmentService) SearchStockAdjustment(shopID string, pageable micromodels.Pageable) ([]models.StockAdjustmentInfo, mongopagination.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindPage(shopID, pageable)
 
 	if err != nil {
 		return docList, pagination, err
@@ -128,8 +129,8 @@ func (svc StockAdjustmentService) SearchStockAdjustment(shopID string, q string,
 	return docList, pagination, nil
 }
 
-func (svc StockAdjustmentService) SearchItemsStockAdjustment(guid string, shopID string, q string, page int, limit int) ([]models.StockAdjustmentInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindItemsByGuidPage(shopID, guid, q, page, limit)
+func (svc StockAdjustmentService) SearchItemsStockAdjustment(guid string, shopID string, pageable micromodels.Pageable) ([]models.StockAdjustmentInfo, mongopagination.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindItemsByGuidPage(shopID, guid, pageable)
 
 	if err != nil {
 		return docList, pagination, err

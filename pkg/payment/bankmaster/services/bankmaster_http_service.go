@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/payment/bankmaster/models"
@@ -23,8 +24,8 @@ type IBankMasterHttpService interface {
 	DeleteBankMaster(shopID string, guid string, authUsername string) error
 	DeleteBankMasterByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoBankMaster(shopID string, guid string) (models.BankMasterInfo, error)
-	SearchBankMaster(shopID string, q string, page int, limit int, sort map[string]int) ([]models.BankMasterInfo, mongopagination.PaginationData, error)
-	SearchBankMasterStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.BankMasterInfo, int, error)
+	SearchBankMaster(shopID string, pageable micromodels.Pageable) ([]models.BankMasterInfo, mongopagination.PaginationData, error)
+	SearchBankMasterStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.BankMasterInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.BankMaster) (common.BulkImport, error)
 
 	GetModuleName() string
@@ -162,13 +163,13 @@ func (svc BankMasterHttpService) InfoBankMaster(shopID string, guid string) (mod
 
 }
 
-func (svc BankMasterHttpService) SearchBankMaster(shopID string, q string, page int, limit int, sort map[string]int) ([]models.BankMasterInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc BankMasterHttpService) SearchBankMaster(shopID string, pageable micromodels.Pageable) ([]models.BankMasterInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"code",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.BankMasterInfo{}, pagination, err
@@ -177,25 +178,25 @@ func (svc BankMasterHttpService) SearchBankMaster(shopID string, q string, page 
 	return docList, pagination, nil
 }
 
-func (svc BankMasterHttpService) SearchBankMasterStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.BankMasterInfo, int, error) {
-	searchCols := []string{
+func (svc BankMasterHttpService) SearchBankMasterStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.BankMasterInfo, int, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"code",
 	}
 
-	projectQuery := map[string]interface{}{
+	selectFields := map[string]interface{}{
 		"guidfixed": 1,
 		"code":      1,
 		"logo":      1,
 	}
 
 	if langCode != "" {
-		projectQuery["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
+		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
 	} else {
-		projectQuery["names"] = 1
+		selectFields["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindLimit(shopID, map[string]interface{}{}, searchCols, q, skip, limit, sort, projectQuery)
+	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.BankMasterInfo{}, 0, err

@@ -2,6 +2,7 @@ package shop
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/shop/models"
 	"time"
 
@@ -21,8 +22,8 @@ type IShopUserRepository interface {
 	FindRole(shopID string, username string) (models.UserRole, error)
 	FindByShopID(shopID string) (*[]models.ShopUser, error)
 	FindByUsername(username string) (*[]models.ShopUser, error)
-	FindByUsernamePage(username string, q string, page int, limit int) ([]models.ShopUserInfo, mongopagination.PaginationData, error)
-	FindByUserInShopPage(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, mongopagination.PaginationData, error)
+	FindByUsernamePage(username string, pageable micromodels.Pageable) ([]models.ShopUserInfo, mongopagination.PaginationData, error)
+	FindByUserInShopPage(shopID string, pageable micromodels.Pageable) ([]models.ShopUser, mongopagination.PaginationData, error)
 }
 
 type ShopUserRepository struct {
@@ -143,25 +144,25 @@ func (svc ShopUserRepository) FindByUsername(username string) (*[]models.ShopUse
 	return shopUsers, nil
 }
 
-func (repo ShopUserRepository) FindByUsernamePage(username string, q string, page int, limit int) ([]models.ShopUserInfo, mongopagination.PaginationData, error) {
+func (repo ShopUserRepository) FindByUsernamePage(username string, pageable micromodels.Pageable) ([]models.ShopUserInfo, mongopagination.PaginationData, error) {
 
 	docList := []models.ShopUserInfo{}
 
 	searchFilterList := []interface{}{}
 
-	searchCols := []string{
+	searchInFields := []string{
 		"shopid",
 		"name",
 	}
 
-	for _, colName := range searchCols {
+	for _, colName := range searchInFields {
 		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
-			Pattern: ".*" + q + ".*",
+			Pattern: ".*" + pageable.Query + ".*",
 			Options: "",
 		}}})
 	}
 
-	aggPaginatedData, err := repo.pst.AggregatePage(&models.ShopUser{}, limit, page,
+	aggPaginatedData, err := repo.pst.AggregatePage(&models.ShopUser{}, pageable,
 		bson.M{"$match": bson.M{
 			"username": username,
 		}},
@@ -213,19 +214,19 @@ func (repo ShopUserRepository) FindByUsernamePage(username string, q string, pag
 	return docList, aggPaginatedData.Pagination, nil
 }
 
-func (repo ShopUserRepository) FindByUserInShopPage(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, mongopagination.PaginationData, error) {
+func (repo ShopUserRepository) FindByUserInShopPage(shopID string, pageable micromodels.Pageable) ([]models.ShopUser, mongopagination.PaginationData, error) {
 
 	docList := []models.ShopUser{}
 
-	searchCols := []string{
+	searchInFields := []string{
 		"username",
 	}
 
 	searchFilterList := []interface{}{}
 
-	for _, colName := range searchCols {
+	for _, colName := range searchInFields {
 		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
-			Pattern: ".*" + q + ".*",
+			Pattern: ".*" + pageable.Query + ".*",
 			Options: "",
 		}}})
 	}
@@ -235,7 +236,7 @@ func (repo ShopUserRepository) FindByUserInShopPage(shopID string, q string, pag
 		"$or":    searchFilterList,
 	}
 
-	paginattion, err := repo.pst.FindPageSort(&models.ShopUser{}, limit, page, filtter, sort, &docList)
+	paginattion, err := repo.pst.FindPage(&models.ShopUser{}, filtter, pageable, &docList)
 
 	if err != nil {
 		return []models.ShopUser{}, mongopagination.PaginationData{}, err

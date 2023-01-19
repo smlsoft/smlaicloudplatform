@@ -381,9 +381,7 @@ func (h JournalHttp) SearchJournal(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	sort := utils.GetSortParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
 	accountGroup := ctx.QueryParam("accountgroup")
 
@@ -411,7 +409,7 @@ func (h JournalHttp) SearchJournal(ctx microservice.IContext) error {
 		}
 	}
 
-	docList, pagination, err := h.svc.SearchJournal(shopID, q, page, limit, sort, startDate, endDate, accountGroup)
+	docList, pagination, err := h.svc.SearchJournal(shopID, pageable, startDate, endDate, accountGroup)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

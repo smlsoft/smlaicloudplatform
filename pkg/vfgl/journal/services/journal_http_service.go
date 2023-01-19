@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
@@ -21,7 +22,7 @@ type IJournalHttpService interface {
 	InfoJournal(shopID string, guid string) (models.JournalInfo, error)
 	InfoJournalByDocNo(shopID string, docNo string) (models.JournalInfo, error)
 	InfoJournalByDocumentRef(shopID string, documentRef string) (models.JournalInfo, error)
-	SearchJournal(shopID string, q string, page int, limit int, sort map[string]int, startDate time.Time, endDate time.Time, accountGroup string) ([]models.JournalInfo, mongopagination.PaginationData, error)
+	SearchJournal(shopID string, pagable micromodels.Pageable, startDate time.Time, endDate time.Time, accountGroup string) ([]models.JournalInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Journal) (common.BulkImport, error)
 
 	FindLastDocnoFromFormat(shopID string, docFormat string) (string, error)
@@ -191,8 +192,8 @@ func (svc JournalHttpService) InfoJournalByDocumentRef(shopID string, documentRe
 
 }
 
-func (svc JournalHttpService) SearchJournal(shopID string, q string, page int, limit int, sort map[string]int, startDate time.Time, endDate time.Time, accountGroup string) ([]models.JournalInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc JournalHttpService) SearchJournal(shopID string, pageable micromodels.Pageable, startDate time.Time, endDate time.Time, accountGroup string) ([]models.JournalInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"docno",
 	}
@@ -211,7 +212,7 @@ func (svc JournalHttpService) SearchJournal(shopID string, q string, page int, l
 		filters["accountgroup"] = accountGroup
 	}
 
-	docList, pagination, err := svc.repo.FindPageFilterSort(shopID, filters, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.JournalInfo{}, pagination, err

@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/payment/qrpayment/models"
 	"smlcloudplatform/pkg/repositories"
 	"time"
@@ -16,18 +17,18 @@ type IQrPaymentRepository interface {
 	Update(shopID string, guid string, doc models.QrPaymentDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	Delete(shopID string, username string, filters map[string]interface{}) error
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.QrPaymentInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.QrPaymentInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.QrPaymentDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.QrPaymentItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.QrPaymentDoc, error)
-	FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.QrPaymentInfo, mongopagination.PaginationData, error)
-	FindLimit(shopID string, filters map[string]interface{}, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.QrPaymentInfo, int, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.QrPaymentDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.QrPaymentActivity, mongopagination.PaginationData, error)
-	FindDeletedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.QrPaymentDeleteActivity, error)
-	FindCreatedOrUpdatedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]models.QrPaymentActivity, error)
+	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, selectFields map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.QrPaymentInfo, int, error)
+
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.QrPaymentDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.QrPaymentActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.QrPaymentDeleteActivity, error)
+	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.QrPaymentActivity, error)
 }
 
 type QrPaymentRepository struct {

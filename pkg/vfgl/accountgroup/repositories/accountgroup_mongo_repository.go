@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/vfgl/accountgroup/models"
 
@@ -15,7 +16,7 @@ type IAccountGroupMongoRepository interface {
 	Update(shopID string, guid string, category models.AccountGroupDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindOne(shopID string, filters interface{}) (models.AccountGroupDoc, error)
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.AccountGroupInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.AccountGroupInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.AccountGroupDoc, error)
 }
 

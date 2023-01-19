@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/storefront/models"
 	"smlcloudplatform/pkg/storefront/repositories"
 	"smlcloudplatform/pkg/utils"
@@ -16,7 +17,7 @@ type IStorefrontHttpService interface {
 	UpdateStorefront(shopID string, guid string, authUsername string, doc models.Storefront) error
 	DeleteStorefront(shopID string, guid string, authUsername string) error
 	InfoStorefront(shopID string, guid string) (models.StorefrontInfo, error)
-	SearchStorefront(shopID string, q string, page int, limit int, sort map[string]int) ([]models.StorefrontInfo, mongopagination.PaginationData, error)
+	SearchStorefront(shopID string, pageable micromodels.Pageable) ([]models.StorefrontInfo, mongopagination.PaginationData, error)
 }
 
 type StorefrontHttpService struct {
@@ -113,13 +114,13 @@ func (svc StorefrontHttpService) InfoStorefront(shopID string, guid string) (mod
 
 }
 
-func (svc StorefrontHttpService) SearchStorefront(shopID string, q string, page int, limit int, sort map[string]int) ([]models.StorefrontInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc StorefrontHttpService) SearchStorefront(shopID string, pageable micromodels.Pageable) ([]models.StorefrontInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"code",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.StorefrontInfo{}, pagination, err

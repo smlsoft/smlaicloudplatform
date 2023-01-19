@@ -3,7 +3,7 @@ package authentication_test
 import (
 	"errors"
 	"smlcloudplatform/internal/microservice"
-	micromodel "smlcloudplatform/internal/microservice/models"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/authentication"
 	"smlcloudplatform/pkg/shop/models"
 	"testing"
@@ -44,7 +44,7 @@ func mockLoginData(authRepo *AuthenticationRepositoryMock, shopUserRepo *ShopUse
 	authRepo.On("CreateUser", userDoc2).Return(MockObjectID(), nil)
 
 	//microAuth
-	microAuthServiceMock.On("GenerateTokenWithRedis", micromodel.UserInfo{
+	microAuthServiceMock.On("GenerateTokenWithRedis", micromodels.UserInfo{
 		Username: userDoc1.Username,
 		Name:     userDoc1.Name,
 	}).Return(tokenMock, nil)
@@ -520,12 +520,12 @@ func (m *ShopUserRepositoryMock) FindByUsername(username string) (*[]models.Shop
 	args := m.Called(username)
 	return args.Get(0).(*[]models.ShopUser), args.Error(1)
 }
-func (m *ShopUserRepositoryMock) FindByUsernamePage(username string, q string, page int, limit int) ([]models.ShopUserInfo, mongopagination.PaginationData, error) {
-	args := m.Called(username, q, page, limit)
+func (m *ShopUserRepositoryMock) FindByUsernamePage(username string, pageable micromodels.Pageable) ([]models.ShopUserInfo, mongopagination.PaginationData, error) {
+	args := m.Called(username, pageable)
 	return args.Get(0).([]models.ShopUserInfo), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
-func (m *ShopUserRepositoryMock) FindByUserInShopPage(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, mongopagination.PaginationData, error) {
-	args := m.Called(shopID, q, page, limit, sort)
+func (m *ShopUserRepositoryMock) FindByUserInShopPage(shopID string, pageable micromodels.Pageable) ([]models.ShopUser, mongopagination.PaginationData, error) {
+	args := m.Called(shopID, pageable)
 	return args.Get(0).([]models.ShopUser), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
 
@@ -577,13 +577,13 @@ func (m *AuthServiceMock) GetTokenFromAuthorizationHeader(tokenType microservice
 	return args.String(0), args.Error(1)
 }
 
-func (m *AuthServiceMock) GenerateTokenWithRedis(tokenType microservice.TokenType, userInfo micromodel.UserInfo) (string, error) {
+func (m *AuthServiceMock) GenerateTokenWithRedis(tokenType microservice.TokenType, userInfo micromodels.UserInfo) (string, error) {
 
 	args := m.Called(tokenType, userInfo)
 	return args.String(0), args.Error(1)
 }
 
-func (m *AuthServiceMock) GenerateTokenWithRedisExpire(tokenType microservice.TokenType, userInfo micromodel.UserInfo, expireTime time.Duration) (string, error) {
+func (m *AuthServiceMock) GenerateTokenWithRedisExpire(tokenType microservice.TokenType, userInfo micromodels.UserInfo, expireTime time.Duration) (string, error) {
 
 	args := m.Called(tokenType, userInfo, expireTime)
 	return args.String(0), args.Error(1)

@@ -203,9 +203,8 @@ func (h PrinterHttp) SearchPrinter(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchPrinter(shopID, q, page, limit)
+	pageable := utils.GetPageable(ctx.QueryParam)
+	docList, pagination, err := h.svc.SearchPrinter(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -235,11 +234,9 @@ func (h PrinterHttp) SearchPrinterLimit(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	offset, limit := utils.GetParamOffsetLimit(ctx.QueryParam)
-	sorts := utils.GetSortParam(ctx.QueryParam)
+	pageableStep := utils.GetPageableStep(ctx.QueryParam)
 
-	docList, total, err := h.svc.SearchPrinterStep(shopID, "", q, offset, limit, sorts)
+	docList, total, err := h.svc.SearchPrinterStep(shopID, "", pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -285,9 +282,9 @@ func (h PrinterHttp) FetchUpdate(ctx microservice.IContext) error {
 		return err
 	}
 
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.LastActivity(shopID, "all", lastUpdate, page, limit)
+	docList, pagination, err := h.svc.LastActivity(shopID, "all", lastUpdate, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

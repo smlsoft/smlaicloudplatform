@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/shopcoupon/models"
 	"smlcloudplatform/pkg/shopcoupon/repositories"
 	"smlcloudplatform/pkg/utils"
@@ -16,7 +17,7 @@ type IShopCouponHttpService interface {
 	UpdateShopCoupon(shopID string, guid string, authUsername string, doc models.ShopCoupon) error
 	DeleteShopCoupon(shopID string, guid string, authUsername string) error
 	InfoShopCoupon(shopID string, guid string) (models.ShopCouponInfo, error)
-	SearchShopCoupon(shopID string, filters map[string]interface{}, q string, page int, limit int, sort map[string]int) ([]models.ShopCouponInfo, mongopagination.PaginationData, error)
+	SearchShopCoupon(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ShopCouponInfo, mongopagination.PaginationData, error)
 }
 
 type ShopCouponHttpService struct {
@@ -113,12 +114,12 @@ func (svc ShopCouponHttpService) InfoShopCoupon(shopID string, guid string) (mod
 
 }
 
-func (svc ShopCouponHttpService) SearchShopCoupon(shopID string, filters map[string]interface{}, q string, page int, limit int, sort map[string]int) ([]models.ShopCouponInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc ShopCouponHttpService) SearchShopCoupon(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ShopCouponInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"name1",
 	}
 
-	docList, pagination, err := svc.repo.FindPageFilterSort(shopID, filters, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ShopCouponInfo{}, pagination, err

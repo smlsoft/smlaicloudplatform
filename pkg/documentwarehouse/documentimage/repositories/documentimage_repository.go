@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/models"
 	"smlcloudplatform/pkg/repositories"
 	"time"
@@ -19,8 +20,9 @@ type IDocumentImageRepository interface {
 	FindByReferenceDocNo(shopID string, docNo string) ([]models.DocumentImageDoc, error)
 	FindByReference(shopID string, reference models.Reference) ([]models.DocumentImageDoc, error)
 	FindByGuid(shopID string, guid string) (models.DocumentImageDoc, error)
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
-	FindPageFilterSort(shopID string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
+
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
+	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.DocumentImageItemGuid, error)
 	FindInGUIDs(shopID string, docImageGUIDs []string) ([]models.DocumentImageDoc, error)
@@ -31,7 +33,7 @@ type IDocumentImageRepository interface {
 	// UpdateDocumentImageStatus(shopID string, guid string, docnoGUIDRef string, status int8) error
 	// UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, docnoGUIDRef string, status int8) error
 	// SaveDocumentImageDocRefGroup(shopID string, docRef string, docImages []models.DocumentImageGroup) error
-	// ListDocumentImageGroup(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error)
+	// ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentImageGroup, mongopagination.PaginationData, error)
 	// GetDocumentImageGroup(shopID string, docRef string) (models.DocumentImageGroup, error)
 }
 
@@ -136,148 +138,3 @@ func (repo DocumentImageRepository) UpdateAll(doc models.DocumentImageDoc) error
 
 	return nil
 }
-
-/*
-func (repo DocumentImageRepository) UpdateDocumentImageStatus(shopID string, guid string, docnoGUIDRef string, status int8) error {
-	fillter := bson.M{
-		"shopid":    shopID,
-		"guidfixed": guid,
-	}
-
-	data := bson.M{
-		"$set": bson.M{"status": status},
-	}
-
-	return repo.pst.Update(models.DocumentImageDoc{}, fillter, data)
-}
-
-func (repo DocumentImageRepository) UpdateDocumentImageStatusByDocumentRef(shopID string, docRef string, docnoGUIDRef string, status int8) error {
-
-	fillter := bson.M{
-		"shopid":      shopID,
-		"documentref": docRef,
-	}
-
-	data := bson.M{
-		"$set": bson.M{
-			"docguidref": docnoGUIDRef,
-			"status":     status,
-		},
-	}
-
-	return repo.pst.Update(models.DocumentImageDoc{}, fillter, data)
-}
-
-func (repo DocumentImageRepository) SaveDocumentImageDocRefGroup(shopID string, docRef string, docImages []models.DocumentImageGroup) error {
-
-	fillter := bson.M{
-		"shopid":    shopID,
-		"guidfixed": bson.M{"$in": docImages},
-	}
-
-	data := bson.M{
-		"$set": bson.M{
-			"documentref": docRef},
-	}
-
-	return repo.pst.Update(models.DocumentImageDoc{}, fillter, data)
-}
-
-func (repo DocumentImageRepository) ListDocumentImageGroup(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error) {
-
-	searchFilter := bson.M{
-		"shopid": shopID,
-	}
-
-	if len(filters) > 0 {
-		for key, val := range filters {
-			searchFilter[key] = val
-		}
-	}
-
-	if len(strings.TrimSpace(q)) > 0 {
-
-		searchFields := []string{"documentref", "name"}
-
-		tempFilters := []interface{}{}
-
-		for _, fieldName := range searchFields {
-			tempFilters = append(tempFilters, bson.M{fieldName: bson.M{"$regex": primitive.Regex{
-				Pattern: ".*" + q + ".*",
-				Options: "",
-			}}})
-		}
-
-		searchFilter["$or"] = tempFilters
-
-	}
-
-	searchQuery := bson.M{"$match": searchFilter}
-
-	groupQuery := bson.M{"$group": bson.M{"_id": "$documentref", "documentimages": bson.M{"$push": bson.M{
-		"guidfixed":  "$guidfixed",
-		"name":       "$name",
-		"imageuri":   "$imageuri",
-		"docguidref": "$docguidref",
-		"module":     "$module",
-		"status":     "$status",
-		"uploadedby": "$uploadedby",
-		"uploadedat": "$uploadedat",
-	}}}}
-
-	projectQuery := bson.M{"$project": bson.M{"documentref": "$_id", "documentimages": 1}}
-
-	aggData, err := repo.pst.AggregatePage(&models.DocumentImageGroup{}, limit, page, searchQuery, groupQuery, projectQuery)
-
-	if err != nil {
-		return nil, mongopagination.PaginationData{}, err
-	}
-
-	docList, err := mogoutil.AggregatePageDecode[models.DocumentImageGroup](aggData)
-
-	if err != nil {
-		return []models.DocumentImageGroup{}, mongopagination.PaginationData{}, err
-	}
-
-	if len(docList) < 1 {
-		return []models.DocumentImageGroup{}, mongopagination.PaginationData{}, nil
-	}
-
-	return docList, aggData.Pagination, nil
-}
-
-func (repo DocumentImageRepository) GetDocumentImageGroup(shopID string, docRef string) (models.DocumentImageGroup, error) {
-
-	shopQuery := bson.M{"$match": bson.M{"shopid": shopID, "documentref": docRef}}
-
-	groupQuery := bson.M{"$group": bson.M{"_id": "$documentref", "documentimages": bson.M{"$push": bson.M{
-		"guidfixed":  "$guidfixed",
-		"name":       "$name",
-		"imageuri":   "$imageuri",
-		"docguidref": "$docguidref",
-		"module":     "$module",
-		"status":     "$status",
-		"uploadedby": "$uploadedby",
-		"uploadedat": "$uploadedat",
-	}}}}
-
-	projectQuery := bson.M{"$project": bson.M{"documentref": "$_id", "documentimages": 1}}
-
-	results := []models.DocumentImageGroup{}
-	err := repo.pst.Aggregate(&models.DocumentImageGroup{}, []interface{}{
-		shopQuery,
-		groupQuery,
-		projectQuery,
-	}, &results)
-
-	if err != nil {
-		return models.DocumentImageGroup{}, err
-	}
-
-	if len(results) < 1 {
-		return models.DocumentImageGroup{}, nil
-	}
-
-	return results[0], nil
-}
-*/

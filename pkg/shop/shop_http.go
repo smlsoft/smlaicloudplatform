@@ -249,10 +249,9 @@ func (h ShopHttp) InfoShop(ctx microservice.IContext) error {
 // @Router /shop [get]
 func (h ShopHttp) SearchShop(ctx microservice.IContext) error {
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	shopList, pagination, err := h.service.SearchShop(q, page, limit)
+	shopList, pagination, err := h.service.SearchShop(pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, "database error")

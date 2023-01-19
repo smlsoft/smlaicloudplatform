@@ -45,6 +45,8 @@ import (
 	"smlcloudplatform/pkg/mastersync/repositories"
 
 	"github.com/userplant/mongopagination"
+
+	micromodels "smlcloudplatform/internal/microservice/models"
 )
 
 type MasterSyncHttp struct {
@@ -211,7 +213,7 @@ func (h MasterSyncHttp) LastActivitySync(ctx microservice.IContext) error {
 		return err
 	}
 
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
 	moduleParam := strings.Trim(ctx.QueryParam("module"), " ")
 	action := strings.Trim(ctx.QueryParam("action"), " ")
@@ -235,8 +237,7 @@ func (h MasterSyncHttp) LastActivitySync(ctx microservice.IContext) error {
 		ShopID:     shopID,
 		Action:     action,
 		LastUpdate: lastUpdate,
-		Page:       page,
-		Limit:      limit,
+		Pageable:   pageable,
 	})
 
 	if err != nil {
@@ -284,7 +285,7 @@ func (h MasterSyncHttp) LastActivitySyncOffset(ctx microservice.IContext) error 
 		return err
 	}
 
-	offset, limit := utils.GetParamOffsetLimit(ctx.QueryParam)
+	pageableStep := utils.GetPageableStep(ctx.QueryParam)
 
 	moduleParam := strings.Trim(ctx.QueryParam("module"), " ")
 	action := strings.Trim(ctx.QueryParam("action"), " ")
@@ -305,11 +306,10 @@ func (h MasterSyncHttp) LastActivitySyncOffset(ctx microservice.IContext) error 
 	}
 
 	results, err := listDataModuleOffset(h.activityModuleManager.GetList(), moduleSelectList, ActivityParamOffset{
-		ShopID:     shopID,
-		Action:     action,
-		LastUpdate: lastUpdate,
-		Offset:     offset,
-		Limit:      limit,
+		ShopID:       shopID,
+		Action:       action,
+		LastUpdate:   lastUpdate,
+		PageableStep: pageableStep,
 	})
 
 	if err != nil {
@@ -364,8 +364,8 @@ func (m ActivityModuleManager) GetPage(moduleSelectList map[string]struct{}, act
 }
 
 type ActivityModule interface {
-	LastActivity(string, string, time.Time, int, int) (models.LastActivity, mongopagination.PaginationData, error)
-	LastActivityOffset(string, string, time.Time, int, int) (models.LastActivity, error)
+	LastActivity(string, string, time.Time, micromodels.Pageable) (models.LastActivity, mongopagination.PaginationData, error)
+	LastActivityStep(string, string, time.Time, micromodels.PageableStep) (models.LastActivity, error)
 	GetModuleName() string
 }
 
@@ -373,16 +373,14 @@ type ActivityParamPage struct {
 	ShopID     string
 	Action     string
 	LastUpdate time.Time
-	Page       int
-	Limit      int
+	Pageable   micromodels.Pageable
 }
 
 type ActivityParamOffset struct {
-	ShopID     string
-	Action     string
-	LastUpdate time.Time
-	Offset     int
-	Limit      int
+	ShopID       string
+	Action       string
+	LastUpdate   time.Time
+	PageableStep micromodels.PageableStep
 }
 
 func listDataModulePage(appModules map[string]ActivityModule, moduleSelectList map[string]struct{}, param ActivityParamPage) (map[string]interface{}, mongopagination.PaginationData, error) {
@@ -392,7 +390,7 @@ func listDataModulePage(appModules map[string]ActivityModule, moduleSelectList m
 	resultPagination := mongopagination.PaginationData{}
 	for moduleName, appModule := range appModules {
 		if len(moduleSelectList) == 0 || isSelectModule(moduleSelectList, moduleName) {
-			docList, pagination, err := appModule.LastActivity(param.ShopID, param.Action, param.LastUpdate, param.Page, param.Limit)
+			docList, pagination, err := appModule.LastActivity(param.ShopID, param.Action, param.LastUpdate, param.Pageable)
 
 			if err != nil {
 				return map[string]interface{}{}, mongopagination.PaginationData{}, err
@@ -415,7 +413,8 @@ func listDataModuleOffset(appModules map[string]ActivityModule, moduleSelectList
 
 	for moduleName, appModule := range appModules {
 		if len(moduleSelectList) == 0 || isSelectModule(moduleSelectList, moduleName) {
-			docList, err := appModule.LastActivityOffset(param.ShopID, param.Action, param.LastUpdate, param.Offset, param.Limit)
+
+			docList, err := appModule.LastActivityStep(param.ShopID, param.Action, param.LastUpdate, param.PageableStep)
 
 			if err != nil {
 				return map[string]interface{}{}, err

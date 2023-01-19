@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/device/models"
@@ -23,8 +24,8 @@ type IDeviceHttpService interface {
 	DeleteDevice(shopID string, guid string, authUsername string) error
 	DeleteDeviceByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoDevice(shopID string, guid string) (models.DeviceInfo, error)
-	SearchDevice(shopID string, q string, page int, limit int, sort map[string]int) ([]models.DeviceInfo, mongopagination.PaginationData, error)
-	SearchDeviceStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.DeviceInfo, int, error)
+	SearchDevice(shopID string, pageable micromodels.Pageable) ([]models.DeviceInfo, mongopagination.PaginationData, error)
+	SearchDeviceStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.DeviceInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Device) (common.BulkImport, error)
 
 	GetModuleName() string
@@ -162,13 +163,13 @@ func (svc DeviceHttpService) InfoDevice(shopID string, guid string) (models.Devi
 
 }
 
-func (svc DeviceHttpService) SearchDevice(shopID string, q string, page int, limit int, sort map[string]int) ([]models.DeviceInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc DeviceHttpService) SearchDevice(shopID string, pageable micromodels.Pageable) ([]models.DeviceInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"code",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.DeviceInfo{}, pagination, err
@@ -177,15 +178,15 @@ func (svc DeviceHttpService) SearchDevice(shopID string, q string, page int, lim
 	return docList, pagination, nil
 }
 
-func (svc DeviceHttpService) SearchDeviceStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.DeviceInfo, int, error) {
-	searchCols := []string{
+func (svc DeviceHttpService) SearchDeviceStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.DeviceInfo, int, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"code",
 	}
 
-	projectQuery := map[string]interface{}{}
+	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindLimit(shopID, map[string]interface{}{}, searchCols, q, skip, limit, sort, projectQuery)
+	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.DeviceInfo{}, 0, err

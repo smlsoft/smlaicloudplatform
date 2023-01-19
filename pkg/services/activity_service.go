@@ -1,11 +1,11 @@
 package services
 
 import (
+	micromodels "smlcloudplatform/internal/microservice/models"
+	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/repositories"
 	"sync"
 	"time"
-
-	common "smlcloudplatform/pkg/models"
 
 	"github.com/userplant/mongopagination"
 )
@@ -20,7 +20,7 @@ func NewActivityService[TCU any, TDEL any](repo repositories.IActivityRepository
 	}
 }
 
-func (svc ActivityService[TCU, TDEL]) LastActivity(shopID string, action string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error) {
+func (svc ActivityService[TCU, TDEL]) LastActivity(shopID string, action string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error) {
 	lastActivity := common.LastActivity{}
 	var wg sync.WaitGroup
 
@@ -34,7 +34,7 @@ func (svc ActivityService[TCU, TDEL]) LastActivity(shopID string, action string,
 	if isActionRemove {
 		wg.Add(1)
 		go func() {
-			deleteDocList, pagination1, errFindDel = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
+			deleteDocList, pagination1, errFindDel = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, pageable)
 			wg.Done()
 		}()
 	}
@@ -46,7 +46,7 @@ func (svc ActivityService[TCU, TDEL]) LastActivity(shopID string, action string,
 	if isActionNew {
 		wg.Add(1)
 		go func() {
-			createAndUpdateDocList, pagination2, errFindCreateUpdate = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
+			createAndUpdateDocList, pagination2, errFindCreateUpdate = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, pageable)
 			wg.Done()
 		}()
 	}
@@ -76,7 +76,7 @@ func (svc ActivityService[TCU, TDEL]) LastActivity(shopID string, action string,
 	return lastActivity, pagination, nil
 }
 
-func (svc ActivityService[TCU, TDEL]) LastActivityOffset(shopID string, action string, lastUpdatedDate time.Time, skip int, limit int) (common.LastActivity, error) {
+func (svc ActivityService[TCU, TDEL]) LastActivityStep(shopID string, action string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) (common.LastActivity, error) {
 	lastActivity := common.LastActivity{}
 
 	var wg sync.WaitGroup
@@ -89,7 +89,7 @@ func (svc ActivityService[TCU, TDEL]) LastActivityOffset(shopID string, action s
 	if isActionRemove {
 		wg.Add(1)
 		go func() {
-			deleteDocList, errFindDel = svc.repo.FindDeletedOffset(shopID, lastUpdatedDate, skip, limit)
+			deleteDocList, errFindDel = svc.repo.FindDeletedStep(shopID, lastUpdatedDate, pageableStep)
 			wg.Done()
 		}()
 	}
@@ -99,7 +99,7 @@ func (svc ActivityService[TCU, TDEL]) LastActivityOffset(shopID string, action s
 	if isActionNew {
 		wg.Add(1)
 		go func() {
-			createAndUpdateDocList, errFindCreateUpdate = svc.repo.FindCreatedOrUpdatedOffset(shopID, lastUpdatedDate, skip, limit)
+			createAndUpdateDocList, errFindCreateUpdate = svc.repo.FindCreatedOrUpdatedStep(shopID, lastUpdatedDate, pageableStep)
 			wg.Done()
 		}()
 	}

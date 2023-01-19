@@ -156,10 +156,9 @@ func (h StockInOutHttp) SearchStockInOut(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.service.SearchStockInOut(shopID, q, page, limit)
+	docList, pagination, err := h.service.SearchStockInOut(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -184,10 +183,9 @@ func (h StockInOutHttp) SearchStockInOutItems(ctx microservice.IContext) error {
 
 	docID := ctx.Param("id")
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.service.SearchItemsStockInOut(shopID, docID, q, page, limit)
+	docList, pagination, err := h.service.SearchItemsStockInOut(shopID, docID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

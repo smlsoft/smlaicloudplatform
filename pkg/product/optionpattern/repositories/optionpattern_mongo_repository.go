@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/optionpattern/models"
 	"smlcloudplatform/pkg/repositories"
 
@@ -14,12 +15,11 @@ type IOptionPatternRepository interface {
 	CreateInBatch(docList []models.OptionPatternDoc) error
 	Update(shopID string, guid string, doc models.OptionPatternDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.OptionPatternInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.OptionPatternInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.OptionPatternDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.OptionPatternItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.OptionPatternDoc, error)
-	FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.OptionPatternInfo, mongopagination.PaginationData, error)
 }
 
 type OptionPatternRepository struct {

@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/staff/models"
@@ -23,8 +24,8 @@ type IStaffHttpService interface {
 	DeleteStaff(shopID string, guid string, authUsername string) error
 	DeleteStaffByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoStaff(shopID string, guid string) (models.StaffInfo, error)
-	SearchStaff(shopID string, q string, page int, limit int, sort map[string]int) ([]models.StaffInfo, mongopagination.PaginationData, error)
-	SearchStaffStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.StaffInfo, int, error)
+	SearchStaff(shopID string, pageable micromodels.Pageable) ([]models.StaffInfo, mongopagination.PaginationData, error)
+	SearchStaffStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.StaffInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Staff) (common.BulkImport, error)
 
 	GetModuleName() string
@@ -162,13 +163,13 @@ func (svc StaffHttpService) InfoStaff(shopID string, guid string) (models.StaffI
 
 }
 
-func (svc StaffHttpService) SearchStaff(shopID string, q string, page int, limit int, sort map[string]int) ([]models.StaffInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc StaffHttpService) SearchStaff(shopID string, pageable micromodels.Pageable) ([]models.StaffInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"code",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.StaffInfo{}, pagination, err
@@ -177,14 +178,14 @@ func (svc StaffHttpService) SearchStaff(shopID string, q string, page int, limit
 	return docList, pagination, nil
 }
 
-func (svc StaffHttpService) SearchStaffStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.StaffInfo, int, error) {
-	searchCols := []string{
+func (svc StaffHttpService) SearchStaffStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.StaffInfo, int, error) {
+	searchInFields := []string{
 		"code",
 	}
 
-	projectQuery := map[string]interface{}{}
+	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindLimit(shopID, map[string]interface{}{}, searchCols, q, skip, limit, sort, projectQuery)
+	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.StaffInfo{}, 0, err

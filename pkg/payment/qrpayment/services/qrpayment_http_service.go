@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/payment/qrpayment/models"
@@ -23,8 +24,8 @@ type IQrPaymentHttpService interface {
 	DeleteQrPayment(shopID string, guid string, authUsername string) error
 	DeleteQrPaymentByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoQrPayment(shopID string, guid string) (models.QrPaymentInfo, error)
-	SearchQrPayment(shopID string, q string, page int, limit int, sort map[string]int) ([]models.QrPaymentInfo, mongopagination.PaginationData, error)
-	SearchQrPaymentStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.QrPaymentInfo, int, error)
+	SearchQrPayment(shopID string, pageable micromodels.Pageable) ([]models.QrPaymentInfo, mongopagination.PaginationData, error)
+	SearchQrPaymentStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.QrPaymentInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.QrPayment) (common.BulkImport, error)
 
 	GetModuleName() string
@@ -162,13 +163,12 @@ func (svc QrPaymentHttpService) InfoQrPayment(shopID string, guid string) (model
 
 }
 
-func (svc QrPaymentHttpService) SearchQrPayment(shopID string, q string, page int, limit int, sort map[string]int) ([]models.QrPaymentInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
-		"guidfixed",
+func (svc QrPaymentHttpService) SearchQrPayment(shopID string, pageable micromodels.Pageable) ([]models.QrPaymentInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"paymentcode",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.QrPaymentInfo{}, pagination, err
@@ -177,13 +177,12 @@ func (svc QrPaymentHttpService) SearchQrPayment(shopID string, q string, page in
 	return docList, pagination, nil
 }
 
-func (svc QrPaymentHttpService) SearchQrPaymentStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.QrPaymentInfo, int, error) {
-	searchCols := []string{
-		"guidfixed",
+func (svc QrPaymentHttpService) SearchQrPaymentStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.QrPaymentInfo, int, error) {
+	searchInFields := []string{
 		"paymentcode",
 	}
 
-	projectQuery := map[string]interface{}{
+	selectFields := map[string]interface{}{
 		"guidfixed":    1,
 		"paymentcode":  1,
 		"countrycode":  1,
@@ -196,12 +195,12 @@ func (svc QrPaymentHttpService) SearchQrPaymentStep(shopID string, langCode stri
 	}
 
 	if langCode != "" {
-		projectQuery["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
+		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
 	} else {
-		projectQuery["names"] = 1
+		selectFields["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindLimit(shopID, map[string]interface{}{}, searchCols, q, skip, limit, sort, projectQuery)
+	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.QrPaymentInfo{}, 0, err

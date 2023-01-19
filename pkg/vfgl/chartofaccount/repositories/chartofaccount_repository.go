@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/models"
 
@@ -15,7 +16,7 @@ type IChartOfAccountRepository interface {
 	Update(shopID string, guid string, doc models.ChartOfAccountDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindOne(shopID string, filters interface{}) (models.ChartOfAccountDoc, error)
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.ChartOfAccountInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ChartOfAccountInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.ChartOfAccountDoc, error)
 }
 

@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/product/models"
 	"smlcloudplatform/pkg/product/product/repositories"
@@ -20,8 +21,8 @@ type IProductHttpService interface {
 	DeleteProduct(shopID string, guid string, authUsername string) error
 	DeleteProductByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoProduct(shopID string, guid string) (models.ProductInfo, error)
-	SearchProduct(shopID string, filters map[string]interface{}, q string, page int, limit int, sort map[string]int) ([]models.ProductInfo, mongopagination.PaginationData, error)
-	SearchProductStep(shopID string, langCode string, filters map[string]interface{}, q string, skip int, limit int, sort map[string]int) ([]models.ProductInfo, int, error)
+	SearchProduct(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductInfo, mongopagination.PaginationData, error)
+	SearchProductStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Product) (common.BulkImport, error)
 }
 
@@ -173,13 +174,13 @@ func (svc ProductHttpService) InfoProduct(shopID string, guid string) (models.Pr
 
 }
 
-func (svc ProductHttpService) SearchProduct(shopID string, filters map[string]interface{}, q string, page int, limit int, sort map[string]int) ([]models.ProductInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc ProductHttpService) SearchProduct(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"itemcode",
 		"names.name",
 	}
 
-	docList, pagination, err := svc.repo.FindPageFilterSort(shopID, filters, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ProductInfo{}, pagination, err
@@ -188,13 +189,13 @@ func (svc ProductHttpService) SearchProduct(shopID string, filters map[string]in
 	return docList, pagination, nil
 }
 
-func (svc ProductHttpService) SearchProductStep(shopID string, langCode string, filters map[string]interface{}, q string, skip int, limit int, sort map[string]int) ([]models.ProductInfo, int, error) {
-	searchCols := []string{
+func (svc ProductHttpService) SearchProductStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductInfo, int, error) {
+	searchInFields := []string{
 		"itemcode",
 		"names.name",
 	}
 
-	projectQuery := map[string]interface{}{
+	selectFields := map[string]interface{}{
 		"guidfixed":       1,
 		"itemcode":        1,
 		"categoryguid":    1,
@@ -213,12 +214,12 @@ func (svc ProductHttpService) SearchProductStep(shopID string, langCode string, 
 	}
 
 	if langCode != "" {
-		projectQuery["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
+		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
 	} else {
-		projectQuery["names"] = 1
+		selectFields["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindLimit(shopID, filters, searchCols, q, skip, limit, sort, projectQuery)
+	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.ProductInfo{}, 0, err

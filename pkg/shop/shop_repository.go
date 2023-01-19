@@ -2,6 +2,7 @@ package shop
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/shop/models"
 
 	"github.com/userplant/mongopagination"
@@ -13,7 +14,7 @@ type IShopRepository interface {
 	Create(shop models.ShopDoc) (string, error)
 	Update(guid string, shop models.ShopDoc) error
 	FindByGuid(guid string) (models.ShopDoc, error)
-	FindPage(q string, page int, limit int) ([]models.ShopInfo, mongopagination.PaginationData, error)
+	FindPage(pageable micromodels.Pageable) ([]models.ShopInfo, mongopagination.PaginationData, error)
 	Delete(guid string, username string) error
 }
 
@@ -58,16 +59,17 @@ func (repo ShopRepository) FindByGuid(guid string) (models.ShopDoc, error) {
 	return *findShop, err
 }
 
-func (repo ShopRepository) FindPage(q string, page int, limit int) ([]models.ShopInfo, mongopagination.PaginationData, error) {
+func (repo ShopRepository) FindPage(pageable micromodels.Pageable) ([]models.ShopInfo, mongopagination.PaginationData, error) {
+	filterQueries := bson.M{
+		"deletedat": bson.M{"$exists": false},
+		"name1": bson.M{"$regex": primitive.Regex{
+			Pattern: ".*" + pageable.Query + ".*",
+			Options: "",
+		}}}
 
 	shopList := []models.ShopInfo{}
 
-	pagination, err := repo.pst.FindPage(&models.ShopInfo{}, limit, page, bson.M{
-		"deletedat": bson.M{"$exists": false},
-		"name1": bson.M{"$regex": primitive.Regex{
-			Pattern: ".*" + q + ".*",
-			Options: "",
-		}}}, &shopList)
+	pagination, err := repo.pst.FindPage(&models.ShopInfo{}, filterQueries, pageable, &shopList)
 
 	if err != nil {
 		return []models.ShopInfo{}, mongopagination.PaginationData{}, err

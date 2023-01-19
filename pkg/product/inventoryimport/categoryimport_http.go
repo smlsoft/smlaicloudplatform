@@ -54,8 +54,8 @@ func (h *CategoryImportHttp) ListCategoryImport(ctx microservice.IContext) error
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	docList, pagination, err := h.svc.List(shopID, page, limit)
+	pageable := utils.GetPageable(ctx.QueryParam)
+	docList, pagination, err := h.svc.List(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

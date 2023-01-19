@@ -3,6 +3,7 @@ package employee
 import (
 	"errors"
 	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
@@ -20,11 +21,11 @@ type IEmployeeService interface {
 	Login(shopID string, loginReq models.EmployeeRequestLogin) (*models.EmployeeInfo, error)
 	Register(shopID string, authUsername string, emp models.EmployeeRequestRegister) (string, error)
 	Get(shopID string, username string) (models.EmployeeInfo, error)
-	List(shopID string, q string, page int, limit int) ([]models.EmployeeInfo, mongopagination.PaginationData, error)
+	List(shopID string, pageable micromodels.Pageable) ([]models.EmployeeInfo, mongopagination.PaginationData, error)
 	Update(shopID string, authUsername string, emp models.EmployeeRequestUpdate) error
 	UpdatePassword(shopID string, authUsername string, emp models.EmployeeRequestPassword) error
 
-	LastActivity(shopID string, action string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error)
+	LastActivity(shopID string, action string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error)
 	GetModuleName() string
 }
 
@@ -128,9 +129,9 @@ func (svc EmployeeService) Get(shopID string, username string) (models.EmployeeI
 	return doc.EmployeeInfo, nil
 }
 
-func (svc EmployeeService) List(shopID string, q string, page int, limit int) ([]models.EmployeeInfo, mongopagination.PaginationData, error) {
+func (svc EmployeeService) List(shopID string, pageable micromodels.Pageable) ([]models.EmployeeInfo, mongopagination.PaginationData, error) {
 
-	docList, pagination, err := svc.repo.FindEmployeeByShopIDPage(shopID, q, page, limit)
+	docList, pagination, err := svc.repo.FindPageEmployeeByShopID(shopID, pageable)
 
 	if err != nil {
 		return []models.EmployeeInfo{}, pagination, err

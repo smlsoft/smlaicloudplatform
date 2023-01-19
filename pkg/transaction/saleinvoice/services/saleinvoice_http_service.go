@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/transaction/saleinvoice/models"
 	"smlcloudplatform/pkg/transaction/saleinvoice/repositories"
@@ -17,8 +18,8 @@ type ISaleinvoiceService interface {
 	UpdateSaleinvoice(shopID string, guid string, username string, trans models.Saleinvoice) error
 	DeleteSaleinvoice(shopID string, guid string, username string) error
 	InfoSaleinvoice(shopID string, guid string) (models.SaleinvoiceInfo, error)
-	SearchSaleinvoice(shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, mongopagination.PaginationData, error)
-	SearchItemsSaleinvoice(guid string, shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, mongopagination.PaginationData, error)
+	SearchSaleinvoice(shopID string, pageable micromodels.Pageable) ([]models.SaleinvoiceInfo, mongopagination.PaginationData, error)
+	SearchItemsSaleinvoice(guid string, shopID string, pageable micromodels.Pageable) ([]models.SaleinvoiceInfo, mongopagination.PaginationData, error)
 }
 
 type SaleinvoiceService struct {
@@ -135,8 +136,8 @@ func (svc SaleinvoiceService) InfoSaleinvoice(shopID string, guid string) (model
 	return trans.SaleinvoiceInfo, nil
 }
 
-func (svc SaleinvoiceService) SearchSaleinvoice(shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, mongopagination.PaginationData, error) {
-	transList, pagination, err := svc.saleinvoiceRepository.FindPage(shopID, q, page, limit)
+func (svc SaleinvoiceService) SearchSaleinvoice(shopID string, pageable micromodels.Pageable) ([]models.SaleinvoiceInfo, mongopagination.PaginationData, error) {
+	transList, pagination, err := svc.saleinvoiceRepository.FindPage(shopID, pageable)
 
 	if err != nil {
 		return transList, pagination, err
@@ -145,8 +146,8 @@ func (svc SaleinvoiceService) SearchSaleinvoice(shopID string, q string, page in
 	return transList, pagination, nil
 }
 
-func (svc SaleinvoiceService) SearchItemsSaleinvoice(guid string, shopID string, q string, page int, limit int) ([]models.SaleinvoiceInfo, mongopagination.PaginationData, error) {
-	transList, pagination, err := svc.saleinvoiceRepository.FindItemsByGuidPage(guid, shopID, q, page, limit)
+func (svc SaleinvoiceService) SearchItemsSaleinvoice(guid string, shopID string, pageable micromodels.Pageable) ([]models.SaleinvoiceInfo, mongopagination.PaginationData, error) {
+	transList, pagination, err := svc.saleinvoiceRepository.FindItemsByGuidPage(guid, shopID, pageable)
 
 	if err != nil {
 		return transList, pagination, err

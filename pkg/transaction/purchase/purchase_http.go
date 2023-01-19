@@ -203,10 +203,9 @@ func (h PurchaseHttp) SearchPurchase(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.service.SearchPurchase(shopID, q, page, limit)
+	docList, pagination, err := h.service.SearchPurchase(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -231,10 +230,9 @@ func (h PurchaseHttp) SearchPurchaseItems(ctx microservice.IContext) error {
 
 	docID := ctx.Param("id")
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.service.SearchItemsPurchase(docID, shopID, q, page, limit)
+	docList, pagination, err := h.service.SearchItemsPurchase(docID, shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

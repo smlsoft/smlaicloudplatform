@@ -2,6 +2,7 @@ package inventoryimport
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/inventoryimport/models"
 
 	"github.com/userplant/mongopagination"
@@ -12,7 +13,7 @@ type IInventoryOptionMainImportRepository interface {
 	CreateInBatch(inventories []models.InventoryOptionMainImportDoc) error
 	DeleteInBatch(shopID string, guidList []string) error
 	DeleteInBatchCode(shopID string, codeList []string) error
-	FindPage(shopID string, page int, limit int) ([]models.InventoryOptionMainImportInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionMainImportInfo, mongopagination.PaginationData, error)
 }
 
 type InventoryOptionMainImportRepository struct {
@@ -65,12 +66,14 @@ func (repo InventoryOptionMainImportRepository) DeleteInBatchCode(shopID string,
 	return nil
 }
 
-func (repo InventoryOptionMainImportRepository) FindPage(shopID string, page int, limit int) ([]models.InventoryOptionMainImportInfo, mongopagination.PaginationData, error) {
+func (repo InventoryOptionMainImportRepository) FindPage(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionMainImportInfo, mongopagination.PaginationData, error) {
+
+	filterQueries := bson.M{
+		"shopid": shopID,
+	}
 
 	docList := []models.InventoryOptionMainImportInfo{}
-	pagination, err := repo.pst.FindPage(&models.InventoryOptionMainImportInfo{}, limit, page, bson.M{
-		"shopid": shopID,
-	}, &docList)
+	pagination, err := repo.pst.FindPage(&models.InventoryOptionMainImportInfo{}, filterQueries, pageable, &docList)
 
 	if err != nil {
 		return []models.InventoryOptionMainImportInfo{}, mongopagination.PaginationData{}, err

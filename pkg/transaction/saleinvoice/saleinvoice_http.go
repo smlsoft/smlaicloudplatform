@@ -206,10 +206,9 @@ func (h SaleinvoiceHttp) SearchSaleinvoice(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.service.SearchSaleinvoice(shopID, q, page, limit)
+	docList, pagination, err := h.service.SearchSaleinvoice(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -234,10 +233,9 @@ func (h SaleinvoiceHttp) SearchSaleinvoiceItems(ctx microservice.IContext) error
 
 	transID := ctx.Param("id")
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.service.SearchItemsSaleinvoice(transID, shopID, q, page, limit)
+	docList, pagination, err := h.service.SearchItemsSaleinvoice(transID, shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

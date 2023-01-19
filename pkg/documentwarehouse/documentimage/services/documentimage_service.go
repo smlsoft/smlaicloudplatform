@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"mime/multipart"
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/models"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
-	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"sort"
 	"strings"
@@ -27,12 +27,12 @@ type IDocumentImageService interface {
 	DeleteDocumentImage(shopID string, authUsername string, imageGUID string) error
 
 	InfoDocumentImage(shopID string, guid string) (models.DocumentImageInfo, error)
-	SearchDocumentImage(shopID string, matchFilters map[string]interface{}, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
+	SearchDocumentImage(shopID string, matchFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
 	UploadDocumentImage(shopID string, authUsername string, fh *multipart.FileHeader) (*models.DocumentImageInfo, error)
 
 	// SaveDocumentImageDocRefGroup(shopID string, authUsername string, docRef string, docImages []models.DocumentImageGroup) error
 	// GetDocumentImageDocRefGroup(shopID string, docRef string) (models.DocumentImageGroup, error)
-	// ListDocumentImageDocRefGroup(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.DocumentImageGroup, mongopagination.PaginationData, error)
+	// ListDocumentImageDocRefGroup(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentImageGroup, mongopagination.PaginationData, error)
 
 	CreateDocumentImageGroup(shopID string, authUsername string, docImageGroup models.DocumentImageGroup) (string, error)
 	GetDocumentImageDocRefGroup(shopID string, docImageGroupGUID string) (models.DocumentImageGroupInfo, error)
@@ -41,7 +41,7 @@ type IDocumentImageService interface {
 	UpdateImageReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImages []models.ImageReferenceBody) error
 	UpdateReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error
 	UnGroupDocumentImageGroup(shopID string, authUsername string, groupGUID string) error
-	ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable common.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
+	ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
 	DeleteReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error
 
 	UpdateDocumentImageRederenceGroup() error
@@ -422,8 +422,9 @@ func (svc DocumentImageService) InfoDocumentImage(shopID string, guid string) (m
 	return findDoc.DocumentImageInfo, nil
 }
 
-func (svc DocumentImageService) SearchDocumentImage(shopID string, matchFilters map[string]interface{}, q string, page int, limit int, sorts map[string]int) ([]models.DocumentImageInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.repoImage.FindPageFilterSort(shopID, matchFilters, []string{"guidfixed", "documentref", "module"}, q, page, limit, sorts)
+func (svc DocumentImageService) SearchDocumentImage(shopID string, matchFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentImageInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{"guidfixed", "documentref", "module"}
+	docList, pagination, err := svc.repoImage.FindPageFilter(shopID, matchFilters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.DocumentImageInfo{}, pagination, err
@@ -1019,8 +1020,9 @@ func (svc DocumentImageService) UnGroupDocumentImageGroup(shopID string, authUse
 	return nil
 }
 
-func (svc DocumentImageService) ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable common.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.repoImageGroup.FindPageImageGroup(shopID, "", filters, []string{"title"}, pageable.Q, pageable.Page, pageable.Limit, pageable.Sorts)
+func (svc DocumentImageService) ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{"title"}
+	docList, pagination, err := svc.repoImageGroup.FindPageImageGroup(shopID, filters, searchInFields, pageable)
 
 	return docList, pagination, err
 }

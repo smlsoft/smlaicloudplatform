@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"regexp"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	smspatternsRepo "smlcloudplatform/pkg/smsreceive/smspatterns/repositories"
 	smssetingsRepo "smlcloudplatform/pkg/smsreceive/smspaymentsettings/repositories"
 	"smlcloudplatform/pkg/smsreceive/smstransaction/models"
@@ -20,7 +21,7 @@ type ISmsTransactionHttpService interface {
 	UpdateSmsTransaction(guid string, shopID string, authUsername string, doc models.SmsTransaction) error
 	DeleteSmsTransaction(guid string, shopID string, authUsername string) error
 	InfoSmsTransaction(guid string, shopID string) (models.SmsTransactionInfo, error)
-	SearchSmsTransaction(shopID string, q string, page int, limit int, sort map[string]int) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error)
+	SearchSmsTransaction(shopID string, pageable micromodels.Pageable) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error)
 	CheckSMS(shopID string, storefrontGUID string, amountCheck float64, checkTime time.Time) (models.SmsTransactionCheck, error)
 	ConfirmSmsTransaction(shopID string, smsTransactionGUIDFixed string) error
 }
@@ -145,13 +146,13 @@ func (svc SmsTransactionHttpService) InfoSmsTransaction(guid string, shopID stri
 
 }
 
-func (svc SmsTransactionHttpService) SearchSmsTransaction(shopID string, q string, page int, limit int, sort map[string]int) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc SmsTransactionHttpService) SearchSmsTransaction(shopID string, pageable micromodels.Pageable) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"transid",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.SmsTransactionInfo{}, pagination, err

@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	smspatternsrepo "smlcloudplatform/pkg/smsreceive/smspatterns/repositories"
 	"smlcloudplatform/pkg/smsreceive/smspaymentsettings/models"
 	"smlcloudplatform/pkg/smsreceive/smspaymentsettings/repositories"
@@ -17,7 +18,7 @@ import (
 type ISmsPaymentSettingsHttpService interface {
 	SaveSmsPaymentSettings(shopID string, authUsername string, storefrontGUID string, doc models.SmsPaymentSettings) error
 	InfoSmsPaymentSettings(shopID string, storefrontGUID string) (models.SmsPaymentSettingsInfo, error)
-	SearchSmsPaymentSettings(shopID string, q string, page int, limit int, sorts map[string]int) ([]models.SmsPaymentSettingsInfo, mongopagination.PaginationData, error)
+	SearchSmsPaymentSettings(shopID string, pageable micromodels.Pageable) ([]models.SmsPaymentSettingsInfo, mongopagination.PaginationData, error)
 }
 
 type SmsPaymentSettingsHttpService struct {
@@ -134,9 +135,9 @@ func (svc SmsPaymentSettingsHttpService) InfoSmsPaymentSettings(shopID string, s
 
 }
 
-func (svc SmsPaymentSettingsHttpService) SearchSmsPaymentSettings(shopID string, q string, page int, limit int, sorts map[string]int) ([]models.SmsPaymentSettingsInfo, mongopagination.PaginationData, error) {
+func (svc SmsPaymentSettingsHttpService) SearchSmsPaymentSettings(shopID string, pageable micromodels.Pageable) ([]models.SmsPaymentSettingsInfo, mongopagination.PaginationData, error) {
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, []string{}, q, page, limit, sorts)
+	docList, pagination, err := svc.repo.FindPage(shopID, []string{}, pageable)
 
 	if err != nil {
 		return []models.SmsPaymentSettingsInfo{}, mongopagination.PaginationData{}, err

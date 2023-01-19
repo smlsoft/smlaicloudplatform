@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/unit/models"
@@ -25,8 +26,8 @@ type IUnitHttpService interface {
 	DeleteUnit(shopID string, guid string, authUsername string) error
 	DeleteUnitByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoUnit(shopID string, guid string) (models.UnitInfo, error)
-	SearchUnit(shopID string, q string, page int, limit int, sort map[string]int) ([]models.UnitInfo, mongopagination.PaginationData, error)
-	SearchUnitLimit(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.UnitInfo, int, error)
+	SearchUnit(shopID string, pageable micromodels.Pageable) ([]models.UnitInfo, mongopagination.PaginationData, error)
+	SearchUnitLimit(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.UnitInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Unit) (common.BulkImport, error)
 
 	GetModuleName() string
@@ -219,13 +220,13 @@ func (svc UnitHttpService) InfoUnit(shopID string, guid string) (models.UnitInfo
 
 }
 
-func (svc UnitHttpService) SearchUnit(shopID string, q string, page int, limit int, sort map[string]int) ([]models.UnitInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc UnitHttpService) SearchUnit(shopID string, pageable micromodels.Pageable) ([]models.UnitInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"unitcode",
 		"names.name",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.UnitInfo{}, pagination, err
@@ -234,24 +235,24 @@ func (svc UnitHttpService) SearchUnit(shopID string, q string, page int, limit i
 	return docList, pagination, nil
 }
 
-func (svc UnitHttpService) SearchUnitLimit(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.UnitInfo, int, error) {
-	searchCols := []string{
+func (svc UnitHttpService) SearchUnitLimit(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.UnitInfo, int, error) {
+	searchInFields := []string{
 		"unitcode",
 		"names.name",
 	}
 
-	projectQuery := map[string]interface{}{
+	selectFields := map[string]interface{}{
 		"guidfixed": 1,
 		"unitcode":  1,
 	}
 
 	if langCode != "" {
-		projectQuery["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
+		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
 	} else {
-		projectQuery["names"] = 1
+		selectFields["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindLimit(shopID, map[string]interface{}{}, searchCols, q, skip, limit, sort, projectQuery)
+	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.UnitInfo{}, 0, err
@@ -419,7 +420,7 @@ func (svc UnitHttpService) getDocIDKey(doc models.Unit) string {
 // 	return lastActivity, pagination, nil
 // }
 
-// func (svc UnitHttpService) LastActivityOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) (common.LastActivity, error) {
+// func (svc UnitHttpService) LastActivityStep(shopID string, lastUpdatedDate time.Time, skip int, limit int) (common.LastActivity, error) {
 // 	lastActivity := common.LastActivity{}
 // 	var wg sync.WaitGroup
 
@@ -428,7 +429,7 @@ func (svc UnitHttpService) getDocIDKey(doc models.Unit) string {
 // 	var err1 error
 
 // 	go func() {
-// 		deleteDocList, err1 = svc.repo.FindDeletedOffset(shopID, lastUpdatedDate, skip, limit)
+// 		deleteDocList, err1 = svc.repo.FindDeletedStep(shopID, lastUpdatedDate, skip, limit)
 // 		wg.Done()
 // 	}()
 
@@ -438,7 +439,7 @@ func (svc UnitHttpService) getDocIDKey(doc models.Unit) string {
 // 	var err2 error
 
 // 	go func() {
-// 		createAndUpdateDocList, err2 = svc.repo.FindCreatedOrUpdatedOffset(shopID, lastUpdatedDate, skip, limit)
+// 		createAndUpdateDocList, err2 = svc.repo.FindCreatedOrUpdatedStep(shopID, lastUpdatedDate, skip, limit)
 // 		wg.Done()
 // 	}()
 

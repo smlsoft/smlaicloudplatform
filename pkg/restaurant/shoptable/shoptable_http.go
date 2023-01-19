@@ -203,10 +203,9 @@ func (h ShopTableHttp) SearchShopTable(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchShopTable(shopID, q, page, limit)
+	docList, pagination, err := h.svc.SearchShopTable(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -252,9 +251,9 @@ func (h ShopTableHttp) FetchUpdate(ctx microservice.IContext) error {
 		return err
 	}
 
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.LastActivity(shopID, "all", lastUpdate, page, limit)
+	docList, pagination, err := h.svc.LastActivity(shopID, "all", lastUpdate, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

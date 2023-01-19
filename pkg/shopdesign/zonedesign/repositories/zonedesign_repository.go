@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/shopdesign/zonedesign/models"
 
@@ -16,7 +17,7 @@ type IZoneDesignRepository interface {
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	FindOne(shopID string, filters interface{}) (models.ZoneDesignDoc, error)
 	FindByGuid(shopID string, guid string) (models.ZoneDesignDoc, error)
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.ZoneDesignInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ZoneDesignInfo, mongopagination.PaginationData, error)
 }
 
 type ZoneDesignRepository struct {

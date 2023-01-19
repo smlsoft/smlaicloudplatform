@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/optionpattern/models"
 	"smlcloudplatform/pkg/product/optionpattern/repositories"
@@ -18,7 +19,7 @@ type IOptionPatternHttpService interface {
 	UpdateOptionPattern(shopID string, guid string, authUsername string, doc models.OptionPattern) error
 	DeleteOptionPattern(shopID string, guid string, authUsername string) error
 	InfoOptionPattern(shopID string, guid string) (models.OptionPatternInfo, error)
-	SearchOptionPattern(shopID string, q string, page int, limit int, sort map[string]int) ([]models.OptionPatternInfo, mongopagination.PaginationData, error)
+	SearchOptionPattern(shopID string, pageable micromodels.Pageable) ([]models.OptionPatternInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.OptionPattern) (common.BulkImport, error)
 }
 
@@ -130,13 +131,13 @@ func (svc OptionPatternHttpService) InfoOptionPattern(shopID string, guid string
 
 }
 
-func (svc OptionPatternHttpService) SearchOptionPattern(shopID string, q string, page int, limit int, sort map[string]int) ([]models.OptionPatternInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc OptionPatternHttpService) SearchOptionPattern(shopID string, pageable micromodels.Pageable) ([]models.OptionPatternInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"patterncode",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.OptionPatternInfo{}, pagination, err

@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/vfgl/journal/models"
 
@@ -17,7 +18,7 @@ type IJournalRepository interface {
 	CreateInBatch(docList []models.JournalDoc) error
 	Update(shopID string, guid string, category models.JournalDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.JournalInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.JournalInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.JournalDoc, error)
 	FindOne(shopID string, filters interface{}) (models.JournalDoc, error)
 	IsAccountCodeUsed(shopID string, accountCode string) (bool, error)

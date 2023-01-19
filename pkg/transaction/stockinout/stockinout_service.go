@@ -2,6 +2,7 @@ package stockinout
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/transaction/stockinout/models"
 	"smlcloudplatform/pkg/utils"
 	"time"
@@ -15,8 +16,8 @@ type IStockInOutService interface {
 	UpdateStockInOut(shopID string, guid string, username string, doc models.StockInOut) error
 	DeleteStockInOut(shopID string, guid string, username string) error
 	InfoStockInOut(shopID string, guid string) (models.StockInOutInfo, error)
-	SearchStockInOut(shopID string, q string, page int, limit int) ([]models.StockInOutInfo, mongopagination.PaginationData, error)
-	SearchItemsStockInOut(shopID string, guid string, q string, page int, limit int) ([]models.StockInOutInfo, mongopagination.PaginationData, error)
+	SearchStockInOut(shopID string, pageable micromodels.Pageable) ([]models.StockInOutInfo, mongopagination.PaginationData, error)
+	SearchItemsStockInOut(shopID string, guid string, pageable micromodels.Pageable) ([]models.StockInOutInfo, mongopagination.PaginationData, error)
 }
 
 type StockInOutService struct {
@@ -116,8 +117,8 @@ func (svc StockInOutService) InfoStockInOut(shopID string, guid string) (models.
 	return doc.StockInOutInfo, nil
 }
 
-func (svc StockInOutService) SearchStockInOut(shopID string, q string, page int, limit int) ([]models.StockInOutInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
+func (svc StockInOutService) SearchStockInOut(shopID string, pageable micromodels.Pageable) ([]models.StockInOutInfo, mongopagination.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindPage(shopID, pageable)
 
 	if err != nil {
 		return docList, pagination, err
@@ -126,8 +127,8 @@ func (svc StockInOutService) SearchStockInOut(shopID string, q string, page int,
 	return docList, pagination, nil
 }
 
-func (svc StockInOutService) SearchItemsStockInOut(shopID string, guid string, q string, page int, limit int) ([]models.StockInOutInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindItemsByGuidPage(shopID, guid, q, page, limit)
+func (svc StockInOutService) SearchItemsStockInOut(shopID string, guid string, pageable micromodels.Pageable) ([]models.StockInOutInfo, mongopagination.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindItemsByGuidPage(shopID, guid, pageable)
 
 	if err != nil {
 		return docList, pagination, err

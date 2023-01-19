@@ -253,10 +253,9 @@ func (h EmployeeHttp) SearchEmployee(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.empService.List(shopID, q, page, limit)
+	docList, pagination, err := h.empService.List(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

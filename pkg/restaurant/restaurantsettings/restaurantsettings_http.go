@@ -244,7 +244,7 @@ func (h RestaurantSettingsHttp) InfoRestaurantSettingsByCode(ctx microservice.IC
 	code := ctx.Param("code")
 
 	h.ms.Logger.Debugf("Get RestaurantSettings %v", code)
-	pageable := utils.GetSearchPageable(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
 	docList, pagination, err := h.svc.ListRestaurantSettingsByCode(shopID, code, pageable)
 
@@ -277,10 +277,9 @@ func (h RestaurantSettingsHttp) SearchRestaurantSettings(ctx microservice.IConte
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchRestaurantSettings(shopID, q, page, limit)
+	docList, pagination, err := h.svc.SearchRestaurantSettings(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -326,9 +325,9 @@ func (h RestaurantSettingsHttp) FetchUpdate(ctx microservice.IContext) error {
 		return err
 	}
 
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.LastActivity(shopID, "all", lastUpdate, page, limit)
+	docList, pagination, err := h.svc.LastActivity(shopID, "all", lastUpdate, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

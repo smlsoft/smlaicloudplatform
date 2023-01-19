@@ -2,6 +2,7 @@ package purchase
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/transaction/purchase/models"
 
 	"github.com/userplant/mongopagination"
@@ -14,8 +15,8 @@ type IPurchaseRepository interface {
 	Update(shopID string, guid string, doc models.PurchaseDoc) error
 	Delete(shopID string, guid string, username string) error
 	FindByGuid(shopID string, guid string) (models.PurchaseDoc, error)
-	FindPage(shopID string, q string, page int, limit int) ([]models.PurchaseInfo, mongopagination.PaginationData, error)
-	FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.PurchaseInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, pageable micromodels.Pageable) ([]models.PurchaseInfo, mongopagination.PaginationData, error)
+	FindItemsByGuidPage(guid string, shopID string, pageable micromodels.Pageable) ([]models.PurchaseInfo, mongopagination.PaginationData, error)
 }
 
 type PurchaseRepository struct {
@@ -66,19 +67,20 @@ func (repo PurchaseRepository) FindByGuid(shopID string, guid string) (models.Pu
 	return *doc, nil
 }
 
-func (repo PurchaseRepository) FindPage(shopID string, q string, page int, limit int) ([]models.PurchaseInfo, mongopagination.PaginationData, error) {
-
-	docList := []models.PurchaseInfo{}
-	pagination, err := repo.pst.FindPage(&models.PurchaseInfo{}, limit, page, bson.M{
+func (repo PurchaseRepository) FindPage(shopID string, pageable micromodels.Pageable) ([]models.PurchaseInfo, mongopagination.PaginationData, error) {
+	filterQueries := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$exists": false},
 		"$or": []interface{}{
 			bson.M{"guidfixed": bson.M{"$regex": primitive.Regex{
-				Pattern: ".*" + q + ".*",
+				Pattern: ".*" + pageable.Query + ".*",
 				Options: "",
 			}}},
 		},
-	}, &docList)
+	}
+
+	docList := []models.PurchaseInfo{}
+	pagination, err := repo.pst.FindPage(&models.PurchaseInfo{}, filterQueries, pageable, &docList)
 
 	if err != nil {
 		return []models.PurchaseInfo{}, mongopagination.PaginationData{}, err
@@ -87,20 +89,21 @@ func (repo PurchaseRepository) FindPage(shopID string, q string, page int, limit
 	return docList, pagination, nil
 }
 
-func (repo PurchaseRepository) FindItemsByGuidPage(guid string, shopID string, q string, page int, limit int) ([]models.PurchaseInfo, mongopagination.PaginationData, error) {
-
-	docList := []models.PurchaseInfo{}
-	pagination, err := repo.pst.FindPage(&models.PurchaseInfo{}, limit, page, bson.M{
+func (repo PurchaseRepository) FindItemsByGuidPage(guid string, shopID string, pageable micromodels.Pageable) ([]models.PurchaseInfo, mongopagination.PaginationData, error) {
+	filterQueries := bson.M{
 		"shopid":    shopID,
 		"guidfixed": guid,
 		"deletedat": bson.M{"$exists": false},
 		"$or": []interface{}{
 			bson.M{"items.itemSku": bson.M{"$regex": primitive.Regex{
-				Pattern: ".*" + q + ".*",
+				Pattern: ".*" + pageable.Query + ".*",
 				Options: "",
 			}}},
 		},
-	}, &docList)
+	}
+
+	docList := []models.PurchaseInfo{}
+	pagination, err := repo.pst.FindPage(&models.PurchaseInfo{}, filterQueries, pageable, &docList)
 
 	if err != nil {
 		return []models.PurchaseInfo{}, mongopagination.PaginationData{}, err

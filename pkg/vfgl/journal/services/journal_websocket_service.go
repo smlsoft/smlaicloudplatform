@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	documentimageModel "smlcloudplatform/pkg/documentwarehouse/documentimage/models"
 	documentimageRepo "smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
 	"smlcloudplatform/pkg/vfgl/journal/models"
@@ -400,7 +401,13 @@ func (svc JournalWebsocketService) DocRefNextSelect(shopID string, username stri
 		}
 	}
 
-	tempNextDocImage, _, err := svc.docImageRepo.FindPageFilterSort(shopID, filters, []string{}, "", 1, 30, map[string]int{})
+	pageable := micromodels.Pageable{
+		Query: "",
+		Page:  1,
+		Limit: 30,
+	}
+
+	tempNextDocImage, _, err := svc.docImageRepo.FindPageFilter(shopID, filters, []string{}, pageable)
 
 	if err != nil {
 		return documentimageModel.DocumentImageInfo{}, err

@@ -3,6 +3,7 @@ package repositories_test
 import (
 	"os"
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/mock"
 	inventoryModel "smlcloudplatform/pkg/product/inventory/models"
 	"smlcloudplatform/pkg/transaction/saleinvoice/models"
@@ -240,8 +241,14 @@ func TestFindPageSaleinvoice(t *testing.T) {
 	shopID := "mx01"
 	// give := "fx01"
 
+	pageable := micromodels.Pageable{
+		Query: "",
+		Page:  1,
+		Limit: 20,
+	}
+
 	want := 1
-	trans, _, err := repo.FindPage(shopID, "", 1, 20)
+	trans, _, err := repo.FindPage(shopID, pageable)
 
 	if err != nil {
 		t.Error(err)

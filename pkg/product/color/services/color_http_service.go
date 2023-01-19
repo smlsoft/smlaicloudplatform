@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/color/models"
 	"smlcloudplatform/pkg/product/color/repositories"
@@ -19,8 +20,8 @@ type IColorHttpService interface {
 	UpdateColor(shopID string, guid string, authUsername string, doc models.Color) error
 	DeleteColor(shopID string, guid string, authUsername string) error
 	InfoColor(shopID string, guid string) (models.ColorInfo, error)
-	SearchColor(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ColorInfo, mongopagination.PaginationData, error)
-	SearchColorLimit(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ColorInfo, int, error)
+	SearchColor(shopID string, pageable micromodels.Pageable) ([]models.ColorInfo, mongopagination.PaginationData, error)
+	SearchColorStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ColorInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Color) (common.BulkImport, error)
 }
 
@@ -128,13 +129,12 @@ func (svc ColorHttpService) InfoColor(shopID string, guid string) (models.ColorI
 
 }
 
-func (svc ColorHttpService) SearchColor(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ColorInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
-		"guidfixed",
+func (svc ColorHttpService) SearchColor(shopID string, pageable micromodels.Pageable) ([]models.ColorInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"code",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ColorInfo{}, pagination, err
@@ -143,13 +143,12 @@ func (svc ColorHttpService) SearchColor(shopID string, q string, page int, limit
 	return docList, pagination, nil
 }
 
-func (svc ColorHttpService) SearchColorLimit(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.ColorInfo, int, error) {
-	searchCols := []string{
-		"guidfixed",
+func (svc ColorHttpService) SearchColorStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ColorInfo, int, error) {
+	searchInFields := []string{
 		"code",
 	}
 
-	projectQuery := map[string]interface{}{
+	selectFields := map[string]interface{}{
 		"guidfixed":      1,
 		"code":           1,
 		"colorselect":    1,
@@ -160,12 +159,12 @@ func (svc ColorHttpService) SearchColorLimit(shopID string, langCode string, q s
 	}
 
 	if langCode != "" {
-		projectQuery["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
+		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
 	} else {
-		projectQuery["names"] = 1
+		selectFields["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindLimit(shopID, map[string]interface{}{}, searchCols, q, skip, limit, sort, projectQuery)
+	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.ColorInfo{}, 0, err

@@ -156,10 +156,9 @@ func (h StockAdjustmentHttp) SearchStockAdjustment(ctx microservice.IContext) er
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.service.SearchStockAdjustment(shopID, q, page, limit)
+	docList, pagination, err := h.service.SearchStockAdjustment(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -184,10 +183,9 @@ func (h StockAdjustmentHttp) SearchStockAdjustmentItems(ctx microservice.IContex
 
 	docID := ctx.Param("id")
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.service.SearchItemsStockAdjustment(docID, shopID, q, page, limit)
+	docList, pagination, err := h.service.SearchItemsStockAdjustment(docID, shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

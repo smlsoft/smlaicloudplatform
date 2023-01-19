@@ -4,16 +4,18 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"time"
 
+	micromodels "smlcloudplatform/internal/microservice/models"
+
 	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type IActivityRepository[TCU any, TDEL any] interface {
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]TDEL, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]TCU, mongopagination.PaginationData, error)
-	FindDeletedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]TDEL, error)
-	FindCreatedOrUpdatedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]TCU, error)
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]TDEL, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]TCU, mongopagination.PaginationData, error)
+	FindDeletedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]TDEL, error)
+	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]TCU, error)
 }
 type ActivityRepository[TCU any, TDEL any] struct {
 	pst microservice.IPersisterMongo
@@ -25,13 +27,15 @@ func NewActivityRepository[TCU any, TDEL any](pst microservice.IPersisterMongo) 
 	}
 }
 
-func (repo ActivityRepository[TCU, TDEL]) FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]TDEL, mongopagination.PaginationData, error) {
+func (repo ActivityRepository[TCU, TDEL]) FindDeletedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]TDEL, mongopagination.PaginationData, error) {
 
-	docList := []TDEL{}
-	pagination, err := repo.pst.FindPage(new(TDEL), limit, page, bson.M{
+	filterQueries := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$gte": lastUpdatedDate},
-	}, &docList)
+	}
+
+	docList := []TDEL{}
+	pagination, err := repo.pst.FindPage(new(TDEL), filterQueries, pageable, &docList)
 
 	if err != nil {
 		return []TDEL{}, mongopagination.PaginationData{}, err
@@ -40,17 +44,19 @@ func (repo ActivityRepository[TCU, TDEL]) FindDeletedPage(shopID string, lastUpd
 	return docList, pagination, nil
 }
 
-func (repo ActivityRepository[TCU, TDEL]) FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]TCU, mongopagination.PaginationData, error) {
+func (repo ActivityRepository[TCU, TDEL]) FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]TCU, mongopagination.PaginationData, error) {
 
-	docList := []TCU{}
-	pagination, err := repo.pst.FindPage(new(TCU), limit, page, bson.M{
+	filterQueries := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$not": bson.M{"$gte": lastUpdatedDate}},
 		"$or": []interface{}{
 			bson.M{"createdat": bson.M{"$gte": lastUpdatedDate}},
 			bson.M{"updatedat": bson.M{"$gte": lastUpdatedDate}},
 		},
-	}, &docList)
+	}
+
+	docList := []TCU{}
+	pagination, err := repo.pst.FindPage(new(TCU), filterQueries, pageable, &docList)
 
 	if err != nil {
 		return []TCU{}, mongopagination.PaginationData{}, err
@@ -59,7 +65,7 @@ func (repo ActivityRepository[TCU, TDEL]) FindCreatedOrUpdatedPage(shopID string
 	return docList, pagination, nil
 }
 
-func (repo ActivityRepository[TCU, TDEL]) FindDeletedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]TDEL, error) {
+func (repo ActivityRepository[TCU, TDEL]) FindDeletedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]TDEL, error) {
 
 	docList := []TDEL{}
 
@@ -69,8 +75,8 @@ func (repo ActivityRepository[TCU, TDEL]) FindDeletedOffset(shopID string, lastU
 	}
 
 	tempOptions := &options.FindOptions{}
-	tempOptions.SetSkip(int64(skip))
-	tempOptions.SetLimit(int64(limit))
+	tempOptions.SetSkip(int64(pageableStep.Skip))
+	tempOptions.SetLimit(int64(pageableStep.Limit))
 
 	err := repo.pst.Find(new(TDEL), filterQuery, &docList, tempOptions)
 
@@ -81,7 +87,7 @@ func (repo ActivityRepository[TCU, TDEL]) FindDeletedOffset(shopID string, lastU
 	return docList, nil
 }
 
-func (repo ActivityRepository[TCU, TDEL]) FindCreatedOrUpdatedOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) ([]TCU, error) {
+func (repo ActivityRepository[TCU, TDEL]) FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]TCU, error) {
 
 	docList := []TCU{}
 	filterQuery := bson.M{
@@ -94,8 +100,8 @@ func (repo ActivityRepository[TCU, TDEL]) FindCreatedOrUpdatedOffset(shopID stri
 	}
 
 	tempOptions := &options.FindOptions{}
-	tempOptions.SetSkip(int64(skip))
-	tempOptions.SetLimit(int64(limit))
+	tempOptions.SetSkip(int64(pageableStep.Skip))
+	tempOptions.SetLimit(int64(pageableStep.Limit))
 
 	err := repo.pst.Find(new(TCU), filterQuery, &docList, tempOptions)
 

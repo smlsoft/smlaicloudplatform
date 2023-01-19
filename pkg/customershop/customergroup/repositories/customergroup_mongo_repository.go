@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/customershop/customergroup/models"
 	"smlcloudplatform/pkg/repositories"
 
@@ -15,13 +16,12 @@ type ICustomerGroupRepository interface {
 	Update(shopID string, guid string, doc models.CustomerGroupDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	Delete(shopID string, username string, filters map[string]interface{}) error
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.CustomerGroupInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.CustomerGroupDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.CustomerGroupItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.CustomerGroupDoc, error)
-	FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.CustomerGroupInfo, mongopagination.PaginationData, error)
-	FindLimit(shopID string, filters map[string]interface{}, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.CustomerGroupInfo, int, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.CustomerGroupInfo, mongopagination.PaginationData, error)
+	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.CustomerGroupInfo, int, error)
 }
 
 type CustomerGroupRepository struct {

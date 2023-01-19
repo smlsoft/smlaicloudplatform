@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/inventory/models"
@@ -29,11 +30,11 @@ type IInventoryService interface {
 	InfoInventoryItemCode(shopID string, itemCode string) (models.InventoryInfo, error)
 	InfoMongoInventory(id string) (models.InventoryInfo, error)
 	InfoInventoryBarcode(shopID string, barcode string) (models.InventoryInfo, error)
-	SearchInventory(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.InventoryInfo, mongopagination.PaginationData, error)
+	SearchInventory(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryInfo, mongopagination.PaginationData, error)
 	UpdateProductCategory(shopID string, authUsername string, catId string, guid []string) error
 
-	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error)
-	LastActivityOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) (common.LastActivity, error)
+	LastActivity(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error)
+	LastActivityStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) (common.LastActivity, error)
 	GetModuleName() string
 }
 
@@ -506,8 +507,8 @@ func (svc InventoryService) InfoInventoryItemCode(shopID string, itemCode string
 	return findDoc.InventoryInfo, nil
 }
 
-func (svc InventoryService) SearchInventory(shopID string, filters map[string]interface{}, q string, page int, limit int) ([]models.InventoryInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.invRepo.FindPage(shopID, filters, q, page, limit)
+func (svc InventoryService) SearchInventory(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryInfo, mongopagination.PaginationData, error) {
+	docList, pagination, err := svc.invRepo.FindPage(shopID, filters, pageable)
 
 	if err != nil {
 		return []models.InventoryInfo{}, pagination, err
@@ -554,7 +555,7 @@ func (svc InventoryService) UpdateProductCategory(shopID string, authUsername st
 	return nil
 }
 
-func (svc InventoryService) LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error) {
+func (svc InventoryService) LastActivity(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error) {
 	var wg sync.WaitGroup
 
 	wg.Add(1)
@@ -563,7 +564,7 @@ func (svc InventoryService) LastActivity(shopID string, lastUpdatedDate time.Tim
 	var err1 error
 
 	go func() {
-		deleteDocList, pagination1, err1 = svc.invRepo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
+		deleteDocList, pagination1, err1 = svc.invRepo.FindDeletedPage(shopID, lastUpdatedDate, pageable)
 		wg.Done()
 	}()
 
@@ -573,7 +574,7 @@ func (svc InventoryService) LastActivity(shopID string, lastUpdatedDate time.Tim
 	var err2 error
 
 	go func() {
-		createAndUpdateDocList, pagination2, err2 = svc.invRepo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
+		createAndUpdateDocList, pagination2, err2 = svc.invRepo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, pageable)
 		wg.Done()
 	}()
 
@@ -601,7 +602,7 @@ func (svc InventoryService) LastActivity(shopID string, lastUpdatedDate time.Tim
 	return lastActivity, pagination, nil
 }
 
-func (svc InventoryService) LastActivityOffset(shopID string, lastUpdatedDate time.Time, skip int, limit int) (common.LastActivity, error) {
+func (svc InventoryService) LastActivityStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) (common.LastActivity, error) {
 	var wg sync.WaitGroup
 
 	wg.Add(1)
@@ -609,7 +610,7 @@ func (svc InventoryService) LastActivityOffset(shopID string, lastUpdatedDate ti
 	var err1 error
 
 	go func() {
-		deleteDocList, err1 = svc.invRepo.FindDeletedOffset(shopID, lastUpdatedDate, skip, limit)
+		deleteDocList, err1 = svc.invRepo.FindDeletedStep(shopID, lastUpdatedDate, pageableStep)
 		wg.Done()
 	}()
 
@@ -619,7 +620,7 @@ func (svc InventoryService) LastActivityOffset(shopID string, lastUpdatedDate ti
 	var err2 error
 
 	go func() {
-		createAndUpdateDocList, err2 = svc.invRepo.FindCreatedOrUpdatedOffset(shopID, lastUpdatedDate, skip, limit)
+		createAndUpdateDocList, err2 = svc.invRepo.FindCreatedOrUpdatedStep(shopID, lastUpdatedDate, pageableStep)
 		wg.Done()
 	}()
 

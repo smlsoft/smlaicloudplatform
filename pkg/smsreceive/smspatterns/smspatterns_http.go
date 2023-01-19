@@ -139,9 +139,8 @@ func (h SmsPatternsHttp) InfoSmsPatterns(ctx microservice.IContext) error {
 
 func (h SmsPatternsHttp) SearchSmsPatterns(ctx microservice.IContext) error {
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchSmsPatterns(q, page, limit)
+	pageable := utils.GetPageable(ctx.QueryParam)
+	docList, pagination, err := h.svc.SearchSmsPatterns(pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

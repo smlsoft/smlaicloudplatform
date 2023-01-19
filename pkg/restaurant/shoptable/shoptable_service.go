@@ -3,6 +3,7 @@ package shoptable
 import (
 	"errors"
 	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/shoptable/models"
@@ -20,10 +21,10 @@ type IShopTableService interface {
 	UpdateShopTable(shopID string, guid string, authUsername string, doc models.ShopTable) error
 	DeleteShopTable(shopID string, guid string, authUsername string) error
 	InfoShopTable(shopID string, guid string) (models.ShopTableInfo, error)
-	SearchShopTable(shopID string, q string, page int, limit int) ([]models.ShopTableInfo, mongopagination.PaginationData, error)
+	SearchShopTable(shopID string, pageable micromodels.Pageable) ([]models.ShopTableInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ShopTable) (common.BulkImport, error)
 
-	LastActivity(shopID string, action string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error)
+	LastActivity(shopID string, action string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error)
 	GetModuleName() string
 }
 
@@ -123,17 +124,17 @@ func (svc ShopTableService) InfoShopTable(shopID string, guid string) (models.Sh
 
 }
 
-func (svc ShopTableService) SearchShopTable(shopID string, q string, page int, limit int) ([]models.ShopTableInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc ShopTableService) SearchShopTable(shopID string, pageable micromodels.Pageable) ([]models.ShopTableInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"code",
 	}
 
 	for i := range [5]bool{} {
-		searchCols = append(searchCols, fmt.Sprintf("name%d", (i+1)))
+		searchInFields = append(searchInFields, fmt.Sprintf("name%d", (i+1)))
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ShopTableInfo{}, pagination, err

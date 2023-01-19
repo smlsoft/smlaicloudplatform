@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/filefolder/models"
 	"smlcloudplatform/pkg/filefolder/repositories"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
@@ -23,8 +24,8 @@ type IFileFolderHttpService interface {
 	DeleteFileFolder(shopID string, guid string, authUsername string) error
 	DeleteFileFolderByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoFileFolder(shopID string, guid string) (models.FileFolderInfo, error)
-	SearchFileFolder(shopID string, module string, q string, page int, limit int, sort map[string]int) ([]models.FileFolderInfo, mongopagination.PaginationData, error)
-	SearchFileFolderStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.FileFolderInfo, int, error)
+	SearchFileFolder(shopID string, module string, pageable micromodels.Pageable) ([]models.FileFolderInfo, mongopagination.PaginationData, error)
+	SearchFileFolderStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.FileFolderInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.FileFolder) (common.BulkImport, error)
 
 	GetModuleName() string
@@ -162,13 +163,12 @@ func (svc FileFolderHttpService) InfoFileFolder(shopID string, guid string) (mod
 
 }
 
-func (svc FileFolderHttpService) SearchFileFolder(shopID string, module string, q string, page int, limit int, sort map[string]int) ([]models.FileFolderInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc FileFolderHttpService) SearchFileFolder(shopID string, module string, pageable micromodels.Pageable) ([]models.FileFolderInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"name",
 	}
 
-	// docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
-	docList, pagination, err := svc.repo.FindPageFileFolder(shopID, module, map[string]interface{}{}, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPageFileFolder(shopID, module, map[string]interface{}{}, searchInFields, pageable)
 
 	if err != nil {
 		return []models.FileFolderInfo{}, pagination, err
@@ -177,14 +177,14 @@ func (svc FileFolderHttpService) SearchFileFolder(shopID string, module string, 
 	return docList, pagination, nil
 }
 
-func (svc FileFolderHttpService) SearchFileFolderStep(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.FileFolderInfo, int, error) {
-	searchCols := []string{
+func (svc FileFolderHttpService) SearchFileFolderStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.FileFolderInfo, int, error) {
+	searchInFields := []string{
 		"name",
 	}
 
-	projectQuery := map[string]interface{}{}
+	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindLimit(shopID, map[string]interface{}{}, searchCols, q, skip, limit, sort, projectQuery)
+	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.FileFolderInfo{}, 0, err
