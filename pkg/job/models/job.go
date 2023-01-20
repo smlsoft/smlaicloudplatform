@@ -2,6 +2,7 @@ package models
 
 import (
 	"smlcloudplatform/pkg/models"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -20,10 +21,18 @@ type Job struct {
 }
 
 type JobInfo struct {
-	models.DocIdentity `bson:"inline"`
-	Job                `bson:"inline"`
-	ToTal              int `json:"total" bson:"total"`
-	ToTalReject        int `json:"totalreject" bson:"totalreject"`
+	models.DocIdentity       `bson:"inline"`
+	models.PartitionIdentity `bson:"inline"`
+	Name                     string    `json:"name" bson:"name"`
+	Module                   string    `json:"module" bson:"module"`
+	Status                   int8      `json:"status" bson:"status"`
+	ParentGUIDFixed          string    `json:"parentguidfixed" bson:"parentguidfixed"`
+	Path                     string    `json:"path" bson:"path"`
+	IsFavorit                bool      `json:"isfavorit" bson:"isfavorit"`
+	Tags                     *[]string `json:"tags" bson:"tags"`
+	ToTal                    int       `json:"total" bson:"total"`
+	ToTalReject              int       `json:"totalreject" bson:"totalreject"`
+	CreatedAt                time.Time `json:"createdat" bson:"createdat"`
 }
 
 func (JobInfo) CollectionName() string {
