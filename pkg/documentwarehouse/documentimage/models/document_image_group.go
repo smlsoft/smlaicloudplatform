@@ -18,8 +18,8 @@ type DocumentImageGroup struct {
 	UploadedBy      string            `json:"uploadedby" bson:"uploadedby"`
 	UploadedAt      time.Time         `json:"uploadedat" bson:"uploadedat"`
 	IsReject        bool              `json:"isreject" bson:"isreject"`
-	FileFolderGUID  string            `json:"filefolderguid" bson:"filefolderguid"`
-	PathFileFolder  string            `json:"pathfilefolder" bson:"pathfilefolder"`
+	JobGUID         string            `json:"jobguid" bson:"jobguid"`
+	PathJob         string            `json:"pathjob" bson:"pathjob"`
 }
 
 type DocumentImageGroupBody struct {

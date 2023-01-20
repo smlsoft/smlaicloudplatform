@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
-	"smlcloudplatform/pkg/filefolder/models"
-	"smlcloudplatform/pkg/filefolder/repositories"
+	"smlcloudplatform/pkg/job/models"
+	"smlcloudplatform/pkg/job/repositories"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/services"
@@ -18,39 +18,39 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type IFileFolderHttpService interface {
-	CreateFileFolder(shopID string, authUsername string, doc models.FileFolder) (string, error)
-	UpdateFileFolder(shopID string, guid string, authUsername string, doc models.FileFolder) error
-	DeleteFileFolder(shopID string, guid string, authUsername string) error
-	DeleteFileFolderByGUIDs(shopID string, authUsername string, GUIDs []string) error
-	InfoFileFolder(shopID string, guid string) (models.FileFolderInfo, error)
-	SearchFileFolder(shopID string, module string, pageable micromodels.Pageable) ([]models.FileFolderInfo, mongopagination.PaginationData, error)
-	SearchFileFolderStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.FileFolderInfo, int, error)
-	SaveInBatch(shopID string, authUsername string, dataList []models.FileFolder) (common.BulkImport, error)
+type IJobHttpService interface {
+	CreateJob(shopID string, authUsername string, doc models.Job) (string, error)
+	UpdateJob(shopID string, guid string, authUsername string, doc models.Job) error
+	DeleteJob(shopID string, guid string, authUsername string) error
+	DeleteJobByGUIDs(shopID string, authUsername string, GUIDs []string) error
+	InfoJob(shopID string, guid string) (models.JobInfo, error)
+	SearchJob(shopID string, module string, pageable micromodels.Pageable) ([]models.JobInfo, mongopagination.PaginationData, error)
+	SearchJobStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.JobInfo, int, error)
+	SaveInBatch(shopID string, authUsername string, dataList []models.Job) (common.BulkImport, error)
 
 	GetModuleName() string
 }
 
-type FileFolderHttpService struct {
-	repo repositories.IFileFolderRepository
+type JobHttpService struct {
+	repo repositories.IJobRepository
 
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
-	services.ActivityService[models.FileFolderActivity, models.FileFolderDeleteActivity]
+	services.ActivityService[models.JobActivity, models.JobDeleteActivity]
 }
 
-func NewFileFolderHttpService(repo repositories.IFileFolderRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *FileFolderHttpService {
+func NewJobHttpService(repo repositories.IJobRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *JobHttpService {
 
-	insSvc := &FileFolderHttpService{
+	insSvc := &JobHttpService{
 		repo:          repo,
 		syncCacheRepo: syncCacheRepo,
 	}
 
-	insSvc.ActivityService = services.NewActivityService[models.FileFolderActivity, models.FileFolderDeleteActivity](repo)
+	insSvc.ActivityService = services.NewActivityService[models.JobActivity, models.JobDeleteActivity](repo)
 
 	return insSvc
 }
 
-func (svc FileFolderHttpService) CreateFileFolder(shopID string, authUsername string, doc models.FileFolder) (string, error) {
+func (svc JobHttpService) CreateJob(shopID string, authUsername string, doc models.Job) (string, error) {
 
 	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "name", doc.Name)
 
@@ -64,10 +64,10 @@ func (svc FileFolderHttpService) CreateFileFolder(shopID string, authUsername st
 
 	newGuidFixed := utils.NewGUID()
 
-	docData := models.FileFolderDoc{}
+	docData := models.JobDoc{}
 	docData.ShopID = shopID
 	docData.GuidFixed = newGuidFixed
-	docData.FileFolder = doc
+	docData.Job = doc
 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
@@ -83,7 +83,7 @@ func (svc FileFolderHttpService) CreateFileFolder(shopID string, authUsername st
 	return newGuidFixed, nil
 }
 
-func (svc FileFolderHttpService) UpdateFileFolder(shopID string, guid string, authUsername string, doc models.FileFolder) error {
+func (svc JobHttpService) UpdateJob(shopID string, guid string, authUsername string, doc models.Job) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -95,7 +95,7 @@ func (svc FileFolderHttpService) UpdateFileFolder(shopID string, guid string, au
 		return errors.New("document not found")
 	}
 
-	findDoc.FileFolder = doc
+	findDoc.Job = doc
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
@@ -111,7 +111,7 @@ func (svc FileFolderHttpService) UpdateFileFolder(shopID string, guid string, au
 	return nil
 }
 
-func (svc FileFolderHttpService) DeleteFileFolder(shopID string, guid string, authUsername string) error {
+func (svc JobHttpService) DeleteJob(shopID string, guid string, authUsername string) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -133,7 +133,7 @@ func (svc FileFolderHttpService) DeleteFileFolder(shopID string, guid string, au
 	return nil
 }
 
-func (svc FileFolderHttpService) DeleteFileFolderByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+func (svc JobHttpService) DeleteJobByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
@@ -147,37 +147,37 @@ func (svc FileFolderHttpService) DeleteFileFolderByGUIDs(shopID string, authUser
 	return nil
 }
 
-func (svc FileFolderHttpService) InfoFileFolder(shopID string, guid string) (models.FileFolderInfo, error) {
+func (svc JobHttpService) InfoJob(shopID string, guid string) (models.JobInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
-		return models.FileFolderInfo{}, err
+		return models.JobInfo{}, err
 	}
 
 	if findDoc.ID == primitive.NilObjectID {
-		return models.FileFolderInfo{}, errors.New("document not found")
+		return models.JobInfo{}, errors.New("document not found")
 	}
 
-	return findDoc.FileFolderInfo, nil
+	return findDoc.JobInfo, nil
 
 }
 
-func (svc FileFolderHttpService) SearchFileFolder(shopID string, module string, pageable micromodels.Pageable) ([]models.FileFolderInfo, mongopagination.PaginationData, error) {
+func (svc JobHttpService) SearchJob(shopID string, module string, pageable micromodels.Pageable) ([]models.JobInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"name",
 	}
 
-	docList, pagination, err := svc.repo.FindPageFileFolder(shopID, module, map[string]interface{}{}, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPageJob(shopID, module, map[string]interface{}{}, searchInFields, pageable)
 
 	if err != nil {
-		return []models.FileFolderInfo{}, pagination, err
+		return []models.JobInfo{}, pagination, err
 	}
 
 	return docList, pagination, nil
 }
 
-func (svc FileFolderHttpService) SearchFileFolderStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.FileFolderInfo, int, error) {
+func (svc JobHttpService) SearchJobStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.JobInfo, int, error) {
 	searchInFields := []string{
 		"name",
 	}
@@ -187,15 +187,15 @@ func (svc FileFolderHttpService) SearchFileFolderStep(shopID string, langCode st
 	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
-		return []models.FileFolderInfo{}, 0, err
+		return []models.JobInfo{}, 0, err
 	}
 
 	return docList, total, nil
 }
 
-func (svc FileFolderHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.FileFolder) (common.BulkImport, error) {
+func (svc JobHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.Job) (common.BulkImport, error) {
 
-	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.FileFolder](dataList, svc.getDocIDKey)
+	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.Job](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
 	for _, doc := range payloadList {
@@ -213,20 +213,20 @@ func (svc FileFolderHttpService) SaveInBatch(shopID string, authUsername string,
 		foundItemGuidList = append(foundItemGuidList, doc.Name)
 	}
 
-	duplicateDataList, createDataList := importdata.PreparePayloadData[models.FileFolder, models.FileFolderDoc](
+	duplicateDataList, createDataList := importdata.PreparePayloadData[models.Job, models.JobDoc](
 		shopID,
 		authUsername,
 		foundItemGuidList,
 		payloadList,
 		svc.getDocIDKey,
-		func(shopID string, authUsername string, doc models.FileFolder) models.FileFolderDoc {
+		func(shopID string, authUsername string, doc models.Job) models.JobDoc {
 			newGuid := utils.NewGUID()
 
-			dataDoc := models.FileFolderDoc{}
+			dataDoc := models.JobDoc{}
 
 			dataDoc.GuidFixed = newGuid
 			dataDoc.ShopID = shopID
-			dataDoc.FileFolder = doc
+			dataDoc.Job = doc
 
 			currentTime := time.Now()
 			dataDoc.CreatedBy = authUsername
@@ -235,20 +235,20 @@ func (svc FileFolderHttpService) SaveInBatch(shopID string, authUsername string,
 		},
 	)
 
-	updateSuccessDataList, updateFailDataList := importdata.UpdateOnDuplicate[models.FileFolder, models.FileFolderDoc](
+	updateSuccessDataList, updateFailDataList := importdata.UpdateOnDuplicate[models.Job, models.JobDoc](
 		shopID,
 		authUsername,
 		duplicateDataList,
 		svc.getDocIDKey,
-		func(shopID string, guid string) (models.FileFolderDoc, error) {
+		func(shopID string, guid string) (models.JobDoc, error) {
 			return svc.repo.FindByDocIndentityGuid(shopID, "name", guid)
 		},
-		func(doc models.FileFolderDoc) bool {
+		func(doc models.JobDoc) bool {
 			return doc.Name != ""
 		},
-		func(shopID string, authUsername string, data models.FileFolder, doc models.FileFolderDoc) error {
+		func(shopID string, authUsername string, data models.Job, doc models.JobDoc) error {
 
-			doc.FileFolder = data
+			doc.Job = data
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
@@ -301,11 +301,11 @@ func (svc FileFolderHttpService) SaveInBatch(shopID string, authUsername string,
 	}, nil
 }
 
-func (svc FileFolderHttpService) getDocIDKey(doc models.FileFolder) string {
+func (svc JobHttpService) getDocIDKey(doc models.Job) string {
 	return doc.Name
 }
 
-func (svc FileFolderHttpService) saveMasterSync(shopID string) {
+func (svc JobHttpService) saveMasterSync(shopID string) {
 	if svc.syncCacheRepo != nil {
 		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
 
@@ -315,6 +315,6 @@ func (svc FileFolderHttpService) saveMasterSync(shopID string) {
 	}
 }
 
-func (svc FileFolderHttpService) GetModuleName() string {
+func (svc JobHttpService) GetModuleName() string {
 	return "fileFolder"
 }

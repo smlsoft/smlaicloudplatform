@@ -159,7 +159,7 @@ func (svc RestaurantSettingsService) ListRestaurantSettingsByCode(shopID string,
 
 func (svc RestaurantSettingsService) SearchRestaurantSettings(shopID string, pageable micromodels.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
-		"body",
+		// "body",
 	}
 
 	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)

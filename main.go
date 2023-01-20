@@ -10,8 +10,8 @@ import (
 	"smlcloudplatform/pkg/customershop/customer"
 	"smlcloudplatform/pkg/customershop/customergroup"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
-	"smlcloudplatform/pkg/filefolder"
 	"smlcloudplatform/pkg/images"
+	"smlcloudplatform/pkg/job"
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
 	"smlcloudplatform/pkg/payment/bankmaster"
@@ -195,7 +195,7 @@ func main() {
 			bookbank.NewBookBankHttp(ms, cfg),
 			qrpayment.NewQrPaymentHttp(ms, cfg),
 
-			filefolder.NewFileFolderHttp(ms, cfg),
+			job.NewJobHttp(ms, cfg),
 		}
 
 		startHttpServices(httpServices...)

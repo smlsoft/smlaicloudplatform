@@ -211,7 +211,7 @@ func (pst *PersisterMongo) FindPage(model interface{}, filter interface{}, pagea
 	}
 
 	var limit64 int64 = int64(pageable.Limit)
-	var page64 int64 = int64(pageable.Limit)
+	var page64 int64 = int64(pageable.Page)
 
 	pagingQuery := mongopagination.New(db.Collection(collectionName)).Context(pst.ctx).Limit(limit64).Page(page64).Filter(filter)
 

@@ -6,9 +6,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const filefolderCollectionName = "fileFolder"
+const jobCollectionName = "fileFolder"
 
-type FileFolder struct {
+type Job struct {
 	models.PartitionIdentity `bson:"inline"`
 	Name                     string    `json:"name" bson:"name"`
 	Module                   string    `json:"module" bson:"module"`
@@ -20,52 +20,52 @@ type FileFolder struct {
 	ToTal                    int       `json:"total" bson:"total"`
 }
 
-type FileFolderInfo struct {
+type JobInfo struct {
 	models.DocIdentity `bson:"inline"`
-	FileFolder         `bson:"inline"`
+	Job                `bson:"inline"`
 }
 
-func (FileFolderInfo) CollectionName() string {
-	return filefolderCollectionName
+func (JobInfo) CollectionName() string {
+	return jobCollectionName
 }
 
-type FileFolderData struct {
+type JobData struct {
 	models.ShopIdentity `bson:"inline"`
-	FileFolderInfo      `bson:"inline"`
+	JobInfo             `bson:"inline"`
 }
 
-type FileFolderDoc struct {
+type JobDoc struct {
 	ID                 primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	FileFolderData     `bson:"inline"`
+	JobData            `bson:"inline"`
 	models.ActivityDoc `bson:"inline"`
 }
 
-func (FileFolderDoc) CollectionName() string {
-	return filefolderCollectionName
+func (JobDoc) CollectionName() string {
+	return jobCollectionName
 }
 
-type FileFolderItemGuid struct {
+type JobItemGuid struct {
 	Name string `json:"name" bson:"name"`
 }
 
-func (FileFolderItemGuid) CollectionName() string {
-	return filefolderCollectionName
+func (JobItemGuid) CollectionName() string {
+	return jobCollectionName
 }
 
-type FileFolderActivity struct {
-	FileFolderData      `bson:"inline"`
+type JobActivity struct {
+	JobData             `bson:"inline"`
 	models.ActivityTime `bson:"inline"`
 }
 
-func (FileFolderActivity) CollectionName() string {
-	return filefolderCollectionName
+func (JobActivity) CollectionName() string {
+	return jobCollectionName
 }
 
-type FileFolderDeleteActivity struct {
+type JobDeleteActivity struct {
 	models.Identity     `bson:"inline"`
 	models.ActivityTime `bson:"inline"`
 }
 
-func (FileFolderDeleteActivity) CollectionName() string {
-	return filefolderCollectionName
+func (JobDeleteActivity) CollectionName() string {
+	return jobCollectionName
 }

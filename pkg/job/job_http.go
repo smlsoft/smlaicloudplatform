@@ -1,69 +1,69 @@
-package filefolder
+package job
 
 import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/filefolder/models"
-	"smlcloudplatform/pkg/filefolder/repositories"
-	"smlcloudplatform/pkg/filefolder/services"
+	"smlcloudplatform/pkg/job/models"
+	"smlcloudplatform/pkg/job/repositories"
+	"smlcloudplatform/pkg/job/services"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 )
 
-type IFileFolderHttp interface{}
+type IJobHttp interface{}
 
-type FileFolderHttp struct {
+type JobHttp struct {
 	ms  *microservice.Microservice
 	cfg microservice.IConfig
-	svc services.IFileFolderHttpService
+	svc services.IJobHttpService
 }
 
-func NewFileFolderHttp(ms *microservice.Microservice, cfg microservice.IConfig) FileFolderHttp {
+func NewJobHttp(ms *microservice.Microservice, cfg microservice.IConfig) JobHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
-	repo := repositories.NewFileFolderRepository(pst)
+	repo := repositories.NewJobRepository(pst)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewFileFolderHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewJobHttpService(repo, masterSyncCacheRepo)
 
-	return FileFolderHttp{
+	return JobHttp{
 		ms:  ms,
 		cfg: cfg,
 		svc: svc,
 	}
 }
 
-func (h FileFolderHttp) RouteSetup() {
+func (h JobHttp) RouteSetup() {
 
-	h.ms.POST("/file-folder/bulk", h.SaveBulk)
+	h.ms.POST("/job/bulk", h.SaveBulk)
 
-	h.ms.GET("/file-folder", h.SearchFileFolderPage)
-	h.ms.GET("/file-folder/list", h.SearchFileFolderLimit)
-	h.ms.POST("/file-folder", h.CreateFileFolder)
-	h.ms.GET("/file-folder/:id", h.InfoFileFolder)
-	h.ms.PUT("/file-folder/:id", h.UpdateFileFolder)
-	h.ms.DELETE("/file-folder/:id", h.DeleteFileFolder)
-	h.ms.DELETE("/file-folder", h.DeleteFileFolderByGUIDs)
+	h.ms.GET("/job", h.SearchJobPage)
+	h.ms.GET("/job/list", h.SearchJobLimit)
+	h.ms.POST("/job", h.CreateJob)
+	h.ms.GET("/job/:id", h.InfoJob)
+	h.ms.PUT("/job/:id", h.UpdateJob)
+	h.ms.DELETE("/job/:id", h.DeleteJob)
+	h.ms.DELETE("/job", h.DeleteJobByGUIDs)
 }
 
-// Create FileFolder godoc
-// @Description Create FileFolder
-// @Tags		FileFolder
-// @Param		FileFolder  body      models.FileFolder  true  "FileFolder"
+// Create Job godoc
+// @Description Create Job
+// @Tags		Job
+// @Param		Job  body      models.Job  true  "Job"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /file-folder [post]
-func (h FileFolderHttp) CreateFileFolder(ctx microservice.IContext) error {
+// @Router /job [post]
+func (h JobHttp) CreateJob(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &models.FileFolder{}
+	docReq := &models.Job{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -76,7 +76,7 @@ func (h FileFolderHttp) CreateFileFolder(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.svc.CreateFileFolder(shopID, authUsername, *docReq)
+	idx, err := h.svc.CreateJob(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -90,17 +90,17 @@ func (h FileFolderHttp) CreateFileFolder(ctx microservice.IContext) error {
 	return nil
 }
 
-// Update FileFolder godoc
-// @Description Update FileFolder
-// @Tags		FileFolder
-// @Param		id  path      string  true  "FileFolder ID"
-// @Param		FileFolder  body      models.FileFolder  true  "FileFolder"
+// Update Job godoc
+// @Description Update Job
+// @Tags		Job
+// @Param		id  path      string  true  "Job ID"
+// @Param		Job  body      models.Job  true  "Job"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /file-folder/{id} [put]
-func (h FileFolderHttp) UpdateFileFolder(ctx microservice.IContext) error {
+// @Router /job/{id} [put]
+func (h JobHttp) UpdateJob(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -108,7 +108,7 @@ func (h FileFolderHttp) UpdateFileFolder(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &models.FileFolder{}
+	docReq := &models.Job{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -121,7 +121,7 @@ func (h FileFolderHttp) UpdateFileFolder(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svc.UpdateFileFolder(shopID, id, authUsername, *docReq)
+	err = h.svc.UpdateJob(shopID, id, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -136,23 +136,23 @@ func (h FileFolderHttp) UpdateFileFolder(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete FileFolder godoc
-// @Description Delete FileFolder
-// @Tags		FileFolder
-// @Param		id  path      string  true  "FileFolder ID"
+// Delete Job godoc
+// @Description Delete Job
+// @Tags		Job
+// @Param		id  path      string  true  "Job ID"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /file-folder/{id} [delete]
-func (h FileFolderHttp) DeleteFileFolder(ctx microservice.IContext) error {
+// @Router /job/{id} [delete]
+func (h JobHttp) DeleteJob(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
 
 	id := ctx.Param("id")
 
-	err := h.svc.DeleteFileFolder(shopID, id, authUsername)
+	err := h.svc.DeleteJob(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -167,16 +167,16 @@ func (h FileFolderHttp) DeleteFileFolder(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete FileFolder godoc
-// @Description Delete FileFolder
-// @Tags		FileFolder
-// @Param		FileFolder  body      []string  true  "FileFolder GUIDs"
+// Delete Job godoc
+// @Description Delete Job
+// @Tags		Job
+// @Param		Job  body      []string  true  "Job GUIDs"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /file-folder [delete]
-func (h FileFolderHttp) DeleteFileFolderByGUIDs(ctx microservice.IContext) error {
+// @Router /job [delete]
+func (h JobHttp) DeleteJobByGUIDs(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
@@ -191,7 +191,7 @@ func (h FileFolderHttp) DeleteFileFolderByGUIDs(ctx microservice.IContext) error
 		return err
 	}
 
-	err = h.svc.DeleteFileFolderByGUIDs(shopID, authUsername, docReq)
+	err = h.svc.DeleteJobByGUIDs(shopID, authUsername, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -205,23 +205,23 @@ func (h FileFolderHttp) DeleteFileFolderByGUIDs(ctx microservice.IContext) error
 	return nil
 }
 
-// Get FileFolder godoc
+// Get Job godoc
 // @Description get struct array by ID
-// @Tags		FileFolder
-// @Param		id  path      string  true  "FileFolder ID"
+// @Tags		Job
+// @Param		id  path      string  true  "Job ID"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /file-folder/{id} [get]
-func (h FileFolderHttp) InfoFileFolder(ctx microservice.IContext) error {
+// @Router /job/{id} [get]
+func (h JobHttp) InfoJob(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	h.ms.Logger.Debugf("Get FileFolder %v", id)
-	doc, err := h.svc.InfoFileFolder(shopID, id)
+	h.ms.Logger.Debugf("Get Job %v", id)
+	doc, err := h.svc.InfoJob(shopID, id)
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
@@ -236,9 +236,9 @@ func (h FileFolderHttp) InfoFileFolder(ctx microservice.IContext) error {
 	return nil
 }
 
-// List FileFolder godoc
+// List Job godoc
 // @Description get struct array by ID
-// @Tags		FileFolder
+// @Tags		Job
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
@@ -247,8 +247,8 @@ func (h FileFolderHttp) InfoFileFolder(ctx microservice.IContext) error {
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /file-folder [get]
-func (h FileFolderHttp) SearchFileFolderPage(ctx microservice.IContext) error {
+// @Router /job [get]
+func (h JobHttp) SearchJobPage(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -256,7 +256,7 @@ func (h FileFolderHttp) SearchFileFolderPage(ctx microservice.IContext) error {
 
 	module := ctx.QueryParam("module")
 
-	docList, pagination, err := h.svc.SearchFileFolder(shopID, module, pageable)
+	docList, pagination, err := h.svc.SearchJob(shopID, module, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -271,9 +271,9 @@ func (h FileFolderHttp) SearchFileFolderPage(ctx microservice.IContext) error {
 	return nil
 }
 
-// List FileFolder godoc
+// List Job godoc
 // @Description search limit offset
-// @Tags		FileFolder
+// @Tags		Job
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
@@ -282,8 +282,8 @@ func (h FileFolderHttp) SearchFileFolderPage(ctx microservice.IContext) error {
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /file-folder/list [get]
-func (h FileFolderHttp) SearchFileFolderLimit(ctx microservice.IContext) error {
+// @Router /job/list [get]
+func (h JobHttp) SearchJobLimit(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -291,7 +291,7 @@ func (h FileFolderHttp) SearchFileFolderLimit(ctx microservice.IContext) error {
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchFileFolderStep(shopID, lang, pageableStep)
+	docList, total, err := h.svc.SearchJobStep(shopID, lang, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -306,16 +306,16 @@ func (h FileFolderHttp) SearchFileFolderLimit(ctx microservice.IContext) error {
 	return nil
 }
 
-// Create FileFolder Bulk godoc
-// @Description Create FileFolder
-// @Tags		FileFolder
-// @Param		FileFolder  body      []models.FileFolder  true  "FileFolder"
+// Create Job Bulk godoc
+// @Description Create Job
+// @Tags		Job
+// @Param		Job  body      []models.Job  true  "Job"
 // @Accept 		json
 // @Success		201	{object}	common.BulkReponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /file-folder/bulk [post]
-func (h FileFolderHttp) SaveBulk(ctx microservice.IContext) error {
+// @Router /job/bulk [post]
+func (h JobHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -323,7 +323,7 @@ func (h FileFolderHttp) SaveBulk(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	dataReq := []models.FileFolder{}
+	dataReq := []models.Job{}
 	err := json.Unmarshal([]byte(input), &dataReq)
 
 	if err != nil {

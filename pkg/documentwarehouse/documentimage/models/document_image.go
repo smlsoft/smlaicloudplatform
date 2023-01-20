@@ -40,10 +40,10 @@ type Comment struct {
 }
 
 type DocumentImageRequest struct {
-	DocumentImage  `bson:"inline"`
-	Tags           *[]string `json:"tags,omitempty" bson:"tags,omitempty"`
-	FileFolderGUID string    `json:"filefolderguid" bson:"filefolderguid"`
-	PathFileFolder string    `json:"pathfilefolder" bson:"pathfilefolder"`
+	DocumentImage `bson:"inline"`
+	Tags          *[]string `json:"tags,omitempty" bson:"tags,omitempty"`
+	JobGUID       string    `json:"jobguid" bson:"jobguid"`
+	PathJob       string    `json:"pathjob" bson:"pathjob"`
 }
 
 type DocumentImageInfo struct {

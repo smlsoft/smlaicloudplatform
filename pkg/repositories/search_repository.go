@@ -93,9 +93,7 @@ func (repo SearchRepository[T]) FindStep(shopID string, filters map[string]inter
 		tempSorts[pageSort.Key] = pageSort.Value
 	}
 
-	if len(tempSorts) > 0 {
-		tempSorts["guidfixed"] = 1
-	}
+	tempSorts["createdat"] = 1
 
 	tempOptions.SetSort(tempSorts)
 
@@ -128,16 +126,13 @@ func (repo SearchRepository[T]) FindPage(shopID string, searchInFields []string,
 	filterQuery := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$exists": false},
-		"$or":       searchFilterList,
 	}
 
 	if len(searchFilterList) > 0 {
 		filterQuery["$or"] = searchFilterList
 	}
 
-	if len(pageable.Sorts) > 0 {
-		pageable.Sorts = append(pageable.Sorts, models.KeyInt{Key: "createdat", Value: 1})
-	}
+	pageable.Sorts = append(pageable.Sorts, models.KeyInt{Key: "createdat", Value: 1})
 
 	docList := []T{}
 	pagination, err := repo.pst.FindPage(new(T), filterQuery, pageable, &docList)
@@ -179,9 +174,7 @@ func (repo SearchRepository[T]) FindPageFilter(shopID string, filters map[string
 		queryFilters["$and"] = matchFilterList
 	}
 
-	if len(pageable.Sorts) > 0 {
-		pageable.Sorts = append(pageable.Sorts, models.KeyInt{Key: "guidfixed", Value: 1})
-	}
+	pageable.Sorts = append(pageable.Sorts, models.KeyInt{Key: "createdat", Value: 1})
 
 	docList := []T{}
 	pagination, err := repo.pst.FindPage(new(T), queryFilters, pageable, &docList)
