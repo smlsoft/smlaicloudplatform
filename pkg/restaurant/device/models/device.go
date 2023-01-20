@@ -11,7 +11,7 @@ const deviceCollectionName = "restarantDevices"
 type Device struct {
 	models.PartitionIdentity `bson:"inline"`
 	Code                     string `json:"code" bson:"code" validate:"required" `
-	Type                     int16  `json:"type" bson:"type" validate:"required" `
+	Type                     int16  `json:"type" bson:"type" `
 	Name1                    string `json:"name1" bson:"name1" `
 	Name2                    string `json:"name2,omitempty" bson:"name2,omitempty"`
 	Name3                    string `json:"name3,omitempty" bson:"name3,omitempty"`
