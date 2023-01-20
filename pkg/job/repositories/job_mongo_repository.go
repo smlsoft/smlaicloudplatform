@@ -91,9 +91,7 @@ func (repo *JobRepository) FindPageJob(shopID string, module string, filters map
 		queryFilters["$and"] = matchFilterList
 	}
 
-	if len(pageable.Sorts) > 0 {
-		pageable.Sorts = append(pageable.Sorts, micromodels.KeyInt{Key: "guidfixed", Value: 1})
-	}
+	pageable.Sorts = append(pageable.Sorts, micromodels.KeyInt{Key: "guidfixed", Value: 1})
 
 	matchQuery := bson.M{
 		"$match": queryFilters,
