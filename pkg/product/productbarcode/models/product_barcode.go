@@ -25,7 +25,7 @@ type ProductBarcode struct {
 	UseImageOrColor bool             `json:"useimageorcolor" bson:"useimageorcolor"`
 	ColorSelect     string           `json:"colorselect" bson:"colorselect"`
 	ColorSelectHex  string           `json:"colorselecthex" bson:"colorselecthex"`
-	CategoryNames   []string         `json:"categorynames" bson:"categorynames"`
+	CategoryNames   *[]string        `json:"categorynames" bson:"categorynames"`
 }
 
 type ProductImage struct {
