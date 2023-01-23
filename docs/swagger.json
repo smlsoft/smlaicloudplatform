@@ -16363,6 +16363,12 @@
         "models.Job": {
             "type": "object",
             "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
                 "isfavorit": {
                     "type": "boolean"
                 },
@@ -16388,6 +16394,9 @@
                     }
                 },
                 "total": {
+                    "type": "integer"
+                },
+                "totalreject": {
                     "type": "integer"
                 }
             }

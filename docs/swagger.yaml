@@ -1571,6 +1571,10 @@ definitions:
     type: object
   models.Job:
     properties:
+      createdat:
+        type: string
+      description:
+        type: string
       isfavorit:
         type: boolean
       module:
@@ -1588,6 +1592,8 @@ definitions:
           type: string
         type: array
       total:
+        type: integer
+      totalreject:
         type: integer
     type: object
   models.Journal:
