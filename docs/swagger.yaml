@@ -2523,6 +2523,10 @@ definitions:
         type: array
       categoryguid:
         type: string
+      categorynames:
+        items:
+          type: string
+        type: array
       images:
         items:
           $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductImage'
@@ -2572,6 +2576,10 @@ definitions:
         type: string
       categoryguid:
         type: string
+      categorynames:
+        items:
+          type: string
+        type: array
       colorselect:
         type: string
       colorselecthex:
@@ -3154,6 +3162,14 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
+    type: object
+  models.SMLTransaction:
+    properties:
+      docno:
+        type: string
+      dynamic_data:
+        additionalProperties: true
+        type: object
     type: object
   models.Saleinvoice:
     properties:
@@ -4230,7 +4246,6 @@ definitions:
         type: integer
     required:
     - code
-    - type
     type: object
   smlcloudplatform_pkg_storefront_models.Device:
     properties:
@@ -12112,6 +12127,229 @@ paths:
       - AccessToken: []
       tags:
       - ShopUser
+  /sml-transaction:
+    delete:
+      consumes:
+      - application/json
+      description: Delete SMLTransaction
+      parameters:
+      - description: SMLTransaction GUIDs
+        in: body
+        name: SMLTransaction
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SMLTransaction
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SMLTransaction
+    post:
+      consumes:
+      - application/json
+      description: Create SMLTransaction
+      parameters:
+      - description: SMLTransaction
+        in: body
+        name: SMLTransaction
+        required: true
+        schema:
+          $ref: '#/definitions/models.SMLTransaction'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SMLTransaction
+  /sml-transaction/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete SMLTransaction
+      parameters:
+      - description: SMLTransaction ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SMLTransaction
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: SMLTransaction ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SMLTransaction
+    put:
+      consumes:
+      - application/json
+      description: Update SMLTransaction
+      parameters:
+      - description: SMLTransaction ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: SMLTransaction
+        in: body
+        name: SMLTransaction
+        required: true
+        schema:
+          $ref: '#/definitions/models.SMLTransaction'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SMLTransaction
+  /sml-transaction/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create SMLTransaction
+      parameters:
+      - description: SMLTransaction
+        in: body
+        name: SMLTransaction
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.SMLTransaction'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SMLTransaction
+  /sml-transaction/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SMLTransaction
   /smspaymentsettings:
     get:
       consumes:
