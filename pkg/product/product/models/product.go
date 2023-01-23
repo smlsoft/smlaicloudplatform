@@ -16,7 +16,7 @@ type Product struct {
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	MultiUnit                bool            `json:"multiunit" bson:"multiunit"`
 	UseSerialNumber          bool            `json:"useserialnumber" bson:"useserialnumber"`
-	Units                    *[]ProductUnit  `json:"units" bson:"units"`
+	Units                    *[]ProductUnit  `json:"units,omitempty" bson:"units,omitempty"`
 
 	UnitCost      string          `json:"unitcost" bson:"unitcost"`
 	UnitStandard  string          `json:"unitstandard" bson:"unitstandard"`
@@ -26,6 +26,7 @@ type Product struct {
 	IsSumPoint    bool            `json:"issumpoint" bson:"issumpoint"`
 	Images        *[]ProductImage `json:"images" bson:"images"`
 	Prices        *[]ProductPrice `json:"prices" bson:"prices"`
+	CategoryNames []string        `json:"categorynames,omitempty" bson:"categorynames,omitempty"`
 }
 
 type ProductPrice struct {
