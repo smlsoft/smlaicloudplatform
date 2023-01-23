@@ -18,14 +18,15 @@ type Job struct {
 	Path                     string    `json:"path" bson:"path"`
 	IsFavorit                bool      `json:"isfavorit" bson:"isfavorit"`
 	Tags                     *[]string `json:"tags" bson:"tags"`
+	Description              string    `json:"description" bson:"description"`
+	ToTal                    int       `json:"total" bson:"total"`
+	ToTalReject              int       `json:"totalreject" bson:"totalreject"`
+	CreatedAt                time.Time `json:"createdat" bson:"createdat"`
 }
 
 type JobInfo struct {
 	models.DocIdentity `bson:"inline"`
 	Job                `bson:"inline"`
-	ToTal              int       `json:"total" bson:"total"`
-	ToTalReject        int       `json:"totalreject" bson:"totalreject"`
-	CreatedAt          time.Time `json:"createdat" bson:"createdat"`
 }
 
 func (JobInfo) CollectionName() string {
