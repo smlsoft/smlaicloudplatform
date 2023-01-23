@@ -16369,6 +16369,12 @@ const docTemplate = `{
         "models.Job": {
             "type": "object",
             "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
                 "isfavorit": {
                     "type": "boolean"
                 },
@@ -16394,6 +16400,9 @@ const docTemplate = `{
                     }
                 },
                 "total": {
+                    "type": "integer"
+                },
+                "totalreject": {
                     "type": "integer"
                 }
             }
