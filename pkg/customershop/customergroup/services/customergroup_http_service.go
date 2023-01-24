@@ -156,7 +156,6 @@ func (svc CustomerGroupHttpService) SearchCustomerGroupStep(shopID string, langC
 
 	selectFields := map[string]interface{}{
 		"guidfixed":    1,
-		"guid":         1,
 		"customercode": 1,
 	}
 
