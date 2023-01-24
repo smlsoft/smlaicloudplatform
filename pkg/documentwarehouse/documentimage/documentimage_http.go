@@ -73,7 +73,7 @@ func (h DocumentImageHttp) RouteSetup() {
 	// h.ms.PUT("/documentimage/status/:id", h.UpdateDocumentImageStatus)
 	h.ms.PUT("/documentimage/:guid", h.UpdateDocumentImage)
 	h.ms.PUT("/documentimage/:guid/reject", h.UpdateDocumentImageReject)
-	h.ms.DELETE("/documentimage/:guid", h.DeleteDocumentImage)
+	// h.ms.DELETE("/documentimage/:guid", h.DeleteDocumentImage)
 	// h.ms.PUT("/documentimage/documentref/status/:docref", h.UpdateDocumentImageStatusByDocumentRef)
 
 	h.ms.GET("/documentimagegroup", h.ListDocumentImageGroup)
@@ -84,6 +84,7 @@ func (h DocumentImageHttp) RouteSetup() {
 	h.ms.PUT("/documentimagegroup/:guid/reference", h.UpdateReferenceByDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid/ungroup", h.UngroupDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid/images", h.UpdateDocumentImageGroup)
+	h.ms.DELETE("/documentimagegroup/:guid", h.DeleteDocumentImageGroup)
 
 	h.ms.GET("/documentimagegroup/docref/:docref", h.GetDocumentImageGroupByDocRefInfo)
 }
@@ -460,37 +461,6 @@ func (h DocumentImageHttp) UpdateDocumentImageStatusByDocumentRef(ctx microservi
 	return nil
 }
 */
-
-// Delete Document Image godoc
-// @Summary		Delete Document Image
-// @Description Delete Document Image
-// @Tags		DocumentImage
-// @Param		guid  path      string  true  "document image guid"
-// @Accept 		json
-// @Success		200	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /documentimage/{guid} [delete]
-func (h DocumentImageHttp) DeleteDocumentImage(ctx microservice.IContext) error {
-
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-	authUsername := userInfo.Username
-
-	id := ctx.Param("guid")
-
-	err := h.service.DeleteDocumentImage(shopID, authUsername, id)
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success: true,
-		ID:      id,
-	})
-	return nil
-}
 
 // Upload Document Image
 // @Description Upload Document Image
@@ -882,6 +852,37 @@ func (h DocumentImageHttp) GetDocumentImageGroupByDocRefInfo(ctx microservice.IC
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		Data:    doc,
+	})
+	return nil
+}
+
+// Delete Document Image Group godoc
+// @Summary		Delete Document Image Group
+// @Description Delete Document Image Group
+// @Tags		DocumentImageGroup
+// @Param		guid  path      string  true  "document image group guid"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /documentimagegroup/{guid} [delete]
+func (h DocumentImageHttp) DeleteDocumentImageGroup(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	id := ctx.Param("guid")
+
+	err := h.service.DeleteDocumentImageGroup(shopID, authUsername, id)
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		ID:      id,
 	})
 	return nil
 }

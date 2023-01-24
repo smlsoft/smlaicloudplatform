@@ -24,7 +24,7 @@ type IDocumentImageService interface {
 	BulkCreateDocumentImage(shopID string, authUsername string, docs []models.DocumentImageRequest) error
 	UpdateDocumentImage(shopID string, guid string, authUsername string, doc models.DocumentImage) error
 	UpdateDocumentImageReject(shopID string, guid string, authUsername string, isReject bool) error
-	DeleteDocumentImage(shopID string, authUsername string, imageGUID string) error
+	// DeleteDocumentImage(shopID string, authUsername string, imageGUID string) error
 
 	InfoDocumentImage(shopID string, guid string) (models.DocumentImageInfo, error)
 	SearchDocumentImage(shopID string, matchFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
@@ -43,6 +43,7 @@ type IDocumentImageService interface {
 	UnGroupDocumentImageGroup(shopID string, authUsername string, groupGUID string) error
 	ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
 	DeleteReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error
+	DeleteDocumentImageGroup(shopID string, authUsername string, DocumentImageGroupGuidFixed string) error
 
 	UpdateDocumentImageRederenceGroup() error
 }
@@ -988,6 +989,33 @@ func (svc DocumentImageService) DeleteReferenceByDocumentImageGroup(shopID strin
 		docImageGroup.References = tempDocRefs
 
 		svc.repoImageGroup.Update(shopID, docImageGroup.GuidFixed, docImageGroup)
+	}
+
+	return nil
+}
+
+func (svc DocumentImageService) DeleteDocumentImageGroup(shopID string, authUsername string, DocumentImageGroupGuidFixed string) error {
+
+	findDocGroup, err := svc.repoImageGroup.FindByGuid(shopID, DocumentImageGroupGuidFixed)
+
+	if err != nil {
+		return err
+	}
+
+	if svc.isDocumentImageGroupHasReferenced(findDocGroup) {
+		return errors.New("document has referenced")
+	}
+
+	for _, docImage := range *findDocGroup.ImageReferences {
+		err = svc.repoImage.DeleteByGuidfixed(shopID, docImage.DocumentImageGUID, authUsername)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	if err = svc.repoImageGroup.DeleteByGuidfixed(shopID, findDocGroup.GuidFixed); err != nil {
+		return err
 	}
 
 	return nil
