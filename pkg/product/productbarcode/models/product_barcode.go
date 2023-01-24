@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const posProductBarcodeCollectionName = "productBarcodes"
+const productBarcodeCollectionName = "productBarcodes"
 
 type ProductBarcode struct {
 	models.PartitionIdentity `bson:"inline"`
@@ -44,7 +44,7 @@ type ProductBarcodeInfo struct {
 }
 
 func (ProductBarcodeInfo) CollectionName() string {
-	return posProductBarcodeCollectionName
+	return productBarcodeCollectionName
 }
 
 type ProductBarcodeData struct {
@@ -59,7 +59,7 @@ type ProductBarcodeDoc struct {
 }
 
 func (ProductBarcodeDoc) CollectionName() string {
-	return posProductBarcodeCollectionName
+	return productBarcodeCollectionName
 }
 
 type ProductBarcodeItemGuid struct {
@@ -67,7 +67,7 @@ type ProductBarcodeItemGuid struct {
 }
 
 func (ProductBarcodeItemGuid) CollectionName() string {
-	return posProductBarcodeCollectionName
+	return productBarcodeCollectionName
 }
 
 type ProductBarcodeActivity struct {
@@ -76,7 +76,7 @@ type ProductBarcodeActivity struct {
 }
 
 func (ProductBarcodeActivity) CollectionName() string {
-	return posProductBarcodeCollectionName
+	return productBarcodeCollectionName
 }
 
 type ProductBarcodeDeleteActivity struct {
@@ -85,5 +85,5 @@ type ProductBarcodeDeleteActivity struct {
 }
 
 func (ProductBarcodeDeleteActivity) CollectionName() string {
-	return posProductBarcodeCollectionName
+	return productBarcodeCollectionName
 }

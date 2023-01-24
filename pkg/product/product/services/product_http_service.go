@@ -211,6 +211,7 @@ func (svc ProductHttpService) SearchProductStep(shopID string, langCode string, 
 		"issumpoint":      1,
 		"images":          1,
 		"prices":          1,
+		"categorynames":   1,
 	}
 
 	if langCode != "" {
