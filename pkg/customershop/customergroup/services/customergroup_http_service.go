@@ -158,7 +158,6 @@ func (svc CustomerGroupHttpService) SearchCustomerGroupStep(shopID string, langC
 		"guidfixed":    1,
 		"guid":         1,
 		"customercode": 1,
-		"names.name":   1,
 	}
 
 	if langCode != "" {
