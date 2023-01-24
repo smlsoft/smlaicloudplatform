@@ -26,7 +26,7 @@ type Product struct {
 	IsSumPoint    bool            `json:"issumpoint" bson:"issumpoint"`
 	Images        *[]ProductImage `json:"images" bson:"images"`
 	Prices        *[]ProductPrice `json:"prices" bson:"prices"`
-	CategoryNames *[]string       `json:"categorynames" bson:"categorynames"`
+	CategoryNames *[]models.NameX `json:"categorynames" bson:"categorynames"`
 }
 
 type ProductPrice struct {
