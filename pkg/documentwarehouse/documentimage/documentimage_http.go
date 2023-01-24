@@ -85,6 +85,7 @@ func (h DocumentImageHttp) RouteSetup() {
 	h.ms.PUT("/documentimagegroup/:guid/ungroup", h.UngroupDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid/images", h.UpdateDocumentImageGroup)
 	h.ms.DELETE("/documentimagegroup/:guid", h.DeleteDocumentImageGroup)
+	h.ms.DELETE("/documentimagegroup", h.DeleteDocumentImageGroups)
 
 	h.ms.GET("/documentimagegroup/docref/:docref", h.GetDocumentImageGroupByDocRefInfo)
 }
@@ -874,7 +875,7 @@ func (h DocumentImageHttp) DeleteDocumentImageGroup(ctx microservice.IContext) e
 
 	id := ctx.Param("guid")
 
-	err := h.service.DeleteDocumentImageGroup(shopID, authUsername, id)
+	err := h.service.DeleteDocumentImageGroupByGuid(shopID, authUsername, id)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
@@ -883,6 +884,45 @@ func (h DocumentImageHttp) DeleteDocumentImageGroup(ctx microservice.IContext) e
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		ID:      id,
+	})
+	return nil
+}
+
+// Delete Many Document Image Group godoc
+// @Summary		Delete Many Document Image Group
+// @Description Delete Many Document Image Group
+// @Tags		DocumentImageGroup
+// @Param		guids  body      []string  true  "document image group guids"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /documentimagegroup [delete]
+func (h DocumentImageHttp) DeleteDocumentImageGroups(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	guids := []string{}
+	err := json.Unmarshal([]byte(input), &guids)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	err = h.service.DeleteDocumentImageGroupByGuids(shopID, authUsername, guids)
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    guids,
 	})
 	return nil
 }
