@@ -10,7 +10,6 @@ const customergroupCollectionName = "customershopCustomerGroup"
 
 type CustomerGroup struct {
 	models.PartitionIdentity `bson:"inline"`
-	GUID                     string          `json:"guid" bson:"guid"`
 	CustomerCode             string          `json:"customercode" bson:"customercode" validate:"required,min=1"`
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 }

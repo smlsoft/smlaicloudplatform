@@ -45,7 +45,7 @@ func (svc CustomerGroupHttpService) CreateCustomerGroup(shopID string, authUsern
 		return "", err
 	}
 
-	if findDoc.GUID != "" {
+	if findDoc.CustomerCode != "" {
 		return "", errors.New("customer code is exists")
 	}
 
@@ -181,7 +181,7 @@ func (svc CustomerGroupHttpService) SaveInBatch(shopID string, authUsername stri
 
 	itemCodeGuidList := []string{}
 	for _, doc := range payloadList {
-		itemCodeGuidList = append(itemCodeGuidList, doc.GUID)
+		itemCodeGuidList = append(itemCodeGuidList, doc.CustomerCode)
 	}
 
 	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "guid", itemCodeGuidList)
@@ -226,7 +226,7 @@ func (svc CustomerGroupHttpService) SaveInBatch(shopID string, authUsername stri
 			return svc.repo.FindByDocIndentityGuid(shopID, "guid", guid)
 		},
 		func(doc models.CustomerGroupDoc) bool {
-			return doc.GUID != ""
+			return doc.CustomerCode != ""
 		},
 		func(shopID string, authUsername string, data models.CustomerGroup, doc models.CustomerGroupDoc) error {
 
@@ -254,18 +254,18 @@ func (svc CustomerGroupHttpService) SaveInBatch(shopID string, authUsername stri
 	createDataKey := []string{}
 
 	for _, doc := range createDataList {
-		createDataKey = append(createDataKey, doc.GUID)
+		createDataKey = append(createDataKey, doc.CustomerCode)
 	}
 
 	payloadDuplicateDataKey := []string{}
 	for _, doc := range payloadDuplicateList {
-		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.GUID)
+		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.CustomerCode)
 	}
 
 	updateDataKey := []string{}
 	for _, doc := range updateSuccessDataList {
 
-		updateDataKey = append(updateDataKey, doc.GUID)
+		updateDataKey = append(updateDataKey, doc.CustomerCode)
 	}
 
 	updateFailDataKey := []string{}
@@ -296,5 +296,5 @@ func (svc CustomerGroupHttpService) DeleteCustomerGroupByGUIDs(shopID string, au
 }
 
 func (svc CustomerGroupHttpService) getDocIDKey(doc models.CustomerGroup) string {
-	return doc.GUID
+	return doc.CustomerCode
 }
