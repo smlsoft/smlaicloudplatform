@@ -841,8 +841,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageReference:
     properties:
@@ -2525,7 +2523,7 @@ definitions:
         type: string
       categorynames:
         items:
-          type: string
+          $ref: '#/definitions/models.NameX'
         type: array
       images:
         items:
@@ -2578,7 +2576,7 @@ definitions:
         type: string
       categorynames:
         items:
-          type: string
+          $ref: '#/definitions/models.NameX'
         type: array
       colorselect:
         type: string

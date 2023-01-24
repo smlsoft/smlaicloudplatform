@@ -15671,9 +15671,6 @@
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -18148,7 +18145,7 @@
                 "categorynames": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/models.NameX"
                     }
                 },
                 "images": {
@@ -18226,7 +18223,7 @@
                 "categorynames": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/models.NameX"
                     }
                 },
                 "colorselect": {

@@ -15677,9 +15677,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -18154,7 +18151,7 @@ const docTemplate = `{
                 "categorynames": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/models.NameX"
                     }
                 },
                 "images": {
@@ -18232,7 +18229,7 @@ const docTemplate = `{
                 "categorynames": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/models.NameX"
                     }
                 },
                 "colorselect": {
