@@ -132,7 +132,8 @@ func (svc CustomerGroupHttpService) InfoCustomerGroup(shopID string, guid string
 
 func (svc CustomerGroupHttpService) SearchCustomerGroup(shopID string, pageable micromodels.Pageable) ([]models.CustomerGroupInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
-		"guid",
+		"customercode",
+		"names",
 	}
 
 	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
@@ -146,7 +147,8 @@ func (svc CustomerGroupHttpService) SearchCustomerGroup(shopID string, pageable 
 
 func (svc CustomerGroupHttpService) SearchCustomerGroupStep(shopID string, langCode string, pageStep micromodels.PageableStep) ([]models.CustomerGroupInfo, int, error) {
 	searchInFields := []string{
-		"guid",
+		"customercode",
+		"names",
 	}
 
 	selectFields := map[string]interface{}{
