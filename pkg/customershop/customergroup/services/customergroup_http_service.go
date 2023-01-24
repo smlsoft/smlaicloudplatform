@@ -39,14 +39,14 @@ func NewCustomerGroupHttpService(repo repositories.ICustomerGroupRepository) *Cu
 
 func (svc CustomerGroupHttpService) CreateCustomerGroup(shopID string, authUsername string, doc models.CustomerGroup) (string, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "guid", doc.GUID)
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "customercode", doc.CustomerCode)
 
 	if err != nil {
 		return "", err
 	}
 
 	if findDoc.GUID != "" {
-		return "", errors.New("GUID is exists")
+		return "", errors.New("customer code is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -80,7 +80,10 @@ func (svc CustomerGroupHttpService) UpdateCustomerGroup(shopID string, guid stri
 		return errors.New("document not found")
 	}
 
+	tempCode := findDoc.CustomerCode
+
 	findDoc.CustomerGroup = doc
+	findDoc.CustomerCode = tempCode
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
@@ -133,7 +136,7 @@ func (svc CustomerGroupHttpService) InfoCustomerGroup(shopID string, guid string
 func (svc CustomerGroupHttpService) SearchCustomerGroup(shopID string, pageable micromodels.Pageable) ([]models.CustomerGroupInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"customercode",
-		"names",
+		"names.name",
 	}
 
 	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
@@ -148,14 +151,14 @@ func (svc CustomerGroupHttpService) SearchCustomerGroup(shopID string, pageable 
 func (svc CustomerGroupHttpService) SearchCustomerGroupStep(shopID string, langCode string, pageStep micromodels.PageableStep) ([]models.CustomerGroupInfo, int, error) {
 	searchInFields := []string{
 		"customercode",
-		"names",
+		"names.name",
 	}
 
 	selectFields := map[string]interface{}{
 		"guidfixed":    1,
 		"guid":         1,
 		"customercode": 1,
-		"names":        1,
+		"names.name":   1,
 	}
 
 	if langCode != "" {
