@@ -5272,6 +5272,33 @@ paths:
       tags:
       - DocumentImage
   /documentimagegroup:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Many Document Image Group
+      parameters:
+      - description: document image group guids
+        in: body
+        name: guids
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: Delete Many Document Image Group
+      tags:
+      - DocumentImageGroup
     get:
       consumes:
       - application/json
