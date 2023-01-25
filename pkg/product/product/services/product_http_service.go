@@ -16,6 +16,7 @@ import (
 )
 
 type IProductHttpService interface {
+	SaveProduct(shopID string, authUsername string, doc models.Product) (string, error)
 	CreateProduct(shopID string, authUsername string, doc models.Product) (string, error)
 	UpdateProduct(shopID string, guid string, authUsername string, doc models.Product) error
 	DeleteProduct(shopID string, guid string, authUsername string) error
@@ -36,6 +37,61 @@ func NewProductHttpService(repo repositories.IProductRepository, mqRepo reposito
 	return &ProductHttpService{
 		repo:   repo,
 		mqRepo: mqRepo,
+	}
+}
+
+func (svc ProductHttpService) SaveProduct(shopID string, authUsername string, doc models.Product) (string, error) {
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "itemcode", doc.ItemCode)
+
+	if err != nil {
+		return "", err
+	}
+
+	if findDoc.ItemCode != "" {
+		findDoc.Product = doc
+
+		findDoc.UpdatedBy = authUsername
+		findDoc.UpdatedAt = time.Now()
+
+		err = svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
+
+		if err != nil {
+			return "", err
+		}
+
+		err = svc.mqRepo.Update(findDoc)
+
+		if err != nil {
+			return "", err
+		}
+
+		return findDoc.GuidFixed, nil
+
+	} else {
+
+		newGuidFixed := utils.NewGUID()
+
+		docData := models.ProductDoc{}
+		docData.ShopID = shopID
+		docData.GuidFixed = newGuidFixed
+		docData.Product = doc
+
+		docData.CreatedBy = authUsername
+		docData.CreatedAt = time.Now()
+
+		_, err = svc.repo.Create(docData)
+
+		if err != nil {
+			return "", err
+		}
+
+		err = svc.mqRepo.Create(docData)
+		if err != nil {
+			return "", err
+		}
+
+		return newGuidFixed, nil
 	}
 }
 

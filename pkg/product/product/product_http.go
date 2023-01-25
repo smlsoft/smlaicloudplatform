@@ -43,6 +43,7 @@ func (h ProductHttp) RouteSetup() {
 
 	h.ms.GET("/product", h.SearchProductPage)
 	h.ms.GET("/product/list", h.SearchProductLimit)
+	h.ms.POST("/product/save", h.SaveProduct)
 	h.ms.POST("/product", h.CreateProduct)
 	h.ms.GET("/product/:id", h.InfoProduct)
 	h.ms.PUT("/product/:id", h.UpdateProduct)
@@ -78,6 +79,47 @@ func (h ProductHttp) CreateProduct(ctx microservice.IContext) error {
 	}
 
 	idx, err := h.svc.CreateProduct(shopID, authUsername, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+		ID:      idx,
+	})
+	return nil
+}
+
+// Save Product godoc
+// @Description Save Product
+// @Tags		Product
+// @Param		Product  body      models.Product  true  "Product"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/save [post]
+func (h ProductHttp) SaveProduct(ctx microservice.IContext) error {
+	authUsername := ctx.UserInfo().Username
+	shopID := ctx.UserInfo().ShopID
+	input := ctx.ReadInput()
+
+	docReq := &models.Product{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(docReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	idx, err := h.svc.SaveProduct(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
