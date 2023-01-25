@@ -166,6 +166,7 @@ func (svc QrPaymentHttpService) InfoQrPayment(shopID string, guid string) (model
 func (svc QrPaymentHttpService) SearchQrPayment(shopID string, pageable micromodels.Pageable) ([]models.QrPaymentInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"paymentcode",
+		"names.name",
 	}
 
 	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
@@ -180,6 +181,7 @@ func (svc QrPaymentHttpService) SearchQrPayment(shopID string, pageable micromod
 func (svc QrPaymentHttpService) SearchQrPaymentStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.QrPaymentInfo, int, error) {
 	searchInFields := []string{
 		"paymentcode",
+		"names.name",
 	}
 
 	selectFields := map[string]interface{}{

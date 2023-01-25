@@ -132,6 +132,7 @@ func (svc ColorHttpService) InfoColor(shopID string, guid string) (models.ColorI
 func (svc ColorHttpService) SearchColor(shopID string, pageable micromodels.Pageable) ([]models.ColorInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"code",
+		"names.name",
 	}
 
 	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
@@ -146,6 +147,7 @@ func (svc ColorHttpService) SearchColor(shopID string, pageable micromodels.Page
 func (svc ColorHttpService) SearchColorStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ColorInfo, int, error) {
 	searchInFields := []string{
 		"code",
+		"names.name",
 	}
 
 	selectFields := map[string]interface{}{

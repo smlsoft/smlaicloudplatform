@@ -165,8 +165,9 @@ func (svc BookBankHttpService) InfoBookBank(shopID string, guid string) (models.
 
 func (svc BookBankHttpService) SearchBookBank(shopID string, pageable micromodels.Pageable) ([]models.BookBankInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
-		"guidfixed",
 		"passbook",
+		"names.name",
+		"banknames.name",
 	}
 
 	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
@@ -180,8 +181,9 @@ func (svc BookBankHttpService) SearchBookBank(shopID string, pageable micromodel
 
 func (svc BookBankHttpService) SearchBookBankStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.BookBankInfo, int, error) {
 	searchInFields := []string{
-		"guidfixed",
 		"passbook",
+		"names.name",
+		"banknames.name",
 	}
 
 	selectFields := map[string]interface{}{

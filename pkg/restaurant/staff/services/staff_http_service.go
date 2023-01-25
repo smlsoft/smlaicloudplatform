@@ -165,8 +165,8 @@ func (svc StaffHttpService) InfoStaff(shopID string, guid string) (models.StaffI
 
 func (svc StaffHttpService) SearchStaff(shopID string, pageable micromodels.Pageable) ([]models.StaffInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
-		"guidfixed",
 		"code",
+		"names.name",
 	}
 
 	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
@@ -181,6 +181,7 @@ func (svc StaffHttpService) SearchStaff(shopID string, pageable micromodels.Page
 func (svc StaffHttpService) SearchStaffStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.StaffInfo, int, error) {
 	searchInFields := []string{
 		"code",
+		"names.name",
 	}
 
 	selectFields := map[string]interface{}{}
