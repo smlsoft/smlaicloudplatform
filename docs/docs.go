@@ -5172,7 +5172,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Job"
+                    "Task"
                 ],
                 "parameters": [
                     {
@@ -5224,21 +5224,21 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Create Job",
+                "description": "Create Task",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Job"
+                    "Task"
                 ],
                 "parameters": [
                     {
-                        "description": "Job",
-                        "name": "Job",
+                        "description": "Task",
+                        "name": "Task",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Job"
+                            "$ref": "#/definitions/models.Task"
                         }
                     }
                 ],
@@ -5263,17 +5263,17 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Delete Job",
+                "description": "Delete Task",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Job"
+                    "Task"
                 ],
                 "parameters": [
                     {
-                        "description": "Job GUIDs",
-                        "name": "Job",
+                        "description": "Task GUIDs",
+                        "name": "Task",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -5307,23 +5307,23 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Create Job",
+                "description": "Create Task",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Job"
+                    "Task"
                 ],
                 "parameters": [
                     {
-                        "description": "Job",
-                        "name": "Job",
+                        "description": "Task",
+                        "name": "Task",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Job"
+                                "$ref": "#/definitions/models.Task"
                             }
                         }
                     }
@@ -5356,7 +5356,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Job"
+                    "Task"
                 ],
                 "parameters": [
                     {
@@ -5415,12 +5415,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Job"
+                    "Task"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Job ID",
+                        "description": "Task ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -5447,28 +5447,28 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Update Job",
+                "description": "Update Task",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Job"
+                    "Task"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Job ID",
+                        "description": "Task ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Job",
-                        "name": "Job",
+                        "description": "Task",
+                        "name": "Task",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Job"
+                            "$ref": "#/definitions/models.Task"
                         }
                     }
                 ],
@@ -5493,17 +5493,17 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Delete Job",
+                "description": "Delete Task",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Job"
+                    "Task"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Job ID",
+                        "description": "Task ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -5512,6 +5512,54 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/job/{id}/status": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Task Status",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Task Status",
+                        "name": "TaskStatus",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.TaskStatus"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
@@ -14870,8 +14918,8 @@ const docTemplate = `{
                 "isprimary": {
                     "type": "boolean"
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "name1": {
                     "type": "string",
@@ -14893,8 +14941,18 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "price": {
-                    "type": "string"
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
                 },
                 "unitcode": {
                     "type": "string"
@@ -15758,9 +15816,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -15912,8 +15967,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -15938,6 +15993,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -15959,7 +16017,14 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "type": "string"
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
                 },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
@@ -16111,8 +16176,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -16137,6 +16202,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -16158,7 +16226,14 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "type": "string"
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
                 },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
@@ -16387,8 +16462,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -16413,6 +16488,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -16434,7 +16512,14 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "type": "string"
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
                 },
                 "recommended": {
                     "description": "สินค้าแนะนำ",
@@ -18220,7 +18305,10 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "itemcode",
-                "names"
+                "names",
+                "unit",
+                "unitcostnames",
+                "unitstandardnames"
             ],
             "properties": {
                 "barcodes": {
@@ -18275,8 +18363,19 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.ProductPrice"
                     }
                 },
+                "unit": {
+                    "$ref": "#/definitions/models.ProductUnit"
+                },
                 "unitcost": {
                     "type": "string"
+                },
+                "unitcostnames": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "units": {
                     "type": "array",
@@ -18286,6 +18385,14 @@ const docTemplate = `{
                 },
                 "unitstandard": {
                     "type": "string"
+                },
+                "unitstandardnames": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "useserialnumber": {
                     "type": "boolean"
@@ -18510,11 +18617,21 @@ const docTemplate = `{
         "models.ProductPrice": {
             "type": "object",
             "properties": {
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
+                },
+                "normalprice": {
+                    "type": "number"
                 },
                 "price": {
-                    "type": "string"
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
                 }
             }
         },
@@ -18524,6 +18641,12 @@ const docTemplate = `{
                 "divider": {
                     "type": "number"
                 },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "stand": {
                     "type": "number"
                 },
@@ -18531,9 +18654,6 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "unitcode": {
-                    "type": "string"
-                },
-                "unitname": {
                     "type": "string"
                 },
                 "xorder": {
@@ -18778,11 +18898,11 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
-                },
                 "linenumber": {
                     "type": "integer"
+                },
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -18807,6 +18927,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -18828,6 +18951,12 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "qty": {
@@ -19333,11 +19462,11 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
-                },
                 "linenumber": {
                     "type": "integer"
+                },
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -19362,6 +19491,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -19383,6 +19515,12 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "qty": {
@@ -20155,6 +20293,58 @@ const docTemplate = `{
                 },
                 "tablecode": {
                     "type": "string"
+                }
+            }
+        },
+        "models.Task": {
+            "type": "object",
+            "properties": {
+                "createdat": {
+                    "type": "string"
+                },
+                "createdby": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "isfavorit": {
+                    "type": "boolean"
+                },
+                "module": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parentguidfixed": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "totalreject": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.TaskStatus": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer"
                 }
             }
         },

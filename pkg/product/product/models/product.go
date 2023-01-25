@@ -19,15 +19,17 @@ type Product struct {
 	Units                    *[]ProductUnit  `json:"units,omitempty" bson:"units,omitempty"`
 	Unit                     ProductUnit     `json:"unit" bson:"unit" validate:"required"`
 
-	UnitCost      string          `json:"unitcost" bson:"unitcost"`
-	UnitStandard  string          `json:"unitstandard" bson:"unitstandard"`
-	ItemStockType int8            `json:"itemstocktype" bson:"itemstocktype"`
-	ItemType      int8            `json:"itemtype" bson:"itemtype"`
-	VatType       int8            `json:"vattype" bson:"vattype"`
-	IsSumPoint    bool            `json:"issumpoint" bson:"issumpoint"`
-	Images        *[]ProductImage `json:"images" bson:"images"`
-	Prices        *[]ProductPrice `json:"prices" bson:"prices"`
-	CategoryNames *[]models.NameX `json:"categorynames" bson:"categorynames"`
+	UnitCost          string          `json:"unitcost" bson:"unitcost"`
+	UnitCostNames     *[]models.NameX `json:"unitcostnames" bson:"unitcostnames" validate:"required,min=1,unique=Code,dive"`
+	UnitStandard      string          `json:"unitstandard" bson:"unitstandard"`
+	UnitStandardNames *[]models.NameX `json:"unitstandardnames" bson:"unitstandardnames" validate:"required,min=1,unique=Code,dive"`
+	ItemStockType     int8            `json:"itemstocktype" bson:"itemstocktype"`
+	ItemType          int8            `json:"itemtype" bson:"itemtype"`
+	VatType           int8            `json:"vattype" bson:"vattype"`
+	IsSumPoint        bool            `json:"issumpoint" bson:"issumpoint"`
+	Images            *[]ProductImage `json:"images" bson:"images"`
+	Prices            *[]ProductPrice `json:"prices" bson:"prices"`
+	CategoryNames     *[]models.NameX `json:"categorynames" bson:"categorynames"`
 }
 
 type ProductPrice struct {
