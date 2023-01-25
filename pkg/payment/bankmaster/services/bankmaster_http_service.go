@@ -165,8 +165,8 @@ func (svc BankMasterHttpService) InfoBankMaster(shopID string, guid string) (mod
 
 func (svc BankMasterHttpService) SearchBankMaster(shopID string, pageable micromodels.Pageable) ([]models.BankMasterInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
-		"guidfixed",
 		"code",
+		"names.name",
 	}
 
 	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
@@ -180,8 +180,8 @@ func (svc BankMasterHttpService) SearchBankMaster(shopID string, pageable microm
 
 func (svc BankMasterHttpService) SearchBankMasterStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.BankMasterInfo, int, error) {
 	searchInFields := []string{
-		"guidfixed",
 		"code",
+		"names.name",
 	}
 
 	selectFields := map[string]interface{}{
