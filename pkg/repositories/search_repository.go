@@ -28,7 +28,7 @@ func (repo SearchRepository[T]) Find(shopID string, searchInFields []string, q s
 	for _, colName := range searchInFields {
 		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
 			Pattern: ".*" + q + ".*",
-			Options: "",
+			Options: "i",
 		}}})
 	}
 
@@ -158,7 +158,7 @@ func (repo SearchRepository[T]) FindPageFilter(shopID string, filters map[string
 	for _, colName := range searchInFields {
 		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
 			Pattern: ".*" + pageable.Query + ".*",
-			Options: "",
+			Options: "i",
 		}}})
 	}
 
@@ -202,6 +202,7 @@ func (SearchRepository[T]) SearchTextFilter(searchInFields []string, q string) p
 			fieldFilter = append(fieldFilter, bson.M{
 				col: primitive.Regex{
 					Pattern: ".*" + textSearch + ".*",
+					Options: "i",
 				},
 			})
 		}

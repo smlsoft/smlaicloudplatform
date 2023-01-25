@@ -131,8 +131,12 @@ func (svc ShopZoneService) InfoShopZone(shopID string, guid string) (models.Shop
 
 func (svc ShopZoneService) SearchShopZone(shopID string, pageable micromodels.Pageable) ([]models.ShopZoneInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
-		"guidfixed",
 		"code",
+		"name1",
+		"name2",
+		"name3",
+		"name4",
+		"name5",
 	}
 
 	for i := range [5]bool{} {

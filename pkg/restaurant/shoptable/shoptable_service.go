@@ -126,8 +126,8 @@ func (svc ShopTableService) InfoShopTable(shopID string, guid string) (models.Sh
 
 func (svc ShopTableService) SearchShopTable(shopID string, pageable micromodels.Pageable) ([]models.ShopTableInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
-		"guidfixed",
 		"code",
+		"names.name",
 	}
 
 	for i := range [5]bool{} {

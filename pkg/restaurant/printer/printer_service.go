@@ -130,8 +130,12 @@ func (svc PrinterService) InfoPrinter(shopID string, guid string) (models.Printe
 
 func (svc PrinterService) SearchPrinter(shopID string, pageable micromodels.Pageable) ([]models.PrinterInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
-		"guidfixed",
 		"code",
+		"name1",
+		"name2",
+		"name3",
+		"name4",
+		"name5",
 	}
 
 	for i := range [5]bool{} {
@@ -149,8 +153,12 @@ func (svc PrinterService) SearchPrinter(shopID string, pageable micromodels.Page
 
 func (svc PrinterService) SearchPrinterStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.PrinterInfo, int, error) {
 	searchInFields := []string{
-		"guidfixed",
 		"code",
+		"name1",
+		"name2",
+		"name3",
+		"name4",
+		"name5",
 	}
 
 	selectFields := map[string]interface{}{}

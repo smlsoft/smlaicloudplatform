@@ -165,8 +165,12 @@ func (svc DeviceHttpService) InfoDevice(shopID string, guid string) (models.Devi
 
 func (svc DeviceHttpService) SearchDevice(shopID string, pageable micromodels.Pageable) ([]models.DeviceInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
-		"guidfixed",
 		"code",
+		"name1",
+		"name2",
+		"name3",
+		"name4",
+		"name5",
 	}
 
 	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
@@ -180,8 +184,12 @@ func (svc DeviceHttpService) SearchDevice(shopID string, pageable micromodels.Pa
 
 func (svc DeviceHttpService) SearchDeviceStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.DeviceInfo, int, error) {
 	searchInFields := []string{
-		"guidfixed",
 		"code",
+		"name1",
+		"name2",
+		"name3",
+		"name4",
+		"name5",
 	}
 
 	selectFields := map[string]interface{}{}
