@@ -17,6 +17,7 @@ type Product struct {
 	MultiUnit                bool            `json:"multiunit" bson:"multiunit"`
 	UseSerialNumber          bool            `json:"useserialnumber" bson:"useserialnumber"`
 	Units                    *[]ProductUnit  `json:"units,omitempty" bson:"units,omitempty"`
+	Unit                     ProductUnit     `json:"unit" bson:"unit" validate:"required"`
 
 	UnitCost      string          `json:"unitcost" bson:"unitcost"`
 	UnitStandard  string          `json:"unitstandard" bson:"unitstandard"`
@@ -35,12 +36,12 @@ type ProductPrice struct {
 }
 
 type ProductUnit struct {
-	UnitCode   string  `json:"unitcode" bson:"unitcode"`
-	UnitName   string  `json:"unitname" bson:"unitname"`
-	Divider    float64 `json:"divider" bson:"divider"`
-	Stand      float64 `json:"stand" bson:"stand"`
-	XOrder     int     `json:"xorder" bson:"xorder"`
-	StockCount bool    `json:"stockcount" bson:"stockcount"`
+	UnitCode   string          `json:"unitcode" bson:"unitcode"`
+	Names      *[]models.NameX `json:"names" bson:"names"`
+	Divider    float64         `json:"divider" bson:"divider"`
+	Stand      float64         `json:"stand" bson:"stand"`
+	XOrder     int             `json:"xorder" bson:"xorder"`
+	StockCount bool            `json:"stockcount" bson:"stockcount"`
 }
 
 type ProductImage struct {
