@@ -678,8 +678,6 @@ definitions:
     properties:
       imageuri:
         type: string
-      isreject:
-        type: boolean
       metafileat:
         type: string
       name:
@@ -689,6 +687,9 @@ definitions:
           $ref: '#/definitions/models.ReferenceGroup'
         type: array
       references:
+        description: |-
+          IsReject        bool             `json:"isreject" bson:"isreject"`
+          Status          int8             `json:"status" bson:"status"`
         items:
           $ref: '#/definitions/models.Reference'
         type: array
@@ -699,24 +700,28 @@ definitions:
     type: object
   models.DocumentImageGroup:
     properties:
+      description:
+        type: string
       imagereferences:
         items:
           $ref: '#/definitions/models.ImageReference'
         type: array
-      isreject:
+      iscompleted:
         type: boolean
-      jobguid:
-        type: string
-      pathjob:
+      pathtask:
         type: string
       references:
         items:
           $ref: '#/definitions/models.Reference'
         type: array
+      status:
+        type: integer
       tags:
         items:
           type: string
         type: array
+      taskguid:
+        type: string
       title:
         description: DocumentRef     string            `json:"documentref" bson:"documentref"`
         type: string
@@ -731,8 +736,6 @@ definitions:
         type: string
       imageuri:
         type: string
-      isreject:
-        type: boolean
       metafileat:
         type: string
       name:
@@ -742,6 +745,9 @@ definitions:
           $ref: '#/definitions/models.ReferenceGroup'
         type: array
       references:
+        description: |-
+          IsReject        bool             `json:"isreject" bson:"isreject"`
+          Status          int8             `json:"status" bson:"status"`
         items:
           $ref: '#/definitions/models.Reference'
         type: array
@@ -853,8 +859,6 @@ definitions:
         type: string
       imageuri:
         type: string
-      isreject:
-        type: boolean
       metafileat:
         type: string
       name:
@@ -862,6 +866,7 @@ definitions:
       uploadedat:
         type: string
       uploadedby:
+        description: IsReject           bool      `json:"isreject" bson:"isreject"`
         type: string
       xorder:
         type: integer
@@ -1592,33 +1597,6 @@ definitions:
     properties:
       name:
         type: string
-    type: object
-  models.Job:
-    properties:
-      createdat:
-        type: string
-      description:
-        type: string
-      isfavorit:
-        type: boolean
-      module:
-        type: string
-      name:
-        type: string
-      parentguidfixed:
-        type: string
-      path:
-        type: string
-      status:
-        type: integer
-      tags:
-        items:
-          type: string
-        type: array
-      total:
-        type: integer
-      totalreject:
-        type: integer
     type: object
   models.Journal:
     properties:
@@ -3119,11 +3097,6 @@ definitions:
       xtype:
         type: integer
     type: object
-  models.RequestDocumentImageReject:
-    properties:
-      isreject:
-        type: boolean
-    type: object
   models.ResponseSuccess:
     properties:
       success:
@@ -3895,10 +3868,6 @@ definitions:
     type: object
   models.Task:
     properties:
-      createdat:
-        type: string
-      createdby:
-        type: string
       description:
         type: string
       isfavorit:
@@ -3907,9 +3876,17 @@ definitions:
         type: string
       name:
         type: string
+      ownerat:
+        type: string
+      ownerby:
+        type: string
       parentguidfixed:
         type: string
       path:
+        type: string
+      rejectedat:
+        type: string
+      rejectedby:
         type: string
       status:
         type: integer
@@ -5196,67 +5173,6 @@ paths:
       summary: Get Document Image Infomation
       tags:
       - DocumentImage
-    put:
-      consumes:
-      - application/json
-      description: Update Document Image
-      parameters:
-      - description: document image guid
-        in: path
-        name: guid
-        required: true
-        type: string
-      - description: DocumentImage
-        in: body
-        name: DocumentImage
-        required: true
-        schema:
-          $ref: '#/definitions/models.DocumentImage'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      summary: Update Document Image
-      tags:
-      - DocumentImage
-  /documentimage/{guid}/reject:
-    put:
-      consumes:
-      - application/json
-      description: Update Reject Document Image
-      parameters:
-      - description: document image guid
-        in: path
-        name: guid
-        required: true
-        type: string
-      - description: Document Image Reject
-        in: body
-        name: RequestDocumentImageReject
-        required: true
-        schema:
-          $ref: '#/definitions/models.RequestDocumentImageReject'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      summary: Update Reject Document Image
-      tags:
-      - DocumentImage
   /documentimage/bulk:
     post:
       consumes:
@@ -5372,11 +5288,11 @@ paths:
         type: integer
       - description: Filter Path Job
         in: query
-        name: pathjob
+        name: pathtask
         type: string
       - description: Filter by Job guidfixed
         in: query
-        name: jobguid
+        name: taskguid
         type: string
       - description: เอกสารที่มีการจอง,0 not filter, 1 filter
         in: query
@@ -5560,6 +5476,30 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/models.Reference'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentImageGroup
+  /documentimagegroup/{guid}/status:
+    put:
+      consumes:
+      - application/json
+      description: Update Status Document Image Group
+      parameters:
+      - description: document image group guid
+        in: path
+        name: guid
+        required: true
+        type: string
       responses:
         "200":
           description: OK
@@ -7574,263 +7514,6 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
-  /job:
-    delete:
-      consumes:
-      - application/json
-      description: Delete Task
-      parameters:
-      - description: Task GUIDs
-        in: body
-        name: Task
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Task
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      - description: Module
-        in: query
-        name: module
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.ApiResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Task
-    post:
-      consumes:
-      - application/json
-      description: Create Task
-      parameters:
-      - description: Task
-        in: body
-        name: Task
-        required: true
-        schema:
-          $ref: '#/definitions/models.Task'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Task
-  /job/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete Task
-      parameters:
-      - description: Task ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Task
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: Task ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Task
-    put:
-      consumes:
-      - application/json
-      description: Update Task
-      parameters:
-      - description: Task ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Task
-        in: body
-        name: Task
-        required: true
-        schema:
-          $ref: '#/definitions/models.Task'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Task
-  /job/{id}/status:
-    put:
-      consumes:
-      - application/json
-      description: Update Task Status
-      parameters:
-      - description: Task ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Task Status
-        in: body
-        name: TaskStatus
-        required: true
-        schema:
-          $ref: '#/definitions/models.TaskStatus'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Task
-  /job/bulk:
-    post:
-      consumes:
-      - application/json
-      description: Create Task
-      parameters:
-      - description: Task
-        in: body
-        name: Task
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.Task'
-          type: array
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.BulkReponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Task
-  /job/list:
-    get:
-      consumes:
-      - application/json
-      description: search limit offset
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: offset
-        in: query
-        name: offset
-        type: integer
-      - description: limit
-        in: query
-        name: limit
-        type: integer
-      - description: lang
-        in: query
-        name: lang
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.ApiResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Task
   /list-shop:
     get:
       consumes:
@@ -12306,64 +11989,6 @@ paths:
       tags:
       - ShopUser
   /sml-transaction:
-    delete:
-      consumes:
-      - application/json
-      description: Delete SMLTransaction
-      parameters:
-      - description: SMLTransaction GUIDs
-        in: body
-        name: SMLTransaction
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - SMLTransaction
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: Add Category
-        in: query
-        name: page
-        type: integer
-      - description: Add Category
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.ApiResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - SMLTransaction
     post:
       consumes:
       - application/json
@@ -12380,146 +12005,6 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - SMLTransaction
-  /sml-transaction/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete SMLTransaction
-      parameters:
-      - description: SMLTransaction ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - SMLTransaction
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: SMLTransaction ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - SMLTransaction
-    put:
-      consumes:
-      - application/json
-      description: Update SMLTransaction
-      parameters:
-      - description: SMLTransaction ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: SMLTransaction
-        in: body
-        name: SMLTransaction
-        required: true
-        schema:
-          $ref: '#/definitions/models.SMLTransaction'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - SMLTransaction
-  /sml-transaction/bulk:
-    post:
-      consumes:
-      - application/json
-      description: Create SMLTransaction
-      parameters:
-      - description: SMLTransaction
-        in: body
-        name: SMLTransaction
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.SMLTransaction'
-          type: array
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.BulkReponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - SMLTransaction
-  /sml-transaction/list:
-    get:
-      consumes:
-      - application/json
-      description: search limit offset
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: offset
-        in: query
-        name: offset
-        type: integer
-      - description: limit
-        in: query
-        name: limit
-        type: integer
-      - description: lang
-        in: query
-        name: lang
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.ApiResponse'
-            type: array
         "401":
           description: Unauthorized
           schema:
@@ -12909,6 +12394,288 @@ paths:
       - AccessToken: []
       tags:
       - Synchronize
+  /task:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Task
+      parameters:
+      - description: Task GUIDs
+        in: body
+        name: Task
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Task
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Module
+        in: query
+        name: module
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Task
+    post:
+      consumes:
+      - application/json
+      description: Create Task
+      parameters:
+      - description: Task
+        in: body
+        name: Task
+        required: true
+        schema:
+          $ref: '#/definitions/models.Task'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Task
+  /task/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Task
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Task
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Task
+    put:
+      consumes:
+      - application/json
+      description: Update Task
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Task
+        in: body
+        name: Task
+        required: true
+        schema:
+          $ref: '#/definitions/models.Task'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Task
+  /task/{id}/status:
+    put:
+      consumes:
+      - application/json
+      description: Update Task Status
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Task Status
+        in: body
+        name: TaskStatus
+        required: true
+        schema:
+          $ref: '#/definitions/models.TaskStatus'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Task
+  /task/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Task
+      parameters:
+      - description: Task
+        in: body
+        name: Task
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Task'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Task
+  /task/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Task
+  /task/reject/{guid}:
+    get:
+      consumes:
+      - application/json
+      description: get Task Reject by task guid
+      parameters:
+      - description: Module
+        in: query
+        name: module
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Task
   /unit:
     delete:
       consumes:
