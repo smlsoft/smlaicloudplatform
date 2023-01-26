@@ -1,69 +1,70 @@
-package job
+package task
 
 import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/job/models"
-	"smlcloudplatform/pkg/job/repositories"
-	"smlcloudplatform/pkg/job/services"
-	mastersync "smlcloudplatform/pkg/mastersync/repositories"
+	repositoriesDocumentImage "smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
 	common "smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/task/models"
+	"smlcloudplatform/pkg/task/repositories"
+	"smlcloudplatform/pkg/task/services"
 	"smlcloudplatform/pkg/utils"
+	"strconv"
 )
 
-type IJobHttp interface{}
+type ITaskHttp interface{}
 
-type JobHttp struct {
+type TaskHttp struct {
 	ms  *microservice.Microservice
 	cfg microservice.IConfig
-	svc services.IJobHttpService
+	svc services.ITaskHttpService
 }
 
-func NewJobHttp(ms *microservice.Microservice, cfg microservice.IConfig) JobHttp {
+func NewTaskHttp(ms *microservice.Microservice, cfg microservice.IConfig) TaskHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
-	cache := ms.Cacher(cfg.CacherConfig())
 
-	repo := repositories.NewJobRepository(pst)
+	repo := repositories.NewTaskRepository(pst)
+	repoImageGroup := repositoriesDocumentImage.NewDocumentImageGroupRepository(pst)
+	svc := services.NewTaskHttpService(repo, repoImageGroup)
 
-	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewJobHttpService(repo, masterSyncCacheRepo)
-
-	return JobHttp{
+	return TaskHttp{
 		ms:  ms,
 		cfg: cfg,
 		svc: svc,
 	}
 }
 
-func (h JobHttp) RouteSetup() {
+func (h TaskHttp) RouteSetup() {
 
-	h.ms.POST("/job/bulk", h.SaveBulk)
+	h.ms.POST("/task/bulk", h.SaveBulk)
 
-	h.ms.GET("/job", h.SearchJobPage)
-	h.ms.GET("/job/list", h.SearchJobLimit)
-	h.ms.POST("/job", h.CreateJob)
-	h.ms.GET("/job/:id", h.InfoJob)
-	h.ms.PUT("/job/:id", h.UpdateJob)
-	h.ms.DELETE("/job/:id", h.DeleteJob)
-	h.ms.DELETE("/job", h.DeleteJobByGUIDs)
+	h.ms.GET("/task", h.SearchTaskPage)
+	h.ms.GET("/task/list", h.SearchTaskLimit)
+	h.ms.POST("/task", h.CreateTask)
+	h.ms.GET("/task/:id", h.InfoTask)
+	h.ms.GET("/task/reject/:guid", h.GetTaskReject)
+	h.ms.PUT("/task/:id", h.UpdateTask)
+	h.ms.PUT("/task/:id/status", h.UpdateTaskStatus)
+	h.ms.DELETE("/task/:id", h.DeleteTask)
+	h.ms.DELETE("/task", h.DeleteTaskByGUIDs)
 }
 
-// Create Job godoc
-// @Description Create Job
-// @Tags		Job
-// @Param		Job  body      models.Job  true  "Job"
+// Create Task godoc
+// @Description Create Task
+// @Tags		Task
+// @Param		Task  body      models.Task  true  "Task"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /job [post]
-func (h JobHttp) CreateJob(ctx microservice.IContext) error {
+// @Router /task [post]
+func (h TaskHttp) CreateTask(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &models.Job{}
+	docReq := &models.Task{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -76,7 +77,7 @@ func (h JobHttp) CreateJob(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.svc.CreateJob(shopID, authUsername, *docReq)
+	idx, err := h.svc.CreateTask(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -90,17 +91,17 @@ func (h JobHttp) CreateJob(ctx microservice.IContext) error {
 	return nil
 }
 
-// Update Job godoc
-// @Description Update Job
-// @Tags		Job
-// @Param		id  path      string  true  "Job ID"
-// @Param		Job  body      models.Job  true  "Job"
+// Update Task godoc
+// @Description Update Task
+// @Tags		Task
+// @Param		id  path      string  true  "Task ID"
+// @Param		Task  body      models.Task  true  "Task"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /job/{id} [put]
-func (h JobHttp) UpdateJob(ctx microservice.IContext) error {
+// @Router /task/{id} [put]
+func (h TaskHttp) UpdateTask(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -108,7 +109,7 @@ func (h JobHttp) UpdateJob(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &models.Job{}
+	docReq := &models.Task{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -121,7 +122,7 @@ func (h JobHttp) UpdateJob(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svc.UpdateJob(shopID, id, authUsername, *docReq)
+	err = h.svc.UpdateTask(shopID, id, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -136,23 +137,69 @@ func (h JobHttp) UpdateJob(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete Job godoc
-// @Description Delete Job
-// @Tags		Job
-// @Param		id  path      string  true  "Job ID"
+// Update Task Status godoc
+// @Description Update Task Status
+// @Tags		Task
+// @Param		id  path      string  true  "Task ID"
+// @Param		TaskStatus  body      models.TaskStatus  true  "Task Status"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /task/{id}/status [put]
+func (h TaskHttp) UpdateTaskStatus(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	id := ctx.Param("id")
+	input := ctx.ReadInput()
+
+	docReq := &models.TaskStatus{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(docReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.UpdateTaskStatus(shopID, id, authUsername, docReq.Status)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+		ID:      id,
+	})
+
+	return nil
+}
+
+// Delete Task godoc
+// @Description Delete Task
+// @Tags		Task
+// @Param		id  path      string  true  "Task ID"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /job/{id} [delete]
-func (h JobHttp) DeleteJob(ctx microservice.IContext) error {
+// @Router /task/{id} [delete]
+func (h TaskHttp) DeleteTask(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
 
 	id := ctx.Param("id")
 
-	err := h.svc.DeleteJob(shopID, id, authUsername)
+	err := h.svc.DeleteTask(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -167,16 +214,16 @@ func (h JobHttp) DeleteJob(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete Job godoc
-// @Description Delete Job
-// @Tags		Job
-// @Param		Job  body      []string  true  "Job GUIDs"
+// Delete Task godoc
+// @Description Delete Task
+// @Tags		Task
+// @Param		Task  body      []string  true  "Task GUIDs"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /job [delete]
-func (h JobHttp) DeleteJobByGUIDs(ctx microservice.IContext) error {
+// @Router /task [delete]
+func (h TaskHttp) DeleteTaskByGUIDs(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
@@ -191,7 +238,7 @@ func (h JobHttp) DeleteJobByGUIDs(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svc.DeleteJobByGUIDs(shopID, authUsername, docReq)
+	err = h.svc.DeleteTaskByGUIDs(shopID, authUsername, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -205,23 +252,23 @@ func (h JobHttp) DeleteJobByGUIDs(ctx microservice.IContext) error {
 	return nil
 }
 
-// Get Job godoc
+// Get Task godoc
 // @Description get struct array by ID
-// @Tags		Job
-// @Param		id  path      string  true  "Job ID"
+// @Tags		Task
+// @Param		id  path      string  true  "Task ID"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /job/{id} [get]
-func (h JobHttp) InfoJob(ctx microservice.IContext) error {
+// @Router /task/{id} [get]
+func (h TaskHttp) InfoTask(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	h.ms.Logger.Debugf("Get Job %v", id)
-	doc, err := h.svc.InfoJob(shopID, id)
+	h.ms.Logger.Debugf("Get Task %v", id)
+	doc, err := h.svc.InfoTask(shopID, id)
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
@@ -236,9 +283,40 @@ func (h JobHttp) InfoJob(ctx microservice.IContext) error {
 	return nil
 }
 
-// List Job godoc
+// Get Task Reject List godoc
+// @Description get Task Reject by task guid
+// @Tags		Task
+// @Param		module	query	integer		false  "Module"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /task/reject/{guid} [get]
+func (h TaskHttp) GetTaskReject(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	taskGUID := ctx.Param("guid")
+
+	module := ctx.QueryParam("module")
+
+	docList, err := h.svc.GetTaskReject(shopID, module, taskGUID)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docList,
+	})
+	return nil
+}
+
+// List Task godoc
 // @Description get struct array by ID
-// @Tags		Job
+// @Tags		Task
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
@@ -247,8 +325,8 @@ func (h JobHttp) InfoJob(ctx microservice.IContext) error {
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /job [get]
-func (h JobHttp) SearchJobPage(ctx microservice.IContext) error {
+// @Router /task [get]
+func (h TaskHttp) SearchTaskPage(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -256,7 +334,16 @@ func (h JobHttp) SearchJobPage(ctx microservice.IContext) error {
 
 	module := ctx.QueryParam("module")
 
-	docList, pagination, err := h.svc.SearchJob(shopID, module, pageable)
+	statusReq := ctx.QueryParam("status")
+
+	filters := map[string]interface{}{}
+
+	status, err := strconv.Atoi(statusReq)
+	if err == nil {
+		filters["status"] = status
+	}
+
+	docList, pagination, err := h.svc.SearchTask(shopID, module, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -271,9 +358,9 @@ func (h JobHttp) SearchJobPage(ctx microservice.IContext) error {
 	return nil
 }
 
-// List Job godoc
+// List Task godoc
 // @Description search limit offset
-// @Tags		Job
+// @Tags		Task
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
@@ -282,8 +369,8 @@ func (h JobHttp) SearchJobPage(ctx microservice.IContext) error {
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /job/list [get]
-func (h JobHttp) SearchJobLimit(ctx microservice.IContext) error {
+// @Router /task/list [get]
+func (h TaskHttp) SearchTaskLimit(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -291,7 +378,7 @@ func (h JobHttp) SearchJobLimit(ctx microservice.IContext) error {
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchJobStep(shopID, lang, pageableStep)
+	docList, total, err := h.svc.SearchTaskStep(shopID, lang, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -306,16 +393,16 @@ func (h JobHttp) SearchJobLimit(ctx microservice.IContext) error {
 	return nil
 }
 
-// Create Job Bulk godoc
-// @Description Create Job
-// @Tags		Job
-// @Param		Job  body      []models.Job  true  "Job"
+// Create Task Bulk godoc
+// @Description Create Task
+// @Tags		Task
+// @Param		Task  body      []models.Task  true  "Task"
 // @Accept 		json
 // @Success		201	{object}	common.BulkReponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /job/bulk [post]
-func (h JobHttp) SaveBulk(ctx microservice.IContext) error {
+// @Router /task/bulk [post]
+func (h TaskHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -323,7 +410,7 @@ func (h JobHttp) SaveBulk(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	dataReq := []models.Job{}
+	dataReq := []models.Task{}
 	err := json.Unmarshal([]byte(input), &dataReq)
 
 	if err != nil {

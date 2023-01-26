@@ -10,9 +10,10 @@ import (
 const documentImageCollectionName = "documentImages"
 
 type DocumentImage struct {
-	ImageURI        string           `json:"imageuri" bson:"imageuri"`
-	Name            string           `json:"name" bson:"name"`
-	IsReject        bool             `json:"isreject" bson:"isreject"`
+	ImageURI string `json:"imageuri" bson:"imageuri"`
+	Name     string `json:"name" bson:"name"`
+	// IsReject        bool             `json:"isreject" bson:"isreject"`
+	// Status          int8             `json:"status" bson:"status"`
 	References      []Reference      `json:"references" bson:"references"`
 	ReferenceGroups []ReferenceGroup `json:"referencegroups" bson:"referencegroups"`
 
@@ -42,8 +43,8 @@ type Comment struct {
 type DocumentImageRequest struct {
 	DocumentImage `bson:"inline"`
 	Tags          *[]string `json:"tags,omitempty" bson:"tags,omitempty"`
-	JobGUID       string    `json:"jobguid" bson:"jobguid"`
-	PathJob       string    `json:"pathjob" bson:"pathjob"`
+	TaskGUID      string    `json:"taskguid" bson:"taskguid"`
+	PathTask      string    `json:"pathtask" bson:"pathtask"`
 }
 
 type DocumentImageInfo struct {
@@ -100,9 +101,3 @@ type DocumentImageStatus struct {
 }
 
 type ImageStatus = int8
-
-const (
-	ImageNormal ImageStatus = iota
-	ImageReject
-	ImageCompleted
-)

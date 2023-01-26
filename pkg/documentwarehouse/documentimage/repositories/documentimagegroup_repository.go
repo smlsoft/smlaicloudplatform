@@ -29,7 +29,9 @@ type IDocumentImageGroupRepository interface {
 
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
 	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
+	FindByTaskGUID(shopID string, taskGUID string) ([]models.DocumentImageGroupDoc, error)
 
+	UpdateTaskIsCompletedByTaskGUID(shopID string, taskGUID string, isCompleted bool) error
 	FindOneByReference(shopID string, reference models.Reference) (models.DocumentImageGroupDoc, error)
 	FindOneByDocumentImageGUID(shopID string, documentImageGUID string) (models.DocumentImageGroupDoc, error)
 	FindByDocumentImageGUIDs(shopID string, documentImageGUIDs []string) ([]models.DocumentImageGroupInfo, error)
@@ -60,6 +62,23 @@ func NewDocumentImageGroupRepository(pst microservice.IPersisterMongo) DocumentI
 
 func (repo DocumentImageGroupRepository) Transaction(fnc func() error) error {
 	return repo.pst.Transaction(fnc)
+}
+
+func (repo DocumentImageGroupRepository) UpdateTaskIsCompletedByTaskGUID(shopID string, taskGUID string, isCompleted bool) error {
+
+	filters := bson.M{
+		"shopid":    shopID,
+		"taskguid":  taskGUID,
+		"deletedat": bson.M{"$exists": false},
+	}
+
+	err := repo.pst.Update(models.DocumentImageGroupDoc{}, filters, bson.M{"$set": bson.M{"iscompleted": isCompleted}})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (repo DocumentImageGroupRepository) FindOneByReference(shopID string, reference models.Reference) (models.DocumentImageGroupDoc, error) {
@@ -184,6 +203,20 @@ func (repo DocumentImageGroupRepository) FindByReferenceDocNo(shopID string, doc
 	err := repo.pst.Find(models.DocumentImageGroupDoc{}, bson.M{
 		"references.docno": docNo,
 		"deletedat":        bson.M{"$exists": false},
+	}, &docList)
+
+	if err != nil {
+		return []models.DocumentImageGroupDoc{}, err
+	}
+
+	return docList, nil
+}
+
+func (repo DocumentImageGroupRepository) FindByTaskGUID(shopID string, taskGUID string) ([]models.DocumentImageGroupDoc, error) {
+	docList := []models.DocumentImageGroupDoc{}
+	err := repo.pst.Find(models.DocumentImageGroupDoc{}, bson.M{
+		"taskguid":  taskGUID,
+		"deletedat": bson.M{"$exists": false},
 	}, &docList)
 
 	if err != nil {

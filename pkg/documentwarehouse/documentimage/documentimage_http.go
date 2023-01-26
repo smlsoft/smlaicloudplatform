@@ -71,8 +71,6 @@ func (h DocumentImageHttp) RouteSetup() {
 	h.ms.POST("/documentimage", h.CreateDocumentImage)
 	h.ms.POST("/documentimage/bulk", h.BulkCreateDocumentImage)
 	// h.ms.PUT("/documentimage/status/:id", h.UpdateDocumentImageStatus)
-	h.ms.PUT("/documentimage/:guid", h.UpdateDocumentImage)
-	h.ms.PUT("/documentimage/:guid/reject", h.UpdateDocumentImageReject)
 	// h.ms.DELETE("/documentimage/:guid", h.DeleteDocumentImage)
 	// h.ms.PUT("/documentimage/documentref/status/:docref", h.UpdateDocumentImageStatusByDocumentRef)
 
@@ -84,6 +82,7 @@ func (h DocumentImageHttp) RouteSetup() {
 	h.ms.PUT("/documentimagegroup/:guid/reference", h.UpdateReferenceByDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid/ungroup", h.UngroupDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid/images", h.UpdateDocumentImageGroup)
+	h.ms.PUT("/documentimagegroup/:guid/status", h.UpdateStatusDocumentImageGroup)
 	h.ms.DELETE("/documentimagegroup/:guid", h.DeleteDocumentImageGroup)
 	h.ms.DELETE("/documentimagegroup", h.DeleteDocumentImageGroups)
 
@@ -305,84 +304,6 @@ func (h DocumentImageHttp) BulkCreateDocumentImage(ctx microservice.IContext) er
 	return nil
 }
 
-// Update Document Image godoc
-// @Summary		Update Document Image
-// @Description Update Document Image
-// @Tags		DocumentImage
-// @Param		guid  path      string  true  "document image guid"
-// @Param		DocumentImage  body      models.DocumentImage  true  "DocumentImage"
-// @Accept 		json
-// @Success		200	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /documentimage/{guid} [put]
-func (h DocumentImageHttp) UpdateDocumentImage(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	shopID := userInfo.ShopID
-
-	id := ctx.Param("guid")
-	input := ctx.ReadInput()
-
-	docReq := &models.DocumentImage{}
-	err := json.Unmarshal([]byte(input), &docReq)
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	err = h.service.UpdateDocumentImage(shopID, id, authUsername, *docReq)
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusCreated, common.ApiResponse{
-		Success: true,
-		ID:      id,
-	})
-	return nil
-}
-
-// Update Reject Status Document Image godoc
-// @Summary		Update Reject Document Image
-// @Description Update Reject Document Image
-// @Tags		DocumentImage
-// @Param		guid  path      string  true  "document image guid"
-// @Param		RequestDocumentImageReject  body      models.RequestDocumentImageReject  true  "Document Image Reject"
-// @Accept 		json
-// @Success		200	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /documentimage/{guid}/reject [put]
-func (h DocumentImageHttp) UpdateDocumentImageReject(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	shopID := userInfo.ShopID
-
-	guid := ctx.Param("guid")
-	input := ctx.ReadInput()
-
-	docReq := &models.RequestDocumentImageReject{}
-	err := json.Unmarshal([]byte(input), &docReq)
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	err = h.service.UpdateDocumentImageReject(shopID, guid, authUsername, docReq.IsReject)
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusCreated, common.ApiResponse{
-		Success: true,
-		ID:      guid,
-	})
-	return nil
-}
-
 /*
 // Update Document Image Status godoc
 // @Summary		Update Document Image Status
@@ -514,8 +435,8 @@ func (h DocumentImageHttp) UploadDocumentImage(ctx microservice.IContext) error 
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
-// @Param		pathjob	query	string		false  "Filter Path Job"
-// @Param		jobguid	query	string		false  "Filter by Job guidfixed"
+// @Param		pathtask	query	string		false  "Filter Path Job"
+// @Param		taskguid	query	string		false  "Filter by Job guidfixed"
 // @Param		reserve	query	integer		false  "เอกสารที่มีการจอง,0 not filter, 1 filter"
 // @Param		reject	query	integer		false  "empty not filter, 0 not reject, 1 reject"
 // @Param		ref	query	integer		false  "document reference: empty not filter, 1 not reference, 2 referenced"
@@ -538,8 +459,8 @@ func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) err
 	docRefReserve := strings.TrimSpace(ctx.QueryParam("reserve"))
 	isreject := strings.TrimSpace(ctx.QueryParam("reject"))
 	isref := strings.TrimSpace(ctx.QueryParam("ref"))
-	path := strings.TrimSpace(ctx.QueryParam("pathjob"))
-	folder := strings.TrimSpace(ctx.QueryParam("jobguid"))
+	path := strings.TrimSpace(ctx.QueryParam("pathtask"))
+	folder := strings.TrimSpace(ctx.QueryParam("taskguid"))
 
 	fromDateStr := strings.TrimSpace(ctx.QueryParam("fromdate"))
 	toDateStr := strings.TrimSpace(ctx.QueryParam("todate"))
@@ -591,11 +512,11 @@ func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) err
 	}
 
 	if len(path) > 0 {
-		matchFilters["pathjob"] = path
+		matchFilters["pathtask"] = path
 	}
 
 	if len(folder) > 0 {
-		matchFilters["jobguid"] = folder
+		matchFilters["taskguid"] = folder
 	}
 
 	docList, pagination, err := h.service.ListDocumentImageGroup(shopID, matchFilters, pageable)
@@ -815,6 +736,46 @@ func (h DocumentImageHttp) UngroupDocumentImageGroup(ctx microservice.IContext) 
 	docImageGroupGUID := ctx.Param("guid")
 
 	err := h.service.UnGroupDocumentImageGroup(userInfo.ShopID, userInfo.Username, docImageGroupGUID)
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+	})
+
+	return nil
+}
+
+// Update Status Document Image Group
+// @Description Update Status Document Image Group
+// @Tags		DocumentImageGroup
+// @Accept 		json
+// @Param		guid  path      string  true  "document image group guid"
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /documentimagegroup/{guid}/status [put]
+func (h DocumentImageHttp) UpdateStatusDocumentImageGroup(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	docImageGroupGUID := ctx.Param("guid")
+
+	input := ctx.ReadInput()
+
+	docReq := models.Status{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.service.UpdateStatusDocumentImageGroup(shopID, authUsername, docImageGroupGUID, docReq.Status)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err

@@ -12,7 +12,6 @@ import (
 	"smlcloudplatform/pkg/customershop/customer"
 	"smlcloudplatform/pkg/customershop/customergroup"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
-	"smlcloudplatform/pkg/job"
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
 	"smlcloudplatform/pkg/payment/bankmaster"
@@ -42,6 +41,7 @@ import (
 	"smlcloudplatform/pkg/smsreceive/smstransaction"
 	"smlcloudplatform/pkg/storefront"
 	"smlcloudplatform/pkg/syncdata"
+	"smlcloudplatform/pkg/task"
 	"smlcloudplatform/pkg/tools"
 	"smlcloudplatform/pkg/transaction/purchase"
 	"smlcloudplatform/pkg/transaction/saleinvoice"
@@ -168,7 +168,7 @@ func main() {
 		bookbank.NewBookBankHttp(ms, cfg),
 		qrpayment.NewQrPaymentHttp(ms, cfg),
 
-		job.NewJobHttp(ms, cfg),
+		task.NewTaskHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)

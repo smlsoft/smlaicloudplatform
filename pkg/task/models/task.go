@@ -7,9 +7,16 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const jobCollectionName = "fileJobs"
+const taskCollectionName = "tasks"
 
-type Job struct {
+const (
+	TaskPending = iota
+	TaskUplaoded
+	TaskChecking
+	TaskCompleted
+)
+
+type Task struct {
 	models.PartitionIdentity `bson:"inline"`
 	Name                     string    `json:"name" bson:"name"`
 	Module                   string    `json:"module" bson:"module"`
@@ -21,55 +28,62 @@ type Job struct {
 	Description              string    `json:"description" bson:"description"`
 	ToTal                    int       `json:"total" bson:"total"`
 	ToTalReject              int       `json:"totalreject" bson:"totalreject"`
-	CreatedAt                time.Time `json:"createdat" bson:"createdat"`
+	OwnerAt                  time.Time `json:"ownerat" bson:"ownerat"`
+	OwnerBy                  string    `json:"ownerby" bson:"ownerby"`
+	RejectedAt               time.Time `json:"rejectedat,omitempty" bson:"rejectedat,omitempty"`
+	RejectedBy               string    `json:"rejectedby,omitempty" bson:"rejectedby,omitempty"`
 }
 
-type JobInfo struct {
+type TaskInfo struct {
 	models.DocIdentity `bson:"inline"`
-	Job                `bson:"inline"`
+	Task               `bson:"inline"`
 }
 
-func (JobInfo) CollectionName() string {
-	return jobCollectionName
+func (TaskInfo) CollectionName() string {
+	return taskCollectionName
 }
 
-type JobData struct {
+type TaskData struct {
 	models.ShopIdentity `bson:"inline"`
-	JobInfo             `bson:"inline"`
+	TaskInfo            `bson:"inline"`
 }
 
-type JobDoc struct {
+type TaskDoc struct {
 	ID                 primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	JobData            `bson:"inline"`
+	TaskData           `bson:"inline"`
 	models.ActivityDoc `bson:"inline"`
 }
 
-func (JobDoc) CollectionName() string {
-	return jobCollectionName
+func (TaskDoc) CollectionName() string {
+	return taskCollectionName
 }
 
-type JobItemGuid struct {
+type TaskItemGuid struct {
 	Name string `json:"name" bson:"name"`
 }
 
-func (JobItemGuid) CollectionName() string {
-	return jobCollectionName
+func (TaskItemGuid) CollectionName() string {
+	return taskCollectionName
 }
 
-type JobActivity struct {
-	JobData             `bson:"inline"`
+type TaskActivity struct {
+	TaskData            `bson:"inline"`
 	models.ActivityTime `bson:"inline"`
 }
 
-func (JobActivity) CollectionName() string {
-	return jobCollectionName
+func (TaskActivity) CollectionName() string {
+	return taskCollectionName
 }
 
-type JobDeleteActivity struct {
+type TaskDeleteActivity struct {
 	models.Identity     `bson:"inline"`
 	models.ActivityTime `bson:"inline"`
 }
 
-func (JobDeleteActivity) CollectionName() string {
-	return jobCollectionName
+func (TaskDeleteActivity) CollectionName() string {
+	return taskCollectionName
+}
+
+type TaskStatus struct {
+	Status int8 `json:"status"`
 }

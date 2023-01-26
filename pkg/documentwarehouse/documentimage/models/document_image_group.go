@@ -9,6 +9,13 @@ import (
 
 const documentImageGroupCollectionName = "documentImageGroups"
 
+const (
+	IMAGE_PENDING = iota
+	IMAGE_CHECKED
+	IMAGE_REJECT
+	IMAGE_BANNED
+)
+
 type DocumentImageGroup struct {
 	// DocumentRef     string            `json:"documentref" bson:"documentref"`
 	Title           string            `json:"title" bson:"title"`
@@ -17,9 +24,11 @@ type DocumentImageGroup struct {
 	ImageReferences *[]ImageReference `json:"imagereferences" bson:"imagereferences"`
 	UploadedBy      string            `json:"uploadedby" bson:"uploadedby"`
 	UploadedAt      time.Time         `json:"uploadedat" bson:"uploadedat"`
-	IsReject        bool              `json:"isreject" bson:"isreject"`
-	JobGUID         string            `json:"jobguid" bson:"jobguid"`
-	PathJob         string            `json:"pathjob" bson:"pathjob"`
+	Status          int8              `json:"status" bson:"status"`
+	Description     string            `json:"description" bson:"description"`
+	TaskGUID        string            `json:"taskguid" bson:"taskguid"`
+	PathTask        string            `json:"pathtask" bson:"pathtask"`
+	IsTaskCompleted bool              `json:"iscompleted" bson:"iscompleted"`
 }
 
 type DocumentImageGroupBody struct {
@@ -33,12 +42,12 @@ type ImageReferenceBody struct {
 }
 type ImageReference struct {
 	ImageReferenceBody `bson:",inline"`
-	ImageURI           string    `json:"imageuri" bson:"imageuri"`
-	Name               string    `json:"name" bson:"name"`
-	IsReject           bool      `json:"isreject" bson:"isreject"`
-	UploadedBy         string    `json:"uploadedby" bson:"uploadedby"`
-	UploadedAt         time.Time `json:"uploadedat" bson:"uploadedat"`
-	MetaFileAt         time.Time `json:"metafileat" bson:"metafileat"`
+	ImageURI           string `json:"imageuri" bson:"imageuri"`
+	Name               string `json:"name" bson:"name"`
+	// IsReject           bool      `json:"isreject" bson:"isreject"`
+	UploadedBy string    `json:"uploadedby" bson:"uploadedby"`
+	UploadedAt time.Time `json:"uploadedat" bson:"uploadedat"`
+	MetaFileAt time.Time `json:"metafileat" bson:"metafileat"`
 }
 
 func (DocumentImageGroup) CollectionName() string {
@@ -68,4 +77,8 @@ type DocumentImageGroupDoc struct {
 
 func (DocumentImageGroupDoc) CollectionName() string {
 	return documentImageGroupCollectionName
+}
+
+type Status struct {
+	Status int8 `json:"status"`
 }
