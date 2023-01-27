@@ -236,8 +236,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -253,15 +253,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       unitcode:
         type: string
       unitname1:
@@ -633,9 +626,7 @@ definitions:
       contactnames:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
       countrycode:
         type: string
       districtcode:
@@ -656,12 +647,10 @@ definitions:
         type: string
       zipcode:
         type: string
-    required:
-    - contactnames
     type: object
   models.CustomerGroup:
     properties:
-      customercode:
+      groupcode:
         minLength: 1
         type: string
       names:
@@ -671,7 +660,42 @@ definitions:
         type: array
         uniqueItems: true
     required:
-    - customercode
+    - groupcode
+    - names
+    type: object
+  models.CustomerRequest:
+    properties:
+      addressforbilling:
+        $ref: '#/definitions/models.CustomerAddress'
+      addressforshipping:
+        items:
+          $ref: '#/definitions/models.CustomerAddress'
+        type: array
+      code:
+        minLength: 1
+        type: string
+      email:
+        type: string
+      groups:
+        items:
+          type: string
+        type: array
+      images:
+        items:
+          $ref: '#/definitions/models.Image'
+        type: array
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      personaltype:
+        type: integer
+      taxid:
+        type: string
+    required:
+    - code
     - names
     type: object
   models.DocumentImage:
@@ -852,6 +876,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageReference:
     properties:
@@ -953,8 +979,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -972,8 +998,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -989,12 +1013,7 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1102,8 +1121,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1121,8 +1140,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1138,12 +1155,7 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1301,8 +1313,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1320,8 +1332,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1337,12 +1347,7 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -2737,17 +2742,10 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
+      keynumber:
+        type: integer
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
     type: object
   models.ProductUnit:
     properties:
@@ -2932,10 +2930,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -2953,8 +2951,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -2970,10 +2966,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -3308,10 +3300,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -3329,8 +3321,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3346,10 +3336,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -4413,11 +4399,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -4661,13 +4647,17 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
+        type: integer
+      - description: customer group
+        in: query
+        name: group
         type: integer
       responses:
         "200":
@@ -4689,12 +4679,12 @@ paths:
       - application/json
       description: Create Customer
       parameters:
-      - description: Customer
+      - description: Customer Request
         in: body
-        name: Customer
+        name: CustomerRequest
         required: true
         schema:
-          $ref: '#/definitions/models.Customer'
+          $ref: '#/definitions/models.CustomerRequest'
       responses:
         "201":
           description: Created
@@ -4765,12 +4755,12 @@ paths:
         name: id
         required: true
         type: string
-      - description: Customer
+      - description: Customer Request
         in: body
-        name: Customer
+        name: CustomerRequest
         required: true
         schema:
-          $ref: '#/definitions/models.Customer'
+          $ref: '#/definitions/models.CustomerRequest'
       responses:
         "201":
           description: Created
@@ -4884,11 +4874,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -5923,11 +5913,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -7198,11 +7188,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -7415,11 +7405,11 @@ paths:
         name: lastUpdate
         required: true
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -7953,11 +7943,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -8084,11 +8074,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -8270,11 +8260,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -8493,11 +8483,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -8716,11 +8706,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -9122,11 +9112,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -9285,11 +9275,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -9562,11 +9552,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -9918,11 +9908,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -10102,11 +10092,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -10458,11 +10448,11 @@ paths:
         name: lastUpdate
         required: true
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -10681,11 +10671,11 @@ paths:
         name: lastUpdate
         required: true
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -10954,11 +10944,11 @@ paths:
         name: lastUpdate
         required: true
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -11011,11 +11001,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -11367,11 +11357,11 @@ paths:
         name: lastUpdate
         required: true
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -11557,11 +11547,11 @@ paths:
         name: lastUpdate
         required: true
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -12246,11 +12236,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
@@ -13039,11 +13029,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: Page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: Limit
         in: query
         name: limit
         type: integer
