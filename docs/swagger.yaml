@@ -876,8 +876,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageReference:
     properties:
@@ -3184,13 +3182,62 @@ definitions:
       success:
         type: boolean
     type: object
-  models.SMLTransaction:
+  models.SMLTransactionBulkRequest:
     properties:
-      docno:
+      body:
+        items:
+          additionalProperties: true
+          type: object
+        type: array
+      collection:
+        maxLength: 100
+        minLength: 1
         type: string
-      dynamic_data:
+      keyname:
+        maxLength: 100
+        minLength: 1
+        type: string
+    required:
+    - body
+    - collection
+    - keyname
+    type: object
+  models.SMLTransactionKeyRequest:
+    properties:
+      collection:
+        maxLength: 100
+        minLength: 1
+        type: string
+      keyname:
+        maxLength: 100
+        minLength: 1
+        type: string
+      keys:
+        items:
+          type: string
+        type: array
+    required:
+    - collection
+    - keyname
+    - keys
+    type: object
+  models.SMLTransactionRequest:
+    properties:
+      body:
         additionalProperties: true
         type: object
+      collection:
+        maxLength: 100
+        minLength: 1
+        type: string
+      keyname:
+        maxLength: 100
+        minLength: 1
+        type: string
+    required:
+    - body
+    - collection
+    - keyname
     type: object
   models.Saleinvoice:
     properties:
@@ -11979,17 +12026,66 @@ paths:
       tags:
       - ShopUser
   /sml-transaction:
+    delete:
+      consumes:
+      - application/json
+      description: Delete SMLTransaction
+      parameters:
+      - description: SMLTransaction Key Request
+        in: body
+        name: SMLTransactionKeyRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.SMLTransactionKeyRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SMLTransaction
     post:
       consumes:
       - application/json
       description: Create SMLTransaction
       parameters:
-      - description: SMLTransaction
+      - description: SMLTransactionRequest
         in: body
-        name: SMLTransaction
+        name: SMLTransactionRequest
         required: true
         schema:
-          $ref: '#/definitions/models.SMLTransaction'
+          $ref: '#/definitions/models.SMLTransactionRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SMLTransaction
+  /sml-transaction/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Bulk Create SMLTransaction
+      parameters:
+      - description: SMLTransaction Bulk Request
+        in: body
+        name: SMLTransactionBulkRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.SMLTransactionBulkRequest'
       responses:
         "201":
           description: Created

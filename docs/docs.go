@@ -12331,12 +12331,92 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "SMLTransaction",
-                        "name": "SMLTransaction",
+                        "description": "SMLTransactionRequest",
+                        "name": "SMLTransactionRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SMLTransaction"
+                            "$ref": "#/definitions/models.SMLTransactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SMLTransaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMLTransaction"
+                ],
+                "parameters": [
+                    {
+                        "description": "SMLTransaction Key Request",
+                        "name": "SMLTransactionKeyRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SMLTransactionKeyRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/sml-transaction/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Bulk Create SMLTransaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMLTransaction"
+                ],
+                "parameters": [
+                    {
+                        "description": "SMLTransaction Bulk Request",
+                        "name": "SMLTransactionBulkRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SMLTransactionBulkRequest"
                         }
                     }
                 ],
@@ -15526,9 +15606,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -18906,15 +18983,80 @@ const docTemplate = `{
                 }
             }
         },
-        "models.SMLTransaction": {
+        "models.SMLTransactionBulkRequest": {
             "type": "object",
+            "required": [
+                "body",
+                "collection",
+                "keyname"
+            ],
             "properties": {
-                "docno": {
-                    "type": "string"
+                "body": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                    }
                 },
-                "dynamic_data": {
+                "collection": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "keyname": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                }
+            }
+        },
+        "models.SMLTransactionKeyRequest": {
+            "type": "object",
+            "required": [
+                "collection",
+                "keyname",
+                "keys"
+            ],
+            "properties": {
+                "collection": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "keyname": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "keys": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.SMLTransactionRequest": {
+            "type": "object",
+            "required": [
+                "body",
+                "collection",
+                "keyname"
+            ],
+            "properties": {
+                "body": {
                     "type": "object",
                     "additionalProperties": true
+                },
+                "collection": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "keyname": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
                 }
             }
         },
