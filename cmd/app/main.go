@@ -45,6 +45,7 @@ import (
 	"smlcloudplatform/pkg/tools"
 	"smlcloudplatform/pkg/transaction/purchase"
 	"smlcloudplatform/pkg/transaction/saleinvoice"
+	"smlcloudplatform/pkg/transaction/smltransaction"
 	"smlcloudplatform/pkg/vfgl/accountgroup"
 	"smlcloudplatform/pkg/vfgl/accountperiodmaster"
 	"smlcloudplatform/pkg/vfgl/chartofaccount"
@@ -169,6 +170,7 @@ func main() {
 		qrpayment.NewQrPaymentHttp(ms, cfg),
 
 		task.NewTaskHttp(ms, cfg),
+		smltransaction.NewSMLTransactionHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)
