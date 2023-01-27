@@ -5,39 +5,58 @@ import (
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/customershop/customer/models"
 	"smlcloudplatform/pkg/customershop/customer/repositories"
+	modelsCustomerGroup "smlcloudplatform/pkg/customershop/customergroup/models"
+	repositoriesCustomerGroup "smlcloudplatform/pkg/customershop/customergroup/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
 	"time"
 
+	"github.com/samber/lo"
 	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ICustomerHttpService interface {
-	CreateCustomer(shopID string, authUsername string, doc models.Customer) (string, error)
-	UpdateCustomer(shopID string, guid string, authUsername string, doc models.Customer) error
+	CreateCustomer(shopID string, authUsername string, doc models.CustomerRequest) (string, error)
+	UpdateCustomer(shopID string, guid string, authUsername string, doc models.CustomerRequest) error
 	DeleteCustomer(shopID string, guid string, authUsername string) error
 	DeleteCustomerByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoCustomer(shopID string, guid string) (models.CustomerInfo, error)
-	SearchCustomer(shopID string, pageable micromodels.Pageable) ([]models.CustomerInfo, mongopagination.PaginationData, error)
+	SearchCustomer(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.CustomerInfo, mongopagination.PaginationData, error)
 	SearchCustomerStep(shopID string, langCode string, pageable micromodels.PageableStep) ([]models.CustomerInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Customer) (common.BulkImport, error)
 }
 
 type CustomerHttpService struct {
-	repo repositories.ICustomerRepository
+	repo              repositories.ICustomerRepository
+	repoCustomerGroup repositoriesCustomerGroup.ICustomerGroupRepository
 }
 
-func NewCustomerHttpService(repo repositories.ICustomerRepository) *CustomerHttpService {
+func NewCustomerHttpService(repo repositories.ICustomerRepository, repoCustomerGroup repositoriesCustomerGroup.ICustomerGroupRepository) *CustomerHttpService {
 
 	return &CustomerHttpService{
-		repo: repo,
+		repo:              repo,
+		repoCustomerGroup: repoCustomerGroup,
 	}
 }
 
-func (svc CustomerHttpService) CreateCustomer(shopID string, authUsername string, doc models.Customer) (string, error) {
+func (svc CustomerHttpService) getCustomerGroupByGUIDs(shopID string, groupGUIDs []string) ([]modelsCustomerGroup.CustomerGroupInfo, error) {
+	docCustomerGroups, err := svc.repoCustomerGroup.FindByGuids(shopID, groupGUIDs)
+
+	if err != nil {
+		return []modelsCustomerGroup.CustomerGroupInfo{}, err
+	}
+
+	customerGroups := lo.Map[modelsCustomerGroup.CustomerGroupDoc, modelsCustomerGroup.CustomerGroupInfo](docCustomerGroups, func(docCustomerGroup modelsCustomerGroup.CustomerGroupDoc, idx int) modelsCustomerGroup.CustomerGroupInfo {
+		return docCustomerGroup.CustomerGroupInfo
+	})
+
+	return customerGroups, nil
+}
+
+func (svc CustomerHttpService) CreateCustomer(shopID string, authUsername string, doc models.CustomerRequest) (string, error) {
 
 	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", doc.Code)
 
@@ -46,7 +65,7 @@ func (svc CustomerHttpService) CreateCustomer(shopID string, authUsername string
 	}
 
 	if findDoc.Code != "" {
-		return "", errors.New("Code is exists")
+		return "", errors.New("code is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -54,10 +73,20 @@ func (svc CustomerHttpService) CreateCustomer(shopID string, authUsername string
 	docData := models.CustomerDoc{}
 	docData.ShopID = shopID
 	docData.GuidFixed = newGuidFixed
-	docData.Customer = doc
+	docData.Customer = doc.Customer
 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
+
+	customerGroups := []modelsCustomerGroup.CustomerGroupInfo{}
+	if doc.Groups != nil && len(*doc.Groups) > 0 {
+		customerGroups, err = svc.getCustomerGroupByGUIDs(shopID, *doc.Groups)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	docData.Groups = &customerGroups
 
 	_, err = svc.repo.Create(docData)
 
@@ -68,7 +97,7 @@ func (svc CustomerHttpService) CreateCustomer(shopID string, authUsername string
 	return newGuidFixed, nil
 }
 
-func (svc CustomerHttpService) UpdateCustomer(shopID string, guid string, authUsername string, doc models.Customer) error {
+func (svc CustomerHttpService) UpdateCustomer(shopID string, guid string, authUsername string, doc models.CustomerRequest) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -80,10 +109,20 @@ func (svc CustomerHttpService) UpdateCustomer(shopID string, guid string, authUs
 		return errors.New("document not found")
 	}
 
-	findDoc.Customer = doc
+	findDoc.Customer = doc.Customer
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
+
+	customerGroups := []modelsCustomerGroup.CustomerGroupInfo{}
+	if doc.Groups != nil && len(*doc.Groups) > 0 {
+		customerGroups, err = svc.getCustomerGroupByGUIDs(shopID, *doc.Groups)
+		if err != nil {
+			return err
+		}
+	}
+
+	findDoc.Groups = &customerGroups
 
 	err = svc.repo.Update(shopID, guid, findDoc)
 
@@ -130,13 +169,13 @@ func (svc CustomerHttpService) InfoCustomer(shopID string, guid string) (models.
 
 }
 
-func (svc CustomerHttpService) SearchCustomer(shopID string, pageable micromodels.Pageable) ([]models.CustomerInfo, mongopagination.PaginationData, error) {
+func (svc CustomerHttpService) SearchCustomer(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.CustomerInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"code",
 		"names.name",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.CustomerInfo{}, pagination, err
@@ -239,6 +278,22 @@ func (svc CustomerHttpService) SaveInBatch(shopID string, authUsername string, d
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
+			groupGUIDs := []string{}
+
+			for _, tempGroup := range *doc.Groups {
+				groupGUIDs = append(groupGUIDs, tempGroup.GuidFixed)
+			}
+
+			customerGroups := []modelsCustomerGroup.CustomerGroupInfo{}
+			if doc.Groups != nil && len(*doc.Groups) > 0 {
+				customerGroups, err = svc.getCustomerGroupByGUIDs(shopID, groupGUIDs)
+				if err != nil {
+					return err
+				}
+			}
+
+			doc.Groups = &customerGroups
+
 			err = svc.repo.Update(shopID, doc.GuidFixed, doc)
 			if err != nil {
 				return nil
@@ -246,6 +301,25 @@ func (svc CustomerHttpService) SaveInBatch(shopID string, authUsername string, d
 			return nil
 		},
 	)
+
+	for docIdx, tempDoc := range createDataList {
+		customerGroups := []modelsCustomerGroup.CustomerGroupInfo{}
+
+		groupGUIDs := lo.Map[modelsCustomerGroup.CustomerGroupInfo, string](
+			*tempDoc.Groups,
+			func(doc modelsCustomerGroup.CustomerGroupInfo, idx int) string {
+				return doc.GuidFixed
+			})
+
+		if tempDoc.Groups != nil && len(*tempDoc.Groups) > 0 {
+			customerGroups, err = svc.getCustomerGroupByGUIDs(shopID, groupGUIDs)
+			if err != nil {
+				return common.BulkImport{}, err
+			}
+		}
+
+		createDataList[docIdx].Groups = &customerGroups
+	}
 
 	if len(createDataList) > 0 {
 		err = svc.repo.CreateInBatch(createDataList)

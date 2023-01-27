@@ -180,8 +180,8 @@ func (h *OptionHttp) InfoInventoryOptionMain(ctx microservice.IContext) error {
 // @Description List Inventory Option
 // @Tags		Inventory
 // @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
 // @Success		200	{object}	models.InventoryOptionPageResponse
 // @Failure		401 {object}	models.AuthResponseFailed

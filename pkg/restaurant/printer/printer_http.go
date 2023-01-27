@@ -255,8 +255,8 @@ func (h PrinterHttp) SearchPrinterLimit(ctx microservice.IContext) error {
 // @Description Fetch Restaurant Printer Update By Date
 // @Tags		Restaurant
 // @Param		lastUpdate query string true "DateTime YYYY-MM-DDTHH:mm"
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
 // @Accept		json
 // @Success		200 {object} models.PrinterFetchUpdateResponse
 // @Failure		401 {object} common.AuthResponseFailed

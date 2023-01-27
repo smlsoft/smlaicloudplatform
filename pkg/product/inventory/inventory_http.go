@@ -436,8 +436,8 @@ func (h InventoryHttp) InfoInventoryBarcode(ctx microservice.IContext) error {
 // @Description get struct array by ID
 // @Tags		Inventory
 // @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
 // @Success		200	{array}		models.InventoryPageResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -501,8 +501,8 @@ func (h InventoryHttp) InfoMongoInventory(ctx microservice.IContext) error {
 // @Description Fetch Update Inventory By Date
 // @Tags		Inventory
 // @Param		lastUpdate query string true "DateTime YYYY-MM-DDTHH:mm"
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
 // @Accept		json
 // @Success		200 {object} models.InventoryFetchUpdateResponse
 // @Failure		401 {object} common.AuthResponseFailed

@@ -245,8 +245,8 @@ func (h ProductHttp) InfoProduct(ctx microservice.IContext) error {
 // @Description get struct array by ID
 // @Tags		Product
 // @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
 // @Param		category	query	string		false  "category guid"
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse

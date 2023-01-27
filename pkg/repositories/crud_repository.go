@@ -157,7 +157,7 @@ func (repo CrudRepository[T]) FindByGuids(shopID string, guids []string) ([]T, e
 
 	doc := new([]T)
 
-	err := repo.pst.FindOne(new(T), bson.M{"guidfixed": bson.M{"$in": guids}, "shopid": shopID, "deletedat": bson.M{"$exists": false}}, doc)
+	err := repo.pst.Find(new(T), bson.M{"guidfixed": bson.M{"$in": guids}, "shopid": shopID, "deletedat": bson.M{"$exists": false}}, doc)
 
 	if err != nil {
 		return *new([]T), err

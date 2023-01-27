@@ -17,6 +17,7 @@ type ICustomerGroupRepository interface {
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindByGuid(shopID string, guid string) (models.CustomerGroupDoc, error)
+	FindByGuids(shopID string, guids []string) ([]models.CustomerGroupDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.CustomerGroupItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.CustomerGroupDoc, error)

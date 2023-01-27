@@ -20,7 +20,7 @@ type ICustomerRepository interface {
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.CustomerItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.CustomerDoc, error)
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.CustomerInfo, mongopagination.PaginationData, error)
+	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.CustomerInfo, mongopagination.PaginationData, error)
 	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.CustomerInfo, int, error)
 }
 

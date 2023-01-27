@@ -191,8 +191,8 @@ func (h PurchaseHttp) InfoPurchase(ctx microservice.IContext) error {
 // List Purchase Transaction godoc
 // @Tags		Purchase
 // @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
 // @Success		200	{array}	models.PurchaseListPageResponse
 // @Failure		401 {object}	models.AuthResponseFailed

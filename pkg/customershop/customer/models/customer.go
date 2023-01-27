@@ -1,6 +1,7 @@
 package models
 
 import (
+	modelsCustomergroup "smlcloudplatform/pkg/customershop/customergroup/models"
 	"smlcloudplatform/pkg/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -29,7 +30,7 @@ type CustomerAddress struct {
 	DistrictCode    string          `json:"districtcode" bson:"districtcode"`
 	SubDistrictCode string          `json:"subdistrictcode" bson:"subdistrictcode"`
 	ZipCode         string          `json:"zipcode" bson:"zipcode"`
-	ContactNames    *[]models.NameX `json:"contactnames" bson:"contactnames" validate:"required,min=1,unique=Code,dive"`
+	ContactNames    *[]models.NameX `json:"contactnames" bson:"contactnames"`
 	PhonePrimary    string          `json:"phoneprimary" bson:"phoneprimary"`
 	PhoneSecondary  string          `json:"phonesecondary" bson:"phonesecondary"`
 	Latitude        float64         `json:"latitude" bson:"latitude"`
@@ -41,9 +42,15 @@ type Image struct {
 	URI    string `json:"uri" bson:"uri"`
 }
 
+type CustomerRequest struct {
+	Customer
+	Groups *[]string `json:"groups"`
+}
+
 type CustomerInfo struct {
 	models.DocIdentity `bson:"inline"`
 	Customer           `bson:"inline"`
+	Groups             *[]modelsCustomergroup.CustomerGroupInfo `json:"groups" bson:"groups"`
 }
 
 func (CustomerInfo) CollectionName() string {

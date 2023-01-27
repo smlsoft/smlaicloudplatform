@@ -7,6 +7,7 @@ import (
 	"smlcloudplatform/pkg/customershop/customer/models"
 	"smlcloudplatform/pkg/customershop/customer/repositories"
 	"smlcloudplatform/pkg/customershop/customer/services"
+	repositoriesCustomerGroup "smlcloudplatform/pkg/customershop/customergroup/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 )
@@ -23,8 +24,9 @@ func NewCustomerHttp(ms *microservice.Microservice, cfg microservice.IConfig) Cu
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	repo := repositories.NewCustomerRepository(pst)
+	repoCustomer := repositoriesCustomerGroup.NewCustomerGroupRepository(pst)
 
-	svc := services.NewCustomerHttpService(repo)
+	svc := services.NewCustomerHttpService(repo, repoCustomer)
 
 	return CustomerHttp{
 		ms:  ms,
@@ -49,7 +51,7 @@ func (h CustomerHttp) RouteSetup() {
 // Create Customer godoc
 // @Description Create Customer
 // @Tags		CustomerShop
-// @Param		Customer  body      models.Customer  true  "Customer"
+// @Param		CustomerRequest  body      models.CustomerRequest  true  "Customer Request"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -60,7 +62,7 @@ func (h CustomerHttp) CreateCustomer(ctx microservice.IContext) error {
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &models.Customer{}
+	docReq := &models.CustomerRequest{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -91,7 +93,7 @@ func (h CustomerHttp) CreateCustomer(ctx microservice.IContext) error {
 // @Description Update Customer
 // @Tags		CustomerShop
 // @Param		id  path      string  true  "Customer ID"
-// @Param		Customer  body      models.Customer  true  "Customer"
+// @Param		CustomerRequest  body      models.CustomerRequest  true  "Customer Request"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -105,7 +107,7 @@ func (h CustomerHttp) UpdateCustomer(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &models.Customer{}
+	docReq := &models.CustomerRequest{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -199,8 +201,9 @@ func (h CustomerHttp) InfoCustomer(ctx microservice.IContext) error {
 // @Description get struct array by ID
 // @Tags		CustomerShop
 // @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
+// @Param		group	query	integer		false  "customer group"
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -212,7 +215,15 @@ func (h CustomerHttp) SearchCustomerPage(ctx microservice.IContext) error {
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchCustomer(shopID, pageable)
+	groupGUID := ctx.QueryParam("group")
+
+	filters := map[string]interface{}{}
+
+	if len(groupGUID) > 0 {
+		filters["groups.guidfixed"] = groupGUID
+	}
+
+	docList, pagination, err := h.svc.SearchCustomer(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

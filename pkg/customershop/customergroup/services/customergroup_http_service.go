@@ -39,14 +39,14 @@ func NewCustomerGroupHttpService(repo repositories.ICustomerGroupRepository) *Cu
 
 func (svc CustomerGroupHttpService) CreateCustomerGroup(shopID string, authUsername string, doc models.CustomerGroup) (string, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "customercode", doc.CustomerCode)
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "groupcode", doc.GroupCode)
 
 	if err != nil {
 		return "", err
 	}
 
-	if findDoc.CustomerCode != "" {
-		return "", errors.New("customer code is exists")
+	if findDoc.GroupCode != "" {
+		return "", errors.New("group code is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -80,10 +80,10 @@ func (svc CustomerGroupHttpService) UpdateCustomerGroup(shopID string, guid stri
 		return errors.New("document not found")
 	}
 
-	tempCode := findDoc.CustomerCode
+	tempCode := findDoc.GroupCode
 
 	findDoc.CustomerGroup = doc
-	findDoc.CustomerCode = tempCode
+	findDoc.GroupCode = tempCode
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
@@ -135,7 +135,7 @@ func (svc CustomerGroupHttpService) InfoCustomerGroup(shopID string, guid string
 
 func (svc CustomerGroupHttpService) SearchCustomerGroup(shopID string, pageable micromodels.Pageable) ([]models.CustomerGroupInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
-		"customercode",
+		"groupcode",
 		"names.name",
 	}
 
@@ -150,17 +150,17 @@ func (svc CustomerGroupHttpService) SearchCustomerGroup(shopID string, pageable 
 
 func (svc CustomerGroupHttpService) SearchCustomerGroupStep(shopID string, langCode string, pageStep micromodels.PageableStep) ([]models.CustomerGroupInfo, int, error) {
 	searchInFields := []string{
-		"customercode",
+		"groupcode",
 		"names.name",
 	}
 
 	selectFields := map[string]interface{}{
-		"guidfixed":    1,
-		"customercode": 1,
+		"guidfixed": 1,
+		"groupcode": 1,
 	}
 
 	if langCode != "" {
-		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
+		selectFields["names"] = bson.M{"$elemMatch": bson.M{"groupcode": langCode}}
 	} else {
 		selectFields["names"] = 1
 	}
@@ -180,7 +180,7 @@ func (svc CustomerGroupHttpService) SaveInBatch(shopID string, authUsername stri
 
 	itemCodeGuidList := []string{}
 	for _, doc := range payloadList {
-		itemCodeGuidList = append(itemCodeGuidList, doc.CustomerCode)
+		itemCodeGuidList = append(itemCodeGuidList, doc.GroupCode)
 	}
 
 	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "guid", itemCodeGuidList)
@@ -225,7 +225,7 @@ func (svc CustomerGroupHttpService) SaveInBatch(shopID string, authUsername stri
 			return svc.repo.FindByDocIndentityGuid(shopID, "guid", guid)
 		},
 		func(doc models.CustomerGroupDoc) bool {
-			return doc.CustomerCode != ""
+			return doc.GroupCode != ""
 		},
 		func(shopID string, authUsername string, data models.CustomerGroup, doc models.CustomerGroupDoc) error {
 
@@ -253,18 +253,18 @@ func (svc CustomerGroupHttpService) SaveInBatch(shopID string, authUsername stri
 	createDataKey := []string{}
 
 	for _, doc := range createDataList {
-		createDataKey = append(createDataKey, doc.CustomerCode)
+		createDataKey = append(createDataKey, doc.GroupCode)
 	}
 
 	payloadDuplicateDataKey := []string{}
 	for _, doc := range payloadDuplicateList {
-		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.CustomerCode)
+		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.GroupCode)
 	}
 
 	updateDataKey := []string{}
 	for _, doc := range updateSuccessDataList {
 
-		updateDataKey = append(updateDataKey, doc.CustomerCode)
+		updateDataKey = append(updateDataKey, doc.GroupCode)
 	}
 
 	updateFailDataKey := []string{}
@@ -295,5 +295,5 @@ func (svc CustomerGroupHttpService) DeleteCustomerGroupByGUIDs(shopID string, au
 }
 
 func (svc CustomerGroupHttpService) getDocIDKey(doc models.CustomerGroup) string {
-	return doc.CustomerCode
+	return doc.GroupCode
 }
