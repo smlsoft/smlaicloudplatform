@@ -1532,8 +1532,8 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "empty not filter, 0 not reject, 1 reject",
-                        "name": "reject",
+                        "description": "status",
+                        "name": "status",
                         "in": "query"
                     },
                     {
@@ -15606,6 +15606,9 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },

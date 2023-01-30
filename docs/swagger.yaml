@@ -876,6 +876,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageReference:
     properties:
@@ -5335,9 +5337,9 @@ paths:
         in: query
         name: reserve
         type: integer
-      - description: empty not filter, 0 not reject, 1 reject
+      - description: status
         in: query
-        name: reject
+        name: status
         type: integer
       - description: 'document reference: empty not filter, 1 not reference, 2 referenced'
         in: query
