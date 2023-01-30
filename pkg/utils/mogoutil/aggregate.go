@@ -17,5 +17,9 @@ func AggregatePageDecode[T any](paginatedData *mongopagination.PaginatedData) ([
 		aggList = append(aggList, *item)
 	}
 
+	if aggList == nil {
+		aggList = make([]T, 0)
+	}
+
 	return aggList, nil
 }

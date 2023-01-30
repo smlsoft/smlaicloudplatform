@@ -457,7 +457,7 @@ func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) err
 	matchFilters := map[string]interface{}{}
 
 	docRefReserve := strings.TrimSpace(ctx.QueryParam("reserve"))
-	isreject := strings.TrimSpace(ctx.QueryParam("reject"))
+	status := strings.TrimSpace(ctx.QueryParam("status"))
 	isref := strings.TrimSpace(ctx.QueryParam("ref"))
 	path := strings.TrimSpace(ctx.QueryParam("pathtask"))
 	folder := strings.TrimSpace(ctx.QueryParam("taskguid"))
@@ -465,10 +465,10 @@ func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) err
 	fromDateStr := strings.TrimSpace(ctx.QueryParam("fromdate"))
 	toDateStr := strings.TrimSpace(ctx.QueryParam("todate"))
 
-	if len(isreject) > 0 {
-		tempStatus, err := strconv.Atoi(isreject)
+	if len(status) > 0 {
+		tempStatus, err := strconv.Atoi(status)
 		if err == nil {
-			matchFilters["isreject"] = tempStatus != 0
+			matchFilters["status"] = tempStatus
 		}
 	}
 
