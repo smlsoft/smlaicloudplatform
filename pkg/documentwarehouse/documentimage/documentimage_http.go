@@ -438,7 +438,7 @@ func (h DocumentImageHttp) UploadDocumentImage(ctx microservice.IContext) error 
 // @Param		pathtask	query	string		false  "Filter Path Job"
 // @Param		taskguid	query	string		false  "Filter by Job guidfixed"
 // @Param		reserve	query	integer		false  "เอกสารที่มีการจอง,0 not filter, 1 filter"
-// @Param		reject	query	integer		false  "empty not filter, 0 not reject, 1 reject"
+// @Param		status	query	integer		false  "status"
 // @Param		ref	query	integer		false  "document reference: empty not filter, 1 not reference, 2 referenced"
 // @Param		fromdate		query	string		false  "From Date (YYYY-MM-DD)"
 // @Param		todate		query	string		false  "To Date (YYYY-MM-DD)"
