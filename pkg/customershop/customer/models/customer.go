@@ -20,6 +20,8 @@ type Customer struct {
 	AddressForShipping *[]CustomerAddress `json:"addressforshipping" bson:"addressforshipping"`
 	TaxId              string             `json:"taxid" bson:"taxid"`
 	Email              string             `json:"email" bson:"email"`
+	CustomerType       int                `json:"customertype" bson:"customertype"`
+	BranchNumber       string             `json:"branchnumber" bson:"branchnumber"`
 }
 
 type CustomerAddress struct {
