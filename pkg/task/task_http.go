@@ -352,7 +352,7 @@ func (h TaskHttp) SearchTaskPage(ctx microservice.IContext) error {
 				tempStatus = append(tempStatus, status)
 			}
 		}
-		filters["status"] = bson.M{"in": tempStatus}
+		filters["status"] = bson.M{"$in": tempStatus}
 	}
 
 	docList, pagination, err := h.svc.SearchTask(shopID, module, filters, pageable)

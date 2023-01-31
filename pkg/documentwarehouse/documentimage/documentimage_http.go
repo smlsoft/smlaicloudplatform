@@ -438,7 +438,7 @@ func (h DocumentImageHttp) UploadDocumentImage(ctx microservice.IContext) error 
 // @Param		pathtask	query	string		false  "Filter Path Job"
 // @Param		taskguid	query	string		false  "Filter by Job guidfixed"
 // @Param		reserve	query	integer		false  "เอกสารที่มีการจอง,0 not filter, 1 filter"
-// @Param		status	query	integer		false  "status"
+// @Param		status	query	integer		false  "ex. status=0 status=1,2,3"
 // @Param		ref	query	integer		false  "document reference: empty not filter, 1 not reference, 2 referenced"
 // @Param		fromdate		query	string		false  "From Date (YYYY-MM-DD)"
 // @Param		todate		query	string		false  "To Date (YYYY-MM-DD)"
@@ -457,7 +457,7 @@ func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) err
 	matchFilters := map[string]interface{}{}
 
 	docRefReserve := strings.TrimSpace(ctx.QueryParam("reserve"))
-	status := strings.TrimSpace(ctx.QueryParam("status"))
+	statusReq := strings.TrimSpace(ctx.QueryParam("status"))
 	isref := strings.TrimSpace(ctx.QueryParam("ref"))
 	path := strings.TrimSpace(ctx.QueryParam("pathtask"))
 	folder := strings.TrimSpace(ctx.QueryParam("taskguid"))
@@ -465,11 +465,17 @@ func (h DocumentImageHttp) ListDocumentImageGroup(ctx microservice.IContext) err
 	fromDateStr := strings.TrimSpace(ctx.QueryParam("fromdate"))
 	toDateStr := strings.TrimSpace(ctx.QueryParam("todate"))
 
-	if len(status) > 0 {
-		tempStatus, err := strconv.Atoi(status)
-		if err == nil {
-			matchFilters["status"] = tempStatus
+	if len(statusReq) > 0 {
+		tempStatusStrArr := strings.Split(statusReq, ",")
+
+		tempStatus := []int{}
+		for _, temp := range tempStatusStrArr {
+			status, err := strconv.Atoi(temp)
+			if err == nil {
+				tempStatus = append(tempStatus, status)
+			}
 		}
+		matchFilters["status"] = bson.M{"$in": tempStatus}
 	}
 
 	if len(isref) > 0 && isref != "0" {
