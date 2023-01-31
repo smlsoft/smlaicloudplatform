@@ -11,6 +11,9 @@ import (
 	"smlcloudplatform/pkg/task/services"
 	"smlcloudplatform/pkg/utils"
 	"strconv"
+	"strings"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type ITaskHttp interface{}
@@ -321,6 +324,7 @@ func (h TaskHttp) GetTaskReject(ctx microservice.IContext) error {
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
 // @Param		module	query	integer		false  "Module"
+// @Param		status	query	integer		false  "ex. status=0 status=1,2,3"
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -338,9 +342,17 @@ func (h TaskHttp) SearchTaskPage(ctx microservice.IContext) error {
 
 	filters := map[string]interface{}{}
 
-	status, err := strconv.Atoi(statusReq)
-	if err == nil {
-		filters["status"] = status
+	if len(statusReq) > 0 {
+		tempStatusStrArr := strings.Split(statusReq, ",")
+
+		tempStatus := []int{}
+		for _, temp := range tempStatusStrArr {
+			status, err := strconv.Atoi(temp)
+			if err == nil {
+				tempStatus = append(tempStatus, status)
+			}
+		}
+		filters["status"] = bson.M{"in": tempStatus}
 	}
 
 	docList, pagination, err := h.svc.SearchTask(shopID, module, filters, pageable)
