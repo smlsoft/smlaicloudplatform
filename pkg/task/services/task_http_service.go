@@ -142,7 +142,7 @@ func (svc TaskHttpService) UpdateTaskStatus(shopID string, guid string, authUser
 		return errors.New("task status invalid")
 	}
 
-	if jobStatus < 0 || jobStatus > 3 {
+	if jobStatus < models.TaskPending || jobStatus > models.TaskGlCompleted {
 		return errors.New("task status out of range")
 	}
 
@@ -167,6 +167,29 @@ func (svc TaskHttpService) UpdateTaskStatus(shopID string, guid string, authUser
 		if err != nil {
 			return err
 		}
+	}
+
+	totalImageGroup = 0
+	totalRejectImageGroup = 0
+	if jobStatus == models.TaskGlCompleted {
+		findDocImageGroups, err := svc.repoDocImageGroup.FindByTaskGUID(shopID, guid)
+
+		if err != nil {
+			return err
+		}
+
+		for _, docImageGroup := range findDocImageGroups {
+			if docImageGroup.Status == modelDocumentImage.IMAGE_REJECT_KEYING {
+				totalRejectImageGroup += 1
+			}
+
+			totalImageGroup += 1
+		}
+
+		// err = svc.repoDocImageGroup.UpdateTaskIsCompletedByTaskGUID(shopID, findDoc.GuidFixed, true)
+		// if err != nil {
+		// 	return err
+		// }
 	}
 
 	if totalRejectImageGroup > 0 {

@@ -41,7 +41,9 @@ func NewJournalHttp(ms *microservice.Microservice, cfg microservice.IConfig) Jou
 
 	repoDocImage := repoDocumentimage.NewDocumentImageRepository(pst)
 	repoDocImageGroup := repoDocumentimage.NewDocumentImageGroupRepository(pst)
-	svcDocImage := serviceDocumentimage.NewDocumentImageService(repoDocImage, repoDocImageGroup, nil)
+	repoDocImageGroupMessagequeue := repoDocumentimage.NewDocumentImageMessageQueueRepository(prod)
+
+	svcDocImage := serviceDocumentimage.NewDocumentImageService(repoDocImage, repoDocImageGroup, repoDocImageGroupMessagequeue, nil)
 
 	return JournalHttp{
 		Module:      "GL",

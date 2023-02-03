@@ -14,6 +14,7 @@ const (
 	TaskUplaoded
 	TaskChecking
 	TaskCompleted
+	TaskGlCompleted
 )
 
 type Task struct {
