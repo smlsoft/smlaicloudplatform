@@ -42,12 +42,14 @@ func NewDocumentImageHttp(ms *microservice.Microservice, cfg microservice.IConfi
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	prod := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewDocumentImageRepository(pst)
 	repoImageGroup := repositories.NewDocumentImageGroupRepository(pst)
+	repoMessagequeue := repositories.NewDocumentImageMessageQueueRepository(prod)
 
 	azureblob := microservice.NewPersisterAzureBlob()
-	svc := services.NewDocumentImageService(repo, repoImageGroup, azureblob)
+	svc := services.NewDocumentImageService(repo, repoImageGroup, repoMessagequeue, azureblob)
 
 	docImageRepo := repositories.NewDocumentImageRepository(pst)
 
@@ -91,7 +93,7 @@ func (h DocumentImageHttp) RouteSetup() {
 
 func (h DocumentImageHttp) DocumentImageSpecial(ctx microservice.IContext) error {
 
-	err := h.service.UpdateDocumentImageRederenceGroup()
+	err := h.service.UpdateDocumentImageReferenceGroup()
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
@@ -287,6 +289,11 @@ func (h DocumentImageHttp) BulkCreateDocumentImage(ctx microservice.IContext) er
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(docReq); err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}

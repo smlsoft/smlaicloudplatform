@@ -14,6 +14,7 @@ const (
 	IMAGE_CHECKED
 	IMAGE_REJECT
 	IMAGE_BANNED
+	IMAGE_REJECT_KEYING
 )
 
 type DocumentImageGroup struct {
@@ -26,7 +27,7 @@ type DocumentImageGroup struct {
 	UploadedAt      time.Time         `json:"uploadedat" bson:"uploadedat"`
 	Status          int8              `json:"status" bson:"status"`
 	Description     string            `json:"description" bson:"description"`
-	TaskGUID        string            `json:"taskguid" bson:"taskguid"`
+	TaskGUID        string            `json:"taskguid" bson:"taskguid" validate:"required,min=1"`
 	PathTask        string            `json:"pathtask" bson:"pathtask"`
 	IsTaskCompleted bool              `json:"iscompleted" bson:"iscompleted"`
 }

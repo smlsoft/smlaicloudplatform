@@ -23,6 +23,7 @@ type IDocumentImageGroupRepository interface {
 	RemoveDocumentImageByDocumentImageGUIDs(shopID string, imageGUIDs []string) error
 	DeleteByDocumentImageGUIDsHasOneWithoutDocumentImageGroupGUID(shopID string, withoutGUID string, imageGUIDs []string) error
 	DeleteByGUIDsIsDocumentImageEmptyWithoutDocumentImageGroupGUID(shopID string, withoutGUID string, GUIDs []string) error
+	DeleteByGUIDIsDocumentImageEmpty(shopID string, imageGroupGUID string) error
 	RemoveDocumentImageByDocumentImageGUIDsWithoutDocumentImageGroupGUID(shopID string, withoutGUID string, imageGUIDs []string) error
 	FindOne(shopID string, filters interface{}) (models.DocumentImageGroupDoc, error)
 	FindByGuid(shopID string, guid string) (models.DocumentImageGroupDoc, error)
@@ -297,6 +298,25 @@ func (repo DocumentImageGroupRepository) DeleteByGUIDsIsDocumentImageEmptyWithou
 	filterQuery := bson.D{
 		{Key: "shopid", Value: shopID},
 		{Key: "guidfixed", Value: bson.M{"$ne": withoutGUID, "$in": GUIDs}},
+		// {Key: "guidfixed", Value: bson.M{"$in": GUIDs}},
+		{Key: "$or", Value: bson.A{
+			bson.D{{Key: "imagereferences", Value: bson.D{{Key: "$exists", Value: false}}}},
+			bson.D{{Key: "imagereferences", Value: bson.D{{Key: "$size", Value: 0}}}},
+		}},
+		{Key: "$or", Value: bson.A{
+			bson.D{{Key: "references", Value: bson.D{{Key: "$exists", Value: false}}}},
+			bson.D{{Key: "references", Value: bson.D{{Key: "$size", Value: 0}}}},
+		}},
+	}
+
+	return repo.pst.Delete(models.DocumentImageGroupDoc{}, filterQuery)
+}
+
+func (repo DocumentImageGroupRepository) DeleteByGUIDIsDocumentImageEmpty(shopID string, imageGroupGUID string) error {
+
+	filterQuery := bson.D{
+		{Key: "shopid", Value: shopID},
+		{Key: "guidfixed", Value: imageGroupGUID},
 		{Key: "$or", Value: bson.A{
 			bson.D{{Key: "imagereferences", Value: bson.D{{Key: "$exists", Value: false}}}},
 			bson.D{{Key: "imagereferences", Value: bson.D{{Key: "$size", Value: 0}}}},

@@ -43,7 +43,7 @@ type Comment struct {
 type DocumentImageRequest struct {
 	DocumentImage `bson:"inline"`
 	Tags          *[]string `json:"tags,omitempty" bson:"tags,omitempty"`
-	TaskGUID      string    `json:"taskguid" bson:"taskguid"`
+	TaskGUID      string    `json:"taskguid" bson:"taskguid" validate:"required,min=1"`
 	PathTask      string    `json:"pathtask" bson:"pathtask"`
 }
 
