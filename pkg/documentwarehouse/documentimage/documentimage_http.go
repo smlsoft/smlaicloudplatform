@@ -85,6 +85,7 @@ func (h DocumentImageHttp) RouteSetup() {
 	h.ms.PUT("/documentimagegroup/:guid/ungroup", h.UngroupDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid/images", h.UpdateDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid/status", h.UpdateStatusDocumentImageGroup)
+	h.ms.PUT("/documentimagegroup/:guid/tags", h.UpdateTagsDocumentImageGroup)
 	h.ms.DELETE("/documentimagegroup/:guid", h.DeleteDocumentImageGroup)
 	h.ms.DELETE("/documentimagegroup", h.DeleteDocumentImageGroups)
 
@@ -766,6 +767,7 @@ func (h DocumentImageHttp) UngroupDocumentImageGroup(ctx microservice.IContext) 
 // @Tags		DocumentImageGroup
 // @Accept 		json
 // @Param		guid  path      string  true  "document image group guid"
+// @Param		models.Status  body      models.Status  true  "status"
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
@@ -789,6 +791,52 @@ func (h DocumentImageHttp) UpdateStatusDocumentImageGroup(ctx microservice.ICont
 	}
 
 	err = h.service.UpdateStatusDocumentImageGroup(shopID, authUsername, docImageGroupGUID, docReq.Status)
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+	})
+
+	return nil
+}
+
+// Update Status Document Image Group
+// @Description Update Status Document Image Group
+// @Tags		DocumentImageGroup
+// @Accept 		json
+// @Param		guid  path      string  true  "document image group guid"
+// @Param		[]string  body      []string  true  "tags"
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /documentimagegroup/{guid}/tags [put]
+func (h DocumentImageHttp) UpdateTagsDocumentImageGroup(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	docImageGroupGUID := ctx.Param("guid")
+
+	input := ctx.ReadInput()
+
+	if len(input) < 2 {
+		ctx.ResponseError(400, "payload invalid")
+		return nil
+	}
+
+	tags := []string{}
+	err := json.Unmarshal([]byte(input), &tags)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.service.UpdateTagsInDocumentImageGroup(shopID, authUsername, docImageGroupGUID, tags)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
