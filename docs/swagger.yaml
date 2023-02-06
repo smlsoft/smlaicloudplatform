@@ -236,8 +236,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -253,15 +253,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       unitcode:
         type: string
       unitname1:
@@ -752,6 +745,7 @@ definitions:
           type: string
         type: array
       taskguid:
+        minLength: 1
         type: string
       title:
         description: DocumentRef     string            `json:"documentref" bson:"documentref"`
@@ -760,6 +754,8 @@ definitions:
         type: string
       uploadedby:
         type: string
+    required:
+    - taskguid
     type: object
   models.DocumentImageInfo:
     properties:
@@ -883,8 +879,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageReference:
     properties:
@@ -986,8 +980,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1005,8 +999,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1022,12 +1014,7 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1135,8 +1122,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1154,8 +1141,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1171,12 +1156,7 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1334,8 +1314,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1353,8 +1333,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1370,12 +1348,7 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -2770,17 +2743,10 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
+      keynumber:
+        type: integer
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
     type: object
   models.ProductUnit:
     properties:
@@ -2965,10 +2931,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -2986,8 +2952,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3003,10 +2967,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -3390,10 +3350,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -3411,8 +3371,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3428,10 +3386,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -3912,6 +3866,11 @@ definitions:
         type: boolean
     required:
     - names
+    type: object
+  models.Status:
+    properties:
+      status:
+        type: integer
     type: object
   models.Storefront:
     properties:
@@ -5586,6 +5545,44 @@ paths:
         name: guid
         required: true
         type: string
+      - description: status
+        in: body
+        name: models.Status
+        required: true
+        schema:
+          $ref: '#/definitions/models.Status'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentImageGroup
+  /documentimagegroup/{guid}/tags:
+    put:
+      consumes:
+      - application/json
+      description: Update Status Document Image Group
+      parameters:
+      - description: document image group guid
+        in: path
+        name: guid
+        required: true
+        type: string
+      - description: tags
+        in: body
+        name: '[]string'
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
       responses:
         "200":
           description: OK

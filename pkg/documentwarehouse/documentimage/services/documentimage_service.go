@@ -32,6 +32,7 @@ type IDocumentImageService interface {
 	UpdateDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImageGroup models.DocumentImageGroup) error
 	UpdateImageReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImages []models.ImageReferenceBody) error
 	UpdateReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error
+	UpdateTagsInDocumentImageGroup(shopID string, authUsername string, groupGUID string, tags []string) error
 	UnGroupDocumentImageGroup(shopID string, authUsername string, groupGUID string) error
 	UpdateStatusDocumentImageGroup(shopID string, authUsername string, groupGUID string, status int8) error
 	ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
@@ -796,6 +797,34 @@ func (svc DocumentImageService) UpdateReferenceByDocumentImageGroup(shopID strin
 		if err = svc.repoImage.Update(shopID, docImage.GuidFixed, docImage); err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (svc DocumentImageService) UpdateTagsInDocumentImageGroup(shopID string, authUsername string, groupGUID string, tags []string) error {
+
+	findDoc, err := svc.repoImageGroup.FindByGuid(shopID, groupGUID)
+
+	if err != nil {
+		return err
+	}
+
+	if len(findDoc.GuidFixed) < 1 {
+		return errors.New("document not found")
+	}
+
+	if svc.isDocumentImageGroupHasReferenced(findDoc) {
+		return errors.New("document has referenced")
+	}
+
+	findDoc.Tags = &tags
+
+	findDoc.UpdatedAt = svc.timeNowFnc()
+	findDoc.UpdatedBy = authUsername
+
+	if err = svc.repoImageGroup.Update(shopID, groupGUID, findDoc); err != nil {
+		return err
 	}
 
 	return nil
