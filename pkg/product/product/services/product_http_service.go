@@ -382,16 +382,20 @@ func (svc ProductHttpService) SaveInBatch(shopID string, authUsername string, da
 		updateFailDataKey = append(updateFailDataKey, svc.getDocIDKey(doc))
 	}
 
-	err = svc.mqRepo.CreateInBatch(createDataList)
+	if len(createDataList) > 0 {
+		err = svc.mqRepo.CreateInBatch(createDataList)
 
-	if err != nil {
-		return common.BulkImport{}, err
+		if err != nil {
+			return common.BulkImport{}, err
+		}
 	}
 
-	err = svc.mqRepo.UpdateInBatch(updateSuccessDataList)
+	if len(updateSuccessDataList) > 0 {
+		err = svc.mqRepo.UpdateInBatch(updateSuccessDataList)
 
-	if err != nil {
-		return common.BulkImport{}, err
+		if err != nil {
+			return common.BulkImport{}, err
+		}
 	}
 
 	return common.BulkImport{
