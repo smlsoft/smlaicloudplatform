@@ -23,11 +23,12 @@ type ProductBarcodeHttp struct {
 func NewProductBarcodeHttp(ms *microservice.Microservice, cfg microservice.IConfig) ProductBarcodeHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	prod := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewProductBarcodeRepository(pst)
-
+	mqRepo := repositories.NewProductBarcodeMessageQueueRepository(prod)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewProductBarcodeHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewProductBarcodeHttpService(repo, mqRepo, masterSyncCacheRepo)
 
 	return ProductBarcodeHttp{
 		ms:  ms,

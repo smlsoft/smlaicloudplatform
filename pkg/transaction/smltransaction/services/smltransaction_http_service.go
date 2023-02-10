@@ -33,6 +33,18 @@ func NewSMLTransactionHttpService(repo repositories.ISMLTransactionRepository, m
 }
 
 func (svc SMLTransactionHttpService) CreateSMLTransaction(shopID string, authUsername string, smlRequest models.SMLTransactionRequest) (string, error) {
+	guid, err := svc.save(shopID, authUsername, smlRequest)
+
+	if err != nil {
+		return "", err
+	}
+
+	svc.mqRepo.Save(smlRequest)
+
+	return guid, nil
+}
+
+func (svc SMLTransactionHttpService) save(shopID string, authUsername string, smlRequest models.SMLTransactionRequest) (string, error) {
 	collectionName := svc.getCollectionName(smlRequest.Collection)
 	findDoc, err := svc.repo.FindByDocIndentityKey(collectionName, shopID, smlRequest.KeyName, smlRequest.Body[smlRequest.KeyName])
 
@@ -58,7 +70,7 @@ func (svc SMLTransactionHttpService) CreateSMLTransaction(shopID string, authUse
 	if err != nil {
 		return "", err
 	}
-	svc.mqRepo.Save(smlRequest)
+
 	return guid, nil
 }
 
@@ -107,6 +119,7 @@ func (svc SMLTransactionHttpService) create(shopID string, authUsername string, 
 func (svc SMLTransactionHttpService) SaveInBatch(shopID string, authUsername string, dataReq models.SMLTransactionBulkRequest) ([]string, error) {
 
 	guids := []string{}
+	tempSaveSuccess := []map[string]interface{}{}
 	err := svc.repo.Transaction(func() error {
 		for _, smlRequest := range dataReq.Body {
 			guidFixed, err := svc.CreateSMLTransaction(shopID, authUsername, models.SMLTransactionRequest{
@@ -120,6 +133,7 @@ func (svc SMLTransactionHttpService) SaveInBatch(shopID string, authUsername str
 			}
 
 			guids = append(guids, guidFixed)
+			tempSaveSuccess = append(tempSaveSuccess, smlRequest)
 		}
 
 		return nil
@@ -127,6 +141,16 @@ func (svc SMLTransactionHttpService) SaveInBatch(shopID string, authUsername str
 
 	if err != nil {
 		return []string{}, err
+	}
+
+	err = svc.mqRepo.BulkSave(models.SMLTransactionBulkRequest{
+		Collection: dataReq.Collection,
+		KeyName:    dataReq.KeyName,
+		Body:       tempSaveSuccess,
+	})
+
+	if err != nil {
+		return guids, err
 	}
 
 	return guids, nil

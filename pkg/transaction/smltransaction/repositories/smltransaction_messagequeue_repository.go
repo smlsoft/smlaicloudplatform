@@ -8,6 +8,7 @@ import (
 
 type ISMLTransactionMessageQueueRepository interface {
 	Save(doc models.SMLTransactionRequest) error
+	BulkSave(doc models.SMLTransactionBulkRequest) error
 	Delete(doc models.SMLTransactionKeyRequest) error
 }
 
@@ -30,6 +31,16 @@ func NewSMLTransactionMessageQueueRepository(prod microservice.IProducer) SMLTra
 
 func (repo SMLTransactionMessageQueueRepository) Save(doc models.SMLTransactionRequest) error {
 	err := repo.prod.SendMessage(repo.config.TopicSaved(), repo.mqKey, doc)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repo SMLTransactionMessageQueueRepository) BulkSave(doc models.SMLTransactionBulkRequest) error {
+	err := repo.prod.SendMessage(repo.config.TopicBulkSaved(), repo.mqKey, doc)
 
 	if err != nil {
 		return err
