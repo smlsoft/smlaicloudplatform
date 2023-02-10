@@ -36,11 +36,11 @@ type IProductBarcodeHttpService interface {
 type ProductBarcodeHttpService struct {
 	repo          repositories.IProductBarcodeRepository
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
-
+	mqRepo        repositories.IProductBarcodeMessageQueueRepository
 	services.ActivityService[models.ProductBarcodeActivity, models.ProductBarcodeDeleteActivity]
 }
 
-func NewProductBarcodeHttpService(repo repositories.IProductBarcodeRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *ProductBarcodeHttpService {
+func NewProductBarcodeHttpService(repo repositories.IProductBarcodeRepository, mqRepo repositories.IProductBarcodeMessageQueueRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *ProductBarcodeHttpService {
 
 	insSvc := &ProductBarcodeHttpService{
 		repo:          repo,
@@ -96,6 +96,11 @@ func (svc ProductBarcodeHttpService) CreateProductBarcode(shopID string, authUse
 		return "", err
 	}
 
+	err = svc.mqRepo.Create(docData)
+	if err != nil {
+		return "", err
+	}
+
 	svc.saveMasterSync(shopID)
 
 	return newGuidFixed, nil
@@ -124,6 +129,11 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 		return err
 	}
 
+	err = svc.mqRepo.Update(findDoc)
+	if err != nil {
+		return err
+	}
+
 	svc.saveMasterSync(shopID)
 
 	return nil
@@ -142,6 +152,11 @@ func (svc ProductBarcodeHttpService) DeleteProductBarcode(shopID string, guid st
 	}
 
 	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	if err != nil {
+		return err
+	}
+
+	err = svc.mqRepo.Delete(findDoc)
 	if err != nil {
 		return err
 	}
@@ -315,6 +330,20 @@ func (svc ProductBarcodeHttpService) SaveInBatch(shopID string, authUsername str
 	updateFailDataKey := []string{}
 	for _, doc := range updateFailDataList {
 		updateFailDataKey = append(updateFailDataKey, svc.getDocIDKey(doc))
+	}
+
+	if len(createDataList) > 0 {
+		err = svc.mqRepo.CreateInBatch(createDataList)
+		if err != nil {
+			return common.BulkImport{}, err
+		}
+	}
+
+	if len(updateSuccessDataList) > 0 {
+		err = svc.mqRepo.UpdateInBatch(updateSuccessDataList)
+		if err != nil {
+			return common.BulkImport{}, err
+		}
 	}
 
 	svc.saveMasterSync(shopID)
