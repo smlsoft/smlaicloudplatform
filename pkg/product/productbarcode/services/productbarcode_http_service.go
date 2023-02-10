@@ -45,6 +45,7 @@ func NewProductBarcodeHttpService(repo repositories.IProductBarcodeRepository, m
 	insSvc := &ProductBarcodeHttpService{
 		repo:          repo,
 		syncCacheRepo: syncCacheRepo,
+		mqRepo:        mqRepo,
 	}
 	insSvc.ActivityService = services.NewActivityService[models.ProductBarcodeActivity, models.ProductBarcodeDeleteActivity](repo)
 	return insSvc
