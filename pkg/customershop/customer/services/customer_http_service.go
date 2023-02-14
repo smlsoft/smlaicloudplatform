@@ -79,8 +79,14 @@ func (svc CustomerHttpService) CreateCustomer(shopID string, authUsername string
 	docData.CreatedAt = time.Now()
 
 	customerGroups := []modelsCustomerGroup.CustomerGroupInfo{}
-	if doc.Groups != nil && len(*doc.Groups) > 0 {
-		customerGroups, err = svc.getCustomerGroupByGUIDs(shopID, *doc.Groups)
+	if doc.Groups != nil && len(doc.Groups) > 0 {
+		customerGroupGUIDs := lo.Map[models.CustomerGroupRequest, string](
+			doc.Groups,
+			func(docGroup models.CustomerGroupRequest, idx int) string {
+				return docGroup.GuidFixed
+			})
+
+		customerGroups, err = svc.getCustomerGroupByGUIDs(shopID, customerGroupGUIDs)
 		if err != nil {
 			return "", err
 		}
@@ -115,8 +121,13 @@ func (svc CustomerHttpService) UpdateCustomer(shopID string, guid string, authUs
 	findDoc.UpdatedAt = time.Now()
 
 	customerGroups := []modelsCustomerGroup.CustomerGroupInfo{}
-	if doc.Groups != nil && len(*doc.Groups) > 0 {
-		customerGroups, err = svc.getCustomerGroupByGUIDs(shopID, *doc.Groups)
+	if doc.Groups != nil && len(doc.Groups) > 0 {
+		customerGroupGUIDs := lo.Map[models.CustomerGroupRequest, string](
+			doc.Groups,
+			func(docGroup models.CustomerGroupRequest, idx int) string {
+				return docGroup.GuidFixed
+			})
+		customerGroups, err = svc.getCustomerGroupByGUIDs(shopID, customerGroupGUIDs)
 		if err != nil {
 			return err
 		}

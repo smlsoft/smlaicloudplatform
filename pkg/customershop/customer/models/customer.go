@@ -46,7 +46,11 @@ type Image struct {
 
 type CustomerRequest struct {
 	Customer
-	Groups *[]string `json:"groups"`
+	Groups []CustomerGroupRequest `json:"groups"`
+}
+
+type CustomerGroupRequest struct {
+	GuidFixed string `json:"guidfixed"`
 }
 
 type CustomerInfo struct {
