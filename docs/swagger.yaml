@@ -236,8 +236,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       name1:
         maxLength: 255
         type: string
@@ -253,8 +253,15 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       unitcode:
         type: string
       unitname1:
@@ -977,8 +984,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -996,6 +1003,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1011,7 +1020,12 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1119,8 +1133,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1138,6 +1152,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1153,7 +1169,12 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1311,8 +1332,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1330,6 +1351,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1345,7 +1368,12 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -2740,10 +2768,17 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
+      normalprice:
+        type: number
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
     type: object
   models.ProductUnit:
     properties:
@@ -2928,10 +2963,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
       linenumber:
         type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -2949,6 +2984,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -2964,6 +3001,10 @@ definitions:
         maxLength: 50
         type: string
       price:
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       qty:
         type: number
@@ -3193,14 +3234,14 @@ definitions:
         maxLength: 100
         minLength: 1
         type: string
-      keyname:
+      keyid:
         maxLength: 100
         minLength: 1
         type: string
     required:
     - body
     - collection
-    - keyname
+    - keyid
     type: object
   models.SMLTransactionKeyRequest:
     properties:
@@ -3208,18 +3249,18 @@ definitions:
         maxLength: 100
         minLength: 1
         type: string
-      keyname:
-        maxLength: 100
-        minLength: 1
-        type: string
-      keys:
+      deletekeys:
         items:
           type: string
         type: array
+      keyid:
+        maxLength: 100
+        minLength: 1
+        type: string
     required:
     - collection
-    - keyname
-    - keys
+    - deletekeys
+    - keyid
     type: object
   models.SMLTransactionRequest:
     properties:
@@ -3230,14 +3271,14 @@ definitions:
         maxLength: 100
         minLength: 1
         type: string
-      keyname:
+      keyid:
         maxLength: 100
         minLength: 1
         type: string
     required:
     - body
     - collection
-    - keyname
+    - keyid
     type: object
   models.Saleinvoice:
     properties:
@@ -3347,10 +3388,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
       linenumber:
         type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -3368,6 +3409,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3383,6 +3426,10 @@ definitions:
         maxLength: 50
         type: string
       price:
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       qty:
         type: number
