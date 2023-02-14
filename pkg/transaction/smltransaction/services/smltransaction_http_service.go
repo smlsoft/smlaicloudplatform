@@ -46,15 +46,15 @@ func (svc SMLTransactionHttpService) CreateSMLTransaction(shopID string, authUse
 
 func (svc SMLTransactionHttpService) save(shopID string, authUsername string, smlRequest models.SMLTransactionRequest) (string, error) {
 	collectionName := svc.getCollectionName(smlRequest.Collection)
-	findDoc, err := svc.repo.FindByDocIndentityKey(collectionName, shopID, smlRequest.KeyName, smlRequest.Body[smlRequest.KeyName])
+	findDoc, err := svc.repo.FindByDocIndentityKey(collectionName, shopID, smlRequest.KeyID, smlRequest.Body[smlRequest.KeyID])
 
 	if err != nil {
 		return "", err
 	}
 
-	_, ok := findDoc[smlRequest.KeyName]
+	_, ok := findDoc[smlRequest.KeyID]
 
-	if ok || findDoc[smlRequest.KeyName] != nil {
+	if ok || findDoc[smlRequest.KeyID] != nil {
 		guid, err := svc.update(shopID, authUsername, findDoc, smlRequest)
 
 		if err != nil {
@@ -124,7 +124,7 @@ func (svc SMLTransactionHttpService) SaveInBatch(shopID string, authUsername str
 		for _, smlRequest := range dataReq.Body {
 			guidFixed, err := svc.CreateSMLTransaction(shopID, authUsername, models.SMLTransactionRequest{
 				Collection: dataReq.Collection,
-				KeyName:    dataReq.KeyName,
+				KeyID:      dataReq.KeyID,
 				Body:       smlRequest,
 			})
 
@@ -145,7 +145,7 @@ func (svc SMLTransactionHttpService) SaveInBatch(shopID string, authUsername str
 
 	err = svc.mqRepo.BulkSave(models.SMLTransactionBulkRequest{
 		Collection: dataReq.Collection,
-		KeyName:    dataReq.KeyName,
+		KeyID:      dataReq.KeyID,
 		Body:       tempSaveSuccess,
 	})
 
@@ -160,7 +160,7 @@ func (svc SMLTransactionHttpService) DeleteSMLTransaction(shopID string, authUse
 	collectionName := svc.getCollectionName(smlKeyRequest.Collection)
 
 	filters := map[string]interface{}{
-		smlKeyRequest.KeyName: bson.M{"$in": smlKeyRequest.Keys},
+		smlKeyRequest.KeyID: bson.M{"$in": smlKeyRequest.DeleteKeys},
 	}
 	err := svc.repo.Delete(collectionName, shopID, authUsername, filters)
 
@@ -174,7 +174,7 @@ func (svc SMLTransactionHttpService) DeleteSMLTransaction(shopID string, authUse
 		return []string{}, err
 	}
 
-	return smlKeyRequest.Keys, nil
+	return smlKeyRequest.DeleteKeys, nil
 }
 
 func (svc SMLTransactionHttpService) getCollectionName(collectionName string) string {

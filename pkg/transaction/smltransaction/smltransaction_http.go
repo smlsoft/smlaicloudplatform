@@ -74,7 +74,7 @@ func (h SMLTransactionHttp) CreateSMLTransaction(ctx microservice.IContext) erro
 		return err
 	}
 
-	_, ok := docReq.Body[docReq.KeyName]
+	_, ok := docReq.Body[docReq.KeyID]
 	if !ok {
 		ctx.ResponseError(400, "key field not found in body")
 		return err
