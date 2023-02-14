@@ -22,6 +22,7 @@ type Customer struct {
 	Email              string             `json:"email" bson:"email"`
 	CustomerType       int                `json:"customertype" bson:"customertype"`
 	BranchNumber       string             `json:"branchnumber" bson:"branchnumber"`
+	GroupGUIDs         *[]string          `json:"-" bson:"groups"`
 }
 
 type CustomerAddress struct {
@@ -56,7 +57,7 @@ type CustomerGroupRequest struct {
 type CustomerInfo struct {
 	models.DocIdentity `bson:"inline"`
 	Customer           `bson:"inline"`
-	Groups             *[]modelsCustomergroup.CustomerGroupInfo `json:"groups" bson:"groups"`
+	Groups             *[]modelsCustomergroup.CustomerGroupInfo `json:"groups" bson:"-"`
 }
 
 func (CustomerInfo) CollectionName() string {

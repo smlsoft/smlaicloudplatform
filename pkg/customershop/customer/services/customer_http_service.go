@@ -78,21 +78,28 @@ func (svc CustomerHttpService) CreateCustomer(shopID string, authUsername string
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	customerGroups := []modelsCustomerGroup.CustomerGroupInfo{}
-	if doc.Groups != nil && len(doc.Groups) > 0 {
-		customerGroupGUIDs := lo.Map[models.CustomerGroupRequest, string](
-			doc.Groups,
-			func(docGroup models.CustomerGroupRequest, idx int) string {
-				return docGroup.GuidFixed
-			})
+	// customerGroups := []modelsCustomerGroup.CustomerGroupInfo{}
+	// if doc.Groups != nil && len(doc.Groups) > 0 {
+	// 	customerGroupGUIDs := lo.Map[models.CustomerGroupRequest, string](
+	// 		doc.Groups,
+	// 		func(docGroup models.CustomerGroupRequest, idx int) string {
+	// 			return docGroup.GuidFixed
+	// 		})
 
-		customerGroups, err = svc.getCustomerGroupByGUIDs(shopID, customerGroupGUIDs)
-		if err != nil {
-			return "", err
-		}
-	}
+	// 	customerGroups, err = svc.getCustomerGroupByGUIDs(shopID, customerGroupGUIDs)
+	// 	if err != nil {
+	// 		return "", err
+	// 	}
+	// }
+	// docData.Groups = &customerGroups
 
-	docData.Groups = &customerGroups
+	customerGroupGUIDs := lo.Map[models.CustomerGroupRequest, string](
+		doc.Groups,
+		func(docGroup models.CustomerGroupRequest, idx int) string {
+			return docGroup.GuidFixed
+		})
+
+	docData.GroupGUIDs = &customerGroupGUIDs
 
 	_, err = svc.repo.Create(docData)
 
@@ -120,20 +127,28 @@ func (svc CustomerHttpService) UpdateCustomer(shopID string, guid string, authUs
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	customerGroups := []modelsCustomerGroup.CustomerGroupInfo{}
-	if doc.Groups != nil && len(doc.Groups) > 0 {
-		customerGroupGUIDs := lo.Map[models.CustomerGroupRequest, string](
-			doc.Groups,
-			func(docGroup models.CustomerGroupRequest, idx int) string {
-				return docGroup.GuidFixed
-			})
-		customerGroups, err = svc.getCustomerGroupByGUIDs(shopID, customerGroupGUIDs)
-		if err != nil {
-			return err
-		}
-	}
+	// customerGroups := []modelsCustomerGroup.CustomerGroupInfo{}
+	// if doc.Groups != nil && len(doc.Groups) > 0 {
+	// 	customerGroupGUIDs := lo.Map[models.CustomerGroupRequest, string](
+	// 		doc.Groups,
+	// 		func(docGroup models.CustomerGroupRequest, idx int) string {
+	// 			return docGroup.GuidFixed
+	// 		})
+	// 	customerGroups, err = svc.getCustomerGroupByGUIDs(shopID, customerGroupGUIDs)
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// }
 
-	findDoc.Groups = &customerGroups
+	// findDoc.Groups = &customerGroups
+
+	customerGroupGUIDs := lo.Map[models.CustomerGroupRequest, string](
+		doc.Groups,
+		func(docGroup models.CustomerGroupRequest, idx int) string {
+			return docGroup.GuidFixed
+		})
+
+	findDoc.GroupGUIDs = &customerGroupGUIDs
 
 	err = svc.repo.Update(shopID, guid, findDoc)
 
@@ -176,6 +191,19 @@ func (svc CustomerHttpService) InfoCustomer(shopID string, guid string) (models.
 		return models.CustomerInfo{}, errors.New("document not found")
 	}
 
+	findCustGroups, err := svc.repoCustomerGroup.FindByGuids(shopID, *findDoc.GroupGUIDs)
+	if err != nil {
+		return models.CustomerInfo{}, err
+	}
+
+	custGroupInfo := lo.Map[modelsCustomerGroup.CustomerGroupDoc, modelsCustomerGroup.CustomerGroupInfo](
+		findCustGroups,
+		func(docCustomerGroup modelsCustomerGroup.CustomerGroupDoc, idx int) modelsCustomerGroup.CustomerGroupInfo {
+			return docCustomerGroup.CustomerGroupInfo
+		})
+
+	findDoc.CustomerInfo.Groups = &custGroupInfo
+
 	return findDoc.CustomerInfo, nil
 
 }
@@ -192,6 +220,23 @@ func (svc CustomerHttpService) SearchCustomer(shopID string, filters map[string]
 		return []models.CustomerInfo{}, pagination, err
 	}
 
+	for idx, doc := range docList {
+		if doc.GroupGUIDs != nil {
+			findCustGroups, err := svc.repoCustomerGroup.FindByGuids(shopID, *doc.GroupGUIDs)
+			if err != nil {
+				return []models.CustomerInfo{}, pagination, err
+			}
+
+			custGroupInfo := lo.Map[modelsCustomerGroup.CustomerGroupDoc, modelsCustomerGroup.CustomerGroupInfo](
+				findCustGroups,
+				func(docCustomerGroup modelsCustomerGroup.CustomerGroupDoc, idx int) modelsCustomerGroup.CustomerGroupInfo {
+					return docCustomerGroup.CustomerGroupInfo
+				})
+
+			docList[idx].Groups = &custGroupInfo
+		}
+	}
+
 	return docList, pagination, nil
 }
 
@@ -203,8 +248,8 @@ func (svc CustomerHttpService) SearchCustomerStep(shopID string, langCode string
 
 	selectCols := []string{
 		"guidfixed", "code", "personaltype", "images",
-		"names", "addressforbilling", "addressforshipping",
-		"taxid", "email",
+		"addressforbilling", "addressforshipping",
+		"taxid", "email", "groups",
 	}
 
 	selectFields := map[string]interface{}{}
@@ -225,6 +270,23 @@ func (svc CustomerHttpService) SearchCustomerStep(shopID string, langCode string
 
 	if err != nil {
 		return []models.CustomerInfo{}, 0, err
+	}
+
+	for idx, doc := range docList {
+		if doc.GroupGUIDs != nil {
+			findCustGroups, err := svc.repoCustomerGroup.FindByGuids(shopID, *doc.GroupGUIDs)
+			if err != nil {
+				return []models.CustomerInfo{}, 0, err
+			}
+
+			custGroupInfo := lo.Map[modelsCustomerGroup.CustomerGroupDoc, modelsCustomerGroup.CustomerGroupInfo](
+				findCustGroups,
+				func(docCustomerGroup modelsCustomerGroup.CustomerGroupDoc, idx int) modelsCustomerGroup.CustomerGroupInfo {
+					return docCustomerGroup.CustomerGroupInfo
+				})
+
+			docList[idx].Groups = &custGroupInfo
+		}
 	}
 
 	return docList, total, nil
@@ -289,21 +351,22 @@ func (svc CustomerHttpService) SaveInBatch(shopID string, authUsername string, d
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
-			groupGUIDs := []string{}
+			// groupGUIDs := []string{}
 
-			for _, tempGroup := range *doc.Groups {
-				groupGUIDs = append(groupGUIDs, tempGroup.GuidFixed)
-			}
+			// for _, tempGroup := range *doc.Groups {
+			// 	groupGUIDs = append(groupGUIDs, tempGroup.GuidFixed)
+			// }
 
-			customerGroups := []modelsCustomerGroup.CustomerGroupInfo{}
-			if doc.Groups != nil && len(*doc.Groups) > 0 {
-				customerGroups, err = svc.getCustomerGroupByGUIDs(shopID, groupGUIDs)
-				if err != nil {
-					return err
-				}
-			}
+			// customerGroups := []modelsCustomerGroup.CustomerGroupInfo{}
+			// if doc.Groups != nil && len(*doc.Groups) > 0 {
+			// 	customerGroups, err = svc.getCustomerGroupByGUIDs(shopID, groupGUIDs)
+			// 	if err != nil {
+			// 		return err
+			// 	}
+			// }
 
-			doc.Groups = &customerGroups
+			// doc.Groups = &customerGroups
+			doc.Groups = doc.Groups
 
 			err = svc.repo.Update(shopID, doc.GuidFixed, doc)
 			if err != nil {
@@ -314,22 +377,23 @@ func (svc CustomerHttpService) SaveInBatch(shopID string, authUsername string, d
 	)
 
 	for docIdx, tempDoc := range createDataList {
-		customerGroups := []modelsCustomerGroup.CustomerGroupInfo{}
+		// customerGroups := []modelsCustomerGroup.CustomerGroupInfo{}
 
-		groupGUIDs := lo.Map[modelsCustomerGroup.CustomerGroupInfo, string](
-			*tempDoc.Groups,
-			func(doc modelsCustomerGroup.CustomerGroupInfo, idx int) string {
-				return doc.GuidFixed
-			})
+		// groupGUIDs := lo.Map[modelsCustomerGroup.CustomerGroupInfo, string](
+		// 	*tempDoc.Groups,
+		// 	func(doc modelsCustomerGroup.CustomerGroupInfo, idx int) string {
+		// 		return doc.GuidFixed
+		// 	})
 
-		if tempDoc.Groups != nil && len(*tempDoc.Groups) > 0 {
-			customerGroups, err = svc.getCustomerGroupByGUIDs(shopID, groupGUIDs)
-			if err != nil {
-				return common.BulkImport{}, err
-			}
-		}
+		// if tempDoc.Groups != nil && len(*tempDoc.Groups) > 0 {
+		// 	customerGroups, err = svc.getCustomerGroupByGUIDs(shopID, groupGUIDs)
+		// 	if err != nil {
+		// 		return common.BulkImport{}, err
+		// 	}
+		// }
 
-		createDataList[docIdx].Groups = &customerGroups
+		// createDataList[docIdx].Groups = &customerGroups
+		createDataList[docIdx].Groups = tempDoc.Groups
 	}
 
 	if len(createDataList) > 0 {
