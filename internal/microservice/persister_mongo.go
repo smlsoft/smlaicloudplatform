@@ -43,6 +43,7 @@ type IPersisterMongo interface {
 	Cleanup() error
 	TestConnect() error
 	Healthcheck() error
+	CreateIndex(model interface{}, indexName string, keys interface{}) (string, error)
 }
 
 // IPersisterConfig is interface for persister
@@ -693,4 +694,31 @@ func (pst *PersisterMongo) Transaction(queryFunc func() error) error {
 	session.EndSession(pst.ctx)
 
 	return nil
+}
+
+func (pst *PersisterMongo) CreateIndex(model interface{}, indexName string, keys interface{}) (string, error) {
+	db, err := pst.getClient()
+	if err != nil {
+		return "", err
+	}
+
+	collectionName, err := pst.getCollectionName(model)
+	if err != nil {
+		return "", err
+	}
+
+	indexModel := mongo.IndexModel{
+		Keys:    keys,
+		Options: options.Index().SetUnique(true).SetName(indexName),
+	}
+
+	mongoCollection := db.Collection(collectionName)
+
+	resultIndexName, err := mongoCollection.Indexes().CreateOne(pst.ctx, indexModel)
+
+	if err != nil {
+		return "", err
+	}
+
+	return resultIndexName, nil
 }

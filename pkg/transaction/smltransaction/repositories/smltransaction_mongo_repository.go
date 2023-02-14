@@ -15,6 +15,7 @@ type ISMLTransactionRepository interface {
 	DeleteByGuidfixed(collectionName string, shopID string, guid string, username string) error
 	Delete(collectionName string, shopID string, username string, filters map[string]interface{}) error
 	Transaction(fnc func() error) error
+	CreateIndex(collectionName string, keyID string) (string, error)
 }
 
 type SMLTransactionRepository struct {
@@ -101,6 +102,20 @@ func (repo SMLTransactionRepository) DeleteByGuidfixed(collectionName string, sh
 
 func (repo SMLTransactionRepository) Delete(collectionName string, shopID string, username string, filters map[string]interface{}) error {
 
+	// filterQuery := bson.M{}
+
+	// for col, val := range filters {
+	// 	filterQuery[col] = val
+	// }
+
+	// filterQuery["shopid"] = shopID
+
+	// err := repo.pst.SoftDelete(&models.DynamicCollection{Collection: collectionName}, username, filterQuery)
+
+	// if err != nil {
+	// 	return err
+	// }
+
 	filterQuery := bson.M{}
 
 	for col, val := range filters {
@@ -109,7 +124,7 @@ func (repo SMLTransactionRepository) Delete(collectionName string, shopID string
 
 	filterQuery["shopid"] = shopID
 
-	err := repo.pst.SoftDelete(&models.DynamicCollection{Collection: collectionName}, username, filterQuery)
+	err := repo.pst.Delete(&models.DynamicCollection{Collection: collectionName}, filterQuery)
 
 	if err != nil {
 		return err
@@ -120,4 +135,13 @@ func (repo SMLTransactionRepository) Delete(collectionName string, shopID string
 
 func (repo SMLTransactionRepository) Transaction(fnc func() error) error {
 	return repo.pst.Transaction(fnc)
+}
+
+func (repo SMLTransactionRepository) CreateIndex(collectionName string, keyID string) (string, error) {
+	indexName := "idx_smlx_" + keyID
+	keys := bson.D{
+		{Key: "shopid", Value: 1},
+		{Key: keyID, Value: 1},
+	}
+	return repo.pst.CreateIndex(&models.DynamicCollection{Collection: collectionName}, indexName, keys)
 }
