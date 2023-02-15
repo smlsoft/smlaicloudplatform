@@ -13295,6 +13295,36 @@ const docTemplate = `{
                 }
             }
         },
+        "/task/generate-code": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "generate new Task Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Task"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/task/list": {
             "get": {
                 "security": [
@@ -15431,6 +15461,9 @@ const docTemplate = `{
         "models.DocumentImage": {
             "type": "object",
             "properties": {
+                "imageedituri": {
+                    "type": "string"
+                },
                 "imageuri": {
                     "type": "string"
                 },
@@ -15488,6 +15521,12 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.Reference"
                     }
                 },
+                "rejectfromgroupguid": {
+                    "type": "string"
+                },
+                "rejectremark": {
+                    "type": "string"
+                },
                 "status": {
                     "type": "integer"
                 },
@@ -15510,6 +15549,9 @@ const docTemplate = `{
                 },
                 "uploadedby": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -15517,6 +15559,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "guidfixed": {
+                    "type": "string"
+                },
+                "imageedituri": {
                     "type": "string"
                 },
                 "imageuri": {
@@ -15696,6 +15741,9 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -15703,6 +15751,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "documentimageguid": {
+                    "type": "string"
+                },
+                "imageedituri": {
                     "type": "string"
                 },
                 "imageuri": {
@@ -20143,6 +20194,9 @@ const docTemplate = `{
         "models.Task": {
             "type": "object",
             "properties": {
+                "code": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },

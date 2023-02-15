@@ -713,6 +713,8 @@ definitions:
     type: object
   models.DocumentImage:
     properties:
+      imageedituri:
+        type: string
       imageuri:
         type: string
       metafileat:
@@ -751,6 +753,10 @@ definitions:
         items:
           $ref: '#/definitions/models.Reference'
         type: array
+      rejectfromgroupguid:
+        type: string
+      rejectremark:
+        type: string
       status:
         type: integer
       tags:
@@ -767,12 +773,16 @@ definitions:
         type: string
       uploadedby:
         type: string
+      xorder:
+        type: integer
     required:
     - taskguid
     type: object
   models.DocumentImageInfo:
     properties:
       guidfixed:
+        type: string
+      imageedituri:
         type: string
       imageuri:
         type: string
@@ -892,10 +902,14 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageReference:
     properties:
       documentimageguid:
+        type: string
+      imageedituri:
         type: string
       imageuri:
         type: string
@@ -3922,6 +3936,8 @@ definitions:
     type: object
   models.Task:
     properties:
+      code:
+        type: string
       description:
         type: string
       isfavorit:
@@ -12755,6 +12771,24 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Task
+  /task/generate-code:
+    get:
+      consumes:
+      - application/json
+      description: generate new Task Code
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
         "401":
           description: Unauthorized
           schema:
