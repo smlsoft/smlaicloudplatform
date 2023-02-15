@@ -33,8 +33,8 @@ type IDocumentImageService interface {
 	UpdateImageReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImages []models.ImageReferenceBody) error
 	UpdateReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error
 	UpdateTagsInDocumentImageGroup(shopID string, authUsername string, groupGUID string, tags []string) error
-	UnGroupDocumentImageGroup(shopID string, authUsername string, groupGUID string) error
 	UpdateStatusDocumentImageGroup(shopID string, authUsername string, groupGUID string, status int8) error
+	UnGroupDocumentImageGroup(shopID string, authUsername string, groupGUID string) error
 	ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
 	DeleteReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error
 	DeleteDocumentImageGroupByGuid(shopID string, authUsername string, DocumentImageGroupGuidFixed string) error
@@ -71,6 +71,19 @@ func NewDocumentImageService(repo repositories.IDocumentImageRepository, repoIma
 
 func (svc DocumentImageService) CreateDocumentImage(shopID string, authUsername string, docRequest models.DocumentImageRequest) (string, string, error) {
 
+	findDocImgGroup := models.DocumentImageGroupDoc{}
+	if len(docRequest.DocumentImageGroupGUID) > 0 {
+		_, err := svc.repoImageGroup.FindByGuid(shopID, docRequest.DocumentImageGroupGUID)
+
+		if err != nil {
+			return "", "", err
+		}
+
+		// if len(findDocImgGroup.GuidFixed) == 0 {
+		// 	return "", "", errors.New("document image group not found")
+		// }
+	}
+
 	// do upload first
 
 	createdAt := svc.timeNowFnc()
@@ -88,11 +101,74 @@ func (svc DocumentImageService) CreateDocumentImage(shopID string, authUsername 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = createdAt
 
-	// docData.UpdatedBy = authUsername
-	// docData.UpdatedAt = createdAt
+	docData.UploadedBy = authUsername
+	docData.UploadedAt = createdAt
+
+	tags := []string{}
+	if docRequest.Tags != nil {
+		tags = *docRequest.Tags
+	}
+
+	// image group
+	imageGroupGUID := svc.newDocumentImageGroupGUIDFnc()
+
+	if len(findDocImgGroup.GuidFixed) > 0 {
+		imageGroupGUID = findDocImgGroup.GuidFixed
+	}
+
+	docImageRef := svc.documentImageToImageReference(documentImageGUID, docRequest.DocumentImage, authUsername, createdAt)
+	docDataImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, imageGroupGUID, docImageRef, docRequest.ImageURI, tags, docRequest.TaskGUID, docRequest.PathTask, createdAt)
+
+	err := svc.repoImageGroup.Transaction(func() error {
+
+		_, err := svc.repoImage.Create(docData)
+
+		if err != nil {
+			return err
+		}
+
+		_, err = svc.repoImageGroup.Create(docDataImageGroup)
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return "", "", err
+	}
+
+	_, err = svc.messageQueueReCountDocumentImageGroup(shopID, docRequest.TaskGUID)
+	if err != nil {
+		return "", "", err
+	}
+
+	return documentImageGUID, imageGroupGUID, nil
+}
+
+func (svc DocumentImageService) CreateDocumentImageWithTask(shopID string, authUsername string, docRequest models.DocumentImageRequest) (string, string, error) {
+
+	// do upload first
+
+	createdAt := svc.timeNowFnc()
+
+	documentImageGUID := svc.newDocumentImageGUIDFnc()
+
+	docData := models.DocumentImageDoc{}
+	docData.ShopID = shopID
+	docData.GuidFixed = documentImageGUID
+	docData.DocumentImage = docRequest.DocumentImage
+
+	docData.References = []models.Reference{}
+	docData.MetaFileAt = docRequest.MetaFileAt
+
+	docData.CreatedBy = authUsername
+	docData.CreatedAt = createdAt
 
 	docData.UploadedBy = authUsername
-	// docData.UploadedAt = createdAt
+	docData.UploadedAt = createdAt
 
 	tags := []string{}
 	if docRequest.Tags != nil {
@@ -125,14 +201,7 @@ func (svc DocumentImageService) CreateDocumentImage(shopID string, authUsername 
 		return "", "", err
 	}
 
-	taskMsg := models.DocumentImageTaskChangeMessage{
-		ShopID:   shopID,
-		TaskGUID: docRequest.TaskGUID,
-		Event:    models.TaskChangePlus,
-		Count:    1,
-	}
-
-	err = svc.repoMessagequeue.TaskChange(taskMsg)
+	_, err = svc.messageQueueReCountDocumentImageGroup(shopID, docRequest.TaskGUID)
 	if err != nil {
 		return "", "", err
 	}
@@ -202,17 +271,15 @@ func (svc DocumentImageService) BulkCreateDocumentImage(shopID string, authUsern
 		return err
 	}
 
+	taskGUIDsChanged := map[string]struct{}{}
 	for _, tempDocGroup := range docDataImageGroupList {
-		taskMsg := models.DocumentImageTaskChangeMessage{
-			ShopID:   shopID,
-			TaskGUID: tempDocGroup.TaskGUID,
-			Event:    models.TaskChangePlus,
-			Count:    1,
-		}
+		taskGUIDsChanged[tempDocGroup.TaskGUID] = struct{}{}
+	}
 
-		err = svc.repoMessagequeue.TaskChange(taskMsg)
+	for taskGUID := range taskGUIDsChanged {
+		_, err = svc.messageQueueReCountDocumentImageGroup(shopID, taskGUID)
 		if err != nil {
-			return err
+			fmt.Println(err)
 		}
 	}
 
@@ -462,14 +529,33 @@ func (svc DocumentImageService) UpdateStatusDocumentImageGroup(shopID string, au
 		return errors.New("document has referenced")
 	}
 
+	if findDoc.Status == status {
+		return nil
+	}
+
 	if status < models.IMAGE_PENDING || status > models.IMAGE_REJECT_KEYING {
 		return errors.New("status out of range")
 	}
 
 	findDoc.Status = status
 	svc.repoImageGroup.Update(shopID, groupGUID, findDoc)
-	return nil
 
+	if status == models.IMAGE_REJECT_KEYING || status == models.IMAGE_REJECT {
+
+		_, err = svc.messageQueueReCountRejectDocumentImageGroup(shopID, findDoc.TaskGUID)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+	}
+
+	if findDoc.Status == models.IMAGE_REJECT_KEYING || findDoc.Status == models.IMAGE_REJECT && status != models.IMAGE_REJECT_KEYING && status != models.IMAGE_REJECT {
+		_, err = svc.messageQueueReCountRejectDocumentImageGroup(shopID, findDoc.TaskGUID)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+	}
+
+	return nil
 }
 
 func (svc DocumentImageService) UpdateDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImageGroup models.DocumentImageGroup) error {
@@ -542,6 +628,7 @@ func (svc DocumentImageService) UpdateDocumentImageGroup(shopID string, authUser
 
 		tempDocImgRef.DocumentImageGUID = docRefImage.GuidFixed
 		tempDocImgRef.ImageURI = docRefImage.ImageURI
+		tempDocImgRef.ImageEditURI = docRefImage.ImageEditURI
 		tempDocImgRef.Name = docRefImage.Name
 		tempDocImgRef.MetaFileAt = docRefImage.MetaFileAt
 		tempDocImgRef.UploadedAt = docRefImage.UploadedAt
@@ -1039,11 +1126,12 @@ func (svc DocumentImageService) documentImageToImageReference(documentImageGUID 
 			XOrder:            1,
 			DocumentImageGUID: documentImageGUID,
 		},
-		ImageURI:   documentImage.ImageURI,
-		Name:       documentImage.Name,
-		UploadedBy: authUsername,
-		UploadedAt: createdAt,
-		MetaFileAt: documentImage.MetaFileAt,
+		ImageURI:     documentImage.ImageURI,
+		ImageEditURI: documentImage.ImageEditURI,
+		Name:         documentImage.Name,
+		UploadedBy:   authUsername,
+		UploadedAt:   createdAt,
+		MetaFileAt:   documentImage.MetaFileAt,
 	}
 }
 
@@ -1104,4 +1192,42 @@ func (svc DocumentImageService) clearUpdateDocumentImageGroupByDocumentGUIDs(sho
 	}
 
 	return nil
+}
+
+func (svc DocumentImageService) messageQueueReCountDocumentImageGroup(shopID string, taskGUID string) (int, error) {
+
+	count, err := svc.repoImageGroup.CountByTask(shopID, taskGUID)
+
+	taskMsg := models.DocumentImageTaskChangeMessage{
+		ShopID:   shopID,
+		TaskGUID: taskGUID,
+		// Event:    models.TaskChangePlus,
+		Count: count,
+	}
+
+	err = svc.repoMessagequeue.TaskChange(taskMsg)
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+func (svc DocumentImageService) messageQueueReCountRejectDocumentImageGroup(shopID string, taskGUID string) (int, error) {
+
+	count, err := svc.repoImageGroup.CountRejectByTask(shopID, taskGUID)
+
+	taskMsg := models.DocumentImageTaskRejectMessage{
+		ShopID:   shopID,
+		TaskGUID: taskGUID,
+		// Event:    models.TaskChangePlus,
+		Count: count,
+	}
+
+	err = svc.repoMessagequeue.TaskReject(taskMsg)
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
 }

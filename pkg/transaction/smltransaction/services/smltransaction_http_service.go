@@ -171,14 +171,13 @@ func (svc SMLTransactionHttpService) createBody(shopID string, authUsername stri
 
 func (svc SMLTransactionHttpService) SaveInBatch(shopID string, authUsername string, dataReq models.SMLTransactionBulkRequest) ([]string, error) {
 	collectionName := svc.getCollectionName(dataReq.Collection)
-	// _, collectionIndexExists := svc.indexCreated[collectionName]
-	// if !collectionIndexExists {
-	// 	_, err := svc.repo.CreateIndex(collectionName, dataReq.KeyID)
-	// 	if err == nil {
-	// 		svc.indexCreated[collectionName] = struct{}{}
-	// 	}
-	// }
-	svc.repo.CreateIndex(collectionName, dataReq.KeyID)
+	_, collectionIndexExists := svc.indexCreated[collectionName]
+	if !collectionIndexExists {
+		_, err := svc.repo.CreateIndex(collectionName, dataReq.KeyID)
+		if err == nil {
+			svc.indexCreated[collectionName] = struct{}{}
+		}
+	}
 
 	identityKeys := []string{}
 	tempData := []map[string]interface{}{}

@@ -10,8 +10,9 @@ import (
 const documentImageCollectionName = "documentImages"
 
 type DocumentImage struct {
-	ImageURI string `json:"imageuri" bson:"imageuri"`
-	Name     string `json:"name" bson:"name"`
+	ImageURI     string `json:"imageuri" bson:"imageuri"`
+	ImageEditURI string `json:"imageedituri" bson:"imageedituri"`
+	Name         string `json:"name" bson:"name"`
 	// IsReject        bool             `json:"isreject" bson:"isreject"`
 	// Status          int8             `json:"status" bson:"status"`
 	References      []Reference      `json:"references" bson:"references"`
@@ -41,10 +42,11 @@ type Comment struct {
 }
 
 type DocumentImageRequest struct {
-	DocumentImage `bson:"inline"`
-	Tags          *[]string `json:"tags,omitempty" bson:"tags,omitempty"`
-	TaskGUID      string    `json:"taskguid" bson:"taskguid" validate:"required,min=1"`
-	PathTask      string    `json:"pathtask" bson:"pathtask"`
+	DocumentImage          `bson:"inline"`
+	DocumentImageGroupGUID string    `json:"documentimagegroupguid" bson:"documentimagegroupguid"`
+	Tags                   *[]string `json:"tags,omitempty" bson:"tags,omitempty"`
+	TaskGUID               string    `json:"taskguid" bson:"taskguid" validate:"required,min=1"`
+	PathTask               string    `json:"pathtask" bson:"pathtask"`
 }
 
 type DocumentImageInfo struct {

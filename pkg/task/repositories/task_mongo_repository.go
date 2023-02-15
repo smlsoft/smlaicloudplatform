@@ -11,10 +11,14 @@ import (
 	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type ITaskRepository interface {
+	FindLastTaskByCode(shopID string, codeFormat string) (models.TaskDoc, error)
+	FindOneTaskByCode(shopID string, taskCode string) (models.TaskInfo, error)
 	Count(shopID string) (int, error)
+	CountTaskParent(shopID string, taskGUID string) (int, error)
 	Create(doc models.TaskDoc) (string, error)
 	CreateInBatch(docList []models.TaskDoc) error
 	Update(shopID string, guid string, doc models.TaskDoc) error
@@ -22,6 +26,9 @@ type ITaskRepository interface {
 	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.TaskInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.TaskDoc, error)
+
+	UpdateTotalDocumentImageGroup(shopID string, taskGUID string, total int) error
+	UpdateTotalRejectDocumentImageGroup(shopID string, taskGUID string, total int) error
 
 	FindPageByTaskReject(shopID string, module string, taskGUID string) ([]models.TaskInfo, error)
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.TaskItemGuid, error)
@@ -58,6 +65,88 @@ func NewTaskRepository(pst microservice.IPersisterMongo) *TaskRepository {
 	return &insRepo
 }
 
+func (repo *TaskRepository) FindLastTaskByCode(shopID string, codeFormat string) (models.TaskDoc, error) {
+
+	queryFilters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+		"code": bson.M{"$regex": primitive.Regex{
+			Pattern: codeFormat + ".*",
+			Options: "i",
+		}},
+	}
+
+	opts := &options.FindOneOptions{}
+
+	opts.SetSort(bson.M{"code": -1})
+
+	findDoc := new(models.TaskDoc)
+	err := repo.pst.FindOne(models.TaskDoc{}, queryFilters, &findDoc, opts)
+	// err := repo.pst.FindOne(models.TaskDoc{}, bson.M{"shopid": shopID}, &findDoc)
+
+	if err != nil {
+		return models.TaskDoc{}, err
+	}
+
+	return *findDoc, nil
+}
+
+func (repo *TaskRepository) CountTaskParent(shopID string, taskGUID string) (int, error) {
+
+	queryFilters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+	}
+
+	queryFilters["parentguidfixed"] = taskGUID
+
+	count, err := repo.pst.Count(models.TaskInfo{}, queryFilters)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+func (repo *TaskRepository) UpdateTotalDocumentImageGroup(shopID string, taskGUID string, total int) error {
+
+	queryFilters := bson.M{
+		"shopid":    shopID,
+		"guidfixed": taskGUID,
+		"deletedat": bson.M{"$exists": false},
+	}
+
+	queryFilters["parentguidfixed"] = taskGUID
+
+	err := repo.pst.UpdateOne(models.TaskTotal{}, queryFilters, models.TaskTotal{ToTal: total})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repo *TaskRepository) UpdateTotalRejectDocumentImageGroup(shopID string, taskGUID string, total int) error {
+
+	queryFilters := bson.M{
+		"shopid":    shopID,
+		"guidfixed": taskGUID,
+		"deletedat": bson.M{"$exists": false},
+	}
+
+	queryFilters["parentguidfixed"] = taskGUID
+
+	err := repo.pst.UpdateOne(models.TaskTotalReject{}, queryFilters, models.TaskTotalReject{ToTalReject: total})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (repo *TaskRepository) FindPageByTaskReject(shopID string, module string, taskGUID string) ([]models.TaskInfo, error) {
 
 	queryFilters := bson.M{
@@ -80,6 +169,25 @@ func (repo *TaskRepository) FindPageByTaskReject(shopID string, module string, t
 	}
 
 	return docList, nil
+}
+
+func (repo *TaskRepository) FindOneTaskByCode(shopID string, taskCode string) (models.TaskInfo, error) {
+
+	queryFilters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+		"code":      taskCode,
+	}
+
+	findDoc := models.TaskInfo{}
+
+	err := repo.pst.FindOne(models.TaskInfo{}, queryFilters, &findDoc)
+
+	if err != nil {
+		return models.TaskInfo{}, err
+	}
+
+	return findDoc, nil
 }
 
 func (repo *TaskRepository) FindPageTask(shopID string, module string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.TaskInfo, mongopagination.PaginationData, error) {

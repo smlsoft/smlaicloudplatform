@@ -228,6 +228,8 @@ func main() {
 		chartofaccount.StartChartOfAccountConsumerUpdated(ms, cfg, consumerGroupName)
 		chartofaccount.StartChartOfAccountConsumerDeleted(ms, cfg, consumerGroupName)
 		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, consumerGroupName)
+
+		task.NewTaskConsumer(ms, cfg).RegisterConsumer()
 	}
 
 	ms.Start()

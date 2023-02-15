@@ -25,7 +25,7 @@ type IPersisterMongo interface {
 	FindPage(model interface{}, filter interface{}, pageable models.Pageable, decode interface{}) (mongopagination.PaginationData, error)
 	// FindPage(model interface{}, limit int, page int, filter interface{}, decode interface{}) (mongopagination.PaginationData, error)
 	// FindPageSort(model interface{}, limit int, page int, filter interface{}, sorts map[string]int, decode interface{}) (mongopagination.PaginationData, error)
-	FindOne(model interface{}, filter interface{}, decode interface{}) error
+	FindOne(model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOneOptions) error
 	FindByID(model interface{}, keyName string, id interface{}, decode interface{}) error
 	Create(model interface{}, data interface{}) (primitive.ObjectID, error)
 	UpdateOne(model interface{}, filterConditions map[string]interface{}, data interface{}) error
@@ -255,7 +255,7 @@ func (pst *PersisterMongo) Find(model interface{}, filter interface{}, decode in
 	return nil
 }
 
-func (pst *PersisterMongo) FindOne(model interface{}, filter interface{}, decode interface{}) error {
+func (pst *PersisterMongo) FindOne(model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOneOptions) error {
 	db, err := pst.getClient()
 	if err != nil {
 		return err

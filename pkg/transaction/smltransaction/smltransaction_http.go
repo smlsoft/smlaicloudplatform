@@ -121,7 +121,7 @@ func (h SMLTransactionHttp) BulkCreateSMLTransaction(ctx microservice.IContext) 
 		return err
 	}
 
-	idx, err := h.svc.SaveInBatch(shopID, authUsername, docReq)
+	_, err = h.svc.SaveInBatch(shopID, authUsername, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -130,7 +130,6 @@ func (h SMLTransactionHttp) BulkCreateSMLTransaction(ctx microservice.IContext) 
 
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
-		ID:      idx,
 	})
 	return nil
 }

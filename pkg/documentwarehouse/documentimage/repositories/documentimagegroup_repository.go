@@ -14,6 +14,8 @@ import (
 )
 
 type IDocumentImageGroupRepository interface {
+	CountByTask(shopID string, taskGUID string) (int, error)
+	CountRejectByTask(shopID string, taskGUID string) (int, error)
 	Create(doc models.DocumentImageGroupDoc) (string, error)
 	CreateInBatch(doc []models.DocumentImageGroupDoc) error
 	Update(shopID string, guid string, doc models.DocumentImageGroupDoc) error
@@ -63,6 +65,32 @@ func NewDocumentImageGroupRepository(pst microservice.IPersisterMongo) DocumentI
 
 func (repo DocumentImageGroupRepository) Transaction(fnc func() error) error {
 	return repo.pst.Transaction(fnc)
+}
+
+func (repo DocumentImageGroupRepository) CountByTask(shopID string, taskGUID string) (int, error) {
+
+	filters := bson.M{
+		"shopid":    shopID,
+		"taskguid":  taskGUID,
+		"deletedat": bson.M{"$exists": false},
+	}
+
+	return repo.pst.Count(models.DocumentImageGroupDoc{}, filters)
+}
+
+func (repo DocumentImageGroupRepository) CountRejectByTask(shopID string, taskGUID string) (int, error) {
+
+	filters := bson.M{
+		"shopid":   shopID,
+		"taskguid": taskGUID,
+		"$or": []interface{}{
+			bson.M{"status": models.IMAGE_REJECT},
+			bson.M{"status": models.IMAGE_REJECT_KEYING},
+		},
+		"deletedat": bson.M{"$exists": false},
+	}
+
+	return repo.pst.Count(models.DocumentImageGroupDoc{}, filters)
 }
 
 func (repo DocumentImageGroupRepository) UpdateTaskIsCompletedByTaskGUID(shopID string, taskGUID string, isCompleted bool) error {

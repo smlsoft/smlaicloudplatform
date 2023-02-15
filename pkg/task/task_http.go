@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	repositoriesDocumentImage "smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
+	servicesDocumentImage "smlcloudplatform/pkg/documentwarehouse/documentimage/services"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/task/models"
 	"smlcloudplatform/pkg/task/repositories"
@@ -26,10 +27,17 @@ type TaskHttp struct {
 
 func NewTaskHttp(ms *microservice.Microservice, cfg microservice.IConfig) TaskHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	prod := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewTaskRepository(pst)
+	repoImage := repositoriesDocumentImage.NewDocumentImageRepository(pst)
 	repoImageGroup := repositoriesDocumentImage.NewDocumentImageGroupRepository(pst)
-	svc := services.NewTaskHttpService(repo, repoImageGroup)
+	azureblob := microservice.NewPersisterAzureBlob()
+
+	repoImageMessagequeue := repositoriesDocumentImage.NewDocumentImageMessageQueueRepository(prod)
+
+	svcImage := servicesDocumentImage.NewDocumentImageService(repoImage, repoImageGroup, repoImageMessagequeue, azureblob)
+	svc := services.NewTaskHttpService(repo, repoImageGroup, svcImage)
 
 	return TaskHttp{
 		ms:  ms,
@@ -47,6 +55,7 @@ func (h TaskHttp) RouteSetup() {
 	h.ms.POST("/task", h.CreateTask)
 	h.ms.GET("/task/:id", h.InfoTask)
 	h.ms.GET("/task/reject/:guid", h.GetTaskReject)
+	h.ms.GET("/task/generate-code", h.GenerateTaskCode)
 	h.ms.PUT("/task/:id", h.UpdateTask)
 	h.ms.PUT("/task/:id/status", h.UpdateTaskStatus)
 	h.ms.DELETE("/task/:id", h.DeleteTask)
@@ -252,6 +261,34 @@ func (h TaskHttp) DeleteTaskByGUIDs(ctx microservice.IContext) error {
 		Success: true,
 	})
 
+	return nil
+}
+
+// Generate Task Code godoc
+// @Description generate new Task Code
+// @Tags		Task
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /task/generate-code [get]
+func (h TaskHttp) GenerateTaskCode(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	newTaskCode, err := h.svc.GenerateTaskID(shopID, authUsername)
+
+	if err != nil {
+		h.ms.Logger.Errorf("Error generate task code: %v", err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    newTaskCode,
+	})
 	return nil
 }
 

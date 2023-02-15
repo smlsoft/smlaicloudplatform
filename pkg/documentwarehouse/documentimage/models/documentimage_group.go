@@ -19,17 +19,20 @@ const (
 
 type DocumentImageGroup struct {
 	// DocumentRef     string            `json:"documentref" bson:"documentref"`
-	Title           string            `json:"title" bson:"title"`
-	References      []Reference       `json:"references" bson:"references"`
-	Tags            *[]string         `json:"tags,omitempty" bson:"tags,omitempty"`
-	ImageReferences *[]ImageReference `json:"imagereferences" bson:"imagereferences"`
-	UploadedBy      string            `json:"uploadedby" bson:"uploadedby"`
-	UploadedAt      time.Time         `json:"uploadedat" bson:"uploadedat"`
-	Status          int8              `json:"status" bson:"status"`
-	Description     string            `json:"description" bson:"description"`
-	TaskGUID        string            `json:"taskguid" bson:"taskguid" validate:"required,min=1"`
-	PathTask        string            `json:"pathtask" bson:"pathtask"`
-	IsTaskCompleted bool              `json:"iscompleted" bson:"iscompleted"`
+	Title               string            `json:"title" bson:"title"`
+	References          []Reference       `json:"references" bson:"references"`
+	Tags                *[]string         `json:"tags,omitempty" bson:"tags,omitempty"`
+	ImageReferences     *[]ImageReference `json:"imagereferences" bson:"imagereferences"`
+	UploadedBy          string            `json:"uploadedby" bson:"uploadedby"`
+	UploadedAt          time.Time         `json:"uploadedat" bson:"uploadedat"`
+	Status              int8              `json:"status" bson:"status"`
+	Description         string            `json:"description" bson:"description"`
+	TaskGUID            string            `json:"taskguid" bson:"taskguid" validate:"required,min=1"`
+	PathTask            string            `json:"pathtask" bson:"pathtask"`
+	IsTaskCompleted     bool              `json:"iscompleted" bson:"iscompleted"`
+	RejectFromGroupGUID string            `json:"rejectfromgroupguid" bson:"rejectfromgroupguid"`
+	XOrder              int               `json:"xorder" bson:"xorder"`
+	RejectRemark        string            `json:"rejectremark" bson:"rejectremark"`
 }
 
 type DocumentImageGroupBody struct {
@@ -44,6 +47,7 @@ type ImageReferenceBody struct {
 type ImageReference struct {
 	ImageReferenceBody `bson:",inline"`
 	ImageURI           string `json:"imageuri" bson:"imageuri"`
+	ImageEditURI       string `json:"imageedituri" bson:"imageedituri"`
 	Name               string `json:"name" bson:"name"`
 	// IsReject           bool      `json:"isreject" bson:"isreject"`
 	UploadedBy string    `json:"uploadedby" bson:"uploadedby"`

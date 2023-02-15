@@ -19,6 +19,7 @@ const (
 
 type Task struct {
 	models.PartitionIdentity `bson:"inline"`
+	Code                     string    `json:"code" bson:"code"`
 	Name                     string    `json:"name" bson:"name"`
 	Module                   string    `json:"module" bson:"module"`
 	Status                   int8      `json:"status" bson:"status"`
@@ -87,4 +88,20 @@ func (TaskDeleteActivity) CollectionName() string {
 
 type TaskStatus struct {
 	Status int8 `json:"status"`
+}
+
+type TaskTotal struct {
+	ToTal int `json:"total" bson:"total"`
+}
+
+func (TaskTotal) CollectionName() string {
+	return taskCollectionName
+}
+
+type TaskTotalReject struct {
+	ToTalReject int `json:"totalreject" bson:"totalreject"`
+}
+
+func (TaskTotalReject) CollectionName() string {
+	return taskCollectionName
 }

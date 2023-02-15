@@ -181,6 +181,8 @@ func main() {
 	saleinvoice.StartSaleinvoiceAsync(ms, cfg)
 	purchase.StartPurchaseAsync(ms, cfg)
 
+	task.NewTaskConsumer(ms, cfg).RegisterConsumer()
+
 	toolSvc := tools.NewToolsService(ms, cfg)
 
 	toolSvc.RouteSetup()
