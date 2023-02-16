@@ -4306,6 +4306,22 @@ definitions:
         minimum: 0
         type: integer
     type: object
+  models.XSortDocumentImageGroupRequest:
+    properties:
+      guidfixed:
+        minLength: 1
+        type: string
+      taskguid:
+        minLength: 1
+        type: string
+      xorder:
+        maximum: 4294967295
+        minimum: 0
+        type: integer
+    required:
+    - guidfixed
+    - taskguid
+    type: object
   models.XSortModifyReqesut:
     properties:
       code:
@@ -5686,7 +5702,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/models.XSortModifyReqesut'
+            $ref: '#/definitions/models.XSortDocumentImageGroupRequest'
           type: array
       responses:
         "201":

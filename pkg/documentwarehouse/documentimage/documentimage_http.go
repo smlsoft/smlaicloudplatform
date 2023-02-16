@@ -953,7 +953,7 @@ func (h DocumentImageHttp) DeleteDocumentImageGroups(ctx microservice.IContext) 
 // Update XSort Document Image Group godoc
 // @Description Update XSort Document Image Group
 // @Tags		DocumentImageGroup
-// @Param		XSort  body      []common.XSortModifyReqesut  true  "XSort"
+// @Param		XSort  body      []models.XSortDocumentImageGroupRequest  true  "XSort"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -967,7 +967,7 @@ func (h DocumentImageHttp) UpdateXSort(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	reqBody := []models.XSortDocumentImageGroupReqesut{}
+	reqBody := []models.XSortDocumentImageGroupRequest{}
 	err := json.Unmarshal([]byte(input), &reqBody)
 
 	if err != nil {

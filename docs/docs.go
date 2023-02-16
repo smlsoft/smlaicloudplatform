@@ -1716,7 +1716,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.XSortModifyReqesut"
+                                "$ref": "#/definitions/models.XSortDocumentImageGroupRequest"
                             }
                         }
                     }
@@ -20862,6 +20862,28 @@ const docTemplate = `{
             "properties": {
                 "code": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer",
+                    "maximum": 4294967295,
+                    "minimum": 0
+                }
+            }
+        },
+        "models.XSortDocumentImageGroupRequest": {
+            "type": "object",
+            "required": [
+                "guidfixed",
+                "taskguid"
+            ],
+            "properties": {
+                "guidfixed": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "taskguid": {
+                    "type": "string",
+                    "minLength": 1
                 },
                 "xorder": {
                     "type": "integer",
