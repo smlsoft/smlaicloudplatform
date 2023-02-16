@@ -1301,7 +1301,7 @@ func (svc DocumentImageService) newXOrderDocumentImageGroup(shopID string, taskG
 	}
 
 	if len(findDoc.GuidFixed) < 1 {
-		return 1, nil
+		return 0, nil
 	}
 
 	return findDoc.XOrder + 1, nil
