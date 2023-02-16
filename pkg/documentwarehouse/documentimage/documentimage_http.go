@@ -952,7 +952,7 @@ func (h DocumentImageHttp) DeleteDocumentImageGroups(ctx microservice.IContext) 
 
 // Update XSort Document Image Group godoc
 // @Description Update XSort Document Image Group
-// @Tags		ProductBarcode
+// @Tags		DocumentImageGroup
 // @Param		XSort  body      []common.XSortModifyReqesut  true  "XSort"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
