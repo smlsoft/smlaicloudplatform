@@ -278,7 +278,7 @@ func (h SmsTransactionHttp) CheckSMS(ctx microservice.IContext) error {
 // @Success		200	{object}	models.SmsTransactionPageResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /checksms [get]
+// @Router /smstransaction/confirm/{id} [get]
 func (h SmsTransactionHttp) ConfirmSmsTransaction(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID

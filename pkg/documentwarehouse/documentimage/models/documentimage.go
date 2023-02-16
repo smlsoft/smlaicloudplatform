@@ -26,7 +26,7 @@ type DocumentImage struct {
 type ReferenceGroup struct {
 	GroupType  string `json:"grouptype" bson:"grouptype"`
 	ParentGUID string `json:"parentguid" bson:"parentguid"`
-	XOder      int    `json:"xorder" bson:"xorder"`
+	XOrder     int    `json:"xorder" bson:"xorder"`
 	XType      int    `json:"xtype" bson:"xtype"`
 }
 

@@ -19,6 +19,7 @@ type IDocumentImageGroupRepository interface {
 	Create(doc models.DocumentImageGroupDoc) (string, error)
 	CreateInBatch(doc []models.DocumentImageGroupDoc) error
 	Update(shopID string, guid string, doc models.DocumentImageGroupDoc) error
+	UpdateXOrder(shopID string, taskGUID string, GUID string, xorder uint) error
 	DeleteByGuidfixed(shopID string, guid string) error
 	DeleteByDocumentImageGUIDsHasOne(shopID string, imageGUIDs []string) error
 	DeleteByGUIDsIsDocumentImageEmpty(shopID string, GUIDs []string) error
@@ -30,6 +31,7 @@ type IDocumentImageGroupRepository interface {
 	FindOne(shopID string, filters interface{}) (models.DocumentImageGroupDoc, error)
 	FindByGuid(shopID string, guid string) (models.DocumentImageGroupDoc, error)
 
+	FindLastOneByTask(shopID string, taskGUID string) (models.DocumentImageGroupDoc, error)
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
 	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
 	FindByTaskGUID(shopID string, taskGUID string) ([]models.DocumentImageGroupDoc, error)
@@ -108,6 +110,49 @@ func (repo DocumentImageGroupRepository) UpdateTaskIsCompletedByTaskGUID(shopID 
 	}
 
 	return nil
+}
+
+func (repo DocumentImageGroupRepository) UpdateXOrder(shopID string, taskGUID string, GUID string, xorder uint) error {
+
+	filters := bson.M{
+		"shopid":    shopID,
+		"taskguid":  taskGUID,
+		"guidfixed": GUID,
+		"deletedat": bson.M{"$exists": false},
+	}
+
+	err := repo.pst.UpdateOne(models.DocumentImageGroupDoc{}, filters, bson.M{"xorder": xorder})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repo DocumentImageGroupRepository) FindLastOneByTask(shopID string, taskGUID string) (models.DocumentImageGroupDoc, error) {
+
+	results := []models.DocumentImageGroupDoc{}
+	err := repo.pst.Aggregate(models.DocumentImageGroupDoc{}, []interface{}{
+		bson.M{
+			"shopid":    shopID,
+			"taskguid":  taskGUID,
+			"deletedat": bson.M{"$exists": false},
+		},
+		bson.M{"$sort": bson.M{"xorder": -1}},
+		bson.M{"$limit": 1},
+	}, &results)
+
+	if err != nil {
+		return models.DocumentImageGroupDoc{}, err
+	}
+
+	if len(results) < 1 {
+		return models.DocumentImageGroupDoc{}, nil
+	}
+
+	return results[0], nil
+
 }
 
 func (repo DocumentImageGroupRepository) FindOneByReference(shopID string, reference models.Reference) (models.DocumentImageGroupDoc, error) {

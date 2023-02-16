@@ -228,7 +228,7 @@ func (h AccountGroupHttp) SearchAccountGroup(ctx microservice.IContext) error {
 // @Success		201	{object}	common.BulkInsertResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /gl/chartofaccount/bulk [post]
+// @Router /gl/accountgroup/bulk [post]
 func (h AccountGroupHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()

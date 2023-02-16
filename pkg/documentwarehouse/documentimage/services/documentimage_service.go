@@ -39,6 +39,7 @@ type IDocumentImageService interface {
 	DeleteReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error
 	DeleteDocumentImageGroupByGuid(shopID string, authUsername string, DocumentImageGroupGuidFixed string) error
 	DeleteDocumentImageGroupByGuids(shopID string, authUsername string, documentImageGroupGuidFixeds []string) error
+	XSortsUpdate(shopID string, authUsername string, xsorts []models.XSortDocumentImageGroupReqesut) error
 
 	UpdateDocumentImageReferenceGroup() error
 }
@@ -119,6 +120,9 @@ func (svc DocumentImageService) CreateDocumentImage(shopID string, authUsername 
 	docImageRef := svc.documentImageToImageReference(documentImageGUID, docRequest.DocumentImage, authUsername, createdAt)
 	docDataImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, imageGroupGUID, docImageRef, docRequest.ImageURI, tags, docRequest.TaskGUID, docRequest.PathTask, createdAt)
 
+	newXOrderDocImgGroup, _ := svc.newXOrderDocumentImageGroup(shopID, docRequest.TaskGUID)
+	docDataImageGroup.XOrder = newXOrderDocImgGroup
+
 	err := svc.repoImageGroup.Transaction(func() error {
 
 		_, err := svc.repoImage.Create(docData)
@@ -180,6 +184,10 @@ func (svc DocumentImageService) CreateDocumentImageWithTask(shopID string, authU
 	docImageRef := svc.documentImageToImageReference(documentImageGUID, docRequest.DocumentImage, authUsername, createdAt)
 	docDataImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, imageGroupGUID, docImageRef, docRequest.ImageURI, tags, docRequest.TaskGUID, docRequest.PathTask, createdAt)
 
+	newXOrderDocImgGroup, _ := svc.newXOrderDocumentImageGroup(shopID, docRequest.TaskGUID)
+
+	docDataImageGroup.XOrder = newXOrderDocImgGroup
+
 	err := svc.repoImageGroup.Transaction(func() error {
 
 		_, err := svc.repoImage.Create(docData)
@@ -217,9 +225,19 @@ func (svc DocumentImageService) BulkCreateDocumentImage(shopID string, authUsern
 	docDataList := []models.DocumentImageDoc{}
 	docDataImageGroupList := []models.DocumentImageGroupDoc{}
 
+	taskLastXOrder := map[string]int{}
+
 	for _, doc := range docs {
 		if len(doc.TaskGUID) < 1 {
 			return fmt.Errorf("job is empty")
+		}
+
+		_, ok := taskLastXOrder[doc.TaskGUID]
+		if !ok {
+			newXOrderDocImgGroup, _ := svc.newXOrderDocumentImageGroup(shopID, doc.TaskGUID)
+			taskLastXOrder[doc.TaskGUID] = newXOrderDocImgGroup
+		} else {
+			taskLastXOrder[doc.TaskGUID]++
 		}
 
 		documentImageGUID := svc.newDocumentImageGUIDFnc()
@@ -245,6 +263,8 @@ func (svc DocumentImageService) BulkCreateDocumentImage(shopID string, authUsern
 		imageGroupGUID := svc.newDocumentImageGroupGUIDFnc()
 		docImageRef := svc.documentImageToImageReference(documentImageGUID, doc.DocumentImage, authUsername, createdAt)
 		docDataImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, imageGroupGUID, docImageRef, doc.ImageURI, *doc.Tags, doc.TaskGUID, doc.PathTask, createdAt)
+
+		docDataImageGroup.XOrder = taskLastXOrder[doc.TaskGUID]
 
 		docDataList = append(docDataList, docData)
 		docDataImageGroupList = append(docDataImageGroupList, docDataImageGroup)
@@ -378,7 +398,7 @@ func (svc DocumentImageService) UpdateDocumentImageReferenceGroup() error {
 			refGroup := models.ReferenceGroup{}
 			refGroup.GroupType = ""
 			refGroup.ParentGUID = ""
-			refGroup.XOder = 1
+			refGroup.XOrder = 1
 			refGroup.XType = 0
 
 			refGroups = append(refGroups, refGroup)
@@ -476,6 +496,9 @@ func (svc DocumentImageService) CreateDocumentImageGroup(shopID string, authUser
 	docImageGroupData.Status = models.IMAGE_PENDING
 
 	docImageGroupData.References = []models.Reference{}
+
+	newXOrder, _ := svc.newXOrderDocumentImageGroup(shopID, docImageGroup.TaskGUID)
+	docImageGroupData.XOrder = newXOrder
 
 	docImageGroupData.CreatedBy = authUsername
 	docImageGroupData.CreatedAt = createdAt
@@ -679,6 +702,11 @@ func (svc DocumentImageService) UpdateDocumentImageGroup(shopID string, authUser
 		}
 
 		docImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, imageGroupGUID, imageRef, imageRef.ImageURI, tempTags, findDoc.TaskGUID, findDoc.PathTask, timeAt)
+
+		newXOrderDocImgGroup, _ := svc.newXOrderDocumentImageGroup(shopID, findDoc.TaskGUID)
+
+		docImageGroup.XOrder = newXOrderDocImgGroup
+
 		_, err = svc.repoImageGroup.Create(docImageGroup)
 
 		if err != nil {
@@ -789,6 +817,10 @@ func (svc DocumentImageService) UpdateImageReferenceByDocumentImageGroup(shopID 
 		}
 
 		docImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, imageGroupGUID, imageRef, imageRef.ImageURI, tempTags, findDoc.TaskGUID, findDoc.PathTask, timeAt)
+		newXOrderDocImgGroup, _ := svc.newXOrderDocumentImageGroup(shopID, findDoc.TaskGUID)
+
+		docImageGroup.XOrder = newXOrderDocImgGroup
+
 		_, err = svc.repoImageGroup.Create(docImageGroup)
 
 		if err != nil {
@@ -1063,6 +1095,10 @@ func (svc DocumentImageService) UnGroupDocumentImageGroup(shopID string, authUse
 		}
 
 		docImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, imageGroupGUID, imageRef, imageRef.ImageURI, tags, findDocGroup.TaskGUID, findDocGroup.PathTask, updatedAt)
+
+		newXOrderDocImgGroup, _ := svc.newXOrderDocumentImageGroup(shopID, docImageGroup.TaskGUID)
+
+		docImageGroup.XOrder = newXOrderDocImgGroup
 		_, err = svc.repoImageGroup.Create(docImageGroup)
 
 		if err != nil {
@@ -1110,6 +1146,22 @@ func (svc DocumentImageService) GetDocumentImageGroupByDocRef(shopID string, doc
 
 	return findDoc.DocumentImageGroupInfo, nil
 
+}
+
+func (svc DocumentImageService) XSortsUpdate(shopID string, authUsername string, xsorts []models.XSortDocumentImageGroupReqesut) error {
+	for _, xsort := range xsorts {
+		if len(xsort.GUIDFixed) < 1 {
+			continue
+		}
+
+		err := svc.repoImageGroup.UpdateXOrder(shopID, xsort.TaskGUID, xsort.GUIDFixed, xsort.XOrder)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (svc DocumentImageService) isDocumentImageGroupHasReferenced(doc models.DocumentImageGroupDoc) bool {
@@ -1198,6 +1250,10 @@ func (svc DocumentImageService) messageQueueReCountDocumentImageGroup(shopID str
 
 	count, err := svc.repoImageGroup.CountByTask(shopID, taskGUID)
 
+	if err != nil {
+		return 0, err
+	}
+
 	taskMsg := models.DocumentImageTaskChangeMessage{
 		ShopID:   shopID,
 		TaskGUID: taskGUID,
@@ -1217,6 +1273,10 @@ func (svc DocumentImageService) messageQueueReCountRejectDocumentImageGroup(shop
 
 	count, err := svc.repoImageGroup.CountRejectByTask(shopID, taskGUID)
 
+	if err != nil {
+		return 0, err
+	}
+
 	taskMsg := models.DocumentImageTaskRejectMessage{
 		ShopID:   shopID,
 		TaskGUID: taskGUID,
@@ -1230,4 +1290,19 @@ func (svc DocumentImageService) messageQueueReCountRejectDocumentImageGroup(shop
 	}
 
 	return count, nil
+}
+
+func (svc DocumentImageService) newXOrderDocumentImageGroup(shopID string, taskGUID string) (int, error) {
+
+	findDoc, err := svc.repoImageGroup.FindLastOneByTask(shopID, taskGUID)
+
+	if err != nil {
+		return 0, err
+	}
+
+	if len(findDoc.GuidFixed) < 1 {
+		return 1, nil
+	}
+
+	return findDoc.XOrder + 1, nil
 }

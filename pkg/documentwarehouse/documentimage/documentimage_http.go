@@ -80,6 +80,7 @@ func (h DocumentImageHttp) RouteSetup() {
 	h.ms.GET("/documentimagegroup/:guid", h.GetDocumentImageGroup)
 	h.ms.POST("/documentimagegroup", h.CreateDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid", h.UpdateDocumentImageGroup)
+	h.ms.PUT("/documentimagegroup/xsort", h.UpdateXSort)
 	h.ms.PUT("/documentimagegroup/:guid/documentimages", h.UpdateImageReferenceByDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid/reference", h.UpdateReferenceByDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid/ungroup", h.UngroupDocumentImageGroup)
@@ -945,6 +946,43 @@ func (h DocumentImageHttp) DeleteDocumentImageGroups(ctx microservice.IContext) 
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		Data:    guids,
+	})
+	return nil
+}
+
+// Update XSort Document Image Group godoc
+// @Description Update XSort Document Image Group
+// @Tags		ProductBarcode
+// @Param		XSort  body      []common.XSortModifyReqesut  true  "XSort"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /documentimagegroup/xsort [put]
+func (h DocumentImageHttp) UpdateXSort(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	reqBody := []models.XSortDocumentImageGroupReqesut{}
+	err := json.Unmarshal([]byte(input), &reqBody)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	err = h.service.XSortsUpdate(shopID, authUsername, reqBody)
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
 	})
 	return nil
 }
