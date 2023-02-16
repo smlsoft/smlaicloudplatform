@@ -1705,7 +1705,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "ProductBarcode"
+                    "DocumentImageGroup"
                 ],
                 "parameters": [
                     {

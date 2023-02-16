@@ -1699,7 +1699,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "ProductBarcode"
+                    "DocumentImageGroup"
                 ],
                 "parameters": [
                     {

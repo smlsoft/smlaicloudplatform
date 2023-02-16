@@ -5700,7 +5700,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - ProductBarcode
+      - DocumentImageGroup
   /employee:
     get:
       consumes:
