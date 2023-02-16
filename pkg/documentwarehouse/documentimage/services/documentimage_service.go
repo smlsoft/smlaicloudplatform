@@ -39,7 +39,7 @@ type IDocumentImageService interface {
 	DeleteReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error
 	DeleteDocumentImageGroupByGuid(shopID string, authUsername string, DocumentImageGroupGuidFixed string) error
 	DeleteDocumentImageGroupByGuids(shopID string, authUsername string, documentImageGroupGuidFixeds []string) error
-	XSortsUpdate(shopID string, authUsername string, xsorts []models.XSortDocumentImageGroupReqesut) error
+	XSortsUpdate(shopID string, authUsername string, xsorts []models.XSortDocumentImageGroupRequest) error
 
 	UpdateDocumentImageReferenceGroup() error
 }
@@ -1148,7 +1148,7 @@ func (svc DocumentImageService) GetDocumentImageGroupByDocRef(shopID string, doc
 
 }
 
-func (svc DocumentImageService) XSortsUpdate(shopID string, authUsername string, xsorts []models.XSortDocumentImageGroupReqesut) error {
+func (svc DocumentImageService) XSortsUpdate(shopID string, authUsername string, xsorts []models.XSortDocumentImageGroupRequest) error {
 	for _, xsort := range xsorts {
 		if len(xsort.GUIDFixed) < 1 {
 			continue
