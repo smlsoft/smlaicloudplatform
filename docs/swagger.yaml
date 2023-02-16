@@ -5674,6 +5674,33 @@ paths:
       summary: Get Document Image Group By document reference Infomation
       tags:
       - DocumentImageGroup
+  /documentimagegroup/xsort:
+    put:
+      consumes:
+      - application/json
+      description: Update XSort Document Image Group
+      parameters:
+      - description: XSort
+        in: body
+        name: XSort
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.XSortModifyReqesut'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductBarcode
   /employee:
     get:
       consumes:
@@ -5997,6 +6024,34 @@ paths:
       security:
       - AccessToken: []
       summary: แก้ไขกลุ่มบัญชี
+      tags:
+      - GL
+  /gl/accountgroup/bulk:
+    post:
+      consumes:
+      - application/json
+      description: นำเข้ากลุ่มบัญชี
+      parameters:
+      - description: กลุ่มบัญชี
+        in: body
+        name: AccountGroup
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.AccountGroup'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkInsertResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: นำเข้ากลุ่มบัญชี
       tags:
       - GL
   /gl/accountperiodmaster:
@@ -12388,6 +12443,38 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: รับข้อมูล sms
+      tags:
+      - SMS
+  /smstransaction/confirm/{id}:
+    get:
+      consumes:
+      - application/json
+      description: รับข้อมูล sms
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Size
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SmsTransactionPageResponse'
         "401":
           description: Unauthorized
           schema:
