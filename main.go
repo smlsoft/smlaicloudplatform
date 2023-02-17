@@ -26,6 +26,7 @@ import (
 	"smlcloudplatform/pkg/product/product"
 	"smlcloudplatform/pkg/product/productbarcode"
 	"smlcloudplatform/pkg/product/productcategory"
+	"smlcloudplatform/pkg/product/productgroup"
 	"smlcloudplatform/pkg/product/unit"
 	"smlcloudplatform/pkg/restaurant/device"
 	"smlcloudplatform/pkg/restaurant/kitchen"
@@ -152,7 +153,12 @@ func main() {
 			unit.NewUnitHttp(ms, cfg),
 			optionpattern.NewOptionPatternHttp(ms, cfg),
 			color.NewColorHttp(ms, cfg),
+
+			//product
 			productcategory.NewProductCategoryHttp(ms, cfg),
+			productbarcode.NewProductBarcodeHttp(ms, cfg),
+			product.NewProductHttp(ms, cfg),
+			productgroup.NewProductGroupHttp(ms, cfg),
 
 			inventoryimport.NewInventoryImportHttp(ms, cfg),
 			inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg),
@@ -185,11 +191,9 @@ func main() {
 			smstransaction.NewSmsTransactionHttp(ms, cfg),
 			paymentmaster.NewPaymentMasterHttp(ms, cfg),
 			warehouse.NewWarehouseHttp(ms, cfg),
-			productbarcode.NewProductBarcodeHttp(ms, cfg),
 
 			customer.NewCustomerHttp(ms, cfg),
 			customergroup.NewCustomerGroupHttp(ms, cfg),
-			product.NewProductHttp(ms, cfg),
 			accountperiodmaster.NewAccountPeriodMasterHttp(ms, cfg),
 
 			bankmaster.NewBankMasterHttp(ms, cfg),

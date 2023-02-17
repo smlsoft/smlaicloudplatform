@@ -958,7 +958,7 @@ func (h DocumentImageHttp) DeleteDocumentImageGroups(ctx microservice.IContext) 
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /documentimagegroup/xsort [put]
+// @Router /documentimagegroup/xsort/{taskguid} [put]
 func (h DocumentImageHttp) UpdateXSort(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
@@ -966,6 +966,13 @@ func (h DocumentImageHttp) UpdateXSort(ctx microservice.IContext) error {
 	authUsername := userInfo.Username
 
 	input := ctx.ReadInput()
+
+	taskGUID := ctx.Param("taskguid")
+
+	if len(taskGUID) < 1 {
+		ctx.ResponseError(http.StatusBadRequest, "taskguid is required")
+		return nil
+	}
 
 	reqBody := []models.XSortDocumentImageGroupRequest{}
 	err := json.Unmarshal([]byte(input), &reqBody)
