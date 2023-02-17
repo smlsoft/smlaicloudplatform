@@ -262,7 +262,13 @@ func (svc DocumentImageService) BulkCreateDocumentImage(shopID string, authUsern
 		// image group
 		imageGroupGUID := svc.newDocumentImageGroupGUIDFnc()
 		docImageRef := svc.documentImageToImageReference(documentImageGUID, doc.DocumentImage, authUsername, createdAt)
-		docDataImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, imageGroupGUID, docImageRef, doc.ImageURI, *doc.Tags, doc.TaskGUID, doc.PathTask, createdAt)
+
+		tags := []string{}
+		if doc.Tags != nil {
+			tags = *doc.Tags
+		}
+
+		docDataImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, imageGroupGUID, docImageRef, doc.ImageURI, tags, doc.TaskGUID, doc.PathTask, createdAt)
 
 		docDataImageGroup.XOrder = taskLastXOrder[doc.TaskGUID]
 
