@@ -236,8 +236,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -253,15 +253,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       unitcode:
         type: string
       unitname1:
@@ -909,8 +902,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageReference:
     properties:
@@ -1014,8 +1005,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1033,8 +1024,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1050,12 +1039,7 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1163,8 +1147,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1182,8 +1166,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1199,12 +1181,7 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1362,8 +1339,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1381,8 +1358,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1398,12 +1373,7 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -2817,17 +2787,10 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
+      keynumber:
+        type: integer
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
+        type: string
     type: object
   models.ProductUnit:
     properties:
@@ -3012,10 +2975,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -3033,8 +2996,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3050,10 +3011,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -3437,10 +3394,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -3458,8 +3415,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3475,10 +3430,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -4377,16 +4328,12 @@ definitions:
       guidfixed:
         minLength: 1
         type: string
-      taskguid:
-        minLength: 1
-        type: string
       xorder:
         maximum: 4294967295
         minimum: 0
         type: integer
     required:
     - guidfixed
-    - taskguid
     type: object
   models.XSortModifyReqesut:
     properties:
