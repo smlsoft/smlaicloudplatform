@@ -2581,15 +2581,21 @@ definitions:
   models.Product:
     properties:
       barcodes:
+        description: CategoryGUID             string          `json:"categoryguid"
+          bson:"categoryguid"` //
         items:
           type: string
         type: array
-      categoryguid:
-        type: string
+      categories:
+        items:
+          type: string
+        type: array
       categorynames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      groupcode:
+        type: string
       images:
         items:
           $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductImage'
@@ -2766,6 +2772,19 @@ definitions:
         type: string
       refunitcode:
         type: string
+    required:
+    - names
+    type: object
+  models.ProductGroup:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
     required:
     - names
     type: object
@@ -5737,7 +5756,7 @@ paths:
       summary: Get Document Image Group By document reference Infomation
       tags:
       - DocumentImageGroup
-  /documentimagegroup/xsort:
+  /documentimagegroup/xsort/{taskguid}:
     put:
       consumes:
       - application/json
@@ -10033,6 +10052,254 @@ paths:
       - AccessToken: []
       tags:
       - ProductCategory
+  /product/group:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ProductGroup
+      parameters:
+      - description: ProductGroup GUIDs
+        in: body
+        name: ProductGroup
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductGroup
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductGroup
+    post:
+      consumes:
+      - application/json
+      description: Create ProductGroup
+      parameters:
+      - description: ProductGroup
+        in: body
+        name: ProductGroup
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductGroup'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductGroup
+  /product/group/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ProductGroup
+      parameters:
+      - description: ProductGroup ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductGroup
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: ProductGroup ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductGroup
+    put:
+      consumes:
+      - application/json
+      description: Update ProductGroup
+      parameters:
+      - description: ProductGroup ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: ProductGroup
+        in: body
+        name: ProductGroup
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductGroup'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductGroup
+  /product/group/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create ProductGroup
+      parameters:
+      - description: ProductGroup
+        in: body
+        name: ProductGroup
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.ProductGroup'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductGroup
+  /product/group/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductGroup
+  /product/group/save:
+    post:
+      consumes:
+      - application/json
+      description: Save ProductGroup
+      parameters:
+      - description: ProductGroup
+        in: body
+        name: ProductGroup
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductGroup'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductGroup
   /product/list:
     get:
       consumes:

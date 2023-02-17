@@ -1693,7 +1693,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/documentimagegroup/xsort": {
+        "/documentimagegroup/xsort/{taskguid}": {
             "put": {
                 "security": [
                     {
@@ -8802,6 +8802,406 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "ProductCategory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/group": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ProductGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductGroup",
+                        "name": "ProductGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductGroup GUIDs",
+                        "name": "ProductGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/group/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ProductGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductGroup",
+                        "name": "ProductGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ProductGroup"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/group/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/group/save": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Save ProductGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductGroup",
+                        "name": "ProductGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/group/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update ProductGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ProductGroup",
+                        "name": "ProductGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductGroup ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -18350,19 +18750,26 @@ const docTemplate = `{
             ],
             "properties": {
                 "barcodes": {
+                    "description": "CategoryGUID             string          ` + "`" + `json:\"categoryguid\" bson:\"categoryguid\"` + "`" + ` //",
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
                 },
-                "categoryguid": {
-                    "type": "string"
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "categorynames": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "groupcode": {
+                    "type": "string"
                 },
                 "images": {
                     "type": "array",
@@ -18611,6 +19018,25 @@ const docTemplate = `{
                 },
                 "refunitcode": {
                     "type": "string"
+                }
+            }
+        },
+        "models.ProductGroup": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 }
             }
         },
