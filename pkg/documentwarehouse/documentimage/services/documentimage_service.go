@@ -34,7 +34,7 @@ type IDocumentImageService interface {
 	UpdateReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error
 	UpdateTagsInDocumentImageGroup(shopID string, authUsername string, groupGUID string, tags []string) error
 	UpdateStatusDocumentImageGroup(shopID string, authUsername string, groupGUID string, status int8) error
-	UnGroupDocumentImageGroup(shopID string, authUsername string, groupGUID string) error
+	UnGroupDocumentImageGroup(shopID string, authUsername string, groupGUID string) ([]string, error)
 	ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
 	DeleteReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error
 	DeleteDocumentImageGroupByGuid(shopID string, authUsername string, DocumentImageGroupGuidFixed string) error
@@ -1074,18 +1074,19 @@ func (svc DocumentImageService) DeleteDocumentImageGroupByGuids(shopID string, a
 	return nil
 }
 
-func (svc DocumentImageService) UnGroupDocumentImageGroup(shopID string, authUsername string, groupGUID string) error {
+func (svc DocumentImageService) UnGroupDocumentImageGroup(shopID string, authUsername string, groupGUID string) ([]string, error) {
 	findDocGroup, err := svc.repoImageGroup.FindByGuid(shopID, groupGUID)
 
 	if err != nil {
-		return err
+		return []string{}, err
 	}
 
 	if svc.isDocumentImageGroupHasReferenced(findDocGroup) {
-		return errors.New("document has referenced")
+		return []string{}, errors.New("document has referenced")
 	}
 
 	updatedAt := svc.timeNowFnc()
+	newImageGroupGUIDs := []string{}
 	for _, imageRef := range *findDocGroup.ImageReferences {
 		imageGroupGUID := svc.newDocumentImageGroupGUIDFnc()
 
@@ -1102,13 +1103,15 @@ func (svc DocumentImageService) UnGroupDocumentImageGroup(shopID string, authUse
 		_, err = svc.repoImageGroup.Create(docImageGroup)
 
 		if err != nil {
-			return err
+			return []string{}, err
 		}
+
+		newImageGroupGUIDs = append(newImageGroupGUIDs, imageGroupGUID)
 	}
 
 	svc.repoImageGroup.DeleteByGuidfixed(shopID, groupGUID)
 
-	return nil
+	return newImageGroupGUIDs, nil
 }
 
 func (svc DocumentImageService) ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error) {

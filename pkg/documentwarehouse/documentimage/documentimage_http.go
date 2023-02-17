@@ -750,7 +750,7 @@ func (h DocumentImageHttp) UngroupDocumentImageGroup(ctx microservice.IContext) 
 
 	docImageGroupGUID := ctx.Param("guid")
 
-	err := h.service.UnGroupDocumentImageGroup(userInfo.ShopID, userInfo.Username, docImageGroupGUID)
+	guids, err := h.service.UnGroupDocumentImageGroup(userInfo.ShopID, userInfo.Username, docImageGroupGUID)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
@@ -758,6 +758,7 @@ func (h DocumentImageHttp) UngroupDocumentImageGroup(ctx microservice.IContext) 
 
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
+		Data:    guids,
 	})
 
 	return nil
