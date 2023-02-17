@@ -90,6 +90,5 @@ type Status struct {
 
 type XSortDocumentImageGroupRequest struct {
 	GUIDFixed string `json:"guidfixed" bson:"guidfixed" validate:"required,min=1"`
-	TaskGUID  string `json:"taskguid" bson:"taskguid" validate:"required,min=1"`
 	XOrder    uint   `json:"xorder" bson:"xorder" validate:"min=0,max=4294967295"`
 }

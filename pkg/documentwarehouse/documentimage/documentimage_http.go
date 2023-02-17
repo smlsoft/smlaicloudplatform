@@ -80,7 +80,7 @@ func (h DocumentImageHttp) RouteSetup() {
 	h.ms.GET("/documentimagegroup/:guid", h.GetDocumentImageGroup)
 	h.ms.POST("/documentimagegroup", h.CreateDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid", h.UpdateDocumentImageGroup)
-	h.ms.PUT("/documentimagegroup/xsort", h.UpdateXSort)
+	h.ms.PUT("/documentimagegroup/xsort/:taskguid", h.UpdateXSort)
 	h.ms.PUT("/documentimagegroup/:guid/documentimages", h.UpdateImageReferenceByDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid/reference", h.UpdateReferenceByDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid/ungroup", h.UngroupDocumentImageGroup)
@@ -982,7 +982,7 @@ func (h DocumentImageHttp) UpdateXSort(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.service.XSortsUpdate(shopID, authUsername, reqBody)
+	err = h.service.XSortsUpdate(shopID, authUsername, taskGUID, reqBody)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
