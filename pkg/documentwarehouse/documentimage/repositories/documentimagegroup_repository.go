@@ -147,6 +147,10 @@ func (repo DocumentImageGroupRepository) FindLastOneByTask(shopID string, taskGU
 		return models.DocumentImageGroupDoc{}, err
 	}
 
+	if len(results) < 1 {
+		return models.DocumentImageGroupDoc{}, nil
+	}
+
 	return results[0], nil
 
 }

@@ -89,10 +89,10 @@ func (c *TaskConsumer) ConsumeOnProductCreated(ctx microservice.IContext) error 
 		return err
 	}
 
-	fmt.Println("consume task changed")
-	fmt.Printf("%v\n", doc)
-	fmt.Printf("task: %s \n", doc.TaskGUID)
-	fmt.Printf("count: %d \n", doc.Count)
+	// fmt.Println("consume task changed")
+	// fmt.Printf("%v\n", doc)
+	// fmt.Printf("task: %s \n", doc.TaskGUID)
+	// fmt.Printf("count: %d \n", doc.Count)
 
 	err = c.svc.UpdateTaskTotalImage(doc)
 
@@ -116,10 +116,10 @@ func (c *TaskConsumer) ConsumeOnProductRejected(ctx microservice.IContext) error
 		return err
 	}
 
-	fmt.Println("consume task rejected")
-	fmt.Printf("%v\n", doc)
-	fmt.Printf("task: %s \n", doc.TaskGUID)
-	fmt.Printf("count: %d \n", doc.Count)
+	// fmt.Println("consume task rejected")
+	// fmt.Printf("%v\n", doc)
+	// fmt.Printf("task: %s \n", doc.TaskGUID)
+	// fmt.Printf("count: %d \n", doc.Count)
 
 	err = c.svc.UpdateTaskTotalRejectImage(doc)
 
