@@ -134,21 +134,17 @@ func (repo DocumentImageGroupRepository) FindLastOneByTask(shopID string, taskGU
 
 	results := []models.DocumentImageGroupDoc{}
 	err := repo.pst.Aggregate(models.DocumentImageGroupDoc{}, []interface{}{
-		bson.M{
+		bson.M{"$match": bson.M{
 			"shopid":    shopID,
 			"taskguid":  taskGUID,
 			"deletedat": bson.M{"$exists": false},
-		},
+		}},
 		bson.M{"$sort": bson.M{"xorder": -1}},
 		bson.M{"$limit": 1},
 	}, &results)
 
 	if err != nil {
 		return models.DocumentImageGroupDoc{}, err
-	}
-
-	if len(results) < 1 {
-		return models.DocumentImageGroupDoc{}, nil
 	}
 
 	return results[0], nil
@@ -159,12 +155,12 @@ func (repo DocumentImageGroupRepository) FindOneByReference(shopID string, refer
 
 	results := []models.DocumentImageGroupDoc{}
 	err := repo.pst.Aggregate(models.DocumentImageGroupDoc{}, []interface{}{
-		bson.M{
+		bson.M{"$match": bson.M{
 			"shopid":            shopID,
 			"references.module": reference.Module,
 			"references.docno":  reference.DocNo,
 			"deletedat":         bson.M{"$exists": false},
-		},
+		}},
 		bson.M{"$limit": 1},
 	}, &results)
 

@@ -1081,6 +1081,10 @@ func (svc DocumentImageService) UnGroupDocumentImageGroup(shopID string, authUse
 		return []string{}, err
 	}
 
+	if len(findDocGroup.GuidFixed) < 1 {
+		return []string{}, nil
+	}
+
 	if svc.isDocumentImageGroupHasReferenced(findDocGroup) {
 		return []string{}, errors.New("document has referenced")
 	}
