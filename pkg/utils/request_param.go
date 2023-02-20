@@ -8,7 +8,7 @@ import (
 
 const RequestSearchMaxPage = 2147483647
 const RequestSearchMinPage = 1
-const RequestSearchMaxLimit = 1000
+const RequestSearchMaxLimit = 100_000
 const RequestSearchMinLimit = 1
 
 const RequestSearchDefaultOffset = 0
