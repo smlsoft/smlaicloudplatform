@@ -38,16 +38,19 @@ func (repo MasterSyncCacheRepository) Get(shopID string, moduleName string) (tim
 
 	strTime, err := repo.cache.Get(cacheModuleKey)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println(err)
+		return time.Time{}, nil
+	}
+
+	if len(strTime) == 0 {
 		return time.Time{}, nil
 	}
 
 	strTime = strings.ReplaceAll(strTime, "\"", "")
 
-	fmt.Println(strTime)
 	valTime, err := time.Parse(time.RFC3339, strTime)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println(err)
 		return time.Time{}, nil
 	}
 
