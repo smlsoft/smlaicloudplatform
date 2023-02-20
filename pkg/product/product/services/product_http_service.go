@@ -2,10 +2,13 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/product/models"
 	"smlcloudplatform/pkg/product/product/repositories"
+	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
 	"time"
@@ -28,16 +31,20 @@ type IProductHttpService interface {
 }
 
 type ProductHttpService struct {
-	repo   repositories.IProductRepository
-	mqRepo repositories.IProductMessageQueueRepository
+	repo          repositories.IProductRepository
+	mqRepo        repositories.IProductMessageQueueRepository
+	syncCacheRepo mastersync.IMasterSyncCacheRepository
+	services.ActivityService[models.ProductActivity, models.ProductDeleteActivity]
 }
 
-func NewProductHttpService(repo repositories.IProductRepository, mqRepo repositories.IProductMessageQueueRepository) *ProductHttpService {
+func NewProductHttpService(repo repositories.IProductRepository, mqRepo repositories.IProductMessageQueueRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *ProductHttpService {
 
-	return &ProductHttpService{
+	insSvc := &ProductHttpService{
 		repo:   repo,
 		mqRepo: mqRepo,
 	}
+	insSvc.ActivityService = services.NewActivityService[models.ProductActivity, models.ProductDeleteActivity](repo)
+	return insSvc
 }
 
 func (svc ProductHttpService) SaveProduct(shopID string, authUsername string, doc models.Product) (string, error) {
@@ -66,6 +73,8 @@ func (svc ProductHttpService) SaveProduct(shopID string, authUsername string, do
 			return "", err
 		}
 
+		svc.saveMasterSync(shopID)
+
 		return findDoc.GuidFixed, nil
 
 	} else {
@@ -90,6 +99,8 @@ func (svc ProductHttpService) SaveProduct(shopID string, authUsername string, do
 		if err != nil {
 			return "", err
 		}
+
+		svc.saveMasterSync(shopID)
 
 		return newGuidFixed, nil
 	}
@@ -128,6 +139,8 @@ func (svc ProductHttpService) CreateProduct(shopID string, authUsername string, 
 		return "", err
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return newGuidFixed, nil
 }
 
@@ -160,6 +173,8 @@ func (svc ProductHttpService) UpdateProduct(shopID string, guid string, authUser
 		return err
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -186,6 +201,8 @@ func (svc ProductHttpService) DeleteProduct(shopID string, guid string, authUser
 		return err
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -210,6 +227,8 @@ func (svc ProductHttpService) DeleteProductByGUIDs(shopID string, authUsername s
 	if err != nil {
 		return err
 	}
+
+	svc.saveMasterSync(shopID)
 
 	return nil
 }
@@ -398,6 +417,10 @@ func (svc ProductHttpService) SaveInBatch(shopID string, authUsername string, da
 		}
 	}
 
+	if len(createDataList) > 0 || len(updateSuccessDataList) > 0 {
+		svc.saveMasterSync(shopID)
+	}
+
 	return common.BulkImport{
 		Created:          createDataKey,
 		Updated:          updateDataKey,
@@ -408,4 +431,18 @@ func (svc ProductHttpService) SaveInBatch(shopID string, authUsername string, da
 
 func (svc ProductHttpService) getDocIDKey(doc models.Product) string {
 	return doc.ItemCode
+}
+
+func (svc ProductHttpService) saveMasterSync(shopID string) {
+	if svc.syncCacheRepo != nil {
+		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
+
+		if err != nil {
+			fmt.Printf("save %s cache error :: %s", svc.GetModuleName(), err.Error())
+		}
+	}
+}
+
+func (svc ProductHttpService) GetModuleName() string {
+	return "product"
 }
