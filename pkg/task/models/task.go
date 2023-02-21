@@ -19,21 +19,27 @@ const (
 
 type Task struct {
 	models.PartitionIdentity `bson:"inline"`
-	Code                     string    `json:"code" bson:"code"`
-	Name                     string    `json:"name" bson:"name"`
-	Module                   string    `json:"module" bson:"module"`
-	Status                   int8      `json:"status" bson:"status"`
-	ParentGUIDFixed          string    `json:"parentguidfixed" bson:"parentguidfixed"`
-	Path                     string    `json:"path" bson:"path"`
-	IsFavorit                bool      `json:"isfavorit" bson:"isfavorit"`
-	Tags                     *[]string `json:"tags" bson:"tags"`
-	Description              string    `json:"description" bson:"description"`
-	ToTal                    int       `json:"total" bson:"total"`
-	ToTalReject              int       `json:"totalreject" bson:"totalreject"`
-	OwnerAt                  time.Time `json:"ownerat" bson:"ownerat"`
-	OwnerBy                  string    `json:"ownerby" bson:"ownerby"`
-	RejectedAt               time.Time `json:"rejectedat,omitempty" bson:"rejectedat,omitempty"`
-	RejectedBy               string    `json:"rejectedby,omitempty" bson:"rejectedby,omitempty"`
+	Code                     string         `json:"code" bson:"code"`
+	Name                     string         `json:"name" bson:"name"`
+	Module                   string         `json:"module" bson:"module"`
+	Status                   int8           `json:"status" bson:"status"`
+	ParentGUIDFixed          string         `json:"parentguidfixed" bson:"parentguidfixed"`
+	Path                     string         `json:"path" bson:"path"`
+	IsFavorit                bool           `json:"isfavorit" bson:"isfavorit"`
+	Tags                     *[]string      `json:"tags" bson:"tags"`
+	Description              string         `json:"description" bson:"description"`
+	TotalDocument            int            `json:"totaldocument" bson:"totaldocument"`
+	TotalDocumentStatus      *[]TotalStatus `json:"totaldocumentstatus" bson:"totaldocumentstatus"`
+	OwnerAt                  time.Time      `json:"ownerat" bson:"ownerat"`
+	OwnerBy                  string         `json:"ownerby" bson:"ownerby"`
+	RejectedAt               time.Time      `json:"rejectedat,omitempty" bson:"rejectedat,omitempty"`
+	RejectedBy               string         `json:"rejectedby,omitempty" bson:"rejectedby,omitempty"`
+	// ToTalReject              int       `json:"totalreject" bson:"totalreject"`
+}
+
+type TotalStatus struct {
+	Status int8 `json:"status" bson:"status"`
+	Total  int  `json:"total" bson:"total"`
 }
 
 type TaskInfo struct {
@@ -90,11 +96,12 @@ type TaskStatus struct {
 	Status int8 `json:"status"`
 }
 
-type TaskTotal struct {
-	ToTal int `json:"total" bson:"total"`
+type TaskDocumentTotal struct {
+	TotalDocument       int            `json:"totaldocument" bson:"totaldocument"`
+	TotalDocumentStatus *[]TotalStatus `json:"totaldocumentstatus" bson:"totaldocumentstatus"`
 }
 
-func (TaskTotal) CollectionName() string {
+func (TaskDocumentTotal) CollectionName() string {
 	return taskCollectionName
 }
 

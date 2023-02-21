@@ -27,7 +27,7 @@ type ITaskRepository interface {
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.TaskInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.TaskDoc, error)
 
-	UpdateTotalDocumentImageGroup(shopID string, taskGUID string, total int) error
+	UpdateTotalDocumentImageGroup(shopID string, taskGUID string, total int, countStatus []models.TotalStatus) error
 	UpdateTotalRejectDocumentImageGroup(shopID string, taskGUID string, total int) error
 
 	FindPageByTaskReject(shopID string, module string, taskGUID string) ([]models.TaskInfo, error)
@@ -109,7 +109,7 @@ func (repo *TaskRepository) CountTaskParent(shopID string, taskGUID string) (int
 	return count, nil
 }
 
-func (repo *TaskRepository) UpdateTotalDocumentImageGroup(shopID string, taskGUID string, total int) error {
+func (repo *TaskRepository) UpdateTotalDocumentImageGroup(shopID string, taskGUID string, totalDoc int, totalDocStatus []models.TotalStatus) error {
 
 	queryFilters := bson.M{
 		"shopid":    shopID,
@@ -119,7 +119,7 @@ func (repo *TaskRepository) UpdateTotalDocumentImageGroup(shopID string, taskGUI
 
 	queryFilters["guidfixed"] = taskGUID
 
-	err := repo.pst.UpdateOne(models.TaskTotal{}, queryFilters, models.TaskTotal{ToTal: total})
+	err := repo.pst.UpdateOne(models.TaskDocumentTotal{}, queryFilters, models.TaskDocumentTotal{TotalDocument: totalDoc, TotalDocumentStatus: &totalDocStatus})
 
 	if err != nil {
 		return err
