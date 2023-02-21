@@ -205,6 +205,7 @@ func main() {
 		}
 
 		startHttpServices(httpServices...)
+
 	}
 
 	if devApiMode == "1" || devApiMode == "2" {
@@ -234,6 +235,7 @@ func main() {
 		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, consumerGroupName)
 
 		task.NewTaskConsumer(ms, cfg).RegisterConsumer()
+
 	}
 
 	ms.Start()
