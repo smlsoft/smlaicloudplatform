@@ -31,6 +31,7 @@ type IDocumentImageGroupRepository interface {
 	FindOne(shopID string, filters interface{}) (models.DocumentImageGroupDoc, error)
 	FindByGuid(shopID string, guid string) (models.DocumentImageGroupDoc, error)
 
+	FindStatusByDocumentImageGroupTask(shopID string, taskGUID string) ([]models.DocumentImageGroupStatus, error)
 	FindLastOneByTask(shopID string, taskGUID string) (models.DocumentImageGroupDoc, error)
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
 	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error)
@@ -67,6 +68,23 @@ func NewDocumentImageGroupRepository(pst microservice.IPersisterMongo) DocumentI
 
 func (repo DocumentImageGroupRepository) Transaction(fnc func() error) error {
 	return repo.pst.Transaction(fnc)
+}
+
+func (repo DocumentImageGroupRepository) FindStatusByDocumentImageGroupTask(shopID string, taskGUID string) ([]models.DocumentImageGroupStatus, error) {
+
+	filters := bson.M{
+		"shopid":    shopID,
+		"taskguid":  taskGUID,
+		"deletedat": bson.M{"$exists": false},
+	}
+	docList := []models.DocumentImageGroupStatus{}
+	err := repo.pst.Find(models.DocumentImageGroupDoc{}, filters, &docList)
+
+	if err != nil {
+		return []models.DocumentImageGroupStatus{}, err
+	}
+
+	return docList, nil
 }
 
 func (repo DocumentImageGroupRepository) CountByTask(shopID string, taskGUID string) (int, error) {

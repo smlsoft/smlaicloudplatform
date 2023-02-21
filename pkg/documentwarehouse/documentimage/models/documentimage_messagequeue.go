@@ -1,17 +1,22 @@
 package models
 
+type CountStatus struct {
+	Status int8 `json:"status"`
+	Count  int  `json:"count"`
+}
 type DocumentImageTaskChangeMessage struct {
-	ShopID   string `json:"shopid"`
-	TaskGUID string `json:"taskguid"`
+	ShopID      string        `json:"shopid"`
+	TaskGUID    string        `json:"taskguid"`
+	Count       int           `json:"count"`
+	CountStatus []CountStatus `json:"countstatus"`
 	// Event    TaskChangeEvent `json:"event"`
-	Count int `json:"count"`
 }
 
 type DocumentImageTaskRejectMessage struct {
 	ShopID   string `json:"shopid"`
 	TaskGUID string `json:"taskguid"`
+	Count    int    `json:"count"`
 	// Event    TaskRejectEvent `json:"event"`
-	Count int `json:"count"`
 }
 
 type TaskChangeEvent int8

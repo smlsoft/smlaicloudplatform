@@ -92,3 +92,13 @@ type XSortDocumentImageGroupRequest struct {
 	GUIDFixed string `json:"guidfixed" bson:"guidfixed" validate:"required,min=1"`
 	XOrder    uint   `json:"xorder" bson:"xorder" validate:"min=0,max=4294967295"`
 }
+
+type DocumentImageGroupStatus struct {
+	models.ShopIdentity `bson:"inline"`
+	models.DocIdentity  `bson:"inline"`
+	Status              int8 `json:"status"`
+}
+
+func (DocumentImageGroupStatus) CollectionName() string {
+	return documentImageGroupCollectionName
+}

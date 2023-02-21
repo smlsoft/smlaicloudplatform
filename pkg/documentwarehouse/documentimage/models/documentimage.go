@@ -18,9 +18,10 @@ type DocumentImage struct {
 	References      []Reference      `json:"references" bson:"references"`
 	ReferenceGroups []ReferenceGroup `json:"referencegroups" bson:"referencegroups"`
 
-	UploadedBy string    `json:"uploadedby" bson:"uploadedby"`
-	UploadedAt time.Time `json:"uploadedat" bson:"uploadedat"`
-	MetaFileAt time.Time `json:"metafileat" bson:"metafileat"`
+	UploadedBy string      `json:"uploadedby" bson:"uploadedby"`
+	UploadedAt time.Time   `json:"uploadedat" bson:"uploadedat"`
+	MetaFileAt time.Time   `json:"metafileat" bson:"metafileat"`
+	Edits      []ImageEdit `json:"edits" bson:"edits"`
 }
 
 type ReferenceGroup struct {
@@ -39,6 +40,12 @@ type Comment struct {
 	Username    string    `json:"username" bson:"username"`
 	Comment     string    `json:"comment" bson:"comment"`
 	CommentedAt time.Time `json:"commentedat" bson:"commentedat"`
+}
+
+type ImageEdit struct {
+	ImageURI string    `json:"imageuri" bson:"imageuri"`
+	EditedBy string    `json:"editedby" bson:"editedby"`
+	EditedAt time.Time `json:"editedat" bson:"editedat"`
 }
 
 type DocumentImageRequest struct {

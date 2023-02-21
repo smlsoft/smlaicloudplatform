@@ -545,23 +545,16 @@ func (svc TaskHttpService) getDocIDKey(doc models.Task) string {
 
 func (svc TaskHttpService) UpdateTaskTotalImage(docReq documentImageModel.DocumentImageTaskChangeMessage) error {
 
-	// findDoc, err := svc.repo.FindByGuid(docReq.ShopID, docReq.TaskGUID)
+	totalDocStatus := []models.TotalStatus{}
 
-	// if err != nil {
-	// 	return err
-	// }
+	for _, doc := range docReq.CountStatus {
+		totalDocStatus = append(totalDocStatus, models.TotalStatus{
+			Status: doc.Status,
+			Total:  doc.Count,
+		})
+	}
 
-	// if findDoc.ID == primitive.NilObjectID {
-	// 	return errors.New("document not found")
-	// }
-
-	// if docReq.Event == documentImageModel.TaskChangePlus {
-	// 	findDoc.ToTal = findDoc.ToTal + docReq.Count
-	// } else if docReq.Event == documentImageModel.TaskChangeMinus && findDoc.ToTal > 0 {
-	// 	findDoc.ToTal = findDoc.ToTal - docReq.Count
-	// }
-
-	err := svc.repo.UpdateTotalDocumentImageGroup(docReq.ShopID, docReq.TaskGUID, docReq.Count)
+	err := svc.repo.UpdateTotalDocumentImageGroup(docReq.ShopID, docReq.TaskGUID, docReq.Count, totalDocStatus)
 
 	if err != nil {
 		return err
