@@ -230,40 +230,6 @@ func (repo *TaskRepository) FindPageTask(shopID string, module string, filters m
 		"$match": queryFilters,
 	}
 
-	lookupQuery := bson.M{
-		"$lookup": bson.M{
-			"from": "documentImageGroups",
-			"let":  bson.M{"shopid": "$shopid", "foreignField": "$foreignField"},
-			"pipeline": []interface{}{
-				bson.M{
-					"$match": bson.M{
-						"$expr": bson.M{"$and": []interface{}{
-							bson.M{
-								"$eq": []interface{}{"$shopid", "$$shopid"},
-							},
-							bson.M{
-								"$eq": []interface{}{"$shopid", "$$shopid"},
-							},
-						}},
-					},
-				},
-			},
-			"as": "tempTotal",
-		},
-	}
-
-	addFielsQuery := bson.M{
-		"$addFields": bson.M{
-			"total": bson.M{"$size": "$tempTotal"},
-		},
-	}
-
-	projectQuery := bson.M{
-		"$project": bson.M{
-			"tempTotal": 0,
-		},
-	}
-
 	sortFields := bson.D{}
 	for _, sortTemp := range pageable.Sorts {
 		tempSortVal := 1
@@ -277,7 +243,7 @@ func (repo *TaskRepository) FindPageTask(shopID string, module string, filters m
 		"$sort": sortFields,
 	}
 
-	aggData, err := repo.pst.AggregatePage(models.TaskInfo{}, pageable, matchQuery, lookupQuery, addFielsQuery, projectQuery, sortQuery)
+	aggData, err := repo.pst.AggregatePage(models.TaskInfo{}, pageable, matchQuery, sortQuery)
 
 	if err != nil {
 		return []models.TaskInfo{}, mongopagination.PaginationData{}, err
