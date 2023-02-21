@@ -15995,6 +15995,12 @@
         "models.DocumentImage": {
             "type": "object",
             "properties": {
+                "edits": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ImageEdit"
+                    }
+                },
                 "imageedituri": {
                     "type": "string"
                 },
@@ -16092,6 +16098,12 @@
         "models.DocumentImageInfo": {
             "type": "object",
             "properties": {
+                "edits": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ImageEdit"
+                    }
+                },
                 "guidfixed": {
                     "type": "string"
                 },
@@ -16274,6 +16286,23 @@
             "type": "object",
             "properties": {
                 "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.ImageEdit": {
+            "type": "object",
+            "properties": {
+                "editedat": {
+                    "type": "string"
+                },
+                "editedby": {
+                    "type": "string"
+                },
+                "imageuri": {
                     "type": "string"
                 }
             }
@@ -20793,11 +20822,14 @@
                         "type": "string"
                     }
                 },
-                "total": {
+                "totaldocument": {
                     "type": "integer"
                 },
-                "totalreject": {
-                    "type": "integer"
+                "totaldocumentstatus": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TotalStatus"
+                    }
                 }
             }
         },
@@ -20864,6 +20896,17 @@
                 },
                 "taxrate": {
                     "type": "number"
+                }
+            }
+        },
+        "models.TotalStatus": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },

@@ -713,6 +713,10 @@ definitions:
     type: object
   models.DocumentImage:
     properties:
+      edits:
+        items:
+          $ref: '#/definitions/models.ImageEdit'
+        type: array
       imageedituri:
         type: string
       imageuri:
@@ -780,6 +784,10 @@ definitions:
     type: object
   models.DocumentImageInfo:
     properties:
+      edits:
+        items:
+          $ref: '#/definitions/models.ImageEdit'
+        type: array
       guidfixed:
         type: string
       imageedituri:
@@ -901,6 +909,17 @@ definitions:
   models.Image:
     properties:
       uri:
+        type: string
+      xorder:
+        type: integer
+    type: object
+  models.ImageEdit:
+    properties:
+      editedat:
+        type: string
+      editedby:
+        type: string
+      imageuri:
         type: string
     type: object
   models.ImageReference:
@@ -3981,10 +4000,12 @@ definitions:
         items:
           type: string
         type: array
-      total:
+      totaldocument:
         type: integer
-      totalreject:
-        type: integer
+      totaldocumentstatus:
+        items:
+          $ref: '#/definitions/models.TotalStatus'
+        type: array
     type: object
   models.TaskStatus:
     properties:
@@ -4028,6 +4049,13 @@ definitions:
         type: number
       taxrate:
         type: number
+    type: object
+  models.TotalStatus:
+    properties:
+      status:
+        type: integer
+      total:
+        type: integer
     type: object
   models.TransferPayment:
     properties:

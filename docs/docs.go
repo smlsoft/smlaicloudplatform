@@ -16001,6 +16001,12 @@ const docTemplate = `{
         "models.DocumentImage": {
             "type": "object",
             "properties": {
+                "edits": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ImageEdit"
+                    }
+                },
                 "imageedituri": {
                     "type": "string"
                 },
@@ -16098,6 +16104,12 @@ const docTemplate = `{
         "models.DocumentImageInfo": {
             "type": "object",
             "properties": {
+                "edits": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ImageEdit"
+                    }
+                },
                 "guidfixed": {
                     "type": "string"
                 },
@@ -16280,6 +16292,23 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.ImageEdit": {
+            "type": "object",
+            "properties": {
+                "editedat": {
+                    "type": "string"
+                },
+                "editedby": {
+                    "type": "string"
+                },
+                "imageuri": {
                     "type": "string"
                 }
             }
@@ -20799,11 +20828,14 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
-                "total": {
+                "totaldocument": {
                     "type": "integer"
                 },
-                "totalreject": {
-                    "type": "integer"
+                "totaldocumentstatus": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TotalStatus"
+                    }
                 }
             }
         },
@@ -20870,6 +20902,17 @@ const docTemplate = `{
                 },
                 "taxrate": {
                     "type": "number"
+                }
+            }
+        },
+        "models.TotalStatus": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },
