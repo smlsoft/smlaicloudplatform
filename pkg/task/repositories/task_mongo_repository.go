@@ -117,7 +117,7 @@ func (repo *TaskRepository) UpdateTotalDocumentImageGroup(shopID string, taskGUI
 		"deletedat": bson.M{"$exists": false},
 	}
 
-	queryFilters["parentguidfixed"] = taskGUID
+	queryFilters["guidfixed"] = taskGUID
 
 	err := repo.pst.UpdateOne(models.TaskTotal{}, queryFilters, models.TaskTotal{ToTal: total})
 
@@ -136,7 +136,7 @@ func (repo *TaskRepository) UpdateTotalRejectDocumentImageGroup(shopID string, t
 		"deletedat": bson.M{"$exists": false},
 	}
 
-	queryFilters["parentguidfixed"] = taskGUID
+	queryFilters["guidfixed"] = taskGUID
 
 	err := repo.pst.UpdateOne(models.TaskTotalReject{}, queryFilters, models.TaskTotalReject{ToTalReject: total})
 

@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	MQ_GROUP_TASK          string = "consume-task"
+	MQ_GROUP_TASK          string = "consume-task-1"
 	MQ_TOPIC_TASK_CHANGED  string = "when-documentimage-task-changed"
 	MQ_TOPIC_TASK_REJECTED string = "when-documentimage-task-rejected"
 )
