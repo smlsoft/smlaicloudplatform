@@ -50,6 +50,7 @@ func NewProductRepository(pst microservice.IPersisterMongo) *ProductRepository {
 	insRepo.CrudRepository = repositories.NewCrudRepository[models.ProductDoc](pst)
 	insRepo.SearchRepository = repositories.NewSearchRepository[models.ProductInfo](pst)
 	insRepo.GuidRepository = repositories.NewGuidRepository[models.ProductItemGuid](pst)
+	insRepo.ActivityRepository = repositories.NewActivityRepository[models.ProductActivity, models.ProductDeleteActivity](pst)
 
 	return insRepo
 }
