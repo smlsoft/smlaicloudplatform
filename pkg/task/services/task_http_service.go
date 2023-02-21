@@ -121,11 +121,11 @@ func (svc TaskHttpService) CreateTask(shopID string, authUsername string, doc mo
 	}
 
 	if findDoc.Code == doc.Code {
-		return "", errors.New("code is duplicate")
+		return "", errors.New("code is duplicated")
 	}
 
 	if findDoc.Name != "" {
-		return "", errors.New("name is empty")
+		return "", errors.New("name is duplicated")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -241,11 +241,6 @@ func (svc TaskHttpService) UpdateTaskStatus(shopID string, taskGUID string, auth
 
 			totalImageGroup += 1
 		}
-
-		// err = svc.repoDocImageGroup.UpdateTaskIsCompletedByTaskGUID(shopID, findDoc.GuidFixed, true)
-		// if err != nil {
-		// 	return err
-		// }
 	}
 
 	if totalRejectImageGroup > 0 || totalRejectKeyingImageGroup > 0 {
