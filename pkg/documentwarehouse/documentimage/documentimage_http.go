@@ -72,6 +72,7 @@ func (h DocumentImageHttp) RouteSetup() {
 	h.ms.POST("/documentimage/upload", h.UploadDocumentImage)
 	h.ms.POST("/documentimage", h.CreateDocumentImage)
 	h.ms.POST("/documentimage/bulk", h.BulkCreateDocumentImage)
+	h.ms.PUT("/documentimage/:guid/imageedit", h.CreateDocumentImageEdit)
 	// h.ms.PUT("/documentimage/status/:id", h.UpdateDocumentImageStatus)
 	// h.ms.DELETE("/documentimage/:guid", h.DeleteDocumentImage)
 	// h.ms.PUT("/documentimage/documentref/status/:docref", h.UpdateDocumentImageStatusByDocumentRef)
