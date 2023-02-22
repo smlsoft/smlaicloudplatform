@@ -713,12 +713,12 @@ definitions:
     type: object
   models.DocumentImage:
     properties:
+      cloneimagefrom:
+        type: string
       edits:
         items:
           $ref: '#/definitions/models.ImageEdit'
         type: array
-      imageedituri:
-        type: string
       imageuri:
         type: string
       metafileat:
@@ -784,13 +784,13 @@ definitions:
     type: object
   models.DocumentImageInfo:
     properties:
+      cloneimagefrom:
+        type: string
       edits:
         items:
           $ref: '#/definitions/models.ImageEdit'
         type: array
       guidfixed:
-        type: string
-      imageedituri:
         type: string
       imageuri:
         type: string
@@ -910,6 +910,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -920,17 +922,27 @@ definitions:
       imageuri:
         type: string
     type: object
+  models.ImageEditRequest:
+    properties:
+      editedat:
+        type: string
+      editedby:
+        type: string
+      imageuri:
+        type: string
+    type: object
   models.ImageReference:
     properties:
-      documentimageguid:
+      cloneimagefrom:
         type: string
-      imageedituri:
+      documentimageguid:
         type: string
       imageuri:
         type: string
       metafileat:
         type: string
       name:
+        description: ImageEditURI       string `json:"imageedituri" bson:"imageedituri"`
         type: string
       uploadedat:
         type: string
@@ -5300,6 +5312,37 @@ paths:
       security:
       - AccessToken: []
       summary: Get Document Image Infomation
+      tags:
+      - DocumentImage
+  /documentimage/{guid}/imageedit:
+    put:
+      consumes:
+      - application/json
+      description: Create Document Image Edit
+      parameters:
+      - description: document image guid
+        in: path
+        name: guid
+        required: true
+        type: string
+      - description: ImageEditRequest
+        in: body
+        name: ImageEditRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.ImageEditRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: Create Document Image Edit
       tags:
       - DocumentImage
   /documentimage/bulk:

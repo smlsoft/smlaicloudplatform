@@ -10,18 +10,18 @@ import (
 const documentImageCollectionName = "documentImages"
 
 type DocumentImage struct {
-	ImageURI     string `json:"imageuri" bson:"imageuri"`
-	ImageEditURI string `json:"imageedituri" bson:"imageedituri"`
-	Name         string `json:"name" bson:"name"`
+	ImageURI string `json:"imageuri" bson:"imageuri"`
+	Name     string `json:"name" bson:"name"`
 	// IsReject        bool             `json:"isreject" bson:"isreject"`
 	// Status          int8             `json:"status" bson:"status"`
 	References      []Reference      `json:"references" bson:"references"`
 	ReferenceGroups []ReferenceGroup `json:"referencegroups" bson:"referencegroups"`
 
-	UploadedBy string      `json:"uploadedby" bson:"uploadedby"`
-	UploadedAt time.Time   `json:"uploadedat" bson:"uploadedat"`
-	MetaFileAt time.Time   `json:"metafileat" bson:"metafileat"`
-	Edits      []ImageEdit `json:"edits" bson:"edits"`
+	UploadedBy     string      `json:"uploadedby" bson:"uploadedby"`
+	UploadedAt     time.Time   `json:"uploadedat" bson:"uploadedat"`
+	MetaFileAt     time.Time   `json:"metafileat" bson:"metafileat"`
+	CloneImageFrom string      `json:"cloneimagefrom" bson:"cloneimagefrom"`
+	Edits          []ImageEdit `json:"edits" bson:"edits"`
 }
 
 type ReferenceGroup struct {
@@ -43,6 +43,12 @@ type Comment struct {
 }
 
 type ImageEdit struct {
+	ImageURI string    `json:"imageuri" bson:"imageuri"`
+	EditedBy string    `json:"editedby" bson:"editedby"`
+	EditedAt time.Time `json:"editedat" bson:"editedat"`
+}
+
+type ImageEditRequest struct {
 	ImageURI string    `json:"imageuri" bson:"imageuri"`
 	EditedBy string    `json:"editedby" bson:"editedby"`
 	EditedAt time.Time `json:"editedat" bson:"editedat"`

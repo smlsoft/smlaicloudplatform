@@ -1477,6 +1477,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/documentimage/{guid}/imageedit": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Document Image Edit",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImage"
+                ],
+                "summary": "Create Document Image Edit",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document image guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ImageEditRequest",
+                        "name": "ImageEditRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ImageEditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/documentimagegroup": {
             "get": {
                 "security": [
@@ -16001,14 +16050,14 @@ const docTemplate = `{
         "models.DocumentImage": {
             "type": "object",
             "properties": {
+                "cloneimagefrom": {
+                    "type": "string"
+                },
                 "edits": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.ImageEdit"
                     }
-                },
-                "imageedituri": {
-                    "type": "string"
                 },
                 "imageuri": {
                     "type": "string"
@@ -16104,6 +16153,9 @@ const docTemplate = `{
         "models.DocumentImageInfo": {
             "type": "object",
             "properties": {
+                "cloneimagefrom": {
+                    "type": "string"
+                },
                 "edits": {
                     "type": "array",
                     "items": {
@@ -16111,9 +16163,6 @@ const docTemplate = `{
                     }
                 },
                 "guidfixed": {
-                    "type": "string"
-                },
-                "imageedituri": {
                     "type": "string"
                 },
                 "imageuri": {
@@ -16293,6 +16342,9 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -16310,13 +16362,27 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ImageEditRequest": {
+            "type": "object",
+            "properties": {
+                "editedat": {
+                    "type": "string"
+                },
+                "editedby": {
+                    "type": "string"
+                },
+                "imageuri": {
+                    "type": "string"
+                }
+            }
+        },
         "models.ImageReference": {
             "type": "object",
             "properties": {
-                "documentimageguid": {
+                "cloneimagefrom": {
                     "type": "string"
                 },
-                "imageedituri": {
+                "documentimageguid": {
                     "type": "string"
                 },
                 "imageuri": {
@@ -16326,6 +16392,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
+                    "description": "ImageEditURI       string ` + "`" + `json:\"imageedituri\" bson:\"imageedituri\"` + "`" + `",
                     "type": "string"
                 },
                 "uploadedat": {
