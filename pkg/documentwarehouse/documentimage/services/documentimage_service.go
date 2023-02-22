@@ -22,6 +22,7 @@ type IDocumentImageService interface {
 	InfoDocumentImage(shopID string, guid string) (models.DocumentImageInfo, error)
 	SearchDocumentImage(shopID string, matchFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
 	UploadDocumentImage(shopID string, authUsername string, fh *multipart.FileHeader) (*models.DocumentImageInfo, error)
+	CreateImageEdit(shopID string, authUsername string, docImageGUID string, docRequest models.ImageEditRequest) error
 
 	CreateDocumentImageGroup(shopID string, authUsername string, docImageGroup models.DocumentImageGroup) (string, error)
 	GetDocumentImageDocRefGroup(shopID string, docImageGroupGUID string) (models.DocumentImageGroupInfo, error)
@@ -214,6 +215,40 @@ func (svc DocumentImageService) CreateDocumentImageWithTask(shopID string, authU
 	}
 
 	return documentImageGUID, imageGroupGUID, nil
+}
+
+func (svc DocumentImageService) CreateImageEdit(shopID string, authUsername string, docImageGUID string, docRequest models.ImageEditRequest) error {
+
+	findDoc, err := svc.repoImage.FindByGuid(shopID, docImageGUID)
+
+	if err != nil {
+		return err
+	}
+
+	if len(findDoc.GuidFixed) == 0 {
+		return errors.New("document image not found")
+	}
+
+	tempDoc := findDoc
+
+	if tempDoc.Edits == nil {
+		tempDoc.Edits = []models.ImageEdit{}
+	}
+
+	imageEdit := models.ImageEdit{}
+
+	imageEdit.ImageURI = docRequest.ImageURI
+	imageEdit.EditedBy = authUsername
+	imageEdit.EditedAt = svc.timeNowFnc()
+
+	tempDoc.Edits = append(tempDoc.Edits, imageEdit)
+
+	err = svc.repoImage.Update(shopID, docImageGUID, tempDoc)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (svc DocumentImageService) BulkCreateDocumentImage(shopID string, authUsername string, docs []models.DocumentImageRequest) error {

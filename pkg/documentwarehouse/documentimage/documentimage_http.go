@@ -272,6 +272,50 @@ func (h DocumentImageHttp) CreateDocumentImage(ctx microservice.IContext) error 
 	return nil
 }
 
+// Create Document Image Edit godoc
+// @Summary		Create Document Image Edit
+// @Description Create Document Image Edit
+// @Tags		DocumentImage
+// @Param		guid  path      string  true  "document image guid"
+// @Param		ImageEditRequest  body      models.ImageEditRequest  true  "ImageEditRequest"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /documentimage/{guid}/imageedit [put]
+func (h DocumentImageHttp) CreateDocumentImageEdit(ctx microservice.IContext) error {
+	authUsername := ctx.UserInfo().Username
+	shopID := ctx.UserInfo().ShopID
+	input := ctx.ReadInput()
+
+	docImageGUID := ctx.Param("guid")
+
+	if len(docImageGUID) == 0 {
+		ctx.ResponseError(http.StatusBadRequest, "document image guid is required")
+		return nil
+	}
+
+	docReq := &models.ImageEditRequest{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.service.CreateImageEdit(shopID, authUsername, docImageGUID, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, map[string]interface{}{
+		"success": true,
+	})
+	return nil
+}
+
 // Bulk Create Document Image godoc
 // @Summary		Create Document Image
 // @Description Create Document Image

@@ -238,7 +238,7 @@ func (svc DocumentImageService) UpdateDocumentImageGroup(shopID string, authUser
 
 		tempDocImgRef.DocumentImageGUID = docRefImage.GuidFixed
 		tempDocImgRef.ImageURI = docRefImage.ImageURI
-		tempDocImgRef.ImageEditURI = docRefImage.ImageEditURI
+		tempDocImgRef.CloneImageFrom = docRefImage.GuidFixed
 		tempDocImgRef.Name = docRefImage.Name
 		tempDocImgRef.MetaFileAt = docRefImage.MetaFileAt
 		tempDocImgRef.UploadedAt = docRefImage.UploadedAt
@@ -772,12 +772,12 @@ func (svc DocumentImageService) documentImageToImageReference(documentImageGUID 
 			XOrder:            1,
 			DocumentImageGUID: documentImageGUID,
 		},
-		ImageURI:     documentImage.ImageURI,
-		ImageEditURI: documentImage.ImageEditURI,
-		Name:         documentImage.Name,
-		UploadedBy:   authUsername,
-		UploadedAt:   createdAt,
-		MetaFileAt:   documentImage.MetaFileAt,
+		ImageURI:       documentImage.ImageURI,
+		CloneImageFrom: documentImage.CloneImageFrom,
+		Name:           documentImage.Name,
+		UploadedBy:     authUsername,
+		UploadedAt:     createdAt,
+		MetaFileAt:     documentImage.MetaFileAt,
 	}
 }
 
