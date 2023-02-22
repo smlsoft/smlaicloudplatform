@@ -160,19 +160,9 @@ func (svc DocumentImageService) UpdateStatusDocumentImageGroup(shopID string, au
 	findDoc.Status = status
 	svc.repoImageGroup.Update(shopID, groupGUID, findDoc)
 
-	if status == models.IMAGE_REJECT_KEYING || status == models.IMAGE_REJECT {
-
-		_, err = svc.messageQueueReCountDocumentImageGroup(shopID, findDoc.TaskGUID)
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-	}
-
-	if findDoc.Status == models.IMAGE_REJECT_KEYING || findDoc.Status == models.IMAGE_REJECT && status != models.IMAGE_REJECT_KEYING && status != models.IMAGE_REJECT {
-		_, err = svc.messageQueueReCountDocumentImageGroup(shopID, findDoc.TaskGUID)
-		if err != nil {
-			fmt.Println(err.Error())
-		}
+	_, err = svc.messageQueueReCountDocumentImageGroup(shopID, findDoc.TaskGUID)
+	if err != nil {
+		fmt.Println(err.Error())
 	}
 
 	return nil
@@ -864,6 +854,10 @@ func (svc DocumentImageService) messageQueueReCountDocumentImageGroup(shopID str
 	}
 
 	totalStatus := map[int8]int{}
+
+	for i := 0; i < 4; i++ {
+		totalStatus[int8(i)] = 0
+	}
 
 	for _, doc := range docList {
 		if _, ok := totalStatus[doc.Status]; !ok {
