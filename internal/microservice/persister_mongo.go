@@ -264,7 +264,7 @@ func (pst *PersisterMongo) FindOne(model interface{}, filter interface{}, decode
 		return err
 	}
 
-	result := db.Collection(collectionName).FindOne(context.TODO(), filter)
+	result := db.Collection(collectionName).FindOne(context.TODO(), filter, opts...)
 
 	err = result.Decode(decode)
 	if err != nil && err.Error() != "mongo: no documents in result" {
