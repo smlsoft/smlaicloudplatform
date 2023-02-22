@@ -120,12 +120,18 @@ func (svc TaskHttpService) CreateTask(shopID string, authUsername string, doc mo
 		return "", err
 	}
 
-	if findDoc.Code == doc.Code {
-		return "", errors.New("code is duplicated")
-	}
-
 	if findDoc.Name != "" {
 		return "", errors.New("name is duplicated")
+	}
+
+	findDocCode, err := svc.repo.FindByDocIndentityGuid(shopID, "code", doc.Code)
+
+	if err != nil {
+		return "", err
+	}
+
+	if findDocCode.Code == doc.Code {
+		return "", errors.New("code is duplicated")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -272,6 +278,26 @@ func (svc TaskHttpService) UpdateTaskStatus(shopID string, taskGUID string, auth
 		taskCount += 1
 		rejectTaskName := fmt.Sprintf("%s - [%d]", findDoc.Task.Name, taskCount)
 
+		newTaskCode := ""
+		for i := 0; i < 5; i++ {
+			newTaskCode, err = svc.GenerateTaskID(shopID, authUsername)
+			if err != nil {
+				return err
+			}
+
+			findDocCode, err := svc.repo.FindByDocIndentityGuid(shopID, "code", newTaskCode)
+
+			if err != nil {
+				return err
+			}
+
+			if findDocCode.Code != newTaskCode {
+				break
+			}
+		}
+
+		docData.Code = newTaskCode
+
 		docData.Name = rejectTaskName
 		docData.ParentGUIDFixed = parentGUID
 
@@ -311,11 +337,9 @@ func (svc TaskHttpService) UpdateTaskStatus(shopID string, taskGUID string, auth
 						docImgReq.DocumentImageGroupGUID = newDocImgGroupGUID
 						docImgReq.TaskGUID = newTaskGuidFixed
 						docImgReq.ImageURI = docImage.ImageURI
-						docImgReq.Name = docImage.Name + " -- REJECT"
+						docImgReq.Name = docImage.Name // + " -- REJECT"
 
-						gid, id, err := svc.serviceDocImage.CreateDocumentImage(shopID, authUsername, docImgReq)
-
-						fmt.Println(gid, id)
+						_, _, err := svc.serviceDocImage.CreateDocumentImage(shopID, authUsername, docImgReq)
 
 						if err != nil {
 							fmt.Println(err)
