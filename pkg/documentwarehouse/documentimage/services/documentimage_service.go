@@ -23,6 +23,7 @@ type IDocumentImageService interface {
 	SearchDocumentImage(shopID string, matchFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentImageInfo, mongopagination.PaginationData, error)
 	UploadDocumentImage(shopID string, authUsername string, fh *multipart.FileHeader) (*models.DocumentImageInfo, error)
 	CreateImageEdit(shopID string, authUsername string, docImageGUID string, docRequest models.ImageEditRequest) error
+	CreateImageComment(shopID string, authUsername string, docImageGUID string, docRequest models.CommentRequest) error
 
 	CreateDocumentImageGroup(shopID string, authUsername string, docImageGroup models.DocumentImageGroup) (string, error)
 	GetDocumentImageDocRefGroup(shopID string, docImageGroupGUID string) (models.DocumentImageGroupInfo, error)
@@ -242,6 +243,40 @@ func (svc DocumentImageService) CreateImageEdit(shopID string, authUsername stri
 	imageEdit.EditedAt = svc.timeNowFnc()
 
 	tempDoc.Edits = append(tempDoc.Edits, imageEdit)
+
+	err = svc.repoImage.Update(shopID, docImageGUID, tempDoc)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc DocumentImageService) CreateImageComment(shopID string, authUsername string, docImageGUID string, docRequest models.CommentRequest) error {
+
+	findDoc, err := svc.repoImage.FindByGuid(shopID, docImageGUID)
+
+	if err != nil {
+		return err
+	}
+
+	if len(findDoc.GuidFixed) == 0 {
+		return errors.New("document image not found")
+	}
+
+	tempDoc := findDoc
+
+	if tempDoc.Comments == nil {
+		tempDoc.Comments = []models.Comment{}
+	}
+
+	comment := models.Comment{}
+
+	comment.Comment = docRequest.Comment
+	comment.CommentedBy = authUsername
+	comment.CommentedAt = svc.timeNowFnc()
+
+	tempDoc.Comments = append(tempDoc.Comments, comment)
 
 	err = svc.repoImage.Update(shopID, docImageGUID, tempDoc)
 	if err != nil {

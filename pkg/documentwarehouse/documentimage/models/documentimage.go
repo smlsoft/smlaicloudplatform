@@ -22,6 +22,7 @@ type DocumentImage struct {
 	MetaFileAt     time.Time   `json:"metafileat" bson:"metafileat"`
 	CloneImageFrom string      `json:"cloneimagefrom" bson:"cloneimagefrom"`
 	Edits          []ImageEdit `json:"edits" bson:"edits"`
+	Comments       []Comment   `json:"comments" bson:"comments"`
 }
 
 type ReferenceGroup struct {
@@ -37,9 +38,14 @@ type Reference struct {
 }
 
 type Comment struct {
-	Username    string    `json:"username" bson:"username"`
+	GuidFixed   string    `json:"guidfixed" bson:"guidfixed"`
 	Comment     string    `json:"comment" bson:"comment"`
 	CommentedAt time.Time `json:"commentedat" bson:"commentedat"`
+	CommentedBy string    `json:"commentedby" bson:"commentedby"`
+}
+
+type CommentRequest struct {
+	Comment string `json:"comment" bson:"comment"`
 }
 
 type ImageEdit struct {

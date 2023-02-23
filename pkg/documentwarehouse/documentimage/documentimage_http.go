@@ -73,6 +73,7 @@ func (h DocumentImageHttp) RouteSetup() {
 	h.ms.POST("/documentimage", h.CreateDocumentImage)
 	h.ms.POST("/documentimage/bulk", h.BulkCreateDocumentImage)
 	h.ms.PUT("/documentimage/:guid/imageedit", h.CreateDocumentImageEdit)
+	h.ms.PUT("/documentimage/:guid/comment", h.CreateDocumentImageComment)
 	// h.ms.PUT("/documentimage/status/:id", h.UpdateDocumentImageStatus)
 	// h.ms.DELETE("/documentimage/:guid", h.DeleteDocumentImage)
 	// h.ms.PUT("/documentimage/documentref/status/:docref", h.UpdateDocumentImageStatusByDocumentRef)
@@ -305,6 +306,50 @@ func (h DocumentImageHttp) CreateDocumentImageEdit(ctx microservice.IContext) er
 	}
 
 	err = h.service.CreateImageEdit(shopID, authUsername, docImageGUID, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, map[string]interface{}{
+		"success": true,
+	})
+	return nil
+}
+
+// Create Document Image Comment godoc
+// @Summary		Create Document Image Comment
+// @Description Create Document Image Comment
+// @Tags		DocumentImage
+// @Param		guid  path      string  true  "document image guid"
+// @Param		CommentRequest  body      models.CommentRequest  true  "CommentRequest"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /documentimage/{guid}/comment [put]
+func (h DocumentImageHttp) CreateDocumentImageComment(ctx microservice.IContext) error {
+	authUsername := ctx.UserInfo().Username
+	shopID := ctx.UserInfo().ShopID
+	input := ctx.ReadInput()
+
+	docImageGUID := ctx.Param("guid")
+
+	if len(docImageGUID) == 0 {
+		ctx.ResponseError(http.StatusBadRequest, "document image guid is required")
+		return nil
+	}
+
+	docReq := &models.CommentRequest{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.service.CreateImageComment(shopID, authUsername, docImageGUID, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
