@@ -15,7 +15,7 @@ import (
 )
 
 type ITaskRepository interface {
-	FindTaskChild(shopID string, parentTaskGUID string) ([]models.TaskChild, error)
+	FindTaskChild(shopID string, rejectFromTaskGUID string) (models.TaskChild, error)
 	FindLastTaskByCode(shopID string, codeFormat string) (models.TaskDoc, error)
 	FindOneTaskByCode(shopID string, taskCode string) (models.TaskInfo, error)
 	Count(shopID string) (int, error)
@@ -66,23 +66,23 @@ func NewTaskRepository(pst microservice.IPersisterMongo) *TaskRepository {
 	return &insRepo
 }
 
-func (repo *TaskRepository) FindTaskChild(shopID string, parentTaskGUID string) ([]models.TaskChild, error) {
+func (repo *TaskRepository) FindTaskChild(shopID string, rejectFromTaskGUID string) (models.TaskChild, error) {
 
 	queryFilters := bson.M{
-		"shopid":          shopID,
-		"deletedat":       bson.M{"$exists": false},
-		"parentguidfixed": parentTaskGUID,
+		"shopid":             shopID,
+		"deletedat":          bson.M{"$exists": false},
+		"rejectfromtaskguid": rejectFromTaskGUID,
 	}
 
-	opts := &options.FindOptions{}
+	opts := &options.FindOneOptions{}
 
 	opts.SetSort(bson.M{"code": 1})
 
-	findDoc := []models.TaskChild{}
-	err := repo.pst.Find(models.TaskChild{}, queryFilters, &findDoc, opts)
+	findDoc := models.TaskChild{}
+	err := repo.pst.FindOne(models.TaskChild{}, queryFilters, &findDoc, opts)
 
 	if err != nil {
-		return []models.TaskChild{}, err
+		return models.TaskChild{}, err
 	}
 
 	return findDoc, nil

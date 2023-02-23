@@ -179,6 +179,7 @@ func (svc TaskHttpService) UpdateTask(shopID string, guid string, authUsername s
 	updateDoc.TotalDocument = findDoc.TotalDocument
 	updateDoc.TotalDocumentStatus = findDoc.TotalDocumentStatus
 
+	updateDoc.RejectFromTaskGUID = findDoc.RejectFromTaskGUID
 	updateDoc.RejectedAt = findDoc.RejectedAt
 	updateDoc.RejectedBy = findDoc.RejectedBy
 
@@ -309,6 +310,7 @@ func (svc TaskHttpService) UpdateTaskStatus(shopID string, taskGUID string, auth
 
 		docData.Name = rejectTaskName
 		docData.ParentGUIDFixed = parentGUID
+		docData.RejectFromTaskGUID = findDoc.GuidFixed
 
 		docData.Status = models.TaskPending
 

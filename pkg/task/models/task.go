@@ -33,6 +33,7 @@ type Task struct {
 	TotalDocumentStatus      *[]TotalStatus `json:"totaldocumentstatus" bson:"totaldocumentstatus"`
 	OwnerAt                  time.Time      `json:"ownerat" bson:"ownerat"`
 	OwnerBy                  string         `json:"ownerby" bson:"ownerby"`
+	RejectFromTaskGUID       string         `json:"rejectfromtaskguid" bson:"rejectfromtaskguid"`
 	RejectedAt               time.Time      `json:"rejectedat,omitempty" bson:"rejectedat,omitempty"`
 	RejectedBy               string         `json:"rejectedby,omitempty" bson:"rejectedby,omitempty"`
 	// ToTalReject              int       `json:"totalreject" bson:"totalreject"`
@@ -46,7 +47,7 @@ type TotalStatus struct {
 type TaskInfo struct {
 	models.DocIdentity `bson:"inline"`
 	Task               `bson:"inline"`
-	TaskChild          []TaskChild `json:"taskchild" bson:"taskchild"`
+	TaskChild          TaskChild `json:"taskchild" bson:"taskchild"`
 }
 
 func (TaskInfo) CollectionName() string {
