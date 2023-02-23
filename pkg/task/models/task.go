@@ -118,6 +118,7 @@ func (TaskTotalReject) CollectionName() string {
 
 type TaskChild struct {
 	GuidFixed string `json:"guidfixed" bson:"guidfixed"`
+	Code      string `json:"code" bson:"code"`
 	Name      string `json:"name" bson:"name"`
 	Status    int8   `json:"status" bson:"status"`
 }

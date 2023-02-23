@@ -77,10 +77,10 @@ func (svc TaskHttpService) GenerateTaskID(shopID string, authUsername string) (s
 
 	userHash := fmt.Sprintf("%x", md5.Sum([]byte(authUsername)))
 	userHashLength := len(userHash)
-	userFmt := userHash[(userHashLength - 8):userHashLength]
-	timeFmt := timeNow.Format("20060102")
+	userFmt := userHash[(userHashLength - 4):userHashLength]
+	timeFmt := timeNow.Format("060102")
 
-	codeFmt := fmt.Sprintf("task%s-%s-", userFmt, timeFmt)
+	codeFmt := fmt.Sprintf("%s%s-", userFmt, timeFmt)
 
 	findDoc, err := svc.repo.FindLastTaskByCode(shopID, codeFmt)
 	if err != nil {
