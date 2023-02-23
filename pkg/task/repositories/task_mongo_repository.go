@@ -15,6 +15,7 @@ import (
 )
 
 type ITaskRepository interface {
+	FindTaskChild(shopID string, parentTaskGUID string) ([]models.TaskChild, error)
 	FindLastTaskByCode(shopID string, codeFormat string) (models.TaskDoc, error)
 	FindOneTaskByCode(shopID string, taskCode string) (models.TaskInfo, error)
 	Count(shopID string) (int, error)
@@ -63,6 +64,28 @@ func NewTaskRepository(pst microservice.IPersisterMongo) *TaskRepository {
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.TaskActivity, models.TaskDeleteActivity](pst)
 
 	return &insRepo
+}
+
+func (repo *TaskRepository) FindTaskChild(shopID string, parentTaskGUID string) ([]models.TaskChild, error) {
+
+	queryFilters := bson.M{
+		"shopid":          shopID,
+		"deletedat":       bson.M{"$exists": false},
+		"parentguidfixed": parentTaskGUID,
+	}
+
+	opts := &options.FindOptions{}
+
+	opts.SetSort(bson.M{"code": 1})
+
+	findDoc := []models.TaskChild{}
+	err := repo.pst.Find(models.TaskChild{}, queryFilters, &findDoc, opts)
+
+	if err != nil {
+		return []models.TaskChild{}, err
+	}
+
+	return findDoc, nil
 }
 
 func (repo *TaskRepository) FindLastTaskByCode(shopID string, codeFormat string) (models.TaskDoc, error) {

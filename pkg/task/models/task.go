@@ -15,6 +15,7 @@ const (
 	TaskChecking
 	TaskCompleted
 	TaskGlCompleted
+	TaskCanceled
 )
 
 type Task struct {
@@ -45,6 +46,7 @@ type TotalStatus struct {
 type TaskInfo struct {
 	models.DocIdentity `bson:"inline"`
 	Task               `bson:"inline"`
+	TaskChild          []TaskChild `json:"taskchild" bson:"taskchild"`
 }
 
 func (TaskInfo) CollectionName() string {
@@ -110,5 +112,15 @@ type TaskTotalReject struct {
 }
 
 func (TaskTotalReject) CollectionName() string {
+	return taskCollectionName
+}
+
+type TaskChild struct {
+	GuidFixed string `json:"guidfixed" bson:"guidfixed"`
+	Name      string `json:"name" bson:"name"`
+	Status    int8   `json:"status" bson:"status"`
+}
+
+func (TaskChild) CollectionName() string {
 	return taskCollectionName
 }

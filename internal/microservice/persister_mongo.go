@@ -3,12 +3,14 @@ package microservice
 import (
 	"context"
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
 	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/event"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
@@ -48,6 +50,7 @@ type IPersisterMongo interface {
 type IPersisterMongoConfig interface {
 	MongodbURI() string
 	DB() string
+	Debug() bool
 }
 
 type MongoModel interface {
@@ -113,27 +116,32 @@ func (pst *PersisterMongo) getClient() (*mongo.Database, error) {
 		return nil, err
 	}
 
-	// cmdMonitor := &event.CommandMonitor{
-	// 	Started: func(_ context.Context, evt *event.CommandStartedEvent) {
-	// 		log.Print(evt.Command)
-	// 	},
-	// }
+	if pst.config.Debug() {
+		cmdMonitor := &event.CommandMonitor{
+			Started: func(_ context.Context, evt *event.CommandStartedEvent) {
+				log.Print(evt.Command)
+			},
+		}
 
-	// client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr).SetMonitor(cmdMonitor))
-	client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr))
-	if err != nil {
-		return nil, err
+		pst.client, err = mongo.NewClient(options.Client().ApplyURI(connectionStr).SetMonitor(cmdMonitor))
+		if err != nil {
+			return nil, err
+		}
+
+	} else {
+		pst.client, err = mongo.NewClient(options.Client().ApplyURI(connectionStr))
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	pst.client = client
-
-	err = client.Connect(pst.ctx)
+	err = pst.client.Connect(pst.ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	// check connection
-	err = client.Ping(context.TODO(), nil)
+	err = pst.client.Ping(context.TODO(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +153,7 @@ func (pst *PersisterMongo) getClient() (*mongo.Database, error) {
 	// }
 	// fmt.Println(databases)
 
-	db := client.Database(pst.config.DB())
+	db := pst.client.Database(pst.config.DB())
 
 	pst.db = db
 

@@ -176,6 +176,15 @@ func (svc TaskHttpService) UpdateTask(shopID string, guid string, authUsername s
 	updateDoc.Status = findDoc.Status
 	updateDoc.Code = findDoc.Code
 
+	updateDoc.TotalDocument = findDoc.TotalDocument
+	updateDoc.TotalDocumentStatus = findDoc.TotalDocumentStatus
+
+	updateDoc.RejectedAt = findDoc.RejectedAt
+	updateDoc.RejectedBy = findDoc.RejectedBy
+
+	updateDoc.OwnerBy = findDoc.OwnerBy
+	updateDoc.OwnerAt = findDoc.OwnerAt
+
 	updateDoc.UpdatedBy = authUsername
 	updateDoc.UpdatedAt = time.Now()
 
@@ -204,7 +213,7 @@ func (svc TaskHttpService) UpdateTaskStatus(shopID string, taskGUID string, auth
 		return errors.New("task status invalid")
 	}
 
-	if jobStatus < models.TaskPending || jobStatus > models.TaskGlCompleted {
+	if jobStatus < models.TaskPending || jobStatus > models.TaskCanceled {
 		return errors.New("task status out of range")
 	}
 
@@ -350,14 +359,15 @@ func (svc TaskHttpService) UpdateTaskStatus(shopID string, taskGUID string, auth
 		}
 	}
 
-	findDoc.Status = jobStatus
+	updateDoc := findDoc
+	updateDoc.Status = jobStatus
 	// findDoc.ToTal = totalImageGroup
 	// findDoc.ToTalReject = totalRejectImageGroup
 
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	updateDoc.UpdatedBy = authUsername
+	updateDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, taskGUID, findDoc)
+	err = svc.repo.Update(shopID, taskGUID, updateDoc)
 
 	if err != nil {
 		return err
@@ -412,6 +422,14 @@ func (svc TaskHttpService) InfoTask(shopID string, guid string) (models.TaskInfo
 		return models.TaskInfo{}, errors.New("document not found")
 	}
 
+	findDocChild, err := svc.repo.FindTaskChild(shopID, findDoc.GuidFixed)
+
+	if err != nil {
+		return models.TaskInfo{}, err
+	}
+
+	findDoc.TaskChild = findDocChild
+
 	return findDoc.TaskInfo, nil
 
 }
@@ -438,6 +456,11 @@ func (svc TaskHttpService) SearchTask(shopID string, module string, filters map[
 		return []models.TaskInfo{}, pagination, err
 	}
 
+	for i, doc := range docList {
+		findDocChild, _ := svc.repo.FindTaskChild(shopID, doc.GuidFixed)
+		docList[i].TaskChild = findDocChild
+	}
+
 	return docList, pagination, nil
 }
 
@@ -452,6 +475,12 @@ func (svc TaskHttpService) SearchTaskStep(shopID string, langCode string, pageab
 
 	if err != nil {
 		return []models.TaskInfo{}, 0, err
+	}
+
+	for i, doc := range docList {
+		findDocChild, _ := svc.repo.FindTaskChild(shopID, doc.GuidFixed)
+
+		docList[i].TaskChild = findDocChild
 	}
 
 	return docList, total, nil

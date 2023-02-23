@@ -15,6 +15,7 @@ const (
 	IMAGE_REJECT
 	IMAGE_BANNED
 	IMAGE_REJECT_KEYING
+	IMAGE_FROM_REJECT
 )
 
 type DocumentImageGroup struct {
@@ -33,6 +34,15 @@ type DocumentImageGroup struct {
 	RejectFromGroupGUID string            `json:"rejectfromgroupguid" bson:"rejectfromgroupguid"`
 	XOrder              int               `json:"xorder" bson:"xorder"`
 	RejectRemark        string            `json:"rejectremark" bson:"rejectremark"`
+	StatusChangedBy     string            `json:"statuschangedby" bson:"statuschangedby"`
+	StatusChangedAt     time.Time         `json:"statuschangedat" bson:"statuschangedat"`
+	StatusHistories     []StatusHistory   `json:"statushistories" bson:"statushistories"`
+}
+
+type StatusHistory struct {
+	Status    int8      `json:"status" bson:"status"`
+	ChangedBy string    `json:"changedby" bson:"changedby"`
+	ChangedAt time.Time `json:"changedat" bson:"changedat"`
 }
 
 type DocumentImageGroupBody struct {

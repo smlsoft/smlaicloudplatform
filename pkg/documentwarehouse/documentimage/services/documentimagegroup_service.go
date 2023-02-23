@@ -157,8 +157,17 @@ func (svc DocumentImageService) UpdateStatusDocumentImageGroup(shopID string, au
 		return errors.New("status out of range")
 	}
 
-	findDoc.Status = status
-	svc.repoImageGroup.Update(shopID, groupGUID, findDoc)
+	updateDoc := findDoc
+
+	lastStatusHistory := models.StatusHistory{
+		Status:    findDoc.Status,
+		ChangedBy: authUsername,
+		ChangedAt: svc.timeNowFnc(),
+	}
+
+	updateDoc.StatusHistories = append(updateDoc.StatusHistories, lastStatusHistory)
+	updateDoc.Status = status
+	svc.repoImageGroup.Update(shopID, groupGUID, updateDoc)
 
 	_, err = svc.messageQueueReCountDocumentImageGroup(shopID, findDoc.TaskGUID)
 	if err != nil {
@@ -260,20 +269,22 @@ func (svc DocumentImageService) UpdateDocumentImageGroup(shopID string, authUser
 		findDoc.UploadedAt = docImgRefs[0].UploadedAt
 	}
 
-	tempDoc := findDoc
+	updateDoc := findDoc
 	timeAt := svc.timeNowFnc()
 
-	tempStatus := findDoc.Status
-	findDoc.DocumentImageGroup = docImageGroup
-	findDoc.ImageReferences = &docImgRefs
-	findDoc.References = tempDoc.References
+	updateDoc.DocumentImageGroup = docImageGroup
+	updateDoc.ImageReferences = &docImgRefs
+	updateDoc.References = findDoc.References
 
-	findDoc.UpdatedAt = timeAt
-	findDoc.UpdatedBy = authUsername
+	updateDoc.UpdatedAt = timeAt
+	updateDoc.UpdatedBy = authUsername
 
-	findDoc.Status = tempStatus
+	updateDoc.Status = findDoc.Status
+	updateDoc.StatusChangedBy = findDoc.StatusChangedBy
+	updateDoc.StatusChangedAt = findDoc.StatusChangedAt
+	updateDoc.StatusHistories = findDoc.StatusHistories
 
-	if err = svc.repoImageGroup.Update(shopID, groupGUID, findDoc); err != nil {
+	if err = svc.repoImageGroup.Update(shopID, groupGUID, updateDoc); err != nil {
 		return err
 	}
 

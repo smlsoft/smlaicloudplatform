@@ -96,3 +96,7 @@ func (cfg *MongoPersisterConfig) MongoTlsCaFile() string {
 	}
 	return tlsCaFile
 }
+
+func (cfg *MongoPersisterConfig) Debug() bool {
+	return getEnv("MONGODB_DEBUG", "false") == "true"
+}

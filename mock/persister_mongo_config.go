@@ -19,6 +19,10 @@ func (*PersisterMongoConfig) DB() string {
 	return os.Getenv("MONGODB_DB")
 }
 
+func (*PersisterMongoConfig) Debug() bool {
+	return os.Getenv("MONGODB_DEBUG") == "true"
+}
+
 func NewPersisterMongoConfig() microservice.IPersisterMongoConfig {
 	re := regexp.MustCompile(`^(.*` + projectDirName + `)`)
 	cwd, _ := os.Getwd()

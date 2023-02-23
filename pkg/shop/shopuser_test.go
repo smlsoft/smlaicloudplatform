@@ -18,6 +18,10 @@ func (TestPersisterMongoConfig) DB() string {
 	return "micro_test"
 }
 
+func (TestPersisterMongoConfig) Debug() bool {
+	return true
+}
+
 var shopUserRepo shop.IShopUserRepository
 
 func setup() {
