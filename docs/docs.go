@@ -1477,6 +1477,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/documentimage/{guid}/comment": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Document Image Comment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImage"
+                ],
+                "summary": "Create Document Image Comment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document image guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "CommentRequest",
+                        "name": "CommentRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CommentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/documentimage/{guid}/imageedit": {
             "put": {
                 "security": [
@@ -15843,6 +15892,31 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Comment": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "commentedat": {
+                    "type": "string"
+                },
+                "commentedby": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CommentRequest": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "type": "string"
+                }
+            }
+        },
         "models.CreditCardPayment": {
             "type": "object",
             "properties": {
@@ -16053,6 +16127,12 @@ const docTemplate = `{
                 "cloneimagefrom": {
                     "type": "string"
                 },
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Comment"
+                    }
+                },
                 "edits": {
                     "type": "array",
                     "items": {
@@ -16125,6 +16205,18 @@ const docTemplate = `{
                 "status": {
                     "type": "integer"
                 },
+                "statuschangedat": {
+                    "type": "string"
+                },
+                "statuschangedby": {
+                    "type": "string"
+                },
+                "statushistories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.StatusHistory"
+                    }
+                },
                 "tags": {
                     "type": "array",
                     "items": {
@@ -16155,6 +16247,12 @@ const docTemplate = `{
             "properties": {
                 "cloneimagefrom": {
                     "type": "string"
+                },
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Comment"
+                    }
                 },
                 "edits": {
                     "type": "array",
@@ -16342,6 +16440,9 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -20793,6 +20894,20 @@ const docTemplate = `{
                 }
             }
         },
+        "models.StatusHistory": {
+            "type": "object",
+            "properties": {
+                "changedat": {
+                    "type": "string"
+                },
+                "changedby": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.Storefront": {
             "type": "object",
             "required": [
@@ -20878,6 +20993,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "rejectedby": {
+                    "type": "string"
+                },
+                "rejectfromtaskguid": {
                     "type": "string"
                 },
                 "status": {

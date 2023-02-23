@@ -573,6 +573,22 @@ definitions:
     required:
     - names
     type: object
+  models.Comment:
+    properties:
+      comment:
+        type: string
+      commentedat:
+        type: string
+      commentedby:
+        type: string
+      guidfixed:
+        type: string
+    type: object
+  models.CommentRequest:
+    properties:
+      comment:
+        type: string
+    type: object
   models.CreditCardPayment:
     properties:
       amount:
@@ -715,6 +731,10 @@ definitions:
     properties:
       cloneimagefrom:
         type: string
+      comments:
+        items:
+          $ref: '#/definitions/models.Comment'
+        type: array
       edits:
         items:
           $ref: '#/definitions/models.ImageEdit'
@@ -763,6 +783,14 @@ definitions:
         type: string
       status:
         type: integer
+      statuschangedat:
+        type: string
+      statuschangedby:
+        type: string
+      statushistories:
+        items:
+          $ref: '#/definitions/models.StatusHistory'
+        type: array
       tags:
         items:
           type: string
@@ -786,6 +814,10 @@ definitions:
     properties:
       cloneimagefrom:
         type: string
+      comments:
+        items:
+          $ref: '#/definitions/models.Comment'
+        type: array
       edits:
         items:
           $ref: '#/definitions/models.ImageEdit'
@@ -910,6 +942,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -3943,6 +3977,15 @@ definitions:
       status:
         type: integer
     type: object
+  models.StatusHistory:
+    properties:
+      changedat:
+        type: string
+      changedby:
+        type: string
+      status:
+        type: integer
+    type: object
   models.Storefront:
     properties:
       devices:
@@ -4001,6 +4044,8 @@ definitions:
       rejectedat:
         type: string
       rejectedby:
+        type: string
+      rejectfromtaskguid:
         type: string
       status:
         type: integer
@@ -5310,6 +5355,37 @@ paths:
       security:
       - AccessToken: []
       summary: Get Document Image Infomation
+      tags:
+      - DocumentImage
+  /documentimage/{guid}/comment:
+    put:
+      consumes:
+      - application/json
+      description: Create Document Image Comment
+      parameters:
+      - description: document image guid
+        in: path
+        name: guid
+        required: true
+        type: string
+      - description: CommentRequest
+        in: body
+        name: CommentRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.CommentRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      summary: Create Document Image Comment
       tags:
       - DocumentImage
   /documentimage/{guid}/imageedit:
