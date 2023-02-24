@@ -22,7 +22,7 @@ type IJournalHttpService interface {
 	InfoJournal(shopID string, guid string) (models.JournalInfo, error)
 	InfoJournalByDocNo(shopID string, docNo string) (models.JournalInfo, error)
 	InfoJournalByDocumentRef(shopID string, documentRef string) (models.JournalInfo, error)
-	SearchJournal(shopID string, pagable micromodels.Pageable, startDate time.Time, endDate time.Time, accountGroup string) ([]models.JournalInfo, mongopagination.PaginationData, error)
+	SearchJournal(shopID string, pagable micromodels.Pageable, searchFilters map[string]interface{}, startDate time.Time, endDate time.Time, accountGroup string) ([]models.JournalInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Journal) (common.BulkImport, error)
 
 	FindLastDocnoFromFormat(shopID string, docFormat string) (string, error)
@@ -59,6 +59,9 @@ func (svc JournalHttpService) CreateJournal(shopID string, authUsername string, 
 	docData.ShopID = shopID
 	docData.GuidFixed = newGuidFixed
 	docData.Journal = doc
+
+	// docDate := doc.DocDate.Format("2006-01-02")
+	docData.DocDate = time.Date(doc.DocDate.Year(), doc.DocDate.Month(), doc.DocDate.Day(), 0, 0, 0, 0, time.UTC)
 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
@@ -192,9 +195,8 @@ func (svc JournalHttpService) InfoJournalByDocumentRef(shopID string, documentRe
 
 }
 
-func (svc JournalHttpService) SearchJournal(shopID string, pageable micromodels.Pageable, startDate time.Time, endDate time.Time, accountGroup string) ([]models.JournalInfo, mongopagination.PaginationData, error) {
+func (svc JournalHttpService) SearchJournal(shopID string, pageable micromodels.Pageable, searchFilters map[string]interface{}, startDate time.Time, endDate time.Time, accountGroup string) ([]models.JournalInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
-		"guidfixed",
 		"docno",
 	}
 
@@ -210,6 +212,21 @@ func (svc JournalHttpService) SearchJournal(shopID string, pageable micromodels.
 
 	if accountGroup != "" {
 		filters["accountgroup"] = accountGroup
+	}
+
+	for key, value := range searchFilters {
+
+		switch tempVal := value.(type) {
+		case string:
+			filters[key] = bson.M{"$regex": primitive.Regex{
+				Pattern: ".*" + tempVal + ".*",
+				Options: "i",
+			}}
+		case int, int16, int32, float64, bool:
+			filters[key] = value
+		case time.Time:
+			filters[key] = value
+		}
 	}
 
 	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)

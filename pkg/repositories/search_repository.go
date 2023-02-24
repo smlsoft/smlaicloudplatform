@@ -155,11 +155,13 @@ func (repo SearchRepository[T]) FindPageFilter(shopID string, filters map[string
 
 	searchFilterList := []interface{}{}
 
-	for _, colName := range searchInFields {
-		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
-			Pattern: ".*" + pageable.Query + ".*",
-			Options: "i",
-		}}})
+	if len(pageable.Query) > 0 {
+		for _, colName := range searchInFields {
+			searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
+				Pattern: ".*" + pageable.Query + ".*",
+				Options: "i",
+			}}})
+		}
 	}
 
 	queryFilters := bson.M{

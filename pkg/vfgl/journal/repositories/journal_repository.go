@@ -13,6 +13,7 @@ import (
 )
 
 type IJournalRepository interface {
+	FindAll() ([]models.JournalDoc, error)
 	Count(shopID string) (int, error)
 	Create(category models.JournalDoc) (string, error)
 	CreateInBatch(docList []models.JournalDoc) error

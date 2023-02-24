@@ -12,6 +12,7 @@ import (
 	"smlcloudplatform/pkg/vfgl/journal/models"
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
 	"smlcloudplatform/pkg/vfgl/journal/services"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -372,6 +373,13 @@ func (h JournalHttp) InfoJournalByDocumentRef(ctx microservice.IContext) error {
 // @Description แสดงรายการข้อมูลรายวัน
 // @Tags		GL
 // @Param		q		query	string		false  "Search Value"
+// @Param		docno		query	string		false  "DocNo"
+// @Param		docdate		query	string		false  "DocDate ex. 2020-01-01"
+// @Param		accountyear		query	int		false  "Account Year"
+// @Param		accountperiod		query	int		false  "Account Period"
+// @Param		accountdescription		query	int		false  "Account Description"
+// @Param		amount		query	int		false  "Amount"
+// @Param		createdby		query	int		false  "Created By"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
 // @Accept 		json
@@ -411,7 +419,77 @@ func (h JournalHttp) SearchJournal(ctx microservice.IContext) error {
 		}
 	}
 
-	docList, pagination, err := h.svc.SearchJournal(shopID, pageable, startDate, endDate, accountGroup)
+	// filterFields := []string{"docno", "docdate", "accountyear", "amount"}
+	filterFields := []common.SearchFilter{
+		{
+			Field: "docno",
+			Type:  "string",
+		},
+		{
+			Field: "docdate",
+			Type:  "time.Time",
+		},
+		{
+			Field: "accountyear",
+			Type:  "int16",
+		},
+		{
+			Field: "accountperiod",
+			Type:  "int16",
+		},
+		{
+			Field: "accountdescription",
+			Type:  "string",
+		},
+		{
+			Field: "amount",
+			Type:  "float64",
+		},
+		{
+			Field: "createdby",
+			Type:  "string",
+		},
+	}
+	searchFilters := map[string]interface{}{}
+
+	for _, searchFilter := range filterFields {
+		qVal := strings.TrimSpace(ctx.QueryParam(searchFilter.Field))
+
+		if len(qVal) > 0 {
+
+			switch searchFilter.Type {
+			case "string":
+				searchFilters[searchFilter.Field] = qVal
+			case "int":
+				intVal, err := strconv.Atoi(qVal)
+				if err == nil {
+					searchFilters[searchFilter.Field] = intVal
+				}
+			case "int16":
+				intVal, err := strconv.Atoi(qVal)
+				if err == nil {
+					searchFilters[searchFilter.Field] = int16(intVal)
+				}
+			case "float64":
+				floatVal, err := strconv.ParseFloat(qVal, 64)
+				if err == nil {
+					searchFilters[searchFilter.Field] = floatVal
+				}
+			case "time.Time":
+				dateVal, err := time.Parse("2006-01-02", qVal)
+				if err == nil {
+					searchFilters[searchFilter.Field] = dateVal
+				}
+			case "bool":
+				boolVal, err := strconv.ParseBool(qVal)
+				if err == nil {
+					searchFilters[searchFilter.Field] = boolVal
+				}
+			}
+		}
+	}
+
+	docList, pagination, err := h.svc.SearchJournal(shopID, pageable, searchFilters, startDate, endDate, accountGroup)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
