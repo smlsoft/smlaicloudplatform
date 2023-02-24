@@ -6693,6 +6693,34 @@ paths:
         in: query
         name: q
         type: string
+      - description: DocNo
+        in: query
+        name: docno
+        type: string
+      - description: DocDate ex. 2020-01-01
+        in: query
+        name: docdate
+        type: string
+      - description: Account Year
+        in: query
+        name: accountyear
+        type: integer
+      - description: Account Period
+        in: query
+        name: accountperiod
+        type: integer
+      - description: Account Description
+        in: query
+        name: accountdescription
+        type: integer
+      - description: Amount
+        in: query
+        name: amount
+        type: integer
+      - description: Created By
+        in: query
+        name: createdby
+        type: integer
       - description: Page
         in: query
         name: page

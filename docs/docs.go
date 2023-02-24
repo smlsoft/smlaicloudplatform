@@ -3438,6 +3438,48 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "DocNo",
+                        "name": "docno",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "DocDate ex. 2020-01-01",
+                        "name": "docdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account Year",
+                        "name": "accountyear",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account Period",
+                        "name": "accountperiod",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account Description",
+                        "name": "accountdescription",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Amount",
+                        "name": "amount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Created By",
+                        "name": "createdby",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "Page",
                         "name": "page",
