@@ -153,7 +153,7 @@ func (svc DocumentImageService) UpdateStatusDocumentImageGroup(shopID string, au
 		return nil
 	}
 
-	if status < models.IMAGE_PENDING || status > models.IMAGE_REJECT_KEYING {
+	if status < models.IMAGE_PENDING || status > models.IMAGE_GL_COMPLETED {
 		return errors.New("status out of range")
 	}
 
@@ -866,7 +866,7 @@ func (svc DocumentImageService) messageQueueReCountDocumentImageGroup(shopID str
 
 	totalStatus := map[int8]int{}
 
-	for i := 0; i < 4; i++ {
+	for i := 0; i <= models.IMAGE_FROM_REJECT; i++ {
 		totalStatus[int8(i)] = 0
 	}
 

@@ -50,7 +50,7 @@ func (svc JournalHttpService) CreateJournal(shopID string, authUsername string, 
 	}
 
 	if findDoc.DocNo != "" {
-		return "", errors.New("DocNo is exists")
+		return "", errors.New("docno is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
