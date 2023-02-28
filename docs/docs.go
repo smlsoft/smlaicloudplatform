@@ -1812,15 +1812,6 @@ const docTemplate = `{
                         "name": "taskguid",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "description": "status",
-                        "name": "models.Status",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Status"
-                        }
                     }
                 ],
                 "responses": {

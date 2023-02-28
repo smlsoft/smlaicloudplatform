@@ -5857,12 +5857,6 @@ paths:
         name: taskguid
         required: true
         type: string
-      - description: status
-        in: body
-        name: models.Status
-        required: true
-        schema:
-          $ref: '#/definitions/models.Status'
       responses:
         "200":
           description: OK
