@@ -89,8 +89,8 @@ func (h DocumentImageHttp) RouteSetup() {
 	h.ms.PUT("/documentimagegroup/:guid/images", h.UpdateDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid/status", h.UpdateStatusDocumentImageGroup)
 	h.ms.PUT("/documentimagegroup/:guid/tags", h.UpdateTagsDocumentImageGroup)
-	h.ms.PUT("/documentimagegroup/task/:taskguid/status ", h.UpdateStatusDocumentImageGroupByTask)
-	h.ms.PUT("/documentimagegroup/task/:taskguid/recount ", h.ReCountStatusDocumentImageGroupByTask)
+	h.ms.PUT("/documentimagegroup/task/:taskguid/status", h.UpdateStatusDocumentImageGroupByTask)
+	h.ms.PUT("/documentimagegroup/task/:taskguid/recount", h.ReCountStatusDocumentImageGroupByTask)
 	h.ms.DELETE("/documentimagegroup/:guid", h.DeleteDocumentImageGroup)
 	h.ms.DELETE("/documentimagegroup", h.DeleteDocumentImageGroups)
 
@@ -108,6 +108,15 @@ func (h DocumentImageHttp) DocumentImageSpecial(ctx microservice.IContext) error
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 	})
+	return nil
+}
+
+func (h DocumentImageHttp) Info(ctx microservice.IContext) error {
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+	})
+
 	return nil
 }
 
@@ -943,7 +952,6 @@ func (h DocumentImageHttp) UpdateStatusDocumentImageGroupByTask(ctx microservice
 // @Tags		DocumentImageGroup
 // @Accept 		json
 // @Param		taskguid  path      string  true  "task guid"
-// @Param		models.Status  body      models.Status  true  "status"
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
@@ -956,17 +964,7 @@ func (h DocumentImageHttp) ReCountStatusDocumentImageGroupByTask(ctx microservic
 
 	docImageGroupGUID := ctx.Param("taskguid")
 
-	input := ctx.ReadInput()
-
-	docReq := models.Status{}
-	err := json.Unmarshal([]byte(input), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	err = h.service.ReCountStatusDocumentImageGroupByTask(shopID, authUsername, docImageGroupGUID)
+	err := h.service.ReCountStatusDocumentImageGroupByTask(shopID, authUsername, docImageGroupGUID)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
