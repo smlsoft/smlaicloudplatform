@@ -177,6 +177,36 @@ func (svc DocumentImageService) UpdateStatusDocumentImageGroup(shopID string, au
 	return nil
 }
 
+func (svc DocumentImageService) UpdateStatusDocumentImageGroupByTask(shopID string, authUsername string, taskGUID string, status int8) error {
+
+	if status != models.IMAGE_PENDING && status != models.IMAGE_CHECKED {
+		return errors.New("status out of range")
+	}
+
+	err := svc.repoImageGroup.UpdateStatusByTask(shopID, taskGUID, status)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = svc.messageQueueReCountDocumentImageGroup(shopID, taskGUID)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	return nil
+}
+
+func (svc DocumentImageService) ReCountStatusDocumentImageGroupByTask(shopID string, authUsername string, taskGUID string) error {
+
+	_, err := svc.messageQueueReCountDocumentImageGroup(shopID, taskGUID)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	return nil
+}
+
 func (svc DocumentImageService) UpdateDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImageGroup models.DocumentImageGroup) error {
 	if docImageGroup.ImageReferences == nil || len(*docImageGroup.ImageReferences) > svc.maxImageReferences {
 		return fmt.Errorf("document image is over size %d", svc.maxImageReferences)
@@ -899,28 +929,6 @@ func (svc DocumentImageService) messageQueueReCountDocumentImageGroup(shopID str
 
 	return countDoc, nil
 }
-
-// func (svc DocumentImageService) messageQueueReCountRejectDocumentImageGroup(shopID string, taskGUID string) (int, error) {
-
-// 	count, err := svc.repoImageGroup.CountRejectByTask(shopID, taskGUID)
-
-// 	if err != nil {
-// 		return 0, err
-// 	}
-
-// 	taskMsg := models.DocumentImageTaskRejectMessage{
-// 		ShopID:   shopID,
-// 		TaskGUID: taskGUID,
-// 		Count:    count,
-// 	}
-
-// 	err = svc.repoMessagequeue.TaskReject(taskMsg)
-// 	if err != nil {
-// 		return 0, err
-// 	}
-
-// 	return count, nil
-// }
 
 func (svc DocumentImageService) newXOrderDocumentImageGroup(shopID string, taskGUID string) (int, error) {
 

@@ -41,6 +41,8 @@ type IDocumentImageService interface {
 	XSortsUpdate(shopID string, authUsername string, taskGUID string, xsorts []models.XSortDocumentImageGroupRequest) error
 
 	UpdateDocumentImageReferenceGroup() error
+	UpdateStatusDocumentImageGroupByTask(shopID string, authUsername string, taskGUID string, status int8) error
+	ReCountStatusDocumentImageGroupByTask(shopID string, authUsername string, taskGUID string) error
 }
 
 type DocumentImageService struct {

@@ -47,6 +47,7 @@ type IDocumentImageGroupRepository interface {
 	Transaction(fnc func() error) error
 
 	FindOneByDocumentImageGUIDAll(documentImageGUID string) (models.DocumentImageGroupDoc, error)
+	UpdateStatusByTask(shopID string, taskGUID string, status int8) error
 }
 
 type DocumentImageGroupRepository struct {
@@ -68,6 +69,10 @@ func NewDocumentImageGroupRepository(pst microservice.IPersisterMongo) DocumentI
 
 func (repo DocumentImageGroupRepository) Transaction(fnc func() error) error {
 	return repo.pst.Transaction(fnc)
+}
+
+func (repo DocumentImageGroupRepository) UpdateStatusByTask(shopID string, taskGUID string, status int8) error {
+	return repo.pst.Update(models.DocumentImageGroupDoc{}, bson.M{"shopid": shopID, "taskguid": taskGUID}, bson.M{"$set": bson.M{"status": status}})
 }
 
 func (repo DocumentImageGroupRepository) FindStatusByDocumentImageGroupTask(shopID string, taskGUID string) ([]models.DocumentImageGroupStatus, error) {
