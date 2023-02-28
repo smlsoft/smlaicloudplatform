@@ -40,7 +40,7 @@ func (UnitDoc) CollectionName() string {
 }
 
 type UnitItemGuid struct {
-	DocNo string `json:"docno" bson:"docno"`
+	UnitCode string `json:"unitcode" bson:"unitcode" `
 }
 
 func (UnitItemGuid) CollectionName() string {

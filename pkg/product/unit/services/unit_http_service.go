@@ -278,7 +278,7 @@ func (svc UnitHttpService) SaveInBatch(shopID string, authUsername string, dataL
 
 	foundItemGuidList := []string{}
 	for _, doc := range findItemGuid {
-		foundItemGuidList = append(foundItemGuidList, doc.DocNo)
+		foundItemGuidList = append(foundItemGuidList, doc.UnitCode)
 	}
 
 	duplicateDataList, createDataList := importdata.PreparePayloadData[models.Unit, models.UnitDoc](
