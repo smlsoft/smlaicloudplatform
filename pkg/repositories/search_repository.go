@@ -28,7 +28,6 @@ func (repo SearchRepository[T]) Find(shopID string, searchInFields []string, q s
 	for _, colName := range searchInFields {
 		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
 			Pattern: ".*" + q + ".*",
-			Options: "i",
 		}}})
 	}
 
@@ -53,7 +52,7 @@ func (repo SearchRepository[T]) FindStep(shopID string, filters map[string]inter
 	for _, colName := range searchInFields {
 		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
 			Pattern: ".*" + pageableStep.Query + ".*",
-			Options: "",
+			Options: "i",
 		}}})
 	}
 
@@ -119,6 +118,7 @@ func (repo SearchRepository[T]) FindPage(shopID string, searchInFields []string,
 	for _, colName := range searchInFields {
 		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
 			Pattern: ".*" + pageable.Query + ".*",
+			Options: "i",
 		}}})
 	}
 
