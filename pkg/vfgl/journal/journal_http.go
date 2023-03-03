@@ -379,7 +379,8 @@ func (h JournalHttp) InfoJournalByDocumentRef(ctx microservice.IContext) error {
 // @Param		accountperiod		query	int		false  "Account Period"
 // @Param		accountdescription		query	int		false  "Account Description"
 // @Param		amount		query	int		false  "Amount"
-// @Param		createdby		query	int		false  "Created By"
+// @Param		createdby		query	string		false  "Created By"
+// @Param		createdat		query	string		false  "Create Date ex. 2020-01-01"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
 // @Accept 		json
@@ -448,6 +449,10 @@ func (h JournalHttp) SearchJournal(ctx microservice.IContext) error {
 		{
 			Field: "createdby",
 			Type:  "string",
+		},
+		{
+			Field: "createdat",
+			Type:  "time.Time",
 		},
 	}
 	searchFilters := map[string]interface{}{}
