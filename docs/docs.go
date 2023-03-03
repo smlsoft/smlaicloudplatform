@@ -3561,9 +3561,15 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Created By",
                         "name": "createdby",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Create Date ex. 2020-01-01",
+                        "name": "createdat",
                         "in": "query"
                     },
                     {

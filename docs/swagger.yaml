@@ -6727,7 +6727,11 @@ paths:
       - description: Created By
         in: query
         name: createdby
-        type: integer
+        type: string
+      - description: Create Date ex. 2020-01-01
+        in: query
+        name: createdat
+        type: string
       - description: Page
         in: query
         name: page
