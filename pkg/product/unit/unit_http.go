@@ -10,6 +10,7 @@ import (
 	"smlcloudplatform/pkg/product/unit/repositories"
 	"smlcloudplatform/pkg/product/unit/services"
 	"smlcloudplatform/pkg/utils"
+	"strings"
 )
 
 type IUnitHttp interface{}
@@ -234,8 +235,9 @@ func (h UnitHttp) InfoUnit(ctx microservice.IContext) error {
 // @Description get struct array by ID
 // @Tags		Unit
 // @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Add "
-// @Param		limit	query	integer		false  "Add "
+// @Param		page	query	integer		false  "page "
+// @Param		limit	query	integer		false  "liumit "
+// @Param		unitcode	query	string		false  "unitcode filter ex. \"u001,u002,u003\""
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -246,7 +248,15 @@ func (h UnitHttp) SearchUnit(ctx microservice.IContext) error {
 	shopID := userInfo.ShopID
 
 	pageable := utils.GetPageable(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchUnit(shopID, pageable)
+
+	unitCode := ctx.QueryParam("unitcode")
+
+	unitCodeFilters := []string{}
+	if len(unitCode) > 0 {
+		unitCodeFilters = strings.Split(unitCode, ",")
+	}
+
+	docList, pagination, err := h.svc.SearchUnit(shopID, unitCodeFilters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -267,7 +277,8 @@ func (h UnitHttp) SearchUnit(ctx microservice.IContext) error {
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
-// @Param		lang	query	string		false  "lang"
+// @Param		lang	query	string		false  "lang ex. en,th"
+// @Param		unitcode	query	string		false  "unitcode filter ex. \"u001,u002,u003\" "
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -281,7 +292,14 @@ func (h UnitHttp) SearchUnitLimit(ctx microservice.IContext) error {
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchUnitLimit(shopID, lang, pageableStep)
+	unitCode := ctx.QueryParam("unitcode")
+
+	unitCodeFilters := []string{}
+	if len(unitCode) > 0 {
+		unitCodeFilters = strings.Split(unitCode, ",")
+	}
+
+	docList, total, err := h.svc.SearchUnitLimit(shopID, lang, unitCodeFilters, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

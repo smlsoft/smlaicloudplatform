@@ -26,8 +26,8 @@ type IUnitHttpService interface {
 	DeleteUnit(shopID string, guid string, authUsername string) error
 	DeleteUnitByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoUnit(shopID string, guid string) (models.UnitInfo, error)
-	SearchUnit(shopID string, pageable micromodels.Pageable) ([]models.UnitInfo, mongopagination.PaginationData, error)
-	SearchUnitLimit(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.UnitInfo, int, error)
+	SearchUnit(shopID string, codeFilters []string, pageable micromodels.Pageable) ([]models.UnitInfo, mongopagination.PaginationData, error)
+	SearchUnitLimit(shopID string, langCode string, codeFilters []string, pageableStep micromodels.PageableStep) ([]models.UnitInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Unit) (common.BulkImport, error)
 
 	GetModuleName() string
@@ -220,13 +220,18 @@ func (svc UnitHttpService) InfoUnit(shopID string, guid string) (models.UnitInfo
 
 }
 
-func (svc UnitHttpService) SearchUnit(shopID string, pageable micromodels.Pageable) ([]models.UnitInfo, mongopagination.PaginationData, error) {
+func (svc UnitHttpService) SearchUnit(shopID string, codeFilters []string, pageable micromodels.Pageable) ([]models.UnitInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"unitcode",
 		"names.name",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
+	filters := map[string]interface{}{}
+	if len(codeFilters) > 0 {
+		filters["unitcode"] = bson.M{"$in": codeFilters}
+	}
+
+	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.UnitInfo{}, pagination, err
@@ -235,7 +240,7 @@ func (svc UnitHttpService) SearchUnit(shopID string, pageable micromodels.Pageab
 	return docList, pagination, nil
 }
 
-func (svc UnitHttpService) SearchUnitLimit(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.UnitInfo, int, error) {
+func (svc UnitHttpService) SearchUnitLimit(shopID string, langCode string, codeFilters []string, pageableStep micromodels.PageableStep) ([]models.UnitInfo, int, error) {
 	searchInFields := []string{
 		"unitcode",
 		"names.name",
@@ -252,7 +257,15 @@ func (svc UnitHttpService) SearchUnitLimit(shopID string, langCode string, pagea
 		selectFields["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	filters := map[string]interface{}{}
+	if len(codeFilters) > 0 {
+
+		filters["$or"] = []interface{}{
+			bson.M{"unitcode": bson.M{"$in": codeFilters}},
+		}
+	}
+
+	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.UnitInfo{}, 0, err
@@ -372,93 +385,6 @@ func (svc UnitHttpService) SaveInBatch(shopID string, authUsername string, dataL
 func (svc UnitHttpService) getDocIDKey(doc models.Unit) string {
 	return doc.UnitCode
 }
-
-// func (svc UnitHttpService) LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error) {
-// 	var wg sync.WaitGroup
-
-// 	wg.Add(1)
-// 	var deleteDocList []models.UnitDeleteActivity
-// 	var pagination1 mongopagination.PaginationData
-// 	var err1 error
-
-// 	go func() {
-// 		deleteDocList, pagination1, err1 = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
-// 		wg.Done()
-// 	}()
-
-// 	wg.Add(1)
-// 	var createAndUpdateDocList []models.UnitActivity
-// 	var pagination2 mongopagination.PaginationData
-// 	var err2 error
-
-// 	go func() {
-// 		createAndUpdateDocList, pagination2, err2 = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
-// 		wg.Done()
-// 	}()
-
-// 	wg.Wait()
-
-// 	if err1 != nil {
-// 		return common.LastActivity{}, pagination1, err1
-// 	}
-
-// 	if err2 != nil {
-// 		return common.LastActivity{}, pagination2, err2
-// 	}
-
-// 	lastActivity := common.LastActivity{}
-
-// 	lastActivity.Remove = &deleteDocList
-// 	lastActivity.New = &createAndUpdateDocList
-
-// 	pagination := pagination1
-
-// 	if pagination.Total < pagination2.Total {
-// 		pagination = pagination2
-// 	}
-
-// 	return lastActivity, pagination, nil
-// }
-
-// func (svc UnitHttpService) LastActivityStep(shopID string, lastUpdatedDate time.Time, skip int, limit int) (common.LastActivity, error) {
-// 	lastActivity := common.LastActivity{}
-// 	var wg sync.WaitGroup
-
-// 	wg.Add(1)
-// 	var deleteDocList []models.UnitDeleteActivity
-// 	var err1 error
-
-// 	go func() {
-// 		deleteDocList, err1 = svc.repo.FindDeletedStep(shopID, lastUpdatedDate, skip, limit)
-// 		wg.Done()
-// 	}()
-
-// 	wg.Add(1)
-// 	var createAndUpdateDocList []models.UnitActivity
-
-// 	var err2 error
-
-// 	go func() {
-// 		createAndUpdateDocList, err2 = svc.repo.FindCreatedOrUpdatedStep(shopID, lastUpdatedDate, skip, limit)
-// 		wg.Done()
-// 	}()
-
-// 	wg.Wait()
-
-// 	if err1 != nil {
-// 		return common.LastActivity{}, err1
-// 	}
-
-// 	lastActivity.Remove = &deleteDocList
-
-// 	if err2 != nil {
-// 		return common.LastActivity{}, err2
-// 	}
-
-// 	lastActivity.New = &createAndUpdateDocList
-
-// 	return lastActivity, nil
-// }
 
 func (svc UnitHttpService) saveMasterSync(shopID string) {
 	if svc.syncCacheRepo != nil {
