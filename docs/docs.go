@@ -14385,14 +14385,20 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Add ",
+                        "description": "page ",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Add ",
+                        "description": "liumit ",
                         "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "unitcode filter ex. \\",
+                        "name": "unitcode",
                         "in": "query"
                     }
                 ],
@@ -14575,8 +14581,14 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "lang",
+                        "description": "lang ex. en,th",
                         "name": "lang",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "unitcode filter ex. \\",
+                        "name": "unitcode",
                         "in": "query"
                     }
                 ],

@@ -13484,14 +13484,18 @@ paths:
         in: query
         name: q
         type: string
-      - description: 'Add '
+      - description: 'page '
         in: query
         name: page
         type: integer
-      - description: 'Add '
+      - description: 'liumit '
         in: query
         name: limit
         type: integer
+      - description: unitcode filter ex. \
+        in: query
+        name: unitcode
+        type: string
       responses:
         "200":
           description: OK
@@ -13681,9 +13685,13 @@ paths:
         in: query
         name: limit
         type: integer
-      - description: lang
+      - description: lang ex. en,th
         in: query
         name: lang
+        type: string
+      - description: unitcode filter ex. \
+        in: query
+        name: unitcode
         type: string
       responses:
         "200":
