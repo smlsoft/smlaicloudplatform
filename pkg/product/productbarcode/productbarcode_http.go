@@ -45,6 +45,7 @@ func (h ProductBarcodeHttp) RouteSetup() {
 	h.ms.GET("/product/barcode/list", h.SearchProductBarcodeLimit)
 	h.ms.POST("/product/barcode", h.CreateProductBarcode)
 	h.ms.GET("/product/barcode/:id", h.InfoProductBarcode)
+	h.ms.GET("/product/barcode/pk", h.InfoArray)
 	h.ms.PUT("/product/barcode/xsort", h.UpdateProductBarcodeXSort)
 	h.ms.PUT("/product/barcode/:id", h.UpdateProductBarcode)
 	h.ms.DELETE("/product/barcode/:id", h.DeleteProductBarcode)
@@ -240,6 +241,44 @@ func (h ProductBarcodeHttp) InfoProductBarcode(ctx microservice.IContext) error 
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// Get ProductBarcode By code array godoc
+// @Description get ProductBarcode by code array
+// @Tags		Unit
+// @Param		[]string  body      []string  true  "Barcode Array"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/barcode/pk [get]
+func (h ProductBarcodeHttp) InfoArray(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	docReq := &[]string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	// where to filter array
+	doc, err := h.svc.InfoWTFArray(shopID, *docReq)
+
+	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}

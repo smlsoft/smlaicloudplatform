@@ -32,6 +32,7 @@ func NewOptionHttp(ms *microservice.Microservice, cfg microservice.IConfig) *Opt
 func (h OptionHttp) RouteSetup() {
 
 	h.ms.GET("/option/:id", h.InfoInventoryOptionMain)
+	h.ms.GET("/option/pk", h.InfoArray)
 	h.ms.GET("/option", h.SearchInventoryOptionMain)
 	h.ms.POST("/option", h.CreateInventoryOptionMain)
 	h.ms.PUT("/option/:id", h.UpdateInventoryOptionMain)
@@ -163,6 +164,44 @@ func (h *OptionHttp) InfoInventoryOptionMain(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 
 	doc, err := h.optService.InfoOption(shopID, id)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// Get Inventory Option By code array godoc
+// @Description get Inventory Option by code array
+// @Tags		Unit
+// @Param		[]string  body      []string  true  "Barcode Array"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /option/pk [get]
+func (h OptionHttp) InfoArray(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	docReq := &[]string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	// where to filter array
+	doc, err := h.optService.InfoWTFArray(shopID, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

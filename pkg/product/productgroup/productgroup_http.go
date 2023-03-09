@@ -45,6 +45,7 @@ func (h ProductGroupHttp) RouteSetup() {
 	h.ms.POST("/product/group", h.CreateProductGroup)
 	h.ms.POST("/product/group/save", h.SaveProductGroup)
 	h.ms.GET("/product/group/:id", h.InfoProductGroup)
+	h.ms.GET("/product/group/pk ", h.InfoArray)
 	h.ms.PUT("/product/group/:id", h.UpdateProductGroup)
 	h.ms.DELETE("/product/group/:id", h.DeleteProductGroup)
 	h.ms.DELETE("/product/group", h.DeleteProductGroupByGUIDs)
@@ -267,6 +268,44 @@ func (h ProductGroupHttp) InfoProductGroup(ctx microservice.IContext) error {
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// Get Product Group By code array godoc
+// @Description get Product Group by code array
+// @Tags		Unit
+// @Param		[]string  body      []string  true  "Code Array"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/group/pk [get]
+func (h ProductGroupHttp) InfoArray(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	docReq := &[]string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	// where to filter array
+	doc, err := h.svc.InfoWTFArray(shopID, *docReq)
+
+	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}

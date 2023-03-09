@@ -194,6 +194,44 @@ func (h ColorHttp) InfoColor(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Color By code array godoc
+// @Description get Color by code array
+// @Tags		Unit
+// @Param		[]string  body      []string  true  "Code Array"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /color/pk [get]
+func (h ColorHttp) InfoArray(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	docReq := &[]string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	// where to filter array
+	doc, err := h.svc.InfoWTFArray(shopID, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
 // List Color godoc
 // @Description get struct array by ID
 // @Tags		Color

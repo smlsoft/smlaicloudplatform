@@ -4,6 +4,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/option/models"
+	"smlcloudplatform/pkg/repositories"
 
 	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
@@ -16,16 +17,21 @@ type IOptionRepository interface {
 	Delete(shopID string, guid string, username string) error
 	FindByGuid(shopID string, guid string) (models.InventoryOptionMainDoc, error)
 	FindPage(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionMainInfo, mongopagination.PaginationData, error)
+	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.InventoryOptionMainDoc, error)
 }
 
 type OptionRepository struct {
 	pst microservice.IPersisterMongo
+	repositories.CrudRepository[models.InventoryOptionMainDoc]
 }
 
 func NewOptionRepository(pst microservice.IPersisterMongo) *OptionRepository {
-	return &OptionRepository{
+	insRepo := &OptionRepository{
 		pst: pst,
 	}
+
+	insRepo.CrudRepository = repositories.NewCrudRepository[models.InventoryOptionMainDoc](pst)
+	return insRepo
 }
 
 func (repo OptionRepository) Create(doc models.InventoryOptionMainDoc) (string, error) {

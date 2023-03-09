@@ -25,6 +25,7 @@ type IProductGroupHttpService interface {
 	DeleteProductGroup(shopID string, guid string, authUsername string) error
 	DeleteProductGroupByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoProductGroup(shopID string, guid string) (models.ProductGroupInfo, error)
+	InfoWTFArray(shopID string, unitCodes []string) ([]interface{}, error)
 	SearchProductGroup(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductGroupInfo, mongopagination.PaginationData, error)
 	SearchProductGroupStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ProductGroupInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ProductGroup) (common.BulkImport, error)
@@ -204,6 +205,22 @@ func (svc ProductGroupHttpService) InfoProductGroup(shopID string, guid string) 
 
 	return findDoc.ProductGroupInfo, nil
 
+}
+
+func (svc ProductGroupHttpService) InfoWTFArray(shopID string, codes []string) ([]interface{}, error) {
+	docList := []interface{}{}
+
+	for _, code := range codes {
+		findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", code)
+		if err != nil || findDoc.ID == primitive.NilObjectID {
+			// add item empty
+			docList = append(docList, nil)
+		} else {
+			docList = append(docList, findDoc.ProductGroupInfo)
+		}
+	}
+
+	return docList, nil
 }
 
 func (svc ProductGroupHttpService) SearchProductGroup(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductGroupInfo, mongopagination.PaginationData, error) {

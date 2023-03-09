@@ -24,6 +24,7 @@ type IProductBarcodeHttpService interface {
 	DeleteProductBarcode(shopID string, guid string, authUsername string) error
 	DeleteProductBarcodeByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoProductBarcode(shopID string, guid string) (models.ProductBarcodeInfo, error)
+	InfoWTFArray(shopID string, codes []string) ([]interface{}, error)
 	SearchProductBarcode(shopID string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 	SearchProductBarcodeStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ProductBarcode) (common.BulkImport, error)
@@ -181,6 +182,22 @@ func (svc ProductBarcodeHttpService) InfoProductBarcode(shopID string, guid stri
 
 	return findDoc.ProductBarcodeInfo, nil
 
+}
+
+func (svc ProductBarcodeHttpService) InfoWTFArray(shopID string, codes []string) ([]interface{}, error) {
+	docList := []interface{}{}
+
+	for _, code := range codes {
+		findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "barcode", code)
+		if err != nil || findDoc.ID == primitive.NilObjectID {
+			// add item empty
+			docList = append(docList, nil)
+		} else {
+			docList = append(docList, findDoc.ProductBarcodeInfo)
+		}
+	}
+
+	return docList, nil
 }
 
 func (svc ProductBarcodeHttpService) SearchProductBarcode(shopID string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {

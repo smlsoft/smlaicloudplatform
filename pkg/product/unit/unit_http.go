@@ -258,6 +258,7 @@ func (h UnitHttp) InfoUnitArray(ctx microservice.IContext) error {
 		return err
 	}
 
+	// where to filter array
 	doc, err := h.svc.InfoUnitWTFArray(shopID, *docReq)
 
 	if err != nil {

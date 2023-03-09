@@ -20,6 +20,7 @@ type IColorHttpService interface {
 	UpdateColor(shopID string, guid string, authUsername string, doc models.Color) error
 	DeleteColor(shopID string, guid string, authUsername string) error
 	InfoColor(shopID string, guid string) (models.ColorInfo, error)
+	InfoWTFArray(shopID string, codes []string) ([]interface{}, error)
 	SearchColor(shopID string, pageable micromodels.Pageable) ([]models.ColorInfo, mongopagination.PaginationData, error)
 	SearchColorStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ColorInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Color) (common.BulkImport, error)
@@ -127,6 +128,22 @@ func (svc ColorHttpService) InfoColor(shopID string, guid string) (models.ColorI
 
 	return findDoc.ColorInfo, nil
 
+}
+
+func (svc ColorHttpService) InfoWTFArray(shopID string, codes []string) ([]interface{}, error) {
+	docList := []interface{}{}
+
+	for _, code := range codes {
+		findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", code)
+		if err != nil || findDoc.ID == primitive.NilObjectID {
+			// add item empty
+			docList = append(docList, nil)
+		} else {
+			docList = append(docList, findDoc.ColorInfo)
+		}
+	}
+
+	return docList, nil
 }
 
 func (svc ColorHttpService) SearchColor(shopID string, pageable micromodels.Pageable) ([]models.ColorInfo, mongopagination.PaginationData, error) {

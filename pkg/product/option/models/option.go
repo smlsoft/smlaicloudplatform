@@ -81,6 +81,14 @@ func (InventoryOptionMainDoc) CollectionName() string {
 	return inventoryOptionCollectionName
 }
 
+type InventoryOptionMainGuid struct {
+	Code string `json:"code" bson:"code" `
+}
+
+func (InventoryOptionMainGuid) CollectionName() string {
+	return inventoryOptionCollectionName
+}
+
 type InventoryOption struct {
 	DocID string `bson:"-" gorm:"docid;primaryKey"`
 	OptID string `bson:"-" gorm:"optid;primaryKey"`

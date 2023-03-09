@@ -16,6 +16,7 @@ type IOptionService interface {
 	UpdateOption(shopID string, guid string, authUsername string, invOpt models.InventoryOptionMain) error
 	DeleteOption(shopID string, guid string, username string) error
 	InfoOption(shopID string, guid string) (models.InventoryOptionMainInfo, error)
+	InfoWTFArray(shopID string, codes []string) ([]interface{}, error)
 	SearchOption(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionMainInfo, mongopagination.PaginationData, error)
 }
 
@@ -108,6 +109,22 @@ func (svc OptionService) InfoOption(shopID string, guid string) (models.Inventor
 	}
 
 	return findDoc.InventoryOptionMainInfo, nil
+}
+
+func (svc OptionService) InfoWTFArray(shopID string, codes []string) ([]interface{}, error) {
+	docList := []interface{}{}
+
+	for _, code := range codes {
+		findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", code)
+		if err != nil || findDoc.ID == primitive.NilObjectID {
+			// add item empty
+			docList = append(docList, nil)
+		} else {
+			docList = append(docList, findDoc.InventoryOptionMainInfo)
+		}
+	}
+
+	return docList, nil
 }
 
 func (svc OptionService) SearchOption(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionMainInfo, mongopagination.PaginationData, error) {
