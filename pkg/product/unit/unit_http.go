@@ -45,6 +45,7 @@ func (h UnitHttp) RouteSetup() {
 	h.ms.GET("/unit/list", h.SearchUnitLimit)
 	h.ms.POST("/unit", h.CreateUnit)
 	h.ms.GET("/unit/:id", h.InfoUnit)
+	h.ms.GET("/unit/unitcode", h.InfoUnitArray)
 	h.ms.PUT("/unit/:id", h.UpdateUnit)
 	h.ms.PATCH("/unit/:id", h.UpdateFieldUnit)
 	h.ms.DELETE("/unit/:id", h.DeleteUnit)
@@ -220,6 +221,46 @@ func (h UnitHttp) InfoUnit(ctx microservice.IContext) error {
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// Get Unit By unit code array godoc
+// @Description get unit by unit code array
+// @Tags		Unit
+// @Param		[]string  body      []string  true  "Unit Code Array"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /unit/unitcode [get]
+func (h UnitHttp) InfoUnitArray(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	// unitCode := ctx.QueryParam("unitcode")
+	// unitCodeFilters := strings.Split(unitCode, ",")
+
+	input := ctx.ReadInput()
+
+	docReq := &[]string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	doc, err := h.svc.InfoUnitWTFArray(shopID, *docReq)
+
+	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}
