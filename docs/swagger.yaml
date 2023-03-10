@@ -236,8 +236,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       name1:
         maxLength: 255
         type: string
@@ -253,8 +253,15 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       unitcode:
         type: string
       unitname1:
@@ -1064,8 +1071,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1083,6 +1090,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1098,7 +1107,12 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1206,8 +1220,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1225,6 +1239,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1240,7 +1256,12 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -1398,8 +1419,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1417,6 +1438,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1432,7 +1455,12 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
       recommended:
         description: สินค้าแนะนำ
         type: boolean
@@ -2846,10 +2874,17 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
+      normalprice:
+        type: number
       price:
-        type: string
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
     type: object
   models.ProductUnit:
     properties:
@@ -3034,10 +3069,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
       linenumber:
         type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -3055,6 +3090,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3070,6 +3107,10 @@ definitions:
         maxLength: 50
         type: string
       price:
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       qty:
         type: number
@@ -3453,10 +3494,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
       linenumber:
         type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -3474,6 +3515,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3489,6 +3532,10 @@ definitions:
         maxLength: 50
         type: string
       price:
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       qty:
         type: number
@@ -4741,6 +4788,33 @@ paths:
       - AccessToken: []
       tags:
       - Color
+  /color/by-code:
+    get:
+      consumes:
+      - application/json
+      description: get Color by code array
+      parameters:
+      - description: Code Array
+        in: body
+        name: '[]string'
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
   /color/list:
     get:
       consumes:
@@ -4778,33 +4852,6 @@ paths:
       - AccessToken: []
       tags:
       - Color
-  /color/pk:
-    get:
-      consumes:
-      - application/json
-      description: get Color by code array
-      parameters:
-      - description: Code Array
-        in: body
-        name: '[]string'
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Unit
   /create-shop:
     post:
       consumes:
@@ -8524,7 +8571,7 @@ paths:
       - AccessToken: []
       tags:
       - Inventory
-  /option/pk:
+  /option/by-code:
     get:
       consumes:
       - application/json
@@ -9912,6 +9959,33 @@ paths:
       - AccessToken: []
       tags:
       - ProductBarcode
+  /product/barcode/by-code:
+    get:
+      consumes:
+      - application/json
+      description: get ProductBarcode by code array
+      parameters:
+      - description: Barcode Array
+        in: body
+        name: '[]string'
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
   /product/barcode/list:
     get:
       consumes:
@@ -9949,33 +10023,6 @@ paths:
       - AccessToken: []
       tags:
       - ProductBarcode
-  /product/barcode/pk:
-    get:
-      consumes:
-      - application/json
-      description: get ProductBarcode by code array
-      parameters:
-      - description: Barcode Array
-        in: body
-        name: '[]string'
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Unit
   /product/barcode/xsort:
     put:
       consumes:
@@ -10030,6 +10077,33 @@ paths:
       - AccessToken: []
       tags:
       - Product
+  /product/by-code:
+    get:
+      consumes:
+      - application/json
+      description: get Product by code array
+      parameters:
+      - description: Item Code Array
+        in: body
+        name: '[]string'
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
   /product/category:
     delete:
       consumes:
@@ -10493,6 +10567,33 @@ paths:
       - AccessToken: []
       tags:
       - ProductGroup
+  /product/group/by-code:
+    get:
+      consumes:
+      - application/json
+      description: get Product Group by code array
+      parameters:
+      - description: Code Array
+        in: body
+        name: '[]string'
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
   /product/group/list:
     get:
       consumes:
@@ -10530,33 +10631,6 @@ paths:
       - AccessToken: []
       tags:
       - ProductGroup
-  /product/group/pk:
-    get:
-      consumes:
-      - application/json
-      description: get Product Group by code array
-      parameters:
-      - description: Code Array
-        in: body
-        name: '[]string'
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Unit
   /product/group/save:
     post:
       consumes:
@@ -10623,33 +10697,6 @@ paths:
       - AccessToken: []
       tags:
       - Product
-  /product/pk:
-    get:
-      consumes:
-      - application/json
-      description: get Product by code array
-      parameters:
-      - description: Item Code Array
-        in: body
-        name: '[]string'
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Unit
   /product/save:
     post:
       consumes:
@@ -13804,6 +13851,33 @@ paths:
       - AccessToken: []
       tags:
       - Unit
+  /unit/by-code:
+    get:
+      consumes:
+      - application/json
+      description: get unit by unit code array
+      parameters:
+      - description: Unit Code Array
+        in: body
+        name: '[]string'
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
   /unit/list:
     get:
       consumes:
@@ -13837,33 +13911,6 @@ paths:
             items:
               $ref: '#/definitions/models.ApiResponse'
             type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Unit
-  /unit/unitcode:
-    get:
-      consumes:
-      - application/json
-      description: get unit by unit code array
-      parameters:
-      - description: Unit Code Array
-        in: body
-        name: '[]string'
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
         "401":
           description: Unauthorized
           schema:
