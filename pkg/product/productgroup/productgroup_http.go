@@ -45,7 +45,7 @@ func (h ProductGroupHttp) RouteSetup() {
 	h.ms.POST("/product/group", h.CreateProductGroup)
 	h.ms.POST("/product/group/save", h.SaveProductGroup)
 	h.ms.GET("/product/group/:id", h.InfoProductGroup)
-	h.ms.GET("/product/group/pk ", h.InfoArray)
+	h.ms.GET("/product/group/by-code ", h.InfoArray)
 	h.ms.PUT("/product/group/:id", h.UpdateProductGroup)
 	h.ms.DELETE("/product/group/:id", h.DeleteProductGroup)
 	h.ms.DELETE("/product/group", h.DeleteProductGroupByGUIDs)
@@ -287,7 +287,7 @@ func (h ProductGroupHttp) InfoProductGroup(ctx microservice.IContext) error {
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/group/pk [get]
+// @Router /product/group/by-code [get]
 func (h ProductGroupHttp) InfoArray(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID

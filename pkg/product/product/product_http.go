@@ -48,6 +48,7 @@ func (h ProductHttp) RouteSetup() {
 	h.ms.POST("/product/save", h.SaveProduct)
 	h.ms.POST("/product", h.CreateProduct)
 	h.ms.GET("/product/:id", h.InfoProduct)
+	h.ms.GET("/product/by-code", h.InfoArray)
 	h.ms.PUT("/product/:id", h.UpdateProduct)
 	h.ms.DELETE("/product/:id", h.DeleteProduct)
 	h.ms.DELETE("/product", h.DeleteByGUIDs)
@@ -251,7 +252,7 @@ func (h ProductHttp) InfoProduct(ctx microservice.IContext) error {
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/pk [get]
+// @Router /product/by-code [get]
 func (h ProductHttp) InfoArray(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID

@@ -32,7 +32,7 @@ func NewOptionHttp(ms *microservice.Microservice, cfg microservice.IConfig) *Opt
 func (h OptionHttp) RouteSetup() {
 
 	h.ms.GET("/option/:id", h.InfoInventoryOptionMain)
-	h.ms.GET("/option/pk", h.InfoArray)
+	h.ms.GET("/option/by-code", h.InfoArray)
 	h.ms.GET("/option", h.SearchInventoryOptionMain)
 	h.ms.POST("/option", h.CreateInventoryOptionMain)
 	h.ms.PUT("/option/:id", h.UpdateInventoryOptionMain)
@@ -185,7 +185,7 @@ func (h *OptionHttp) InfoInventoryOptionMain(ctx microservice.IContext) error {
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /option/pk [get]
+// @Router /option/by-code [get]
 func (h OptionHttp) InfoArray(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID

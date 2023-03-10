@@ -45,7 +45,7 @@ func (h ProductBarcodeHttp) RouteSetup() {
 	h.ms.GET("/product/barcode/list", h.SearchProductBarcodeLimit)
 	h.ms.POST("/product/barcode", h.CreateProductBarcode)
 	h.ms.GET("/product/barcode/:id", h.InfoProductBarcode)
-	h.ms.GET("/product/barcode/pk", h.InfoArray)
+	h.ms.GET("/product/barcode/by-code", h.InfoArray)
 	h.ms.PUT("/product/barcode/xsort", h.UpdateProductBarcodeXSort)
 	h.ms.PUT("/product/barcode/:id", h.UpdateProductBarcode)
 	h.ms.DELETE("/product/barcode/:id", h.DeleteProductBarcode)
@@ -260,7 +260,7 @@ func (h ProductBarcodeHttp) InfoProductBarcode(ctx microservice.IContext) error 
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/barcode/pk [get]
+// @Router /product/barcode/by-code [get]
 func (h ProductBarcodeHttp) InfoArray(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID

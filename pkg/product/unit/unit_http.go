@@ -45,7 +45,7 @@ func (h UnitHttp) RouteSetup() {
 	h.ms.GET("/unit/list", h.SearchUnitLimit)
 	h.ms.POST("/unit", h.CreateUnit)
 	h.ms.GET("/unit/:id", h.InfoUnit)
-	h.ms.GET("/unit/unitcode", h.InfoUnitArray)
+	h.ms.GET("/unit/by-code", h.InfoArray)
 	h.ms.PUT("/unit/:id", h.UpdateUnit)
 	h.ms.PATCH("/unit/:id", h.UpdateFieldUnit)
 	h.ms.DELETE("/unit/:id", h.DeleteUnit)
@@ -240,8 +240,8 @@ func (h UnitHttp) InfoUnit(ctx microservice.IContext) error {
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /unit/unitcode [get]
-func (h UnitHttp) InfoUnitArray(ctx microservice.IContext) error {
+// @Router /unit/by-code [get]
+func (h UnitHttp) InfoArray(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
