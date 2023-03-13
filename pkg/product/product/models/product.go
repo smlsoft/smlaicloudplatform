@@ -36,8 +36,8 @@ type Product struct {
 }
 
 type ProductPrice struct {
-	KeyNumber int    `json:"keynumber" bson:"keynumber"`
-	Price     string `json:"price" bson:"price"`
+	KeyNumber int     `json:"keynumber" bson:"keynumber"`
+	Price     float64 `json:"price" bson:"price"`
 }
 
 type ProductUnit struct {
