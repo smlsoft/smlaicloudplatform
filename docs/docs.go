@@ -264,50 +264,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/color/by-code": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get Color by code array",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Unit"
-                ],
-                "parameters": [
-                    {
-                        "description": "Code Array",
-                        "name": "[]string",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/color/list": {
             "get": {
                 "security": [
@@ -356,6 +312,50 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/models.ApiResponse"
                             }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/color/pk": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Color by code array",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "description": "Code Array",
+                        "name": "[]string",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     },
                     "401": {
@@ -16861,6 +16861,9 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },

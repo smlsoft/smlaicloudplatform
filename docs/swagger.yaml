@@ -949,6 +949,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -4788,33 +4790,6 @@ paths:
       - AccessToken: []
       tags:
       - Color
-  /color/by-code:
-    get:
-      consumes:
-      - application/json
-      description: get Color by code array
-      parameters:
-      - description: Code Array
-        in: body
-        name: '[]string'
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Unit
   /color/list:
     get:
       consumes:
@@ -4852,6 +4827,33 @@ paths:
       - AccessToken: []
       tags:
       - Color
+  /color/pk:
+    get:
+      consumes:
+      - application/json
+      description: get Color by code array
+      parameters:
+      - description: Code Array
+        in: body
+        name: '[]string'
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
   /create-shop:
     post:
       consumes:
