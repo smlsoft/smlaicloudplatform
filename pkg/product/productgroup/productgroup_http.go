@@ -45,7 +45,7 @@ func (h ProductGroupHttp) RouteSetup() {
 	h.ms.POST("/product/group", h.CreateProductGroup)
 	h.ms.POST("/product/group/save", h.SaveProductGroup)
 	h.ms.GET("/product/group/:id", h.InfoProductGroup)
-	h.ms.GET("/product/group/by-code ", h.InfoArray)
+	h.ms.GET("/product/group/by-code", h.InfoArray)
 	h.ms.PUT("/product/group/:id", h.UpdateProductGroup)
 	h.ms.DELETE("/product/group/:id", h.DeleteProductGroup)
 	h.ms.DELETE("/product/group", h.DeleteProductGroupByGUIDs)
