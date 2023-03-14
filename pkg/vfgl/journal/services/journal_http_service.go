@@ -19,6 +19,7 @@ type IJournalHttpService interface {
 	CreateJournal(shopID string, authUsername string, doc models.Journal) (string, error)
 	UpdateJournal(guid string, shopID string, authUsername string, doc models.Journal) error
 	DeleteJournal(guid string, shopID string, authUsername string) error
+	DeleteJournalByBatchID(shopID string, authUsername string, batchID string) error
 	InfoJournal(shopID string, guid string) (models.JournalInfo, error)
 	InfoJournalByDocNo(shopID string, docNo string) (models.JournalInfo, error)
 	InfoJournalByDocumentRef(shopID string, documentRef string) (models.JournalInfo, error)
@@ -127,6 +128,30 @@ func (svc JournalHttpService) DeleteJournal(guid string, shopID string, authUser
 	}
 
 	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	if err != nil {
+		return err
+	}
+	svc.mqRepo.Delete(findDoc)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (svc JournalHttpService) DeleteJournalByBatchID(shopID string, authUsername string, batchID string) error {
+
+	findDoc, err := svc.repo.FindOne(shopID, bson.M{"batchid": batchID})
+
+	if err != nil {
+		return err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return errors.New("document not found")
+	}
+
+	err = svc.repo.Delete(shopID, authUsername, map[string]interface{}{"batchid": batchID})
 	if err != nil {
 		return err
 	}
