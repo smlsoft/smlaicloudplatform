@@ -12,7 +12,7 @@ import (
 const journalCollectionName = "journals"
 
 type JournalBody struct {
-	BatchID            string    `json:"batchId" bson:"batch" gorm:"column:batchid"`
+	BatchID            string    `json:"batchid" bson:"batchid" gorm:"column:batchid"`
 	DocNo              string    `json:"docno" bson:"docno" gorm:"column:docno;primaryKey"`
 	DocDate            time.Time `json:"docdate" bson:"docdate" format:"dateTime" gorm:"column:docdate"`
 	DocumentRef        string    `json:"documentref" bson:"documentref" gorm:"column:documentref"`

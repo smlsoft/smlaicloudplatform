@@ -68,6 +68,7 @@ func (h JournalHttp) RouteSetup() {
 	h.ms.GET("/gl/journal/docref/:doc", h.InfoJournalByDocumentRef)
 	h.ms.PUT("/gl/journal/:id", h.UpdateJournal)
 	h.ms.DELETE("/gl/journal/:id", h.DeleteJournal)
+	h.ms.DELETE("/gl/journal/batchid/:batchid", h.DeleteJournalByBatchID)
 
 }
 
@@ -267,6 +268,37 @@ func (h JournalHttp) DeleteJournal(ctx microservice.IContext) error {
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		ID:      id,
+	})
+
+	return nil
+}
+
+// Delete Journal By Batch ID godoc
+// @Summary		ลบข้อมูลรายวัน By Batch ID
+// @Description ลบข้อมูลรายวัน By Batch ID
+// @Tags		GL
+// @Param		batchid  path      string  true  "Journal Batch ID"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /gl/journal/batchid/{batchid} [delete]
+func (h JournalHttp) DeleteJournalByBatchID(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	batchID := ctx.Param("batchid")
+
+	err := h.svc.DeleteJournalByBatchID(shopID, authUsername, batchID)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
 	})
 
 	return nil
