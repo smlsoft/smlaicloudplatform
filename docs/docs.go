@@ -6374,7 +6374,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Code  filter ex. \\",
+                        "description": "Code filter, json array encode ",
                         "name": "codes",
                         "in": "query"
                     }
@@ -8479,7 +8479,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Barcode filter ex. \\",
+                        "description": "Code filter, json array encode ",
                         "name": "codes",
                         "in": "query"
                     }
@@ -8786,7 +8786,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Item Code  filter ex. \\",
+                        "description": "Code filter, json array encode ",
                         "name": "codes",
                         "in": "query"
                     }
@@ -9449,7 +9449,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "codes filter ex. \\",
+                        "description": "Code filter, json array encode ",
                         "name": "codes",
                         "in": "query"
                     }
@@ -14805,7 +14805,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "codes filter ex. \\",
+                        "description": "Code filter, json array encode ",
                         "name": "codes",
                         "in": "query"
                     }
