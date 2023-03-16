@@ -6373,16 +6373,10 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "Barcode Array",
-                        "name": "[]string",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
+                        "type": "string",
+                        "description": "Code  filter ex. \\",
+                        "name": "codes",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -8480,20 +8474,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Unit"
+                    "ProductBarcode"
                 ],
                 "parameters": [
                     {
-                        "description": "Barcode Array",
-                        "name": "[]string",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
+                        "type": "string",
+                        "description": "Barcode filter ex. \\",
+                        "name": "codes",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -8797,16 +8785,10 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "Item Code Array",
-                        "name": "[]string",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
+                        "type": "string",
+                        "description": "Item Code  filter ex. \\",
+                        "name": "codes",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -9466,16 +9448,10 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "Code Array",
-                        "name": "[]string",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
+                        "type": "string",
+                        "description": "codes filter ex. \\",
+                        "name": "codes",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -14828,16 +14804,10 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "Unit Code Array",
-                        "name": "[]string",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
+                        "type": "string",
+                        "description": "codes filter ex. \\",
+                        "name": "codes",
+                        "in": "query"
                     }
                 ],
                 "responses": {
