@@ -3,6 +3,7 @@ package product
 import (
 	"encoding/json"
 	"net/http"
+	"net/url"
 	"smlcloudplatform/internal/microservice"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
@@ -247,7 +248,7 @@ func (h ProductHttp) InfoProduct(ctx microservice.IContext) error {
 // Get Product By code array godoc
 // @Description get Product by code array
 // @Tags		Unit
-// @Param		codes	query	string		false  "Item Code  filter ex. \"c001,c002,c003\" "
+// @Param		codes	query	string		false  "Code filter, json array encode "
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -257,11 +258,19 @@ func (h ProductHttp) InfoArray(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	codes := ctx.QueryParam("codes")
-	docReq := []string{}
+	codesReq, err := url.QueryUnescape(ctx.QueryParam("codes"))
 
-	if len(codes) > 0 {
-		docReq = strings.Split(codes, ",")
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	docReq := []string{}
+	err = json.Unmarshal([]byte(codesReq), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
 	}
 
 	// where to filter array
