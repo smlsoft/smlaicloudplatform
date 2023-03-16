@@ -8579,7 +8579,7 @@ paths:
       - application/json
       description: get Inventory Option by code array
       parameters:
-      - description: Code  filter ex. \
+      - description: 'Code filter, json array encode '
         in: query
         name: codes
         type: string
@@ -9963,7 +9963,7 @@ paths:
       - application/json
       description: get ProductBarcode by code array
       parameters:
-      - description: Barcode filter ex. \
+      - description: 'Code filter, json array encode '
         in: query
         name: codes
         type: string
@@ -10077,7 +10077,7 @@ paths:
       - application/json
       description: get Product by code array
       parameters:
-      - description: Item Code  filter ex. \
+      - description: 'Code filter, json array encode '
         in: query
         name: codes
         type: string
@@ -10563,7 +10563,7 @@ paths:
       - application/json
       description: get Product Group by code array
       parameters:
-      - description: codes filter ex. \
+      - description: 'Code filter, json array encode '
         in: query
         name: codes
         type: string
@@ -13843,7 +13843,7 @@ paths:
       - application/json
       description: get unit by unit code array
       parameters:
-      - description: codes filter ex. \
+      - description: 'Code filter, json array encode '
         in: query
         name: codes
         type: string
