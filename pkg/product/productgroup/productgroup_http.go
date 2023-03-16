@@ -10,6 +10,7 @@ import (
 	"smlcloudplatform/pkg/product/productgroup/repositories"
 	"smlcloudplatform/pkg/product/productgroup/services"
 	"smlcloudplatform/pkg/utils"
+	"strings"
 )
 
 type IProductGroupHttp interface{}
@@ -282,7 +283,7 @@ func (h ProductGroupHttp) InfoProductGroup(ctx microservice.IContext) error {
 // Get Product Group By code array godoc
 // @Description get Product Group by code array
 // @Tags		Unit
-// @Param		[]string  body      []string  true  "Code Array"
+// @Param		codes	query	string		false  "codes filter ex. \"c001,c002,c003\" "
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -292,18 +293,16 @@ func (h ProductGroupHttp) InfoArray(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	input := ctx.ReadInput()
+	codes := ctx.QueryParam("codes")
 
-	docReq := &[]string{}
-	err := json.Unmarshal([]byte(input), &docReq)
+	docReq := []string{}
 
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
+	if len(codes) > 0 {
+		docReq = strings.Split(codes, ",")
 	}
 
 	// where to filter array
-	doc, err := h.svc.InfoWTFArray(shopID, *docReq)
+	doc, err := h.svc.InfoWTFArray(shopID, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

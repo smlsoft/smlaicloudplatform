@@ -247,7 +247,7 @@ func (h ProductHttp) InfoProduct(ctx microservice.IContext) error {
 // Get Product By code array godoc
 // @Description get Product by code array
 // @Tags		Unit
-// @Param		[]string  body      []string  true  "Item Code Array"
+// @Param		codes	query	string		false  "Item Code  filter ex. \"c001,c002,c003\" "
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -257,18 +257,15 @@ func (h ProductHttp) InfoArray(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	input := ctx.ReadInput()
+	codes := ctx.QueryParam("codes")
+	docReq := []string{}
 
-	docReq := &[]string{}
-	err := json.Unmarshal([]byte(input), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
+	if len(codes) > 0 {
+		docReq = strings.Split(codes, ",")
 	}
 
 	// where to filter array
-	doc, err := h.svc.InfoWTFArray(shopID, *docReq)
+	doc, err := h.svc.InfoWTFArray(shopID, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

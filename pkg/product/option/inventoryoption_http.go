@@ -7,6 +7,7 @@ import (
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/option/models"
 	"smlcloudplatform/pkg/utils"
+	"strings"
 )
 
 type OptionHttp struct {
@@ -180,7 +181,7 @@ func (h *OptionHttp) InfoInventoryOptionMain(ctx microservice.IContext) error {
 // Get Inventory Option By code array godoc
 // @Description get Inventory Option by code array
 // @Tags		Unit
-// @Param		[]string  body      []string  true  "Barcode Array"
+// @Param		codes	query	string		false  "Code  filter ex. \"c001,c002,c003\" "
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -190,18 +191,15 @@ func (h OptionHttp) InfoArray(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	input := ctx.ReadInput()
+	codes := ctx.QueryParam("codes")
+	docReq := []string{}
 
-	docReq := &[]string{}
-	err := json.Unmarshal([]byte(input), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
+	if len(codes) > 0 {
+		docReq = strings.Split(codes, ",")
 	}
 
 	// where to filter array
-	doc, err := h.optService.InfoWTFArray(shopID, *docReq)
+	doc, err := h.optService.InfoWTFArray(shopID, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

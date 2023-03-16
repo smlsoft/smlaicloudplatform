@@ -235,7 +235,7 @@ func (h UnitHttp) InfoUnit(ctx microservice.IContext) error {
 // Get Unit By unit code array godoc
 // @Description get unit by unit code array
 // @Tags		Unit
-// @Param		[]string  body      []string  true  "Unit Code Array"
+// @Param		codes	query	string		false  "codes filter ex. \"c001,c002,c003\" "
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -245,21 +245,16 @@ func (h UnitHttp) InfoArray(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	// unitCode := ctx.QueryParam("unitcode")
-	// unitCodeFilters := strings.Split(unitCode, ",")
+	codes := ctx.QueryParam("codes")
 
-	input := ctx.ReadInput()
+	docReq := []string{}
 
-	docReq := &[]string{}
-	err := json.Unmarshal([]byte(input), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
+	if len(codes) > 0 {
+		docReq = strings.Split(codes, ",")
 	}
 
 	// where to filter array
-	doc, err := h.svc.InfoUnitWTFArray(shopID, *docReq)
+	doc, err := h.svc.InfoUnitWTFArray(shopID, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
