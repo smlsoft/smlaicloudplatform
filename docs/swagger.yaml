@@ -949,6 +949,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -8577,14 +8579,10 @@ paths:
       - application/json
       description: get Inventory Option by code array
       parameters:
-      - description: Barcode Array
-        in: body
-        name: '[]string'
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
+      - description: Code  filter ex. \
+        in: query
+        name: codes
+        type: string
       responses:
         "200":
           description: OK
@@ -9965,14 +9963,10 @@ paths:
       - application/json
       description: get ProductBarcode by code array
       parameters:
-      - description: Barcode Array
-        in: body
-        name: '[]string'
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
+      - description: Barcode filter ex. \
+        in: query
+        name: codes
+        type: string
       responses:
         "200":
           description: OK
@@ -9985,7 +9979,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Unit
+      - ProductBarcode
   /product/barcode/list:
     get:
       consumes:
@@ -10083,14 +10077,10 @@ paths:
       - application/json
       description: get Product by code array
       parameters:
-      - description: Item Code Array
-        in: body
-        name: '[]string'
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
+      - description: Item Code  filter ex. \
+        in: query
+        name: codes
+        type: string
       responses:
         "200":
           description: OK
@@ -10573,14 +10563,10 @@ paths:
       - application/json
       description: get Product Group by code array
       parameters:
-      - description: Code Array
-        in: body
-        name: '[]string'
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
+      - description: codes filter ex. \
+        in: query
+        name: codes
+        type: string
       responses:
         "200":
           description: OK
@@ -13857,14 +13843,10 @@ paths:
       - application/json
       description: get unit by unit code array
       parameters:
-      - description: Unit Code Array
-        in: body
-        name: '[]string'
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
+      - description: codes filter ex. \
+        in: query
+        name: codes
+        type: string
       responses:
         "200":
           description: OK
