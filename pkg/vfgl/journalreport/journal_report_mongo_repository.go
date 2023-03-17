@@ -30,8 +30,8 @@ func (repo *JournalMongoRepository) FindCountDetailByDocs(shopID string, docs []
 	matchQuery := bson.M{
 		"shopid": shopID,
 		"docno":  bson.M{"$in": docs},
-		"vats":   bson.M{"$exists": true},
-		"taxes":  bson.M{"$exists": true},
+		"vats":   bson.M{"$exists": true, "$type": "array"},
+		"taxes":  bson.M{"$exists": true, "$type": "array"},
 	}
 
 	projectQuery := bson.M{
