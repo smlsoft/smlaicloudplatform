@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/userplant/mongopagination"
+	m "github.com/veer66/mapkha"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -23,20 +24,19 @@ func NewSearchRepository[T any](pst microservice.IPersisterMongo) SearchReposito
 
 func (repo SearchRepository[T]) Find(shopID string, searchInFields []string, q string) ([]T, error) {
 
-	searchFilterList := []interface{}{}
+	filterQuery := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+	}
 
-	for _, colName := range searchInFields {
-		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
-			Pattern: ".*" + q + ".*",
-		}}})
+	searchFilterQuery := repo.CreateTextFilter(searchInFields, q)
+
+	if len(searchFilterQuery) > 0 {
+		filterQuery["$or"] = searchFilterQuery
 	}
 
 	docList := []T{}
-	err := repo.pst.Find(new(T), bson.M{
-		"shopid":    shopID,
-		"deletedat": bson.M{"$exists": false},
-		"$or":       searchFilterList,
-	}, &docList)
+	err := repo.pst.Find(new(T), filterQuery, &docList)
 
 	if err != nil {
 		return []T{}, err
@@ -47,19 +47,9 @@ func (repo SearchRepository[T]) Find(shopID string, searchInFields []string, q s
 
 func (repo SearchRepository[T]) FindStep(shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableStep models.PageableStep) ([]T, int, error) {
 
-	searchFilterList := []interface{}{}
-
-	for _, colName := range searchInFields {
-		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
-			Pattern: ".*" + pageableStep.Query + ".*",
-			Options: "i",
-		}}})
-	}
-
 	filterQuery := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$exists": false},
-		"$or":       searchFilterList,
 	}
 
 	matchFilterList := []interface{}{}
@@ -70,6 +60,12 @@ func (repo SearchRepository[T]) FindStep(shopID string, filters map[string]inter
 
 	if len(matchFilterList) > 0 {
 		filterQuery["$and"] = matchFilterList
+	}
+
+	searchFilterQuery := repo.CreateTextFilter(searchInFields, pageableStep.Query)
+
+	if len(searchFilterQuery) > 0 {
+		filterQuery["$or"] = searchFilterQuery
 	}
 
 	tempSkip := int64(pageableStep.Skip)
@@ -113,22 +109,15 @@ func (repo SearchRepository[T]) FindStep(shopID string, filters map[string]inter
 
 func (repo SearchRepository[T]) FindPage(shopID string, searchInFields []string, pageable models.Pageable) ([]T, mongopagination.PaginationData, error) {
 
-	searchFilterList := []interface{}{}
-
-	for _, colName := range searchInFields {
-		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
-			Pattern: ".*" + pageable.Query + ".*",
-			Options: "i",
-		}}})
-	}
-
 	filterQuery := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$exists": false},
 	}
 
-	if len(searchFilterList) > 0 {
-		filterQuery["$or"] = searchFilterList
+	searchFilterQuery := repo.CreateTextFilter(searchInFields, pageable.Query)
+
+	if len(searchFilterQuery) > 0 {
+		filterQuery["$or"] = searchFilterQuery
 	}
 
 	if len(pageable.Sorts) < 1 {
@@ -153,24 +142,13 @@ func (repo SearchRepository[T]) FindPageFilter(shopID string, filters map[string
 		matchFilterList = append(matchFilterList, bson.M{key: value})
 	}
 
-	searchFilterList := []interface{}{}
+	searchFilterQuery := repo.CreateTextFilter(searchInFields, pageable.Query)
 
-	if len(pageable.Query) > 0 {
-		for _, colName := range searchInFields {
-			searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
-				Pattern: ".*" + pageable.Query + ".*",
-				Options: "i",
-			}}})
-		}
-	}
+	// matchFilterList = append(matchFilterList, searchFilterQuery...)
 
 	queryFilters := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$exists": false},
-	}
-
-	if len(searchFilterList) > 0 {
-		queryFilters["$or"] = searchFilterList
 	}
 
 	if len(matchFilterList) > 0 {
@@ -179,6 +157,10 @@ func (repo SearchRepository[T]) FindPageFilter(shopID string, filters map[string
 
 	if len(pageable.Sorts) < 1 {
 		pageable.Sorts = append(pageable.Sorts, models.KeyInt{Key: "createdat", Value: 1})
+	}
+
+	if len(searchFilterQuery) < 1 {
+		queryFilters["$or"] = searchFilterQuery
 	}
 
 	docList := []T{}
@@ -191,29 +173,68 @@ func (repo SearchRepository[T]) FindPageFilter(shopID string, filters map[string
 	return docList, pagination, nil
 }
 
-func (SearchRepository[T]) SearchTextFilter(searchInFields []string, q string) primitive.M {
-	prepareText := strings.Trim(q, " ")
-	textSearchList := strings.Split(prepareText, " ")
+var wordCut *m.Wordcut
 
-	print(textSearchList)
+func (repo SearchRepository[T]) getTokenizer() (*m.Wordcut, error) {
 
-	colFilter := []interface{}{}
-	for _, col := range searchInFields {
-		fieldFilter := []interface{}{}
-		for _, textSearch := range textSearchList {
-			fieldFilter = append(fieldFilter, bson.M{
-				col: primitive.Regex{
-					Pattern: ".*" + textSearch + ".*",
-					Options: "i",
+	if wordCut == nil {
+		dict, err := m.LoadDefaultDict()
+		if err != nil {
+			return nil, err
+		}
+
+		wordCut = m.NewWordcut(dict)
+	}
+
+	return wordCut, nil
+}
+
+func (repo SearchRepository[T]) CreateTextFilter(searchFields []string, query string) []interface{} {
+	searchTerms := repo.extractSearchTerms(query)
+	fieldFilters := repo.generateFieldFilters(searchFields, searchTerms)
+
+	return fieldFilters
+}
+
+func (repo SearchRepository[T]) extractSearchTerms(query string) []string {
+	trimmedQuery := strings.Trim(query, " ")
+	splitBySpace := strings.Split(trimmedQuery, " ")
+
+	searchTerms := []string{}
+	tokenizer, err := repo.getTokenizer()
+
+	if err != nil {
+		return searchTerms
+	}
+
+	for _, term := range splitBySpace {
+		if len(term) > 0 {
+			searchTerms = append(searchTerms, tokenizer.Segment(term)...)
+		}
+	}
+
+	return searchTerms
+}
+
+func (repo SearchRepository[T]) generateFieldFilters(searchFields []string, searchTerms []string) []interface{} {
+	fieldFilters := []interface{}{}
+
+	for _, field := range searchFields {
+		termFilters := []interface{}{}
+
+		for _, searchTerm := range searchTerms {
+			termFilters = append(termFilters, bson.M{
+				field: primitive.Regex{
+					Pattern: searchTerm,
 				},
 			})
 		}
 
-		colFilter = append(colFilter, bson.M{"$or": fieldFilter})
+		if len(termFilters) > 0 {
+			fieldFilters = append(fieldFilters, bson.M{"$and": termFilters})
+		}
 
 	}
 
-	return bson.M{
-		"$and": colFilter,
-	}
+	return fieldFilters
 }

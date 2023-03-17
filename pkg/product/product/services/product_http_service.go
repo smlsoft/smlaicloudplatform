@@ -268,7 +268,6 @@ func (svc ProductHttpService) InfoWTFArray(shopID string, codes []string) ([]int
 
 func (svc ProductHttpService) SearchProduct(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
-		"itemcode",
 		"names.name",
 	}
 

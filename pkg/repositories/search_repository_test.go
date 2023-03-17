@@ -11,6 +11,6 @@ type TestModel struct {
 
 func TestSearchRepositories(t *testing.T) {
 	repo := repositories.NewSearchRepository[models.KitchenInfo](nil)
-	xx := repo.SearchTextFilter([]string{"name_1", "sx"}, "qx ee")
+	xx := repo.CreateTextFilter([]string{"name_1", "sx"}, "okลาก่อน")
 	t.Log(xx)
 }

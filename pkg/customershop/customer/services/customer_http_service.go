@@ -210,7 +210,6 @@ func (svc CustomerHttpService) InfoCustomer(shopID string, guid string) (models.
 
 func (svc CustomerHttpService) SearchCustomer(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.CustomerInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
-		"code",
 		"names.name",
 	}
 
@@ -242,7 +241,6 @@ func (svc CustomerHttpService) SearchCustomer(shopID string, filters map[string]
 
 func (svc CustomerHttpService) SearchCustomerStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.CustomerInfo, int, error) {
 	searchInFields := []string{
-		"code",
 		"names.name",
 	}
 
