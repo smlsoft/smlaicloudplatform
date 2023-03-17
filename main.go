@@ -39,6 +39,7 @@ import (
 	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
 	"smlcloudplatform/pkg/smsreceive/smstransaction"
+	"smlcloudplatform/pkg/sysinfo"
 	"smlcloudplatform/pkg/task"
 	"smlcloudplatform/pkg/transaction/purchase"
 	"smlcloudplatform/pkg/transaction/saleinvoice"
@@ -202,6 +203,7 @@ func main() {
 
 			task.NewTaskHttp(ms, cfg),
 			smltransaction.NewSMLTransactionHttp(ms, cfg),
+			sysinfo.NewSysInfoHttp(ms, cfg),
 		}
 
 		startHttpServices(httpServices...)

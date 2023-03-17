@@ -42,6 +42,7 @@ import (
 	"smlcloudplatform/pkg/smsreceive/smstransaction"
 	"smlcloudplatform/pkg/storefront"
 	"smlcloudplatform/pkg/syncdata"
+	"smlcloudplatform/pkg/sysinfo"
 	"smlcloudplatform/pkg/task"
 	"smlcloudplatform/pkg/tools"
 	"smlcloudplatform/pkg/transaction/purchase"
@@ -173,6 +174,8 @@ func main() {
 
 		task.NewTaskHttp(ms, cfg),
 		smltransaction.NewSMLTransactionHttp(ms, cfg),
+
+		sysinfo.NewSysInfoHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)
