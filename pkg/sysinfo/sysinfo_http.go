@@ -1,8 +1,11 @@
 package sysinfo
 
 import (
+	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/product/product/models"
+	"smlcloudplatform/pkg/repositories"
 )
 
 type SysInfoHttp struct {
@@ -22,8 +25,14 @@ func (h SysInfoHttp) RouteSetup() {
 }
 
 func (h SysInfoHttp) Version(ctx microservice.IContext) error {
+
+	repo := repositories.NewSearchRepository[models.ProductInfo](nil)
+
+	txt := repo.CreateTextFilter([]string{"names.name"}, "A3331")
+
 	ctx.Response(http.StatusOK, map[string]interface{}{
 		"version": "1.0.1",
+		"q":       fmt.Sprintf("%v", txt),
 	})
 	return nil
 }
