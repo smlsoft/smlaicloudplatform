@@ -91,8 +91,9 @@ func (repo AccountPeriodMasterRepository) FindByPeriod(shopID string, period int
 func (repo AccountPeriodMasterRepository) FindAll(shopID string) ([]models.AccountPeriodMasterDoc, error) {
 
 	filterQuery := bson.M{
-		"shopid":    shopID,
-		"deletedat": bson.M{"$exists": false},
+		"shopid":     shopID,
+		"isdisabled": false,
+		"deletedat":  bson.M{"$exists": false},
 	}
 
 	findDocList := []models.AccountPeriodMasterDoc{}
