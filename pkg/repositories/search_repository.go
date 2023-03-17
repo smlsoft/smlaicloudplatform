@@ -32,7 +32,11 @@ func (repo SearchRepository[T]) Find(shopID string, searchInFields []string, q s
 	searchFilterQuery := repo.CreateTextFilter(searchInFields, q)
 
 	if len(searchFilterQuery) > 0 {
-		filterQuery["$or"] = searchFilterQuery
+		if filterQuery["$or"] == nil {
+			filterQuery["$or"] = searchFilterQuery
+		} else {
+			filterQuery["$or"] = append(filterQuery["$or"].([]interface{}), searchFilterQuery...)
+		}
 	}
 
 	docList := []T{}
@@ -65,7 +69,11 @@ func (repo SearchRepository[T]) FindStep(shopID string, filters map[string]inter
 	searchFilterQuery := repo.CreateTextFilter(searchInFields, pageableStep.Query)
 
 	if len(searchFilterQuery) > 0 {
-		filterQuery["$or"] = searchFilterQuery
+		if filterQuery["$or"] == nil {
+			filterQuery["$or"] = searchFilterQuery
+		} else {
+			filterQuery["$or"] = append(filterQuery["$or"].([]interface{}), searchFilterQuery...)
+		}
 	}
 
 	tempSkip := int64(pageableStep.Skip)
@@ -117,7 +125,11 @@ func (repo SearchRepository[T]) FindPage(shopID string, searchInFields []string,
 	searchFilterQuery := repo.CreateTextFilter(searchInFields, pageable.Query)
 
 	if len(searchFilterQuery) > 0 {
-		filterQuery["$or"] = searchFilterQuery
+		if filterQuery["$or"] == nil {
+			filterQuery["$or"] = searchFilterQuery
+		} else {
+			filterQuery["$or"] = append(filterQuery["$or"].([]interface{}), searchFilterQuery...)
+		}
 	}
 
 	if len(pageable.Sorts) < 1 {
@@ -159,8 +171,12 @@ func (repo SearchRepository[T]) FindPageFilter(shopID string, filters map[string
 		pageable.Sorts = append(pageable.Sorts, models.KeyInt{Key: "createdat", Value: 1})
 	}
 
-	if len(searchFilterQuery) < 1 {
-		queryFilters["$or"] = searchFilterQuery
+	if len(searchFilterQuery) > 0 {
+		if queryFilters["$or"] == nil {
+			queryFilters["$or"] = searchFilterQuery
+		} else {
+			queryFilters["$or"] = append(queryFilters["$or"].([]interface{}), searchFilterQuery...)
+		}
 	}
 
 	docList := []T{}
