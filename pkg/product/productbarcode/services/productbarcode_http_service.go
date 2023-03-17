@@ -202,6 +202,7 @@ func (svc ProductBarcodeHttpService) InfoWTFArray(shopID string, codes []string)
 
 func (svc ProductBarcodeHttpService) SearchProductBarcode(shopID string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
+		"barcode",
 		"names.name",
 	}
 
@@ -216,6 +217,7 @@ func (svc ProductBarcodeHttpService) SearchProductBarcode(shopID string, pageabl
 
 func (svc ProductBarcodeHttpService) SearchProductBarcodeStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeInfo, int, error) {
 	searchInFields := []string{
+		"barcode",
 		"names.name",
 	}
 
