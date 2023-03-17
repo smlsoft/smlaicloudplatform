@@ -20,6 +20,7 @@ type IAccountPeriodMasterHttpService interface {
 	DeleteAccountPeriodMasterByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoAccountPeriodMaster(shopID string, guid string) (models.AccountPeriodMasterInfo, error)
 	InfoAccountPeriodMasterByDate(shopID string, findDate time.Time) (models.AccountPeriodMasterInfo, error)
+	InfoAccountPeriodMasterByDateList(shopID string, findDateList []time.Time) ([]models.MapDateAccountPeriodMasterInfo, error)
 	SearchAccountPeriodMaster(shopID string, pageable micromodels.Pageable) ([]models.AccountPeriodMasterInfo, mongopagination.PaginationData, error)
 	SearchAccountPeriodMasterStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.AccountPeriodMasterInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.AccountPeriodMaster) error
@@ -170,6 +171,7 @@ func (svc AccountPeriodMasterHttpService) InfoAccountPeriodMaster(shopID string,
 	return findDoc.AccountPeriodMasterInfo, nil
 
 }
+
 func (svc AccountPeriodMasterHttpService) InfoAccountPeriodMasterByDate(shopID string, findDate time.Time) (models.AccountPeriodMasterInfo, error) {
 
 	findDoc, err := svc.repo.FindByDateRange(shopID, findDate, findDate)
@@ -229,7 +231,7 @@ func (svc AccountPeriodMasterHttpService) SearchAccountPeriodMasterStep(shopID s
 
 func (svc AccountPeriodMasterHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.AccountPeriodMaster) error {
 
-	err := ValidatePeriod(dataList)
+	err := svc.ValidatePeriod(dataList)
 	if err != nil {
 		return err
 	}
@@ -280,23 +282,122 @@ func (svc AccountPeriodMasterHttpService) SaveInBatch(shopID string, authUsernam
 	return nil
 }
 
-func ValidatePeriod(dataList []models.AccountPeriodMaster) error {
-	periodData := map[int]models.AccountPeriodMaster{}
+func (svc AccountPeriodMasterHttpService) InfoAccountPeriodMasterByDateList(shopID string, findDateList []time.Time) ([]models.MapDateAccountPeriodMasterInfo, error) {
 
-	for _, doc := range dataList {
-		if _, ok := periodData[doc.Period]; ok {
-			return errors.New("period is duplicate")
-		}
-		periodData[doc.Period] = doc
+	// minDate, maxDate := svc.findMinAndMaxTimes(findDateList)
+
+	periodData, err := svc.repo.FindAll(shopID)
+
+	if err != nil {
+		return []models.MapDateAccountPeriodMasterInfo{}, err
 	}
 
-	for periodKey, doc := range periodData {
-		for periodKeyCheck, docCheck := range periodData {
-			if periodKey == periodKeyCheck {
+	if len(periodData) == 0 {
+		return []models.MapDateAccountPeriodMasterInfo{}, errors.New("document not found")
+	}
+
+	mapAccountPeriodMaster := []models.MapDateAccountPeriodMasterInfo{}
+
+	for _, findDate := range findDateList {
+		tempMapeAccountPeriodMaster := svc.MapDateToAccountPeriod(periodData, findDate)
+		mapAccountPeriodMaster = append(mapAccountPeriodMaster, tempMapeAccountPeriodMaster)
+	}
+
+	return mapAccountPeriodMaster, nil
+
+}
+
+func (svc AccountPeriodMasterHttpService) MapDateToAccountPeriod(periodData []models.AccountPeriodMasterDoc, findDate time.Time) models.MapDateAccountPeriodMasterInfo {
+	tempMapeAccountPeriodMaster := models.MapDateAccountPeriodMasterInfo{}
+	tempMapeAccountPeriodMaster.PeriodDate = findDate.Format("2006-01-02")
+	tempMapeAccountPeriodMaster.PeriodData = models.AccountPeriodMasterInfo{}
+
+	for _, doc := range periodData {
+		if svc.IsInDateRange(doc.StartDate, doc.EndDate, findDate) {
+			tempMapeAccountPeriodMaster.PeriodData = doc.AccountPeriodMasterInfo
+			break
+		}
+	}
+	return tempMapeAccountPeriodMaster
+}
+
+func (svc AccountPeriodMasterHttpService) findMinAndMaxTimes(times []time.Time) (min, max time.Time) {
+	if len(times) == 0 {
+		return time.Time{}, time.Time{}
+	}
+
+	min, max = times[0], times[0]
+
+	for _, t := range times[1:] {
+		if t.Before(min) {
+			min = t
+		}
+		if t.After(max) {
+			max = t
+		}
+	}
+
+	return min, max
+}
+
+// func ValidatePeriod(dataList []models.AccountPeriodMaster) error {
+// 	periodData := map[int]models.AccountPeriodMaster{}
+
+// 	for _, doc := range dataList {
+// 		if _, ok := periodData[doc.Period]; ok {
+// 			return errors.New("period is duplicate")
+// 		}
+// 		periodData[doc.Period] = doc
+// 	}
+
+// 	for periodKey, doc := range periodData {
+// 		for periodKeyCheck, docCheck := range periodData {
+// 			if periodKey == periodKeyCheck {
+// 				continue
+// 			}
+
+// 			if InDateTimeSpan(docCheck.StartDate, docCheck.EndDate, doc.StartDate, doc.EndDate) {
+// 				return errors.New("date range invalid")
+// 			}
+// 		}
+// 	}
+// 	return nil
+// }
+
+func (svc AccountPeriodMasterHttpService) ValidatePeriod(periodList []models.AccountPeriodMaster) error {
+	periodMap, duplicatePeriodErr := svc.buildPeriodMap(periodList)
+	if duplicatePeriodErr != nil {
+		return duplicatePeriodErr
+	}
+
+	if err := svc.checkForInvalidDateRanges(periodMap); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc AccountPeriodMasterHttpService) buildPeriodMap(periodList []models.AccountPeriodMaster) (map[int]models.AccountPeriodMaster, error) {
+	periodMap := make(map[int]models.AccountPeriodMaster)
+
+	for _, period := range periodList {
+		if _, ok := periodMap[period.Period]; ok {
+			return nil, errors.New("period is duplicate")
+		}
+		periodMap[period.Period] = period
+	}
+
+	return periodMap, nil
+}
+
+func (svc AccountPeriodMasterHttpService) checkForInvalidDateRanges(periodMap map[int]models.AccountPeriodMaster) error {
+	for _, currentPeriod := range periodMap {
+		for _, comparisonPeriod := range periodMap {
+			if currentPeriod.Period == comparisonPeriod.Period {
 				continue
 			}
 
-			if InDateTimeSpan(docCheck.StartDate, docCheck.EndDate, doc.StartDate, doc.EndDate) {
+			if svc.IsInDateTimeSpan(comparisonPeriod.StartDate, comparisonPeriod.EndDate, currentPeriod.StartDate, currentPeriod.EndDate) {
 				return errors.New("date range invalid")
 			}
 		}
@@ -304,12 +405,25 @@ func ValidatePeriod(dataList []models.AccountPeriodMaster) error {
 	return nil
 }
 
-func InDateTimeSpan(fromDate, toDate, checkFromDate time.Time, checkToDate time.Time) bool {
+func (svc AccountPeriodMasterHttpService) IsInDateTimeSpan(fromDate, toDate, checkFromDate, checkToDate time.Time) bool {
 	toDate = toDate.AddDate(0, 0, 1)
 
-	rangeFrom := (checkFromDate.Equal(fromDate) || checkFromDate.After(fromDate)) || (checkToDate.Equal(fromDate) || checkToDate.After(fromDate))
-	rangeTo := (checkFromDate.Before(toDate)) || (checkToDate.Before(toDate))
+	isCheckFromDateInRange := checkFromDate.Equal(fromDate) || checkFromDate.After(fromDate)
+	isCheckToDateInRange := checkToDate.Equal(fromDate) || checkToDate.After(fromDate)
+	rangeFrom := isCheckFromDateInRange || isCheckToDateInRange
+
+	isCheckFromDateBeforeToDate := checkFromDate.Before(toDate)
+	isCheckToDateBeforeToDate := checkToDate.Before(toDate)
+	rangeTo := isCheckFromDateBeforeToDate || isCheckToDateBeforeToDate
 
 	return rangeFrom && rangeTo
+}
 
+func (svc AccountPeriodMasterHttpService) IsInDateRange(fromDate, toDate, checkDate time.Time) bool {
+	toDate = toDate.AddDate(0, 0, 1)
+
+	rangeFrom := checkDate.Equal(fromDate) || checkDate.After(fromDate)
+	rangeTo := checkDate.Before(toDate)
+
+	return rangeFrom && rangeTo
 }
