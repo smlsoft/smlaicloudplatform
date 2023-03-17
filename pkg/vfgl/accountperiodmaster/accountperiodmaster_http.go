@@ -42,7 +42,7 @@ func (h AccountPeriodMasterHttp) RouteSetup() {
 	h.ms.POST("/gl/accountperiodmaster", h.CreateAccountPeriodMaster)
 	h.ms.POST("/gl/accountperiodmaster/bulk", h.SaveBulkAccountPeriodMaster)
 	h.ms.GET("/gl/accountperiodmaster/:id", h.InfoAccountPeriodMaster)
-	h.ms.GET("/gl/accountperiodmaster/bydate", h.InfoAccountPeriodMasterByDate)
+	h.ms.GET("/gl/accountperiodmaster/by-date", h.InfoAccountPeriodMasterByDate)
 	h.ms.PUT("/gl/accountperiodmaster/:id", h.UpdateAccountPeriodMaster)
 	h.ms.DELETE("/gl/accountperiodmaster/:id", h.DeleteAccountPeriodMaster)
 	h.ms.DELETE("/gl/accountperiodmaster", h.DeleteAccountPeriodMasterByGUIDs)
@@ -238,33 +238,39 @@ func (h AccountPeriodMasterHttp) InfoAccountPeriodMaster(ctx microservice.IConte
 // Get AccountPeriodMaster godoc
 // @Description Get AccountPeriodMaster by date
 // @Tags		AccountPeriodMaster
-// @Param		date		query	string		false  "date"
+// @Param		date-list		query	string		false  "date-list"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /gl/accountperiodmaster/bydate [get]
+// @Router /gl/accountperiodmaster/by-date [get]
 func (h AccountPeriodMasterHttp) InfoAccountPeriodMasterByDate(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	layout := "2006-01-02"
-	dateStr := ctx.QueryParam("date")
+	reqDateList := ctx.QueryParam("date-list")
 
-	dateStr = strings.Trim(dateStr, " ")
-	if len(dateStr) < 1 {
-		ctx.ResponseError(400, "date format invalid.")
-		return nil
+	dateListStr := strings.Split(reqDateList, ",")
+
+	dateList := []time.Time{}
+
+	for _, dateStr := range dateListStr {
+
+		dateStr = strings.Trim(dateStr, " ")
+		if len(dateStr) < 1 {
+			continue
+		}
+
+		tempDate, err := time.Parse(layout, dateStr)
+		if err != nil {
+			continue
+		}
+
+		dateList = append(dateList, tempDate)
 	}
 
-	findDate, err := time.Parse(layout, dateStr)
-	if err != nil {
-		ctx.ResponseError(400, "date format invalid.")
-		return nil
-	}
-
-	h.ms.Logger.Debugf("Get AccountPeriodMaster %v", findDate)
-	doc, err := h.svc.InfoAccountPeriodMasterByDate(shopID, findDate)
+	doc, err := h.svc.InfoAccountPeriodMasterByDateList(shopID, dateList)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

@@ -114,3 +114,8 @@ type AccountPeriodMasterDeleteActivity struct {
 func (AccountPeriodMasterDeleteActivity) CollectionName() string {
 	return accountperiodmasterCollectionName
 }
+
+type MapDateAccountPeriodMasterInfo struct {
+	PeriodDate string                  `json:"perioddate"`
+	PeriodData AccountPeriodMasterInfo `json:"perioddata"`
+}

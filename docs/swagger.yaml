@@ -6493,15 +6493,15 @@ paths:
       - AccessToken: []
       tags:
       - AccountPeriodMaster
-  /gl/accountperiodmaster/bydate:
+  /gl/accountperiodmaster/by-date:
     get:
       consumes:
       - application/json
       description: Get AccountPeriodMaster by date
       parameters:
-      - description: date
+      - description: date-list
         in: query
-        name: date
+        name: date-list
         type: string
       responses:
         "200":

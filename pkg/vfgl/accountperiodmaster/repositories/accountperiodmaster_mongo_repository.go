@@ -25,6 +25,7 @@ type IAccountPeriodMasterRepository interface {
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.AccountPeriodMasterItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.AccountPeriodMasterDoc, error)
+	FindAll(shopID string) ([]models.AccountPeriodMasterDoc, error)
 
 	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, selectFields map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.AccountPeriodMasterInfo, int, error)
 }
@@ -85,4 +86,22 @@ func (repo AccountPeriodMasterRepository) FindByPeriod(shopID string, period int
 	}
 
 	return finDoc, nil
+}
+
+func (repo AccountPeriodMasterRepository) FindAll(shopID string) ([]models.AccountPeriodMasterDoc, error) {
+
+	filterQuery := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+	}
+
+	findDocList := []models.AccountPeriodMasterDoc{}
+
+	err := repo.pst.Find(models.AccountPeriodMasterDoc{}, filterQuery, &findDocList)
+
+	if err != nil {
+		return []models.AccountPeriodMasterDoc{}, err
+	}
+
+	return findDocList, nil
 }

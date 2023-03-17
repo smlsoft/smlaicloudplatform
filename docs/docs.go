@@ -3066,7 +3066,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/gl/accountperiodmaster/bydate": {
+        "/gl/accountperiodmaster/by-date": {
             "get": {
                 "security": [
                     {
@@ -3083,8 +3083,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "date",
-                        "name": "date",
+                        "description": "date-list",
+                        "name": "date-list",
                         "in": "query"
                     }
                 ],
