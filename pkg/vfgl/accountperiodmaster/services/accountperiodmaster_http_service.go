@@ -309,7 +309,7 @@ func (svc AccountPeriodMasterHttpService) InfoAccountPeriodMasterByDateList(shop
 
 func (svc AccountPeriodMasterHttpService) MapDateToAccountPeriod(periodData []models.AccountPeriodMasterDoc, findDate time.Time) models.MapDateAccountPeriodMasterInfo {
 	tempMapeAccountPeriodMaster := models.MapDateAccountPeriodMasterInfo{}
-	tempMapeAccountPeriodMaster.PeriodDate = findDate.Format("2006-01-02")
+	tempMapeAccountPeriodMaster.Date = findDate.Format("2006-01-02")
 	tempMapeAccountPeriodMaster.PeriodData = models.AccountPeriodMasterInfo{}
 
 	for _, doc := range periodData {
