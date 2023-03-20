@@ -13,7 +13,8 @@ type ProductBarcode struct {
 	ItemCode                 string `json:"itemcode" bson:"itemcode"`
 	Barcode                  string `json:"barcode" bson:"barcode" validate:"required,min=1"`
 	// CategoryGUID             string          `json:"categoryguid" bson:"categoryguid"`
-	ProductGroupGUID string          `json:"productgroupguid" bson:"productgroupguid"`
+	ProductGroupCode string          `json:"productgroupcode" bson:"productgroupcode"`
+	ProductGroupName models.NameX    `json:"productgroupname" bson:"productgroupname"`
 	Names            *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	XSorts           *[]models.XSort `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
 
@@ -27,7 +28,6 @@ type ProductBarcode struct {
 	ColorSelect     string           `json:"colorselect" bson:"colorselect"`
 	ColorSelectHex  string           `json:"colorselecthex" bson:"colorselecthex"`
 	// CategoryNames   *[]models.NameX  `json:"categorynames" bson:"categorynames"`
-	ProductGroupNames *[]models.NameX `json:"productgroupnames" bson:"productgroupnames"`
 }
 
 type ProductImage struct {
