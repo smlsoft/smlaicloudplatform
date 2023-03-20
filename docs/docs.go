@@ -16861,6 +16861,9 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -19474,16 +19477,12 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.ProductPrice"
                     }
                 },
-                "productgroupguid": {
+                "productgroupcode": {
                     "description": "CategoryGUID             string          ` + "`" + `json:\"categoryguid\" bson:\"categoryguid\"` + "`" + `",
                     "type": "string"
                 },
-                "productgroupnames": {
-                    "description": "CategoryNames   *[]models.NameX  ` + "`" + `json:\"categorynames\" bson:\"categorynames\"` + "`" + `",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
+                "productgroupname": {
+                    "$ref": "#/definitions/models.NameX"
                 },
                 "useimageorcolor": {
                     "type": "boolean"
