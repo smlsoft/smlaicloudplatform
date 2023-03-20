@@ -25,4 +25,6 @@ RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build  -o go-app -tags musl main.go
 FROM alpine:3.17
 WORKDIR /root/
 COPY --from=builder /go/app/go-app .
+COPY ./tdict-std.txt /root/tdict-std.txt
+
 ENTRYPOINT  /root/go-app
