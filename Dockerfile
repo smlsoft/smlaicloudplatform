@@ -6,7 +6,7 @@
 FROM golang:1.20.2-alpine3.17 AS builder
 
 RUN apk add alpine-sdk
-RUN apk add librdkafka=1.8.2-r0
+RUN apk add librdkafka=1.9.2-r0
 RUN apk add build-base
 
 WORKDIR /go/app
