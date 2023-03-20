@@ -289,28 +289,28 @@ func (svc ProductCategoryHttpService) XBarcodesSave(shopID string, authUsername 
 			continue
 		}
 
-		if findDoc.Barcodes == nil {
-			findDoc.Barcodes = &[]common.XSort{}
+		if findDoc.CodeList == nil {
+			findDoc.CodeList = &[]models.CodeXSort{}
 		}
 
-		dictXSorts := map[string]common.XSort{}
+		dictXSorts := map[string]models.CodeXSort{}
 
-		for _, tempXSort := range *findDoc.Barcodes {
+		for _, tempXSort := range *findDoc.CodeList {
 			dictXSorts[tempXSort.Code] = tempXSort
 		}
 
-		dictXSorts[xsort.Code] = common.XSort{
+		dictXSorts[xsort.Code] = models.CodeXSort{
 			Code:   xsort.Code,
 			XOrder: xsort.XOrder,
 		}
 
-		tempXSorts := []common.XSort{}
+		tempXSorts := []models.CodeXSort{}
 
 		for _, tempXSort := range dictXSorts {
 			tempXSorts = append(tempXSorts, tempXSort)
 		}
 
-		findDoc.Barcodes = &tempXSorts
+		findDoc.CodeList = &tempXSorts
 
 		findDoc.UpdatedBy = authUsername
 		findDoc.UpdatedAt = time.Now()

@@ -16,10 +16,17 @@ type ProductCategory struct {
 	ImageUri                 string          `json:"imageuri" bson:"imageuri"`
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	XSorts                   *[]models.XSort `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
-	Barcodes                 *[]models.XSort `json:"barcodes" bson:"barcodes" validate:"unique=Code,dive"`
+	CodeList                 *[]CodeXSort    `json:"codelist" bson:"codelist" validate:"unique=Code,dive"`
 	UseImageOrColor          bool            `json:"useimageorcolor" bson:"useimageorcolor"`
 	ColorSelect              string          `json:"colorselect" bson:"colorselect"`
 	ColorSelectHex           string          `json:"colorselecthex" bson:"colorselecthex"`
+}
+
+type CodeXSort struct {
+	Code     string `json:"code" bson:"code"`
+	XOrder   uint   `json:"xorder" bson:"xorder" validate:"min=0,max=4294967295"`
+	Barcode  string `json:"barcode" bson:"barcode"`
+	UnitCode string `json:"unitcode" bson:"unitcode"`
 }
 
 type ProductCategoryInfo struct {
