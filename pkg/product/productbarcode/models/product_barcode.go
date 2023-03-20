@@ -10,11 +10,12 @@ const productBarcodeCollectionName = "productBarcodes"
 
 type ProductBarcode struct {
 	models.PartitionIdentity `bson:"inline"`
-	ItemCode                 string          `json:"itemcode" bson:"itemcode"`
-	Barcode                  string          `json:"barcode" bson:"barcode" validate:"required,min=1"`
-	CategoryGUID             string          `json:"categoryguid" bson:"categoryguid"`
-	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	XSorts                   *[]models.XSort `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
+	ItemCode                 string `json:"itemcode" bson:"itemcode"`
+	Barcode                  string `json:"barcode" bson:"barcode" validate:"required,min=1"`
+	// CategoryGUID             string          `json:"categoryguid" bson:"categoryguid"`
+	ProductGroupGUID string          `json:"productgroupguid" bson:"productgroupguid"`
+	Names            *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	XSorts           *[]models.XSort `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
 
 	ItemUnitCode    string           `json:"itemunitcode" bson:"itemunitcode"`
 	ItemUnitNames   *[]models.NameX  `json:"itemunitnames" bson:"itemunitnames" validate:"required,min=1,unique=Code,dive"`
@@ -25,7 +26,8 @@ type ProductBarcode struct {
 	UseImageOrColor bool             `json:"useimageorcolor" bson:"useimageorcolor"`
 	ColorSelect     string           `json:"colorselect" bson:"colorselect"`
 	ColorSelectHex  string           `json:"colorselecthex" bson:"colorselecthex"`
-	CategoryNames   *[]models.NameX  `json:"categorynames" bson:"categorynames"`
+	// CategoryNames   *[]models.NameX  `json:"categorynames" bson:"categorynames"`
+	ProductGroupNames *[]models.NameX `json:"productgroupnames" bson:"productgroupnames"`
 }
 
 type ProductImage struct {

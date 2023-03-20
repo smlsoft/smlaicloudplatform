@@ -16861,9 +16861,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -19428,15 +19425,6 @@ const docTemplate = `{
                     "type": "string",
                     "minLength": 1
                 },
-                "categoryguid": {
-                    "type": "string"
-                },
-                "categorynames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
                 "colorselect": {
                     "type": "string"
                 },
@@ -19484,6 +19472,17 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.ProductPrice"
+                    }
+                },
+                "productgroupguid": {
+                    "description": "CategoryGUID             string          ` + "`" + `json:\"categoryguid\" bson:\"categoryguid\"` + "`" + `",
+                    "type": "string"
+                },
+                "productgroupnames": {
+                    "description": "CategoryNames   *[]models.NameX  ` + "`" + `json:\"categorynames\" bson:\"categorynames\"` + "`" + `",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
                     }
                 },
                 "useimageorcolor": {
