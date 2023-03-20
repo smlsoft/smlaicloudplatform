@@ -11,7 +11,7 @@ const productCollectionName = "products"
 type Product struct {
 	models.PartitionIdentity `bson:"inline"`
 	ItemCode                 string `json:"itemcode" bson:"itemcode" validate:"required,min=1,max=100"`
-	// CategoryGUID             string          `json:"categoryguid" bson:"categoryguid"` //
+
 	Barcodes        *[]string       `json:"barcodes" bson:"barcodes"`
 	Names           *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	MultiUnit       bool            `json:"multiunit" bson:"multiunit"`
@@ -29,10 +29,8 @@ type Product struct {
 	IsSumPoint        bool            `json:"issumpoint" bson:"issumpoint"`
 	Images            *[]ProductImage `json:"images" bson:"images"`
 	Prices            *[]ProductPrice `json:"prices" bson:"prices"`
-	CategoryNames     *[]models.NameX `json:"categorynames" bson:"categorynames"`
-
-	Categories *[]string `json:"categories" bson:"categories"`
-	GroupCode  string    `json:"groupcode" bson:"groupcode"`
+	GroupCode         string          `json:"groupcode" bson:"groupcode"`
+	GroupName         models.NameX    `json:"groupname" bson:"groupname"`
 }
 
 type ProductPrice struct {
