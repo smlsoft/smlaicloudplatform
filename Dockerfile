@@ -3,7 +3,7 @@
 ##
 ## Builder
 ##
-FROM golang:1.18.0-alpine3.15 AS builder
+FROM golang:1.20.2-alpine3.17 AS builder
 
 RUN apk add alpine-sdk
 RUN apk add librdkafka=1.8.2-r0
@@ -22,7 +22,7 @@ RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build  -o go-app -tags musl main.go
 ##
 ## Deploy
 ##
-FROM alpine:3.15 
+FROM alpine:3.17
 WORKDIR /root/
 COPY --from=builder /go/app/go-app .
 ENTRYPOINT  /root/go-app
