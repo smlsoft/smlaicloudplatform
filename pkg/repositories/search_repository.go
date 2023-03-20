@@ -194,7 +194,7 @@ var wordCut *m.Wordcut
 func (repo SearchRepository[T]) getTokenizer() (*m.Wordcut, error) {
 
 	if wordCut == nil {
-		dict, err := m.LoadDefaultDict()
+		dict, err := m.LoadDict("./tdict-std.txt")
 		if err != nil {
 			return nil, err
 		}
