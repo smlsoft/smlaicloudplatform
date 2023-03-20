@@ -342,13 +342,13 @@ definitions:
     type: object
   models.CategoryImport:
     properties:
-      barcodes:
-        items:
-          $ref: '#/definitions/models.XSort'
-        type: array
-        uniqueItems: true
       childcount:
         type: integer
+      codelist:
+        items:
+          $ref: '#/definitions/models.CodeXSort'
+        type: array
+        uniqueItems: true
       colorselect:
         type: string
       colorselecthex:
@@ -383,13 +383,13 @@ definitions:
     type: object
   models.CategoryImportInfo:
     properties:
-      barcodes:
-        items:
-          $ref: '#/definitions/models.XSort'
-        type: array
-        uniqueItems: true
       childcount:
         type: integer
+      codelist:
+        items:
+          $ref: '#/definitions/models.CodeXSort'
+        type: array
+        uniqueItems: true
       colorselect:
         type: string
       colorselecthex:
@@ -549,6 +549,19 @@ definitions:
     required:
     - name1
     - names
+    type: object
+  models.CodeXSort:
+    properties:
+      barcode:
+        type: string
+      code:
+        type: string
+      unitcode:
+        type: string
+      xorder:
+        maximum: 4294967295
+        minimum: 0
+        type: integer
     type: object
   models.Color:
     properties:
@@ -942,6 +955,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -2610,21 +2625,13 @@ definitions:
   models.Product:
     properties:
       barcodes:
-        description: CategoryGUID             string          `json:"categoryguid"
-          bson:"categoryguid"` //
         items:
           type: string
-        type: array
-      categories:
-        items:
-          type: string
-        type: array
-      categorynames:
-        items:
-          $ref: '#/definitions/models.NameX'
         type: array
       groupcode:
         type: string
+      groupname:
+        $ref: '#/definitions/models.NameX'
       images:
         items:
           $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductImage'
@@ -2693,6 +2700,10 @@ definitions:
         type: string
       colorselecthex:
         type: string
+      groupcode:
+        type: string
+      groupname:
+        $ref: '#/definitions/models.NameX'
       images:
         items:
           $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'
@@ -2723,15 +2734,6 @@ definitions:
         items:
           $ref: '#/definitions/models.ProductPrice'
         type: array
-      productgroupguid:
-        description: CategoryGUID             string          `json:"categoryguid"
-          bson:"categoryguid"`
-        type: string
-      productgroupnames:
-        description: CategoryNames   *[]models.NameX  `json:"categorynames" bson:"categorynames"`
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
       useimageorcolor:
         type: boolean
       xsorts:
@@ -2746,13 +2748,13 @@ definitions:
     type: object
   models.ProductCategory:
     properties:
-      barcodes:
-        items:
-          $ref: '#/definitions/models.XSort'
-        type: array
-        uniqueItems: true
       childcount:
         type: integer
+      codelist:
+        items:
+          $ref: '#/definitions/models.CodeXSort'
+        type: array
+        uniqueItems: true
       colorselect:
         type: string
       colorselecthex:
