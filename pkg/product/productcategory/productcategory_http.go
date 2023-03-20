@@ -77,8 +77,8 @@ func (h ProductCategoryHttp) CreateProductCategory(ctx microservice.IContext) er
 		docReq.XSorts = &[]common.XSort{}
 	}
 
-	if docReq.Barcodes == nil {
-		docReq.Barcodes = &[]common.XSort{}
+	if docReq.CodeList == nil {
+		docReq.CodeList = &[]models.CodeXSort{}
 	}
 
 	if err = ctx.Validate(docReq); err != nil {
@@ -130,8 +130,8 @@ func (h ProductCategoryHttp) UpdateProductCategory(ctx microservice.IContext) er
 		docReq.XSorts = &[]common.XSort{}
 	}
 
-	if docReq.Barcodes == nil {
-		docReq.Barcodes = &[]common.XSort{}
+	if docReq.CodeList == nil {
+		docReq.CodeList = &[]models.CodeXSort{}
 	}
 
 	if err = ctx.Validate(docReq); err != nil {
