@@ -15981,15 +15981,15 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
-                "barcodes": {
+                "childcount": {
+                    "type": "integer"
+                },
+                "codelist": {
                     "type": "array",
                     "uniqueItems": true,
                     "items": {
-                        "$ref": "#/definitions/models.XSort"
+                        "$ref": "#/definitions/models.CodeXSort"
                     }
-                },
-                "childcount": {
-                    "type": "integer"
                 },
                 "colorselect": {
                     "type": "string"
@@ -16041,15 +16041,15 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
-                "barcodes": {
+                "childcount": {
+                    "type": "integer"
+                },
+                "codelist": {
                     "type": "array",
                     "uniqueItems": true,
                     "items": {
-                        "$ref": "#/definitions/models.XSort"
+                        "$ref": "#/definitions/models.CodeXSort"
                     }
-                },
-                "childcount": {
-                    "type": "integer"
                 },
                 "colorselect": {
                     "type": "string"
@@ -16276,6 +16276,25 @@ const docTemplate = `{
                 },
                 "suggestcode": {
                     "type": "string"
+                }
+            }
+        },
+        "models.CodeXSort": {
+            "type": "object",
+            "properties": {
+                "barcode": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "unitcode": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer",
+                    "maximum": 4294967295,
+                    "minimum": 0
                 }
             }
         },
@@ -19319,26 +19338,16 @@ const docTemplate = `{
             ],
             "properties": {
                 "barcodes": {
-                    "description": "CategoryGUID             string          ` + "`" + `json:\"categoryguid\" bson:\"categoryguid\"` + "`" + ` //",
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
-                },
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "categorynames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
                     }
                 },
                 "groupcode": {
                     "type": "string"
+                },
+                "groupname": {
+                    "$ref": "#/definitions/models.NameX"
                 },
                 "images": {
                     "type": "array",
@@ -19434,6 +19443,12 @@ const docTemplate = `{
                 "colorselecthex": {
                     "type": "string"
                 },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupname": {
+                    "$ref": "#/definitions/models.NameX"
+                },
                 "images": {
                     "type": "array",
                     "items": {
@@ -19477,13 +19492,6 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.ProductPrice"
                     }
                 },
-                "productgroupcode": {
-                    "description": "CategoryGUID             string          ` + "`" + `json:\"categoryguid\" bson:\"categoryguid\"` + "`" + `",
-                    "type": "string"
-                },
-                "productgroupname": {
-                    "$ref": "#/definitions/models.NameX"
-                },
                 "useimageorcolor": {
                     "type": "boolean"
                 },
@@ -19502,15 +19510,15 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
-                "barcodes": {
+                "childcount": {
+                    "type": "integer"
+                },
+                "codelist": {
                     "type": "array",
                     "uniqueItems": true,
                     "items": {
-                        "$ref": "#/definitions/models.XSort"
+                        "$ref": "#/definitions/models.CodeXSort"
                     }
-                },
-                "childcount": {
-                    "type": "integer"
                 },
                 "colorselect": {
                     "type": "string"
