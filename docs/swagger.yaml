@@ -955,8 +955,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -2631,7 +2629,9 @@ definitions:
       groupcode:
         type: string
       groupname:
-        $ref: '#/definitions/models.NameX'
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       images:
         items:
           $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductImage'
@@ -2703,7 +2703,9 @@ definitions:
       groupcode:
         type: string
       groupname:
-        $ref: '#/definitions/models.NameX'
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
       images:
         items:
           $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'

@@ -16880,9 +16880,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -19347,7 +19344,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "groupname": {
-                    "$ref": "#/definitions/models.NameX"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "images": {
                     "type": "array",
@@ -19447,7 +19447,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "groupname": {
-                    "$ref": "#/definitions/models.NameX"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "images": {
                     "type": "array",
