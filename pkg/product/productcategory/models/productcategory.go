@@ -23,10 +23,12 @@ type ProductCategory struct {
 }
 
 type CodeXSort struct {
-	Code     string `json:"code" bson:"code"`
-	XOrder   uint   `json:"xorder" bson:"xorder" validate:"min=0,max=4294967295"`
-	Barcode  string `json:"barcode" bson:"barcode"`
-	UnitCode string `json:"unitcode" bson:"unitcode"`
+	Code      string          `json:"code" bson:"code"`
+	XOrder    uint            `json:"xorder" bson:"xorder" validate:"min=0,max=4294967295"`
+	Barcode   string          `json:"barcode" bson:"barcode"`
+	UnitCode  string          `json:"unitcode" bson:"unitcode"`
+	UnitNames *[]models.NameX `json:"unitnames" bson:"unitnames" validate:"required,min=1,unique=Code,dive"`
+	Names     *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 }
 
 type ProductCategoryInfo struct {
