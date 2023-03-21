@@ -290,7 +290,6 @@ func (svc ProductHttpService) SearchProductStep(shopID string, langCode string, 
 	selectFields := map[string]interface{}{
 		"guidfixed":       1,
 		"itemcode":        1,
-		"categoryguid":    1,
 		"barcodes":        1,
 		"names":           1,
 		"multiunit":       1,
@@ -303,7 +302,8 @@ func (svc ProductHttpService) SearchProductStep(shopID string, langCode string, 
 		"issumpoint":      1,
 		"images":          1,
 		"prices":          1,
-		"categorynames":   1,
+		"groupcode":       1,
+		"groupname":       1,
 	}
 
 	if langCode != "" {

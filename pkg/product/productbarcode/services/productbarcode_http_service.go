@@ -222,17 +222,21 @@ func (svc ProductBarcodeHttpService) SearchProductBarcodeStep(shopID string, lan
 	}
 
 	selectFields := map[string]interface{}{
-		"guidfixed":     1,
-		"barcode":       1,
-		"itemcode":      1,
-		"categoryguid":  1,
-		"names":         1,
-		"itemunitcode":  1,
-		"prices":        1,
-		"imageuri":      1,
-		"options":       1,
-		"xsorts":        1,
-		"categorynames": 1,
+		"guidfixed":       1,
+		"barcode":         1,
+		"groupcode":       1,
+		"groupname":       1,
+		"itemcode":        1,
+		"itemunitcode":    1,
+		"itemunitnames":   1,
+		"prices":          1,
+		"imageuri":        1,
+		"options":         1,
+		"xsorts":          1,
+		"images":          1,
+		"useimageorcolor": 1,
+		"colorselect":     1,
+		"colorselecthex":  1,
 	}
 
 	if langCode != "" {
