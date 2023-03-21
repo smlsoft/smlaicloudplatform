@@ -16874,9 +16874,6 @@
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -19341,7 +19338,10 @@
                     "type": "string"
                 },
                 "groupname": {
-                    "$ref": "#/definitions/models.NameX"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "images": {
                     "type": "array",
@@ -19441,7 +19441,10 @@
                     "type": "string"
                 },
                 "groupname": {
-                    "$ref": "#/definitions/models.NameX"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "images": {
                     "type": "array",
