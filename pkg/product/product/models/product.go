@@ -30,7 +30,7 @@ type Product struct {
 	Images            *[]ProductImage `json:"images" bson:"images"`
 	Prices            *[]ProductPrice `json:"prices" bson:"prices"`
 	GroupCode         string          `json:"groupcode" bson:"groupcode"`
-	GroupName         models.NameX    `json:"groupname" bson:"groupname"`
+	GroupName         *[]models.NameX `json:"groupname" bson:"groupname"`
 }
 
 type ProductPrice struct {
