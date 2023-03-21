@@ -619,6 +619,11 @@ func (svc DocumentImageService) DeleteReferenceByDocumentImageGroup(shopID strin
 		svc.repoImageGroup.Update(shopID, docImageGroup.GuidFixed, docImageGroup)
 	}
 
+	_, err = svc.messageQueueReCountDocumentImageGroup(shopID, findDoc.TaskGUID)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
 	return nil
 }
 
@@ -659,6 +664,11 @@ func (svc DocumentImageService) DeleteDocumentImageGroupByGuid(shopID string, au
 		return err
 	}
 
+	_, err = svc.messageQueueReCountDocumentImageGroup(shopID, findDocGroup.TaskGUID)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
 	return nil
 }
 
@@ -688,8 +698,9 @@ func (svc DocumentImageService) DeleteDocumentImageGroupByGuids(shopID string, a
 				return err
 			}
 
+			_, err = svc.messageQueueReCountDocumentImageGroup(shopID, findDocGroup.TaskGUID)
 			if err != nil {
-				return err
+				fmt.Println(err.Error())
 			}
 		}
 		return nil
