@@ -556,12 +556,27 @@ definitions:
         type: string
       code:
         type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       unitcode:
         type: string
+      unitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       xorder:
         maximum: 4294967295
         minimum: 0
         type: integer
+    required:
+    - names
+    - unitnames
     type: object
   models.Color:
     properties:
@@ -955,6 +970,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:

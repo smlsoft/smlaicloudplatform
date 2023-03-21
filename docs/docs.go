@@ -16281,6 +16281,10 @@ const docTemplate = `{
         },
         "models.CodeXSort": {
             "type": "object",
+            "required": [
+                "names",
+                "unitnames"
+            ],
             "properties": {
                 "barcode": {
                     "type": "string"
@@ -16288,8 +16292,24 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "unitcode": {
                     "type": "string"
+                },
+                "unitnames": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "xorder": {
                     "type": "integer",
@@ -16880,6 +16900,9 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
