@@ -35,9 +35,9 @@ func NewEmployeeHttp(ms *microservice.Microservice, cfg microservice.IConfig) Em
 func (h EmployeeHttp) RouteSetup() {
 	// h.ms.POST("/employee/login", h.Login)
 	h.ms.POST("/employee", h.Register)
-	h.ms.GET("/employee/:username", h.InfoEmployee)
+	h.ms.GET("/employee/:code", h.InfoEmployee)
 	h.ms.GET("/employee", h.SearchEmployee)
-	h.ms.PUT("/employee/:username", h.Update)
+	h.ms.PUT("/employee/:code", h.Update)
 	h.ms.PUT("/employee/password", h.UpdatePassword)
 }
 
@@ -128,19 +128,19 @@ func (h EmployeeHttp) Register(ctx microservice.IContext) error {
 // @Failure		400 {object}	models.AuthResponseFailed
 // @Accept 		json
 // @Security     AccessToken
-// @Router		/employee/{username} [put]
+// @Router		/employee/{code} [put]
 func (h EmployeeHttp) Update(ctx microservice.IContext) error {
 	userAuthInfo := ctx.UserInfo()
 	authUsername := userAuthInfo.Username
 	shopID := userAuthInfo.ShopID
 	input := ctx.ReadInput()
 
-	username := ctx.Param("username")
+	username := ctx.Param("code")
 
 	userReq := models.EmployeeRequestUpdate{}
 	err := json.Unmarshal([]byte(input), &userReq)
 
-	userReq.Username = username
+	userReq.Code = username
 
 	if err != nil {
 		ctx.ResponseError(400, "user payload invalid")
@@ -214,14 +214,14 @@ func (h EmployeeHttp) UpdatePassword(ctx microservice.IContext) error {
 // @Success		200	{array}	models.EmployeePageResponse
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /employee/{username} [get]
+// @Router /employee/{codew} [get]
 func (h EmployeeHttp) InfoEmployee(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	username := ctx.Param("username")
+	code := ctx.Param("code")
 
-	docList, err := h.empService.Get(shopID, username)
+	docList, err := h.empService.Get(shopID, code)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

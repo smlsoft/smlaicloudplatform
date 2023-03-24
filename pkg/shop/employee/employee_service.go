@@ -20,7 +20,7 @@ import (
 type IEmployeeService interface {
 	Login(shopID string, loginReq models.EmployeeRequestLogin) (*models.EmployeeInfo, error)
 	Register(shopID string, authUsername string, emp models.EmployeeRequestRegister) (string, error)
-	Get(shopID string, username string) (models.EmployeeInfo, error)
+	Get(shopID string, code string) (models.EmployeeInfo, error)
 	List(shopID string, pageable micromodels.Pageable) ([]models.EmployeeInfo, mongopagination.PaginationData, error)
 	Update(shopID string, authUsername string, emp models.EmployeeRequestUpdate) error
 	UpdatePassword(shopID string, authUsername string, emp models.EmployeeRequestPassword) error
@@ -48,16 +48,16 @@ func NewEmployeeService(repo IEmployeeRepository, syncCacheRepo mastersync.IMast
 
 func (svc EmployeeService) Login(shopID string, loginReq models.EmployeeRequestLogin) (*models.EmployeeInfo, error) {
 
-	loginReq.Username = strings.TrimSpace(loginReq.Username)
+	loginReq.Code = strings.TrimSpace(loginReq.Code)
 
-	findUser, err := svc.repo.FindEmployeeByUsername(shopID, loginReq.Username)
+	findUser, err := svc.repo.FindEmployeeByCode(shopID, loginReq.Code)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return nil, errors.New("auth: database connect error")
 	}
 
-	if len(findUser.Username) < 1 {
-		return nil, errors.New("username is exists")
+	if len(findUser.Code) < 1 {
+		return nil, errors.New("user code is exists")
 	}
 
 	passwordInvalid := !utils.CheckHashPassword(loginReq.Password, findUser.Password)
@@ -78,16 +78,7 @@ func (svc EmployeeService) Register(shopID string, authUsername string, emp mode
 	}
 
 	if len(findUserCode.Code) > 0 {
-		return "", errors.New("code is exists")
-	}
-
-	userFind, err := svc.repo.FindEmployeeByUsername(shopID, emp.Username)
-	if err != nil && err.Error() != "mongo: no documents in result" {
-		return "", err
-	}
-
-	if len(userFind.Username) > 0 {
-		return "", errors.New("username is exists")
+		return "", errors.New("user code is exists")
 	}
 
 	hashPassword, err := utils.HashPassword(emp.Password)
@@ -119,8 +110,8 @@ func (svc EmployeeService) Register(shopID string, authUsername string, emp mode
 	return newGuid, nil
 }
 
-func (svc EmployeeService) Get(shopID string, username string) (models.EmployeeInfo, error) {
-	doc, err := svc.repo.FindEmployeeByUsername(shopID, username)
+func (svc EmployeeService) Get(shopID string, code string) (models.EmployeeInfo, error) {
+	doc, err := svc.repo.FindEmployeeByCode(shopID, code)
 
 	if err != nil {
 		return models.EmployeeInfo{}, err
@@ -142,13 +133,13 @@ func (svc EmployeeService) List(shopID string, pageable micromodels.Pageable) ([
 
 func (svc EmployeeService) Update(shopID string, authUsername string, emp models.EmployeeRequestUpdate) error {
 
-	userFind, err := svc.repo.FindEmployeeByUsername(shopID, emp.Username)
+	userFind, err := svc.repo.FindEmployeeByCode(shopID, emp.Code)
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return err
 	}
 
-	if len(userFind.Username) < 1 {
-		return errors.New("username is exists")
+	if len(userFind.Code) < 1 {
+		return errors.New("user code is exists")
 	}
 
 	userFind.Name = emp.Name
@@ -171,13 +162,13 @@ func (svc EmployeeService) Update(shopID string, authUsername string, emp models
 
 func (svc EmployeeService) UpdatePassword(shopID string, authUsername string, emp models.EmployeeRequestPassword) error {
 
-	userFind, err := svc.repo.FindEmployeeByUsername(shopID, emp.Username)
+	userFind, err := svc.repo.FindEmployeeByCode(shopID, emp.Code)
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return err
 	}
 
-	if len(userFind.Username) < 1 {
-		return errors.New("username is exists")
+	if len(userFind.Code) < 1 {
+		return errors.New("user code is exists")
 	}
 
 	hashPassword, err := utils.HashPassword(emp.Password)
