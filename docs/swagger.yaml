@@ -236,8 +236,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       name1:
         maxLength: 255
         type: string
@@ -253,7 +253,14 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -559,24 +566,17 @@ definitions:
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
       unitcode:
         type: string
       unitnames:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
       xorder:
         maximum: 4294967295
         minimum: 0
         type: integer
-    required:
-    - names
-    - unitnames
     type: object
   models.Color:
     properties:
@@ -896,7 +896,12 @@ definitions:
     properties:
       code:
         type: string
+      email:
+        type: string
+      isenabled:
+        type: boolean
       name:
+        description: Username       string    `json:"username" bson:"username"`
         type: string
       profilepicture:
         type: string
@@ -904,16 +909,19 @@ definitions:
         items:
           type: string
         type: array
-      username:
-        type: string
     type: object
   models.EmployeeInfo:
     properties:
       code:
         type: string
+      email:
+        type: string
       guidfixed:
         type: string
+      isenabled:
+        type: boolean
       name:
+        description: Username       string    `json:"username" bson:"username"`
         type: string
       profilepicture:
         type: string
@@ -921,8 +929,6 @@ definitions:
         items:
           type: string
         type: array
-      username:
-        type: string
     type: object
   models.EmployeePageResponse:
     properties:
@@ -937,25 +943,30 @@ definitions:
     type: object
   models.EmployeeRequestLogin:
     properties:
+      code:
+        type: string
       password:
         type: string
       shopid:
         type: string
-      username:
-        type: string
     type: object
   models.EmployeeRequestPassword:
     properties:
-      password:
+      code:
         type: string
-      username:
+      password:
         type: string
     type: object
   models.EmployeeRequestUpdate:
     properties:
       code:
         type: string
+      email:
+        type: string
+      isenabled:
+        type: boolean
       name:
+        description: Username       string    `json:"username" bson:"username"`
         type: string
       profilepicture:
         type: string
@@ -963,8 +974,6 @@ definitions:
         items:
           type: string
         type: array
-      username:
-        type: string
     type: object
   models.Image:
     properties:
@@ -1094,8 +1103,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1113,6 +1122,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1128,6 +1139,11 @@ definitions:
         maxLength: 50
         type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1236,8 +1252,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1255,6 +1271,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1270,6 +1288,11 @@ definitions:
         maxLength: 50
         type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1428,8 +1451,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1447,6 +1470,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1462,6 +1487,11 @@ definitions:
         maxLength: 50
         type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -2870,9 +2900,16 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
+      normalprice:
+        type: number
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
     type: object
   models.ProductUnit:
@@ -3058,10 +3095,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
       linenumber:
         type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -3079,6 +3116,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3094,6 +3133,10 @@ definitions:
         maxLength: 50
         type: string
       price:
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       qty:
         type: number
@@ -3477,10 +3520,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
       linenumber:
         type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -3498,6 +3541,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3513,6 +3558,10 @@ definitions:
         maxLength: 50
         type: string
       price:
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       qty:
         type: number
@@ -6034,26 +6083,7 @@ paths:
       summary: Create Employee
       tags:
       - Employee
-  /employee/{username}:
-    get:
-      consumes:
-      - application/json
-      description: List Employee
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.EmployeePageResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Employee
+  /employee/{code}:
     put:
       consumes:
       - application/json
@@ -6082,6 +6112,26 @@ paths:
       security:
       - AccessToken: []
       summary: Update Employee
+      tags:
+      - Employee
+  /employee/{codew}:
+    get:
+      consumes:
+      - application/json
+      description: List Employee
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.EmployeePageResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
       tags:
       - Employee
   /employee/login:
@@ -12842,6 +12892,30 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SMLTransaction
+    get:
+      consumes:
+      - application/json
+      description: Create SMLTransaction
+      parameters:
+      - description: SMLTransactionRequest
+        in: body
+        name: SMLTransactionRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.SMLTransactionRequest'
+      responses:
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
