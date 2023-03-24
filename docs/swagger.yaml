@@ -236,8 +236,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -253,14 +253,7 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -304,6 +297,24 @@ definitions:
     required:
     - banknames
     - names
+    type: object
+  models.Branch:
+    properties:
+      code:
+        type: integer
+      lat:
+        type: string
+      lng:
+        type: string
+      name:
+        maxLength: 100
+        minLength: 1
+        type: string
+      telephone:
+        type: string
+    required:
+    - code
+    - name
     type: object
   models.BulkInsertResponse:
     properties:
@@ -1103,8 +1114,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1122,8 +1133,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1139,11 +1148,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1252,8 +1256,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1271,8 +1275,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1288,11 +1290,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1451,8 +1448,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1470,8 +1467,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1487,11 +1482,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -2673,6 +2663,11 @@ definitions:
         items:
           type: string
         type: array
+      branches:
+        items:
+          type: integer
+        type: array
+        uniqueItems: true
       groupcode:
         type: string
       groupname:
@@ -2683,6 +2678,8 @@ definitions:
         items:
           $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductImage'
         type: array
+      ismultiplebranch:
+        type: boolean
       issumpoint:
         type: boolean
       itemcode:
@@ -2712,9 +2709,7 @@ definitions:
       unitcostnames:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
       units:
         items:
           $ref: '#/definitions/models.ProductUnit'
@@ -2724,9 +2719,7 @@ definitions:
       unitstandardnames:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
       useserialnumber:
         type: boolean
       vattype:
@@ -2735,14 +2728,17 @@ definitions:
     - itemcode
     - names
     - unit
-    - unitcostnames
-    - unitstandardnames
     type: object
   models.ProductBarcode:
     properties:
       barcode:
         minLength: 1
         type: string
+      branches:
+        items:
+          type: integer
+        type: array
+        uniqueItems: true
       colorselect:
         type: string
       colorselecthex:
@@ -2759,6 +2755,8 @@ definitions:
         type: array
       imageuri:
         type: string
+      ismultiplebranch:
+        type: boolean
       itemcode:
         type: string
       itemunitcode:
@@ -2766,9 +2764,7 @@ definitions:
       itemunitnames:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -2792,7 +2788,6 @@ definitions:
         uniqueItems: true
     required:
     - barcode
-    - itemunitnames
     - names
     type: object
   models.ProductCategory:
@@ -2900,16 +2895,9 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
+      keynumber:
+        type: integer
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
     type: object
   models.ProductUnit:
@@ -3095,10 +3083,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -3116,8 +3104,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3133,10 +3119,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -3520,10 +3502,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -3541,8 +3523,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3558,10 +3538,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -12766,6 +12742,202 @@ paths:
       - AccessToken: []
       tags:
       - Shop
+  /shop/branch:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Branch
+      parameters:
+      - description: Branch GUIDs
+        in: body
+        name: Branch
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Branch
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Branch
+    post:
+      consumes:
+      - application/json
+      description: Create Branch
+      parameters:
+      - description: Branch
+        in: body
+        name: Branch
+        required: true
+        schema:
+          $ref: '#/definitions/models.Branch'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Branch
+  /shop/branch/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Branch
+      parameters:
+      - description: Branch ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Branch
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Branch ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Branch
+    put:
+      consumes:
+      - application/json
+      description: Update Branch
+      parameters:
+      - description: Branch ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Branch
+        in: body
+        name: Branch
+        required: true
+        schema:
+          $ref: '#/definitions/models.Branch'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Branch
+  /shop/branch/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Branch
   /shop/permission:
     put:
       consumes:
