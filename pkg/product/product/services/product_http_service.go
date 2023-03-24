@@ -304,6 +304,7 @@ func (svc ProductHttpService) SearchProductStep(shopID string, langCode string, 
 		"prices":          1,
 		"groupcode":       1,
 		"groupname":       1,
+		"branches":        1,
 	}
 
 	if langCode != "" {

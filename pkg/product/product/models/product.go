@@ -20,9 +20,9 @@ type Product struct {
 	Unit            ProductUnit     `json:"unit" bson:"unit" validate:"required"`
 
 	UnitCost          string          `json:"unitcost" bson:"unitcost"`
-	UnitCostNames     *[]models.NameX `json:"unitcostnames" bson:"unitcostnames" validate:"required,min=1,unique=Code,dive"`
+	UnitCostNames     *[]models.NameX `json:"unitcostnames" bson:"unitcostnames"`
 	UnitStandard      string          `json:"unitstandard" bson:"unitstandard"`
-	UnitStandardNames *[]models.NameX `json:"unitstandardnames" bson:"unitstandardnames" validate:"required,min=1,unique=Code,dive"`
+	UnitStandardNames *[]models.NameX `json:"unitstandardnames" bson:"unitstandardnames"`
 	ItemStockType     int8            `json:"itemstocktype" bson:"itemstocktype"`
 	ItemType          int8            `json:"itemtype" bson:"itemtype"`
 	VatType           int8            `json:"vattype" bson:"vattype"`
@@ -31,6 +31,8 @@ type Product struct {
 	Prices            *[]ProductPrice `json:"prices" bson:"prices"`
 	GroupCode         string          `json:"groupcode" bson:"groupcode"`
 	GroupName         *[]models.NameX `json:"groupname" bson:"groupname"`
+	Branches          *[]uint16       `json:"branches" bson:"branches" validate:"unique"`
+	IsMultipleBranch  bool            `json:"ismultiplebranch" bson:"ismultiplebranch"`
 }
 
 type ProductPrice struct {

@@ -35,6 +35,7 @@ import (
 	"smlcloudplatform/pkg/restaurant/shopzone"
 	"smlcloudplatform/pkg/restaurant/staff"
 	"smlcloudplatform/pkg/shop"
+	"smlcloudplatform/pkg/shop/branch"
 	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
 	"smlcloudplatform/pkg/smsreceive/smspatterns"
@@ -176,6 +177,7 @@ func main() {
 		smltransaction.NewSMLTransactionHttp(ms, cfg),
 
 		sysinfo.NewSysInfoHttp(ms, cfg),
+		branch.NewBranchHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)
