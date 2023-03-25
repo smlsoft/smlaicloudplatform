@@ -6,6 +6,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/models"
+	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 )
 
@@ -255,7 +256,7 @@ func (h EmployeeHttp) SearchEmployee(ctx microservice.IContext) error {
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.empService.List(shopID, pageable)
+	docList, pagination, err := h.empService.SearchEmployee(shopID, map[string]interface{}{}, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -270,5 +271,43 @@ func (h EmployeeHttp) SearchEmployee(ctx microservice.IContext) error {
 			Pagination: pagination,
 		})
 
+	return nil
+}
+
+// List Employee godoc
+// @Description search limit offset
+// @Tags		Employee
+// @Param		q		query	string		false  "Search Value"
+// @Param		offset	query	integer		false  "offset"
+// @Param		limit	query	integer		false  "limit"
+// @Param		lang	query	string		false  "lang"
+// @Param		category	query	string		false  "category guid"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /employee/list [get]
+func (h EmployeeHttp) SearchEmployeeLimit(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	pageableStep := utils.GetPageableStep(ctx.QueryParam)
+
+	lang := ctx.QueryParam("lang")
+
+	filters := map[string]interface{}{}
+
+	docList, total, err := h.empService.SearchEmployeeStep(shopID, lang, filters, pageableStep)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docList,
+		Total:   total,
+	})
 	return nil
 }
