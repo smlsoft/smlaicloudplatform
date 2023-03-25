@@ -15,13 +15,15 @@ import (
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IEmployeeService interface {
 	Login(shopID string, loginReq models.EmployeeRequestLogin) (*models.EmployeeInfo, error)
 	Register(shopID string, authUsername string, emp models.EmployeeRequestRegister) (string, error)
 	Get(shopID string, code string) (models.EmployeeInfo, error)
-	List(shopID string, pageable micromodels.Pageable) ([]models.EmployeeInfo, mongopagination.PaginationData, error)
+	SearchEmployee(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.EmployeeInfo, mongopagination.PaginationData, error)
+	SearchEmployeeStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.EmployeeInfo, int, error)
 	Update(shopID string, authUsername string, emp models.EmployeeRequestUpdate) error
 	UpdatePassword(shopID string, authUsername string, emp models.EmployeeRequestPassword) error
 
@@ -120,17 +122,6 @@ func (svc EmployeeService) Get(shopID string, code string) (models.EmployeeInfo,
 	return doc.EmployeeInfo, nil
 }
 
-func (svc EmployeeService) List(shopID string, pageable micromodels.Pageable) ([]models.EmployeeInfo, mongopagination.PaginationData, error) {
-
-	docList, pagination, err := svc.repo.FindPageEmployeeByShopID(shopID, pageable)
-
-	if err != nil {
-		return []models.EmployeeInfo{}, pagination, err
-	}
-
-	return docList, pagination, nil
-}
-
 func (svc EmployeeService) Update(shopID string, authUsername string, emp models.EmployeeRequestUpdate) error {
 
 	userFind, err := svc.repo.FindEmployeeByCode(shopID, emp.Code)
@@ -191,6 +182,47 @@ func (svc EmployeeService) UpdatePassword(shopID string, authUsername string, em
 	svc.saveMasterSync(shopID)
 
 	return nil
+}
+
+func (svc EmployeeService) SearchEmployee(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.EmployeeInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
+		"itemcode",
+		"names.name",
+	}
+
+	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
+
+	if err != nil {
+		return []models.EmployeeInfo{}, pagination, err
+	}
+
+	return docList, pagination, nil
+}
+
+func (svc EmployeeService) SearchEmployeeStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.EmployeeInfo, int, error) {
+	searchInFields := []string{
+		"itemcode",
+		"names.name",
+	}
+
+	selectFields := map[string]interface{}{
+		"guidfixed": 1,
+		"itemcode":  1,
+	}
+
+	if langCode != "" {
+		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
+	} else {
+		selectFields["names"] = 1
+	}
+
+	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
+
+	if err != nil {
+		return []models.EmployeeInfo{}, 0, err
+	}
+
+	return docList, total, nil
 }
 
 func (svc EmployeeService) saveMasterSync(shopID string) {

@@ -22,10 +22,14 @@ type IEmployeeRepository interface {
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.EmployeeActivity, mongopagination.PaginationData, error)
 	FindDeletedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.EmployeeDeleteActivity, error)
 	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.EmployeeActivity, error)
+
+	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, selectFields map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.EmployeeInfo, int, error)
+	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.EmployeeInfo, mongopagination.PaginationData, error)
 }
 
 type EmployeeRepository struct {
 	pst microservice.IPersisterMongo
+	repositories.SearchRepository[models.EmployeeInfo]
 	repositories.ActivityRepository[models.EmployeeActivity, models.EmployeeDeleteActivity]
 }
 
