@@ -15,7 +15,6 @@ import (
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 
 	"github.com/userplant/mongopagination"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IEmployeeService interface {
@@ -201,19 +200,17 @@ func (svc EmployeeService) SearchEmployee(shopID string, filters map[string]inte
 
 func (svc EmployeeService) SearchEmployeeStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.EmployeeInfo, int, error) {
 	searchInFields := []string{
-		"itemcode",
-		"names.name",
+		"code",
+		"name",
 	}
 
 	selectFields := map[string]interface{}{
-		"guidfixed": 1,
-		"itemcode":  1,
-	}
-
-	if langCode != "" {
-		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
-	} else {
-		selectFields["names"] = 1
+		"guidfixed":      1,
+		"code":           1,
+		"email":          1,
+		"profilepicture": 1,
+		"roles":          1,
+		"isenabled":      1,
 	}
 
 	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
