@@ -236,8 +236,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -253,14 +253,7 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -892,70 +885,31 @@ definitions:
       success:
         type: boolean
     type: object
-  models.Employee:
-    properties:
-      code:
-        type: string
-      email:
-        type: string
-      isenabled:
-        type: boolean
-      name:
-        description: Username       string    `json:"username" bson:"username"`
-        type: string
-      profilepicture:
-        type: string
-      roles:
-        items:
-          type: string
-        type: array
-    type: object
-  models.EmployeeInfo:
-    properties:
-      code:
-        type: string
-      email:
-        type: string
-      guidfixed:
-        type: string
-      isenabled:
-        type: boolean
-      name:
-        description: Username       string    `json:"username" bson:"username"`
-        type: string
-      profilepicture:
-        type: string
-      roles:
-        items:
-          type: string
-        type: array
-    type: object
-  models.EmployeePageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/models.EmployeeInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
-  models.EmployeeRequestLogin:
-    properties:
-      code:
-        type: string
-      password:
-        type: string
-      shopid:
-        type: string
-    type: object
   models.EmployeeRequestPassword:
     properties:
       code:
         type: string
       password:
         type: string
+    type: object
+  models.EmployeeRequestRegister:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+      isenabled:
+        type: boolean
+      name:
+        type: string
+      password:
+        type: string
+      profilepicture:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
     type: object
   models.EmployeeRequestUpdate:
     properties:
@@ -966,7 +920,6 @@ definitions:
       isenabled:
         type: boolean
       name:
-        description: Username       string    `json:"username" bson:"username"`
         type: string
       profilepicture:
         type: string
@@ -1103,8 +1056,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1122,8 +1075,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1139,11 +1090,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1252,8 +1198,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1271,8 +1217,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1288,11 +1232,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1451,8 +1390,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1470,8 +1409,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1487,11 +1424,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -2900,16 +2832,9 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
+      keynumber:
+        type: integer
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
     type: object
   models.ProductUnit:
@@ -3095,10 +3020,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -3116,8 +3041,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3133,10 +3056,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -3520,10 +3439,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -3541,8 +3460,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3558,10 +3475,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -6025,185 +5938,11 @@ paths:
       - AccessToken: []
       tags:
       - DocumentImageGroup
-  /employee:
-    get:
-      consumes:
-      - application/json
-      description: List Employee
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Size
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.EmployeePageResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Employee
-    post:
-      consumes:
-      - application/json
-      description: For Create Employee
-      parameters:
-      - description: Register Employee
-        in: body
-        name: User
-        required: true
-        schema:
-          $ref: '#/definitions/models.Employee'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      summary: Create Employee
-      tags:
-      - Employee
-  /employee/{code}:
-    get:
-      consumes:
-      - application/json
-      description: List Employee
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.EmployeePageResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Employee
+  /employee/password:
     put:
       consumes:
       - application/json
-      description: Update Employee
-      parameters:
-      - description: Employee username
-        in: path
-        name: username
-        required: true
-        type: string
-      - description: Employee
-        in: body
-        name: Employee
-        required: true
-        schema:
-          $ref: '#/definitions/models.EmployeeRequestUpdate'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccess'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      summary: Update Employee
-      tags:
-      - Employee
-  /employee/list:
-    get:
-      consumes:
-      - application/json
-      description: search limit offset
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: offset
-        in: query
-        name: offset
-        type: integer
-      - description: limit
-        in: query
-        name: limit
-        type: integer
-      - description: lang
-        in: query
-        name: lang
-        type: string
-      - description: category guid
-        in: query
-        name: category
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.ApiResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Employee
-  /employee/login:
-    post:
-      consumes:
-      - application/json
-      description: Validate Employee
-      parameters:
-      - description: EmployeeUserPassword
-        in: body
-        name: EmployeeUserPassword
-        required: true
-        schema:
-          $ref: '#/definitions/models.EmployeeRequestLogin'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.EmployeeInfo'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Employee
-  /employee/password/{id}:
-    put:
-      consumes:
-      - application/json
-      description: For User Register Application
+      description: Update Password Employee
       parameters:
       - description: Employee ID
         in: path
@@ -6227,7 +5966,7 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
-      summary: Register An Account
+      summary: Update Password Employee
       tags:
       - Employee
   /favorite-shop:
@@ -12806,6 +12545,202 @@ paths:
       - AccessToken: []
       tags:
       - Shop
+  /shop/employee:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Employee
+      parameters:
+      - description: Employee GUIDs
+        in: body
+        name: Employee
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Employee
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Employee
+    post:
+      consumes:
+      - application/json
+      description: Create Employee
+      parameters:
+      - description: Employee
+        in: body
+        name: Employee
+        required: true
+        schema:
+          $ref: '#/definitions/models.EmployeeRequestRegister'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Employee
+  /shop/employee/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Employee
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Employee
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Employee
+    put:
+      consumes:
+      - application/json
+      description: Update Employee
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Employee
+        in: body
+        name: Employee
+        required: true
+        schema:
+          $ref: '#/definitions/models.EmployeeRequestUpdate'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Employee
+  /shop/employee/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Employee
   /shop/permission:
     put:
       consumes:
