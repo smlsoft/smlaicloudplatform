@@ -43,7 +43,7 @@ func (h EmployeeHttp) RouteSetup() {
 	h.ms.POST("/shop/employee", h.CreateEmployee)
 	h.ms.GET("/shop/employee/:id", h.InfoEmployee)
 	h.ms.PUT("/shop/employee/:id", h.UpdateEmployee)
-	h.ms.PUT("/employee/password", h.UpdatePassword)
+	h.ms.PUT("/shop/employee/password", h.UpdatePassword)
 	h.ms.DELETE("/shop/employee/:id", h.DeleteEmployee)
 	h.ms.DELETE("/shop/employee", h.DeleteEmployeeByGUIDs)
 }
