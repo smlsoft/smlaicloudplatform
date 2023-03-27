@@ -205,12 +205,12 @@ func (svc EmployeeService) SearchEmployeeStep(shopID string, langCode string, fi
 	}
 
 	selectFields := map[string]interface{}{
-		"guidfixed":      1,
-		"code":           1,
-		"email":          1,
-		"profilepicture": 1,
-		"roles":          1,
-		"isenabled":      1,
+		// "guidfixed":      1,
+		// "code":           1,
+		// "email":          1,
+		// "profilepicture": 1,
+		// "roles":          1,
+		// "isenabled":      1,
 	}
 
 	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
