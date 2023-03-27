@@ -2571,7 +2571,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/employee/{codew}": {
+        "/employee/{code}": {
             "get": {
                 "security": [
                     {
@@ -2602,9 +2602,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/employee/{code}": {
+            },
             "put": {
                 "security": [
                     {
