@@ -6060,6 +6060,25 @@ paths:
       tags:
       - Employee
   /employee/{code}:
+    get:
+      consumes:
+      - application/json
+      description: List Employee
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.EmployeePageResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Employee
     put:
       consumes:
       - application/json
@@ -6088,26 +6107,6 @@ paths:
       security:
       - AccessToken: []
       summary: Update Employee
-      tags:
-      - Employee
-  /employee/{codew}:
-    get:
-      consumes:
-      - application/json
-      description: List Employee
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.EmployeePageResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
       tags:
       - Employee
   /employee/list:

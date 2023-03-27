@@ -2565,7 +2565,7 @@
                 }
             }
         },
-        "/employee/{codew}": {
+        "/employee/{code}": {
             "get": {
                 "security": [
                     {
@@ -2596,9 +2596,7 @@
                         }
                     }
                 }
-            }
-        },
-        "/employee/{code}": {
+            },
             "put": {
                 "security": [
                     {
