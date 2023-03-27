@@ -6,7 +6,6 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/member"
 	"smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/utils"
 	"strings"
 	"time"
@@ -17,6 +16,9 @@ import (
 	"smlcloudplatform/pkg/restaurant/shopzone"
 
 	"smlcloudplatform/pkg/mastersync/services"
+
+	employeeRepo "smlcloudplatform/pkg/shop/employee/repositories"
+	employeeService "smlcloudplatform/pkg/shop/employee/services"
 
 	productRepo "smlcloudplatform/pkg/product/product/repositories"
 	productService "smlcloudplatform/pkg/product/product/services"
@@ -122,8 +124,8 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	activityModuleManager.Add(svcMember)
 
 	// Employee
-	repoEmployee := employee.NewEmployeeRepository(pst)
-	svcEmployee := employee.NewEmployeeService(repoEmployee, masterSyncCacheRepo)
+	repoEmployee := employeeRepo.NewEmployeeRepository(pst)
+	svcEmployee := employeeService.NewEmployeeHttpService(repoEmployee, masterSyncCacheRepo, utils.HashPassword)
 	activityModuleManager.Add(svcEmployee)
 
 	// Bank Master

@@ -5,170 +5,306 @@ import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
-	"smlcloudplatform/pkg/models"
 	common "smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/shop/employee/models"
+	"smlcloudplatform/pkg/shop/employee/repositories"
+	"smlcloudplatform/pkg/shop/employee/services"
 	"smlcloudplatform/pkg/utils"
 )
 
 type IEmployeeHttp interface{}
 
 type EmployeeHttp struct {
-	ms         *microservice.Microservice
-	cfg        microservice.IConfig
-	empService IEmployeeService
+	ms  *microservice.Microservice
+	cfg microservice.IConfig
+	svc services.IEmployeeHttpService
 }
 
 func NewEmployeeHttp(ms *microservice.Microservice, cfg microservice.IConfig) EmployeeHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
-	empRepo := NewEmployeeRepository(pst)
+	repo := repositories.NewEmployeeRepository(pst)
+
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	empService := NewEmployeeService(empRepo, masterSyncCacheRepo)
+	svc := services.NewEmployeeHttpService(repo, masterSyncCacheRepo, utils.HashPassword)
 
 	return EmployeeHttp{
-		ms:         ms,
-		cfg:        cfg,
-		empService: empService,
+		ms:  ms,
+		cfg: cfg,
+		svc: svc,
 	}
 }
 
 func (h EmployeeHttp) RouteSetup() {
-	// h.ms.POST("/employee/login", h.Login)
-	h.ms.POST("/employee", h.Register)
-	h.ms.GET("/employee/:code", h.InfoEmployee)
-	h.ms.GET("/employee", h.SearchEmployee)
-	h.ms.GET("/employee/list", h.SearchEmployeeLimit)
-	h.ms.PUT("/employee/:code", h.Update)
+
+	h.ms.GET("/shop/employee", h.SearchEmployeePage)
+	h.ms.GET("/shop/employee/list", h.SearchEmployeeStep)
+	h.ms.POST("/shop/employee", h.CreateEmployee)
+	h.ms.GET("/shop/employee/:id", h.InfoEmployee)
+	h.ms.PUT("/shop/employee/:id", h.UpdateEmployee)
 	h.ms.PUT("/employee/password", h.UpdatePassword)
-}
-
-// Validate Employee godoc
-// @Description Validate Employee
-// @Tags		Employee
-// @Param		EmployeeUserPassword  body      models.EmployeeRequestLogin  true  "EmployeeUserPassword"
-// @Accept 		json
-// @Success		201	{object}	models.EmployeeInfo
-// @Failure		401 {object}	models.AuthResponseFailed
-// @Security     AccessToken
-// @Router /employee/login [post]
-func (h EmployeeHttp) Login(ctx microservice.IContext) error {
-	input := ctx.ReadInput()
-
-	userReq := &models.EmployeeRequestLogin{}
-	err := json.Unmarshal([]byte(input), &userReq)
-
-	if err != nil {
-		ctx.ResponseError(400, "user payload invalid")
-		return err
-	}
-
-	employee, err := h.empService.Login(userReq.ShopID, *userReq)
-
-	if err != nil {
-		ctx.ResponseError(400, "login failed.")
-		return err
-	}
-
-	ctx.Response(http.StatusOK, models.ApiResponse{
-		Success: true,
-		Data:    employee,
-	})
-
-	return nil
+	h.ms.DELETE("/shop/employee/:id", h.DeleteEmployee)
+	h.ms.DELETE("/shop/employee", h.DeleteEmployeeByGUIDs)
 }
 
 // Create Employee godoc
-// @Summary		Create Employee
-// @Description	For Create Employee
+// @Description Create Employee
 // @Tags		Employee
-// @Param		User  body      models.Employee  true  "Register Employee"
-// @Success		200	{object}	models.ResponseSuccessWithID
-// @Failure		400 {object}	models.AuthResponseFailed
+// @Param		Employee  body      models.EmployeeRequestRegister  true  "Employee"
 // @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router		/employee [post]
-func (h EmployeeHttp) Register(ctx microservice.IContext) error {
-	userAuthInfo := ctx.UserInfo()
-	authUsername := userAuthInfo.Username
-	shopID := userAuthInfo.ShopID
+// @Router /shop/employee [post]
+func (h EmployeeHttp) CreateEmployee(ctx microservice.IContext) error {
+	authUsername := ctx.UserInfo().Username
+	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	userReq := models.EmployeeRequestRegister{}
-	err := json.Unmarshal([]byte(input), &userReq)
+	docReq := &models.EmployeeRequestRegister{}
+	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
-		ctx.ResponseError(400, "user payload invalid")
+		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	idx, err := h.empService.Register(shopID, authUsername, userReq)
-
-	if err != nil {
-		ctx.Response(http.StatusBadRequest, models.ApiResponse{
-			Success: false,
-			Message: err.Error(),
-		})
+	if err = ctx.Validate(docReq); err != nil {
+		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	idx, err := h.svc.CreateEmployee(shopID, authUsername, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
 	})
-
 	return nil
 }
 
 // Update Employee godoc
-// @Summary		Update Employee
-// @Description	Update Employee
+// @Description Update Employee
 // @Tags		Employee
-// @Param		username  path      string  true  "Employee username"
+// @Param		id  path      string  true  "Employee ID"
 // @Param		Employee  body      models.EmployeeRequestUpdate  true  "Employee"
-// @Success		200	{object}	models.ResponseSuccess
-// @Failure		400 {object}	models.AuthResponseFailed
 // @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router		/employee/{code} [put]
-func (h EmployeeHttp) Update(ctx microservice.IContext) error {
-	userAuthInfo := ctx.UserInfo()
-	authUsername := userAuthInfo.Username
-	shopID := userAuthInfo.ShopID
+// @Router /shop/employee/{id} [put]
+func (h EmployeeHttp) UpdateEmployee(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	username := ctx.Param("code")
-
-	userReq := models.EmployeeRequestUpdate{}
-	err := json.Unmarshal([]byte(input), &userReq)
-
-	userReq.Code = username
+	docReq := &models.EmployeeRequestUpdate{}
+	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
-		ctx.ResponseError(400, "user payload invalid")
+		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	err = h.empService.Update(shopID, authUsername, userReq)
-
-	if err != nil {
-		ctx.Response(http.StatusBadRequest, models.ApiResponse{
-			Success: false,
-			Message: err.Error(),
-		})
+	if err = ctx.Validate(docReq); err != nil {
+		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	err = h.svc.UpdateEmployee(shopID, id, authUsername, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+		ID:      id,
+	})
+
+	return nil
+}
+
+// Delete Employee godoc
+// @Description Delete Employee
+// @Tags		Employee
+// @Param		id  path      string  true  "Employee ID"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /shop/employee/{id} [delete]
+func (h EmployeeHttp) DeleteEmployee(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	id := ctx.Param("id")
+
+	err := h.svc.DeleteEmployee(shopID, id, authUsername)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		ID:      id,
+	})
+
+	return nil
+}
+
+// Delete Employee godoc
+// @Description Delete Employee
+// @Tags		Employee
+// @Param		Employee  body      []string  true  "Employee GUIDs"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /shop/employee [delete]
+func (h EmployeeHttp) DeleteEmployeeByGUIDs(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	docReq := []string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.DeleteEmployeeByGUIDs(shopID, authUsername, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 	})
 
 	return nil
 }
 
-// Register Employee godoc
-// @Summary		Register An Account
-// @Description	For User Register Application
+// Get Employee godoc
+// @Description get struct array by ID
+// @Tags		Employee
+// @Param		id  path      string  true  "Employee ID"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /shop/employee/{id} [get]
+func (h EmployeeHttp) InfoEmployee(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	id := ctx.Param("id")
+
+	h.ms.Logger.Debugf("Get Employee %v", id)
+	doc, err := h.svc.InfoEmployee(shopID, id)
+
+	if err != nil {
+		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// List Employee godoc
+// @Description get struct array by ID
+// @Tags		Employee
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Add Category"
+// @Param		limit	query	integer		false  "Add Category"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /shop/employee [get]
+func (h EmployeeHttp) SearchEmployeePage(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	pageable := utils.GetPageable(ctx.QueryParam)
+
+	docList, pagination, err := h.svc.SearchEmployee(shopID, map[string]interface{}{}, pageable)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success:    true,
+		Data:       docList,
+		Pagination: pagination,
+	})
+	return nil
+}
+
+// List Employee godoc
+// @Description search limit offset
+// @Tags		Employee
+// @Param		q		query	string		false  "Search Value"
+// @Param		offset	query	integer		false  "offset"
+// @Param		limit	query	integer		false  "limit"
+// @Param		lang	query	string		false  "lang"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /shop/employee/list [get]
+func (h EmployeeHttp) SearchEmployeeStep(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	pageableStep := utils.GetPageableStep(ctx.QueryParam)
+
+	lang := ctx.QueryParam("lang")
+
+	docList, total, err := h.svc.SearchEmployeeStep(shopID, lang, pageableStep)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docList,
+		Total:   total,
+	})
+	return nil
+}
+
+// Update Password Employee godoc
+// @Summary		Update Password Employee
+// @Description	Update Password Employee
 // @Tags		Employee
 // @Param		id  path      string  true  "Employee ID"
 // @Param		Employee  body      models.EmployeeRequestPassword  true  "Register Employee"
@@ -176,7 +312,7 @@ func (h EmployeeHttp) Update(ctx microservice.IContext) error {
 // @Failure		400 {object}	models.AuthResponseFailed
 // @Accept 		json
 // @Security     AccessToken
-// @Router		/employee/password/{id} [put]
+// @Router		/employee/password [put]
 func (h EmployeeHttp) UpdatePassword(ctx microservice.IContext) error {
 	userAuthInfo := ctx.UserInfo()
 	authUsername := userAuthInfo.Username
@@ -192,123 +328,19 @@ func (h EmployeeHttp) UpdatePassword(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.empService.UpdatePassword(shopID, authUsername, userPwdReq)
+	err = h.svc.UpdatePassword(shopID, authUsername, userPwdReq)
 
 	if err != nil {
-		ctx.Response(http.StatusBadRequest, models.ApiResponse{
+		ctx.Response(http.StatusBadRequest, common.ApiResponse{
 			Success: false,
 			Message: err.Error(),
 		})
 		return err
 	}
 
-	ctx.Response(http.StatusCreated, models.ApiResponse{
+	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 	})
 
-	return nil
-}
-
-// Info Employee godoc
-// @Description List Employee
-// @Tags		Employee
-// @Accept 		json
-// @Success		200	{array}	models.EmployeePageResponse
-// @Failure		401 {object}	models.AuthResponseFailed
-// @Security     AccessToken
-// @Router /employee/{code} [get]
-func (h EmployeeHttp) InfoEmployee(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-
-	code := ctx.Param("code")
-
-	docList, err := h.empService.Get(shopID, code)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	ctx.Response(
-		http.StatusOK,
-		models.ApiResponse{
-			Success: true,
-			Data:    docList,
-		})
-
-	return nil
-}
-
-// List Employee godoc
-// @Description List Employee
-// @Tags		Employee
-// @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Page"
-// @Param		limit	query	integer		false  "Size"
-// @Accept 		json
-// @Success		200	{array}	models.EmployeePageResponse
-// @Failure		401 {object}	models.AuthResponseFailed
-// @Security     AccessToken
-// @Router /employee [get]
-func (h EmployeeHttp) SearchEmployee(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-
-	pageable := utils.GetPageable(ctx.QueryParam)
-
-	docList, pagination, err := h.empService.SearchEmployee(shopID, map[string]interface{}{}, pageable)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	ctx.Response(
-		http.StatusOK,
-		models.ApiResponse{
-			Success:    true,
-			Data:       docList,
-			Pagination: pagination,
-		})
-
-	return nil
-}
-
-// List Employee godoc
-// @Description search limit offset
-// @Tags		Employee
-// @Param		q		query	string		false  "Search Value"
-// @Param		offset	query	integer		false  "offset"
-// @Param		limit	query	integer		false  "limit"
-// @Param		lang	query	string		false  "lang"
-// @Param		category	query	string		false  "category guid"
-// @Accept 		json
-// @Success		200	{array}		common.ApiResponse
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /employee/list [get]
-func (h EmployeeHttp) SearchEmployeeLimit(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-
-	pageableStep := utils.GetPageableStep(ctx.QueryParam)
-
-	lang := ctx.QueryParam("lang")
-
-	filters := map[string]interface{}{}
-
-	docList, total, err := h.empService.SearchEmployeeStep(shopID, lang, filters, pageableStep)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success: true,
-		Data:    docList,
-		Total:   total,
-	})
 	return nil
 }
