@@ -38,6 +38,7 @@ func NewEmployeeRepository(pst microservice.IPersisterMongo) *EmployeeRepository
 		pst: pst,
 	}
 
+	insRepo.SearchRepository = repositories.NewSearchRepository[models.EmployeeInfo](pst)
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.EmployeeActivity, models.EmployeeDeleteActivity](pst)
 
 	return insRepo
