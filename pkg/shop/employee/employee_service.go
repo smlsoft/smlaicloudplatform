@@ -185,8 +185,8 @@ func (svc EmployeeService) UpdatePassword(shopID string, authUsername string, em
 
 func (svc EmployeeService) SearchEmployee(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.EmployeeInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
-		"itemcode",
-		"names.name",
+		"code",
+		"name",
 	}
 
 	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)

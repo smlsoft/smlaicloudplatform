@@ -38,6 +38,7 @@ func (h EmployeeHttp) RouteSetup() {
 	h.ms.POST("/employee", h.Register)
 	h.ms.GET("/employee/:code", h.InfoEmployee)
 	h.ms.GET("/employee", h.SearchEmployee)
+	h.ms.GET("/employee/list", h.SearchEmployeeLimit)
 	h.ms.PUT("/employee/:code", h.Update)
 	h.ms.PUT("/employee/password", h.UpdatePassword)
 }
@@ -215,7 +216,7 @@ func (h EmployeeHttp) UpdatePassword(ctx microservice.IContext) error {
 // @Success		200	{array}	models.EmployeePageResponse
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
-// @Router /employee/{codew} [get]
+// @Router /employee/{code} [get]
 func (h EmployeeHttp) InfoEmployee(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
