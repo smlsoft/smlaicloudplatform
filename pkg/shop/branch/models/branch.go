@@ -10,11 +10,21 @@ const branchCollectionName = "branch"
 
 type Branch struct {
 	models.PartitionIdentity `bson:"inline"`
-	Code                     uint16 `json:"code" bson:"code" validate:"required"`
-	Name                     string `json:"name" bson:"name" validate:"required,min=1,max=100"`
-	Telephone                string `json:"telephone" bson:"telephone"`
-	Lat                      string `json:"lat" bson:"lat"`
-	Lng                      string `json:"lng" bson:"lng"`
+	Code                     uint16          `json:"code" bson:"code"`
+	Telephone                string          `json:"telephone" bson:"telephone" validate:"max=100"`
+	Location                 Location        `json:"location" bson:"location"`
+	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	Departments              *[]Department   `json:"departments" bson:"departments" validate:"unique=Code,dive"`
+}
+
+type Department struct {
+	Code  string          `json:"code" bson:"code" validate:"required"`
+	Names *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+}
+
+type Location struct {
+	Lat string `json:"lat" bson:"lat"`
+	Lng string `json:"lng" bson:"lng"`
 }
 
 type BranchInfo struct {
