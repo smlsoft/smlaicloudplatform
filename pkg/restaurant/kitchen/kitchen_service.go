@@ -26,7 +26,7 @@ type IKitchenService interface {
 	SearchKitchenStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.KitchenInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Kitchen) (common.BulkImport, error)
 
-	LastActivity(shopID string, action string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error)
+	// LastActivity(shopID string, action string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error)
 
 	GetModuleName() string
 }

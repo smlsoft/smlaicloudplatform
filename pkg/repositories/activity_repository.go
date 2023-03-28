@@ -12,10 +12,11 @@ import (
 )
 
 type IActivityRepository[TCU any, TDEL any] interface {
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]TDEL, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]TCU, mongopagination.PaginationData, error)
-	FindDeletedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]TDEL, error)
-	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]TCU, error)
+	// InitialActivityRepository(pst microservice.IPersisterMongo)
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]TDEL, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]TCU, mongopagination.PaginationData, error)
+	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]TDEL, error)
+	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]TCU, error)
 }
 type ActivityRepository[TCU any, TDEL any] struct {
 	pst microservice.IPersisterMongo
@@ -27,11 +28,20 @@ func NewActivityRepository[TCU any, TDEL any](pst microservice.IPersisterMongo) 
 	}
 }
 
-func (repo ActivityRepository[TCU, TDEL]) FindDeletedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]TDEL, mongopagination.PaginationData, error) {
+func (repo *ActivityRepository[TCU, TDEL]) InitialActivityRepository(pst microservice.IPersisterMongo) {
+	repo.pst = pst
+}
+
+func (repo ActivityRepository[TCU, TDEL]) FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]TDEL, mongopagination.PaginationData, error) {
 
 	filterQueries := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$gte": lastUpdatedDate},
+	}
+
+	extraFilterQueries := repo.generateExtraFilters(extraFilters)
+	if len(extraFilterQueries) > 0 {
+		filterQueries["$and"] = extraFilterQueries
 	}
 
 	docList := []TDEL{}
@@ -44,7 +54,7 @@ func (repo ActivityRepository[TCU, TDEL]) FindDeletedPage(shopID string, lastUpd
 	return docList, pagination, nil
 }
 
-func (repo ActivityRepository[TCU, TDEL]) FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]TCU, mongopagination.PaginationData, error) {
+func (repo ActivityRepository[TCU, TDEL]) FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]TCU, mongopagination.PaginationData, error) {
 
 	filterQueries := bson.M{
 		"shopid":    shopID,
@@ -53,6 +63,11 @@ func (repo ActivityRepository[TCU, TDEL]) FindCreatedOrUpdatedPage(shopID string
 			bson.M{"createdat": bson.M{"$gte": lastUpdatedDate}},
 			bson.M{"updatedat": bson.M{"$gte": lastUpdatedDate}},
 		},
+	}
+
+	extraFilterQueries := repo.generateExtraFilters(extraFilters)
+	if len(extraFilterQueries) > 0 {
+		filterQueries["$and"] = extraFilterQueries
 	}
 
 	docList := []TCU{}
@@ -65,20 +80,25 @@ func (repo ActivityRepository[TCU, TDEL]) FindCreatedOrUpdatedPage(shopID string
 	return docList, pagination, nil
 }
 
-func (repo ActivityRepository[TCU, TDEL]) FindDeletedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]TDEL, error) {
+func (repo ActivityRepository[TCU, TDEL]) FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]TDEL, error) {
 
 	docList := []TDEL{}
 
-	filterQuery := bson.M{
+	filterQueries := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$gte": lastUpdatedDate},
+	}
+
+	extraFilterQueries := repo.generateExtraFilters(extraFilters)
+	if len(extraFilterQueries) > 0 {
+		filterQueries["$and"] = extraFilterQueries
 	}
 
 	tempOptions := &options.FindOptions{}
 	tempOptions.SetSkip(int64(pageableStep.Skip))
 	tempOptions.SetLimit(int64(pageableStep.Limit))
 
-	err := repo.pst.Find(new(TDEL), filterQuery, &docList, tempOptions)
+	err := repo.pst.Find(new(TDEL), filterQueries, &docList, tempOptions)
 
 	if err != nil {
 		return []TDEL{}, err
@@ -87,10 +107,10 @@ func (repo ActivityRepository[TCU, TDEL]) FindDeletedStep(shopID string, lastUpd
 	return docList, nil
 }
 
-func (repo ActivityRepository[TCU, TDEL]) FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]TCU, error) {
+func (repo ActivityRepository[TCU, TDEL]) FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]TCU, error) {
 
 	docList := []TCU{}
-	filterQuery := bson.M{
+	filterQueries := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$not": bson.M{"$gte": lastUpdatedDate}},
 		"$or": []interface{}{
@@ -99,15 +119,33 @@ func (repo ActivityRepository[TCU, TDEL]) FindCreatedOrUpdatedStep(shopID string
 		},
 	}
 
+	extraFilterQueries := repo.generateExtraFilters(extraFilters)
+	if len(extraFilterQueries) > 0 {
+		filterQueries["$and"] = extraFilterQueries
+	}
+
 	tempOptions := &options.FindOptions{}
 	tempOptions.SetSkip(int64(pageableStep.Skip))
 	tempOptions.SetLimit(int64(pageableStep.Limit))
 
-	err := repo.pst.Find(new(TCU), filterQuery, &docList, tempOptions)
+	err := repo.pst.Find(new(TCU), filterQueries, &docList, tempOptions)
 
 	if err != nil {
 		return []TCU{}, err
 	}
 
 	return docList, nil
+}
+
+func (repo ActivityRepository[TCU, TDEL]) generateExtraFilters(extraFilters map[string]interface{}) []interface{} {
+	if len(extraFilters) > 0 {
+		tempExtraFilters := []interface{}{}
+		for key, value := range extraFilters {
+			tempExtraFilters = append(tempExtraFilters, bson.M{key: value})
+		}
+
+		return tempExtraFilters
+	}
+
+	return []interface{}{}
 }

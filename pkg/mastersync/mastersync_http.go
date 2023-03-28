@@ -65,11 +65,17 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	// prod := ms.Producer(cfg.MQConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
-	activityModuleManager := NewActivityModuleManager()
+	activityModuleManager := NewActivityModuleManager(pst)
 
 	masterSyncCacheRepo := repositories.NewMasterSyncCacheRepository(cache)
 
 	//############
+
+	// pdt1 := productRepo.ProductRepository{}
+	// pdt1.InitialActivityRepository(pst)
+
+	// pdt2 := productService.ProductHttpService{}
+	// pdt2.InitialActivityService(pst, &productRepo.ProductRepository{})
 
 	// Product
 	svcProduct := productService.NewProductHttpService(productRepo.NewProductRepository(pst), nil, masterSyncCacheRepo)
@@ -188,6 +194,7 @@ func (h MasterSyncHttp) SyncStatus(ctx microservice.IContext) error {
 // @Param		lastupdate		query	string		false  "last update date ex: 2020-01-01T00:00:00"
 // @Param		module		query	string		false  "module code ex: product,productcategory,productbarcode"
 // @Param		action		query	string		false  "action code (all, new, remove)"
+// @Param		filter		query	string		false  "filter data ex. filter=branch:1,department:x01"
 // @Success		200	{array}		models.ApiResponse
 // @Failure		401 {object}	models.AuthResponseFailed
 // @Security     AccessToken
@@ -198,16 +205,13 @@ func (h MasterSyncHttp) LastActivitySync(ctx microservice.IContext) error {
 
 	layout := "2006-01-02T15:04:05"
 	lastUpdateStr := ctx.QueryParam("lastupdate")
-
-	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
 	if len(lastUpdateStr) < 1 {
-		ctx.ResponseError(400, "lastupdate format invalid.")
-		return nil
+		lastUpdateStr = ctx.QueryParam("lastUpdate")
 	}
 
 	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
 	if len(lastUpdateStr) < 1 {
-		ctx.ResponseError(400, "lastUpdate format invalid.")
+		ctx.ResponseError(400, "lastupdate format invalid.")
 		return nil
 	}
 
@@ -222,6 +226,7 @@ func (h MasterSyncHttp) LastActivitySync(ctx microservice.IContext) error {
 
 	moduleParam := strings.Trim(ctx.QueryParam("module"), " ")
 	action := strings.Trim(ctx.QueryParam("action"), " ")
+	filterParam := strings.Trim(ctx.QueryParam("filter"), " ")
 
 	requestModuleSelectList := []string{}
 	moduleSelectList := map[string]struct{}{}
@@ -242,6 +247,7 @@ func (h MasterSyncHttp) LastActivitySync(ctx microservice.IContext) error {
 		ShopID:     shopID,
 		Action:     action,
 		LastUpdate: lastUpdate,
+		Filters:    filterParam,
 		Pageable:   pageable,
 	})
 
@@ -276,6 +282,9 @@ func (h MasterSyncHttp) LastActivitySyncOffset(ctx microservice.IContext) error 
 
 	layout := "2006-01-02T15:04:05"
 	lastUpdateStr := ctx.QueryParam("lastupdate")
+	if len(lastUpdateStr) < 1 {
+		lastUpdateStr = ctx.QueryParam("lastUpdate")
+	}
 
 	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
 	if len(lastUpdateStr) < 1 {
@@ -294,6 +303,7 @@ func (h MasterSyncHttp) LastActivitySyncOffset(ctx microservice.IContext) error 
 
 	moduleParam := strings.Trim(ctx.QueryParam("module"), " ")
 	action := strings.Trim(ctx.QueryParam("action"), " ")
+	filterParam := strings.Trim(ctx.QueryParam("filter"), " ")
 
 	requestModuleSelectList := []string{}
 	moduleSelectList := map[string]struct{}{}
@@ -314,6 +324,7 @@ func (h MasterSyncHttp) LastActivitySyncOffset(ctx microservice.IContext) error 
 		ShopID:       shopID,
 		Action:       action,
 		LastUpdate:   lastUpdate,
+		Filters:      filterParam,
 		PageableStep: pageableStep,
 	})
 
