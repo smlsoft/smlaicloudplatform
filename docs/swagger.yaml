@@ -236,8 +236,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -253,14 +253,7 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -309,19 +302,24 @@ definitions:
     properties:
       code:
         type: integer
-      lat:
-        type: string
-      lng:
-        type: string
-      name:
-        maxLength: 100
-        minLength: 1
-        type: string
+      departments:
+        items:
+          $ref: '#/definitions/models.Department'
+        type: array
+        uniqueItems: true
+      location:
+        $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Location'
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       telephone:
+        maxLength: 100
         type: string
     required:
-    - code
-    - name
+    - names
     type: object
   models.BulkInsertResponse:
     properties:
@@ -773,6 +771,20 @@ definitions:
     - code
     - names
     type: object
+  models.Department:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - code
+    - names
+    type: object
   models.DocumentImage:
     properties:
       cloneimagefrom:
@@ -957,8 +969,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -1081,8 +1091,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1100,8 +1110,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1117,11 +1125,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1230,8 +1233,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1249,8 +1252,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1266,11 +1267,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1429,8 +1425,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1448,8 +1444,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1465,11 +1459,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -2064,28 +2053,6 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
-    type: object
-  models.Location:
-    properties:
-      code:
-        type: string
-      name1:
-        maxLength: 255
-        type: string
-      name2:
-        maxLength: 255
-        type: string
-      name3:
-        maxLength: 255
-        type: string
-      name4:
-        maxLength: 255
-        type: string
-      name5:
-        maxLength: 255
-        type: string
-    required:
-    - name1
     type: object
   models.LostAndProfitSheetReportResponse:
     properties:
@@ -2883,16 +2850,9 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
+      keynumber:
+        type: integer
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
     type: object
   models.ProductUnit:
@@ -3078,10 +3038,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -3099,8 +3059,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3116,10 +3074,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -3503,10 +3457,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -3524,8 +3478,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3541,10 +3493,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -4429,7 +4377,7 @@ definitions:
         type: string
       locations:
         items:
-          $ref: '#/definitions/models.Location'
+          $ref: '#/definitions/smlcloudplatform_pkg_warehouse_models.Location'
         type: array
       name1:
         maxLength: 255
@@ -4554,12 +4502,41 @@ definitions:
     required:
     - code
     type: object
+  smlcloudplatform_pkg_shop_branch_models.Location:
+    properties:
+      lat:
+        type: string
+      lng:
+        type: string
+    type: object
   smlcloudplatform_pkg_storefront_models.Device:
     properties:
       os:
         type: string
       uuid:
         type: string
+    type: object
+  smlcloudplatform_pkg_warehouse_models.Location:
+    properties:
+      code:
+        type: string
+      name1:
+        maxLength: 255
+        type: string
+      name2:
+        maxLength: 255
+        type: string
+      name3:
+        maxLength: 255
+        type: string
+      name4:
+        maxLength: 255
+        type: string
+      name5:
+        maxLength: 255
+        type: string
+    required:
+    - name1
     type: object
 info:
   contact:
@@ -13133,30 +13110,6 @@ paths:
       responses:
         "200":
           description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - SMLTransaction
-    get:
-      consumes:
-      - application/json
-      description: Create SMLTransaction
-      parameters:
-      - description: SMLTransactionRequest
-        in: body
-        name: SMLTransactionRequest
-        required: true
-        schema:
-          $ref: '#/definitions/models.SMLTransactionRequest'
-      responses:
-        "201":
-          description: Created
           schema:
             $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
