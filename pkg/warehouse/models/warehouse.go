@@ -10,14 +10,20 @@ const warehouseCollectionName = "warehouse"
 
 type Warehouse struct {
 	models.PartitionIdentity `bson:"inline"`
-	Code                     string `json:"code" bson:"code"`
-	models.Name              `bson:"inline"`
-	Locations                *[]Location `json:"locations" bson:"locations"`
+	Code                     string          `json:"code" bson:"code"`
+	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	Storage                  *[]Storage      `json:"storage" bson:"storage" validate:"omitempty,unique=Code,dive"`
 }
 
-type Location struct {
-	Code        string `json:"code" bson:"code"`
-	models.Name `bson:"inline"`
+type Storage struct {
+	Code  string          `json:"code" bson:"code"`
+	Names *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	Shelf *[]Shelf        `json:"shelf" bson:"shelf" validate:"omitempty,unique=Code,dive"`
+}
+
+type Shelf struct {
+	Code  string          `json:"code" bson:"code"`
+	Names *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 }
 
 type WarehouseInfo struct {

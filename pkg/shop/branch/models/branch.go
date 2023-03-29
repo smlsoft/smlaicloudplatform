@@ -14,7 +14,7 @@ type Branch struct {
 	Telephone                string          `json:"telephone" bson:"telephone" validate:"max=100"`
 	Location                 Location        `json:"location" bson:"location"`
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	Departments              *[]Department   `json:"departments" bson:"departments" validate:"unique=Code,dive"`
+	Departments              *[]Department   `json:"departments" bson:"departments" validate:"omitempty,unique=Code,dive"`
 }
 
 type Department struct {

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/warehouse/models"
@@ -21,10 +22,12 @@ type WarehouseHttp struct {
 
 func NewWarehouseHttp(ms *microservice.Microservice, cfg microservice.IConfig) WarehouseHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := repositories.NewWarehouseRepository(pst)
 
-	svc := services.NewWarehouseHttpService(repo)
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
+	svc := services.NewWarehouseHttpService(repo, masterSyncCacheRepo)
 
 	return WarehouseHttp{
 		ms:  ms,
@@ -37,11 +40,13 @@ func (h WarehouseHttp) RouteSetup() {
 
 	h.ms.POST("/warehouse/bulk", h.SaveBulk)
 
-	h.ms.GET("/warehouse", h.SearchWarehouse)
+	h.ms.GET("/warehouse", h.SearchWarehousePage)
+	h.ms.GET("/warehouse/list", h.SearchWarehouseStep)
 	h.ms.POST("/warehouse", h.CreateWarehouse)
 	h.ms.GET("/warehouse/:id", h.InfoWarehouse)
 	h.ms.PUT("/warehouse/:id", h.UpdateWarehouse)
 	h.ms.DELETE("/warehouse/:id", h.DeleteWarehouse)
+	h.ms.DELETE("/warehouse", h.DeleteWarehouseByGUIDs)
 }
 
 // Create Warehouse godoc
@@ -62,6 +67,11 @@ func (h WarehouseHttp) CreateWarehouse(ctx microservice.IContext) error {
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(docReq); err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
@@ -102,6 +112,11 @@ func (h WarehouseHttp) UpdateWarehouse(ctx microservice.IContext) error {
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(docReq); err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
@@ -152,6 +167,44 @@ func (h WarehouseHttp) DeleteWarehouse(ctx microservice.IContext) error {
 	return nil
 }
 
+// Delete Warehouse godoc
+// @Description Delete Warehouse
+// @Tags		Warehouse
+// @Param		Warehouse  body      []string  true  "Warehouse GUIDs"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /warehouse [delete]
+func (h WarehouseHttp) DeleteWarehouseByGUIDs(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	docReq := []string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.DeleteWarehouseByGUIDs(shopID, authUsername, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+	})
+
+	return nil
+}
+
 // Get Warehouse godoc
 // @Description get struct array by ID
 // @Tags		Warehouse
@@ -187,19 +240,20 @@ func (h WarehouseHttp) InfoWarehouse(ctx microservice.IContext) error {
 // @Description get struct array by ID
 // @Tags		Warehouse
 // @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Page"
-// @Param		limit	query	integer		false  "Limit"
+// @Param		page	query	integer		false  "Add Category"
+// @Param		limit	query	integer		false  "Add Category"
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
 // @Router /warehouse [get]
-func (h WarehouseHttp) SearchWarehouse(ctx microservice.IContext) error {
+func (h WarehouseHttp) SearchWarehousePage(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	pageable := utils.GetPageable(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchWarehouse(shopID, pageable)
+
+	docList, pagination, err := h.svc.SearchWarehouse(shopID, map[string]interface{}{}, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -210,6 +264,41 @@ func (h WarehouseHttp) SearchWarehouse(ctx microservice.IContext) error {
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
+	})
+	return nil
+}
+
+// List Warehouse godoc
+// @Description search limit offset
+// @Tags		Warehouse
+// @Param		q		query	string		false  "Search Value"
+// @Param		offset	query	integer		false  "offset"
+// @Param		limit	query	integer		false  "limit"
+// @Param		lang	query	string		false  "lang"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /warehouse/list [get]
+func (h WarehouseHttp) SearchWarehouseStep(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	pageableStep := utils.GetPageableStep(ctx.QueryParam)
+
+	lang := ctx.QueryParam("lang")
+
+	docList, total, err := h.svc.SearchWarehouseStep(shopID, lang, pageableStep)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docList,
+		Total:   total,
 	})
 	return nil
 }

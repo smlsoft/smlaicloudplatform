@@ -2,8 +2,11 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
 	"smlcloudplatform/pkg/warehouse/models"
@@ -11,6 +14,7 @@ import (
 	"time"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -18,27 +22,35 @@ type IWarehouseHttpService interface {
 	CreateWarehouse(shopID string, authUsername string, doc models.Warehouse) (string, error)
 	UpdateWarehouse(shopID string, guid string, authUsername string, doc models.Warehouse) error
 	DeleteWarehouse(shopID string, guid string, authUsername string) error
+	DeleteWarehouseByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoWarehouse(shopID string, guid string) (models.WarehouseInfo, error)
-	SearchWarehouse(shopID string, pageable micromodels.Pageable) ([]models.WarehouseInfo, mongopagination.PaginationData, error)
+	SearchWarehouse(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.WarehouseInfo, mongopagination.PaginationData, error)
+	SearchWarehouseStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.WarehouseInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Warehouse) (common.BulkImport, error)
+
+	GetModuleName() string
 }
 
 type WarehouseHttpService struct {
 	repo repositories.IWarehouseRepository
+
+	syncCacheRepo mastersync.IMasterSyncCacheRepository
+	services.ActivityService[models.WarehouseActivity, models.WarehouseDeleteActivity]
 }
 
-func NewWarehouseHttpService(repo repositories.IWarehouseRepository) *WarehouseHttpService {
+func NewWarehouseHttpService(repo repositories.IWarehouseRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *WarehouseHttpService {
 
-	return &WarehouseHttpService{
-		repo: repo,
+	insSvc := &WarehouseHttpService{
+		repo:          repo,
+		syncCacheRepo: syncCacheRepo,
 	}
+
+	insSvc.ActivityService = services.NewActivityService[models.WarehouseActivity, models.WarehouseDeleteActivity](repo)
+
+	return insSvc
 }
 
 func (svc WarehouseHttpService) CreateWarehouse(shopID string, authUsername string, doc models.Warehouse) (string, error) {
-
-	if svc.isDuplicatLocation(*doc.Locations) {
-		return "", errors.New("location code is duplicated")
-	}
 
 	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", doc.Code)
 
@@ -47,7 +59,7 @@ func (svc WarehouseHttpService) CreateWarehouse(shopID string, authUsername stri
 	}
 
 	if findDoc.Code != "" {
-		return "", errors.New("code is exists")
+		return "", errors.New("Code is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -66,13 +78,12 @@ func (svc WarehouseHttpService) CreateWarehouse(shopID string, authUsername stri
 		return "", err
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return newGuidFixed, nil
 }
 
 func (svc WarehouseHttpService) UpdateWarehouse(shopID string, guid string, authUsername string, doc models.Warehouse) error {
-	if svc.isDuplicatLocation(*doc.Locations) {
-		return errors.New("location code is duplicated")
-	}
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -95,19 +106,9 @@ func (svc WarehouseHttpService) UpdateWarehouse(shopID string, guid string, auth
 		return err
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return nil
-}
-
-func (svc WarehouseHttpService) isDuplicatLocation(locations []models.Location) bool {
-	locationKey := map[string]struct{}{}
-	for _, loction := range locations {
-		if _, ok := locationKey[loction.Code]; ok {
-			return true
-		}
-		locationKey[loction.Code] = struct{}{}
-	}
-
-	return false
 }
 
 func (svc WarehouseHttpService) DeleteWarehouse(shopID string, guid string, authUsername string) error {
@@ -123,6 +124,22 @@ func (svc WarehouseHttpService) DeleteWarehouse(shopID string, guid string, auth
 	}
 
 	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	if err != nil {
+		return err
+	}
+
+	svc.saveMasterSync(shopID)
+
+	return nil
+}
+
+func (svc WarehouseHttpService) DeleteWarehouseByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+
+	deleteFilterQuery := map[string]interface{}{
+		"guidfixed": bson.M{"$in": GUIDs},
+	}
+
+	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
@@ -146,19 +163,43 @@ func (svc WarehouseHttpService) InfoWarehouse(shopID string, guid string) (model
 
 }
 
-func (svc WarehouseHttpService) SearchWarehouse(shopID string, pageable micromodels.Pageable) ([]models.WarehouseInfo, mongopagination.PaginationData, error) {
+func (svc WarehouseHttpService) SearchWarehouse(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.WarehouseInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
-		"guidfixed",
 		"code",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.WarehouseInfo{}, pagination, err
 	}
 
 	return docList, pagination, nil
+}
+
+func (svc WarehouseHttpService) SearchWarehouseStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.WarehouseInfo, int, error) {
+	searchInFields := []string{
+		"code",
+	}
+
+	selectFields := map[string]interface{}{
+		"guidfixed": 1,
+		"code":      1,
+	}
+
+	if langCode != "" {
+		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
+	} else {
+		selectFields["names"] = 1
+	}
+
+	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+
+	if err != nil {
+		return []models.WarehouseInfo{}, 0, err
+	}
+
+	return docList, total, nil
 }
 
 func (svc WarehouseHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.Warehouse) (common.BulkImport, error) {
@@ -259,6 +300,8 @@ func (svc WarehouseHttpService) SaveInBatch(shopID string, authUsername string, 
 		updateFailDataKey = append(updateFailDataKey, svc.getDocIDKey(doc))
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return common.BulkImport{
 		Created:          createDataKey,
 		Updated:          updateDataKey,
@@ -269,4 +312,18 @@ func (svc WarehouseHttpService) SaveInBatch(shopID string, authUsername string, 
 
 func (svc WarehouseHttpService) getDocIDKey(doc models.Warehouse) string {
 	return doc.Code
+}
+
+func (svc WarehouseHttpService) saveMasterSync(shopID string) {
+	if svc.syncCacheRepo != nil {
+		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
+
+		if err != nil {
+			fmt.Printf("save %s cache error :: %s", svc.GetModuleName(), err.Error())
+		}
+	}
+}
+
+func (svc WarehouseHttpService) GetModuleName() string {
+	return "warehouse"
 }
