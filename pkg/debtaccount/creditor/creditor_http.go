@@ -1,68 +1,71 @@
-package customer
+package creditor
 
 import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
-	"smlcloudplatform/pkg/customershop/customer/models"
-	"smlcloudplatform/pkg/customershop/customer/repositories"
-	"smlcloudplatform/pkg/customershop/customer/services"
-	repositoriesCustomerGroup "smlcloudplatform/pkg/customershop/customergroup/repositories"
+	"smlcloudplatform/pkg/debtaccount/creditor/models"
+	"smlcloudplatform/pkg/debtaccount/creditor/repositories"
+	"smlcloudplatform/pkg/debtaccount/creditor/services"
+	repositoriesGroup "smlcloudplatform/pkg/debtaccount/creditorgroup/repositories"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 )
 
-type ICustomerHttp interface{}
+type ICreditorHttp interface{}
 
-type CustomerHttp struct {
+type CreditorHttp struct {
 	ms  *microservice.Microservice
 	cfg microservice.IConfig
-	svc services.ICustomerHttpService
+	svc services.ICreditorHttpService
 }
 
-func NewCustomerHttp(ms *microservice.Microservice, cfg microservice.IConfig) CustomerHttp {
+func NewCreditorHttp(ms *microservice.Microservice, cfg microservice.IConfig) CreditorHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
-	repo := repositories.NewCustomerRepository(pst)
-	repoCustomer := repositoriesCustomerGroup.NewCustomerGroupRepository(pst)
+	repo := repositories.NewCreditorRepository(pst)
+	repoGroup := repositoriesGroup.NewCreditorGroupRepository(pst)
 
-	svc := services.NewCustomerHttpService(repo, repoCustomer)
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
+	svc := services.NewCreditorHttpService(repo, repoGroup, masterSyncCacheRepo)
 
-	return CustomerHttp{
+	return CreditorHttp{
 		ms:  ms,
 		cfg: cfg,
 		svc: svc,
 	}
 }
 
-func (h CustomerHttp) RouteSetup() {
+func (h CreditorHttp) RouteSetup() {
 
-	h.ms.POST("customershop/customer/bulk", h.SaveBulk)
+	h.ms.POST("/debtaccount/creditor/bulk", h.SaveBulk)
 
-	h.ms.GET("customershop/customer", h.SearchCustomerPage)
-	h.ms.GET("customershop/customer/list", h.SearchCustomerLimit)
-	h.ms.POST("customershop/customer", h.CreateCustomer)
-	h.ms.GET("customershop/customer/:id", h.InfoCustomer)
-	h.ms.PUT("customershop/customer/:id", h.UpdateCustomer)
-	h.ms.DELETE("customershop/customer/:id", h.DeleteCustomer)
-	h.ms.DELETE("customershop/customer", h.DeleteCustomerByGUIDs)
+	h.ms.GET("/debtaccount/creditor", h.SearchCreditorPage)
+	h.ms.GET("/debtaccount/creditor/list", h.SearchCreditorStep)
+	h.ms.POST("/debtaccount/creditor", h.CreateCreditor)
+	h.ms.GET("/debtaccount/creditor/:id", h.InfoCreditor)
+	h.ms.PUT("/debtaccount/creditor/:id", h.UpdateCreditor)
+	h.ms.DELETE("/debtaccount/creditor/:id", h.DeleteCreditor)
+	h.ms.DELETE("/debtaccount/creditor", h.DeleteCreditorByGUIDs)
 }
 
-// Create Customer godoc
-// @Description Create Customer
-// @Tags		CustomerShop
-// @Param		CustomerRequest  body      models.CustomerRequest  true  "Customer Request"
+// Create Creditor godoc
+// @Description Create Creditor
+// @Tags		Creditor
+// @Param		Creditor  body      models.CreditorRequest  true  "Creditor"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /customershop/customer [post]
-func (h CustomerHttp) CreateCustomer(ctx microservice.IContext) error {
+// @Router /debtaccount/creditor [post]
+func (h CreditorHttp) CreateCreditor(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &models.CustomerRequest{}
+	docReq := &models.CreditorRequest{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -75,7 +78,7 @@ func (h CustomerHttp) CreateCustomer(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.svc.CreateCustomer(shopID, authUsername, *docReq)
+	idx, err := h.svc.CreateCreditor(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -89,17 +92,17 @@ func (h CustomerHttp) CreateCustomer(ctx microservice.IContext) error {
 	return nil
 }
 
-// Update Customer godoc
-// @Description Update Customer
-// @Tags		CustomerShop
-// @Param		id  path      string  true  "Customer ID"
-// @Param		CustomerRequest  body      models.CustomerRequest  true  "Customer Request"
+// Update Creditor godoc
+// @Description Update Creditor
+// @Tags		Creditor
+// @Param		id  path      string  true  "Creditor ID"
+// @Param		Creditor  body      models.CreditorRequest  true  "Creditor"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /customershop/customer/{id} [put]
-func (h CustomerHttp) UpdateCustomer(ctx microservice.IContext) error {
+// @Router /debtaccount/creditor/{id} [put]
+func (h CreditorHttp) UpdateCreditor(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -107,7 +110,7 @@ func (h CustomerHttp) UpdateCustomer(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &models.CustomerRequest{}
+	docReq := &models.CreditorRequest{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -120,7 +123,7 @@ func (h CustomerHttp) UpdateCustomer(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svc.UpdateCustomer(shopID, id, authUsername, *docReq)
+	err = h.svc.UpdateCreditor(shopID, id, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -135,23 +138,23 @@ func (h CustomerHttp) UpdateCustomer(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete Customer godoc
-// @Description Delete Customer
-// @Tags		CustomerShop
-// @Param		id  path      string  true  "Customer ID"
+// Delete Creditor godoc
+// @Description Delete Creditor
+// @Tags		Creditor
+// @Param		id  path      string  true  "Creditor ID"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /customershop/customer/{id} [delete]
-func (h CustomerHttp) DeleteCustomer(ctx microservice.IContext) error {
+// @Router /debtaccount/creditor/{id} [delete]
+func (h CreditorHttp) DeleteCreditor(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
 
 	id := ctx.Param("id")
 
-	err := h.svc.DeleteCustomer(shopID, id, authUsername)
+	err := h.svc.DeleteCreditor(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -166,23 +169,61 @@ func (h CustomerHttp) DeleteCustomer(ctx microservice.IContext) error {
 	return nil
 }
 
-// Get Customer godoc
+// Delete Creditor godoc
+// @Description Delete Creditor
+// @Tags		Creditor
+// @Param		Creditor  body      []string  true  "Creditor GUIDs"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /debtaccount/creditor [delete]
+func (h CreditorHttp) DeleteCreditorByGUIDs(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	docReq := []string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.DeleteCreditorByGUIDs(shopID, authUsername, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+	})
+
+	return nil
+}
+
+// Get Creditor godoc
 // @Description get struct array by ID
-// @Tags		CustomerShop
-// @Param		id  path      string  true  "Customer ID"
+// @Tags		Creditor
+// @Param		id  path      string  true  "Creditor ID"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /customershop/customer/{id} [get]
-func (h CustomerHttp) InfoCustomer(ctx microservice.IContext) error {
+// @Router /debtaccount/creditor/{id} [get]
+func (h CreditorHttp) InfoCreditor(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	h.ms.Logger.Debugf("Get Customer %v", id)
-	doc, err := h.svc.InfoCustomer(shopID, id)
+	h.ms.Logger.Debugf("Get Creditor %v", id)
+	doc, err := h.svc.InfoCreditor(shopID, id)
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
@@ -197,33 +238,24 @@ func (h CustomerHttp) InfoCustomer(ctx microservice.IContext) error {
 	return nil
 }
 
-// List Customer godoc
+// List Creditor godoc
 // @Description get struct array by ID
-// @Tags		CustomerShop
+// @Tags		Creditor
 // @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Page"
-// @Param		limit	query	integer		false  "Limit"
-// @Param		group	query	integer		false  "customer group"
+// @Param		page	query	integer		false  "Add Category"
+// @Param		limit	query	integer		false  "Add Category"
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /customershop/customer [get]
-func (h CustomerHttp) SearchCustomerPage(ctx microservice.IContext) error {
+// @Router /debtaccount/creditor [get]
+func (h CreditorHttp) SearchCreditorPage(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	groupGUID := ctx.QueryParam("group")
-
-	filters := map[string]interface{}{}
-
-	if len(groupGUID) > 0 {
-		filters["groups.guidfixed"] = groupGUID
-	}
-
-	docList, pagination, err := h.svc.SearchCustomer(shopID, filters, pageable)
+	docList, pagination, err := h.svc.SearchCreditor(shopID, map[string]interface{}{}, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -238,9 +270,9 @@ func (h CustomerHttp) SearchCustomerPage(ctx microservice.IContext) error {
 	return nil
 }
 
-// List Customer godoc
+// List Creditor godoc
 // @Description search limit offset
-// @Tags		CustomerShop
+// @Tags		Creditor
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
@@ -249,8 +281,8 @@ func (h CustomerHttp) SearchCustomerPage(ctx microservice.IContext) error {
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /customershop/customer/list [get]
-func (h CustomerHttp) SearchCustomerLimit(ctx microservice.IContext) error {
+// @Router /debtaccount/creditor/list [get]
+func (h CreditorHttp) SearchCreditorStep(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -258,7 +290,7 @@ func (h CustomerHttp) SearchCustomerLimit(ctx microservice.IContext) error {
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchCustomerStep(shopID, lang, pageableStep)
+	docList, total, err := h.svc.SearchCreditorStep(shopID, lang, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -273,16 +305,16 @@ func (h CustomerHttp) SearchCustomerLimit(ctx microservice.IContext) error {
 	return nil
 }
 
-// Create Customer Bulk godoc
-// @Description Create Customer
-// @Tags		CustomerShop
-// @Param		Customer  body      []models.Customer  true  "Customer"
+// Create Creditor Bulk godoc
+// @Description Create Creditor
+// @Tags		Creditor
+// @Param		Creditor  body      []models.CreditorRequest  true  "Creditor"
 // @Accept 		json
 // @Success		201	{object}	common.BulkReponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /customershop/customer/bulk [post]
-func (h CustomerHttp) SaveBulk(ctx microservice.IContext) error {
+// @Router /debtaccount/creditor/bulk [post]
+func (h CreditorHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -290,7 +322,7 @@ func (h CustomerHttp) SaveBulk(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	dataReq := []models.Customer{}
+	dataReq := []models.CreditorRequest{}
 	err := json.Unmarshal([]byte(input), &dataReq)
 
 	if err != nil {
@@ -312,44 +344,6 @@ func (h CustomerHttp) SaveBulk(ctx microservice.IContext) error {
 			BulkImport: bulkResponse,
 		},
 	)
-
-	return nil
-}
-
-// Delete Customer By GUIDs godoc
-// @Description Delete Customer
-// @Tags		Customer
-// @Param		Customer  body      []string  true  "Customer GUIDs"
-// @Accept 		json
-// @Success		200	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /customershop/customer [delete]
-func (h CustomerHttp) DeleteCustomerByGUIDs(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-	authUsername := userInfo.Username
-
-	input := ctx.ReadInput()
-
-	docReq := []string{}
-	err := json.Unmarshal([]byte(input), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	err = h.svc.DeleteCustomerByGUIDs(shopID, authUsername, docReq)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success: true,
-	})
 
 	return nil
 }

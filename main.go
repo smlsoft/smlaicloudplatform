@@ -7,8 +7,10 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/apikeyservice"
 	"smlcloudplatform/pkg/authentication"
-	"smlcloudplatform/pkg/customershop/customer"
-	"smlcloudplatform/pkg/customershop/customergroup"
+	"smlcloudplatform/pkg/debtaccount/creditor"
+	"smlcloudplatform/pkg/debtaccount/creditorgroup"
+	"smlcloudplatform/pkg/debtaccount/debtor"
+	"smlcloudplatform/pkg/debtaccount/debtorgroup"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/images"
 	"smlcloudplatform/pkg/mastersync"
@@ -193,8 +195,6 @@ func main() {
 			paymentmaster.NewPaymentMasterHttp(ms, cfg),
 			warehouse.NewWarehouseHttp(ms, cfg),
 
-			customer.NewCustomerHttp(ms, cfg),
-			customergroup.NewCustomerGroupHttp(ms, cfg),
 			accountperiodmaster.NewAccountPeriodMasterHttp(ms, cfg),
 
 			bankmaster.NewBankMasterHttp(ms, cfg),
@@ -204,6 +204,12 @@ func main() {
 			task.NewTaskHttp(ms, cfg),
 			smltransaction.NewSMLTransactionHttp(ms, cfg),
 			sysinfo.NewSysInfoHttp(ms, cfg),
+
+			// debt account
+			creditor.NewCreditorHttp(ms, cfg),
+			creditorgroup.NewCreditorGroupHttp(ms, cfg),
+			debtor.NewDebtorHttp(ms, cfg),
+			debtorgroup.NewDebtorGroupHttp(ms, cfg),
 		}
 
 		startHttpServices(httpServices...)
