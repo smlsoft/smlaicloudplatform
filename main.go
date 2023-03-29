@@ -9,6 +9,8 @@ import (
 	"smlcloudplatform/pkg/authentication"
 	"smlcloudplatform/pkg/debtaccount/creditor"
 	"smlcloudplatform/pkg/debtaccount/creditorgroup"
+	"smlcloudplatform/pkg/debtaccount/customer"
+	"smlcloudplatform/pkg/debtaccount/customergroup"
 	"smlcloudplatform/pkg/debtaccount/debtor"
 	"smlcloudplatform/pkg/debtaccount/debtorgroup"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
@@ -210,6 +212,9 @@ func main() {
 			creditorgroup.NewCreditorGroupHttp(ms, cfg),
 			debtor.NewDebtorHttp(ms, cfg),
 			debtorgroup.NewDebtorGroupHttp(ms, cfg),
+
+			customer.NewCustomerHttp(ms, cfg),
+			customergroup.NewCustomerGroupHttp(ms, cfg),
 		}
 
 		startHttpServices(httpServices...)
