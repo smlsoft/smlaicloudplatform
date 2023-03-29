@@ -12,18 +12,18 @@ type Warehouse struct {
 	models.PartitionIdentity `bson:"inline"`
 	Code                     string          `json:"code" bson:"code"`
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	Storage                  *[]Storage      `json:"storage" bson:"storage" validate:"omitempty,unique=Code,dive"`
+	Location                 *[]Location     `json:"location" bson:"location" validate:"omitempty,unique=Code,dive"`
 }
 
-type Storage struct {
+type Location struct {
 	Code  string          `json:"code" bson:"code"`
 	Names *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	Shelf *[]Shelf        `json:"shelf" bson:"shelf" validate:"omitempty,unique=Code,dive"`
 }
 
 type Shelf struct {
-	Code  string          `json:"code" bson:"code"`
-	Names *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	Code string `json:"code" bson:"code"`
+	Name string `json:"name" bson:"name" validate:"required,min=1"`
 }
 
 type WarehouseInfo struct {
