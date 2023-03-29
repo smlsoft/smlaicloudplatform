@@ -530,7 +530,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/customershop/customer": {
+        "/debtaccount/creditor": {
             "get": {
                 "security": [
                     {
@@ -542,7 +542,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "CustomerShop"
+                    "Creditor"
                 ],
                 "parameters": [
                     {
@@ -553,20 +553,14 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Page",
+                        "description": "Add Category",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Limit",
+                        "description": "Add Category",
                         "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "customer group",
-                        "name": "group",
                         "in": "query"
                     }
                 ],
@@ -594,21 +588,21 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Create Customer",
+                "description": "Create Creditor",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "CustomerShop"
+                    "Creditor"
                 ],
                 "parameters": [
                     {
-                        "description": "Customer Request",
-                        "name": "CustomerRequest",
+                        "description": "Creditor",
+                        "name": "Creditor",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.CustomerRequest"
+                            "$ref": "#/definitions/models.CreditorRequest"
                         }
                     }
                 ],
@@ -633,17 +627,17 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Delete Customer",
+                "description": "Delete Creditor",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Customer"
+                    "Creditor"
                 ],
                 "parameters": [
                     {
-                        "description": "Customer GUIDs",
-                        "name": "Customer",
+                        "description": "Creditor GUIDs",
+                        "name": "Creditor",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -670,30 +664,164 @@ const docTemplate = `{
                 }
             }
         },
-        "/customershop/customer/bulk": {
+        "/debtaccount/creditor-group": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CreditorGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Create Customer",
+                "description": "Create CreditorGroup",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "CustomerShop"
+                    "CreditorGroup"
                 ],
                 "parameters": [
                     {
-                        "description": "Customer",
-                        "name": "Customer",
+                        "description": "CreditorGroup",
+                        "name": "CreditorGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreditorGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete CreditorGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CreditorGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "CreditorGroup GUIDs",
+                        "name": "CreditorGroup",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Customer"
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/creditor-group/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create CreditorGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CreditorGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "CreditorGroup",
+                        "name": "CreditorGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CreditorGroup"
                             }
                         }
                     }
@@ -714,7 +842,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/customershop/customer/list": {
+        "/debtaccount/creditor-group/list": {
             "get": {
                 "security": [
                     {
@@ -726,7 +854,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "CustomerShop"
+                    "CreditorGroup"
                 ],
                 "parameters": [
                     {
@@ -773,7 +901,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/customershop/customer/{id}": {
+        "/debtaccount/creditor-group/{id}": {
             "get": {
                 "security": [
                     {
@@ -785,12 +913,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "CustomerShop"
+                    "CreditorGroup"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Customer ID",
+                        "description": "CreditorGroup ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -817,28 +945,28 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Update Customer",
+                "description": "Update CreditorGroup",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "CustomerShop"
+                    "CreditorGroup"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Customer ID",
+                        "description": "CreditorGroup ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Customer Request",
-                        "name": "CustomerRequest",
+                        "description": "CreditorGroup",
+                        "name": "CreditorGroup",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.CustomerRequest"
+                            "$ref": "#/definitions/models.CreditorGroup"
                         }
                     }
                 ],
@@ -863,17 +991,17 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Delete Customer",
+                "description": "Delete CreditorGroup",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "CustomerShop"
+                    "CreditorGroup"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Customer ID",
+                        "description": "CreditorGroup ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -895,164 +1023,30 @@ const docTemplate = `{
                 }
             }
         },
-        "/customershop/customergroup": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get struct array by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "CustomerShop"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.ApiResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
+        "/debtaccount/creditor/bulk": {
             "post": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Create CustomerGroup",
+                "description": "Create Creditor",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "CustomerShop"
+                    "Creditor"
                 ],
                 "parameters": [
                     {
-                        "description": "CustomerGroup",
-                        "name": "CustomerGroup",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.CustomerGroup"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete CustomerGroup",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "CustomerGroup"
-                ],
-                "parameters": [
-                    {
-                        "description": "CustomerGroup GUIDs",
-                        "name": "CustomerGroup",
+                        "description": "Creditor",
+                        "name": "Creditor",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "array",
                             "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/customershop/customergroup/bulk": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create CustomerGroup",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "CustomerShop"
-                ],
-                "parameters": [
-                    {
-                        "description": "CustomerGroup",
-                        "name": "CustomerGroup",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.CustomerGroup"
+                                "$ref": "#/definitions/models.CreditorRequest"
                             }
                         }
                     }
@@ -1073,7 +1067,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/customershop/customergroup/list": {
+        "/debtaccount/creditor/list": {
             "get": {
                 "security": [
                     {
@@ -1085,7 +1079,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "CustomerShop"
+                    "Creditor"
                 ],
                 "parameters": [
                     {
@@ -1132,7 +1126,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/customershop/customergroup/{id}": {
+        "/debtaccount/creditor/{id}": {
             "get": {
                 "security": [
                     {
@@ -1144,12 +1138,12 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "CustomerShop"
+                    "Creditor"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "CustomerGroup ID",
+                        "description": "Creditor ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1176,28 +1170,28 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Update CustomerGroup",
+                "description": "Update Creditor",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "CustomerShop"
+                    "Creditor"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "CustomerGroup ID",
+                        "description": "Creditor ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "CustomerGroup",
-                        "name": "CustomerGroup",
+                        "description": "Creditor",
+                        "name": "Creditor",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.CustomerGroup"
+                            "$ref": "#/definitions/models.CreditorRequest"
                         }
                     }
                 ],
@@ -1222,17 +1216,735 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Delete CustomerGroup",
+                "description": "Delete Creditor",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "CustomerShop"
+                    "Creditor"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "CustomerGroup ID",
+                        "description": "Creditor ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/debtor": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Debtor"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Debtor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Debtor"
+                ],
+                "parameters": [
+                    {
+                        "description": "Debtor",
+                        "name": "Debtor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DebtorRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Debtor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Debtor"
+                ],
+                "parameters": [
+                    {
+                        "description": "Debtor GUIDs",
+                        "name": "Debtor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/debtor-group": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DebtorGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Add Category",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create DebtorGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DebtorGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "DebtorGroup",
+                        "name": "DebtorGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DebtorGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete DebtorGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DebtorGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "DebtorGroup GUIDs",
+                        "name": "DebtorGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/debtor-group/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create DebtorGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DebtorGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "DebtorGroup",
+                        "name": "DebtorGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DebtorGroup"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/debtor-group/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DebtorGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/debtor-group/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DebtorGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "DebtorGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update DebtorGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DebtorGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "DebtorGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "DebtorGroup",
+                        "name": "DebtorGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DebtorGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete DebtorGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DebtorGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "DebtorGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/debtor/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Debtor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Debtor"
+                ],
+                "parameters": [
+                    {
+                        "description": "Debtor",
+                        "name": "Debtor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DebtorRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/debtor/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Debtor"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/debtor/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Debtor"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Debtor ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Debtor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Debtor"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Debtor ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Debtor",
+                        "name": "Debtor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DebtorRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Debtor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Debtor"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Debtor ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -5492,6 +6204,12 @@ const docTemplate = `{
                         "description": "action code (all, new, remove)",
                         "name": "action",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "filter data ex. filter=branch:1,department:x01",
+                        "name": "filter",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -5671,45 +6389,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/member/fetchupdate": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Fetch Update Member By Date",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Member"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "DateTime",
-                        "name": "lastUpdate",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.MemberFetchUpdateResponse"
                         }
                     },
                     "401": {
@@ -10514,57 +11193,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/restaurant/kitchen/fetchupdate": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Fetch Restaurant Kitchen Update By Date",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Restaurant"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "DateTime YYYY-MM-DDTHH:mm",
-                        "name": "lastUpdate",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.KitchenFetchUpdateResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/restaurant/kitchen/list": {
             "get": {
                 "security": [
@@ -10862,57 +11490,6 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.BulkInsertResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/restaurant/printer/fetchupdate": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Fetch Restaurant Printer Update By Date",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Restaurant"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "DateTime YYYY-MM-DDTHH:mm",
-                        "name": "lastUpdate",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.PrinterFetchUpdateResponse"
                         }
                     },
                     "401": {
@@ -11302,57 +11879,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.RestaurantSettingsInfoResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/restaurant/settings/fetchupdate": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Fetch Restaurant RestaurantSettings Update By Date",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Restaurant"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "DateTime YYYY-MM-DDTHH:mm",
-                        "name": "lastUpdate",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.RestaurantSettingsFetchUpdateResponse"
                         }
                     },
                     "401": {
@@ -11978,57 +12504,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/restaurant/table/fetchupdate": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Fetch Restaurant ShopTable Update By Date",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Restaurant"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "DateTime YYYY-MM-DDTHH:mm",
-                        "name": "lastUpdate",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ShopTableFetchUpdateResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/restaurant/table/{id}": {
             "get": {
                 "security": [
@@ -12273,57 +12748,6 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.BulkInsertResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/restaurant/zone/fetchupdate": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Fetch Restaurant ShopZone Update By Date",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Restaurant"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "DateTime YYYY-MM-DDTHH:mm",
-                        "name": "lastUpdate",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ShopZoneFetchUpdateResponse"
                         }
                     },
                     "401": {
@@ -13750,6 +14174,45 @@ const docTemplate = `{
             }
         },
         "/sml-transaction": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create SMLTransaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMLTransaction"
+                ],
+                "parameters": [
+                    {
+                        "description": "SMLTransactionRequest",
+                        "name": "SMLTransactionRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SMLTransactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -15504,7 +15967,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Image"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_images_models.Image"
                             }
                         }
                     },
@@ -15558,7 +16021,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Image"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_images_models.Image"
                             }
                         }
                     },
@@ -16241,8 +16704,8 @@ const docTemplate = `{
                 "isprimary": {
                     "type": "boolean"
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "name1": {
                     "type": "string",
@@ -16264,7 +16727,17 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "unitcode": {
@@ -16311,7 +16784,7 @@ const docTemplate = `{
                 "images": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Image"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_payment_bookbank_models.Image"
                     }
                 },
                 "names": {
@@ -16838,28 +17311,45 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Customer": {
+        "models.CreditorGroup": {
             "type": "object",
             "required": [
-                "code",
+                "names"
+            ],
+            "properties": {
+                "groupcode": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.CreditorRequest": {
+            "type": "object",
+            "required": [
                 "names"
             ],
             "properties": {
                 "addressforbilling": {
-                    "$ref": "#/definitions/models.CustomerAddress"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_creditor_models.Address"
                 },
                 "addressforshipping": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.CustomerAddress"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_creditor_models.Address"
                     }
                 },
                 "branchnumber": {
                     "type": "string"
                 },
                 "code": {
-                    "type": "string",
-                    "minLength": 1
+                    "type": "string"
                 },
                 "customertype": {
                     "type": "integer"
@@ -16867,10 +17357,16 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "groups": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "images": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Image"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_creditor_models.Image"
                     }
                 },
                 "names": {
@@ -16889,63 +17385,14 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CustomerAddress": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "contactnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "districtcode": {
-                    "type": "string"
-                },
-                "guid": {
-                    "type": "string"
-                },
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                },
-                "phoneprimary": {
-                    "type": "string"
-                },
-                "phonesecondary": {
-                    "type": "string"
-                },
-                "provincecode": {
-                    "type": "string"
-                },
-                "subdistrictcode": {
-                    "type": "string"
-                },
-                "zipcode": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.CustomerGroup": {
+        "models.DebtorGroup": {
             "type": "object",
             "required": [
-                "groupcode",
                 "names"
             ],
             "properties": {
                 "groupcode": {
-                    "type": "string",
-                    "minLength": 1
+                    "type": "string"
                 },
                 "names": {
                     "type": "array",
@@ -16957,36 +17404,26 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CustomerGroupRequest": {
-            "type": "object",
-            "properties": {
-                "guidfixed": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.CustomerRequest": {
+        "models.DebtorRequest": {
             "type": "object",
             "required": [
-                "code",
                 "names"
             ],
             "properties": {
                 "addressforbilling": {
-                    "$ref": "#/definitions/models.CustomerAddress"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_debtor_models.Address"
                 },
                 "addressforshipping": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.CustomerAddress"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_debtor_models.Address"
                     }
                 },
                 "branchnumber": {
                     "type": "string"
                 },
                 "code": {
-                    "type": "string",
-                    "minLength": 1
+                    "type": "string"
                 },
                 "customertype": {
                     "type": "integer"
@@ -16997,13 +17434,13 @@ const docTemplate = `{
                 "groups": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.CustomerGroupRequest"
+                        "type": "string"
                     }
                 },
                 "images": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Image"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_debtor_models.Image"
                     }
                 },
                 "names": {
@@ -17308,14 +17745,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Image": {
-            "type": "object",
-            "properties": {
-                "uri": {
-                    "type": "string"
-                }
-            }
-        },
         "models.ImageEdit": {
             "type": "object",
             "properties": {
@@ -17494,8 +17923,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -17520,6 +17949,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -17541,6 +17973,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -17693,8 +18132,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -17719,6 +18158,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -17740,6 +18182,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -17969,8 +18418,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -17995,6 +18444,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -18016,6 +18468,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -18719,96 +19178,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.KitchenActivity": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "printers": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "products": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                },
-                "zones": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "models.KitchenDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.KitchenFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.KitchenLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
         "models.KitchenInfo": {
             "type": "object",
             "properties": {
@@ -18861,23 +19230,6 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
-                }
-            }
-        },
-        "models.KitchenLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.KitchenActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.KitchenDeleteActivity"
-                    }
                 }
             }
         },
@@ -18944,90 +19296,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.MemberActivity": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "branchcode": {
-                    "type": "string"
-                },
-                "branchtype": {
-                    "type": "integer"
-                },
-                "contacttype": {
-                    "type": "integer"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "personaltype": {
-                    "type": "integer"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "surname": {
-                    "type": "string"
-                },
-                "taxid": {
-                    "type": "string"
-                },
-                "telephone": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                },
-                "zipcode": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.MemberDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.MemberFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.MemberLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
         "models.MemberInfo": {
             "type": "object",
             "properties": {
@@ -19074,23 +19342,6 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
-                }
-            }
-        },
-        "models.MemberLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.MemberActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.MemberDeleteActivity"
-                    }
                 }
             }
         },
@@ -19571,84 +19822,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.PrinterActivity": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "integer"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.PrinterDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.PrinterFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.PrinterLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
         "models.PrinterInfo": {
             "type": "object",
             "properties": {
@@ -19689,23 +19862,6 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
-                }
-            }
-        },
-        "models.PrinterLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PrinterActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PrinterDeleteActivity"
-                    }
                 }
             }
         },
@@ -20072,10 +20228,20 @@ const docTemplate = `{
         "models.ProductPrice": {
             "type": "object",
             "properties": {
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
+                },
+                "normalprice": {
+                    "type": "number"
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 }
             }
@@ -20343,11 +20509,11 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
-                },
                 "linenumber": {
                     "type": "integer"
+                },
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -20372,6 +20538,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -20393,6 +20562,12 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "qty": {
@@ -20602,66 +20777,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.RestaurantSettingsActivity": {
-            "type": "object",
-            "properties": {
-                "body": {
-                    "type": "string"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.RestaurantSettingsDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.RestaurantSettingsFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.RestaurantSettingsLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
         "models.RestaurantSettingsInfo": {
             "type": "object",
             "properties": {
@@ -20684,23 +20799,6 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
-                }
-            }
-        },
-        "models.RestaurantSettingsLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.RestaurantSettingsActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.RestaurantSettingsDeleteActivity"
-                    }
                 }
             }
         },
@@ -20955,11 +21053,11 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
-                },
                 "linenumber": {
                     "type": "integer"
+                },
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -20984,6 +21082,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -21005,6 +21106,12 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "qty": {
@@ -21213,95 +21320,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.ShopTableActivity": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "number": {
-                    "type": "string"
-                },
-                "seat": {
-                    "type": "integer"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                },
-                "zone": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.ShopTableDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.ShopTableFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.ShopTableLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
         "models.ShopTableInfo": {
             "type": "object",
             "required": [
@@ -21353,23 +21371,6 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
-                }
-            }
-        },
-        "models.ShopTableLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ShopTableActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ShopTableDeleteActivity"
-                    }
                 }
             }
         },
@@ -21439,81 +21440,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.ShopZoneActivity": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "printer": {
-                    "$ref": "#/definitions/models.Printer"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.ShopZoneDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.ShopZoneFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.ShopZoneLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
         "models.ShopZoneInfo": {
             "type": "object",
             "properties": {
@@ -21551,23 +21477,6 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
-                }
-            }
-        },
-        "models.ShopZoneLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ShopZoneActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ShopZoneDeleteActivity"
-                    }
                 }
             }
         },
@@ -22388,6 +22297,141 @@ const docTemplate = `{
                     "type": "integer",
                     "maximum": 4294967295,
                     "minimum": 0
+                }
+            }
+        },
+        "smlcloudplatform_pkg_debtaccount_creditor_models.Address": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "contactnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "guid": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phoneprimary": {
+                    "type": "string"
+                },
+                "phonesecondary": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_debtaccount_creditor_models.Image": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_debtaccount_debtor_models.Address": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "contactnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "guid": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phoneprimary": {
+                    "type": "string"
+                },
+                "phonesecondary": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_debtaccount_debtor_models.Image": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_images_models.Image": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_payment_bookbank_models.Image": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },

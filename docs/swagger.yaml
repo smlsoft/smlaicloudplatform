@@ -236,8 +236,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       name1:
         maxLength: 255
         type: string
@@ -253,7 +253,14 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -284,7 +291,7 @@ definitions:
         uniqueItems: true
       images:
         items:
-          $ref: '#/definitions/models.Image'
+          $ref: '#/definitions/smlcloudplatform_pkg_payment_bookbank_models.Image'
         type: array
       names:
         items:
@@ -646,76 +653,9 @@ definitions:
       remark:
         type: string
     type: object
-  models.Customer:
-    properties:
-      addressforbilling:
-        $ref: '#/definitions/models.CustomerAddress'
-      addressforshipping:
-        items:
-          $ref: '#/definitions/models.CustomerAddress'
-        type: array
-      branchnumber:
-        type: string
-      code:
-        minLength: 1
-        type: string
-      customertype:
-        type: integer
-      email:
-        type: string
-      images:
-        items:
-          $ref: '#/definitions/models.Image'
-        type: array
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      personaltype:
-        type: integer
-      taxid:
-        type: string
-    required:
-    - code
-    - names
-    type: object
-  models.CustomerAddress:
-    properties:
-      address:
-        items:
-          type: string
-        type: array
-      contactnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      guid:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phoneprimary:
-        type: string
-      phonesecondary:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
-    type: object
-  models.CustomerGroup:
+  models.CreditorGroup:
     properties:
       groupcode:
-        minLength: 1
         type: string
       names:
         items:
@@ -724,26 +664,19 @@ definitions:
         type: array
         uniqueItems: true
     required:
-    - groupcode
     - names
     type: object
-  models.CustomerGroupRequest:
-    properties:
-      guidfixed:
-        type: string
-    type: object
-  models.CustomerRequest:
+  models.CreditorRequest:
     properties:
       addressforbilling:
-        $ref: '#/definitions/models.CustomerAddress'
+        $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_creditor_models.Address'
       addressforshipping:
         items:
-          $ref: '#/definitions/models.CustomerAddress'
+          $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_creditor_models.Address'
         type: array
       branchnumber:
         type: string
       code:
-        minLength: 1
         type: string
       customertype:
         type: integer
@@ -751,11 +684,11 @@ definitions:
         type: string
       groups:
         items:
-          $ref: '#/definitions/models.CustomerGroupRequest'
+          type: string
         type: array
       images:
         items:
-          $ref: '#/definitions/models.Image'
+          $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_creditor_models.Image'
         type: array
       names:
         items:
@@ -768,7 +701,56 @@ definitions:
       taxid:
         type: string
     required:
-    - code
+    - names
+    type: object
+  models.DebtorGroup:
+    properties:
+      groupcode:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - names
+    type: object
+  models.DebtorRequest:
+    properties:
+      addressforbilling:
+        $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_debtor_models.Address'
+      addressforshipping:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_debtor_models.Address'
+        type: array
+      branchnumber:
+        type: string
+      code:
+        type: string
+      customertype:
+        type: integer
+      email:
+        type: string
+      groups:
+        items:
+          type: string
+        type: array
+      images:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_debtor_models.Image'
+        type: array
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      personaltype:
+        type: integer
+      taxid:
+        type: string
+    required:
     - names
     type: object
   models.Department:
@@ -965,11 +947,6 @@ definitions:
           type: string
         type: array
     type: object
-  models.Image:
-    properties:
-      uri:
-        type: string
-    type: object
   models.ImageEdit:
     properties:
       editedat:
@@ -1091,8 +1068,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1110,6 +1087,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1125,6 +1104,11 @@ definitions:
         maxLength: 50
         type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1233,8 +1217,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1252,6 +1236,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1267,6 +1253,11 @@ definitions:
         maxLength: 50
         type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1425,8 +1416,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1444,6 +1435,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1459,6 +1452,11 @@ definitions:
         maxLength: 50
         type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1937,65 +1935,6 @@ definitions:
           type: string
         type: array
     type: object
-  models.KitchenActivity:
-    properties:
-      code:
-        type: string
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      printers:
-        items:
-          type: string
-        type: array
-      products:
-        items:
-          type: string
-        type: array
-      shopid:
-        type: string
-      updatedat:
-        type: string
-      zones:
-        items:
-          type: string
-        type: array
-    type: object
-  models.KitchenDeleteActivity:
-    properties:
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      shopid:
-        type: string
-      updatedat:
-        type: string
-    type: object
-  models.KitchenFetchUpdateResponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.KitchenLastActivityResponse'
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
   models.KitchenInfo:
     properties:
       code:
@@ -2031,17 +1970,6 @@ definitions:
         $ref: '#/definitions/models.KitchenInfo'
       success:
         type: boolean
-    type: object
-  models.KitchenLastActivityResponse:
-    properties:
-      new:
-        items:
-          $ref: '#/definitions/models.KitchenActivity'
-        type: array
-      remove:
-        items:
-          $ref: '#/definitions/models.KitchenDeleteActivity'
-        type: array
     type: object
   models.KitchenPageResponse:
     properties:
@@ -2084,61 +2012,6 @@ definitions:
       zipcode:
         type: string
     type: object
-  models.MemberActivity:
-    properties:
-      address:
-        type: string
-      branchcode:
-        type: string
-      branchtype:
-        type: integer
-      contacttype:
-        type: integer
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      name:
-        type: string
-      personaltype:
-        type: integer
-      shopid:
-        type: string
-      surname:
-        type: string
-      taxid:
-        type: string
-      telephone:
-        type: string
-      updatedat:
-        type: string
-      zipcode:
-        type: string
-    type: object
-  models.MemberDeleteActivity:
-    properties:
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      shopid:
-        type: string
-      updatedat:
-        type: string
-    type: object
-  models.MemberFetchUpdateResponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.MemberLastActivityResponse'
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
   models.MemberInfo:
     properties:
       address:
@@ -2170,17 +2043,6 @@ definitions:
         $ref: '#/definitions/models.MemberInfo'
       success:
         type: boolean
-    type: object
-  models.MemberLastActivityResponse:
-    properties:
-      new:
-        items:
-          $ref: '#/definitions/models.MemberActivity'
-        type: array
-      remove:
-        items:
-          $ref: '#/definitions/models.MemberDeleteActivity'
-        type: array
     type: object
   models.MemberPageResponse:
     properties:
@@ -2511,57 +2373,6 @@ definitions:
       type:
         type: integer
     type: object
-  models.PrinterActivity:
-    properties:
-      address:
-        type: string
-      code:
-        type: string
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      shopid:
-        type: string
-      type:
-        type: integer
-      updatedat:
-        type: string
-    type: object
-  models.PrinterDeleteActivity:
-    properties:
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      shopid:
-        type: string
-      updatedat:
-        type: string
-    type: object
-  models.PrinterFetchUpdateResponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.PrinterLastActivityResponse'
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
   models.PrinterInfo:
     properties:
       address:
@@ -2589,17 +2400,6 @@ definitions:
         $ref: '#/definitions/models.PrinterInfo'
       success:
         type: boolean
-    type: object
-  models.PrinterLastActivityResponse:
-    properties:
-      new:
-        items:
-          $ref: '#/definitions/models.PrinterActivity'
-        type: array
-      remove:
-        items:
-          $ref: '#/definitions/models.PrinterDeleteActivity'
-        type: array
     type: object
   models.PrinterPageResponse:
     properties:
@@ -2850,9 +2650,16 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
+      normalprice:
+        type: number
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
     type: object
   models.ProductUnit:
@@ -3038,10 +2845,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
       linenumber:
         type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -3059,6 +2866,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3074,6 +2883,10 @@ definitions:
         maxLength: 50
         type: string
       price:
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       qty:
         type: number
@@ -3215,45 +3028,6 @@ definitions:
       code:
         type: string
     type: object
-  models.RestaurantSettingsActivity:
-    properties:
-      body:
-        type: string
-      code:
-        type: string
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      shopid:
-        type: string
-      updatedat:
-        type: string
-    type: object
-  models.RestaurantSettingsDeleteActivity:
-    properties:
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      shopid:
-        type: string
-      updatedat:
-        type: string
-    type: object
-  models.RestaurantSettingsFetchUpdateResponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.RestaurantSettingsLastActivityResponse'
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
   models.RestaurantSettingsInfo:
     properties:
       body:
@@ -3269,17 +3043,6 @@ definitions:
         $ref: '#/definitions/models.RestaurantSettingsInfo'
       success:
         type: boolean
-    type: object
-  models.RestaurantSettingsLastActivityResponse:
-    properties:
-      new:
-        items:
-          $ref: '#/definitions/models.RestaurantSettingsActivity'
-        type: array
-      remove:
-        items:
-          $ref: '#/definitions/models.RestaurantSettingsDeleteActivity'
-        type: array
     type: object
   models.RestaurantSettingsPageResponse:
     properties:
@@ -3457,10 +3220,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
       linenumber:
         type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -3478,6 +3241,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3493,6 +3258,10 @@ definitions:
         maxLength: 50
         type: string
       price:
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       qty:
         type: number
@@ -3634,65 +3403,6 @@ definitions:
     required:
     - names
     type: object
-  models.ShopTableActivity:
-    properties:
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      number:
-        type: string
-      seat:
-        type: integer
-      shopid:
-        type: string
-      updatedat:
-        type: string
-      zone:
-        type: string
-    required:
-    - names
-    type: object
-  models.ShopTableDeleteActivity:
-    properties:
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      shopid:
-        type: string
-      updatedat:
-        type: string
-    type: object
-  models.ShopTableFetchUpdateResponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.ShopTableLastActivityResponse'
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
   models.ShopTableInfo:
     properties:
       guidfixed:
@@ -3728,17 +3438,6 @@ definitions:
         $ref: '#/definitions/models.ShopTableInfo'
       success:
         type: boolean
-    type: object
-  models.ShopTableLastActivityResponse:
-    properties:
-      new:
-        items:
-          $ref: '#/definitions/models.ShopTableActivity'
-        type: array
-      remove:
-        items:
-          $ref: '#/definitions/models.ShopTableDeleteActivity'
-        type: array
     type: object
   models.ShopTablePageResponse:
     properties:
@@ -3783,55 +3482,6 @@ definitions:
       printer:
         $ref: '#/definitions/models.Printer'
     type: object
-  models.ShopZoneActivity:
-    properties:
-      code:
-        type: string
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      printer:
-        $ref: '#/definitions/models.Printer'
-      shopid:
-        type: string
-      updatedat:
-        type: string
-    type: object
-  models.ShopZoneDeleteActivity:
-    properties:
-      createdat:
-        type: string
-      deletedat:
-        type: string
-      guidfixed:
-        type: string
-      shopid:
-        type: string
-      updatedat:
-        type: string
-    type: object
-  models.ShopZoneFetchUpdateResponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.ShopZoneLastActivityResponse'
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
   models.ShopZoneInfo:
     properties:
       code:
@@ -3857,17 +3507,6 @@ definitions:
         $ref: '#/definitions/models.ShopZoneInfo'
       success:
         type: boolean
-    type: object
-  models.ShopZoneLastActivityResponse:
-    properties:
-      new:
-        items:
-          $ref: '#/definitions/models.ShopZoneActivity'
-        type: array
-      remove:
-        items:
-          $ref: '#/definitions/models.ShopZoneDeleteActivity'
-        type: array
     type: object
   models.ShopZonePageResponse:
     properties:
@@ -4429,6 +4068,94 @@ definitions:
         minimum: 0
         type: integer
     type: object
+  smlcloudplatform_pkg_debtaccount_creditor_models.Address:
+    properties:
+      address:
+        items:
+          type: string
+        type: array
+      contactnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      guid:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phoneprimary:
+        type: string
+      phonesecondary:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
+    type: object
+  smlcloudplatform_pkg_debtaccount_creditor_models.Image:
+    properties:
+      uri:
+        type: string
+      xorder:
+        type: integer
+    type: object
+  smlcloudplatform_pkg_debtaccount_debtor_models.Address:
+    properties:
+      address:
+        items:
+          type: string
+        type: array
+      contactnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      guid:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phoneprimary:
+        type: string
+      phonesecondary:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
+    type: object
+  smlcloudplatform_pkg_debtaccount_debtor_models.Image:
+    properties:
+      uri:
+        type: string
+      xorder:
+        type: integer
+    type: object
+  smlcloudplatform_pkg_images_models.Image:
+    properties:
+      uri:
+        type: string
+    type: object
+  smlcloudplatform_pkg_payment_bookbank_models.Image:
+    properties:
+      uri:
+        type: string
+      xorder:
+        type: integer
+    type: object
   smlcloudplatform_pkg_product_inventory_models.Unit:
     properties:
       unitcode:
@@ -4863,15 +4590,15 @@ paths:
       - AccessToken: []
       tags:
       - Authentication
-  /customershop/customer:
+  /debtaccount/creditor:
     delete:
       consumes:
       - application/json
-      description: Delete Customer
+      description: Delete Creditor
       parameters:
-      - description: Customer GUIDs
+      - description: Creditor GUIDs
         in: body
-        name: Customer
+        name: Creditor
         required: true
         schema:
           items:
@@ -4889,7 +4616,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - Customer
+      - Creditor
     get:
       consumes:
       - application/json
@@ -4899,17 +4626,13 @@ paths:
         in: query
         name: q
         type: string
-      - description: Page
+      - description: Add Category
         in: query
         name: page
         type: integer
-      - description: Limit
+      - description: Add Category
         in: query
         name: limit
-        type: integer
-      - description: customer group
-        in: query
-        name: group
         type: integer
       responses:
         "200":
@@ -4925,18 +4648,18 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - CustomerShop
+      - Creditor
     post:
       consumes:
       - application/json
-      description: Create Customer
+      description: Create Creditor
       parameters:
-      - description: Customer Request
+      - description: Creditor
         in: body
-        name: CustomerRequest
+        name: Creditor
         required: true
         schema:
-          $ref: '#/definitions/models.CustomerRequest'
+          $ref: '#/definitions/models.CreditorRequest'
       responses:
         "201":
           description: Created
@@ -4949,14 +4672,97 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - CustomerShop
-  /customershop/customer/{id}:
+      - Creditor
+  /debtaccount/creditor-group:
     delete:
       consumes:
       - application/json
-      description: Delete Customer
+      description: Delete CreditorGroup
       parameters:
-      - description: Customer ID
+      - description: CreditorGroup GUIDs
+        in: body
+        name: CreditorGroup
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CreditorGroup
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CreditorGroup
+    post:
+      consumes:
+      - application/json
+      description: Create CreditorGroup
+      parameters:
+      - description: CreditorGroup
+        in: body
+        name: CreditorGroup
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreditorGroup'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - CreditorGroup
+  /debtaccount/creditor-group/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete CreditorGroup
+      parameters:
+      - description: CreditorGroup ID
         in: path
         name: id
         required: true
@@ -4973,13 +4779,13 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - CustomerShop
+      - CreditorGroup
     get:
       consumes:
       - application/json
       description: get struct array by ID
       parameters:
-      - description: Customer ID
+      - description: CreditorGroup ID
         in: path
         name: id
         required: true
@@ -4996,23 +4802,23 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - CustomerShop
+      - CreditorGroup
     put:
       consumes:
       - application/json
-      description: Update Customer
+      description: Update CreditorGroup
       parameters:
-      - description: Customer ID
+      - description: CreditorGroup ID
         in: path
         name: id
         required: true
         type: string
-      - description: Customer Request
+      - description: CreditorGroup
         in: body
-        name: CustomerRequest
+        name: CreditorGroup
         required: true
         schema:
-          $ref: '#/definitions/models.CustomerRequest'
+          $ref: '#/definitions/models.CreditorGroup'
       responses:
         "201":
           description: Created
@@ -5025,20 +4831,20 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - CustomerShop
-  /customershop/customer/bulk:
+      - CreditorGroup
+  /debtaccount/creditor-group/bulk:
     post:
       consumes:
       - application/json
-      description: Create Customer
+      description: Create CreditorGroup
       parameters:
-      - description: Customer
+      - description: CreditorGroup
         in: body
-        name: Customer
+        name: CreditorGroup
         required: true
         schema:
           items:
-            $ref: '#/definitions/models.Customer'
+            $ref: '#/definitions/models.CreditorGroup'
           type: array
       responses:
         "201":
@@ -5052,8 +4858,8 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - CustomerShop
-  /customershop/customer/list:
+      - CreditorGroup
+  /debtaccount/creditor-group/list:
     get:
       consumes:
       - application/json
@@ -5089,97 +4895,14 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - CustomerShop
-  /customershop/customergroup:
+      - CreditorGroup
+  /debtaccount/creditor/{id}:
     delete:
       consumes:
       - application/json
-      description: Delete CustomerGroup
+      description: Delete Creditor
       parameters:
-      - description: CustomerGroup GUIDs
-        in: body
-        name: CustomerGroup
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - CustomerGroup
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.ApiResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - CustomerShop
-    post:
-      consumes:
-      - application/json
-      description: Create CustomerGroup
-      parameters:
-      - description: CustomerGroup
-        in: body
-        name: CustomerGroup
-        required: true
-        schema:
-          $ref: '#/definitions/models.CustomerGroup'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - CustomerShop
-  /customershop/customergroup/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete CustomerGroup
-      parameters:
-      - description: CustomerGroup ID
+      - description: Creditor ID
         in: path
         name: id
         required: true
@@ -5196,13 +4919,13 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - CustomerShop
+      - Creditor
     get:
       consumes:
       - application/json
       description: get struct array by ID
       parameters:
-      - description: CustomerGroup ID
+      - description: Creditor ID
         in: path
         name: id
         required: true
@@ -5219,23 +4942,23 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - CustomerShop
+      - Creditor
     put:
       consumes:
       - application/json
-      description: Update CustomerGroup
+      description: Update Creditor
       parameters:
-      - description: CustomerGroup ID
+      - description: Creditor ID
         in: path
         name: id
         required: true
         type: string
-      - description: CustomerGroup
+      - description: Creditor
         in: body
-        name: CustomerGroup
+        name: Creditor
         required: true
         schema:
-          $ref: '#/definitions/models.CustomerGroup'
+          $ref: '#/definitions/models.CreditorRequest'
       responses:
         "201":
           description: Created
@@ -5248,20 +4971,20 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - CustomerShop
-  /customershop/customergroup/bulk:
+      - Creditor
+  /debtaccount/creditor/bulk:
     post:
       consumes:
       - application/json
-      description: Create CustomerGroup
+      description: Create Creditor
       parameters:
-      - description: CustomerGroup
+      - description: Creditor
         in: body
-        name: CustomerGroup
+        name: Creditor
         required: true
         schema:
           items:
-            $ref: '#/definitions/models.CustomerGroup'
+            $ref: '#/definitions/models.CreditorRequest'
           type: array
       responses:
         "201":
@@ -5275,8 +4998,8 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - CustomerShop
-  /customershop/customergroup/list:
+      - Creditor
+  /debtaccount/creditor/list:
     get:
       consumes:
       - application/json
@@ -5312,7 +5035,453 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - CustomerShop
+      - Creditor
+  /debtaccount/debtor:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Debtor
+      parameters:
+      - description: Debtor GUIDs
+        in: body
+        name: Debtor
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Debtor
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Debtor
+    post:
+      consumes:
+      - application/json
+      description: Create Debtor
+      parameters:
+      - description: Debtor
+        in: body
+        name: Debtor
+        required: true
+        schema:
+          $ref: '#/definitions/models.DebtorRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Debtor
+  /debtaccount/debtor-group:
+    delete:
+      consumes:
+      - application/json
+      description: Delete DebtorGroup
+      parameters:
+      - description: DebtorGroup GUIDs
+        in: body
+        name: DebtorGroup
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DebtorGroup
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Add Category
+        in: query
+        name: page
+        type: integer
+      - description: Add Category
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DebtorGroup
+    post:
+      consumes:
+      - application/json
+      description: Create DebtorGroup
+      parameters:
+      - description: DebtorGroup
+        in: body
+        name: DebtorGroup
+        required: true
+        schema:
+          $ref: '#/definitions/models.DebtorGroup'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DebtorGroup
+  /debtaccount/debtor-group/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete DebtorGroup
+      parameters:
+      - description: DebtorGroup ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DebtorGroup
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: DebtorGroup ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DebtorGroup
+    put:
+      consumes:
+      - application/json
+      description: Update DebtorGroup
+      parameters:
+      - description: DebtorGroup ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: DebtorGroup
+        in: body
+        name: DebtorGroup
+        required: true
+        schema:
+          $ref: '#/definitions/models.DebtorGroup'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DebtorGroup
+  /debtaccount/debtor-group/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create DebtorGroup
+      parameters:
+      - description: DebtorGroup
+        in: body
+        name: DebtorGroup
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.DebtorGroup'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DebtorGroup
+  /debtaccount/debtor-group/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DebtorGroup
+  /debtaccount/debtor/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Debtor
+      parameters:
+      - description: Debtor ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Debtor
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Debtor ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Debtor
+    put:
+      consumes:
+      - application/json
+      description: Update Debtor
+      parameters:
+      - description: Debtor ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Debtor
+        in: body
+        name: Debtor
+        required: true
+        schema:
+          $ref: '#/definitions/models.DebtorRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Debtor
+  /debtaccount/debtor/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Debtor
+      parameters:
+      - description: Debtor
+        in: body
+        name: Debtor
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.DebtorRequest'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Debtor
+  /debtaccount/debtor/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Debtor
   /documentimage:
     get:
       consumes:
@@ -7968,6 +8137,10 @@ paths:
         in: query
         name: action
         type: string
+      - description: filter data ex. filter=branch:1,department:x01
+        in: query
+        name: filter
+        type: string
       responses:
         "200":
           description: OK
@@ -8155,30 +8328,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Member
-  /member/fetchupdate:
-    get:
-      consumes:
-      - application/json
-      description: Fetch Update Member By Date
-      parameters:
-      - description: DateTime
-        in: query
-        name: lastUpdate
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.MemberFetchUpdateResponse'
         "401":
           description: Unauthorized
           schema:
@@ -11162,38 +11311,6 @@ paths:
       - AccessToken: []
       tags:
       - Restaurant
-  /restaurant/kitchen/fetchupdate:
-    get:
-      consumes:
-      - application/json
-      description: Fetch Restaurant Kitchen Update By Date
-      parameters:
-      - description: DateTime YYYY-MM-DDTHH:mm
-        in: query
-        name: lastUpdate
-        required: true
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.KitchenFetchUpdateResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Restaurant
   /restaurant/kitchen/list:
     get:
       consumes:
@@ -11377,38 +11494,6 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/models.BulkInsertResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Restaurant
-  /restaurant/printer/fetchupdate:
-    get:
-      consumes:
-      - application/json
-      description: Fetch Restaurant Printer Update By Date
-      parameters:
-      - description: DateTime YYYY-MM-DDTHH:mm
-        in: query
-        name: lastUpdate
-        required: true
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.PrinterFetchUpdateResponse'
         "401":
           description: Unauthorized
           schema:
@@ -11650,38 +11735,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.RestaurantSettingsInfoResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Restaurant
-  /restaurant/settings/fetchupdate:
-    get:
-      consumes:
-      - application/json
-      description: Fetch Restaurant RestaurantSettings Update By Date
-      parameters:
-      - description: DateTime YYYY-MM-DDTHH:mm
-        in: query
-        name: lastUpdate
-        required: true
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.RestaurantSettingsFetchUpdateResponse'
         "401":
           description: Unauthorized
           schema:
@@ -12071,38 +12124,6 @@ paths:
       - AccessToken: []
       tags:
       - Restaurant
-  /restaurant/table/fetchupdate:
-    get:
-      consumes:
-      - application/json
-      description: Fetch Restaurant ShopTable Update By Date
-      parameters:
-      - description: DateTime YYYY-MM-DDTHH:mm
-        in: query
-        name: lastUpdate
-        required: true
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ShopTableFetchUpdateResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Restaurant
   /restaurant/zone:
     get:
       consumes:
@@ -12253,38 +12274,6 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/models.BulkInsertResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Restaurant
-  /restaurant/zone/fetchupdate:
-    get:
-      consumes:
-      - application/json
-      description: Fetch Restaurant ShopZone Update By Date
-      parameters:
-      - description: DateTime YYYY-MM-DDTHH:mm
-        in: query
-        name: lastUpdate
-        required: true
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ShopZoneFetchUpdateResponse'
         "401":
           description: Unauthorized
           schema:
@@ -13110,6 +13099,30 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SMLTransaction
+    get:
+      consumes:
+      - application/json
+      description: Create SMLTransaction
+      parameters:
+      - description: SMLTransactionRequest
+        in: body
+        name: SMLTransactionRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.SMLTransactionRequest'
+      responses:
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
@@ -14185,7 +14198,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Image'
+              $ref: '#/definitions/smlcloudplatform_pkg_images_models.Image'
             type: array
         "400":
           description: Bad Request
@@ -14219,7 +14232,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Image'
+              $ref: '#/definitions/smlcloudplatform_pkg_images_models.Image'
             type: array
         "400":
           description: Bad Request
