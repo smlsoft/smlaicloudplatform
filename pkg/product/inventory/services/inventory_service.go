@@ -564,7 +564,7 @@ func (svc InventoryService) LastActivity(shopID string, lastUpdatedDate time.Tim
 	var err1 error
 
 	go func() {
-		deleteDocList, pagination1, err1 = svc.invRepo.FindDeletedPage(shopID, lastUpdatedDate, pageable)
+		deleteDocList, pagination1, err1 = svc.invRepo.FindDeletedPage(shopID, lastUpdatedDate, map[string]interface{}{}, pageable)
 		wg.Done()
 	}()
 
@@ -574,7 +574,7 @@ func (svc InventoryService) LastActivity(shopID string, lastUpdatedDate time.Tim
 	var err2 error
 
 	go func() {
-		createAndUpdateDocList, pagination2, err2 = svc.invRepo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, pageable)
+		createAndUpdateDocList, pagination2, err2 = svc.invRepo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, map[string]interface{}{}, pageable)
 		wg.Done()
 	}()
 
@@ -610,7 +610,7 @@ func (svc InventoryService) LastActivityStep(shopID string, lastUpdatedDate time
 	var err1 error
 
 	go func() {
-		deleteDocList, err1 = svc.invRepo.FindDeletedStep(shopID, lastUpdatedDate, pageableStep)
+		deleteDocList, err1 = svc.invRepo.FindDeletedStep(shopID, lastUpdatedDate, map[string]interface{}{}, pageableStep)
 		wg.Done()
 	}()
 
@@ -620,7 +620,7 @@ func (svc InventoryService) LastActivityStep(shopID string, lastUpdatedDate time
 	var err2 error
 
 	go func() {
-		createAndUpdateDocList, err2 = svc.invRepo.FindCreatedOrUpdatedStep(shopID, lastUpdatedDate, pageableStep)
+		createAndUpdateDocList, err2 = svc.invRepo.FindCreatedOrUpdatedStep(shopID, lastUpdatedDate, map[string]interface{}{}, pageableStep)
 		wg.Done()
 	}()
 

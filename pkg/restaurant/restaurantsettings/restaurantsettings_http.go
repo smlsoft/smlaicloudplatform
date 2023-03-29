@@ -7,8 +7,6 @@ import (
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/restaurantsettings/models"
 	"smlcloudplatform/pkg/utils"
-	"strings"
-	"time"
 
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 )
@@ -39,7 +37,6 @@ func NewRestaurantSettingsHttp(ms *microservice.Microservice, cfg microservice.I
 func (h RestaurantSettingsHttp) RouteSetup() {
 
 	h.ms.POST("/restaurant/settings/bulk", h.SaveBulk)
-	h.ms.GET("/restaurant/settings/fetchupdate", h.FetchUpdate)
 
 	h.ms.GET("/restaurant/settings", h.SearchRestaurantSettings)
 	h.ms.POST("/restaurant/settings", h.CreateRestaurantSettings)
@@ -291,57 +288,6 @@ func (h RestaurantSettingsHttp) SearchRestaurantSettings(ctx microservice.IConte
 		Data:       docList,
 		Pagination: pagination,
 	})
-	return nil
-}
-
-// Fetch Restaurant RestaurantSettings Update By Date godoc
-// @Description Fetch Restaurant RestaurantSettings Update By Date
-// @Tags		Restaurant
-// @Param		lastUpdate query string true "DateTime YYYY-MM-DDTHH:mm"
-// @Param		page	query	integer		false  "Page"
-// @Param		limit	query	integer		false  "Limit"
-// @Accept		json
-// @Success		200 {object} models.RestaurantSettingsFetchUpdateResponse
-// @Failure		401 {object} common.AuthResponseFailed
-// @Security	AccessToken
-// @Router		/restaurant/settings/fetchupdate [get]
-func (h RestaurantSettingsHttp) FetchUpdate(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-
-	layout := "2006-01-02T15:04" //
-	lastUpdateStr := ctx.QueryParam("lastUpdate")
-
-	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
-	if len(lastUpdateStr) < 1 {
-		ctx.ResponseError(400, "lastUpdate format invalid.")
-		return nil
-	}
-
-	lastUpdate, err := time.Parse(layout, lastUpdateStr)
-
-	if err != nil {
-		ctx.ResponseError(400, "lastUpdate format invalid.")
-		return err
-	}
-
-	pageable := utils.GetPageable(ctx.QueryParam)
-
-	docList, pagination, err := h.svc.LastActivity(shopID, "all", lastUpdate, pageable)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	ctx.Response(
-		http.StatusOK,
-		common.ApiResponse{
-			Success:    true,
-			Data:       docList,
-			Pagination: pagination,
-		})
-
 	return nil
 }
 

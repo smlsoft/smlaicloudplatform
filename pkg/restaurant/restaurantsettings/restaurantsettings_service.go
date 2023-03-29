@@ -28,7 +28,6 @@ type IRestaurantSettingsService interface {
 	SaveInBatch(shopID string, authUsername string, dataList []models.RestaurantSettings) (common.BulkImport, error)
 	ListRestaurantSettingsByCode(shopID string, code string, pagable micromodels.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
 
-	LastActivity(shopID string, action string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error)
 	GetModuleName() string
 }
 

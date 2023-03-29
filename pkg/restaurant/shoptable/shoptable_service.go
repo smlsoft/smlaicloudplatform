@@ -24,7 +24,6 @@ type IShopTableService interface {
 	SearchShopTable(shopID string, pageable micromodels.Pageable) ([]models.ShopTableInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ShopTable) (common.BulkImport, error)
 
-	LastActivity(shopID string, action string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error)
 	GetModuleName() string
 }
 

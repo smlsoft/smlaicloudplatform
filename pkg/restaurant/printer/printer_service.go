@@ -26,8 +26,6 @@ type IPrinterService interface {
 	SaveInBatch(shopID string, authUsername string, dataList []models.Printer) (common.BulkImport, error)
 	SearchPrinterStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.PrinterInfo, int, error)
 
-	LastActivity(shopID string, action string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error)
-
 	GetModuleName() string
 }
 

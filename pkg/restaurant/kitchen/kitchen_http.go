@@ -8,8 +8,6 @@ import (
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/kitchen/models"
 	"smlcloudplatform/pkg/utils"
-	"strings"
-	"time"
 )
 
 type IKitchenHttp interface{}
@@ -38,7 +36,6 @@ func NewKitchenHttp(ms *microservice.Microservice, cfg microservice.IConfig) Kit
 func (h KitchenHttp) RouteSetup() {
 
 	h.ms.POST("/restaurant/kitchen/bulk", h.SaveBulk)
-	h.ms.GET("/restaurant/kitchen/fetchupdate", h.FetchUpdate)
 
 	h.ms.GET("/restaurant/kitchen", h.SearchKitchen)
 	h.ms.GET("/restaurant/kitchen/list", h.SearchKitchenStep)
@@ -247,57 +244,6 @@ func (h KitchenHttp) SearchKitchenStep(ctx microservice.IContext) error {
 		Data:    docList,
 		Total:   total,
 	})
-	return nil
-}
-
-// Fetch Restaurant Kitchen Update By Date godoc
-// @Description Fetch Restaurant Kitchen Update By Date
-// @Tags		Restaurant
-// @Param		lastUpdate query string true "DateTime YYYY-MM-DDTHH:mm"
-// @Param		page	query	integer		false  "Page"
-// @Param		limit	query	integer		false  "Limit"
-// @Accept		json
-// @Success		200 {object} models.KitchenFetchUpdateResponse
-// @Failure		401 {object} common.AuthResponseFailed
-// @Security	AccessToken
-// @Router		/restaurant/kitchen/fetchupdate [get]
-func (h KitchenHttp) FetchUpdate(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-
-	layout := "2006-01-02T15:04" //
-	lastUpdateStr := ctx.QueryParam("lastUpdate")
-
-	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
-	if len(lastUpdateStr) < 1 {
-		ctx.ResponseError(400, "lastUpdate format invalid.")
-		return nil
-	}
-
-	lastUpdate, err := time.Parse(layout, lastUpdateStr)
-
-	if err != nil {
-		ctx.ResponseError(400, "lastUpdate format invalid.")
-		return err
-	}
-
-	pageable := utils.GetPageable(ctx.QueryParam)
-
-	docList, pagination, err := h.svc.LastActivity(shopID, "all", lastUpdate, pageable)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	ctx.Response(
-		http.StatusOK,
-		common.ApiResponse{
-			Success:    true,
-			Data:       docList,
-			Pagination: pagination,
-		})
-
 	return nil
 }
 

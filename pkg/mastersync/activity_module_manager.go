@@ -1,19 +1,23 @@
 package mastersync
 
 import (
+	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/models"
+	"strings"
 	"time"
 
 	"github.com/userplant/mongopagination"
 )
 
 type ActivityModuleManager struct {
+	pst                microservice.IPersisterMongo
 	activityModuleList map[string]ActivityModule
 }
 
-func NewActivityModuleManager() *ActivityModuleManager {
+func NewActivityModuleManager(pst microservice.IPersisterMongo) *ActivityModuleManager {
 	return &ActivityModuleManager{
+		pst:                pst,
 		activityModuleList: map[string]ActivityModule{},
 	}
 }
@@ -46,8 +50,8 @@ func (m ActivityModuleManager) GetPage(moduleSelectList map[string]struct{}, act
 }
 
 type ActivityModule interface {
-	LastActivity(string, string, time.Time, micromodels.Pageable) (models.LastActivity, mongopagination.PaginationData, error)
-	LastActivityStep(string, string, time.Time, micromodels.PageableStep) (models.LastActivity, error)
+	LastActivity(shopID string, action string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) (models.LastActivity, mongopagination.PaginationData, error)
+	LastActivityStep(shopID string, action string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) (models.LastActivity, error)
 	GetModuleName() string
 }
 
@@ -55,6 +59,7 @@ type ActivityParamPage struct {
 	ShopID     string
 	Action     string
 	LastUpdate time.Time
+	Filters    string
 	Pageable   micromodels.Pageable
 }
 
@@ -62,6 +67,7 @@ type ActivityParamOffset struct {
 	ShopID       string
 	Action       string
 	LastUpdate   time.Time
+	Filters      string
 	PageableStep micromodels.PageableStep
 }
 
@@ -72,7 +78,8 @@ func listDataModulePage(appModules map[string]ActivityModule, moduleSelectList m
 	resultPagination := mongopagination.PaginationData{}
 	for moduleName, appModule := range appModules {
 		if len(moduleSelectList) == 0 || isSelectModule(moduleSelectList, moduleName) {
-			docList, pagination, err := appModule.LastActivity(param.ShopID, param.Action, param.LastUpdate, param.Pageable)
+			filters := filterRawTextToMap(param.Filters)
+			docList, pagination, err := appModule.LastActivity(param.ShopID, param.Action, param.LastUpdate, filters, param.Pageable)
 
 			if err != nil {
 				return map[string]interface{}{}, mongopagination.PaginationData{}, err
@@ -96,7 +103,8 @@ func listDataModuleOffset(appModules map[string]ActivityModule, moduleSelectList
 	for moduleName, appModule := range appModules {
 		if len(moduleSelectList) == 0 || isSelectModule(moduleSelectList, moduleName) {
 
-			docList, err := appModule.LastActivityStep(param.ShopID, param.Action, param.LastUpdate, param.PageableStep)
+			filters := filterRawTextToMap(param.Filters)
+			docList, err := appModule.LastActivityStep(param.ShopID, param.Action, param.LastUpdate, filters, param.PageableStep)
 
 			if err != nil {
 				return map[string]interface{}{}, err
@@ -108,6 +116,20 @@ func listDataModuleOffset(appModules map[string]ActivityModule, moduleSelectList
 	}
 
 	return result, nil
+}
+
+func filterRawTextToMap(rawText string) map[string]interface{} {
+	filters := map[string]interface{}{}
+
+	splitText := strings.Split(rawText, ",")
+	for _, text := range splitText {
+		splitText := strings.Split(text, ":")
+		if len(splitText) == 2 {
+			filters[splitText[0]] = splitText[1]
+		}
+	}
+
+	return filters
 }
 
 func isSelectModule(moduleList map[string]struct{}, moduleKey string) bool {

@@ -29,10 +29,10 @@ type IInventoryRepository interface {
 	FindByItemBarcode(shopId string, barcode string) (models.InventoryDoc, error)
 	FindByBarcodes(shopID string, barcodes []string) ([]models.InventoryDoc, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.InventoryDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.InventoryActivity, mongopagination.PaginationData, error)
-	FindDeletedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.InventoryDeleteActivity, error)
-	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.InventoryActivity, error)
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.InventoryDeleteActivity, error)
+	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.InventoryActivity, error)
 }
 
 type InventoryRepository struct {
@@ -283,7 +283,7 @@ func (repo InventoryRepository) FindPage(shopID string, filters map[string]inter
 	return docList, aggData.Pagination, nil
 }
 
-func (repo InventoryRepository) FindDeletedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.InventoryDeleteActivity, mongopagination.PaginationData, error) {
+func (repo InventoryRepository) FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryDeleteActivity, mongopagination.PaginationData, error) {
 
 	filterQueries := bson.M{
 		"shopid":    shopID,
@@ -300,7 +300,7 @@ func (repo InventoryRepository) FindDeletedPage(shopID string, lastUpdatedDate t
 	return docList, pagination, nil
 }
 
-func (repo InventoryRepository) FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.InventoryActivity, mongopagination.PaginationData, error) {
+func (repo InventoryRepository) FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryActivity, mongopagination.PaginationData, error) {
 
 	matchQuery := bson.M{
 		"$match": bson.M{

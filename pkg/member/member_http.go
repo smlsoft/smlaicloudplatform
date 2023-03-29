@@ -8,8 +8,6 @@ import (
 	"smlcloudplatform/pkg/member/models"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
-	"strings"
-	"time"
 )
 
 type IMemberHttp interface {
@@ -53,7 +51,6 @@ func (h MemberHttp) RouteSetup() {
 	h.ms.POST("/member", h.CreateMember)
 	h.ms.PUT("/member/:id", h.UpdateMember)
 	h.ms.DELETE("/member/:id", h.DeleteMember)
-	h.ms.GET("/member/fetchupdate", h.LastActivityMember)
 }
 
 // Create Member godoc
@@ -219,55 +216,6 @@ func (h MemberHttp) SearchMember(ctx microservice.IContext) error {
 	pageable := utils.GetPageable(ctx.QueryParam)
 
 	docList, pagination, err := h.service.Search(shopID, pageable)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	ctx.Response(
-		http.StatusOK,
-		common.ApiResponse{
-			Success:    true,
-			Data:       docList,
-			Pagination: pagination,
-		})
-
-	return nil
-}
-
-// Fetch Update Member By Date godoc
-// @Description Fetch Update Member By Date
-// @Tags		Member
-// @Param		lastUpdate query string true "DateTime"
-// @Accept		json
-// @Success		200 {object} models.MemberFetchUpdateResponse
-// @Failure		401 {object} common.AuthResponseFailed
-// @Security	AccessToken
-// @Router		/member/fetchupdate [get]
-func (h MemberHttp) LastActivityMember(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-
-	layout := "2006-01-02T15:04" //
-	lastUpdateStr := ctx.QueryParam("lastUpdate")
-
-	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
-	if len(lastUpdateStr) < 1 {
-		ctx.ResponseError(400, "lastUpdate format invalid.")
-		return nil
-	}
-
-	lastUpdate, err := time.Parse(layout, lastUpdateStr)
-
-	if err != nil {
-		ctx.ResponseError(400, "lastUpdate format invalid.")
-		return err
-	}
-
-	pageable := utils.GetPageable(ctx.QueryParam)
-
-	docList, pagination, err := h.service.LastActivity(shopID, "all", lastUpdate, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

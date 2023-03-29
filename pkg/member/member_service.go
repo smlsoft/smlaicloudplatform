@@ -24,7 +24,7 @@ type IMemberService interface {
 	Info(shopID string, guid string) (models.MemberInfo, error)
 	Search(shopID string, pageable micromodels.Pageable) ([]models.MemberInfo, mongopagination.PaginationData, error)
 
-	LastActivity(shopID string, action string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error)
+	LastActivity(shopID string, action string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error)
 	GetModuleName() string
 }
 

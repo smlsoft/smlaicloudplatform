@@ -25,7 +25,6 @@ type IShopZoneService interface {
 	SearchShopZone(shopID string, pageable micromodels.Pageable) ([]models.ShopZoneInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ShopZone) (common.BulkImport, error)
 
-	LastActivity(shopID string, action string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error)
 	GetModuleName() string
 }
 
