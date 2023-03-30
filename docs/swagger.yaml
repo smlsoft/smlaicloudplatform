@@ -267,8 +267,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -284,14 +284,7 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -1160,8 +1153,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1179,8 +1172,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1196,11 +1187,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1309,8 +1295,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1328,8 +1314,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1345,11 +1329,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1508,8 +1487,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1527,8 +1506,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1544,11 +1521,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -2742,16 +2714,9 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
+      keynumber:
+        type: integer
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
     type: object
   models.ProductUnit:
@@ -2937,10 +2902,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -2958,8 +2923,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -2975,10 +2938,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -3312,10 +3271,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -3333,8 +3292,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3350,10 +3307,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -4628,11 +4581,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -4711,11 +4664,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -5074,11 +5027,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -5157,11 +5110,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -5520,11 +5473,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -5603,11 +5556,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -10880,11 +10833,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -13065,11 +13018,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -13261,11 +13214,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -14767,11 +14720,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -14917,6 +14870,30 @@ paths:
       - AccessToken: []
       tags:
       - Warehouse
+  /warehouse/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Warehouse ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Warehouse
   /warehouse/list:
     get:
       consumes:
@@ -14939,6 +14916,72 @@ paths:
         in: query
         name: lang
         type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Warehouse
+  /warehouse/location:
+    get:
+      consumes:
+      - application/json
+      description: get data warehouse location list
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Warehouse
+  /warehouse/location/shelf:
+    get:
+      consumes:
+      - application/json
+      description: get data warehouse location shelf list
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
       responses:
         "200":
           description: OK
