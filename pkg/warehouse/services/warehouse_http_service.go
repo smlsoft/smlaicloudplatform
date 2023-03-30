@@ -24,9 +24,13 @@ type IWarehouseHttpService interface {
 	DeleteWarehouse(shopID string, guid string, authUsername string) error
 	DeleteWarehouseByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoWarehouse(shopID string, guid string) (models.WarehouseInfo, error)
+	InfoWarehouseByCode(shopID string, code string) (models.WarehouseInfo, error)
 	SearchWarehouse(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.WarehouseInfo, mongopagination.PaginationData, error)
 	SearchWarehouseStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.WarehouseInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Warehouse) (common.BulkImport, error)
+
+	SearchLocation(shopID string, pageable micromodels.Pageable) ([]models.LocationInfo, mongopagination.PaginationData, error)
+	SearchShelf(shopID string, pageable micromodels.Pageable) ([]models.ShelfInfo, mongopagination.PaginationData, error)
 
 	GetModuleName() string
 }
@@ -160,6 +164,21 @@ func (svc WarehouseHttpService) InfoWarehouse(shopID string, guid string) (model
 	}
 
 	return findDoc.WarehouseInfo, nil
+}
+
+func (svc WarehouseHttpService) InfoWarehouseByCode(shopID string, code string) (models.WarehouseInfo, error) {
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", code)
+
+	if err != nil {
+		return models.WarehouseInfo{}, err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return models.WarehouseInfo{}, errors.New("document not found")
+	}
+
+	return findDoc.WarehouseInfo, nil
 
 }
 
@@ -182,16 +201,7 @@ func (svc WarehouseHttpService) SearchWarehouseStep(shopID string, langCode stri
 		"code",
 	}
 
-	selectFields := map[string]interface{}{
-		"guidfixed": 1,
-		"code":      1,
-	}
-
-	if langCode != "" {
-		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
-	} else {
-		selectFields["names"] = 1
-	}
+	selectFields := map[string]interface{}{}
 
 	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
@@ -200,6 +210,28 @@ func (svc WarehouseHttpService) SearchWarehouseStep(shopID string, langCode stri
 	}
 
 	return docList, total, nil
+}
+
+func (svc WarehouseHttpService) SearchLocation(shopID string, pageable micromodels.Pageable) ([]models.LocationInfo, mongopagination.PaginationData, error) {
+
+	docList, pagination, err := svc.repo.FindLocationPage(shopID, pageable)
+
+	if err != nil {
+		return []models.LocationInfo{}, pagination, err
+	}
+
+	return docList, pagination, nil
+}
+
+func (svc WarehouseHttpService) SearchShelf(shopID string, pageable micromodels.Pageable) ([]models.ShelfInfo, mongopagination.PaginationData, error) {
+
+	docList, pagination, err := svc.repo.FindShelfPage(shopID, pageable)
+
+	if err != nil {
+		return []models.ShelfInfo{}, pagination, err
+	}
+
+	return docList, pagination, nil
 }
 
 func (svc WarehouseHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.Warehouse) (common.BulkImport, error) {

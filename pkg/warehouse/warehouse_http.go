@@ -42,8 +42,11 @@ func (h WarehouseHttp) RouteSetup() {
 
 	h.ms.GET("/warehouse", h.SearchWarehousePage)
 	h.ms.GET("/warehouse/list", h.SearchWarehouseStep)
+	h.ms.GET("/warehouse/location", h.SearchWarehouseLocationPage)
+	h.ms.GET("/warehouse/location/shelf", h.SearchWarehouseLocationShelfPage)
 	h.ms.POST("/warehouse", h.CreateWarehouse)
 	h.ms.GET("/warehouse/:id", h.InfoWarehouse)
+	h.ms.GET("/warehouse/code/:code", h.InfoWarehouseByCode)
 	h.ms.PUT("/warehouse/:id", h.UpdateWarehouse)
 	h.ms.DELETE("/warehouse/:id", h.DeleteWarehouse)
 	h.ms.DELETE("/warehouse", h.DeleteWarehouseByGUIDs)
@@ -236,6 +239,36 @@ func (h WarehouseHttp) InfoWarehouse(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Warehouse By Code godoc
+// @Description get struct array by ID
+// @Tags		Warehouse
+// @Param		id  path      string  true  "Warehouse ID"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /warehouse/code/{code} [get]
+func (h WarehouseHttp) InfoWarehouseByCode(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	code := ctx.Param("code")
+
+	doc, err := h.svc.InfoWarehouseByCode(shopID, code)
+
+	if err != nil {
+		h.ms.Logger.Errorf("Error getting document by code %v: %v", code, err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
 // List Warehouse godoc
 // @Description get struct array by ID
 // @Tags		Warehouse
@@ -254,6 +287,70 @@ func (h WarehouseHttp) SearchWarehousePage(ctx microservice.IContext) error {
 	pageable := utils.GetPageable(ctx.QueryParam)
 
 	docList, pagination, err := h.svc.SearchWarehouse(shopID, map[string]interface{}{}, pageable)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success:    true,
+		Data:       docList,
+		Pagination: pagination,
+	})
+	return nil
+}
+
+// List Warehouse Location godoc
+// @Description get data warehouse location list
+// @Tags		Warehouse
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Add Category"
+// @Param		limit	query	integer		false  "Add Category"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /warehouse/location [get]
+func (h WarehouseHttp) SearchWarehouseLocationPage(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	pageable := utils.GetPageable(ctx.QueryParam)
+
+	docList, pagination, err := h.svc.SearchLocation(shopID, pageable)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success:    true,
+		Data:       docList,
+		Pagination: pagination,
+	})
+	return nil
+}
+
+// List Warehouse Location Shelf godoc
+// @Description get data warehouse location shelf list
+// @Tags		Warehouse
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "page"
+// @Param		limit	query	integer		false  "limit"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /warehouse/location/shelf [get]
+func (h WarehouseHttp) SearchWarehouseLocationShelfPage(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	pageable := utils.GetPageable(ctx.QueryParam)
+
+	docList, pagination, err := h.svc.SearchShelf(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

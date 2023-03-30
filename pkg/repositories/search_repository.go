@@ -3,6 +3,7 @@ package repositories
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/internal/microservice/models"
+	"smlcloudplatform/pkg/utils/mogoutil"
 	"strings"
 
 	"github.com/userplant/mongopagination"
@@ -187,6 +188,32 @@ func (repo SearchRepository[T]) FindPageFilter(shopID string, filters map[string
 	}
 
 	return docList, pagination, nil
+}
+
+func (repo SearchRepository[T]) FindAggregatePage(shopID string, pageable models.Pageable, criteria ...interface{}) ([]T, mongopagination.PaginationData, error) {
+
+	mainFilter := bson.M{
+		"$match": bson.M{
+			"shopid":    shopID,
+			"deletedat": bson.M{"$exists": false},
+		},
+	}
+
+	tempCriteria := append([]interface{}{mainFilter}, criteria...)
+
+	aggData, err := repo.pst.AggregatePage(new(T), pageable, tempCriteria...)
+
+	if err != nil {
+		return []T{}, mongopagination.PaginationData{}, err
+	}
+
+	docList, err := mogoutil.AggregatePageDecode[T](aggData)
+
+	if err != nil {
+		return []T{}, mongopagination.PaginationData{}, err
+	}
+
+	return docList, aggData.Pagination, nil
 }
 
 var wordCut *m.Wordcut
