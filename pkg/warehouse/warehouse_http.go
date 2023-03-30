@@ -273,8 +273,8 @@ func (h WarehouseHttp) InfoWarehouseByCode(ctx microservice.IContext) error {
 // @Description get struct array by ID
 // @Tags		Warehouse
 // @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
+// @Param		page	query	integer		false  "page"
+// @Param		limit	query	integer		false  "limit"
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -305,8 +305,8 @@ func (h WarehouseHttp) SearchWarehousePage(ctx microservice.IContext) error {
 // @Description get data warehouse location list
 // @Tags		Warehouse
 // @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
+// @Param		page	query	integer		false  "page"
+// @Param		limit	query	integer		false  "limit"
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
