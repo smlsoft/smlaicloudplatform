@@ -10520,6 +10520,30 @@ paths:
       - AccessToken: []
       tags:
       - Product
+  /product/by-barcode/{barcode}:
+    get:
+      consumes:
+      - application/json
+      description: get product by barcode
+      parameters:
+      - description: barcode number
+        in: query
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
   /product/by-code:
     get:
       consumes:
