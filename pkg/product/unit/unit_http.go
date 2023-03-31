@@ -47,6 +47,7 @@ func (h UnitHttp) RouteSetup() {
 	h.ms.POST("/unit", h.CreateUnit)
 	h.ms.GET("/unit/:id", h.InfoUnit)
 	h.ms.GET("/unit/by-code", h.InfoArray)
+	h.ms.GET("/unit/master", h.InfoArrayMaster)
 	h.ms.PUT("/unit/:id", h.UpdateUnit)
 	h.ms.PATCH("/unit/:id", h.UpdateFieldUnit)
 	h.ms.DELETE("/unit/:id", h.DeleteUnit)
