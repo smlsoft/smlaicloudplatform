@@ -35,6 +35,8 @@ type IProductRepository interface {
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductActivity, mongopagination.PaginationData, error)
 	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductDeleteActivity, error)
 	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductActivity, error)
+
+	FindByBarcode(shopID string, barcode string) (models.ProductInfo, error)
 }
 
 type ProductRepository struct {
@@ -80,4 +82,18 @@ func (repo *ProductRepository) FindMasterProductByCode(code string) (models.Prod
 	}
 
 	return doc, nil
+}
+
+func (repo *ProductRepository) FindByBarcode(shopID string, barcode string) (models.ProductInfo, error) {
+
+	filters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+		"barcodes":  barcode,
+	}
+
+	doc := models.ProductInfo{}
+	err := repo.pst.FindOne(models.ProductInfo{}, filters, &doc)
+
+	return doc, err
 }

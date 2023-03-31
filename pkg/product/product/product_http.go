@@ -51,6 +51,7 @@ func (h ProductHttp) RouteSetup() {
 	h.ms.GET("/product/:id", h.InfoProduct)
 	h.ms.GET("/product/by-code", h.InfoArray)
 	h.ms.GET("/product/master/:code", h.InfoMaster)
+	h.ms.GET("/product/by-barcode", h.InfoProductByBarcode)
 	h.ms.PUT("/product/:id", h.UpdateProduct)
 	h.ms.DELETE("/product/:id", h.DeleteProduct)
 	h.ms.DELETE("/product", h.DeleteByGUIDs)
@@ -293,6 +294,7 @@ func (h ProductHttp) InfoArray(ctx microservice.IContext) error {
 // @Description get master Product by code
 // @Tags		Product
 // @Param		codes	query	string		false  "Code"
+// Get Product By Barcode godoc
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -302,6 +304,34 @@ func (h ProductHttp) InfoMaster(ctx microservice.IContext) error {
 	code := ctx.Param("code")
 
 	doc, err := h.svc.InfoMaster(code)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// @Description get product by barcode
+// @Tags		Product
+// @Param		code  query      string  true  "barcode number"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/by-barcode/{barcode} [get]
+func (h ProductHttp) InfoProductByBarcode(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	barcode := ctx.QueryParam("code")
+
+	doc, err := h.svc.InfoProductByBarcode(shopID, barcode)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
