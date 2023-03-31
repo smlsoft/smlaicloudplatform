@@ -81,6 +81,7 @@ func (repo WarehouseRepository) FindLocationPage(shopID string, pageable micromo
 	criteria = append(criteria, unwindQuery)
 
 	projectQuery := bson.M{"$project": bson.M{
+		"guidfixed":      "$guidfixed",
 		"warehousecode":  "$code",
 		"warehousenames": "$names",
 		"locationcode":   "$location.code",
@@ -130,6 +131,7 @@ func (repo WarehouseRepository) FindShelfPage(shopID string, pageable micromodel
 	criteria = append(criteria, unwindQueryLevel2)
 
 	projectQuery := bson.M{"$project": bson.M{
+		"guidfixed":      "$guidfixed",
 		"warehousecode":  "$code",
 		"warehousenames": "$names",
 		"locationcode":   "$location.code",

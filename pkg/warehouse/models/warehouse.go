@@ -27,6 +27,7 @@ type Shelf struct {
 }
 
 type LocationInfo struct {
+	GuidFixed      string          `json:"guidfixed" bson:"guidfixed"`
 	WarehouseCode  string          `json:"warehousecode" bson:"warehousecode"`
 	WarehouseNames *[]models.NameX `json:"warehousenames" bson:"warehousenames"`
 	LocationCode   string          `json:"locationcode" bson:"locationcode"`
@@ -39,6 +40,7 @@ func (LocationInfo) CollectionName() string {
 }
 
 type ShelfInfo struct {
+	GuidFixed      string          `json:"guidfixed" bson:"guidfixed"`
 	WarehouseCode  string          `json:"warehousecode" bson:"warehousecode"`
 	WarehouseNames *[]models.NameX `json:"warehousenames" bson:"warehousenames"`
 	LocationCode   string          `json:"locationcode" bson:"locationcode"`
