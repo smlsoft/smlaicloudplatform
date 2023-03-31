@@ -324,7 +324,7 @@ func (h ProductHttp) InfoMaster(ctx microservice.IContext) error {
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product/by-barcode/{barcode} [get]
+// @Router /product/by-barcode [get]
 func (h ProductHttp) InfoProductByBarcode(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
