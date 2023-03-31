@@ -27,6 +27,7 @@ type IUnitHttpService interface {
 	DeleteUnitByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoUnit(shopID string, guid string) (models.UnitInfo, error)
 	InfoUnitWTFArray(shopID string, unitCodes []string) ([]interface{}, error)
+	InfoWTFArrayMaster(codes []string) ([]interface{}, error)
 	SearchUnit(shopID string, codeFilters []string, pageable micromodels.Pageable) ([]models.UnitInfo, mongopagination.PaginationData, error)
 	SearchUnitLimit(shopID string, langCode string, codeFilters []string, pageableStep micromodels.PageableStep) ([]models.UnitInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Unit) (common.BulkImport, error)
@@ -238,7 +239,30 @@ func (svc UnitHttpService) InfoUnitWTFArray(shopID string, unitCodes []string) (
 	}
 
 	return docList, nil
+}
 
+func (svc UnitHttpService) InfoWTFArrayMaster(codes []string) ([]interface{}, error) {
+	docList := []interface{}{}
+
+	findDocList, err := svc.repo.FindMasterInCodes(codes)
+
+	if err != nil {
+		return []interface{}{}, err
+	}
+
+	for _, code := range codes {
+		findDoc, ok := lo.Find(findDocList, func(item models.UnitInfo) bool {
+			return item.UnitCode == code
+		})
+		if !ok {
+			// add item empty
+			docList = append(docList, nil)
+		} else {
+			docList = append(docList, findDoc)
+		}
+	}
+
+	return docList, nil
 }
 
 func (svc UnitHttpService) SearchUnit(shopID string, codeFilters []string, pageable micromodels.Pageable) ([]models.UnitInfo, mongopagination.PaginationData, error) {

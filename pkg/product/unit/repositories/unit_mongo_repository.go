@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"errors"
+	"os"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/unit/models"
@@ -8,6 +10,7 @@ import (
 	"time"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IUnitRepository interface {
@@ -30,6 +33,7 @@ type IUnitRepository interface {
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.UnitActivity, mongopagination.PaginationData, error)
 	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.UnitDeleteActivity, error)
 	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.UnitActivity, error)
+	FindMasterInCodes(codes []string) ([]models.UnitInfo, error)
 }
 
 type UnitRepository struct {
@@ -52,4 +56,30 @@ func NewUnitRepository(pst microservice.IPersisterMongo) *UnitRepository {
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.UnitActivity, models.UnitDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo UnitRepository) FindMasterInCodes(codes []string) ([]models.UnitInfo, error) {
+
+	masterShopID := os.Getenv("MASTER_SHOP_ID")
+
+	if len(masterShopID) == 0 {
+		return []models.UnitInfo{}, errors.New("master shop id is empty")
+	}
+
+	docList := []models.UnitInfo{}
+
+	filters := bson.M{
+		"shopid": masterShopID,
+		"unitcode": bson.M{
+			"$in": codes,
+		},
+	}
+
+	err := repo.pst.Find([]models.UnitInfo{}, filters, &docList)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return docList, nil
 }

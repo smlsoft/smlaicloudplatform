@@ -116,7 +116,7 @@ func (repo WarehouseRepository) FindShelfPage(shopID string, pageable micromodel
 	}
 	criteria = append(criteria, mainQuery)
 
-	searchFilterQuery := repo.CreateTextFilter([]string{"location.code", "location.code.names.name"}, pageable.Query)
+	searchFilterQuery := repo.CreateTextFilter([]string{"location.shelf.code", "location.shelf.name"}, pageable.Query)
 
 	if len(searchFilterQuery) > 0 {
 		searchQuery := bson.M{"$match": bson.M{"$or": searchFilterQuery}}

@@ -29,6 +29,7 @@ type IProductHttpService interface {
 	SearchProduct(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductInfo, mongopagination.PaginationData, error)
 	SearchProductStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Product) (common.BulkImport, error)
+	InfoMaster(code string) (models.ProductInfo, error)
 }
 
 type ProductHttpService struct {
@@ -264,6 +265,19 @@ func (svc ProductHttpService) InfoWTFArray(shopID string, codes []string) ([]int
 	}
 
 	return docList, nil
+}
+
+func (svc ProductHttpService) InfoMaster(code string) (models.ProductInfo, error) {
+	findDoc, err := svc.repo.FindMasterProductByCode(code)
+	if err != nil {
+		return models.ProductInfo{}, err
+	}
+
+	if len(findDoc.GuidFixed) == 0 {
+		return models.ProductInfo{}, errors.New("document not found")
+	}
+
+	return findDoc, nil
 }
 
 func (svc ProductHttpService) SearchProduct(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductInfo, mongopagination.PaginationData, error) {

@@ -50,6 +50,7 @@ func (h ProductHttp) RouteSetup() {
 	h.ms.POST("/product", h.CreateProduct)
 	h.ms.GET("/product/:id", h.InfoProduct)
 	h.ms.GET("/product/by-code", h.InfoArray)
+	h.ms.GET("/product/master/:code", h.InfoMaster)
 	h.ms.PUT("/product/:id", h.UpdateProduct)
 	h.ms.DELETE("/product/:id", h.DeleteProduct)
 	h.ms.DELETE("/product", h.DeleteByGUIDs)
@@ -275,6 +276,32 @@ func (h ProductHttp) InfoArray(ctx microservice.IContext) error {
 
 	// where to filter array
 	doc, err := h.svc.InfoWTFArray(shopID, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// Get Master Product By code  godoc
+// @Description get master Product by code
+// @Tags		Product
+// @Param		codes	query	string		false  "Code"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/master/{code} [get]
+func (h ProductHttp) InfoMaster(ctx microservice.IContext) error {
+	code := ctx.Param("code")
+
+	doc, err := h.svc.InfoMaster(code)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

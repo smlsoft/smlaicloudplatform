@@ -276,6 +276,46 @@ func (h UnitHttp) InfoArray(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Master Unit By code array godoc
+// @Description get master Unit by code array
+// @Tags		Unit
+// @Param		codes	query	string		false  "Code filter, json array encode "
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /unit/master [get]
+func (h UnitHttp) InfoArrayMaster(ctx microservice.IContext) error {
+	codesReq, err := url.QueryUnescape(ctx.QueryParam("codes"))
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	docReq := []string{}
+	err = json.Unmarshal([]byte(codesReq), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	// where to filter array master
+	doc, err := h.svc.InfoWTFArrayMaster(docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
 // List Unit godoc
 // @Description get struct array by ID
 // @Tags		Unit
