@@ -21206,6 +21206,10 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.ProductPrice"
                     }
                 },
+                "taxtype": {
+                    "description": "0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษีม",
+                    "type": "integer"
+                },
                 "unit": {
                     "$ref": "#/definitions/models.ProductUnit"
                 },
