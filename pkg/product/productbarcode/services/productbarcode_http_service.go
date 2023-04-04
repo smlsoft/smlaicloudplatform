@@ -13,6 +13,7 @@ import (
 	"smlcloudplatform/pkg/utils/importdata"
 	"time"
 
+	"github.com/samber/lo"
 	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -25,6 +26,7 @@ type IProductBarcodeHttpService interface {
 	DeleteProductBarcodeByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoProductBarcode(shopID string, guid string) (models.ProductBarcodeInfo, error)
 	InfoWTFArray(shopID string, codes []string) ([]interface{}, error)
+	InfoWTFArrayMaster(codes []string) ([]interface{}, error)
 	SearchProductBarcode(shopID string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 	SearchProductBarcodeStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ProductBarcode) (common.BulkImport, error)
@@ -61,7 +63,7 @@ func (svc ProductBarcodeHttpService) CreateProductBarcode(shopID string, authUse
 	}
 
 	if findDoc.Barcode != "" {
-		return "", errors.New("Barcode is exists")
+		return "", errors.New("barcode is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -194,6 +196,30 @@ func (svc ProductBarcodeHttpService) InfoWTFArray(shopID string, codes []string)
 			docList = append(docList, nil)
 		} else {
 			docList = append(docList, findDoc.ProductBarcodeInfo)
+		}
+	}
+
+	return docList, nil
+}
+
+func (svc ProductBarcodeHttpService) InfoWTFArrayMaster(codes []string) ([]interface{}, error) {
+	docList := []interface{}{}
+
+	findDocList, err := svc.repo.FindMasterInCodes(codes)
+
+	if err != nil {
+		return []interface{}{}, err
+	}
+
+	for _, code := range codes {
+		findDoc, ok := lo.Find(findDocList, func(item models.ProductBarcodeInfo) bool {
+			return item.Barcode == code
+		})
+		if !ok {
+			// add item empty
+			docList = append(docList, nil)
+		} else {
+			docList = append(docList, findDoc)
 		}
 	}
 

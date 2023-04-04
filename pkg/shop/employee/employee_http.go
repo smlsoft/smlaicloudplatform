@@ -42,6 +42,7 @@ func (h EmployeeHttp) RouteSetup() {
 	h.ms.GET("/shop/employee/list", h.SearchEmployeeStep)
 	h.ms.POST("/shop/employee", h.CreateEmployee)
 	h.ms.GET("/shop/employee/:id", h.InfoEmployee)
+	h.ms.GET("/shop/employee/code/:code", h.InfoEmployeeByCode)
 	h.ms.PUT("/shop/employee/:id", h.UpdateEmployee)
 	h.ms.PUT("/shop/employee/password", h.UpdatePassword)
 	h.ms.DELETE("/shop/employee/:id", h.DeleteEmployee)
@@ -235,12 +236,41 @@ func (h EmployeeHttp) InfoEmployee(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Employee By Code godoc
+// @Description get employee by code
+// @Tags		Employee
+// @Param		code  path      string  true  "Employee code"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /shop/employee/code/{code} [get]
+func (h EmployeeHttp) InfoEmployeeByCode(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	code := ctx.Param("code")
+
+	doc, err := h.svc.InfoEmployeeByCode(shopID, code)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
 // List Employee godoc
 // @Description get struct array by ID
 // @Tags		Employee
 // @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
+// @Param		page	query	integer		false  "page"
+// @Param		limit	query	integer		false  "limit"
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed

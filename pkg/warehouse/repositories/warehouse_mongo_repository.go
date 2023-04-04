@@ -4,10 +4,12 @@ import (
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
+	"smlcloudplatform/pkg/utils/mogoutil"
 	"smlcloudplatform/pkg/warehouse/models"
 	"time"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IWarehouseRepository interface {
@@ -29,6 +31,9 @@ type IWarehouseRepository interface {
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.WarehouseActivity, mongopagination.PaginationData, error)
 	FindDeletedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.WarehouseDeleteActivity, error)
 	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.WarehouseActivity, error)
+
+	FindLocationPage(shopID string, pageable micromodels.Pageable) ([]models.LocationInfo, mongopagination.PaginationData, error)
+	FindShelfPage(shopID string, pageable micromodels.Pageable) ([]models.ShelfInfo, mongopagination.PaginationData, error)
 }
 
 type WarehouseRepository struct {
@@ -51,4 +56,103 @@ func NewWarehouseRepository(pst microservice.IPersisterMongo) *WarehouseReposito
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.WarehouseActivity, models.WarehouseDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo WarehouseRepository) FindLocationPage(shopID string, pageable micromodels.Pageable) ([]models.LocationInfo, mongopagination.PaginationData, error) {
+
+	criteria := []interface{}{}
+
+	mainQuery := bson.M{
+		"$match": bson.M{
+			"shopid":    shopID,
+			"deletedat": bson.M{"$exists": false},
+		},
+	}
+	criteria = append(criteria, mainQuery)
+
+	searchFilterQuery := repo.CreateTextFilter([]string{"location.code", "location.code.names.name"}, pageable.Query)
+
+	if len(searchFilterQuery) > 0 {
+		searchQuery := bson.M{"$match": bson.M{"$or": searchFilterQuery}}
+		criteria = append(criteria, searchQuery)
+	}
+
+	unwindQuery := bson.M{"$unwind": "$location"}
+	criteria = append(criteria, unwindQuery)
+
+	projectQuery := bson.M{"$project": bson.M{
+		"guidfixed":      "$guidfixed",
+		"warehousecode":  "$code",
+		"warehousenames": "$names",
+		"locationcode":   "$location.code",
+		"locationnames":  "$location.names",
+		"shelf":          1,
+	}}
+	criteria = append(criteria, projectQuery)
+
+	aggData, err := repo.pst.AggregatePage(models.LocationInfo{}, pageable, criteria...)
+
+	if err != nil {
+		return []models.LocationInfo{}, mongopagination.PaginationData{}, err
+	}
+
+	docList, err := mogoutil.AggregatePageDecode[models.LocationInfo](aggData)
+
+	if err != nil {
+		return []models.LocationInfo{}, mongopagination.PaginationData{}, err
+	}
+
+	return docList, aggData.Pagination, nil
+}
+
+func (repo WarehouseRepository) FindShelfPage(shopID string, pageable micromodels.Pageable) ([]models.ShelfInfo, mongopagination.PaginationData, error) {
+
+	criteria := []interface{}{}
+
+	mainQuery := bson.M{
+		"$match": bson.M{
+			"shopid":    shopID,
+			"deletedat": bson.M{"$exists": false},
+		},
+	}
+	criteria = append(criteria, mainQuery)
+
+	searchFilterQuery := repo.CreateTextFilter([]string{"location.shelf.code", "location.shelf.name"}, pageable.Query)
+
+	if len(searchFilterQuery) > 0 {
+		searchQuery := bson.M{"$match": bson.M{"$or": searchFilterQuery}}
+		criteria = append(criteria, searchQuery)
+	}
+
+	unwindQueryLevel1 := bson.M{"$unwind": "$location"}
+	criteria = append(criteria, unwindQueryLevel1)
+
+	unwindQueryLevel2 := bson.M{"$unwind": "$location.shelf"}
+	criteria = append(criteria, unwindQueryLevel2)
+
+	projectQuery := bson.M{"$project": bson.M{
+		"guidfixed":      "$guidfixed",
+		"warehousecode":  "$code",
+		"warehousenames": "$names",
+		"locationcode":   "$location.code",
+		"locationnames":  "$location.names",
+		"shelfcode":      "$location.shelf.code",
+		"shelfname":      "$location.shelf.name",
+	}}
+
+	criteria = append(criteria, projectQuery)
+
+	aggData, err := repo.pst.AggregatePage(models.ShelfInfo{}, pageable, criteria...)
+
+	if err != nil {
+		return []models.ShelfInfo{}, mongopagination.PaginationData{}, err
+	}
+
+	docList, err := mogoutil.AggregatePageDecode[models.ShelfInfo](aggData)
+
+	if err != nil {
+		return []models.ShelfInfo{}, mongopagination.PaginationData{}, err
+	}
+
+	return docList, aggData.Pagination, nil
 }

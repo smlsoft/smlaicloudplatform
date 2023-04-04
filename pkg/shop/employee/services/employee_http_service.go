@@ -23,6 +23,7 @@ type IEmployeeHttpService interface {
 	DeleteEmployee(shopID string, guid string, authUsername string) error
 	DeleteEmployeeByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoEmployee(shopID string, guid string) (models.EmployeeInfo, error)
+	InfoEmployeeByCode(shopID string, code string) (models.EmployeeInfo, error)
 	SearchEmployee(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.EmployeeInfo, mongopagination.PaginationData, error)
 	SearchEmployeeStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.EmployeeInfo, int, error)
 
@@ -226,7 +227,6 @@ func (svc EmployeeHttpService) InfoEmployee(shopID string, guid string) (models.
 	}
 
 	return findDoc.EmployeeInfo, nil
-
 }
 
 func (svc EmployeeHttpService) SearchEmployee(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.EmployeeInfo, mongopagination.PaginationData, error) {

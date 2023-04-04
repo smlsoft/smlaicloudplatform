@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"errors"
+	"os"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/productbarcode/models"
@@ -8,6 +10,7 @@ import (
 	"time"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IProductBarcodeRepository interface {
@@ -29,6 +32,8 @@ type IProductBarcodeRepository interface {
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductBarcodeActivity, mongopagination.PaginationData, error)
 	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeDeleteActivity, error)
 	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeActivity, error)
+
+	FindMasterInCodes(codes []string) ([]models.ProductBarcodeInfo, error)
 }
 
 type ProductBarcodeRepository struct {
@@ -51,4 +56,30 @@ func NewProductBarcodeRepository(pst microservice.IPersisterMongo) *ProductBarco
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.ProductBarcodeActivity, models.ProductBarcodeDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo *ProductBarcodeRepository) FindMasterInCodes(codes []string) ([]models.ProductBarcodeInfo, error) {
+
+	masterShopID := os.Getenv("MASTER_SHOP_ID")
+
+	if len(masterShopID) == 0 {
+		return []models.ProductBarcodeInfo{}, errors.New("master shop id is empty")
+	}
+
+	docList := []models.ProductBarcodeInfo{}
+
+	filters := bson.M{
+		"shopid": masterShopID,
+		"barcode": bson.M{
+			"$in": codes,
+		},
+	}
+
+	err := repo.pst.Find(models.ProductBarcodeInfo{}, filters, &docList)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return docList, nil
 }

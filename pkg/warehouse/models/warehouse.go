@@ -26,6 +26,33 @@ type Shelf struct {
 	Name string `json:"name" bson:"name" validate:"required,min=1"`
 }
 
+type LocationInfo struct {
+	GuidFixed      string          `json:"guidfixed" bson:"guidfixed"`
+	WarehouseCode  string          `json:"warehousecode" bson:"warehousecode"`
+	WarehouseNames *[]models.NameX `json:"warehousenames" bson:"warehousenames"`
+	LocationCode   string          `json:"locationcode" bson:"locationcode"`
+	LocationNames  *[]models.NameX `json:"locationnames" bson:"locationnames"`
+	Shelf          []Shelf         `json:"shelf" bson:"shelf"`
+}
+
+func (LocationInfo) CollectionName() string {
+	return warehouseCollectionName
+}
+
+type ShelfInfo struct {
+	GuidFixed      string          `json:"guidfixed" bson:"guidfixed"`
+	WarehouseCode  string          `json:"warehousecode" bson:"warehousecode"`
+	WarehouseNames *[]models.NameX `json:"warehousenames" bson:"warehousenames"`
+	LocationCode   string          `json:"locationcode" bson:"locationcode"`
+	LocationNames  *[]models.NameX `json:"locationnames" bson:"locationnames"`
+	ShelfCode      string          `json:"shelfcode" bson:"shelfcode"`
+	ShelfName      string          `json:"shelfname" bson:"shelfname"`
+}
+
+func (ShelfInfo) CollectionName() string {
+	return warehouseCollectionName
+}
+
 type WarehouseInfo struct {
 	models.DocIdentity `bson:"inline"`
 	Warehouse          `bson:"inline"`

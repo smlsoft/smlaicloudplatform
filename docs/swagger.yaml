@@ -4628,11 +4628,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -4711,11 +4711,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -5074,11 +5074,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -5157,11 +5157,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -5520,11 +5520,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -5603,11 +5603,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -10490,6 +10490,29 @@ paths:
       - AccessToken: []
       tags:
       - ProductBarcode
+  /product/barcode/master:
+    get:
+      consumes:
+      - application/json
+      description: get master ProductBarcode by code array
+      parameters:
+      - description: 'Code filter, json array encode '
+        in: query
+        name: codes
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductBarcode
   /product/barcode/xsort:
     put:
       consumes:
@@ -10536,6 +10559,30 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+  /product/by-barcode:
+    get:
+      consumes:
+      - application/json
+      description: get product by barcode
+      parameters:
+      - description: barcode number
+        in: query
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
         "401":
           description: Unauthorized
           schema:
@@ -10880,11 +10927,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -11148,6 +11195,29 @@ paths:
             items:
               $ref: '#/definitions/models.ApiResponse'
             type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Product
+  /product/master/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get master Product by code
+      parameters:
+      - description: Code
+        in: query
+        name: codes
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
         "401":
           description: Unauthorized
           schema:
@@ -13065,11 +13135,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -13261,11 +13331,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -13376,6 +13446,30 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Employee
+  /shop/employee/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get employee by code
+      parameters:
+      - description: Employee code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
         "401":
           description: Unauthorized
           schema:
@@ -14630,6 +14724,29 @@ paths:
       - AccessToken: []
       tags:
       - Unit
+  /unit/master:
+    get:
+      consumes:
+      - application/json
+      description: get master Unit by code array
+      parameters:
+      - description: 'Code filter, json array encode '
+        in: query
+        name: codes
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Unit
   /upload/images:
     post:
       consumes:
@@ -14767,11 +14884,11 @@ paths:
         in: query
         name: q
         type: string
-      - description: Add Category
+      - description: page
         in: query
         name: page
         type: integer
-      - description: Add Category
+      - description: limit
         in: query
         name: limit
         type: integer
@@ -14917,6 +15034,30 @@ paths:
       - AccessToken: []
       tags:
       - Warehouse
+  /warehouse/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Warehouse ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Warehouse
   /warehouse/list:
     get:
       consumes:
@@ -14939,6 +15080,72 @@ paths:
         in: query
         name: lang
         type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Warehouse
+  /warehouse/location:
+    get:
+      consumes:
+      - application/json
+      description: get data warehouse location list
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Warehouse
+  /warehouse/location/shelf:
+    get:
+      consumes:
+      - application/json
+      description: get data warehouse location shelf list
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
       responses:
         "200":
           description: OK
