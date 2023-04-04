@@ -1785,6 +1785,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/debtaccount/customer/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Customer By Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customer"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Customer Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/debtaccount/customer/list": {
             "get": {
                 "security": [
@@ -1851,7 +1890,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "get struct array by ID",
+                "description": "get info Customer by id",
                 "consumes": [
                     "application/json"
                 ],
@@ -15046,45 +15085,6 @@ const docTemplate = `{
             }
         },
         "/sml-transaction": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create SMLTransaction",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "SMLTransaction"
-                ],
-                "parameters": [
-                    {
-                        "description": "SMLTransactionRequest",
-                        "name": "SMLTransactionRequest",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.SMLTransactionRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
             "post": {
                 "security": [
                     {
@@ -17907,8 +17907,8 @@ const docTemplate = `{
                 "isprimary": {
                     "type": "boolean"
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "name1": {
                     "type": "string",
@@ -17930,17 +17930,7 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "unitcode": {
@@ -19217,8 +19207,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -19243,9 +19233,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -19267,13 +19254,6 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -19426,8 +19406,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -19452,9 +19432,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -19476,13 +19453,6 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -19712,8 +19682,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -19738,9 +19708,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -19762,13 +19729,6 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -21522,20 +21482,10 @@ const docTemplate = `{
         "models.ProductPrice": {
             "type": "object",
             "properties": {
-                "memberprice": {
-                    "type": "number"
-                },
-                "normalprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 }
             }
@@ -21803,11 +21753,11 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "linenumber": {
+                "keynumber": {
                     "type": "integer"
                 },
-                "memberprice": {
-                    "type": "number"
+                "linenumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -21832,9 +21782,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -21856,12 +21803,6 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "qty": {
@@ -22347,11 +22288,11 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "linenumber": {
+                "keynumber": {
                     "type": "integer"
                 },
-                "memberprice": {
-                    "type": "number"
+                "linenumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -22376,9 +22317,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -22400,12 +22338,6 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "qty": {
