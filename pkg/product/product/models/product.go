@@ -33,6 +33,7 @@ type Product struct {
 	GroupName         *[]models.NameX `json:"groupname" bson:"groupname"`
 	Branches          *[]uint16       `json:"branches" bson:"branches" validate:"unique"`
 	IsMultipleBranch  bool            `json:"ismultiplebranch" bson:"ismultiplebranch"`
+	TaxType           int8            `json:"taxtype" bson:"taxtype"` // 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษีม
 }
 
 type ProductPrice struct {
