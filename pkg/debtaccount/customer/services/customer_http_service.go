@@ -27,6 +27,7 @@ type ICustomerHttpService interface {
 	DeleteCustomer(shopID string, guid string, authUsername string) error
 	DeleteCustomerByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoCustomer(shopID string, guid string) (models.CustomerInfo, error)
+	InfoCustomerByCode(shopID string, code string) (models.CustomerInfo, error)
 	SearchCustomer(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.CustomerInfo, mongopagination.PaginationData, error)
 	SearchCustomerStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.CustomerInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.CustomerRequest) (common.BulkImport, error)
@@ -63,7 +64,7 @@ func (svc CustomerHttpService) CreateCustomer(shopID string, authUsername string
 	}
 
 	if findDoc.Code != "" {
-		return "", errors.New("Code is exists")
+		return "", errors.New("code is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -76,6 +77,10 @@ func (svc CustomerHttpService) CreateCustomer(shopID string, authUsername string
 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
+
+	if docData.GroupGUIDs == nil {
+		docData.GroupGUIDs = &[]string{}
+	}
 
 	_, err = svc.repo.Create(docData)
 
@@ -105,6 +110,10 @@ func (svc CustomerHttpService) UpdateCustomer(shopID string, guid string, authUs
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
+
+	if findDoc.GroupGUIDs == nil {
+		findDoc.GroupGUIDs = &[]string{}
+	}
 
 	err = svc.repo.Update(shopID, guid, findDoc)
 
@@ -165,22 +174,54 @@ func (svc CustomerHttpService) InfoCustomer(shopID string, guid string) (models.
 		return models.CustomerInfo{}, errors.New("document not found")
 	}
 
-	findGroups, err := svc.repoGroup.FindByGuids(shopID, *findDoc.GroupGUIDs)
+	if findDoc.GroupGUIDs != nil && len(*findDoc.GroupGUIDs) > 0 {
+		findGroups, err := svc.repoGroup.FindByGuids(shopID, *findDoc.GroupGUIDs)
+
+		if err != nil {
+			return models.CustomerInfo{}, err
+		}
+
+		groupInfo := lo.Map[groupModels.CustomerGroupDoc, groupModels.CustomerGroupInfo](
+			findGroups,
+			func(docGroup groupModels.CustomerGroupDoc, idx int) groupModels.CustomerGroupInfo {
+				return docGroup.CustomerGroupInfo
+			})
+
+		findDoc.CustomerInfo.Groups = &groupInfo
+	}
+
+	return findDoc.CustomerInfo, nil
+}
+
+func (svc CustomerHttpService) InfoCustomerByCode(shopID string, code string) (models.CustomerInfo, error) {
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", code)
 
 	if err != nil {
 		return models.CustomerInfo{}, err
 	}
 
-	groupInfo := lo.Map[groupModels.CustomerGroupDoc, groupModels.CustomerGroupInfo](
-		findGroups,
-		func(docGroup groupModels.CustomerGroupDoc, idx int) groupModels.CustomerGroupInfo {
-			return docGroup.CustomerGroupInfo
-		})
+	if len(findDoc.GuidFixed) < 1 {
+		return models.CustomerInfo{}, errors.New("document not found")
+	}
 
-	findDoc.CustomerInfo.Groups = &groupInfo
+	if findDoc.GroupGUIDs != nil && len(*findDoc.GroupGUIDs) > 0 {
+		findGroups, err := svc.repoGroup.FindByGuids(shopID, *findDoc.GroupGUIDs)
+
+		if err != nil {
+			return models.CustomerInfo{}, err
+		}
+
+		groupInfo := lo.Map[groupModels.CustomerGroupDoc, groupModels.CustomerGroupInfo](
+			findGroups,
+			func(docGroup groupModels.CustomerGroupDoc, idx int) groupModels.CustomerGroupInfo {
+				return docGroup.CustomerGroupInfo
+			})
+
+		findDoc.CustomerInfo.Groups = &groupInfo
+	}
 
 	return findDoc.CustomerInfo, nil
-
 }
 
 func (svc CustomerHttpService) SearchCustomer(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.CustomerInfo, mongopagination.PaginationData, error) {

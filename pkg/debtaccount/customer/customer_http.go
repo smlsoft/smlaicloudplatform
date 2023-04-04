@@ -46,6 +46,7 @@ func (h CustomerHttp) RouteSetup() {
 	h.ms.GET("/debtaccount/customer/list", h.SearchCustomerStep)
 	h.ms.POST("/debtaccount/customer", h.CreateCustomer)
 	h.ms.GET("/debtaccount/customer/:id", h.InfoCustomer)
+	h.ms.GET("/debtaccount/customer/code/:code", h.InfoCustomerByCode)
 	h.ms.PUT("/debtaccount/customer/:id", h.UpdateCustomer)
 	h.ms.DELETE("/debtaccount/customer/:id", h.DeleteCustomer)
 	h.ms.DELETE("/debtaccount/customer", h.DeleteCustomerByGUIDs)
@@ -208,7 +209,7 @@ func (h CustomerHttp) DeleteCustomerByGUIDs(ctx microservice.IContext) error {
 }
 
 // Get Customer godoc
-// @Description get struct array by ID
+// @Description get info Customer by id
 // @Tags		Customer
 // @Param		id  path      string  true  "Customer ID"
 // @Accept 		json
@@ -227,6 +228,35 @@ func (h CustomerHttp) InfoCustomer(ctx microservice.IContext) error {
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// Get Customer By Code godoc
+// @Description Get Customer By Code
+// @Tags		Customer
+// @Param		code  path      string  true  "Customer Code"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /debtaccount/customer/code/{code} [get]
+func (h CustomerHttp) InfoCustomerByCode(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	code := ctx.Param("code")
+
+	doc, err := h.svc.InfoCustomerByCode(shopID, code)
+
+	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}
