@@ -16279,6 +16279,45 @@ const docTemplate = `{
             }
         },
         "/sml-transaction": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create SMLTransaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMLTransaction"
+                ],
+                "parameters": [
+                    {
+                        "description": "SMLTransactionRequest",
+                        "name": "SMLTransactionRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SMLTransactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -18210,7 +18249,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "get struct array by ID",
+                "description": "List Warehouse",
                 "consumes": [
                     "application/json"
                 ],
@@ -18388,7 +18427,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "get struct array by ID",
+                "description": "get Warehouse by code",
                 "consumes": [
                     "application/json"
                 ],
@@ -18694,6 +18733,321 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/{warehouseCode}/location": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Warehouse Location",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse Code",
+                        "name": "warehouseCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Location Request",
+                        "name": "LocationRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LocationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/{warehouseCode}/location/{locationCode}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Location by code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse Code",
+                        "name": "warehouseCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Location Code",
+                        "name": "locationCode",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Warehouse",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse Code",
+                        "name": "warehouseCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "location Code",
+                        "name": "locationCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Location Request",
+                        "name": "LocationRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LocationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/{warehouseCode}/location/{locationCode}/shelf": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Warehouse Shelf",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse Code",
+                        "name": "warehouseCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Location Code",
+                        "name": "locationCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Shelf Request",
+                        "name": "ShelfRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ShelfRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/{warehouseCode}/location/{locationCode}/shelf/{shelfCode}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Shelf by code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse Code",
+                        "name": "warehouseCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Location Code",
+                        "name": "locationCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Shelf Code",
+                        "name": "shelfCode",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Warehouse",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse Code",
+                        "name": "warehouseCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "location Code",
+                        "name": "locationCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "shelf Code",
+                        "name": "shelfCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Shelf Request",
+                        "name": "ShelfRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ShelfRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
@@ -21704,6 +22058,26 @@ const docTemplate = `{
                 }
             }
         },
+        "models.LocationRequest": {
+            "type": "object",
+            "properties": {
+                "locationcode": {
+                    "type": "string"
+                },
+                "locationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "shelf": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Shelf"
+                    }
+                }
+            }
+        },
         "models.LostAndProfitSheetReportResponse": {
             "type": "object",
             "properties": {
@@ -23701,6 +24075,17 @@ const docTemplate = `{
                 "name": {
                     "type": "string",
                     "minLength": 1
+                }
+            }
+        },
+        "models.ShelfRequest": {
+            "type": "object",
+            "properties": {
+                "shelfcode": {
+                    "type": "string"
+                },
+                "shelfname": {
+                    "type": "string"
                 }
             }
         },

@@ -2050,6 +2050,19 @@ definitions:
       success:
         type: boolean
     type: object
+  models.LocationRequest:
+    properties:
+      locationcode:
+        type: string
+      locationnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      shelf:
+        items:
+          $ref: '#/definitions/models.Shelf'
+        type: array
+    type: object
   models.LostAndProfitSheetReportResponse:
     properties:
       data:
@@ -3424,6 +3437,13 @@ definitions:
         type: string
     required:
     - name
+    type: object
+  models.ShelfRequest:
+    properties:
+      shelfcode:
+        type: string
+      shelfname:
+        type: string
     type: object
   models.Shop:
     properties:
@@ -14457,6 +14477,30 @@ paths:
       - AccessToken: []
       tags:
       - SMLTransaction
+    get:
+      consumes:
+      - application/json
+      description: Create SMLTransaction
+      parameters:
+      - description: SMLTransactionRequest
+        in: body
+        name: SMLTransactionRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.SMLTransactionRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SMLTransaction
     post:
       consumes:
       - application/json
@@ -15660,7 +15704,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: get struct array by ID
+      description: List Warehouse
       parameters:
       - description: Search Value
         in: query
@@ -15789,6 +15833,207 @@ paths:
       - AccessToken: []
       tags:
       - Warehouse
+  /warehouse/{warehouseCode}/location:
+    post:
+      consumes:
+      - application/json
+      description: Create Warehouse Location
+      parameters:
+      - description: Warehouse Code
+        in: path
+        name: warehouseCode
+        required: true
+        type: string
+      - description: Location Request
+        in: body
+        name: LocationRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.LocationRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Warehouse
+  /warehouse/{warehouseCode}/location/{locationCode}:
+    get:
+      consumes:
+      - application/json
+      description: get Location by code
+      parameters:
+      - description: Warehouse Code
+        in: path
+        name: warehouseCode
+        required: true
+        type: string
+      - description: Location Code
+        in: path
+        name: locationCode
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Warehouse
+    put:
+      consumes:
+      - application/json
+      description: Update Warehouse
+      parameters:
+      - description: Warehouse Code
+        in: path
+        name: warehouseCode
+        required: true
+        type: string
+      - description: location Code
+        in: path
+        name: locationCode
+        required: true
+        type: string
+      - description: Location Request
+        in: body
+        name: LocationRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.LocationRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Warehouse
+  /warehouse/{warehouseCode}/location/{locationCode}/shelf:
+    post:
+      consumes:
+      - application/json
+      description: Create Warehouse Shelf
+      parameters:
+      - description: Warehouse Code
+        in: path
+        name: warehouseCode
+        required: true
+        type: string
+      - description: Location Code
+        in: path
+        name: locationCode
+        required: true
+        type: string
+      - description: Shelf Request
+        in: body
+        name: ShelfRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.ShelfRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Warehouse
+  /warehouse/{warehouseCode}/location/{locationCode}/shelf/{shelfCode}:
+    get:
+      consumes:
+      - application/json
+      description: get Shelf by code
+      parameters:
+      - description: Warehouse Code
+        in: path
+        name: warehouseCode
+        required: true
+        type: string
+      - description: Location Code
+        in: path
+        name: locationCode
+        required: true
+        type: string
+      - description: Shelf Code
+        in: path
+        name: shelfCode
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Warehouse
+    put:
+      consumes:
+      - application/json
+      description: Update Warehouse
+      parameters:
+      - description: Warehouse Code
+        in: path
+        name: warehouseCode
+        required: true
+        type: string
+      - description: location Code
+        in: path
+        name: locationCode
+        required: true
+        type: string
+      - description: shelf Code
+        in: path
+        name: shelfCode
+        required: true
+        type: string
+      - description: Shelf Request
+        in: body
+        name: ShelfRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.ShelfRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Warehouse
   /warehouse/bulk:
     post:
       consumes:
@@ -15820,7 +16065,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: get struct array by ID
+      description: get Warehouse by code
       parameters:
       - description: Warehouse ID
         in: path
