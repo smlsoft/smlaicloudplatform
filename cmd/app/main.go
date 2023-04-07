@@ -18,6 +18,9 @@ import (
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
+	"smlcloudplatform/pkg/organization/branch"
+	"smlcloudplatform/pkg/organization/bussinesstype"
+	"smlcloudplatform/pkg/organization/department"
 	"smlcloudplatform/pkg/payment/bankmaster"
 	"smlcloudplatform/pkg/payment/bookbank"
 	"smlcloudplatform/pkg/payment/qrpayment"
@@ -39,7 +42,8 @@ import (
 	"smlcloudplatform/pkg/restaurant/shopzone"
 	"smlcloudplatform/pkg/restaurant/staff"
 	"smlcloudplatform/pkg/shop"
-	"smlcloudplatform/pkg/shop/branch"
+
+	// "smlcloudplatform/pkg/shop/branch"
 	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
 	"smlcloudplatform/pkg/smsreceive/smspatterns"
@@ -179,7 +183,7 @@ func main() {
 		smltransaction.NewSMLTransactionHttp(ms, cfg),
 
 		sysinfo.NewSysInfoHttp(ms, cfg),
-		branch.NewBranchHttp(ms, cfg),
+		// branch.NewBranchHttp(ms, cfg),
 
 		// debt account
 		creditor.NewCreditorHttp(ms, cfg),
@@ -189,6 +193,10 @@ func main() {
 
 		customer.NewCustomerHttp(ms, cfg),
 		customergroup.NewCustomerGroupHttp(ms, cfg),
+
+		department.NewDepartmentHttp(ms, cfg),
+		bussinesstype.NewBussinessTypeHttp(ms, cfg),
+		branch.NewBranchHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)

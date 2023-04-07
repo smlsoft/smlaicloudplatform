@@ -53,6 +53,17 @@ func (ShelfInfo) CollectionName() string {
 	return warehouseCollectionName
 }
 
+type LocationRequest struct {
+	Code  string          `json:"locationcode" bson:"locationcode"`
+	Names *[]models.NameX `json:"locationnames" bson:"locationnames"`
+	Shelf []Shelf         `json:"shelf" bson:"shelf"`
+}
+
+type ShelfRequest struct {
+	Code string `json:"shelfcode" bson:"shelfcode"`
+	Name string `json:"shelfname" bson:"shelfname"`
+}
+
 type WarehouseInfo struct {
 	models.DocIdentity `bson:"inline"`
 	Warehouse          `bson:"inline"`

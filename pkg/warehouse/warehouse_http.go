@@ -48,6 +48,12 @@ func (h WarehouseHttp) RouteSetup() {
 	h.ms.GET("/warehouse/:id", h.InfoWarehouse)
 	h.ms.GET("/warehouse/code/:code", h.InfoWarehouseByCode)
 	h.ms.PUT("/warehouse/:id", h.UpdateWarehouse)
+	h.ms.GET("/warehouse/:warehouseCode/location/:locationCode", h.InfoLocation)
+	h.ms.POST("/warehouse/:warehouseCode/location", h.CreateLocation)
+	h.ms.PUT("/warehouse/:warehouseCode/location/:locationCode", h.UpdateLocation)
+	h.ms.GET("/warehouse/:warehouseCode/location/:locationCode/shelf/:shelfCode", h.InfoShelf)
+	h.ms.POST("/warehouse/:warehouseCode/location/:locationCode/shelf", h.CreateShelf)
+	h.ms.PUT("/warehouse/:warehouseCode/location/:locationCode/shelf/:shelfCode", h.UpdateShelf)
 	h.ms.DELETE("/warehouse/:id", h.DeleteWarehouse)
 	h.ms.DELETE("/warehouse", h.DeleteWarehouseByGUIDs)
 }
@@ -134,6 +140,192 @@ func (h WarehouseHttp) UpdateWarehouse(ctx microservice.IContext) error {
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      id,
+	})
+
+	return nil
+}
+
+// Create Warehouse Location godoc
+// @Description Create Warehouse Location
+// @Tags		Warehouse
+// @Param		warehouseCode  path      string  true  "Warehouse Code"
+// @Param		LocationRequest  body      models.LocationRequest  true  "Location Request"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /warehouse/{warehouseCode}/location [post]
+func (h WarehouseHttp) CreateLocation(ctx microservice.IContext) error {
+	authUsername := ctx.UserInfo().Username
+	shopID := ctx.UserInfo().ShopID
+	input := ctx.ReadInput()
+
+	warehouseCode := ctx.Param("warehouseCode")
+
+	docReq := &models.LocationRequest{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(docReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.CreateLocation(shopID, authUsername, warehouseCode, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+	})
+	return nil
+}
+
+// Update Warehouse godoc
+// @Description Update Warehouse
+// @Tags		Warehouse
+// @Param		warehouseCode  path      string  true  "Warehouse Code"
+// @Param		locationCode  path      string  true  "location Code"
+// @Param		LocationRequest  body      models.LocationRequest  true  "Location Request"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /warehouse/{warehouseCode}/location/{locationCode} [put]
+func (h WarehouseHttp) UpdateLocation(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	warehouseCode := ctx.Param("warehouseCode")
+	locationCode := ctx.Param("locationCode")
+
+	input := ctx.ReadInput()
+
+	docReq := &models.LocationRequest{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(docReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.UpdateLocation(shopID, authUsername, warehouseCode, locationCode, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+	})
+
+	return nil
+}
+
+// Create Warehouse Shelf godoc
+// @Description Create Warehouse Shelf
+// @Tags		Warehouse
+// @Param		warehouseCode  path      string  true  "Warehouse Code"
+// @Param		locationCode  path      string  true  "Location Code"
+// @Param		ShelfRequest  body      models.ShelfRequest  true  "Shelf Request"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /warehouse/{warehouseCode}/location/{locationCode}/shelf [post]
+func (h WarehouseHttp) CreateShelf(ctx microservice.IContext) error {
+	authUsername := ctx.UserInfo().Username
+	shopID := ctx.UserInfo().ShopID
+	input := ctx.ReadInput()
+
+	warehouseCode := ctx.Param("warehouseCode")
+	locationCode := ctx.Param("locationCode")
+
+	docReq := &models.ShelfRequest{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(docReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.CreateShelf(shopID, authUsername, warehouseCode, locationCode, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+	})
+	return nil
+}
+
+// Update Warehouse godoc
+// @Description Update Warehouse
+// @Tags		Warehouse
+// @Param		warehouseCode  path      string  true  "Warehouse Code"
+// @Param		locationCode  path      string  true  "location Code"
+// @Param		shelfCode  path      string  true  "shelf Code"
+// @Param		ShelfRequest  body      models.ShelfRequest  true  "Shelf Request"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /warehouse/{warehouseCode}/location/{locationCode}/shelf/{shelfCode} [put]
+func (h WarehouseHttp) UpdateShelf(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	warehouseCode := ctx.Param("warehouseCode")
+	locationCode := ctx.Param("locationCode")
+	shelfCode := ctx.Param("shelfCode")
+
+	input := ctx.ReadInput()
+
+	docReq := &models.ShelfRequest{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(docReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.UpdateShelf(shopID, authUsername, warehouseCode, locationCode, shelfCode, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
 	})
 
 	return nil
@@ -240,7 +432,7 @@ func (h WarehouseHttp) InfoWarehouse(ctx microservice.IContext) error {
 }
 
 // Get Warehouse By Code godoc
-// @Description get struct array by ID
+// @Description get Warehouse by code
 // @Tags		Warehouse
 // @Param		id  path      string  true  "Warehouse ID"
 // @Accept 		json
@@ -270,7 +462,7 @@ func (h WarehouseHttp) InfoWarehouseByCode(ctx microservice.IContext) error {
 }
 
 // List Warehouse godoc
-// @Description get struct array by ID
+// @Description List Warehouse
 // @Tags		Warehouse
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "page"
@@ -297,6 +489,37 @@ func (h WarehouseHttp) SearchWarehousePage(ctx microservice.IContext) error {
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
+	})
+	return nil
+}
+
+// Get List Location By Code godoc
+// @Description get Location by code
+// @Tags		Warehouse
+// @Param		warehouseCode  path      string  true  "Warehouse Code"
+// @Param		locationCode  path      string  true  "Location Code"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /warehouse/{warehouseCode}/location/{locationCode} [get]
+func (h WarehouseHttp) InfoLocation(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	warehouseCode := ctx.Param("warehouseCode")
+	locationCode := ctx.Param("locationCode")
+
+	doc, err := h.svc.InfoLocation(shopID, warehouseCode, locationCode)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
 	})
 	return nil
 }
@@ -329,6 +552,39 @@ func (h WarehouseHttp) SearchWarehouseLocationPage(ctx microservice.IContext) er
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
+	})
+	return nil
+}
+
+// Get Shelf By Code godoc
+// @Description get Shelf by code
+// @Tags		Warehouse
+// @Param		warehouseCode  path      string  true  "Warehouse Code"
+// @Param		locationCode  path      string  true  "Location Code"
+// @Param		shelfCode  path      string  true  "Shelf Code"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /warehouse/{warehouseCode}/location/{locationCode}/shelf/{shelfCode} [get]
+func (h WarehouseHttp) InfoShelf(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	warehouseCode := ctx.Param("warehouseCode")
+	locationCode := ctx.Param("locationCode")
+	shelfCode := ctx.Param("shelfCode")
+
+	doc, err := h.svc.InfoShelf(shopID, warehouseCode, locationCode, shelfCode)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
 	})
 	return nil
 }

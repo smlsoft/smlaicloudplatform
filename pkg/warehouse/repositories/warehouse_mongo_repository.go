@@ -34,6 +34,8 @@ type IWarehouseRepository interface {
 
 	FindLocationPage(shopID string, pageable micromodels.Pageable) ([]models.LocationInfo, mongopagination.PaginationData, error)
 	FindShelfPage(shopID string, pageable micromodels.Pageable) ([]models.ShelfInfo, mongopagination.PaginationData, error)
+	FindWarehouseByLocation(shopID, warehouseCode, locationCode string) (models.WarehouseDoc, error)
+	FindWarehouseByShelf(shopID, warehouseCode, locationCode, shelfCode string) (models.WarehouseDoc, error)
 }
 
 type WarehouseRepository struct {
@@ -155,4 +157,41 @@ func (repo WarehouseRepository) FindShelfPage(shopID string, pageable micromodel
 	}
 
 	return docList, aggData.Pagination, nil
+}
+
+func (repo WarehouseRepository) FindWarehouseByLocation(shopID, warehouseCode, locationCode string) (models.WarehouseDoc, error) {
+
+	filters := bson.M{
+		"shopid":        shopID,
+		"code":          warehouseCode,
+		"location.code": locationCode,
+	}
+
+	doc := models.WarehouseDoc{}
+	err := repo.pst.FindOne(models.WarehouseDoc{}, filters, &doc)
+
+	if err != nil {
+		return models.WarehouseDoc{}, err
+	}
+
+	return doc, nil
+}
+
+func (repo WarehouseRepository) FindWarehouseByShelf(shopID, warehouseCode, locationCode, shelfCode string) (models.WarehouseDoc, error) {
+
+	filters := bson.M{
+		"shopid":              shopID,
+		"code":                warehouseCode,
+		"location.code":       locationCode,
+		"location.shelf.code": shelfCode,
+	}
+
+	doc := models.WarehouseDoc{}
+	err := repo.pst.FindOne(models.WarehouseDoc{}, filters, &doc)
+
+	if err != nil {
+		return models.WarehouseDoc{}, err
+	}
+
+	return doc, nil
 }

@@ -32,6 +32,14 @@ type IWarehouseHttpService interface {
 	SearchLocation(shopID string, pageable micromodels.Pageable) ([]models.LocationInfo, mongopagination.PaginationData, error)
 	SearchShelf(shopID string, pageable micromodels.Pageable) ([]models.ShelfInfo, mongopagination.PaginationData, error)
 
+	InfoLocation(shopID, warehouseCode, locationCode string) (models.LocationInfo, error)
+	CreateLocation(shopID, authUsername, warehouseCode string, doc models.LocationRequest) error
+	UpdateLocation(shopID, authUsername, warehouseCode, locationCode string, doc models.LocationRequest) error
+
+	InfoShelf(shopID, warehouseCode, locationCode, shelfCode string) (models.ShelfInfo, error)
+	CreateShelf(shopID, authUsername, warehouseCode, locationCode string, doc models.ShelfRequest) error
+	UpdateShelf(shopID, authUsername, warehouseCode, locationCode, shelfCode string, doc models.ShelfRequest) error
+
 	GetModuleName() string
 }
 
@@ -115,6 +123,196 @@ func (svc WarehouseHttpService) UpdateWarehouse(shopID string, guid string, auth
 	return nil
 }
 
+func (svc WarehouseHttpService) CreateLocation(shopID, authUsername, warehouseCode string, doc models.LocationRequest) error {
+
+	findDoc, err := svc.repo.FindWarehouseByLocation(shopID, warehouseCode, doc.Code)
+
+	if err != nil {
+		return err
+	}
+
+	if len(findDoc.GuidFixed) < 1 {
+		return errors.New("document not found")
+	}
+
+	locations := findDoc.Warehouse.Location
+
+	for _, location := range *locations {
+		if location.Code == doc.Code {
+			return errors.New("location code is exists")
+		}
+	}
+
+	*findDoc.Location = append(*findDoc.Location, models.Location{
+		Code:  doc.Code,
+		Names: doc.Names,
+	})
+
+	findDoc.UpdatedBy = authUsername
+	findDoc.UpdatedAt = time.Now()
+
+	err = svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
+
+	if err != nil {
+		return err
+	}
+
+	svc.saveMasterSync(shopID)
+
+	return nil
+}
+
+func (svc WarehouseHttpService) UpdateLocation(shopID, authUsername, warehouseCode, locationCode string, doc models.LocationRequest) error {
+
+	findDoc, err := svc.repo.FindWarehouseByLocation(shopID, warehouseCode, locationCode)
+
+	if err != nil {
+		return err
+	}
+
+	if len(findDoc.GuidFixed) < 1 {
+		return errors.New("document not found")
+	}
+
+	if locationCode != doc.Code {
+		locations := findDoc.Warehouse.Location
+
+		for _, location := range *locations {
+			if location.Code == doc.Code {
+				return errors.New("Location Code is exists")
+			}
+		}
+
+		*findDoc.Location = append(*findDoc.Location, models.Location{
+			Code:  doc.Code,
+			Names: doc.Names,
+		})
+
+	} else {
+		for i, location := range *findDoc.Location {
+			if location.Code == doc.Code {
+				location.Names = doc.Names
+				(*findDoc.Location)[i] = location
+			}
+		}
+	}
+
+	findDoc.UpdatedBy = authUsername
+	findDoc.UpdatedAt = time.Now()
+
+	err = svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
+
+	if err != nil {
+		return err
+	}
+
+	svc.saveMasterSync(shopID)
+
+	return nil
+}
+
+func (svc WarehouseHttpService) CreateShelf(shopID, authUsername, warehouseCode, locationCode string, doc models.ShelfRequest) error {
+	findDoc, err := svc.repo.FindWarehouseByShelf(shopID, warehouseCode, locationCode, doc.Code)
+
+	if err != nil {
+		return err
+	}
+
+	if len(findDoc.GuidFixed) < 1 {
+		return errors.New("document not found")
+	}
+
+	locations := findDoc.Warehouse.Location
+
+	for indexLocation, location := range *locations {
+
+		if location.Code == locationCode {
+			shelves := location.Shelf
+
+			for _, shelf := range *shelves {
+				if shelf.Code == doc.Code {
+					return errors.New("shelf Code is exists")
+				}
+			}
+
+			tempLocation := (*findDoc.Location)[indexLocation]
+			tempShelf := *tempLocation.Shelf
+
+			tempShelf = append(tempShelf, models.Shelf{
+				Code: doc.Code,
+				Name: doc.Name,
+			})
+
+			(*findDoc.Location)[indexLocation].Shelf = &tempShelf
+
+			break
+		}
+	}
+
+	return nil
+}
+
+func (svc WarehouseHttpService) UpdateShelf(shopID, authUsername, warehouseCode, locationCode, shelfCode string, doc models.ShelfRequest) error {
+	findDoc, err := svc.repo.FindWarehouseByShelf(shopID, warehouseCode, locationCode, shelfCode)
+
+	if err != nil {
+		return err
+	}
+
+	if len(findDoc.GuidFixed) < 1 {
+		return errors.New("document not found")
+	}
+
+	if shelfCode != doc.Code {
+
+		locations := findDoc.Warehouse.Location
+
+		for indexLocation, location := range *locations {
+
+			if location.Code == locationCode {
+				shelves := location.Shelf
+
+				for _, shelf := range *shelves {
+					if shelf.Code == doc.Code {
+						return errors.New("Shelf Code is exists")
+					}
+				}
+
+				tempLocation := (*findDoc.Location)[indexLocation]
+				tempShelf := *tempLocation.Shelf
+
+				newShelf := models.Shelf{
+					Code: doc.Code,
+					Name: doc.Name,
+				}
+
+				tempShelf = append(tempShelf, newShelf)
+
+				(*findDoc.Location)[indexLocation].Shelf = &tempShelf
+
+			}
+		}
+
+	} else {
+		locations := findDoc.Warehouse.Location
+
+		for indexLocation, location := range *locations {
+			shelves := *location.Shelf
+			for indexShelf, shelf := range shelves {
+				if shelf.Code == doc.Code {
+					tempLocation := (*findDoc.Location)[indexLocation]
+					tempShelf := *tempLocation.Shelf
+					tempShelf[indexShelf].Name = doc.Name
+					(*findDoc.Location)[indexLocation].Shelf = &tempShelf
+				}
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (svc WarehouseHttpService) DeleteWarehouse(shopID string, guid string, authUsername string) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
@@ -179,7 +377,72 @@ func (svc WarehouseHttpService) InfoWarehouseByCode(shopID string, code string) 
 	}
 
 	return findDoc.WarehouseInfo, nil
+}
 
+func (svc WarehouseHttpService) InfoLocation(shopID, warehouseCode, locationCode string) (models.LocationInfo, error) {
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", warehouseCode)
+
+	if err != nil {
+		return models.LocationInfo{}, err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return models.LocationInfo{}, errors.New("document not found")
+	}
+
+	locationInfo := models.LocationInfo{}
+
+	locationInfo.GuidFixed = findDoc.GuidFixed
+	locationInfo.WarehouseCode = findDoc.Code
+	locationInfo.WarehouseNames = findDoc.Names
+
+	for _, location := range *findDoc.Location {
+		if location.Code == locationCode {
+			locationInfo.LocationCode = location.Code
+			locationInfo.LocationNames = location.Names
+			locationInfo.Shelf = *location.Shelf
+			break
+		}
+	}
+
+	return locationInfo, nil
+}
+
+func (svc WarehouseHttpService) InfoShelf(shopID, warehouseCode, locationCode, shelfCode string) (models.ShelfInfo, error) {
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", warehouseCode)
+
+	if err != nil {
+		return models.ShelfInfo{}, err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return models.ShelfInfo{}, errors.New("document not found")
+	}
+
+	shelfInfo := models.ShelfInfo{}
+
+	shelfInfo.GuidFixed = findDoc.GuidFixed
+	shelfInfo.WarehouseCode = findDoc.Code
+	shelfInfo.WarehouseNames = findDoc.Names
+
+	for _, location := range *findDoc.Location {
+		if location.Code == locationCode {
+			shelfInfo.LocationCode = location.Code
+			shelfInfo.LocationNames = location.Names
+			for _, shelf := range *location.Shelf {
+				if shelf.Code == shelfCode {
+					shelfInfo.ShelfCode = shelf.Code
+					shelfInfo.ShelfName = shelf.Name
+					break
+				}
+			}
+			break
+		}
+	}
+
+	return shelfInfo, nil
 }
 
 func (svc WarehouseHttpService) SearchWarehouse(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.WarehouseInfo, mongopagination.PaginationData, error) {
