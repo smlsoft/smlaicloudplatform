@@ -8389,7 +8389,7 @@
                 }
             }
         },
-        "/organization/bussiness-type": {
+        "/organization/business-type": {
             "get": {
                 "security": [
                     {
@@ -8401,7 +8401,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "BussinessType"
+                    "BusinessType"
                 ],
                 "parameters": [
                     {
@@ -8447,21 +8447,21 @@
                         "AccessToken": []
                     }
                 ],
-                "description": "Create BussinessType",
+                "description": "Create BusinessType",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "BussinessType"
+                    "BusinessType"
                 ],
                 "parameters": [
                     {
-                        "description": "BussinessType",
-                        "name": "BussinessType",
+                        "description": "BusinessType",
+                        "name": "BusinessType",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.BussinessType"
+                            "$ref": "#/definitions/models.BusinessType"
                         }
                     }
                 ],
@@ -8486,17 +8486,17 @@
                         "AccessToken": []
                     }
                 ],
-                "description": "Delete BussinessType",
+                "description": "Delete BusinessType",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "BussinessType"
+                    "BusinessType"
                 ],
                 "parameters": [
                     {
-                        "description": "BussinessType GUIDs",
-                        "name": "BussinessType",
+                        "description": "BusinessType GUIDs",
+                        "name": "BusinessType",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -8523,30 +8523,30 @@
                 }
             }
         },
-        "/organization/bussiness-type/bulk": {
+        "/organization/business-type/bulk": {
             "post": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Create BussinessType",
+                "description": "Create BusinessType",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "BussinessType"
+                    "BusinessType"
                 ],
                 "parameters": [
                     {
-                        "description": "BussinessType",
-                        "name": "BussinessType",
+                        "description": "BusinessType",
+                        "name": "BusinessType",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.BussinessType"
+                                "$ref": "#/definitions/models.BusinessType"
                             }
                         }
                     }
@@ -8567,24 +8567,24 @@
                 }
             }
         },
-        "/organization/bussiness-type/code/{code}": {
+        "/organization/business-type/code/{code}": {
             "get": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "get BussinessType info by Code",
+                "description": "get BusinessType info by Code",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "BussinessType"
+                    "BusinessType"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "BussinessType Code",
+                        "description": "BusinessType Code",
                         "name": "code",
                         "in": "path",
                         "required": true
@@ -8606,7 +8606,7 @@
                 }
             }
         },
-        "/organization/bussiness-type/list": {
+        "/organization/business-type/list": {
             "get": {
                 "security": [
                     {
@@ -8618,7 +8618,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "BussinessType"
+                    "BusinessType"
                 ],
                 "parameters": [
                     {
@@ -8665,24 +8665,24 @@
                 }
             }
         },
-        "/organization/bussiness-type/{id}": {
+        "/organization/business-type/{id}": {
             "get": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "get BussinessType info by guidfixed",
+                "description": "get BusinessType info by guidfixed",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "BussinessType"
+                    "BusinessType"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "BussinessType guidfixed",
+                        "description": "BusinessType guidfixed",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -8709,28 +8709,28 @@
                         "AccessToken": []
                     }
                 ],
-                "description": "Update BussinessType",
+                "description": "Update BusinessType",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "BussinessType"
+                    "BusinessType"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "BussinessType ID",
+                        "description": "BusinessType ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "BussinessType",
-                        "name": "BussinessType",
+                        "description": "BusinessType",
+                        "name": "BusinessType",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.BussinessType"
+                            "$ref": "#/definitions/models.BusinessType"
                         }
                     }
                 ],
@@ -8755,17 +8755,17 @@
                         "AccessToken": []
                     }
                 ],
-                "description": "Delete BussinessType",
+                "description": "Delete BusinessType",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "BussinessType"
+                    "BusinessType"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "BussinessType ID",
+                        "description": "BusinessType ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -19609,7 +19609,7 @@
                 }
             }
         },
-        "models.BussinessType": {
+        "models.BusinessType": {
             "type": "object",
             "required": [
                 "names"
@@ -22054,6 +22054,10 @@
         },
         "models.LocationRequest": {
             "type": "object",
+            "required": [
+                "locationcode",
+                "warehousecode"
+            ],
             "properties": {
                 "locationcode": {
                     "type": "string"
@@ -22069,6 +22073,9 @@
                     "items": {
                         "$ref": "#/definitions/models.Shelf"
                     }
+                },
+                "warehousecode": {
+                    "type": "string"
                 }
             }
         },
@@ -22443,6 +22450,31 @@
                 }
             }
         },
+        "models.Organization": {
+            "type": "object",
+            "required": [
+                "branch"
+            ],
+            "properties": {
+                "bissnesstypes": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "branch": {
+                    "type": "integer"
+                },
+                "departments": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "models.PaginationDataResponse": {
             "type": "object",
             "properties": {
@@ -22767,6 +22799,12 @@
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "organizations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Organization"
+                    }
+                },
                 "prices": {
                     "type": "array",
                     "items": {
@@ -22774,7 +22812,7 @@
                     }
                 },
                 "taxtype": {
-                    "description": "0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษีม",
+                    "description": "0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี",
                     "type": "integer"
                 },
                 "unit": {
@@ -22881,6 +22919,12 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.ProductOption"
+                    }
+                },
+                "organizations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Organization"
                     }
                 },
                 "prices": {
@@ -24074,11 +24118,22 @@
         },
         "models.ShelfRequest": {
             "type": "object",
+            "required": [
+                "locationcode",
+                "shelfcode",
+                "warehousecode"
+            ],
             "properties": {
+                "locationcode": {
+                    "type": "string"
+                },
                 "shelfcode": {
                     "type": "string"
                 },
                 "shelfname": {
+                    "type": "string"
+                },
+                "warehousecode": {
                     "type": "string"
                 }
             }
@@ -25146,8 +25201,20 @@
                 "names"
             ],
             "properties": {
+                "businesstypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "code": {
                     "type": "string"
+                },
+                "departments": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "names": {
                     "type": "array",
@@ -25236,6 +25303,12 @@
                     "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "organizations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Organization"
                     }
                 },
                 "unitcode": {

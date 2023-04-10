@@ -378,7 +378,7 @@ definitions:
           type: string
         type: array
     type: object
-  models.BussinessType:
+  models.BusinessType:
     properties:
       code:
         type: string
@@ -2062,6 +2062,11 @@ definitions:
         items:
           $ref: '#/definitions/models.Shelf'
         type: array
+      warehousecode:
+        type: string
+    required:
+    - locationcode
+    - warehousecode
     type: object
   models.LostAndProfitSheetReportResponse:
     properties:
@@ -2319,6 +2324,23 @@ definitions:
     - name1
     - names
     type: object
+  models.Organization:
+    properties:
+      bissnesstypes:
+        items:
+          type: string
+        type: array
+        uniqueItems: true
+      branch:
+        type: integer
+      departments:
+        items:
+          type: string
+        type: array
+        uniqueItems: true
+    required:
+    - branch
+    type: object
   models.PaginationDataResponse:
     properties:
       next:
@@ -2533,12 +2555,16 @@ definitions:
         minItems: 1
         type: array
         uniqueItems: true
+      organizations:
+        items:
+          $ref: '#/definitions/models.Organization'
+        type: array
       prices:
         items:
           $ref: '#/definitions/models.ProductPrice'
         type: array
       taxtype:
-        description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษีม
+        description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
         type: integer
       unit:
         $ref: '#/definitions/models.ProductUnit'
@@ -2612,6 +2638,10 @@ definitions:
       options:
         items:
           $ref: '#/definitions/models.ProductOption'
+        type: array
+      organizations:
+        items:
+          $ref: '#/definitions/models.Organization'
         type: array
       prices:
         items:
@@ -3440,10 +3470,18 @@ definitions:
     type: object
   models.ShelfRequest:
     properties:
+      locationcode:
+        type: string
       shelfcode:
         type: string
       shelfname:
         type: string
+      warehousecode:
+        type: string
+    required:
+    - locationcode
+    - shelfcode
+    - warehousecode
     type: object
   models.Shop:
     properties:
@@ -4162,8 +4200,16 @@ definitions:
     type: object
   smlcloudplatform_pkg_organization_branch_models.Branch:
     properties:
+      businesstypes:
+        items:
+          type: string
+        type: array
       code:
         type: string
+      departments:
+        items:
+          type: string
+        type: array
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -4223,6 +4269,10 @@ definitions:
         minItems: 1
         type: array
         uniqueItems: true
+      organizations:
+        items:
+          $ref: '#/definitions/models.Organization'
+        type: array
       unitcode:
         maxLength: 100
         type: string
@@ -9561,15 +9611,15 @@ paths:
       - AccessToken: []
       tags:
       - Branch
-  /organization/bussiness-type:
+  /organization/business-type:
     delete:
       consumes:
       - application/json
-      description: Delete BussinessType
+      description: Delete BusinessType
       parameters:
-      - description: BussinessType GUIDs
+      - description: BusinessType GUIDs
         in: body
-        name: BussinessType
+        name: BusinessType
         required: true
         schema:
           items:
@@ -9587,7 +9637,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - BussinessType
+      - BusinessType
     get:
       consumes:
       - application/json
@@ -9619,18 +9669,18 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - BussinessType
+      - BusinessType
     post:
       consumes:
       - application/json
-      description: Create BussinessType
+      description: Create BusinessType
       parameters:
-      - description: BussinessType
+      - description: BusinessType
         in: body
-        name: BussinessType
+        name: BusinessType
         required: true
         schema:
-          $ref: '#/definitions/models.BussinessType'
+          $ref: '#/definitions/models.BusinessType'
       responses:
         "201":
           description: Created
@@ -9643,14 +9693,14 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - BussinessType
-  /organization/bussiness-type/{id}:
+      - BusinessType
+  /organization/business-type/{id}:
     delete:
       consumes:
       - application/json
-      description: Delete BussinessType
+      description: Delete BusinessType
       parameters:
-      - description: BussinessType ID
+      - description: BusinessType ID
         in: path
         name: id
         required: true
@@ -9667,13 +9717,13 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - BussinessType
+      - BusinessType
     get:
       consumes:
       - application/json
-      description: get BussinessType info by guidfixed
+      description: get BusinessType info by guidfixed
       parameters:
-      - description: BussinessType guidfixed
+      - description: BusinessType guidfixed
         in: path
         name: id
         required: true
@@ -9690,23 +9740,23 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - BussinessType
+      - BusinessType
     put:
       consumes:
       - application/json
-      description: Update BussinessType
+      description: Update BusinessType
       parameters:
-      - description: BussinessType ID
+      - description: BusinessType ID
         in: path
         name: id
         required: true
         type: string
-      - description: BussinessType
+      - description: BusinessType
         in: body
-        name: BussinessType
+        name: BusinessType
         required: true
         schema:
-          $ref: '#/definitions/models.BussinessType'
+          $ref: '#/definitions/models.BusinessType'
       responses:
         "201":
           description: Created
@@ -9719,20 +9769,20 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - BussinessType
-  /organization/bussiness-type/bulk:
+      - BusinessType
+  /organization/business-type/bulk:
     post:
       consumes:
       - application/json
-      description: Create BussinessType
+      description: Create BusinessType
       parameters:
-      - description: BussinessType
+      - description: BusinessType
         in: body
-        name: BussinessType
+        name: BusinessType
         required: true
         schema:
           items:
-            $ref: '#/definitions/models.BussinessType'
+            $ref: '#/definitions/models.BusinessType'
           type: array
       responses:
         "201":
@@ -9746,14 +9796,14 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - BussinessType
-  /organization/bussiness-type/code/{code}:
+      - BusinessType
+  /organization/business-type/code/{code}:
     get:
       consumes:
       - application/json
-      description: get BussinessType info by Code
+      description: get BusinessType info by Code
       parameters:
-      - description: BussinessType Code
+      - description: BusinessType Code
         in: path
         name: code
         required: true
@@ -9770,8 +9820,8 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - BussinessType
-  /organization/bussiness-type/list:
+      - BusinessType
+  /organization/business-type/list:
     get:
       consumes:
       - application/json
@@ -9807,7 +9857,7 @@ paths:
       security:
       - AccessToken: []
       tags:
-      - BussinessType
+      - BusinessType
   /organization/department:
     delete:
       consumes:

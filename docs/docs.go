@@ -8395,7 +8395,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/organization/bussiness-type": {
+        "/organization/business-type": {
             "get": {
                 "security": [
                     {
@@ -8407,7 +8407,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "BussinessType"
+                    "BusinessType"
                 ],
                 "parameters": [
                     {
@@ -8453,21 +8453,21 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Create BussinessType",
+                "description": "Create BusinessType",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "BussinessType"
+                    "BusinessType"
                 ],
                 "parameters": [
                     {
-                        "description": "BussinessType",
-                        "name": "BussinessType",
+                        "description": "BusinessType",
+                        "name": "BusinessType",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.BussinessType"
+                            "$ref": "#/definitions/models.BusinessType"
                         }
                     }
                 ],
@@ -8492,17 +8492,17 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Delete BussinessType",
+                "description": "Delete BusinessType",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "BussinessType"
+                    "BusinessType"
                 ],
                 "parameters": [
                     {
-                        "description": "BussinessType GUIDs",
-                        "name": "BussinessType",
+                        "description": "BusinessType GUIDs",
+                        "name": "BusinessType",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -8529,30 +8529,30 @@ const docTemplate = `{
                 }
             }
         },
-        "/organization/bussiness-type/bulk": {
+        "/organization/business-type/bulk": {
             "post": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Create BussinessType",
+                "description": "Create BusinessType",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "BussinessType"
+                    "BusinessType"
                 ],
                 "parameters": [
                     {
-                        "description": "BussinessType",
-                        "name": "BussinessType",
+                        "description": "BusinessType",
+                        "name": "BusinessType",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.BussinessType"
+                                "$ref": "#/definitions/models.BusinessType"
                             }
                         }
                     }
@@ -8573,24 +8573,24 @@ const docTemplate = `{
                 }
             }
         },
-        "/organization/bussiness-type/code/{code}": {
+        "/organization/business-type/code/{code}": {
             "get": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "get BussinessType info by Code",
+                "description": "get BusinessType info by Code",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "BussinessType"
+                    "BusinessType"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "BussinessType Code",
+                        "description": "BusinessType Code",
                         "name": "code",
                         "in": "path",
                         "required": true
@@ -8612,7 +8612,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/organization/bussiness-type/list": {
+        "/organization/business-type/list": {
             "get": {
                 "security": [
                     {
@@ -8624,7 +8624,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "BussinessType"
+                    "BusinessType"
                 ],
                 "parameters": [
                     {
@@ -8671,24 +8671,24 @@ const docTemplate = `{
                 }
             }
         },
-        "/organization/bussiness-type/{id}": {
+        "/organization/business-type/{id}": {
             "get": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "get BussinessType info by guidfixed",
+                "description": "get BusinessType info by guidfixed",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "BussinessType"
+                    "BusinessType"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "BussinessType guidfixed",
+                        "description": "BusinessType guidfixed",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -8715,28 +8715,28 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Update BussinessType",
+                "description": "Update BusinessType",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "BussinessType"
+                    "BusinessType"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "BussinessType ID",
+                        "description": "BusinessType ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "BussinessType",
-                        "name": "BussinessType",
+                        "description": "BusinessType",
+                        "name": "BusinessType",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.BussinessType"
+                            "$ref": "#/definitions/models.BusinessType"
                         }
                     }
                 ],
@@ -8761,17 +8761,17 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Delete BussinessType",
+                "description": "Delete BusinessType",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "BussinessType"
+                    "BusinessType"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "BussinessType ID",
+                        "description": "BusinessType ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -19615,7 +19615,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.BussinessType": {
+        "models.BusinessType": {
             "type": "object",
             "required": [
                 "names"
@@ -22060,6 +22060,10 @@ const docTemplate = `{
         },
         "models.LocationRequest": {
             "type": "object",
+            "required": [
+                "locationcode",
+                "warehousecode"
+            ],
             "properties": {
                 "locationcode": {
                     "type": "string"
@@ -22075,6 +22079,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Shelf"
                     }
+                },
+                "warehousecode": {
+                    "type": "string"
                 }
             }
         },
@@ -22449,6 +22456,31 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Organization": {
+            "type": "object",
+            "required": [
+                "branch"
+            ],
+            "properties": {
+                "bissnesstypes": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "branch": {
+                    "type": "integer"
+                },
+                "departments": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "models.PaginationDataResponse": {
             "type": "object",
             "properties": {
@@ -22773,6 +22805,12 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "organizations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Organization"
+                    }
+                },
                 "prices": {
                     "type": "array",
                     "items": {
@@ -22780,7 +22818,7 @@ const docTemplate = `{
                     }
                 },
                 "taxtype": {
-                    "description": "0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษีม",
+                    "description": "0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี",
                     "type": "integer"
                 },
                 "unit": {
@@ -22887,6 +22925,12 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.ProductOption"
+                    }
+                },
+                "organizations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Organization"
                     }
                 },
                 "prices": {
@@ -24080,11 +24124,22 @@ const docTemplate = `{
         },
         "models.ShelfRequest": {
             "type": "object",
+            "required": [
+                "locationcode",
+                "shelfcode",
+                "warehousecode"
+            ],
             "properties": {
+                "locationcode": {
+                    "type": "string"
+                },
                 "shelfcode": {
                     "type": "string"
                 },
                 "shelfname": {
+                    "type": "string"
+                },
+                "warehousecode": {
                     "type": "string"
                 }
             }
@@ -25152,8 +25207,20 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
+                "businesstypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "code": {
                     "type": "string"
+                },
+                "departments": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "names": {
                     "type": "array",
@@ -25242,6 +25309,12 @@ const docTemplate = `{
                     "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "organizations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Organization"
                     }
                 },
                 "unitcode": {
