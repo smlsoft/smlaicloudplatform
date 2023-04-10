@@ -36,6 +36,8 @@ type IWarehouseRepository interface {
 	FindShelfPage(shopID string, pageable micromodels.Pageable) ([]models.ShelfInfo, mongopagination.PaginationData, error)
 	FindWarehouseByLocation(shopID, warehouseCode, locationCode string) (models.WarehouseDoc, error)
 	FindWarehouseByShelf(shopID, warehouseCode, locationCode, shelfCode string) (models.WarehouseDoc, error)
+
+	Transaction(queryFunc func() error) error
 }
 
 type WarehouseRepository struct {
@@ -58,6 +60,10 @@ func NewWarehouseRepository(pst microservice.IPersisterMongo) *WarehouseReposito
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.WarehouseActivity, models.WarehouseDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo WarehouseRepository) Transaction(queryFunc func() error) error {
+	return repo.pst.Transaction(queryFunc)
 }
 
 func (repo WarehouseRepository) FindLocationPage(shopID string, pageable micromodels.Pageable) ([]models.LocationInfo, mongopagination.PaginationData, error) {

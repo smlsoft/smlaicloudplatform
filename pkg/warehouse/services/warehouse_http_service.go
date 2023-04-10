@@ -164,6 +164,9 @@ func (svc WarehouseHttpService) CreateLocation(shopID, authUsername, warehouseCo
 
 func (svc WarehouseHttpService) UpdateLocation(shopID, authUsername, warehouseCode, locationCode string, doc models.LocationRequest) error {
 
+	updateDoc := models.WarehouseDoc{}
+	removeDoc := models.WarehouseDoc{}
+
 	findDoc, err := svc.repo.FindWarehouseByLocation(shopID, warehouseCode, locationCode)
 
 	if err != nil {
@@ -174,33 +177,96 @@ func (svc WarehouseHttpService) UpdateLocation(shopID, authUsername, warehouseCo
 		return errors.New("document not found")
 	}
 
-	if locationCode != doc.Code {
-		locations := findDoc.Warehouse.Location
+	if warehouseCode != doc.WarehouseCode {
 
-		for _, location := range *locations {
-			if location.Code == doc.Code {
-				return errors.New("Location Code is exists")
+		findDocWarehouse, err := svc.repo.FindByDocIndentityGuid(shopID, "code", doc.WarehouseCode)
+
+		if err != nil {
+			return err
+		}
+
+		if len(findDocWarehouse.GuidFixed) < 1 {
+			return errors.New("document not found")
+		}
+
+		updateDoc = findDocWarehouse
+
+		// clear doc
+		removeDoc = findDoc
+		tempLocation := []models.Location{}
+
+		for _, location := range *removeDoc.Location {
+			if location.Code != locationCode {
+				tempLocation = append(tempLocation, location)
 			}
 		}
 
-		*findDoc.Location = append(*findDoc.Location, models.Location{
-			Code:  doc.Code,
-			Names: doc.Names,
-		})
-
+		removeDoc.Location = &tempLocation
 	} else {
-		for i, location := range *findDoc.Location {
-			if location.Code == doc.Code {
-				location.Names = doc.Names
-				(*findDoc.Location)[i] = location
-			}
-		}
+		updateDoc = findDoc
 	}
 
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	if warehouseCode == doc.WarehouseCode {
+		if locationCode != doc.Code {
+			locations := updateDoc.Warehouse.Location
 
-	err = svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
+			for _, location := range *locations {
+				if location.Code == doc.Code {
+					return errors.New("location code is exists")
+				}
+			}
+
+			*updateDoc.Location = append(*updateDoc.Location, models.Location{
+				Code:  doc.Code,
+				Names: doc.Names,
+				Shelf: &doc.Shelf,
+			})
+
+		} else {
+			for i, location := range *updateDoc.Location {
+				if location.Code == doc.Code {
+					location.Names = doc.Names
+					(*updateDoc.Location)[i] = location
+				}
+			}
+		}
+	} else {
+		for _, location := range *updateDoc.Location {
+			if location.Code == doc.Code {
+				return errors.New("location code is exists")
+			}
+		}
+
+		*updateDoc.Location = append(*updateDoc.Location, models.Location{
+			Code:  doc.Code,
+			Names: doc.Names,
+			Shelf: &doc.Shelf,
+		})
+	}
+
+	err = svc.repo.Transaction(func() error {
+		updateDoc.UpdatedBy = authUsername
+		updateDoc.UpdatedAt = time.Now()
+
+		err = svc.repo.Update(shopID, updateDoc.GuidFixed, updateDoc)
+
+		if err != nil {
+			return err
+		}
+
+		if len(removeDoc.GuidFixed) > 0 {
+			removeDoc.UpdatedBy = authUsername
+			removeDoc.UpdatedAt = time.Now()
+
+			err = svc.repo.Update(shopID, removeDoc.GuidFixed, removeDoc)
+
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
 
 	if err != nil {
 		return err
@@ -209,6 +275,105 @@ func (svc WarehouseHttpService) UpdateLocation(shopID, authUsername, warehouseCo
 	svc.saveMasterSync(shopID)
 
 	return nil
+}
+
+func (svc WarehouseHttpService) UpdateLocation2(shopID, authUsername, warehouseCode, locationCode string, doc models.LocationRequest) error {
+	// Retrieve the original warehouse containing the location
+	foundDoc, err := svc.repo.FindWarehouseByLocation(shopID, warehouseCode, locationCode)
+	if err != nil {
+		return err
+	}
+
+	if len(foundDoc.GuidFixed) < 1 {
+		return errors.New("document not found")
+	}
+
+	// If the warehouse code is different, find the new warehouse to move the location to
+	var targetDoc models.WarehouseDoc
+	if warehouseCode != doc.WarehouseCode {
+		targetDoc, err = svc.repo.FindByDocIndentityGuid(shopID, "code", doc.WarehouseCode)
+		if err != nil {
+			return err
+		}
+
+		if len(targetDoc.GuidFixed) < 1 {
+			return errors.New("document not found")
+		}
+	} else {
+		targetDoc = foundDoc
+	}
+
+	// Check if the new location code already exists in the target warehouse
+	if warehouseCode != doc.WarehouseCode {
+		for _, location := range *targetDoc.Location {
+			if location.Code == doc.Code {
+				return errors.New("location code is exists")
+			}
+		}
+	}
+
+	// Update the location in the target warehouse and remove it from the original warehouse if necessary
+	err = svc.updateLocationInWarehouse(shopID, authUsername, foundDoc, targetDoc, doc, warehouseCode, locationCode)
+	if err != nil {
+		return err
+	}
+
+	svc.saveMasterSync(shopID)
+	return nil
+}
+
+func (svc WarehouseHttpService) updateLocationInWarehouse(shopID, authUsername string, foundDoc, targetDoc models.WarehouseDoc, doc models.LocationRequest, warehouseCode, locationCode string) error {
+	// Create the updated location object
+	updatedLocation := models.Location{
+		Code:  doc.Code,
+		Names: doc.Names,
+		Shelf: &doc.Shelf,
+	}
+
+	// Update the target warehouse's location list
+	*targetDoc.Location = append(*targetDoc.Location, updatedLocation)
+
+	// Remove the location from the original warehouse if it's different from the target warehouse
+	if warehouseCode != doc.WarehouseCode {
+		*foundDoc.Location = removeLocationFromWarehouse(*foundDoc.Location, locationCode)
+	}
+
+	// Perform database updates in a transaction
+	err := svc.repo.Transaction(func() error {
+		// Update the target warehouse
+		targetDoc.UpdatedBy = authUsername
+		targetDoc.UpdatedAt = time.Now()
+		err := svc.repo.Update(shopID, targetDoc.GuidFixed, targetDoc)
+		if err != nil {
+			return err
+		}
+
+		// Update the original warehouse if necessary
+		if warehouseCode != doc.WarehouseCode {
+			foundDoc.UpdatedBy = authUsername
+			foundDoc.UpdatedAt = time.Now()
+			err = svc.repo.Update(shopID, foundDoc.GuidFixed, foundDoc)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+
+	return err
+}
+
+func removeLocationFromWarehouse(locations []models.Location, locationCode string) []models.Location {
+	updatedLocations := []models.Location{}
+
+	for _, location := range locations {
+		if location.Code != locationCode {
+			updatedLocations = append(updatedLocations, location)
+		}
+	}
+
+	return updatedLocations
 }
 
 func (svc WarehouseHttpService) CreateShelf(shopID, authUsername, warehouseCode, locationCode string, doc models.ShelfRequest) error {
@@ -253,6 +418,10 @@ func (svc WarehouseHttpService) CreateShelf(shopID, authUsername, warehouseCode,
 }
 
 func (svc WarehouseHttpService) UpdateShelf(shopID, authUsername, warehouseCode, locationCode, shelfCode string, doc models.ShelfRequest) error {
+
+	updateDoc := models.WarehouseDoc{}
+	removeDoc := models.WarehouseDoc{}
+
 	findDoc, err := svc.repo.FindWarehouseByShelf(shopID, warehouseCode, locationCode, shelfCode)
 
 	if err != nil {
@@ -263,51 +432,139 @@ func (svc WarehouseHttpService) UpdateShelf(shopID, authUsername, warehouseCode,
 		return errors.New("document not found")
 	}
 
-	if shelfCode != doc.Code {
+	if warehouseCode != doc.WarehouseCode {
 
-		locations := findDoc.Warehouse.Location
+		findDocWarehouse, err := svc.repo.FindByDocIndentityGuid(shopID, "code", doc.WarehouseCode)
 
-		for indexLocation, location := range *locations {
+		if err != nil {
+			return err
+		}
 
+		if len(findDocWarehouse.GuidFixed) < 1 {
+			return errors.New("document not found")
+		}
+
+		updateDoc = findDocWarehouse
+
+		// clear doc
+		removeDoc = findDoc
+		tempRemoveShelf := []models.Shelf{}
+
+		for i, location := range *removeDoc.Location {
 			if location.Code == locationCode {
-				shelves := location.Shelf
-
-				for _, shelf := range *shelves {
-					if shelf.Code == doc.Code {
-						return errors.New("Shelf Code is exists")
+				for _, shelf := range *location.Shelf {
+					if shelf.Code != shelfCode {
+						tempRemoveShelf = append(tempRemoveShelf, shelf)
 					}
 				}
 
-				tempLocation := (*findDoc.Location)[indexLocation]
-				tempShelf := *tempLocation.Shelf
-
-				newShelf := models.Shelf{
-					Code: doc.Code,
-					Name: doc.Name,
-				}
-
-				tempShelf = append(tempShelf, newShelf)
-
-				(*findDoc.Location)[indexLocation].Shelf = &tempShelf
-
+				(*removeDoc.Location)[i].Shelf = &tempRemoveShelf
 			}
 		}
 
 	} else {
-		locations := findDoc.Warehouse.Location
+		updateDoc = findDoc
+	}
+
+	if warehouseCode == doc.WarehouseCode {
+		if shelfCode != doc.Code {
+
+			locations := updateDoc.Warehouse.Location
+
+			for indexLocation, location := range *locations {
+
+				if location.Code == locationCode {
+					shelves := location.Shelf
+
+					for _, shelf := range *shelves {
+						if shelf.Code == doc.Code {
+							return errors.New("shelf code is exists")
+						}
+					}
+
+					tempLocation := (*updateDoc.Location)[indexLocation]
+					tempShelf := *tempLocation.Shelf
+
+					newShelf := models.Shelf{
+						Code: doc.Code,
+						Name: doc.Name,
+					}
+
+					tempShelf = append(tempShelf, newShelf)
+
+					(*updateDoc.Location)[indexLocation].Shelf = &tempShelf
+
+				}
+			}
+
+		} else {
+			locations := updateDoc.Warehouse.Location
+
+			for indexLocation, location := range *locations {
+				shelves := *location.Shelf
+				for indexShelf, shelf := range shelves {
+					if shelf.Code == doc.Code {
+						tempLocation := (*updateDoc.Location)[indexLocation]
+						tempShelf := *tempLocation.Shelf
+						tempShelf[indexShelf].Name = doc.Name
+						(*updateDoc.Location)[indexLocation].Shelf = &tempShelf
+					}
+				}
+			}
+
+		}
+	} else {
+
+		locations := updateDoc.Warehouse.Location
 
 		for indexLocation, location := range *locations {
-			shelves := *location.Shelf
-			for indexShelf, shelf := range shelves {
-				if shelf.Code == doc.Code {
-					tempLocation := (*findDoc.Location)[indexLocation]
-					tempShelf := *tempLocation.Shelf
-					tempShelf[indexShelf].Name = doc.Name
-					(*findDoc.Location)[indexLocation].Shelf = &tempShelf
+			if location.Shelf == nil {
+				(*updateDoc.Location)[indexLocation].Shelf = &[]models.Shelf{}
+			} else {
+
+				shelves := *location.Shelf
+
+				for _, shelf := range shelves {
+					if shelf.Code == doc.Code {
+						return errors.New("shelf code is exists")
+					}
 				}
+			}
+
+			tempShelfs := (*updateDoc.Location)[indexLocation].Shelf
+			*(*updateDoc.Location)[indexLocation].Shelf = append(*tempShelfs, models.Shelf{
+				Code: doc.Code,
+				Name: doc.Name,
+			})
+		}
+	}
+
+	err = svc.repo.Transaction(func() error {
+		updateDoc.UpdatedBy = authUsername
+		updateDoc.UpdatedAt = time.Now()
+
+		err = svc.repo.Update(shopID, updateDoc.GuidFixed, updateDoc)
+
+		if err != nil {
+			return err
+		}
+
+		if len(removeDoc.GuidFixed) > 0 {
+			removeDoc.UpdatedBy = authUsername
+			removeDoc.UpdatedAt = time.Now()
+
+			err = svc.repo.Update(shopID, removeDoc.GuidFixed, removeDoc)
+
+			if err != nil {
+				return err
 			}
 		}
 
+		return nil
+	})
+
+	if err != nil {
+		return err
 	}
 
 	return nil

@@ -30,3 +30,7 @@ type NameX struct {
 	IsAuto   bool    `json:"isauto" bson:"isauto"`
 	IsDelete bool    `json:"isdelete"`
 }
+
+func NewNameXWithCodeName(code, name string) *NameX {
+	return &NameX{Code: &code, Name: &name, IsAuto: false, IsDelete: false}
+}

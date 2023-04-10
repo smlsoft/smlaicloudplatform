@@ -54,14 +54,17 @@ func (ShelfInfo) CollectionName() string {
 }
 
 type LocationRequest struct {
-	Code  string          `json:"locationcode" bson:"locationcode"`
-	Names *[]models.NameX `json:"locationnames" bson:"locationnames"`
-	Shelf []Shelf         `json:"shelf" bson:"shelf"`
+	WarehouseCode string          `json:"warehousecode" bson:"warehousecode" validate:"required"`
+	Code          string          `json:"locationcode" bson:"locationcode" validate:"required"`
+	Names         *[]models.NameX `json:"locationnames" bson:"locationnames"`
+	Shelf         []Shelf         `json:"shelf" bson:"shelf"`
 }
 
 type ShelfRequest struct {
-	Code string `json:"shelfcode" bson:"shelfcode"`
-	Name string `json:"shelfname" bson:"shelfname"`
+	WarehouseCode string `json:"warehousecode" bson:"warehousecode" validate:"required"`
+	LocationCode  string `json:"locationcode" bson:"locationcode" validate:"required"`
+	Code          string `json:"shelfcode" bson:"shelfcode" validate:"required"`
+	Name          string `json:"shelfname" bson:"shelfname"`
 }
 
 type WarehouseInfo struct {
