@@ -57,7 +57,7 @@ func (svc SMLTransactionHttpService) CreateSMLTransaction(shopID string, authUse
 
 	_, ok := smlRequest.Body[smlRequest.KeyID]
 
-	if !ok || smlRequest.Body[smlRequest.KeyID] != nil {
+	if !ok || smlRequest.Body[smlRequest.KeyID] == nil {
 		return "", fmt.Errorf("KeyID is not found in body")
 	}
 
