@@ -19,7 +19,7 @@ import (
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
 	"smlcloudplatform/pkg/organization/branch"
-	"smlcloudplatform/pkg/organization/bussinesstype"
+	"smlcloudplatform/pkg/organization/businesstype"
 	"smlcloudplatform/pkg/organization/department"
 	"smlcloudplatform/pkg/payment/bankmaster"
 	"smlcloudplatform/pkg/payment/bookbank"
@@ -195,7 +195,7 @@ func main() {
 		customergroup.NewCustomerGroupHttp(ms, cfg),
 
 		department.NewDepartmentHttp(ms, cfg),
-		bussinesstype.NewBussinessTypeHttp(ms, cfg),
+		businesstype.NewBusinessTypeHttp(ms, cfg),
 		branch.NewBranchHttp(ms, cfg),
 	}
 
