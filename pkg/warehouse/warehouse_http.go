@@ -58,7 +58,7 @@ func (h WarehouseHttp) RouteSetup() {
 	h.ms.DELETE("/warehouse", h.DeleteWarehouseByGUIDs)
 }
 
-// Create Warehouse godoc
+// Create Warehouse 1 godoc
 // @Description Create Warehouse
 // @Tags		Warehouse
 // @Param		Warehouse  body      models.Warehouse  true  "Warehouse"
