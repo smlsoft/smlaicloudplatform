@@ -16279,45 +16279,6 @@ const docTemplate = `{
             }
         },
         "/sml-transaction": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create SMLTransaction",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "SMLTransaction"
-                ],
-                "parameters": [
-                    {
-                        "description": "SMLTransactionRequest",
-                        "name": "SMLTransactionRequest",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.SMLTransactionRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
             "post": {
                 "security": [
                     {
@@ -18794,6 +18755,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/warehouse/{warehouseCode}/location/": {
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Warehouse Location",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse Code",
+                        "name": "warehouseCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Location Code",
+                        "name": "LocationCode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/warehouse/{warehouseCode}/location/{locationCode}": {
             "get": {
                 "security": [
@@ -18845,7 +18857,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Update Warehouse",
+                "description": "Update Warehouse Location",
                 "consumes": [
                     "application/json"
                 ],
@@ -18946,6 +18958,62 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Warehouse Shelf",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse Code",
+                        "name": "warehouseCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "location Code",
+                        "name": "locationCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Shelf Code",
+                        "name": "ShelfCode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
             }
         },
         "/warehouse/{warehouseCode}/location/{locationCode}/shelf/{shelfCode}": {
@@ -19006,7 +19074,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Update Warehouse",
+                "description": "Update Warehouse Shelf",
                 "consumes": [
                     "application/json"
                 ],
@@ -20537,9 +20605,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
