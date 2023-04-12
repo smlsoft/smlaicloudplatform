@@ -274,6 +274,8 @@ func (h CustomerHttp) InfoCustomerByCode(ctx microservice.IContext) error {
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "page"
 // @Param		limit	query	integer		false  "limit"
+// @Param		iscreditor	query	bool		false  "creditor"
+// @Param		isdebtor	query	bool		false  "debtor"
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -285,7 +287,19 @@ func (h CustomerHttp) SearchCustomerPage(ctx microservice.IContext) error {
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchCustomer(shopID, map[string]interface{}{}, pageable)
+	filters := map[string]interface{}{}
+	iscreditor := ctx.QueryParam("iscreditor")
+	isdebtor := ctx.QueryParam("isdebtor")
+
+	if iscreditor != "" && iscreditor != "-1" {
+		filters["iscreditor"] = iscreditor == "true" || iscreditor == "1"
+	}
+
+	if isdebtor != "" && isdebtor != "-1" {
+		filters["isdebtor"] = isdebtor == "true" || isdebtor == "1"
+	}
+
+	docList, pagination, err := h.svc.SearchCustomer(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -307,6 +321,8 @@ func (h CustomerHttp) SearchCustomerPage(ctx microservice.IContext) error {
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
 // @Param		lang	query	string		false  "lang"
+// @Param		iscreditor	query	bool		false  "creditor"
+// @Param		isdebtor	query	bool		false  "debtor"
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -320,7 +336,19 @@ func (h CustomerHttp) SearchCustomerStep(ctx microservice.IContext) error {
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchCustomerStep(shopID, lang, pageableStep)
+	filters := map[string]interface{}{}
+	iscreditor := ctx.QueryParam("iscreditor")
+	isdebtor := ctx.QueryParam("isdebtor")
+
+	if iscreditor != "" && iscreditor != "-1" {
+		filters["iscreditor"] = iscreditor == "true" || iscreditor == "1"
+	}
+
+	if isdebtor != "" && isdebtor != "-1" {
+		filters["isdebtor"] = isdebtor == "true" || isdebtor == "1"
+	}
+
+	docList, total, err := h.svc.SearchCustomerStep(shopID, lang, filters, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
