@@ -17,6 +17,9 @@ import (
 	"smlcloudplatform/pkg/images"
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
+	"smlcloudplatform/pkg/organization/branch"
+	"smlcloudplatform/pkg/organization/businesstype"
+	"smlcloudplatform/pkg/organization/department"
 	"smlcloudplatform/pkg/payment/bankmaster"
 	"smlcloudplatform/pkg/payment/bookbank"
 	"smlcloudplatform/pkg/payment/qrpayment"
@@ -215,6 +218,10 @@ func main() {
 
 			customer.NewCustomerHttp(ms, cfg),
 			customergroup.NewCustomerGroupHttp(ms, cfg),
+
+			branch.NewBranchHttp(ms, cfg),
+			department.NewDepartmentHttp(ms, cfg),
+			businesstype.NewBusinessTypeHttp(ms, cfg),
 		}
 
 		startHttpServices(httpServices...)
