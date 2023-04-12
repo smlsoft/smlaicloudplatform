@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/firebase"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/shop"
 	shopmodel "smlcloudplatform/pkg/shop/models"
@@ -12,6 +13,7 @@ import (
 
 type IAuthenticationHttp interface {
 	Login(ctx microservice.IContext) error
+	TokenLogin(ctx microservice.IContext) error
 	Register(ctx microservice.IContext) error
 	Logout(ctx microservice.IContext) error
 	Profile(ctx microservice.IContext) error
@@ -35,7 +37,8 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 	shopUserRepo := shop.NewShopUserRepository(pst)
 	shopUserAccessLogRepo := shop.NewShopUserAccessLogRepository(pst)
 	authRepo := NewAuthenticationRepository(pst)
-	authenticationService := NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, authService, utils.HashPassword, utils.CheckHashPassword, ms.TimeNow)
+	firebaseAdapter := firebase.NewFirebaseAdapter()
+	authenticationService := NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, authService, utils.HashPassword, utils.CheckHashPassword, ms.TimeNow, firebaseAdapter)
 
 	shopService := shop.NewShopService(shopRepo, shopUserRepo, utils.NewGUID, ms.TimeNow)
 	shopUserService := shop.NewShopUserService(shopUserRepo)
@@ -52,6 +55,7 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 func (h AuthenticationHttp) RouteSetup() {
 
 	h.ms.POST("/login", h.Login)
+	h.ms.POST("/tokenlogin", h.TokenLogin)
 	h.ms.POST("/logout", h.Logout)
 
 	h.ms.POST("/register", h.Register)
@@ -100,6 +104,41 @@ func (h AuthenticationHttp) Login(ctx microservice.IContext) error {
 	}
 
 	tokenString, err := h.authenticationService.Login(userReq, authContext)
+
+	if err != nil {
+		ctx.ResponseError(400, "login failed.")
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.AuthResponse{
+		Success: true,
+		Token:   tokenString,
+	})
+
+	return nil
+}
+
+// Login login
+// @Description get struct array by ID
+// @Tags		Authentication
+// @Param		TokenLoginRequest  body      TokenLoginRequest  true  "User Account"
+// @Accept 		json
+// @Success		200	{object}	common.AuthResponse
+// @Failure		400 {object}	common.AuthResponseFailed
+// @Router /tokenlogin [post]
+func (h AuthenticationHttp) TokenLogin(ctx microservice.IContext) error {
+
+	input := ctx.ReadInput()
+
+	tokenReq := &TokenLoginRequest{}
+	err := json.Unmarshal([]byte(input), &tokenReq)
+
+	if err != nil {
+		ctx.ResponseError(400, "user payload invalid")
+		return err
+	}
+
+	tokenString, err := h.authenticationService.LoginWithFirebaseToken(tokenReq.Token)
 
 	if err != nil {
 		ctx.ResponseError(400, "login failed.")

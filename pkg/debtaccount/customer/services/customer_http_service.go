@@ -29,7 +29,7 @@ type ICustomerHttpService interface {
 	InfoCustomer(shopID string, guid string) (models.CustomerInfo, error)
 	InfoCustomerByCode(shopID string, code string) (models.CustomerInfo, error)
 	SearchCustomer(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.CustomerInfo, mongopagination.PaginationData, error)
-	SearchCustomerStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.CustomerInfo, int, error)
+	SearchCustomerStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.CustomerInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.CustomerRequest) (common.BulkImport, error)
 
 	GetModuleName() string
@@ -255,14 +255,14 @@ func (svc CustomerHttpService) SearchCustomer(shopID string, filters map[string]
 	return docList, pagination, nil
 }
 
-func (svc CustomerHttpService) SearchCustomerStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.CustomerInfo, int, error) {
+func (svc CustomerHttpService) SearchCustomerStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.CustomerInfo, int, error) {
 	searchInFields := []string{
 		"code",
 	}
 
 	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.CustomerInfo{}, 0, err

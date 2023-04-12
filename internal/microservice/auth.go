@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice/models"
+	"smlcloudplatform/pkg/encrypt"
 	"strconv"
 	"strings"
 	"time"
@@ -45,6 +46,7 @@ func NewAuthService(cacher ICacher, expireHour int) *AuthService {
 		prefixBearerCacheKey:  "auth-",
 		prefixBearerToken:     "Bearer",
 		prefixXApiKeyCacheKey: "xapikey-",
+		encrypt:               *encrypt.NewEncrypt(),
 	}
 }
 
@@ -55,6 +57,7 @@ type AuthService struct {
 	prefixBearerToken     string
 	expireXApiKey         time.Duration
 	prefixXApiKeyCacheKey string
+	encrypt               encrypt.Encrypt
 }
 
 func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath []string, publicPath ...string) echo.MiddlewareFunc {
@@ -329,8 +332,7 @@ func (authService *AuthService) GetTokenFromAuthorizationHeader(tokenType TokenT
 
 func (authService *AuthService) GenerateTokenWithRedis(tokenType TokenType, userInfo models.UserInfo) (string, error) {
 
-	tokenStr := NewUUID()
-
+	tokenStr := authService.encrypt.GenerateSHA256Hash(NewUUID())
 	cacheKey := authService.GetPrefixCacheKey(tokenType) + tokenStr
 
 	authService.cacher.HMSet(cacheKey, map[string]interface{}{
@@ -344,8 +346,7 @@ func (authService *AuthService) GenerateTokenWithRedis(tokenType TokenType, user
 
 func (authService *AuthService) GenerateTokenWithRedisExpire(tokenType TokenType, userInfo models.UserInfo, expireTime time.Duration) (string, error) {
 
-	tokenStr := NewUUID()
-
+	tokenStr := authService.encrypt.GenerateSHA256Hash(NewUUID())
 	cacheKey := authService.GetPrefixCacheKey(tokenType) + tokenStr
 
 	authService.cacher.HMSet(cacheKey, map[string]interface{}{

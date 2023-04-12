@@ -5,6 +5,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/authentication"
+	"smlcloudplatform/pkg/firebase"
 	"smlcloudplatform/pkg/shop/models"
 	"testing"
 	"time"
@@ -145,7 +146,7 @@ func TestAuthService_Login(t *testing.T) {
 		},
 	}
 
-	authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
+	authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime, MockFirebaseAdapter())
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
 
@@ -216,7 +217,7 @@ func TestAuthService_Register(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
+			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime, MockFirebaseAdapter())
 
 			userReq := models.UserRequest{}
 			userReq.Username = tt.args.username
@@ -280,7 +281,7 @@ func TestAuthService_Update(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
+			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime, MockFirebaseAdapter())
 
 			userReq := models.UserProfileRequest{}
 			userReq.Name = tt.args.name
@@ -351,7 +352,7 @@ func TestAuthService_UpdatePassword(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
+			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime, MockFirebaseAdapter())
 
 			err := authService.UpdatePassword(tt.args.username, tt.args.currentPassword, tt.args.newPassword)
 
@@ -441,7 +442,7 @@ func TestAuthService_AccessShop(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
+			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime, MockFirebaseAdapter())
 			err := authService.AccessShop(tt.args.shopID, tt.args.username, tt.args.authorizationHeader, authContext)
 
 			if tt.wantErr {
@@ -616,4 +617,8 @@ func MockCheckPasswordHash(password string, hash string) bool {
 func MockTime() time.Time {
 	timeVal, _ := time.Parse("2006-01-02 15:04:05", "2022-08-30 00:00:00")
 	return timeVal
+}
+
+func MockFirebaseAdapter() firebase.IFirebaseAdapter {
+	return &firebase.FirebaseAdapter{}
 }

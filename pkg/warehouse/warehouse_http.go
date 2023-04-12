@@ -48,14 +48,18 @@ func (h WarehouseHttp) RouteSetup() {
 	h.ms.GET("/warehouse/:id", h.InfoWarehouse)
 	h.ms.GET("/warehouse/code/:code", h.InfoWarehouseByCode)
 	h.ms.PUT("/warehouse/:id", h.UpdateWarehouse)
+	h.ms.DELETE("/warehouse/:id", h.DeleteWarehouse)
+	h.ms.DELETE("/warehouse", h.DeleteWarehouseByGUIDs)
+
 	h.ms.GET("/warehouse/:warehouseCode/location/:locationCode", h.InfoLocation)
 	h.ms.POST("/warehouse/:warehouseCode/location", h.CreateLocation)
 	h.ms.PUT("/warehouse/:warehouseCode/location/:locationCode", h.UpdateLocation)
+	h.ms.DELETE("/warehouse/:warehouseCode/location", h.DeleteLocation)
+
 	h.ms.GET("/warehouse/:warehouseCode/location/:locationCode/shelf/:shelfCode", h.InfoShelf)
 	h.ms.POST("/warehouse/:warehouseCode/location/:locationCode/shelf", h.CreateShelf)
 	h.ms.PUT("/warehouse/:warehouseCode/location/:locationCode/shelf/:shelfCode", h.UpdateShelf)
-	h.ms.DELETE("/warehouse/:id", h.DeleteWarehouse)
-	h.ms.DELETE("/warehouse", h.DeleteWarehouseByGUIDs)
+	h.ms.DELETE("/warehouse/:warehouseCode/location/:locationCode/shelf", h.DeleteShelf)
 }
 
 // Create Warehouse godoc
@@ -188,8 +192,8 @@ func (h WarehouseHttp) CreateLocation(ctx microservice.IContext) error {
 	return nil
 }
 
-// Update Warehouse godoc
-// @Description Update Warehouse
+// Update Warehouse Location godoc
+// @Description Update Warehouse Location
 // @Tags		Warehouse
 // @Param		warehouseCode  path      string  true  "Warehouse Code"
 // @Param		locationCode  path      string  true  "location Code"
@@ -230,6 +234,47 @@ func (h WarehouseHttp) UpdateLocation(ctx microservice.IContext) error {
 	}
 
 	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+	})
+
+	return nil
+}
+
+// Delete Warehouse Location godoc
+// @Description Delete Warehouse Location
+// @Tags		Warehouse
+// @Param		warehouseCode  path      string  true  "Warehouse Code"
+// @Param		LocationCode  body      []string  true  "Location Code"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /warehouse/{warehouseCode}/location/ [delete]
+func (h WarehouseHttp) DeleteLocation(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	warehouseCode := ctx.Param("warehouseCode")
+
+	docReq := []string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.DeleteLocationByCodes(shopID, authUsername, warehouseCode, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 	})
 
@@ -281,8 +326,8 @@ func (h WarehouseHttp) CreateShelf(ctx microservice.IContext) error {
 	return nil
 }
 
-// Update Warehouse godoc
-// @Description Update Warehouse
+// Update Warehouse Shelf godoc
+// @Description Update Warehouse Shelf
 // @Tags		Warehouse
 // @Param		warehouseCode  path      string  true  "Warehouse Code"
 // @Param		locationCode  path      string  true  "location Code"
@@ -325,6 +370,49 @@ func (h WarehouseHttp) UpdateShelf(ctx microservice.IContext) error {
 	}
 
 	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+	})
+
+	return nil
+}
+
+// Delete Warehouse Shelf godoc
+// @Description Delete Warehouse Shelf
+// @Tags		Warehouse
+// @Param		warehouseCode  path      string  true  "Warehouse Code"
+// @Param		locationCode  path      string  true  "location Code"
+// @Param		ShelfCode  body      []string  true  "Shelf Code"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /warehouse/{warehouseCode}/location/{locationCode}/shelf [delete]
+func (h WarehouseHttp) DeleteShelf(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	warehouseCode := ctx.Param("warehouseCode")
+	locationCode := ctx.Param("locationCode")
+
+	docReq := []string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.DeleteShelfByCodes(shopID, authUsername, warehouseCode, locationCode, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 	})
 
