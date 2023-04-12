@@ -114,6 +114,7 @@ func main() {
 		publicPath := []string{
 			"/swagger",
 			"/login",
+			"/tokenlogin",
 			"/register",
 
 			"/employee/login",
@@ -128,6 +129,7 @@ func main() {
 
 		exceptShopPath := []string{
 			"/shop",
+			"/profile",
 			"/list-shop",
 			"/select-shop",
 			"/create-shop",
