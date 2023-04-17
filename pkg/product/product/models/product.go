@@ -19,22 +19,21 @@ type Product struct {
 	Units           *[]ProductUnit  `json:"units,omitempty" bson:"units,omitempty"`
 	Unit            ProductUnit     `json:"unit" bson:"unit" validate:"required"`
 
-	UnitCost          string                 `json:"unitcost" bson:"unitcost"`
-	UnitCostNames     *[]models.NameX        `json:"unitcostnames" bson:"unitcostnames"`
-	UnitStandard      string                 `json:"unitstandard" bson:"unitstandard"`
-	UnitStandardNames *[]models.NameX        `json:"unitstandardnames" bson:"unitstandardnames"`
-	ItemStockType     int8                   `json:"itemstocktype" bson:"itemstocktype"`
-	ItemType          int8                   `json:"itemtype" bson:"itemtype"`
-	VatType           int8                   `json:"vattype" bson:"vattype"`
-	IsSumPoint        bool                   `json:"issumpoint" bson:"issumpoint"`
-	Images            *[]ProductImage        `json:"images" bson:"images"`
-	Prices            *[]ProductPrice        `json:"prices" bson:"prices"`
-	GroupCode         string                 `json:"groupcode" bson:"groupcode"`
-	GroupName         *[]models.NameX        `json:"groupname" bson:"groupname"`
-	Branches          *[]uint16              `json:"branches" bson:"branches" `
-	IsMultipleBranch  bool                   `json:"ismultiplebranch" bson:"ismultiplebranch"`
-	TaxType           int8                   `json:"taxtype" bson:"taxtype"` // 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
-	Organizations     *[]models.Organization `json:"organizations" bson:"organizations"`
+	UnitCost          string          `json:"unitcost" bson:"unitcost"`
+	UnitCostNames     *[]models.NameX `json:"unitcostnames" bson:"unitcostnames"`
+	UnitStandard      string          `json:"unitstandard" bson:"unitstandard"`
+	UnitStandardNames *[]models.NameX `json:"unitstandardnames" bson:"unitstandardnames"`
+	ItemStockType     int8            `json:"itemstocktype" bson:"itemstocktype"`
+	ItemType          int8            `json:"itemtype" bson:"itemtype"`
+	VatType           int8            `json:"vattype" bson:"vattype"`
+	IsSumPoint        bool            `json:"issumpoint" bson:"issumpoint"`
+	Images            *[]ProductImage `json:"images" bson:"images"`
+	Prices            *[]ProductPrice `json:"prices" bson:"prices"`
+	GroupCode         string          `json:"groupcode" bson:"groupcode"`
+	GroupName         *[]models.NameX `json:"groupname" bson:"groupname"`
+	Branches          *[]uint16       `json:"branches" bson:"branches" `
+	IsMultipleBranch  bool            `json:"ismultiplebranch" bson:"ismultiplebranch"`
+	TaxType           int8            `json:"taxtype" bson:"taxtype"` // 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
 }
 
 type ProductPrice struct {

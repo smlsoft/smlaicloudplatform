@@ -11,6 +11,7 @@ import (
 	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
+	"strconv"
 	"time"
 
 	"github.com/userplant/mongopagination"
@@ -58,8 +59,8 @@ func (svc BranchHttpService) CreateBranch(shopID string, authUsername string, do
 		return "", err
 	}
 
-	if findDoc.Code != "" {
-		return "", errors.New("Code is exists")
+	if len(findDoc.GuidFixed) > 0 {
+		return "", errors.New("code is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -217,12 +218,12 @@ func (svc BranchHttpService) SaveInBatch(shopID string, authUsername string, dat
 
 	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.Branch](dataList, svc.getDocIDKey)
 
-	itemCodeGuidList := []string{}
+	itemCodeGuidList := []interface{}{}
 	for _, doc := range payloadList {
 		itemCodeGuidList = append(itemCodeGuidList, doc.Code)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "code", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuids(shopID, "code", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -264,7 +265,7 @@ func (svc BranchHttpService) SaveInBatch(shopID string, authUsername string, dat
 			return svc.repo.FindByDocIndentityGuid(shopID, "code", guid)
 		},
 		func(doc models.BranchDoc) bool {
-			return doc.Code != ""
+			return doc.Code >= 0
 		},
 		func(shopID string, authUsername string, data models.Branch, doc models.BranchDoc) error {
 
@@ -289,40 +290,54 @@ func (svc BranchHttpService) SaveInBatch(shopID string, authUsername string, dat
 
 	}
 
-	createDataKey := []string{}
+	createDataKey := []interface{}{}
 
 	for _, doc := range createDataList {
 		createDataKey = append(createDataKey, doc.Code)
 	}
 
-	payloadDuplicateDataKey := []string{}
+	payloadDuplicateDataKey := []interface{}{}
 	for _, doc := range payloadDuplicateList {
 		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.Code)
 	}
 
-	updateDataKey := []string{}
+	updateDataKey := []interface{}{}
 	for _, doc := range updateSuccessDataList {
 
 		updateDataKey = append(updateDataKey, doc.Code)
 	}
 
-	updateFailDataKey := []string{}
+	updateFailDataKey := []interface{}{}
 	for _, doc := range updateFailDataList {
 		updateFailDataKey = append(updateFailDataKey, svc.getDocIDKey(doc))
 	}
 
 	svc.saveMasterSync(shopID)
 
+	tempCreateDataKey := svc.toSliceString(createDataKey)
+	tempUpdateDataKey := svc.toSliceString(updateDataKey)
+	tempUpdateFailDataKey := svc.toSliceString(updateFailDataKey)
+	tempPayloadDuplicateDataKey := svc.toSliceString(payloadDuplicateDataKey)
+
 	return common.BulkImport{
-		Created:          createDataKey,
-		Updated:          updateDataKey,
-		UpdateFailed:     updateFailDataKey,
-		PayloadDuplicate: payloadDuplicateDataKey,
+		Created:          tempCreateDataKey,
+		Updated:          tempUpdateDataKey,
+		UpdateFailed:     tempUpdateFailDataKey,
+		PayloadDuplicate: tempPayloadDuplicateDataKey,
 	}, nil
 }
 
+func (svc BranchHttpService) toSliceString(data []interface{}) []string {
+	tempData := make([]string, len(data))
+	for i, v := range data {
+		tempData[i] = v.(string)
+	}
+
+	return tempData
+}
+
 func (svc BranchHttpService) getDocIDKey(doc models.Branch) string {
-	return doc.Code
+	return strconv.Itoa(int(doc.Code))
 }
 
 func (svc BranchHttpService) saveMasterSync(shopID string) {

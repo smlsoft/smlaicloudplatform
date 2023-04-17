@@ -21,6 +21,7 @@ type IBranchRepository interface {
 	FindByGuid(shopID string, guid string) (models.BranchDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.BranchItemGuid, error)
+	FindInItemGuids(shopID string, columnName string, itemGuidList []interface{}) ([]models.BranchItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.BranchDoc, error)
 	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.BranchInfo, mongopagination.PaginationData, error)
 	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.BranchInfo, int, error)

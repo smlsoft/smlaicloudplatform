@@ -12,8 +12,7 @@ type Unit struct {
 	models.PartitionIdentity `bson:"inline"`
 	UnitCode                 string `json:"unitcode" bson:"unitcode" validate:"required,max=100"`
 	models.UnitName          `bson:"inline"`
-	Names                    *[]models.NameX        `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	Organizations            *[]models.Organization `json:"organizations" bson:"organizations"`
+	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 }
 
 type UnitInfo struct {

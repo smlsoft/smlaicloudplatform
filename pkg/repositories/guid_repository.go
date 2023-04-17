@@ -26,3 +26,14 @@ func (repo GuidRepository[T]) FindInItemGuid(shopID string, columnName string, i
 	}
 	return findDoc, nil
 }
+
+func (repo GuidRepository[T]) FindInItemGuids(shopID string, columnName string, itemGuidList []interface{}) ([]T, error) {
+
+	findDoc := []T{}
+	err := repo.pst.Find(new(T), bson.M{"shopid": shopID, columnName: bson.M{"$in": itemGuidList}, "deletedat": bson.M{"$exists": false}}, &findDoc)
+
+	if err != nil {
+		return []T{}, err
+	}
+	return findDoc, nil
+}
