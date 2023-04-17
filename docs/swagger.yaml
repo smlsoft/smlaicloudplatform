@@ -272,8 +272,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -289,14 +289,7 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -1017,6 +1010,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -1139,8 +1134,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1158,8 +1153,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1175,11 +1168,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1288,8 +1276,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1307,8 +1295,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1324,11 +1310,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1487,8 +1468,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1506,8 +1487,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1523,11 +1502,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -2327,23 +2301,6 @@ definitions:
     - name1
     - names
     type: object
-  models.Organization:
-    properties:
-      bissnesstypes:
-        items:
-          type: string
-        type: array
-        uniqueItems: true
-      branch:
-        type: integer
-      departments:
-        items:
-          type: string
-        type: array
-        uniqueItems: true
-    required:
-    - branch
-    type: object
   models.PaginationDataResponse:
     properties:
       next:
@@ -2558,10 +2515,6 @@ definitions:
         minItems: 1
         type: array
         uniqueItems: true
-      organizations:
-        items:
-          $ref: '#/definitions/models.Organization'
-        type: array
       prices:
         items:
           $ref: '#/definitions/models.ProductPrice'
@@ -2641,10 +2594,6 @@ definitions:
       options:
         items:
           $ref: '#/definitions/models.ProductOption'
-        type: array
-      organizations:
-        items:
-          $ref: '#/definitions/models.Organization'
         type: array
       prices:
         items:
@@ -2766,16 +2715,9 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
+      keynumber:
+        type: integer
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
     type: object
   models.ProductUnit:
@@ -2961,10 +2903,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -2982,8 +2924,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -2999,10 +2939,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -3336,10 +3272,10 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
+      keynumber:
+        type: integer
       linenumber:
         type: integer
-      memberprice:
-        type: number
       multiunit:
         type: boolean
       name1:
@@ -3357,8 +3293,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -3374,10 +3308,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       qty:
         type: number
@@ -3460,6 +3390,11 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
+    type: object
+  models.SectionBranch:
+    properties:
+      code:
+        type: string
     type: object
   models.Shelf:
     properties:
@@ -4208,7 +4143,7 @@ definitions:
           type: string
         type: array
       code:
-        type: string
+        type: integer
       departments:
         items:
           type: string
@@ -4272,10 +4207,6 @@ definitions:
         minItems: 1
         type: array
         uniqueItems: true
-      organizations:
-        items:
-          $ref: '#/definitions/models.Organization'
-        type: array
       unitcode:
         maxLength: 100
         type: string
@@ -13828,6 +13759,253 @@ paths:
       - AccessToken: []
       tags:
       - Sale Invoice
+  /section/branch:
+    delete:
+      consumes:
+      - application/json
+      description: Delete SectionBranch
+      parameters:
+      - description: SectionBranch GUIDs
+        in: body
+        name: SectionBranch
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBranch
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBranch
+    post:
+      consumes:
+      - application/json
+      description: Create SectionBranch
+      parameters:
+      - description: SectionBranch
+        in: body
+        name: SectionBranch
+        required: true
+        schema:
+          $ref: '#/definitions/models.SectionBranch'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBranch
+  /section/branch/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete SectionBranch
+      parameters:
+      - description: SectionBranch ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBranch
+    get:
+      consumes:
+      - application/json
+      description: get SectionBranch info by guidfixed
+      parameters:
+      - description: SectionBranch guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBranch
+    put:
+      consumes:
+      - application/json
+      description: Update SectionBranch
+      parameters:
+      - description: SectionBranch ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: SectionBranch
+        in: body
+        name: SectionBranch
+        required: true
+        schema:
+          $ref: '#/definitions/models.SectionBranch'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBranch
+  /section/branch/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create SectionBranch
+      parameters:
+      - description: SectionBranch
+        in: body
+        name: SectionBranch
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.SectionBranch'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBranch
+  /section/branch/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get SectionBranch info by Code
+      parameters:
+      - description: SectionBranch Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBranch
+  /section/branch/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBranch
   /select-shop:
     post:
       consumes:

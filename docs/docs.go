@@ -15185,6 +15185,404 @@ const docTemplate = `{
                 }
             }
         },
+        "/section/branch": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBranch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create SectionBranch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBranch"
+                ],
+                "parameters": [
+                    {
+                        "description": "SectionBranch",
+                        "name": "SectionBranch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SectionBranch"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SectionBranch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBranch"
+                ],
+                "parameters": [
+                    {
+                        "description": "SectionBranch GUIDs",
+                        "name": "SectionBranch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/section/branch/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create SectionBranch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBranch"
+                ],
+                "parameters": [
+                    {
+                        "description": "SectionBranch",
+                        "name": "SectionBranch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.SectionBranch"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/section/branch/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SectionBranch info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBranch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SectionBranch Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/section/branch/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBranch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/section/branch/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SectionBranch info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBranch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SectionBranch guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update SectionBranch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBranch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SectionBranch ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "SectionBranch",
+                        "name": "SectionBranch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SectionBranch"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SectionBranch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBranch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SectionBranch ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/select-shop": {
             "post": {
                 "security": [
@@ -19591,8 +19989,8 @@ const docTemplate = `{
                 "isprimary": {
                     "type": "boolean"
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "name1": {
                     "type": "string",
@@ -19614,17 +20012,7 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "unitcode": {
@@ -20683,6 +21071,9 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -20864,8 +21255,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -20890,9 +21281,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -20914,13 +21302,6 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -21073,8 +21454,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -21099,9 +21480,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -21123,13 +21501,6 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -21359,8 +21730,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -21385,9 +21756,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -21409,13 +21777,6 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -22589,31 +22950,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Organization": {
-            "type": "object",
-            "required": [
-                "branch"
-            ],
-            "properties": {
-                "bissnesstypes": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "branch": {
-                    "type": "integer"
-                },
-                "departments": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
         "models.PaginationDataResponse": {
             "type": "object",
             "properties": {
@@ -22938,12 +23274,6 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
-                "organizations": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Organization"
-                    }
-                },
                 "prices": {
                     "type": "array",
                     "items": {
@@ -23058,12 +23388,6 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.ProductOption"
-                    }
-                },
-                "organizations": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Organization"
                     }
                 },
                 "prices": {
@@ -23236,20 +23560,10 @@ const docTemplate = `{
         "models.ProductPrice": {
             "type": "object",
             "properties": {
-                "memberprice": {
-                    "type": "number"
-                },
-                "normalprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 }
             }
@@ -23517,11 +23831,11 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "linenumber": {
+                "keynumber": {
                     "type": "integer"
                 },
-                "memberprice": {
-                    "type": "number"
+                "linenumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -23546,9 +23860,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -23570,12 +23881,6 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "qty": {
@@ -24061,11 +24366,11 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "linenumber": {
+                "keynumber": {
                     "type": "integer"
                 },
-                "memberprice": {
-                    "type": "number"
+                "linenumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -24090,9 +24395,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -24114,12 +24416,6 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "qty": {
@@ -24237,6 +24533,14 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.SectionBranch": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
                 }
             }
         },
@@ -25347,7 +25651,7 @@ const docTemplate = `{
                     }
                 },
                 "code": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "departments": {
                     "type": "array",
@@ -25442,12 +25746,6 @@ const docTemplate = `{
                     "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "organizations": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Organization"
                     }
                 },
                 "unitcode": {
