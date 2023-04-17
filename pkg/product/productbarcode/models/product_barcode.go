@@ -26,7 +26,6 @@ type ProductBarcode struct {
 	UseImageOrColor  bool             `json:"useimageorcolor" bson:"useimageorcolor"`
 	ColorSelect      string           `json:"colorselect" bson:"colorselect"`
 	ColorSelectHex   string           `json:"colorselecthex" bson:"colorselecthex"`
-	Branches         *[]uint16        `json:"branches" bson:"branches" validate:"unique"`
 	IsMultipleBranch bool             `json:"ismultiplebranch" bson:"ismultiplebranch"`
 }
 
