@@ -203,15 +203,7 @@ func (svc BusinessTypeHttpService) SearchBusinessTypeStep(shopID string, langCod
 		"code",
 	}
 
-	selectFields := map[string]interface{}{
-		"code": 1,
-	}
-
-	if langCode != "" {
-		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
-	} else {
-		selectFields["names"] = 1
-	}
+	selectFields := map[string]interface{}{}
 
 	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 

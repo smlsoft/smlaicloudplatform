@@ -198,12 +198,6 @@ func (svc DepartmentHttpService) SearchDepartmentStep(shopID string, langCode st
 
 	selectFields := map[string]interface{}{}
 
-	if langCode != "" {
-		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
-	} else {
-		selectFields["names"] = 1
-	}
-
 	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
