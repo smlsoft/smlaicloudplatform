@@ -7,8 +7,8 @@ import (
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/services"
-	"smlcloudplatform/pkg/transaction/saleinvoice/models"
-	"smlcloudplatform/pkg/transaction/saleinvoice/repositories"
+	"smlcloudplatform/pkg/transaction/stockpickupproduct/models"
+	"smlcloudplatform/pkg/transaction/stockpickupproduct/repositories"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
 	"time"
@@ -17,40 +17,40 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type ISaleInvoiceHttpService interface {
-	CreateSaleInvoice(shopID string, authUsername string, doc models.SaleInvoice) (string, error)
-	UpdateSaleInvoice(shopID string, guid string, authUsername string, doc models.SaleInvoice) error
-	DeleteSaleInvoice(shopID string, guid string, authUsername string) error
-	DeleteSaleInvoiceByGUIDs(shopID string, authUsername string, GUIDs []string) error
-	InfoSaleInvoice(shopID string, guid string) (models.SaleInvoiceInfo, error)
-	InfoSaleInvoiceByCode(shopID string, code string) (models.SaleInvoiceInfo, error)
-	SearchSaleInvoice(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SaleInvoiceInfo, mongopagination.PaginationData, error)
-	SearchSaleInvoiceStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.SaleInvoiceInfo, int, error)
-	SaveInBatch(shopID string, authUsername string, dataList []models.SaleInvoice) (common.BulkImport, error)
+type IStockPickupProductHttpService interface {
+	CreateStockPickupProduct(shopID string, authUsername string, doc models.StockPickupProduct) (string, error)
+	UpdateStockPickupProduct(shopID string, guid string, authUsername string, doc models.StockPickupProduct) error
+	DeleteStockPickupProduct(shopID string, guid string, authUsername string) error
+	DeleteStockPickupProductByGUIDs(shopID string, authUsername string, GUIDs []string) error
+	InfoStockPickupProduct(shopID string, guid string) (models.StockPickupProductInfo, error)
+	InfoStockPickupProductByCode(shopID string, code string) (models.StockPickupProductInfo, error)
+	SearchStockPickupProduct(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockPickupProductInfo, mongopagination.PaginationData, error)
+	SearchStockPickupProductStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.StockPickupProductInfo, int, error)
+	SaveInBatch(shopID string, authUsername string, dataList []models.StockPickupProduct) (common.BulkImport, error)
 
 	GetModuleName() string
 }
 
-type SaleInvoiceHttpService struct {
-	repo repositories.ISaleInvoiceRepository
+type StockPickupProductHttpService struct {
+	repo repositories.IStockPickupProductRepository
 
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
-	services.ActivityService[models.SaleInvoiceActivity, models.SaleInvoiceDeleteActivity]
+	services.ActivityService[models.StockPickupProductActivity, models.StockPickupProductDeleteActivity]
 }
 
-func NewSaleInvoiceHttpService(repo repositories.ISaleInvoiceRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *SaleInvoiceHttpService {
+func NewStockPickupProductHttpService(repo repositories.IStockPickupProductRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *StockPickupProductHttpService {
 
-	insSvc := &SaleInvoiceHttpService{
+	insSvc := &StockPickupProductHttpService{
 		repo:          repo,
 		syncCacheRepo: syncCacheRepo,
 	}
 
-	insSvc.ActivityService = services.NewActivityService[models.SaleInvoiceActivity, models.SaleInvoiceDeleteActivity](repo)
+	insSvc.ActivityService = services.NewActivityService[models.StockPickupProductActivity, models.StockPickupProductDeleteActivity](repo)
 
 	return insSvc
 }
 
-func (svc SaleInvoiceHttpService) CreateSaleInvoice(shopID string, authUsername string, doc models.SaleInvoice) (string, error) {
+func (svc StockPickupProductHttpService) CreateStockPickupProduct(shopID string, authUsername string, doc models.StockPickupProduct) (string, error) {
 
 	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", doc.Docno)
 
@@ -64,10 +64,10 @@ func (svc SaleInvoiceHttpService) CreateSaleInvoice(shopID string, authUsername 
 
 	newGuidFixed := utils.NewGUID()
 
-	docData := models.SaleInvoiceDoc{}
+	docData := models.StockPickupProductDoc{}
 	docData.ShopID = shopID
 	docData.GuidFixed = newGuidFixed
-	docData.SaleInvoice = doc
+	docData.StockPickupProduct = doc
 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
@@ -83,7 +83,7 @@ func (svc SaleInvoiceHttpService) CreateSaleInvoice(shopID string, authUsername 
 	return newGuidFixed, nil
 }
 
-func (svc SaleInvoiceHttpService) UpdateSaleInvoice(shopID string, guid string, authUsername string, doc models.SaleInvoice) error {
+func (svc StockPickupProductHttpService) UpdateStockPickupProduct(shopID string, guid string, authUsername string, doc models.StockPickupProduct) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -95,7 +95,7 @@ func (svc SaleInvoiceHttpService) UpdateSaleInvoice(shopID string, guid string, 
 		return errors.New("document not found")
 	}
 
-	findDoc.SaleInvoice = doc
+	findDoc.StockPickupProduct = doc
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
@@ -111,7 +111,7 @@ func (svc SaleInvoiceHttpService) UpdateSaleInvoice(shopID string, guid string, 
 	return nil
 }
 
-func (svc SaleInvoiceHttpService) DeleteSaleInvoice(shopID string, guid string, authUsername string) error {
+func (svc StockPickupProductHttpService) DeleteStockPickupProduct(shopID string, guid string, authUsername string) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -133,7 +133,7 @@ func (svc SaleInvoiceHttpService) DeleteSaleInvoice(shopID string, guid string, 
 	return nil
 }
 
-func (svc SaleInvoiceHttpService) DeleteSaleInvoiceByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+func (svc StockPickupProductHttpService) DeleteStockPickupProductByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
@@ -147,37 +147,37 @@ func (svc SaleInvoiceHttpService) DeleteSaleInvoiceByGUIDs(shopID string, authUs
 	return nil
 }
 
-func (svc SaleInvoiceHttpService) InfoSaleInvoice(shopID string, guid string) (models.SaleInvoiceInfo, error) {
+func (svc StockPickupProductHttpService) InfoStockPickupProduct(shopID string, guid string) (models.StockPickupProductInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
-		return models.SaleInvoiceInfo{}, err
+		return models.StockPickupProductInfo{}, err
 	}
 
 	if len(findDoc.GuidFixed) < 1 {
-		return models.SaleInvoiceInfo{}, errors.New("document not found")
+		return models.StockPickupProductInfo{}, errors.New("document not found")
 	}
 
-	return findDoc.SaleInvoiceInfo, nil
+	return findDoc.StockPickupProductInfo, nil
 }
 
-func (svc SaleInvoiceHttpService) InfoSaleInvoiceByCode(shopID string, code string) (models.SaleInvoiceInfo, error) {
+func (svc StockPickupProductHttpService) InfoStockPickupProductByCode(shopID string, code string) (models.StockPickupProductInfo, error) {
 
 	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", code)
 
 	if err != nil {
-		return models.SaleInvoiceInfo{}, err
+		return models.StockPickupProductInfo{}, err
 	}
 
 	if len(findDoc.GuidFixed) < 1 {
-		return models.SaleInvoiceInfo{}, errors.New("document not found")
+		return models.StockPickupProductInfo{}, errors.New("document not found")
 	}
 
-	return findDoc.SaleInvoiceInfo, nil
+	return findDoc.StockPickupProductInfo, nil
 }
 
-func (svc SaleInvoiceHttpService) SearchSaleInvoice(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SaleInvoiceInfo, mongopagination.PaginationData, error) {
+func (svc StockPickupProductHttpService) SearchStockPickupProduct(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockPickupProductInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"docno",
 	}
@@ -185,13 +185,13 @@ func (svc SaleInvoiceHttpService) SearchSaleInvoice(shopID string, filters map[s
 	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
 
 	if err != nil {
-		return []models.SaleInvoiceInfo{}, pagination, err
+		return []models.StockPickupProductInfo{}, pagination, err
 	}
 
 	return docList, pagination, nil
 }
 
-func (svc SaleInvoiceHttpService) SearchSaleInvoiceStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.SaleInvoiceInfo, int, error) {
+func (svc StockPickupProductHttpService) SearchStockPickupProductStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.StockPickupProductInfo, int, error) {
 	searchInFields := []string{
 		"docno",
 	}
@@ -201,15 +201,15 @@ func (svc SaleInvoiceHttpService) SearchSaleInvoiceStep(shopID string, langCode 
 	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
-		return []models.SaleInvoiceInfo{}, 0, err
+		return []models.StockPickupProductInfo{}, 0, err
 	}
 
 	return docList, total, nil
 }
 
-func (svc SaleInvoiceHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.SaleInvoice) (common.BulkImport, error) {
+func (svc StockPickupProductHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.StockPickupProduct) (common.BulkImport, error) {
 
-	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.SaleInvoice](dataList, svc.getDocIDKey)
+	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.StockPickupProduct](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
 	for _, doc := range payloadList {
@@ -227,20 +227,20 @@ func (svc SaleInvoiceHttpService) SaveInBatch(shopID string, authUsername string
 		foundItemGuidList = append(foundItemGuidList, doc.Docno)
 	}
 
-	duplicateDataList, createDataList := importdata.PreparePayloadData[models.SaleInvoice, models.SaleInvoiceDoc](
+	duplicateDataList, createDataList := importdata.PreparePayloadData[models.StockPickupProduct, models.StockPickupProductDoc](
 		shopID,
 		authUsername,
 		foundItemGuidList,
 		payloadList,
 		svc.getDocIDKey,
-		func(shopID string, authUsername string, doc models.SaleInvoice) models.SaleInvoiceDoc {
+		func(shopID string, authUsername string, doc models.StockPickupProduct) models.StockPickupProductDoc {
 			newGuid := utils.NewGUID()
 
-			dataDoc := models.SaleInvoiceDoc{}
+			dataDoc := models.StockPickupProductDoc{}
 
 			dataDoc.GuidFixed = newGuid
 			dataDoc.ShopID = shopID
-			dataDoc.SaleInvoice = doc
+			dataDoc.StockPickupProduct = doc
 
 			currentTime := time.Now()
 			dataDoc.CreatedBy = authUsername
@@ -249,20 +249,20 @@ func (svc SaleInvoiceHttpService) SaveInBatch(shopID string, authUsername string
 		},
 	)
 
-	updateSuccessDataList, updateFailDataList := importdata.UpdateOnDuplicate[models.SaleInvoice, models.SaleInvoiceDoc](
+	updateSuccessDataList, updateFailDataList := importdata.UpdateOnDuplicate[models.StockPickupProduct, models.StockPickupProductDoc](
 		shopID,
 		authUsername,
 		duplicateDataList,
 		svc.getDocIDKey,
-		func(shopID string, guid string) (models.SaleInvoiceDoc, error) {
+		func(shopID string, guid string) (models.StockPickupProductDoc, error) {
 			return svc.repo.FindByDocIndentityGuid(shopID, "docno", guid)
 		},
-		func(doc models.SaleInvoiceDoc) bool {
+		func(doc models.StockPickupProductDoc) bool {
 			return doc.Docno != ""
 		},
-		func(shopID string, authUsername string, data models.SaleInvoice, doc models.SaleInvoiceDoc) error {
+		func(shopID string, authUsername string, data models.StockPickupProduct, doc models.StockPickupProductDoc) error {
 
-			doc.SaleInvoice = data
+			doc.StockPickupProduct = data
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
@@ -315,11 +315,11 @@ func (svc SaleInvoiceHttpService) SaveInBatch(shopID string, authUsername string
 	}, nil
 }
 
-func (svc SaleInvoiceHttpService) getDocIDKey(doc models.SaleInvoice) string {
+func (svc StockPickupProductHttpService) getDocIDKey(doc models.StockPickupProduct) string {
 	return doc.Docno
 }
 
-func (svc SaleInvoiceHttpService) saveMasterSync(shopID string) {
+func (svc StockPickupProductHttpService) saveMasterSync(shopID string) {
 	if svc.syncCacheRepo != nil {
 		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
 
@@ -329,6 +329,6 @@ func (svc SaleInvoiceHttpService) saveMasterSync(shopID string) {
 	}
 }
 
-func (svc SaleInvoiceHttpService) GetModuleName() string {
-	return "saleInvoice"
+func (svc StockPickupProductHttpService) GetModuleName() string {
+	return "stockPickupProduct"
 }

@@ -1,4 +1,4 @@
-package saleinvoice
+package stockpickupproduct
 
 import (
 	"encoding/json"
@@ -6,65 +6,65 @@ import (
 	"smlcloudplatform/internal/microservice"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/transaction/saleinvoice/models"
-	"smlcloudplatform/pkg/transaction/saleinvoice/repositories"
-	"smlcloudplatform/pkg/transaction/saleinvoice/services"
+	"smlcloudplatform/pkg/transaction/stockpickupproduct/models"
+	"smlcloudplatform/pkg/transaction/stockpickupproduct/repositories"
+	"smlcloudplatform/pkg/transaction/stockpickupproduct/services"
 	"smlcloudplatform/pkg/utils"
 )
 
-type ISaleInvoiceHttp interface{}
+type IStockPickupProductHttp interface{}
 
-type SaleInvoiceHttp struct {
+type StockPickupProductHttp struct {
 	ms  *microservice.Microservice
 	cfg microservice.IConfig
-	svc services.ISaleInvoiceHttpService
+	svc services.IStockPickupProductHttpService
 }
 
-func NewSaleInvoiceHttp(ms *microservice.Microservice, cfg microservice.IConfig) SaleInvoiceHttp {
+func NewStockPickupProductHttp(ms *microservice.Microservice, cfg microservice.IConfig) StockPickupProductHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
-	repo := repositories.NewSaleInvoiceRepository(pst)
+	repo := repositories.NewStockPickupProductRepository(pst)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewSaleInvoiceHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewStockPickupProductHttpService(repo, masterSyncCacheRepo)
 
-	return SaleInvoiceHttp{
+	return StockPickupProductHttp{
 		ms:  ms,
 		cfg: cfg,
 		svc: svc,
 	}
 }
 
-func (h SaleInvoiceHttp) RouteSetup() {
+func (h StockPickupProductHttp) RouteSetup() {
 
-	h.ms.POST("/transaction/sale-invoice/bulk", h.SaveBulk)
+	h.ms.POST("/transaction/stock-prickup-product/bulk", h.SaveBulk)
 
-	h.ms.GET("/transaction/sale-invoice", h.SearchSaleInvoicePage)
-	h.ms.GET("/transaction/sale-invoice/list", h.SearchSaleInvoiceStep)
-	h.ms.POST("/transaction/sale-invoice", h.CreateSaleInvoice)
-	h.ms.GET("/transaction/sale-invoice/:id", h.InfoSaleInvoice)
-	h.ms.GET("/transaction/sale-invoice/code/:code", h.InfoSaleInvoiceByCode)
-	h.ms.PUT("/transaction/sale-invoice/:id", h.UpdateSaleInvoice)
-	h.ms.DELETE("/transaction/sale-invoice/:id", h.DeleteSaleInvoice)
-	h.ms.DELETE("/transaction/sale-invoice", h.DeleteSaleInvoiceByGUIDs)
+	h.ms.GET("/transaction/stock-prickup-product", h.SearchStockPickupProductPage)
+	h.ms.GET("/transaction/stock-prickup-product/list", h.SearchStockPickupProductStep)
+	h.ms.POST("/transaction/stock-prickup-product", h.CreateStockPickupProduct)
+	h.ms.GET("/transaction/stock-prickup-product/:id", h.InfoStockPickupProduct)
+	h.ms.GET("/transaction/stock-prickup-product/code/:code", h.InfoStockPickupProductByCode)
+	h.ms.PUT("/transaction/stock-prickup-product/:id", h.UpdateStockPickupProduct)
+	h.ms.DELETE("/transaction/stock-prickup-product/:id", h.DeleteStockPickupProduct)
+	h.ms.DELETE("/transaction/stock-prickup-product", h.DeleteStockPickupProductByGUIDs)
 }
 
-// Create SaleInvoice godoc
-// @Description Create SaleInvoice
-// @Tags		SaleInvoice
-// @Param		SaleInvoice  body      models.SaleInvoice  true  "SaleInvoice"
+// Create StockPickupProduct godoc
+// @Description Create StockPickupProduct
+// @Tags		StockPickupProduct
+// @Param		StockPickupProduct  body      models.StockPickupProduct  true  "StockPickupProduct"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /transaction/sale-invoice [post]
-func (h SaleInvoiceHttp) CreateSaleInvoice(ctx microservice.IContext) error {
+// @Router /transaction/stock-prickup-product [post]
+func (h StockPickupProductHttp) CreateStockPickupProduct(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &models.SaleInvoice{}
+	docReq := &models.StockPickupProduct{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -77,7 +77,7 @@ func (h SaleInvoiceHttp) CreateSaleInvoice(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.svc.CreateSaleInvoice(shopID, authUsername, *docReq)
+	idx, err := h.svc.CreateStockPickupProduct(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -91,17 +91,17 @@ func (h SaleInvoiceHttp) CreateSaleInvoice(ctx microservice.IContext) error {
 	return nil
 }
 
-// Update SaleInvoice godoc
-// @Description Update SaleInvoice
-// @Tags		SaleInvoice
-// @Param		id  path      string  true  "SaleInvoice ID"
-// @Param		SaleInvoice  body      models.SaleInvoice  true  "SaleInvoice"
+// Update StockPickupProduct godoc
+// @Description Update StockPickupProduct
+// @Tags		StockPickupProduct
+// @Param		id  path      string  true  "StockPickupProduct ID"
+// @Param		StockPickupProduct  body      models.StockPickupProduct  true  "StockPickupProduct"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /transaction/sale-invoice/{id} [put]
-func (h SaleInvoiceHttp) UpdateSaleInvoice(ctx microservice.IContext) error {
+// @Router /transaction/stock-prickup-product/{id} [put]
+func (h StockPickupProductHttp) UpdateStockPickupProduct(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -109,7 +109,7 @@ func (h SaleInvoiceHttp) UpdateSaleInvoice(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &models.SaleInvoice{}
+	docReq := &models.StockPickupProduct{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -122,7 +122,7 @@ func (h SaleInvoiceHttp) UpdateSaleInvoice(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svc.UpdateSaleInvoice(shopID, id, authUsername, *docReq)
+	err = h.svc.UpdateStockPickupProduct(shopID, id, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -137,23 +137,23 @@ func (h SaleInvoiceHttp) UpdateSaleInvoice(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete SaleInvoice godoc
-// @Description Delete SaleInvoice
-// @Tags		SaleInvoice
-// @Param		id  path      string  true  "SaleInvoice ID"
+// Delete StockPickupProduct godoc
+// @Description Delete StockPickupProduct
+// @Tags		StockPickupProduct
+// @Param		id  path      string  true  "StockPickupProduct ID"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /transaction/sale-invoice/{id} [delete]
-func (h SaleInvoiceHttp) DeleteSaleInvoice(ctx microservice.IContext) error {
+// @Router /transaction/stock-prickup-product/{id} [delete]
+func (h StockPickupProductHttp) DeleteStockPickupProduct(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
 
 	id := ctx.Param("id")
 
-	err := h.svc.DeleteSaleInvoice(shopID, id, authUsername)
+	err := h.svc.DeleteStockPickupProduct(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -168,16 +168,16 @@ func (h SaleInvoiceHttp) DeleteSaleInvoice(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete SaleInvoice godoc
-// @Description Delete SaleInvoice
-// @Tags		SaleInvoice
-// @Param		SaleInvoice  body      []string  true  "SaleInvoice GUIDs"
+// Delete StockPickupProduct godoc
+// @Description Delete StockPickupProduct
+// @Tags		StockPickupProduct
+// @Param		StockPickupProduct  body      []string  true  "StockPickupProduct GUIDs"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /transaction/sale-invoice [delete]
-func (h SaleInvoiceHttp) DeleteSaleInvoiceByGUIDs(ctx microservice.IContext) error {
+// @Router /transaction/stock-prickup-product [delete]
+func (h StockPickupProductHttp) DeleteStockPickupProductByGUIDs(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
@@ -192,7 +192,7 @@ func (h SaleInvoiceHttp) DeleteSaleInvoiceByGUIDs(ctx microservice.IContext) err
 		return err
 	}
 
-	err = h.svc.DeleteSaleInvoiceByGUIDs(shopID, authUsername, docReq)
+	err = h.svc.DeleteStockPickupProductByGUIDs(shopID, authUsername, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -206,23 +206,23 @@ func (h SaleInvoiceHttp) DeleteSaleInvoiceByGUIDs(ctx microservice.IContext) err
 	return nil
 }
 
-// Get SaleInvoice godoc
-// @Description get SaleInvoice info by guidfixed
-// @Tags		SaleInvoice
-// @Param		id  path      string  true  "SaleInvoice guidfixed"
+// Get StockPickupProduct godoc
+// @Description get StockPickupProduct info by guidfixed
+// @Tags		StockPickupProduct
+// @Param		id  path      string  true  "StockPickupProduct guidfixed"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /transaction/sale-invoice/{id} [get]
-func (h SaleInvoiceHttp) InfoSaleInvoice(ctx microservice.IContext) error {
+// @Router /transaction/stock-prickup-product/{id} [get]
+func (h StockPickupProductHttp) InfoStockPickupProduct(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	h.ms.Logger.Debugf("Get SaleInvoice %v", id)
-	doc, err := h.svc.InfoSaleInvoice(shopID, id)
+	h.ms.Logger.Debugf("Get StockPickupProduct %v", id)
+	doc, err := h.svc.InfoStockPickupProduct(shopID, id)
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
@@ -237,22 +237,22 @@ func (h SaleInvoiceHttp) InfoSaleInvoice(ctx microservice.IContext) error {
 	return nil
 }
 
-// Get SaleInvoice By Code godoc
-// @Description get SaleInvoice info by Code
-// @Tags		SaleInvoice
-// @Param		code  path      string  true  "SaleInvoice Code"
+// Get StockPickupProduct By Code godoc
+// @Description get StockPickupProduct info by Code
+// @Tags		StockPickupProduct
+// @Param		code  path      string  true  "StockPickupProduct Code"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /transaction/sale-invoice/code/{code} [get]
-func (h SaleInvoiceHttp) InfoSaleInvoiceByCode(ctx microservice.IContext) error {
+// @Router /transaction/stock-prickup-product/code/{code} [get]
+func (h StockPickupProductHttp) InfoStockPickupProductByCode(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	code := ctx.Param("code")
 
-	doc, err := h.svc.InfoSaleInvoiceByCode(shopID, code)
+	doc, err := h.svc.InfoStockPickupProductByCode(shopID, code)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -266,9 +266,9 @@ func (h SaleInvoiceHttp) InfoSaleInvoiceByCode(ctx microservice.IContext) error 
 	return nil
 }
 
-// List SaleInvoice step godoc
+// List StockPickupProduct step godoc
 // @Description get list step
-// @Tags		SaleInvoice
+// @Tags		StockPickupProduct
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
@@ -276,14 +276,14 @@ func (h SaleInvoiceHttp) InfoSaleInvoiceByCode(ctx microservice.IContext) error 
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /transaction/sale-invoice [get]
-func (h SaleInvoiceHttp) SearchSaleInvoicePage(ctx microservice.IContext) error {
+// @Router /transaction/stock-prickup-product [get]
+func (h StockPickupProductHttp) SearchStockPickupProductPage(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchSaleInvoice(shopID, map[string]interface{}{}, pageable)
+	docList, pagination, err := h.svc.SearchStockPickupProduct(shopID, map[string]interface{}{}, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -298,9 +298,9 @@ func (h SaleInvoiceHttp) SearchSaleInvoicePage(ctx microservice.IContext) error 
 	return nil
 }
 
-// List SaleInvoice godoc
+// List StockPickupProduct godoc
 // @Description search limit offset
-// @Tags		SaleInvoice
+// @Tags		StockPickupProduct
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
@@ -309,8 +309,8 @@ func (h SaleInvoiceHttp) SearchSaleInvoicePage(ctx microservice.IContext) error 
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /transaction/sale-invoice/list [get]
-func (h SaleInvoiceHttp) SearchSaleInvoiceStep(ctx microservice.IContext) error {
+// @Router /transaction/stock-prickup-product/list [get]
+func (h StockPickupProductHttp) SearchStockPickupProductStep(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -318,7 +318,7 @@ func (h SaleInvoiceHttp) SearchSaleInvoiceStep(ctx microservice.IContext) error 
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchSaleInvoiceStep(shopID, lang, pageableStep)
+	docList, total, err := h.svc.SearchStockPickupProductStep(shopID, lang, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -333,16 +333,16 @@ func (h SaleInvoiceHttp) SearchSaleInvoiceStep(ctx microservice.IContext) error 
 	return nil
 }
 
-// Create SaleInvoice Bulk godoc
-// @Description Create SaleInvoice
-// @Tags		SaleInvoice
-// @Param		SaleInvoice  body      []models.SaleInvoice  true  "SaleInvoice"
+// Create StockPickupProduct Bulk godoc
+// @Description Create StockPickupProduct
+// @Tags		StockPickupProduct
+// @Param		StockPickupProduct  body      []models.StockPickupProduct  true  "StockPickupProduct"
 // @Accept 		json
 // @Success		201	{object}	common.BulkReponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /transaction/sale-invoice/bulk [post]
-func (h SaleInvoiceHttp) SaveBulk(ctx microservice.IContext) error {
+// @Router /transaction/stock-prickup-product/bulk [post]
+func (h StockPickupProductHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -350,7 +350,7 @@ func (h SaleInvoiceHttp) SaveBulk(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	dataReq := []models.SaleInvoice{}
+	dataReq := []models.StockPickupProduct{}
 	err := json.Unmarshal([]byte(input), &dataReq)
 
 	if err != nil {

@@ -4,102 +4,103 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/transaction/purchase/models"
+	"smlcloudplatform/pkg/transaction/purchase/repositories"
+	"smlcloudplatform/pkg/transaction/purchase/services"
 	"smlcloudplatform/pkg/utils"
 )
 
-type IPurchaseHttp interface {
-	RouteSetup()
-	CreatePurchase(ctx microservice.IContext) error
-	UpdatePurchase(ctx microservice.IContext) error
-	DeletePurchase(ctx microservice.IContext) error
-	InfoPurchase(ctx microservice.IContext) error
-	SearchPurchase(ctx microservice.IContext) error
-	SearchPurchaseItems(ctx microservice.IContext) error
-}
+type IPurchaseHttp interface{}
 
 type PurchaseHttp struct {
-	ms      *microservice.Microservice
-	cfg     microservice.IConfig
-	service IPurchaseService
+	ms  *microservice.Microservice
+	cfg microservice.IConfig
+	svc services.IPurchaseHttpService
 }
 
 func NewPurchaseHttp(ms *microservice.Microservice, cfg microservice.IConfig) PurchaseHttp {
-
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
-	prod := ms.Producer(cfg.MQConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
-	purchaseRepo := NewPurchaseRepository(pst)
-	purchaseMQRepo := NewPurchaseMQRepository(prod)
+	repo := repositories.NewPurchaseRepository(pst)
 
-	service := NewPurchaseService(purchaseRepo, purchaseMQRepo)
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
+	svc := services.NewPurchaseHttpService(repo, masterSyncCacheRepo)
+
 	return PurchaseHttp{
-		ms:      ms,
-		cfg:     cfg,
-		service: service,
+		ms:  ms,
+		cfg: cfg,
+		svc: svc,
 	}
 }
 
 func (h PurchaseHttp) RouteSetup() {
 
-	h.ms.GET("/purchase/:id", h.InfoPurchase)
-	h.ms.GET("/purchase", h.SearchPurchase)
-	h.ms.GET("/purchase/:id/items", h.SearchPurchaseItems)
+	h.ms.POST("/transaction/purchase/bulk", h.SaveBulk)
 
-	h.ms.POST("/purchase", h.CreatePurchase)
-	h.ms.PUT("/purchase/:id", h.UpdatePurchase)
-	h.ms.DELETE("/purchase/:id", h.DeletePurchase)
+	h.ms.GET("/transaction/purchase", h.SearchPurchasePage)
+	h.ms.GET("/transaction/purchase/list", h.SearchPurchaseStep)
+	h.ms.POST("/transaction/purchase", h.CreatePurchase)
+	h.ms.GET("/transaction/purchase/:id", h.InfoPurchase)
+	h.ms.GET("/transaction/purchase/code/:code", h.InfoPurchaseByCode)
+	h.ms.PUT("/transaction/purchase/:id", h.UpdatePurchase)
+	h.ms.DELETE("/transaction/purchase/:id", h.DeletePurchase)
+	h.ms.DELETE("/transaction/purchase", h.DeletePurchaseByGUIDs)
 }
 
-// Create Purchase Transaction godoc
-// @Description Create Purchase Transaction
+// Create Purchase godoc
+// @Description Create Purchase
 // @Tags		Purchase
-// @Param		Purchase  body      models.Purchase  true  "payload"
+// @Param		Purchase  body      models.Purchase  true  "Purchase"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /purchase [post]
+// @Router /transaction/purchase [post]
 func (h PurchaseHttp) CreatePurchase(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	shopID := userInfo.ShopID
-
+	authUsername := ctx.UserInfo().Username
+	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	doc := models.Purchase{}
-	err := json.Unmarshal([]byte(input), &doc)
+	docReq := &models.Purchase{}
+	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	idx, err := h.service.CreatePurchase(shopID, authUsername, doc)
+	if err = ctx.Validate(docReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	idx, err := h.svc.CreatePurchase(shopID, authUsername, *docReq)
 
 	if err != nil {
-		ctx.ResponseError(400, err.Error())
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
 	}
 
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
 	})
-
 	return nil
 }
 
-// Update Inventory godoc
-// @Description Update Inventory
+// Update Purchase godoc
+// @Description Update Purchase
 // @Tags		Purchase
-// @Param		id  path      string  true  "Purchase Document ID"
-// @Param		Purchase  body      models.Purchase  true  "payload"
+// @Param		id  path      string  true  "Purchase ID"
+// @Param		Purchase  body      models.Purchase  true  "Purchase"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /purchase/{id} [put]
+// @Router /transaction/purchase/{id} [put]
 func (h PurchaseHttp) UpdatePurchase(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -116,68 +117,116 @@ func (h PurchaseHttp) UpdatePurchase(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.service.UpdatePurchase(shopID, id, authUsername, *docReq)
-
-	if err != nil {
+	if err = ctx.Validate(docReq); err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	ctx.Response(http.StatusOK, common.ApiResponse{
+	err = h.svc.UpdatePurchase(shopID, id, authUsername, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
+		ID:      id,
 	})
+
 	return nil
 }
 
-// Delete Purchase Transaction godoc
-// @Description Tempolaty Delete  Purchase Transaction
+// Delete Purchase godoc
+// @Description Delete Purchase
 // @Tags		Purchase
-// @Param		id  path      string  true  "Purchase Doc ID"
+// @Param		id  path      string  true  "Purchase ID"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /purchase/{id} [delete]
+// @Router /transaction/purchase/{id} [delete]
 func (h PurchaseHttp) DeletePurchase(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
 
 	id := ctx.Param("id")
 
-	err := h.service.DeletePurchase(shopID, id, authUsername)
+	err := h.svc.DeletePurchase(shopID, id, authUsername)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		ID:      id,
+	})
+
+	return nil
+}
+
+// Delete Purchase godoc
+// @Description Delete Purchase
+// @Tags		Purchase
+// @Param		Purchase  body      []string  true  "Purchase GUIDs"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /transaction/purchase [delete]
+func (h PurchaseHttp) DeletePurchaseByGUIDs(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	docReq := []string{}
+	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
+	err = h.svc.DeletePurchaseByGUIDs(shopID, authUsername, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 	})
+
 	return nil
 }
 
-// Get Purchase By Doc guid godoc
-// @Description After Purchare Doc Create system will be return Id of Purchase Document. this Id can get Purchase Document in this service.
+// Get Purchase godoc
+// @Description get Purchase info by guidfixed
 // @Tags		Purchase
-// @Param		id  path      string  true  "Document ID"
+// @Param		id  path      string  true  "Purchase guidfixed"
 // @Accept 		json
-// @Success		200	{object}	models.PurchaseInfo
+// @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /purchase/{id} [get]
+// @Router /transaction/purchase/{id} [get]
 func (h PurchaseHttp) InfoPurchase(ctx microservice.IContext) error {
-
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	doc, err := h.service.InfoPurchase(shopID, id)
+	h.ms.Logger.Debugf("Get Purchase %v", id)
+	doc, err := h.svc.InfoPurchase(shopID, id)
 
-	if err != nil && err.Error() != "mongo: no documents in result" {
-		ctx.ResponseError(400, err.Error())
+	if err != nil {
+		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}
 
@@ -188,51 +237,128 @@ func (h PurchaseHttp) InfoPurchase(ctx microservice.IContext) error {
 	return nil
 }
 
-// List Purchase Transaction godoc
+// Get Purchase By Code godoc
+// @Description get Purchase info by Code
+// @Tags		Purchase
+// @Param		code  path      string  true  "Purchase Code"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /transaction/purchase/code/{code} [get]
+func (h PurchaseHttp) InfoPurchaseByCode(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	code := ctx.Param("code")
+
+	doc, err := h.svc.InfoPurchaseByCode(shopID, code)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// List Purchase step godoc
+// @Description get list step
 // @Tags		Purchase
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
-// @Success		200	{array}	models.PurchaseListPageResponse
-// @Failure		401 {object}	models.AuthResponseFailed
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /purchase [get]
-func (h PurchaseHttp) SearchPurchase(ctx microservice.IContext) error {
-
+// @Router /transaction/purchase [get]
+func (h PurchaseHttp) SearchPurchasePage(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.service.SearchPurchase(shopID, pageable)
+	docList, pagination, err := h.svc.SearchPurchase(shopID, map[string]interface{}{}, pageable)
 
 	if err != nil {
-		ctx.ResponseError(400, err.Error())
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}
 
-	ctx.Response(
-		http.StatusOK,
-		common.ApiResponse{
-			Success:    true,
-			Data:       docList,
-			Pagination: pagination,
-		})
-
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success:    true,
+		Data:       docList,
+		Pagination: pagination,
+	})
 	return nil
 }
 
-func (h PurchaseHttp) SearchPurchaseItems(ctx microservice.IContext) error {
-
+// List Purchase godoc
+// @Description search limit offset
+// @Tags		Purchase
+// @Param		q		query	string		false  "Search Value"
+// @Param		offset	query	integer		false  "offset"
+// @Param		limit	query	integer		false  "limit"
+// @Param		lang	query	string		false  "lang"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /transaction/purchase/list [get]
+func (h PurchaseHttp) SearchPurchaseStep(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	docID := ctx.Param("id")
+	pageableStep := utils.GetPageableStep(ctx.QueryParam)
 
-	pageable := utils.GetPageable(ctx.QueryParam)
+	lang := ctx.QueryParam("lang")
 
-	docList, pagination, err := h.service.SearchItemsPurchase(docID, shopID, pageable)
+	docList, total, err := h.svc.SearchPurchaseStep(shopID, lang, pageableStep)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docList,
+		Total:   total,
+	})
+	return nil
+}
+
+// Create Purchase Bulk godoc
+// @Description Create Purchase
+// @Tags		Purchase
+// @Param		Purchase  body      []models.Purchase  true  "Purchase"
+// @Accept 		json
+// @Success		201	{object}	common.BulkReponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /transaction/purchase/bulk [post]
+func (h PurchaseHttp) SaveBulk(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	dataReq := []models.Purchase{}
+	err := json.Unmarshal([]byte(input), &dataReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	bulkResponse, err := h.svc.SaveInBatch(shopID, authUsername, dataReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -240,11 +366,12 @@ func (h PurchaseHttp) SearchPurchaseItems(ctx microservice.IContext) error {
 	}
 
 	ctx.Response(
-		http.StatusOK,
-		common.ApiResponse{
+		http.StatusCreated,
+		common.BulkReponse{
 			Success:    true,
-			Data:       docList,
-			Pagination: pagination,
-		})
+			BulkImport: bulkResponse,
+		},
+	)
+
 	return nil
 }

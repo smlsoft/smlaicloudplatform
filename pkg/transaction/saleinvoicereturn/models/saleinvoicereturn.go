@@ -7,9 +7,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const purchaseCollectionName = "transactionPurchase"
+const saleinvoicereturnCollectionName = "transactionSaleInvoiceReturn"
 
-type Purchase struct {
+type SaleInvoiceReturn struct {
 	models.PartitionIdentity `bson:"inline"`
 	Docno                    string         `json:"docno" bson:"docno"`
 	TotalDiscount            int            `json:"totaldiscount" bson:"totaldiscount"`
@@ -86,52 +86,52 @@ type Detail struct {
 	SumOfCost           int            `json:"sumofcost" bson:"sumofcost"`
 }
 
-type PurchaseInfo struct {
+type SaleInvoiceReturnInfo struct {
 	models.DocIdentity `bson:"inline"`
-	Purchase           `bson:"inline"`
+	SaleInvoiceReturn  `bson:"inline"`
 }
 
-func (PurchaseInfo) CollectionName() string {
-	return purchaseCollectionName
+func (SaleInvoiceReturnInfo) CollectionName() string {
+	return saleinvoicereturnCollectionName
 }
 
-type PurchaseData struct {
-	models.ShopIdentity `bson:"inline"`
-	PurchaseInfo        `bson:"inline"`
+type SaleInvoiceReturnData struct {
+	models.ShopIdentity   `bson:"inline"`
+	SaleInvoiceReturnInfo `bson:"inline"`
 }
 
-type PurchaseDoc struct {
-	ID                 primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	PurchaseData       `bson:"inline"`
-	models.ActivityDoc `bson:"inline"`
+type SaleInvoiceReturnDoc struct {
+	ID                    primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	SaleInvoiceReturnData `bson:"inline"`
+	models.ActivityDoc    `bson:"inline"`
 }
 
-func (PurchaseDoc) CollectionName() string {
-	return purchaseCollectionName
+func (SaleInvoiceReturnDoc) CollectionName() string {
+	return saleinvoicereturnCollectionName
 }
 
-type PurchaseItemGuid struct {
+type SaleInvoiceReturnItemGuid struct {
 	Docno string `json:"docno" bson:"docno"`
 }
 
-func (PurchaseItemGuid) CollectionName() string {
-	return purchaseCollectionName
+func (SaleInvoiceReturnItemGuid) CollectionName() string {
+	return saleinvoicereturnCollectionName
 }
 
-type PurchaseActivity struct {
-	PurchaseData        `bson:"inline"`
-	models.ActivityTime `bson:"inline"`
+type SaleInvoiceReturnActivity struct {
+	SaleInvoiceReturnData `bson:"inline"`
+	models.ActivityTime   `bson:"inline"`
 }
 
-func (PurchaseActivity) CollectionName() string {
-	return purchaseCollectionName
+func (SaleInvoiceReturnActivity) CollectionName() string {
+	return saleinvoicereturnCollectionName
 }
 
-type PurchaseDeleteActivity struct {
+type SaleInvoiceReturnDeleteActivity struct {
 	models.Identity     `bson:"inline"`
 	models.ActivityTime `bson:"inline"`
 }
 
-func (PurchaseDeleteActivity) CollectionName() string {
-	return purchaseCollectionName
+func (SaleInvoiceReturnDeleteActivity) CollectionName() string {
+	return saleinvoicereturnCollectionName
 }

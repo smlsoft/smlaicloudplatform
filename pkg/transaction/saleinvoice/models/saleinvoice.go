@@ -1,115 +1,137 @@
 package models
 
 import (
-	memberModel "smlcloudplatform/pkg/member/models"
 	"smlcloudplatform/pkg/models"
-	inventoryModel "smlcloudplatform/pkg/product/inventory/models"
-	purchaseModel "smlcloudplatform/pkg/transaction/purchase/models"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const saleinvoiceCollectionName = "saleinvoices"
-const saleinvoiceIndexName = "saleinvoices"
+const saleinvoiceCollectionName = "transactionSaleInvoice"
 
-type Saleinvoice struct {
-	DocDate        *time.Time            `json:"docdate,omitempty" bson:"docdate,omitempty" format:"date-time" examples:"2019-10-12T07:20:50.52Z or 2019-10-12T07:20:50.52+07:00" gorm:"docdate,type:date"`
-	DocNo          string                `json:"docno,omitempty"  bson:"docno,omitempty"`
-	Member         *memberModel.Member   `json:"member,omitempty"  bson:"member,omitempty"`
-	Items          *[]SaleinvoiceDetail  `json:"items" bson:"items" gorm:""`
-	TotalAmount    float64               `json:"totalamount" bson:"totalamount" `
-	TaxRate        float64               `json:"taxrate" bson:"taxrate" `
-	TaxAmount      float64               `json:"taxamount" bson:"taxamount" `
-	TaxBaseAmount  float64               `json:"taxbaseamount" bson:"taxbaseamount" `
-	DiscountAmount float64               `json:"discountamount" bson:"discountamount" `
-	SumAmount      float64               `json:"sumamount" bson:"sumamount" `
-	Payment        purchaseModel.Payment `json:"payment" bson:"payment"`
-	LocalDate      string                `json:"localdate" bson:"localdate"`
-	LocalTime      string                `json:"localtime" bson:"localtime"`
+type SaleInvoice struct {
+	models.PartitionIdentity `bson:"inline"`
+	Docno                    string         `json:"docno" bson:"docno"`
+	TotalDiscount            int            `json:"totaldiscount" bson:"totaldiscount"`
+	TotalBeforeVat           int            `json:"totalbeforevat" bson:"totalbeforevat"`
+	GuidRef                  string         `json:"guidref" bson:"guidref"`
+	DocDatetime              time.Time      `json:"docdatetime" bson:"docdatetime"`
+	DocRefNo                 string         `json:"docrefno" bson:"docrefno"`
+	DocRefDate               time.Time      `json:"docrefdate" bson:"docrefdate"`
+	DocType                  int            `json:"doctype" bson:"doctype"`
+	CustName                 []models.NameX `json:"custname" bson:"custname"`
+	TotalExceptVat           int            `json:"totalexceptvat" bson:"totalexceptvat"`
+	CashierCode              string         `json:"cashiercode" bson:"cashiercode"`
+	Details                  []Detail       `json:"details" bson:"details"`
+	InquiryType              int            `json:"inquirytype" bson:"inquirytype"`
+	DiscountWord             string         `json:"discountword" bson:"discountword"`
+	TotalCost                int            `json:"totalcost" bson:"totalcost"`
+	TotalVatValue            float64        `json:"totalvatvalue" bson:"totalvatvalue"`
+	TotalAmount              float64        `json:"totalamount" bson:"totalamount"`
+	TaxDocDate               time.Time      `json:"taxdocdate" bson:"taxdocdate"`
+	SaleCode                 string         `json:"salecode" bson:"salecode"`
+	PosID                    string         `json:"posid" bson:"posid"`
+	SaleName                 string         `json:"salename" bson:"salename"`
+	MemberCode               string         `json:"membercode" bson:"membercode"`
+	VatRate                  int            `json:"vatrate" bson:"vatrate"`
+	TotalValue               int            `json:"totalvalue" bson:"totalvalue"`
+	TaxDocNo                 string         `json:"taxdocno" bson:"taxdocno"`
+	DocRefType               int            `json:"docreftype" bson:"docreftype"`
+	VatType                  int            `json:"vattype" bson:"vattype"`
+	CustCode                 string         `json:"custcode" bson:"custcode"`
+	TotalAfterVat            float64        `json:"totalaftervat" bson:"totalaftervat"`
+	TransFlag                int            `json:"transflag" bson:"transflag"`
+	Status                   int            `json:"status" bson:"status"`
 }
 
-type SaleinvoiceDetail struct {
-	LineNumber                   int `json:"linenumber" bson:"linenumber"`
-	inventoryModel.InventoryInfo `bson:"inline" gorm:"embedded;"`
-	Price                        float64 `json:"price" bson:"price"`
-	Qty                          float64 `json:"qty" bson:"qty" `
-	DiscountAmount               float64 `json:"discountamount" bson:"discountamount"`
-	DiscountText                 string  `json:"discounttext" bson:"discounttext"`
-	Amount                       float64 `json:"amount" bson:"amount"`
+type Detail struct {
+	SumAmount           int            `json:"sumamount" bson:"sumamount"`
+	LocationNames       []models.NameX `json:"locationnames" bson:"locationnames"`
+	SumAmountExcludeVat int            `json:"sumamountexcludevat" bson:"sumamountexcludevat"`
+	DivideValue         int            `json:"dividevalue" bson:"dividevalue"`
+	InquiryType         int            `json:"inquirytype" bson:"inquirytype"`
+	Price               int            `json:"price" bson:"price"`
+	Barcode             string         `json:"barcode" bson:"barcode"`
+	UnitCode            string         `json:"unitcode" bson:"unitcode"`
+	ToWhCode            string         `json:"towhcode" bson:"towhcode"`
+	ToLocationCode      string         `json:"tolocationcode" bson:"tolocationcode"`
+	TotalValueVat       float64        `json:"totalvaluevat" bson:"totalvaluevat"`
+	ItemGuid            string         `json:"itemguid" bson:"itemguid"`
+	ShelfCode           string         `json:"shelfcode" bson:"shelfcode"`
+	TotalQty            int            `json:"totalqty" bson:"totalqty"`
+	StandValue          int            `json:"standvalue" bson:"standvalue"`
+	CalcFlag            int            `json:"calcflag" bson:"calcflag"`
+	VatType             int            `json:"vattype" bson:"vattype"`
+	ToWhNames           []models.NameX `json:"towhnames" bson:"towhnames"`
+	ItemName            []models.NameX `json:"itemname" bson:"itemname"`
+	LineNumber          int            `json:"linenumber" bson:"linenumber"`
+	WhNames             []models.NameX `json:"whnames" bson:"whnames"`
+	AverageCost         int            `json:"averagecost" bson:"averagecost"`
+	LastStatus          int            `json:"laststatus" bson:"laststatus"`
+	TaxType             int            `json:"taxtype" bson:"taxtype"`
+	ItemCode            string         `json:"itemcode" bson:"itemcode"`
+	IsPos               int            `json:"ispos" bson:"ispos"`
+	MultiUnit           bool           `json:"multiunit" bson:"multiunit"`
+	PriceExcludeVat     int            `json:"priceexcludevat" bson:"priceexcludevat"`
+	LocationCode        string         `json:"locationcode" bson:"locationcode"`
+	ItemType            int            `json:"itemtype" bson:"itemtype"`
+	Remark              string         `json:"remark" bson:"remark"`
+	Qty                 int            `json:"qty" bson:"qty"`
+	Discount            string         `json:"discount" bson:"discount"`
+	DocDatetime         time.Time      `json:"docdatetime" bson:"docdatetime"`
+	WhCode              string         `json:"whcode" bson:"whcode"`
+	ToLocationNames     []models.NameX `json:"tolocationnames" bson:"tolocationnames"`
+	DiscountAmount      int            `json:"discountamount" bson:"discountamount"`
+	UnitNames           []models.NameX `json:"unitnames" bson:"unitnames"`
+	SumOfCost           int            `json:"sumofcost" bson:"sumofcost"`
 }
 
-type SaleinvoiceInfo struct {
+type SaleInvoiceInfo struct {
 	models.DocIdentity `bson:"inline"`
-	Saleinvoice        `bson:"inline"`
+	SaleInvoice        `bson:"inline"`
 }
 
-func (SaleinvoiceInfo) CollectionName() string {
+func (SaleInvoiceInfo) CollectionName() string {
 	return saleinvoiceCollectionName
 }
 
-type SaleinvoiceData struct {
+type SaleInvoiceData struct {
 	models.ShopIdentity `bson:"inline"`
-	SaleinvoiceInfo     `bson:"inline"`
+	SaleInvoiceInfo     `bson:"inline"`
 }
 
-func (SaleinvoiceData) IndexName() string {
-	return saleinvoiceIndexName
-}
-
-type SaleinvoiceDoc struct {
+type SaleInvoiceDoc struct {
 	ID                 primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	SaleinvoiceData    `bson:"inline"`
+	SaleInvoiceData    `bson:"inline"`
 	models.ActivityDoc `bson:"inline"`
 }
 
-func (SaleinvoiceDoc) CollectionName() string {
+func (SaleInvoiceDoc) CollectionName() string {
 	return saleinvoiceCollectionName
 }
 
-type SaleinvoiceListPageResponse struct {
-	Success    bool                          `json:"success"`
-	Data       []SaleinvoiceInfo             `json:"data,omitempty"`
-	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`
+type SaleInvoiceItemGuid struct {
+	Docno string `json:"docno" bson:"docno"`
 }
 
-type SaleinvoicePg struct {
-	Id                  uint `gorm:"primaryKey"`
-	models.ShopIdentity `gorm:"embedded"`
-	DocDate             time.Time             `json:"docdate,omitempty" gorm:"column:docdate"`
-	DocNo               string                `json:"docno,omitempty"  gorm:"column:docno"`
-	TaxRate             float64               `json:"taxrate" gorm:"column:taxrate;" `
-	TaxAmount           float64               `json:"taxamount" gorm:"column:taxamount;" `
-	TaxBaseAmount       float64               `json:"taxbaseamount" gorm:"column:taxbaseamount;" `
-	DiscountAmount      float64               `json:"discountamount" gorm:"column:discountamount;" `
-	SumAmount           float64               `json:"sumamount" gorm:"column:sumamount;" `
-	Items               []SaleinvoiceDetailPg `json:"items" bson:"items" gorm:"foreignKey:SaleinvoiceId" `
+func (SaleInvoiceItemGuid) CollectionName() string {
+	return saleinvoiceCollectionName
 }
 
-func (*SaleinvoicePg) TableName() string {
-	return "saleinvoice"
+type SaleInvoiceActivity struct {
+	SaleInvoiceData     `bson:"inline"`
+	models.ActivityTime `bson:"inline"`
 }
 
-type SaleinvoiceDetailPg struct {
-	Id                  uint `gorm:"primaryKey"`
-	models.ShopIdentity `gorm:"embedded"`
-	SaleinvoiceId       uint    `json:"saleinvoiceid,omitempty"  gorm:"column:saleinvoiceid;foreignKey:Id"`
-	DocNo               string  `json:"docno,omitempty"  gorm:"column:docno"`
-	LineNumber          int     `json:"linenumber" gorm:"column:linenumber"`
-	ItemGuid            string  `json:"itemguid,omitempty" gorm:"column:itemguid"`
-	ItemCode            string  `json:"itemcode,omitempty" gorm:"column:itemcode"`
-	Barcode             string  `json:"barcode" gorm:"column:barcode"`
-	Name1               string  `json:"name1" gorm:"name1"` // ชื่อภาษาไทย
-	ItemUnitCode        string  `json:"itemunitcode,omitempty" gorm:"column:itemunitcode"`
-	ItemUnitStd         float64 `json:"itemunitstd,omitempty" gorm:"column:itemunitstd"`
-	ItemUnitDiv         float64 `json:"itemunitdiv,omitempty" gorm:"column:itemunitdiv"`
-	Price               float64 `json:"price" gorm:"column:price" `
-	Qty                 float64 `json:"qty" gorm:"column:qty" `
-	DiscountAmount      float64 `json:"discountamount" gorm:"column:discountamount"`
-	DiscountText        string  `json:"discounttext" gorm:"column:discounttext"`
-	Amount              float64 `json:"amount" gorm:"column:amount"`
+func (SaleInvoiceActivity) CollectionName() string {
+	return saleinvoiceCollectionName
 }
 
-func (SaleinvoiceDetailPg) TableName() string {
-	return "saleinvoice_detail"
+type SaleInvoiceDeleteActivity struct {
+	models.Identity     `bson:"inline"`
+	models.ActivityTime `bson:"inline"`
+}
+
+func (SaleInvoiceDeleteActivity) CollectionName() string {
+	return saleinvoiceCollectionName
 }

@@ -7,9 +7,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const purchaseCollectionName = "transactionPurchase"
+const stockreceiveproductCollectionName = "transactionStockReceiveProduct"
 
-type Purchase struct {
+type StockReceiveProduct struct {
 	models.PartitionIdentity `bson:"inline"`
 	Docno                    string         `json:"docno" bson:"docno"`
 	TotalDiscount            int            `json:"totaldiscount" bson:"totaldiscount"`
@@ -86,52 +86,52 @@ type Detail struct {
 	SumOfCost           int            `json:"sumofcost" bson:"sumofcost"`
 }
 
-type PurchaseInfo struct {
-	models.DocIdentity `bson:"inline"`
-	Purchase           `bson:"inline"`
+type StockReceiveProductInfo struct {
+	models.DocIdentity  `bson:"inline"`
+	StockReceiveProduct `bson:"inline"`
 }
 
-func (PurchaseInfo) CollectionName() string {
-	return purchaseCollectionName
+func (StockReceiveProductInfo) CollectionName() string {
+	return stockreceiveproductCollectionName
 }
 
-type PurchaseData struct {
-	models.ShopIdentity `bson:"inline"`
-	PurchaseInfo        `bson:"inline"`
+type StockReceiveProductData struct {
+	models.ShopIdentity     `bson:"inline"`
+	StockReceiveProductInfo `bson:"inline"`
 }
 
-type PurchaseDoc struct {
-	ID                 primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	PurchaseData       `bson:"inline"`
-	models.ActivityDoc `bson:"inline"`
+type StockReceiveProductDoc struct {
+	ID                      primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	StockReceiveProductData `bson:"inline"`
+	models.ActivityDoc      `bson:"inline"`
 }
 
-func (PurchaseDoc) CollectionName() string {
-	return purchaseCollectionName
+func (StockReceiveProductDoc) CollectionName() string {
+	return stockreceiveproductCollectionName
 }
 
-type PurchaseItemGuid struct {
+type StockReceiveProductItemGuid struct {
 	Docno string `json:"docno" bson:"docno"`
 }
 
-func (PurchaseItemGuid) CollectionName() string {
-	return purchaseCollectionName
+func (StockReceiveProductItemGuid) CollectionName() string {
+	return stockreceiveproductCollectionName
 }
 
-type PurchaseActivity struct {
-	PurchaseData        `bson:"inline"`
-	models.ActivityTime `bson:"inline"`
+type StockReceiveProductActivity struct {
+	StockReceiveProductData `bson:"inline"`
+	models.ActivityTime     `bson:"inline"`
 }
 
-func (PurchaseActivity) CollectionName() string {
-	return purchaseCollectionName
+func (StockReceiveProductActivity) CollectionName() string {
+	return stockreceiveproductCollectionName
 }
 
-type PurchaseDeleteActivity struct {
+type StockReceiveProductDeleteActivity struct {
 	models.Identity     `bson:"inline"`
 	models.ActivityTime `bson:"inline"`
 }
 
-func (PurchaseDeleteActivity) CollectionName() string {
-	return purchaseCollectionName
+func (StockReceiveProductDeleteActivity) CollectionName() string {
+	return stockreceiveproductCollectionName
 }

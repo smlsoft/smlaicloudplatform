@@ -7,8 +7,8 @@ import (
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/services"
-	"smlcloudplatform/pkg/transaction/saleinvoice/models"
-	"smlcloudplatform/pkg/transaction/saleinvoice/repositories"
+	"smlcloudplatform/pkg/transaction/purchasereturn/models"
+	"smlcloudplatform/pkg/transaction/purchasereturn/repositories"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
 	"time"
@@ -17,40 +17,40 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-type ISaleInvoiceHttpService interface {
-	CreateSaleInvoice(shopID string, authUsername string, doc models.SaleInvoice) (string, error)
-	UpdateSaleInvoice(shopID string, guid string, authUsername string, doc models.SaleInvoice) error
-	DeleteSaleInvoice(shopID string, guid string, authUsername string) error
-	DeleteSaleInvoiceByGUIDs(shopID string, authUsername string, GUIDs []string) error
-	InfoSaleInvoice(shopID string, guid string) (models.SaleInvoiceInfo, error)
-	InfoSaleInvoiceByCode(shopID string, code string) (models.SaleInvoiceInfo, error)
-	SearchSaleInvoice(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SaleInvoiceInfo, mongopagination.PaginationData, error)
-	SearchSaleInvoiceStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.SaleInvoiceInfo, int, error)
-	SaveInBatch(shopID string, authUsername string, dataList []models.SaleInvoice) (common.BulkImport, error)
+type IPurchaseReturnHttpService interface {
+	CreatePurchaseReturn(shopID string, authUsername string, doc models.PurchaseReturn) (string, error)
+	UpdatePurchaseReturn(shopID string, guid string, authUsername string, doc models.PurchaseReturn) error
+	DeletePurchaseReturn(shopID string, guid string, authUsername string) error
+	DeletePurchaseReturnByGUIDs(shopID string, authUsername string, GUIDs []string) error
+	InfoPurchaseReturn(shopID string, guid string) (models.PurchaseReturnInfo, error)
+	InfoPurchaseReturnByCode(shopID string, code string) (models.PurchaseReturnInfo, error)
+	SearchPurchaseReturn(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.PurchaseReturnInfo, mongopagination.PaginationData, error)
+	SearchPurchaseReturnStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.PurchaseReturnInfo, int, error)
+	SaveInBatch(shopID string, authUsername string, dataList []models.PurchaseReturn) (common.BulkImport, error)
 
 	GetModuleName() string
 }
 
-type SaleInvoiceHttpService struct {
-	repo repositories.ISaleInvoiceRepository
+type PurchaseReturnHttpService struct {
+	repo repositories.IPurchaseReturnRepository
 
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
-	services.ActivityService[models.SaleInvoiceActivity, models.SaleInvoiceDeleteActivity]
+	services.ActivityService[models.PurchaseReturnActivity, models.PurchaseReturnDeleteActivity]
 }
 
-func NewSaleInvoiceHttpService(repo repositories.ISaleInvoiceRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *SaleInvoiceHttpService {
+func NewPurchaseReturnHttpService(repo repositories.IPurchaseReturnRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *PurchaseReturnHttpService {
 
-	insSvc := &SaleInvoiceHttpService{
+	insSvc := &PurchaseReturnHttpService{
 		repo:          repo,
 		syncCacheRepo: syncCacheRepo,
 	}
 
-	insSvc.ActivityService = services.NewActivityService[models.SaleInvoiceActivity, models.SaleInvoiceDeleteActivity](repo)
+	insSvc.ActivityService = services.NewActivityService[models.PurchaseReturnActivity, models.PurchaseReturnDeleteActivity](repo)
 
 	return insSvc
 }
 
-func (svc SaleInvoiceHttpService) CreateSaleInvoice(shopID string, authUsername string, doc models.SaleInvoice) (string, error) {
+func (svc PurchaseReturnHttpService) CreatePurchaseReturn(shopID string, authUsername string, doc models.PurchaseReturn) (string, error) {
 
 	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", doc.Docno)
 
@@ -64,10 +64,10 @@ func (svc SaleInvoiceHttpService) CreateSaleInvoice(shopID string, authUsername 
 
 	newGuidFixed := utils.NewGUID()
 
-	docData := models.SaleInvoiceDoc{}
+	docData := models.PurchaseReturnDoc{}
 	docData.ShopID = shopID
 	docData.GuidFixed = newGuidFixed
-	docData.SaleInvoice = doc
+	docData.PurchaseReturn = doc
 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
@@ -83,7 +83,7 @@ func (svc SaleInvoiceHttpService) CreateSaleInvoice(shopID string, authUsername 
 	return newGuidFixed, nil
 }
 
-func (svc SaleInvoiceHttpService) UpdateSaleInvoice(shopID string, guid string, authUsername string, doc models.SaleInvoice) error {
+func (svc PurchaseReturnHttpService) UpdatePurchaseReturn(shopID string, guid string, authUsername string, doc models.PurchaseReturn) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -95,7 +95,7 @@ func (svc SaleInvoiceHttpService) UpdateSaleInvoice(shopID string, guid string, 
 		return errors.New("document not found")
 	}
 
-	findDoc.SaleInvoice = doc
+	findDoc.PurchaseReturn = doc
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
@@ -111,7 +111,7 @@ func (svc SaleInvoiceHttpService) UpdateSaleInvoice(shopID string, guid string, 
 	return nil
 }
 
-func (svc SaleInvoiceHttpService) DeleteSaleInvoice(shopID string, guid string, authUsername string) error {
+func (svc PurchaseReturnHttpService) DeletePurchaseReturn(shopID string, guid string, authUsername string) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -133,7 +133,7 @@ func (svc SaleInvoiceHttpService) DeleteSaleInvoice(shopID string, guid string, 
 	return nil
 }
 
-func (svc SaleInvoiceHttpService) DeleteSaleInvoiceByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+func (svc PurchaseReturnHttpService) DeletePurchaseReturnByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
@@ -147,37 +147,37 @@ func (svc SaleInvoiceHttpService) DeleteSaleInvoiceByGUIDs(shopID string, authUs
 	return nil
 }
 
-func (svc SaleInvoiceHttpService) InfoSaleInvoice(shopID string, guid string) (models.SaleInvoiceInfo, error) {
+func (svc PurchaseReturnHttpService) InfoPurchaseReturn(shopID string, guid string) (models.PurchaseReturnInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
-		return models.SaleInvoiceInfo{}, err
+		return models.PurchaseReturnInfo{}, err
 	}
 
 	if len(findDoc.GuidFixed) < 1 {
-		return models.SaleInvoiceInfo{}, errors.New("document not found")
+		return models.PurchaseReturnInfo{}, errors.New("document not found")
 	}
 
-	return findDoc.SaleInvoiceInfo, nil
+	return findDoc.PurchaseReturnInfo, nil
 }
 
-func (svc SaleInvoiceHttpService) InfoSaleInvoiceByCode(shopID string, code string) (models.SaleInvoiceInfo, error) {
+func (svc PurchaseReturnHttpService) InfoPurchaseReturnByCode(shopID string, code string) (models.PurchaseReturnInfo, error) {
 
 	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", code)
 
 	if err != nil {
-		return models.SaleInvoiceInfo{}, err
+		return models.PurchaseReturnInfo{}, err
 	}
 
 	if len(findDoc.GuidFixed) < 1 {
-		return models.SaleInvoiceInfo{}, errors.New("document not found")
+		return models.PurchaseReturnInfo{}, errors.New("document not found")
 	}
 
-	return findDoc.SaleInvoiceInfo, nil
+	return findDoc.PurchaseReturnInfo, nil
 }
 
-func (svc SaleInvoiceHttpService) SearchSaleInvoice(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SaleInvoiceInfo, mongopagination.PaginationData, error) {
+func (svc PurchaseReturnHttpService) SearchPurchaseReturn(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.PurchaseReturnInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"docno",
 	}
@@ -185,13 +185,13 @@ func (svc SaleInvoiceHttpService) SearchSaleInvoice(shopID string, filters map[s
 	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
 
 	if err != nil {
-		return []models.SaleInvoiceInfo{}, pagination, err
+		return []models.PurchaseReturnInfo{}, pagination, err
 	}
 
 	return docList, pagination, nil
 }
 
-func (svc SaleInvoiceHttpService) SearchSaleInvoiceStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.SaleInvoiceInfo, int, error) {
+func (svc PurchaseReturnHttpService) SearchPurchaseReturnStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.PurchaseReturnInfo, int, error) {
 	searchInFields := []string{
 		"docno",
 	}
@@ -201,15 +201,15 @@ func (svc SaleInvoiceHttpService) SearchSaleInvoiceStep(shopID string, langCode 
 	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
-		return []models.SaleInvoiceInfo{}, 0, err
+		return []models.PurchaseReturnInfo{}, 0, err
 	}
 
 	return docList, total, nil
 }
 
-func (svc SaleInvoiceHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.SaleInvoice) (common.BulkImport, error) {
+func (svc PurchaseReturnHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.PurchaseReturn) (common.BulkImport, error) {
 
-	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.SaleInvoice](dataList, svc.getDocIDKey)
+	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.PurchaseReturn](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
 	for _, doc := range payloadList {
@@ -227,20 +227,20 @@ func (svc SaleInvoiceHttpService) SaveInBatch(shopID string, authUsername string
 		foundItemGuidList = append(foundItemGuidList, doc.Docno)
 	}
 
-	duplicateDataList, createDataList := importdata.PreparePayloadData[models.SaleInvoice, models.SaleInvoiceDoc](
+	duplicateDataList, createDataList := importdata.PreparePayloadData[models.PurchaseReturn, models.PurchaseReturnDoc](
 		shopID,
 		authUsername,
 		foundItemGuidList,
 		payloadList,
 		svc.getDocIDKey,
-		func(shopID string, authUsername string, doc models.SaleInvoice) models.SaleInvoiceDoc {
+		func(shopID string, authUsername string, doc models.PurchaseReturn) models.PurchaseReturnDoc {
 			newGuid := utils.NewGUID()
 
-			dataDoc := models.SaleInvoiceDoc{}
+			dataDoc := models.PurchaseReturnDoc{}
 
 			dataDoc.GuidFixed = newGuid
 			dataDoc.ShopID = shopID
-			dataDoc.SaleInvoice = doc
+			dataDoc.PurchaseReturn = doc
 
 			currentTime := time.Now()
 			dataDoc.CreatedBy = authUsername
@@ -249,20 +249,20 @@ func (svc SaleInvoiceHttpService) SaveInBatch(shopID string, authUsername string
 		},
 	)
 
-	updateSuccessDataList, updateFailDataList := importdata.UpdateOnDuplicate[models.SaleInvoice, models.SaleInvoiceDoc](
+	updateSuccessDataList, updateFailDataList := importdata.UpdateOnDuplicate[models.PurchaseReturn, models.PurchaseReturnDoc](
 		shopID,
 		authUsername,
 		duplicateDataList,
 		svc.getDocIDKey,
-		func(shopID string, guid string) (models.SaleInvoiceDoc, error) {
+		func(shopID string, guid string) (models.PurchaseReturnDoc, error) {
 			return svc.repo.FindByDocIndentityGuid(shopID, "docno", guid)
 		},
-		func(doc models.SaleInvoiceDoc) bool {
+		func(doc models.PurchaseReturnDoc) bool {
 			return doc.Docno != ""
 		},
-		func(shopID string, authUsername string, data models.SaleInvoice, doc models.SaleInvoiceDoc) error {
+		func(shopID string, authUsername string, data models.PurchaseReturn, doc models.PurchaseReturnDoc) error {
 
-			doc.SaleInvoice = data
+			doc.PurchaseReturn = data
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
@@ -315,11 +315,11 @@ func (svc SaleInvoiceHttpService) SaveInBatch(shopID string, authUsername string
 	}, nil
 }
 
-func (svc SaleInvoiceHttpService) getDocIDKey(doc models.SaleInvoice) string {
+func (svc PurchaseReturnHttpService) getDocIDKey(doc models.PurchaseReturn) string {
 	return doc.Docno
 }
 
-func (svc SaleInvoiceHttpService) saveMasterSync(shopID string) {
+func (svc PurchaseReturnHttpService) saveMasterSync(shopID string) {
 	if svc.syncCacheRepo != nil {
 		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
 
@@ -329,6 +329,6 @@ func (svc SaleInvoiceHttpService) saveMasterSync(shopID string) {
 	}
 }
 
-func (svc SaleInvoiceHttpService) GetModuleName() string {
-	return "saleInvoice"
+func (svc PurchaseReturnHttpService) GetModuleName() string {
+	return "purchaseReturn"
 }

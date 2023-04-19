@@ -55,8 +55,14 @@ import (
 	"smlcloudplatform/pkg/task"
 	"smlcloudplatform/pkg/tools"
 	"smlcloudplatform/pkg/transaction/purchase"
+	"smlcloudplatform/pkg/transaction/purchasereturn"
 	"smlcloudplatform/pkg/transaction/saleinvoice"
+	"smlcloudplatform/pkg/transaction/saleinvoicereturn"
 	"smlcloudplatform/pkg/transaction/smltransaction"
+	"smlcloudplatform/pkg/transaction/stockadjustment"
+	"smlcloudplatform/pkg/transaction/stockpickupproduct"
+	"smlcloudplatform/pkg/transaction/stockreceiveproduct"
+	"smlcloudplatform/pkg/transaction/stockreturnproduct"
 	"smlcloudplatform/pkg/vfgl/accountgroup"
 	"smlcloudplatform/pkg/vfgl/accountperiodmaster"
 	"smlcloudplatform/pkg/vfgl/chartofaccount"
@@ -122,8 +128,7 @@ func main() {
 		shop.NewShopHttp(ms, cfg),
 		shop.NewShopMemberHttp(ms, cfg),
 		inventory.NewInventoryHttp(ms, cfg),
-		saleinvoice.NewSaleinvoiceHttp(ms, cfg),
-		purchase.NewPurchaseHttp(ms, cfg),
+
 		syncdata.NewSyncDataHttp(ms, cfg),
 		member.NewMemberHttp(ms, cfg),
 		employee.NewEmployeeHttp(ms, cfg),
@@ -197,15 +202,22 @@ func main() {
 		department.NewDepartmentHttp(ms, cfg),
 		businesstype.NewBusinessTypeHttp(ms, cfg),
 		branch.NewBranchHttp(ms, cfg),
+
+		//transaction
+		purchase.NewPurchaseHttp(ms, cfg),
+		purchasereturn.NewPurchaseReturnHttp(ms, cfg),
+		saleinvoice.NewSaleInvoiceHttp(ms, cfg),
+		saleinvoicereturn.NewSaleInvoiceReturnHttp(ms, cfg),
+		stockreceiveproduct.NewStockReceiveProductHttp(ms, cfg),
+		stockreturnproduct.NewStockReturnProductHttp(ms, cfg),
+		stockpickupproduct.NewStockPickupProductHttp(ms, cfg),
+		stockadjustment.NewStockAdjustmentHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)
 
 	inventory.StartInventoryAsync(ms, cfg)
 	inventory.StartInventoryComsumeCreated(ms, cfg)
-
-	saleinvoice.StartSaleinvoiceAsync(ms, cfg)
-	purchase.StartPurchaseAsync(ms, cfg)
 
 	task.NewTaskConsumer(ms, cfg).RegisterConsumer()
 

@@ -49,8 +49,14 @@ import (
 	"smlcloudplatform/pkg/sysinfo"
 	"smlcloudplatform/pkg/task"
 	"smlcloudplatform/pkg/transaction/purchase"
+	"smlcloudplatform/pkg/transaction/purchasereturn"
 	"smlcloudplatform/pkg/transaction/saleinvoice"
+	"smlcloudplatform/pkg/transaction/saleinvoicereturn"
 	"smlcloudplatform/pkg/transaction/smltransaction"
+	"smlcloudplatform/pkg/transaction/stockadjustment"
+	"smlcloudplatform/pkg/transaction/stockpickupproduct"
+	"smlcloudplatform/pkg/transaction/stockreceiveproduct"
+	"smlcloudplatform/pkg/transaction/stockreturnproduct"
 	"smlcloudplatform/pkg/vfgl/accountgroup"
 	"smlcloudplatform/pkg/vfgl/accountperiodmaster"
 	"smlcloudplatform/pkg/vfgl/chartofaccount"
@@ -186,9 +192,6 @@ func main() {
 			device.NewDeviceHttp(ms, cfg),
 			staff.NewStaffHttp(ms, cfg),
 
-			purchase.NewPurchaseHttp(ms, cfg),
-			saleinvoice.NewSaleinvoiceHttp(ms, cfg),
-
 			chartofaccount.NewChartOfAccountHttp(ms, cfg),
 			journal.NewJournalHttp(ms, cfg),
 			journal.NewJournalWs(ms, cfg),
@@ -224,6 +227,16 @@ func main() {
 			branch.NewBranchHttp(ms, cfg),
 			department.NewDepartmentHttp(ms, cfg),
 			businesstype.NewBusinessTypeHttp(ms, cfg),
+
+			//transaction
+			purchase.NewPurchaseHttp(ms, cfg),
+			purchasereturn.NewPurchaseReturnHttp(ms, cfg),
+			saleinvoice.NewSaleInvoiceHttp(ms, cfg),
+			saleinvoicereturn.NewSaleInvoiceReturnHttp(ms, cfg),
+			stockreceiveproduct.NewStockReceiveProductHttp(ms, cfg),
+			stockreturnproduct.NewStockReturnProductHttp(ms, cfg),
+			stockpickupproduct.NewStockPickupProductHttp(ms, cfg),
+			stockadjustment.NewStockAdjustmentHttp(ms, cfg),
 		}
 
 		startHttpServices(httpServices...)
@@ -241,8 +254,6 @@ func main() {
 
 		inventoryConsumer := inventorysearchconsumer.NewInventorySearchConsumer(ms, cfg)
 		inventoryConsumer.Start()
-
-		saleinvoice.StartSaleinvoiceComsumeCreated(ms, cfg, consumerGroupName)
 
 		journal.MigrationJournalTable(ms, cfg)
 		journal.StartJournalComsumeCreated(ms, cfg, consumerGroupName)

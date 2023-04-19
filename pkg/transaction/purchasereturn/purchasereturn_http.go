@@ -1,4 +1,4 @@
-package saleinvoice
+package purchasereturn
 
 import (
 	"encoding/json"
@@ -6,65 +6,65 @@ import (
 	"smlcloudplatform/internal/microservice"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/transaction/saleinvoice/models"
-	"smlcloudplatform/pkg/transaction/saleinvoice/repositories"
-	"smlcloudplatform/pkg/transaction/saleinvoice/services"
+	"smlcloudplatform/pkg/transaction/purchasereturn/models"
+	"smlcloudplatform/pkg/transaction/purchasereturn/repositories"
+	"smlcloudplatform/pkg/transaction/purchasereturn/services"
 	"smlcloudplatform/pkg/utils"
 )
 
-type ISaleInvoiceHttp interface{}
+type IPurchaseReturnHttp interface{}
 
-type SaleInvoiceHttp struct {
+type PurchaseReturnHttp struct {
 	ms  *microservice.Microservice
 	cfg microservice.IConfig
-	svc services.ISaleInvoiceHttpService
+	svc services.IPurchaseReturnHttpService
 }
 
-func NewSaleInvoiceHttp(ms *microservice.Microservice, cfg microservice.IConfig) SaleInvoiceHttp {
+func NewPurchaseReturnHttp(ms *microservice.Microservice, cfg microservice.IConfig) PurchaseReturnHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
-	repo := repositories.NewSaleInvoiceRepository(pst)
+	repo := repositories.NewPurchaseReturnRepository(pst)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewSaleInvoiceHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewPurchaseReturnHttpService(repo, masterSyncCacheRepo)
 
-	return SaleInvoiceHttp{
+	return PurchaseReturnHttp{
 		ms:  ms,
 		cfg: cfg,
 		svc: svc,
 	}
 }
 
-func (h SaleInvoiceHttp) RouteSetup() {
+func (h PurchaseReturnHttp) RouteSetup() {
 
-	h.ms.POST("/transaction/sale-invoice/bulk", h.SaveBulk)
+	h.ms.POST("/transaction/purchase-return/bulk", h.SaveBulk)
 
-	h.ms.GET("/transaction/sale-invoice", h.SearchSaleInvoicePage)
-	h.ms.GET("/transaction/sale-invoice/list", h.SearchSaleInvoiceStep)
-	h.ms.POST("/transaction/sale-invoice", h.CreateSaleInvoice)
-	h.ms.GET("/transaction/sale-invoice/:id", h.InfoSaleInvoice)
-	h.ms.GET("/transaction/sale-invoice/code/:code", h.InfoSaleInvoiceByCode)
-	h.ms.PUT("/transaction/sale-invoice/:id", h.UpdateSaleInvoice)
-	h.ms.DELETE("/transaction/sale-invoice/:id", h.DeleteSaleInvoice)
-	h.ms.DELETE("/transaction/sale-invoice", h.DeleteSaleInvoiceByGUIDs)
+	h.ms.GET("/transaction/purchase-return", h.SearchPurchaseReturnPage)
+	h.ms.GET("/transaction/purchase-return/list", h.SearchPurchaseReturnStep)
+	h.ms.POST("/transaction/purchase-return", h.CreatePurchaseReturn)
+	h.ms.GET("/transaction/purchase-return/:id", h.InfoPurchaseReturn)
+	h.ms.GET("/transaction/purchase-return/code/:code", h.InfoPurchaseReturnByCode)
+	h.ms.PUT("/transaction/purchase-return/:id", h.UpdatePurchaseReturn)
+	h.ms.DELETE("/transaction/purchase-return/:id", h.DeletePurchaseReturn)
+	h.ms.DELETE("/transaction/purchase-return", h.DeletePurchaseReturnByGUIDs)
 }
 
-// Create SaleInvoice godoc
-// @Description Create SaleInvoice
-// @Tags		SaleInvoice
-// @Param		SaleInvoice  body      models.SaleInvoice  true  "SaleInvoice"
+// Create PurchaseReturn godoc
+// @Description Create PurchaseReturn
+// @Tags		PurchaseReturn
+// @Param		PurchaseReturn  body      models.PurchaseReturn  true  "PurchaseReturn"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /transaction/sale-invoice [post]
-func (h SaleInvoiceHttp) CreateSaleInvoice(ctx microservice.IContext) error {
+// @Router /transaction/purchase-return [post]
+func (h PurchaseReturnHttp) CreatePurchaseReturn(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &models.SaleInvoice{}
+	docReq := &models.PurchaseReturn{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -77,7 +77,7 @@ func (h SaleInvoiceHttp) CreateSaleInvoice(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.svc.CreateSaleInvoice(shopID, authUsername, *docReq)
+	idx, err := h.svc.CreatePurchaseReturn(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -91,17 +91,17 @@ func (h SaleInvoiceHttp) CreateSaleInvoice(ctx microservice.IContext) error {
 	return nil
 }
 
-// Update SaleInvoice godoc
-// @Description Update SaleInvoice
-// @Tags		SaleInvoice
-// @Param		id  path      string  true  "SaleInvoice ID"
-// @Param		SaleInvoice  body      models.SaleInvoice  true  "SaleInvoice"
+// Update PurchaseReturn godoc
+// @Description Update PurchaseReturn
+// @Tags		PurchaseReturn
+// @Param		id  path      string  true  "PurchaseReturn ID"
+// @Param		PurchaseReturn  body      models.PurchaseReturn  true  "PurchaseReturn"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /transaction/sale-invoice/{id} [put]
-func (h SaleInvoiceHttp) UpdateSaleInvoice(ctx microservice.IContext) error {
+// @Router /transaction/purchase-return/{id} [put]
+func (h PurchaseReturnHttp) UpdatePurchaseReturn(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -109,7 +109,7 @@ func (h SaleInvoiceHttp) UpdateSaleInvoice(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &models.SaleInvoice{}
+	docReq := &models.PurchaseReturn{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -122,7 +122,7 @@ func (h SaleInvoiceHttp) UpdateSaleInvoice(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svc.UpdateSaleInvoice(shopID, id, authUsername, *docReq)
+	err = h.svc.UpdatePurchaseReturn(shopID, id, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -137,23 +137,23 @@ func (h SaleInvoiceHttp) UpdateSaleInvoice(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete SaleInvoice godoc
-// @Description Delete SaleInvoice
-// @Tags		SaleInvoice
-// @Param		id  path      string  true  "SaleInvoice ID"
+// Delete PurchaseReturn godoc
+// @Description Delete PurchaseReturn
+// @Tags		PurchaseReturn
+// @Param		id  path      string  true  "PurchaseReturn ID"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /transaction/sale-invoice/{id} [delete]
-func (h SaleInvoiceHttp) DeleteSaleInvoice(ctx microservice.IContext) error {
+// @Router /transaction/purchase-return/{id} [delete]
+func (h PurchaseReturnHttp) DeletePurchaseReturn(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
 
 	id := ctx.Param("id")
 
-	err := h.svc.DeleteSaleInvoice(shopID, id, authUsername)
+	err := h.svc.DeletePurchaseReturn(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -168,16 +168,16 @@ func (h SaleInvoiceHttp) DeleteSaleInvoice(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete SaleInvoice godoc
-// @Description Delete SaleInvoice
-// @Tags		SaleInvoice
-// @Param		SaleInvoice  body      []string  true  "SaleInvoice GUIDs"
+// Delete PurchaseReturn godoc
+// @Description Delete PurchaseReturn
+// @Tags		PurchaseReturn
+// @Param		PurchaseReturn  body      []string  true  "PurchaseReturn GUIDs"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /transaction/sale-invoice [delete]
-func (h SaleInvoiceHttp) DeleteSaleInvoiceByGUIDs(ctx microservice.IContext) error {
+// @Router /transaction/purchase-return [delete]
+func (h PurchaseReturnHttp) DeletePurchaseReturnByGUIDs(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
@@ -192,7 +192,7 @@ func (h SaleInvoiceHttp) DeleteSaleInvoiceByGUIDs(ctx microservice.IContext) err
 		return err
 	}
 
-	err = h.svc.DeleteSaleInvoiceByGUIDs(shopID, authUsername, docReq)
+	err = h.svc.DeletePurchaseReturnByGUIDs(shopID, authUsername, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -206,23 +206,23 @@ func (h SaleInvoiceHttp) DeleteSaleInvoiceByGUIDs(ctx microservice.IContext) err
 	return nil
 }
 
-// Get SaleInvoice godoc
-// @Description get SaleInvoice info by guidfixed
-// @Tags		SaleInvoice
-// @Param		id  path      string  true  "SaleInvoice guidfixed"
+// Get PurchaseReturn godoc
+// @Description get PurchaseReturn info by guidfixed
+// @Tags		PurchaseReturn
+// @Param		id  path      string  true  "PurchaseReturn guidfixed"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /transaction/sale-invoice/{id} [get]
-func (h SaleInvoiceHttp) InfoSaleInvoice(ctx microservice.IContext) error {
+// @Router /transaction/purchase-return/{id} [get]
+func (h PurchaseReturnHttp) InfoPurchaseReturn(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	h.ms.Logger.Debugf("Get SaleInvoice %v", id)
-	doc, err := h.svc.InfoSaleInvoice(shopID, id)
+	h.ms.Logger.Debugf("Get PurchaseReturn %v", id)
+	doc, err := h.svc.InfoPurchaseReturn(shopID, id)
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
@@ -237,22 +237,22 @@ func (h SaleInvoiceHttp) InfoSaleInvoice(ctx microservice.IContext) error {
 	return nil
 }
 
-// Get SaleInvoice By Code godoc
-// @Description get SaleInvoice info by Code
-// @Tags		SaleInvoice
-// @Param		code  path      string  true  "SaleInvoice Code"
+// Get PurchaseReturn By Code godoc
+// @Description get PurchaseReturn info by Code
+// @Tags		PurchaseReturn
+// @Param		code  path      string  true  "PurchaseReturn Code"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /transaction/sale-invoice/code/{code} [get]
-func (h SaleInvoiceHttp) InfoSaleInvoiceByCode(ctx microservice.IContext) error {
+// @Router /transaction/purchase-return/code/{code} [get]
+func (h PurchaseReturnHttp) InfoPurchaseReturnByCode(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	code := ctx.Param("code")
 
-	doc, err := h.svc.InfoSaleInvoiceByCode(shopID, code)
+	doc, err := h.svc.InfoPurchaseReturnByCode(shopID, code)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -266,9 +266,9 @@ func (h SaleInvoiceHttp) InfoSaleInvoiceByCode(ctx microservice.IContext) error 
 	return nil
 }
 
-// List SaleInvoice step godoc
+// List PurchaseReturn step godoc
 // @Description get list step
-// @Tags		SaleInvoice
+// @Tags		PurchaseReturn
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
@@ -276,14 +276,14 @@ func (h SaleInvoiceHttp) InfoSaleInvoiceByCode(ctx microservice.IContext) error 
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /transaction/sale-invoice [get]
-func (h SaleInvoiceHttp) SearchSaleInvoicePage(ctx microservice.IContext) error {
+// @Router /transaction/purchase-return [get]
+func (h PurchaseReturnHttp) SearchPurchaseReturnPage(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchSaleInvoice(shopID, map[string]interface{}{}, pageable)
+	docList, pagination, err := h.svc.SearchPurchaseReturn(shopID, map[string]interface{}{}, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -298,9 +298,9 @@ func (h SaleInvoiceHttp) SearchSaleInvoicePage(ctx microservice.IContext) error 
 	return nil
 }
 
-// List SaleInvoice godoc
+// List PurchaseReturn godoc
 // @Description search limit offset
-// @Tags		SaleInvoice
+// @Tags		PurchaseReturn
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
@@ -309,8 +309,8 @@ func (h SaleInvoiceHttp) SearchSaleInvoicePage(ctx microservice.IContext) error 
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /transaction/sale-invoice/list [get]
-func (h SaleInvoiceHttp) SearchSaleInvoiceStep(ctx microservice.IContext) error {
+// @Router /transaction/purchase-return/list [get]
+func (h PurchaseReturnHttp) SearchPurchaseReturnStep(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
@@ -318,7 +318,7 @@ func (h SaleInvoiceHttp) SearchSaleInvoiceStep(ctx microservice.IContext) error 
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchSaleInvoiceStep(shopID, lang, pageableStep)
+	docList, total, err := h.svc.SearchPurchaseReturnStep(shopID, lang, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -333,16 +333,16 @@ func (h SaleInvoiceHttp) SearchSaleInvoiceStep(ctx microservice.IContext) error 
 	return nil
 }
 
-// Create SaleInvoice Bulk godoc
-// @Description Create SaleInvoice
-// @Tags		SaleInvoice
-// @Param		SaleInvoice  body      []models.SaleInvoice  true  "SaleInvoice"
+// Create PurchaseReturn Bulk godoc
+// @Description Create PurchaseReturn
+// @Tags		PurchaseReturn
+// @Param		PurchaseReturn  body      []models.PurchaseReturn  true  "PurchaseReturn"
 // @Accept 		json
 // @Success		201	{object}	common.BulkReponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /transaction/sale-invoice/bulk [post]
-func (h SaleInvoiceHttp) SaveBulk(ctx microservice.IContext) error {
+// @Router /transaction/purchase-return/bulk [post]
+func (h PurchaseReturnHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -350,7 +350,7 @@ func (h SaleInvoiceHttp) SaveBulk(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	dataReq := []models.SaleInvoice{}
+	dataReq := []models.PurchaseReturn{}
 	err := json.Unmarshal([]byte(input), &dataReq)
 
 	if err != nil {
