@@ -12535,219 +12535,6 @@
                 }
             }
         },
-        "/purchase": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Purchase"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.PurchaseListPageResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Purchase Transaction",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Purchase"
-                ],
-                "parameters": [
-                    {
-                        "description": "payload",
-                        "name": "Purchase",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Purchase"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/purchase/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "After Purchare Doc Create system will be return Id of Purchase Document. this Id can get Purchase Document in this service.",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Purchase"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Document ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.PurchaseInfo"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update Inventory",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Purchase"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Purchase Document ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "payload",
-                        "name": "Purchase",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Purchase"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Tempolaty Delete  Purchase Transaction",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Purchase"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Purchase Doc ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/register": {
             "post": {
                 "description": "For User Register Application",
@@ -14944,220 +14731,6 @@
                     {
                         "type": "string",
                         "description": "ShopZone ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/saleinvoice": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "List Sale Invoice Document",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Sale Invoice"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Size",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.SaleinvoiceListPageResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Inventory",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Sale Invoice"
-                ],
-                "parameters": [
-                    {
-                        "description": "Saleinvoice",
-                        "name": "Saleinvoice",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Saleinvoice"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/saleinvoice/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get struct array by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Sale Invoice"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Inventory ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.SaleinvoiceInfo"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update Sale Invoice",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Sale Invoice"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Document ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Body",
-                        "name": "Invoice",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Saleinvoice"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete Document",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Sale Invoice"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Document ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -17596,6 +17169,3190 @@
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Purchase",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "description": "Purchase",
+                        "name": "Purchase",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Purchase"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Purchase",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "description": "Purchase GUIDs",
+                        "name": "Purchase",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase-return": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create PurchaseReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseReturn"
+                ],
+                "parameters": [
+                    {
+                        "description": "PurchaseReturn",
+                        "name": "PurchaseReturn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PurchaseReturn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete PurchaseReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseReturn"
+                ],
+                "parameters": [
+                    {
+                        "description": "PurchaseReturn GUIDs",
+                        "name": "PurchaseReturn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase-return/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create PurchaseReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseReturn"
+                ],
+                "parameters": [
+                    {
+                        "description": "PurchaseReturn",
+                        "name": "PurchaseReturn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.PurchaseReturn"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase-return/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get PurchaseReturn info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PurchaseReturn Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase-return/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase-return/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get PurchaseReturn info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PurchaseReturn guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update PurchaseReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PurchaseReturn ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "PurchaseReturn",
+                        "name": "PurchaseReturn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PurchaseReturn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete PurchaseReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PurchaseReturn ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Purchase",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "description": "Purchase",
+                        "name": "Purchase",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Purchase"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Purchase info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Purchase Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Purchase info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Purchase guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Purchase",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Purchase ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Purchase",
+                        "name": "Purchase",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Purchase"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Purchase",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Purchase ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create SaleInvoice",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "description": "SaleInvoice",
+                        "name": "SaleInvoice",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SaleInvoice"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SaleInvoice",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "description": "SaleInvoice GUIDs",
+                        "name": "SaleInvoice",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice-return": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoiceReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create SaleInvoiceReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoiceReturn"
+                ],
+                "parameters": [
+                    {
+                        "description": "SaleInvoiceReturn",
+                        "name": "SaleInvoiceReturn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SaleInvoiceReturn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SaleInvoiceReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoiceReturn"
+                ],
+                "parameters": [
+                    {
+                        "description": "SaleInvoiceReturn GUIDs",
+                        "name": "SaleInvoiceReturn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice-return/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create SaleInvoiceReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoiceReturn"
+                ],
+                "parameters": [
+                    {
+                        "description": "SaleInvoiceReturn",
+                        "name": "SaleInvoiceReturn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.SaleInvoiceReturn"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice-return/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SaleInvoiceReturn info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoiceReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleInvoiceReturn Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice-return/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoiceReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice-return/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SaleInvoiceReturn info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoiceReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleInvoiceReturn guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update SaleInvoiceReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoiceReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleInvoiceReturn ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "SaleInvoiceReturn",
+                        "name": "SaleInvoiceReturn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SaleInvoiceReturn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SaleInvoiceReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoiceReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleInvoiceReturn ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create SaleInvoice",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "description": "SaleInvoice",
+                        "name": "SaleInvoice",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.SaleInvoice"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SaleInvoice info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleInvoice Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SaleInvoice info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleInvoice guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update SaleInvoice",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleInvoice ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "SaleInvoice",
+                        "name": "SaleInvoice",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SaleInvoice"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SaleInvoice",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleInvoice ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-adjustment": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockAdjustment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create StockAdjustment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockAdjustment"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockAdjustment",
+                        "name": "StockAdjustment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockAdjustment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockAdjustment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockAdjustment"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockAdjustment GUIDs",
+                        "name": "StockAdjustment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-adjustment/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create StockAdjustment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockAdjustment"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockAdjustment",
+                        "name": "StockAdjustment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.StockAdjustment"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-adjustment/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get StockAdjustment info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockAdjustment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockAdjustment Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-adjustment/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockAdjustment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-adjustment/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get StockAdjustment info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockAdjustment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockAdjustment guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update StockAdjustment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockAdjustment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockAdjustment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "StockAdjustment",
+                        "name": "StockAdjustment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockAdjustment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockAdjustment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockAdjustment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockAdjustment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-prickup-product": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockPickupProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create StockPickupProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockPickupProduct"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockPickupProduct",
+                        "name": "StockPickupProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockPickupProduct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockPickupProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockPickupProduct"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockPickupProduct GUIDs",
+                        "name": "StockPickupProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-prickup-product/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create StockPickupProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockPickupProduct"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockPickupProduct",
+                        "name": "StockPickupProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.StockPickupProduct"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-prickup-product/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get StockPickupProduct info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockPickupProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockPickupProduct Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-prickup-product/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockPickupProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-prickup-product/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get StockPickupProduct info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockPickupProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockPickupProduct guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update StockPickupProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockPickupProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockPickupProduct ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "StockPickupProduct",
+                        "name": "StockPickupProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockPickupProduct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockPickupProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockPickupProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockPickupProduct ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-receive-product": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReceiveProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create StockReceiveProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReceiveProduct"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockReceiveProduct",
+                        "name": "StockReceiveProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockReceiveProduct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockReceiveProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReceiveProduct"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockReceiveProduct GUIDs",
+                        "name": "StockReceiveProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-receive-product/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create StockReceiveProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReceiveProduct"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockReceiveProduct",
+                        "name": "StockReceiveProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.StockReceiveProduct"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-receive-product/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get StockReceiveProduct info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReceiveProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockReceiveProduct Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-receive-product/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReceiveProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-receive-product/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get StockReceiveProduct info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReceiveProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockReceiveProduct guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update StockReceiveProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReceiveProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockReceiveProduct ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "StockReceiveProduct",
+                        "name": "StockReceiveProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockReceiveProduct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockReceiveProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReceiveProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockReceiveProduct ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-return-product": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReturnProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create StockReturnProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReturnProduct"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockReturnProduct",
+                        "name": "StockReturnProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockReturnProduct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockReturnProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReturnProduct"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockReturnProduct GUIDs",
+                        "name": "StockReturnProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-return-product/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create StockReturnProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReturnProduct"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockReturnProduct",
+                        "name": "StockReturnProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.StockReturnProduct"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-return-product/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get StockReturnProduct info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReturnProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockReturnProduct Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-return-product/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReturnProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-return-product/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get StockReturnProduct info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReturnProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockReturnProduct guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update StockReturnProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReturnProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockReturnProduct ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "StockReturnProduct",
+                        "name": "StockReturnProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockReturnProduct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockReturnProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReturnProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockReturnProduct ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
                         }
@@ -20158,26 +22915,6 @@
                 }
             }
         },
-        "models.CreditCardPayment": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "number"
-                },
-                "approvedcode": {
-                    "type": "string"
-                },
-                "cardnumber": {
-                    "type": "string"
-                },
-                "cardtype": {
-                    "type": "string"
-                },
-                "remark": {
-                    "type": "string"
-                }
-            }
-        },
         "models.CreditorGroup": {
             "type": "object",
             "required": [
@@ -20403,6 +23140,146 @@
                 },
                 "taxid": {
                     "type": "string"
+                }
+            }
+        },
+        "models.Detail": {
+            "type": "object",
+            "properties": {
+                "averagecost": {
+                    "type": "integer"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "calcflag": {
+                    "type": "integer"
+                },
+                "discount": {
+                    "type": "string"
+                },
+                "discountamount": {
+                    "type": "integer"
+                },
+                "dividevalue": {
+                    "type": "integer"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "ispos": {
+                    "type": "integer"
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemguid": {
+                    "type": "string"
+                },
+                "itemname": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "laststatus": {
+                    "type": "integer"
+                },
+                "linenumber": {
+                    "type": "integer"
+                },
+                "locationcode": {
+                    "type": "string"
+                },
+                "locationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "multiunit": {
+                    "type": "boolean"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "priceexcludevat": {
+                    "type": "integer"
+                },
+                "qty": {
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "shelfcode": {
+                    "type": "string"
+                },
+                "standvalue": {
+                    "type": "integer"
+                },
+                "sumamount": {
+                    "type": "integer"
+                },
+                "sumamountexcludevat": {
+                    "type": "integer"
+                },
+                "sumofcost": {
+                    "type": "integer"
+                },
+                "taxtype": {
+                    "type": "integer"
+                },
+                "tolocationcode": {
+                    "type": "string"
+                },
+                "tolocationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "totalqty": {
+                    "type": "integer"
+                },
+                "totalvaluevat": {
+                    "type": "number"
+                },
+                "towhcode": {
+                    "type": "string"
+                },
+                "towhnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "unitcode": {
+                    "type": "string"
+                },
+                "unitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "vattype": {
+                    "type": "integer"
+                },
+                "whcode": {
+                    "type": "string"
+                },
+                "whnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 }
             }
         },
@@ -22609,32 +25486,6 @@
                 }
             }
         },
-        "models.Payment": {
-            "type": "object",
-            "properties": {
-                "cash": {
-                    "type": "number"
-                },
-                "creditcard": {
-                    "type": "number"
-                },
-                "creditcarddetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.CreditCardPayment"
-                    }
-                },
-                "transfer": {
-                    "type": "number"
-                },
-                "transferdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.TransferPayment"
-                    }
-                }
-            }
-        },
         "models.PaymentMaster": {
             "type": "object",
             "required": [
@@ -23314,322 +26165,208 @@
         "models.Purchase": {
             "type": "object",
             "properties": {
-                "discountamount": {
-                    "type": "number"
+                "cashiercode": {
+                    "type": "string"
                 },
-                "docdate": {
+                "custcode": {
+                    "type": "string"
+                },
+                "custname": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Detail"
+                    }
+                },
+                "discountword": {
+                    "type": "string"
+                },
+                "docdatetime": {
                     "type": "string"
                 },
                 "docno": {
                     "type": "string"
                 },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PurchaseDetail"
-                    }
-                },
-                "member": {
-                    "$ref": "#/definitions/models.Member"
-                },
-                "payment": {
-                    "$ref": "#/definitions/models.Payment"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "taxamount": {
-                    "type": "number"
-                },
-                "taxbaseamount": {
-                    "type": "number"
-                },
-                "taxrate": {
-                    "type": "number"
-                },
-                "totalamount": {
-                    "type": "number"
-                }
-            }
-        },
-        "models.PurchaseDetail": {
-            "type": "object",
-            "required": [
-                "name1"
-            ],
-            "properties": {
-                "activated": {
-                    "description": "เปิดใช้งานอยู่",
-                    "type": "boolean"
-                },
-                "amount": {
-                    "type": "number"
-                },
-                "availablepatternoptions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.AvailablePatternOption"
-                    }
-                },
-                "barcode": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "barcodedescriptionfromproduct": {
-                    "type": "boolean"
-                },
-                "barcodedetail": {
-                    "$ref": "#/definitions/models.Barcode"
-                },
-                "barcodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Barcode"
-                    }
-                },
-                "category": {
-                    "$ref": "#/definitions/models.ProductCategory"
-                },
-                "categoryguid": {
-                    "description": "Guid กลุ่มสินค้า",
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "description1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "discountamount": {
-                    "type": "number"
-                },
-                "discounttext": {
+                "docrefdate": {
                     "type": "string"
                 },
-                "guidfixed": {
+                "docrefno": {
                     "type": "string"
                 },
-                "havepoint": {
-                    "type": "boolean"
-                },
-                "haveserialno": {
-                    "type": "boolean"
-                },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryImage"
-                    }
-                },
-                "isstockproduct": {
-                    "type": "boolean"
-                },
-                "itemcode": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemguid": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemsku": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemtype": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                },
-                "itemvat": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                },
-                "linenumber": {
+                "docreftype": {
                     "type": "integer"
                 },
-                "memberprice": {
-                    "type": "number"
+                "doctype": {
+                    "type": "integer"
                 },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "normalprice": {
-                    "type": "number"
-                },
-                "optionpatternmaster": {
+                "guidref": {
                     "type": "string"
                 },
-                "options": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Option"
-                    }
+                "inquirytype": {
+                    "type": "integer"
                 },
-                "ordercount": {
-                    "type": "integer",
-                    "maximum": 100
-                },
-                "orderminimum": {
-                    "type": "number"
-                },
-                "parid": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "price": {
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
-                    "type": "number"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "recommended": {
-                    "description": "สินค้าแนะนำ",
-                    "type": "boolean"
-                },
-                "shoprecommended": {
-                    "type": "boolean"
-                },
-                "starpercent": {
-                    "type": "number"
-                },
-                "stockproductguidref": {
+                "membercode": {
                     "type": "string"
                 },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryTag"
-                    }
+                "posid": {
+                    "type": "string"
                 },
-                "unit": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
+                "salecode": {
+                    "type": "string"
                 },
-                "unitcode": {
-                    "type": "string",
-                    "maxLength": 100
+                "salename": {
+                    "type": "string"
                 },
-                "unitcost": {
-                    "type": "string",
-                    "maxLength": 100
+                "status": {
+                    "type": "integer"
                 },
-                "unitstandard": {
-                    "type": "string",
-                    "maxLength": 100
+                "taxdocdate": {
+                    "type": "string"
                 },
-                "unituses": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.UnitUse"
-                    }
+                "taxdocno": {
+                    "type": "string"
                 },
-                "xorder": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
+                "totalaftervat": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                },
+                "totalbeforevat": {
+                    "type": "integer"
+                },
+                "totalcost": {
+                    "type": "integer"
+                },
+                "totaldiscount": {
+                    "type": "integer"
+                },
+                "totalexceptvat": {
+                    "type": "integer"
+                },
+                "totalvalue": {
+                    "type": "integer"
+                },
+                "totalvatvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "integer"
+                },
+                "vattype": {
+                    "type": "integer"
                 }
             }
         },
-        "models.PurchaseInfo": {
+        "models.PurchaseReturn": {
             "type": "object",
             "properties": {
-                "discountamount": {
-                    "type": "number"
+                "cashiercode": {
+                    "type": "string"
                 },
-                "docdate": {
+                "custcode": {
+                    "type": "string"
+                },
+                "custname": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Detail"
+                    }
+                },
+                "discountword": {
+                    "type": "string"
+                },
+                "docdatetime": {
                     "type": "string"
                 },
                 "docno": {
                     "type": "string"
                 },
-                "guidfixed": {
+                "docrefdate": {
                     "type": "string"
                 },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PurchaseDetail"
-                    }
+                "docrefno": {
+                    "type": "string"
                 },
-                "member": {
-                    "$ref": "#/definitions/models.Member"
+                "docreftype": {
+                    "type": "integer"
                 },
-                "payment": {
-                    "$ref": "#/definitions/models.Payment"
+                "doctype": {
+                    "type": "integer"
                 },
-                "sumamount": {
-                    "type": "number"
+                "guidref": {
+                    "type": "string"
                 },
-                "taxamount": {
-                    "type": "number"
+                "inquirytype": {
+                    "type": "integer"
                 },
-                "taxbaseamount": {
-                    "type": "number"
+                "membercode": {
+                    "type": "string"
                 },
-                "taxrate": {
+                "posid": {
+                    "type": "string"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxdocdate": {
+                    "type": "string"
+                },
+                "taxdocno": {
+                    "type": "string"
+                },
+                "totalaftervat": {
                     "type": "number"
                 },
                 "totalamount": {
                     "type": "number"
-                }
-            }
-        },
-        "models.PurchaseListPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PurchaseInfo"
-                    }
                 },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
+                "totalbeforevat": {
+                    "type": "integer"
                 },
-                "success": {
-                    "type": "boolean"
+                "totalcost": {
+                    "type": "integer"
+                },
+                "totaldiscount": {
+                    "type": "integer"
+                },
+                "totalexceptvat": {
+                    "type": "integer"
+                },
+                "totalvalue": {
+                    "type": "integer"
+                },
+                "totalvatvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "integer"
+                },
+                "vattype": {
+                    "type": "integer"
                 }
             }
         },
@@ -23848,339 +26585,211 @@
                 }
             }
         },
-        "models.Saleinvoice": {
+        "models.SaleInvoice": {
             "type": "object",
             "properties": {
-                "discountamount": {
-                    "type": "number"
+                "cashiercode": {
+                    "type": "string"
                 },
-                "docdate": {
-                    "type": "string",
-                    "format": "date-time"
+                "custcode": {
+                    "type": "string"
+                },
+                "custname": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Detail"
+                    }
+                },
+                "discountword": {
+                    "type": "string"
+                },
+                "docdatetime": {
+                    "type": "string"
                 },
                 "docno": {
                     "type": "string"
                 },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.SaleinvoiceDetail"
-                    }
-                },
-                "localdate": {
+                "docrefdate": {
                     "type": "string"
                 },
-                "localtime": {
+                "docrefno": {
                     "type": "string"
                 },
-                "member": {
-                    "$ref": "#/definitions/models.Member"
-                },
-                "payment": {
-                    "$ref": "#/definitions/models.Payment"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "taxamount": {
-                    "type": "number"
-                },
-                "taxbaseamount": {
-                    "type": "number"
-                },
-                "taxrate": {
-                    "type": "number"
-                },
-                "totalamount": {
-                    "type": "number"
-                }
-            }
-        },
-        "models.SaleinvoiceDetail": {
-            "type": "object",
-            "required": [
-                "name1"
-            ],
-            "properties": {
-                "activated": {
-                    "description": "เปิดใช้งานอยู่",
-                    "type": "boolean"
-                },
-                "amount": {
-                    "type": "number"
-                },
-                "availablepatternoptions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.AvailablePatternOption"
-                    }
-                },
-                "barcode": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "barcodedescriptionfromproduct": {
-                    "type": "boolean"
-                },
-                "barcodedetail": {
-                    "$ref": "#/definitions/models.Barcode"
-                },
-                "barcodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Barcode"
-                    }
-                },
-                "category": {
-                    "$ref": "#/definitions/models.ProductCategory"
-                },
-                "categoryguid": {
-                    "description": "Guid กลุ่มสินค้า",
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "description1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "discountamount": {
-                    "type": "number"
-                },
-                "discounttext": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "havepoint": {
-                    "type": "boolean"
-                },
-                "haveserialno": {
-                    "type": "boolean"
-                },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryImage"
-                    }
-                },
-                "isstockproduct": {
-                    "type": "boolean"
-                },
-                "itemcode": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemguid": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemsku": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemtype": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                },
-                "itemvat": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                },
-                "linenumber": {
+                "docreftype": {
                     "type": "integer"
                 },
-                "memberprice": {
-                    "type": "number"
+                "doctype": {
+                    "type": "integer"
                 },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "normalprice": {
-                    "type": "number"
-                },
-                "optionpatternmaster": {
+                "guidref": {
                     "type": "string"
                 },
-                "options": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Option"
-                    }
+                "inquirytype": {
+                    "type": "integer"
                 },
-                "ordercount": {
-                    "type": "integer",
-                    "maximum": 100
-                },
-                "orderminimum": {
-                    "type": "number"
-                },
-                "parid": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "price": {
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
-                    "type": "number"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "recommended": {
-                    "description": "สินค้าแนะนำ",
-                    "type": "boolean"
-                },
-                "shoprecommended": {
-                    "type": "boolean"
-                },
-                "starpercent": {
-                    "type": "number"
-                },
-                "stockproductguidref": {
+                "membercode": {
                     "type": "string"
                 },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryTag"
-                    }
-                },
-                "unit": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
-                },
-                "unitcode": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unitcost": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unitstandard": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unituses": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.UnitUse"
-                    }
-                },
-                "xorder": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                }
-            }
-        },
-        "models.SaleinvoiceInfo": {
-            "type": "object",
-            "properties": {
-                "discountamount": {
-                    "type": "number"
-                },
-                "docdate": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "docno": {
+                "posid": {
                     "type": "string"
                 },
-                "guidfixed": {
+                "salecode": {
                     "type": "string"
                 },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.SaleinvoiceDetail"
-                    }
-                },
-                "localdate": {
+                "salename": {
                     "type": "string"
                 },
-                "localtime": {
+                "status": {
+                    "type": "integer"
+                },
+                "taxdocdate": {
                     "type": "string"
                 },
-                "member": {
-                    "$ref": "#/definitions/models.Member"
+                "taxdocno": {
+                    "type": "string"
                 },
-                "payment": {
-                    "$ref": "#/definitions/models.Payment"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "taxamount": {
-                    "type": "number"
-                },
-                "taxbaseamount": {
-                    "type": "number"
-                },
-                "taxrate": {
+                "totalaftervat": {
                     "type": "number"
                 },
                 "totalamount": {
                     "type": "number"
+                },
+                "totalbeforevat": {
+                    "type": "integer"
+                },
+                "totalcost": {
+                    "type": "integer"
+                },
+                "totaldiscount": {
+                    "type": "integer"
+                },
+                "totalexceptvat": {
+                    "type": "integer"
+                },
+                "totalvalue": {
+                    "type": "integer"
+                },
+                "totalvatvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "integer"
+                },
+                "vattype": {
+                    "type": "integer"
                 }
             }
         },
-        "models.SaleinvoiceListPageResponse": {
+        "models.SaleInvoiceReturn": {
             "type": "object",
             "properties": {
-                "data": {
+                "cashiercode": {
+                    "type": "string"
+                },
+                "custcode": {
+                    "type": "string"
+                },
+                "custname": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SaleinvoiceInfo"
+                        "$ref": "#/definitions/models.NameX"
                     }
                 },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Detail"
+                    }
                 },
-                "success": {
-                    "type": "boolean"
+                "discountword": {
+                    "type": "string"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "docrefdate": {
+                    "type": "string"
+                },
+                "docrefno": {
+                    "type": "string"
+                },
+                "docreftype": {
+                    "type": "integer"
+                },
+                "doctype": {
+                    "type": "integer"
+                },
+                "guidref": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "membercode": {
+                    "type": "string"
+                },
+                "posid": {
+                    "type": "string"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxdocdate": {
+                    "type": "string"
+                },
+                "taxdocno": {
+                    "type": "string"
+                },
+                "totalaftervat": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                },
+                "totalbeforevat": {
+                    "type": "integer"
+                },
+                "totalcost": {
+                    "type": "integer"
+                },
+                "totaldiscount": {
+                    "type": "integer"
+                },
+                "totalexceptvat": {
+                    "type": "integer"
+                },
+                "totalvalue": {
+                    "type": "integer"
+                },
+                "totalvatvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "integer"
+                },
+                "vattype": {
+                    "type": "integer"
                 }
             }
         },
@@ -24649,6 +27258,422 @@
                 }
             }
         },
+        "models.StockAdjustment": {
+            "type": "object",
+            "properties": {
+                "cashiercode": {
+                    "type": "string"
+                },
+                "custcode": {
+                    "type": "string"
+                },
+                "custname": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Detail"
+                    }
+                },
+                "discountword": {
+                    "type": "string"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "docrefdate": {
+                    "type": "string"
+                },
+                "docrefno": {
+                    "type": "string"
+                },
+                "docreftype": {
+                    "type": "integer"
+                },
+                "doctype": {
+                    "type": "integer"
+                },
+                "guidref": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "membercode": {
+                    "type": "string"
+                },
+                "posid": {
+                    "type": "string"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxdocdate": {
+                    "type": "string"
+                },
+                "taxdocno": {
+                    "type": "string"
+                },
+                "totalaftervat": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                },
+                "totalbeforevat": {
+                    "type": "integer"
+                },
+                "totalcost": {
+                    "type": "integer"
+                },
+                "totaldiscount": {
+                    "type": "integer"
+                },
+                "totalexceptvat": {
+                    "type": "integer"
+                },
+                "totalvalue": {
+                    "type": "integer"
+                },
+                "totalvatvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "integer"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.StockPickupProduct": {
+            "type": "object",
+            "properties": {
+                "cashiercode": {
+                    "type": "string"
+                },
+                "custcode": {
+                    "type": "string"
+                },
+                "custname": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Detail"
+                    }
+                },
+                "discountword": {
+                    "type": "string"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "docrefdate": {
+                    "type": "string"
+                },
+                "docrefno": {
+                    "type": "string"
+                },
+                "docreftype": {
+                    "type": "integer"
+                },
+                "doctype": {
+                    "type": "integer"
+                },
+                "guidref": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "membercode": {
+                    "type": "string"
+                },
+                "posid": {
+                    "type": "string"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxdocdate": {
+                    "type": "string"
+                },
+                "taxdocno": {
+                    "type": "string"
+                },
+                "totalaftervat": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                },
+                "totalbeforevat": {
+                    "type": "integer"
+                },
+                "totalcost": {
+                    "type": "integer"
+                },
+                "totaldiscount": {
+                    "type": "integer"
+                },
+                "totalexceptvat": {
+                    "type": "integer"
+                },
+                "totalvalue": {
+                    "type": "integer"
+                },
+                "totalvatvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "integer"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.StockReceiveProduct": {
+            "type": "object",
+            "properties": {
+                "cashiercode": {
+                    "type": "string"
+                },
+                "custcode": {
+                    "type": "string"
+                },
+                "custname": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Detail"
+                    }
+                },
+                "discountword": {
+                    "type": "string"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "docrefdate": {
+                    "type": "string"
+                },
+                "docrefno": {
+                    "type": "string"
+                },
+                "docreftype": {
+                    "type": "integer"
+                },
+                "doctype": {
+                    "type": "integer"
+                },
+                "guidref": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "membercode": {
+                    "type": "string"
+                },
+                "posid": {
+                    "type": "string"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxdocdate": {
+                    "type": "string"
+                },
+                "taxdocno": {
+                    "type": "string"
+                },
+                "totalaftervat": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                },
+                "totalbeforevat": {
+                    "type": "integer"
+                },
+                "totalcost": {
+                    "type": "integer"
+                },
+                "totaldiscount": {
+                    "type": "integer"
+                },
+                "totalexceptvat": {
+                    "type": "integer"
+                },
+                "totalvalue": {
+                    "type": "integer"
+                },
+                "totalvatvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "integer"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.StockReturnProduct": {
+            "type": "object",
+            "properties": {
+                "cashiercode": {
+                    "type": "string"
+                },
+                "custcode": {
+                    "type": "string"
+                },
+                "custname": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Detail"
+                    }
+                },
+                "discountword": {
+                    "type": "string"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "docrefdate": {
+                    "type": "string"
+                },
+                "docrefno": {
+                    "type": "string"
+                },
+                "docreftype": {
+                    "type": "integer"
+                },
+                "doctype": {
+                    "type": "integer"
+                },
+                "guidref": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "membercode": {
+                    "type": "string"
+                },
+                "posid": {
+                    "type": "string"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxdocdate": {
+                    "type": "string"
+                },
+                "taxdocno": {
+                    "type": "string"
+                },
+                "totalaftervat": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                },
+                "totalbeforevat": {
+                    "type": "integer"
+                },
+                "totalcost": {
+                    "type": "integer"
+                },
+                "totaldiscount": {
+                    "type": "integer"
+                },
+                "totalexceptvat": {
+                    "type": "integer"
+                },
+                "totalvalue": {
+                    "type": "integer"
+                },
+                "totalvatvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "integer"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.Storefront": {
             "type": "object",
             "required": [
@@ -24833,17 +27858,6 @@
                 },
                 "total": {
                     "type": "integer"
-                }
-            }
-        },
-        "models.TransferPayment": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "number"
-                },
-                "bankcode": {
-                    "type": "string"
                 }
             }
         },

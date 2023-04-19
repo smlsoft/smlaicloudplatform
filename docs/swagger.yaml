@@ -666,19 +666,6 @@ definitions:
       comment:
         type: string
     type: object
-  models.CreditCardPayment:
-    properties:
-      amount:
-        type: number
-      approvedcode:
-        type: string
-      cardnumber:
-        type: string
-      cardtype:
-        type: string
-      remark:
-        type: string
-    type: object
   models.CreditorGroup:
     properties:
       groupcode:
@@ -832,6 +819,99 @@ definitions:
         type: string
     required:
     - names
+    type: object
+  models.Detail:
+    properties:
+      averagecost:
+        type: integer
+      barcode:
+        type: string
+      calcflag:
+        type: integer
+      discount:
+        type: string
+      discountamount:
+        type: integer
+      dividevalue:
+        type: integer
+      docdatetime:
+        type: string
+      inquirytype:
+        type: integer
+      ispos:
+        type: integer
+      itemcode:
+        type: string
+      itemguid:
+        type: string
+      itemname:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      itemtype:
+        type: integer
+      laststatus:
+        type: integer
+      linenumber:
+        type: integer
+      locationcode:
+        type: string
+      locationnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      multiunit:
+        type: boolean
+      price:
+        type: integer
+      priceexcludevat:
+        type: integer
+      qty:
+        type: integer
+      remark:
+        type: string
+      shelfcode:
+        type: string
+      standvalue:
+        type: integer
+      sumamount:
+        type: integer
+      sumamountexcludevat:
+        type: integer
+      sumofcost:
+        type: integer
+      taxtype:
+        type: integer
+      tolocationcode:
+        type: string
+      tolocationnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      totalqty:
+        type: integer
+      totalvaluevat:
+        type: number
+      towhcode:
+        type: string
+      towhnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      unitcode:
+        type: string
+      unitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      vattype:
+        type: integer
+      whcode:
+        type: string
+      whnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
     type: object
   models.DocumentImage:
     properties:
@@ -2344,23 +2424,6 @@ definitions:
       totalPage:
         type: integer
     type: object
-  models.Payment:
-    properties:
-      cash:
-        type: number
-      creditcard:
-        type: number
-      creditcarddetails:
-        items:
-          $ref: '#/definitions/models.CreditCardPayment'
-        type: array
-      transfer:
-        type: number
-      transferdetails:
-        items:
-          $ref: '#/definitions/models.TransferPayment'
-        type: array
-    type: object
   models.PaymentMaster:
     properties:
       countrycode:
@@ -2826,226 +2889,141 @@ definitions:
     type: object
   models.Purchase:
     properties:
-      discountamount:
-        type: number
-      docdate:
+      cashiercode:
+        type: string
+      custcode:
+        type: string
+      custname:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      details:
+        items:
+          $ref: '#/definitions/models.Detail'
+        type: array
+      discountword:
+        type: string
+      docdatetime:
         type: string
       docno:
         type: string
-      items:
-        items:
-          $ref: '#/definitions/models.PurchaseDetail'
-        type: array
-      member:
-        $ref: '#/definitions/models.Member'
-      payment:
-        $ref: '#/definitions/models.Payment'
-      sumamount:
-        type: number
-      taxamount:
-        type: number
-      taxbaseamount:
-        type: number
-      taxrate:
+      docrefdate:
+        type: string
+      docrefno:
+        type: string
+      docreftype:
+        type: integer
+      doctype:
+        type: integer
+      guidref:
+        type: string
+      inquirytype:
+        type: integer
+      membercode:
+        type: string
+      posid:
+        type: string
+      salecode:
+        type: string
+      salename:
+        type: string
+      status:
+        type: integer
+      taxdocdate:
+        type: string
+      taxdocno:
+        type: string
+      totalaftervat:
         type: number
       totalamount:
         type: number
+      totalbeforevat:
+        type: integer
+      totalcost:
+        type: integer
+      totaldiscount:
+        type: integer
+      totalexceptvat:
+        type: integer
+      totalvalue:
+        type: integer
+      totalvatvalue:
+        type: number
+      transflag:
+        type: integer
+      vatrate:
+        type: integer
+      vattype:
+        type: integer
     type: object
-  models.PurchaseDetail:
+  models.PurchaseReturn:
     properties:
-      activated:
-        description: เปิดใช้งานอยู่
-        type: boolean
-      amount:
-        type: number
-      availablepatternoptions:
+      cashiercode:
+        type: string
+      custcode:
+        type: string
+      custname:
         items:
-          $ref: '#/definitions/models.AvailablePatternOption'
+          $ref: '#/definitions/models.NameX'
         type: array
-      barcode:
-        maxLength: 100
-        type: string
-      barcodedescriptionfromproduct:
-        type: boolean
-      barcodedetail:
-        $ref: '#/definitions/models.Barcode'
-      barcodes:
+      details:
         items:
-          $ref: '#/definitions/models.Barcode'
+          $ref: '#/definitions/models.Detail'
         type: array
-      category:
-        $ref: '#/definitions/models.ProductCategory'
-      categoryguid:
-        description: Guid กลุ่มสินค้า
-        maxLength: 100
+      discountword:
         type: string
-      description1:
-        maxLength: 255
-        type: string
-      description2:
-        maxLength: 255
-        type: string
-      description3:
-        maxLength: 255
-        type: string
-      description4:
-        maxLength: 255
-        type: string
-      description5:
-        maxLength: 255
-        type: string
-      discountamount:
-        type: number
-      discounttext:
-        type: string
-      guidfixed:
-        type: string
-      havepoint:
-        type: boolean
-      haveserialno:
-        type: boolean
-      images:
-        items:
-          $ref: '#/definitions/models.InventoryImage'
-        type: array
-      isstockproduct:
-        type: boolean
-      itemcode:
-        maxLength: 50
-        type: string
-      itemguid:
-        maxLength: 50
-        type: string
-      itemsku:
-        maxLength: 50
-        type: string
-      itemtype:
-        maximum: 125
-        minimum: -125
-        type: integer
-      itemvat:
-        maximum: 125
-        minimum: -125
-        type: integer
-      linenumber:
-        type: integer
-      memberprice:
-        type: number
-      multiunit:
-        type: boolean
-      name1:
-        maxLength: 255
-        type: string
-      name2:
-        maxLength: 255
-        type: string
-      name3:
-        maxLength: 255
-        type: string
-      name4:
-        maxLength: 255
-        type: string
-      name5:
-        maxLength: 255
-        type: string
-      normalprice:
-        type: number
-      optionpatternmaster:
-        type: string
-      options:
-        items:
-          $ref: '#/definitions/models.Option'
-        type: array
-      ordercount:
-        maximum: 100
-        type: integer
-      orderminimum:
-        type: number
-      parid:
-        maxLength: 50
-        type: string
-      price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
-      qty:
-        type: number
-      recommended:
-        description: สินค้าแนะนำ
-        type: boolean
-      shoprecommended:
-        type: boolean
-      starpercent:
-        type: number
-      stockproductguidref:
-        type: string
-      tags:
-        items:
-          $ref: '#/definitions/models.InventoryTag'
-        type: array
-      unit:
-        $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit'
-      unitcode:
-        maxLength: 100
-        type: string
-      unitcost:
-        maxLength: 100
-        type: string
-      unitstandard:
-        maxLength: 100
-        type: string
-      unituses:
-        items:
-          $ref: '#/definitions/models.UnitUse'
-        type: array
-      xorder:
-        maximum: 125
-        minimum: -125
-        type: integer
-    required:
-    - name1
-    type: object
-  models.PurchaseInfo:
-    properties:
-      discountamount:
-        type: number
-      docdate:
+      docdatetime:
         type: string
       docno:
         type: string
-      guidfixed:
+      docrefdate:
         type: string
-      items:
-        items:
-          $ref: '#/definitions/models.PurchaseDetail'
-        type: array
-      member:
-        $ref: '#/definitions/models.Member'
-      payment:
-        $ref: '#/definitions/models.Payment'
-      sumamount:
-        type: number
-      taxamount:
-        type: number
-      taxbaseamount:
-        type: number
-      taxrate:
+      docrefno:
+        type: string
+      docreftype:
+        type: integer
+      doctype:
+        type: integer
+      guidref:
+        type: string
+      inquirytype:
+        type: integer
+      membercode:
+        type: string
+      posid:
+        type: string
+      salecode:
+        type: string
+      salename:
+        type: string
+      status:
+        type: integer
+      taxdocdate:
+        type: string
+      taxdocno:
+        type: string
+      totalaftervat:
         type: number
       totalamount:
         type: number
-    type: object
-  models.PurchaseListPageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/models.PurchaseInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
+      totalbeforevat:
+        type: integer
+      totalcost:
+        type: integer
+      totaldiscount:
+        type: integer
+      totalexceptvat:
+        type: integer
+      totalvalue:
+        type: integer
+      totalvatvalue:
+        type: number
+      transflag:
+        type: integer
+      vatrate:
+        type: integer
+      vattype:
+        type: integer
     type: object
   models.QrPayment:
     properties:
@@ -3194,238 +3172,143 @@ definitions:
     - collection
     - keyid
     type: object
-  models.Saleinvoice:
+  models.SaleInvoice:
     properties:
-      discountamount:
-        type: number
-      docdate:
-        format: date-time
+      cashiercode:
+        type: string
+      custcode:
+        type: string
+      custname:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      details:
+        items:
+          $ref: '#/definitions/models.Detail'
+        type: array
+      discountword:
+        type: string
+      docdatetime:
         type: string
       docno:
         type: string
-      items:
-        items:
-          $ref: '#/definitions/models.SaleinvoiceDetail'
-        type: array
-      localdate:
+      docrefdate:
         type: string
-      localtime:
+      docrefno:
         type: string
-      member:
-        $ref: '#/definitions/models.Member'
-      payment:
-        $ref: '#/definitions/models.Payment'
-      sumamount:
-        type: number
-      taxamount:
-        type: number
-      taxbaseamount:
-        type: number
-      taxrate:
+      docreftype:
+        type: integer
+      doctype:
+        type: integer
+      guidref:
+        type: string
+      inquirytype:
+        type: integer
+      membercode:
+        type: string
+      posid:
+        type: string
+      salecode:
+        type: string
+      salename:
+        type: string
+      status:
+        type: integer
+      taxdocdate:
+        type: string
+      taxdocno:
+        type: string
+      totalaftervat:
         type: number
       totalamount:
         type: number
+      totalbeforevat:
+        type: integer
+      totalcost:
+        type: integer
+      totaldiscount:
+        type: integer
+      totalexceptvat:
+        type: integer
+      totalvalue:
+        type: integer
+      totalvatvalue:
+        type: number
+      transflag:
+        type: integer
+      vatrate:
+        type: integer
+      vattype:
+        type: integer
     type: object
-  models.SaleinvoiceDetail:
+  models.SaleInvoiceReturn:
     properties:
-      activated:
-        description: เปิดใช้งานอยู่
-        type: boolean
-      amount:
-        type: number
-      availablepatternoptions:
+      cashiercode:
+        type: string
+      custcode:
+        type: string
+      custname:
         items:
-          $ref: '#/definitions/models.AvailablePatternOption'
+          $ref: '#/definitions/models.NameX'
         type: array
-      barcode:
-        maxLength: 100
-        type: string
-      barcodedescriptionfromproduct:
-        type: boolean
-      barcodedetail:
-        $ref: '#/definitions/models.Barcode'
-      barcodes:
+      details:
         items:
-          $ref: '#/definitions/models.Barcode'
+          $ref: '#/definitions/models.Detail'
         type: array
-      category:
-        $ref: '#/definitions/models.ProductCategory'
-      categoryguid:
-        description: Guid กลุ่มสินค้า
-        maxLength: 100
+      discountword:
         type: string
-      description1:
-        maxLength: 255
-        type: string
-      description2:
-        maxLength: 255
-        type: string
-      description3:
-        maxLength: 255
-        type: string
-      description4:
-        maxLength: 255
-        type: string
-      description5:
-        maxLength: 255
-        type: string
-      discountamount:
-        type: number
-      discounttext:
-        type: string
-      guidfixed:
-        type: string
-      havepoint:
-        type: boolean
-      haveserialno:
-        type: boolean
-      images:
-        items:
-          $ref: '#/definitions/models.InventoryImage'
-        type: array
-      isstockproduct:
-        type: boolean
-      itemcode:
-        maxLength: 50
-        type: string
-      itemguid:
-        maxLength: 50
-        type: string
-      itemsku:
-        maxLength: 50
-        type: string
-      itemtype:
-        maximum: 125
-        minimum: -125
-        type: integer
-      itemvat:
-        maximum: 125
-        minimum: -125
-        type: integer
-      linenumber:
-        type: integer
-      memberprice:
-        type: number
-      multiunit:
-        type: boolean
-      name1:
-        maxLength: 255
-        type: string
-      name2:
-        maxLength: 255
-        type: string
-      name3:
-        maxLength: 255
-        type: string
-      name4:
-        maxLength: 255
-        type: string
-      name5:
-        maxLength: 255
-        type: string
-      normalprice:
-        type: number
-      optionpatternmaster:
-        type: string
-      options:
-        items:
-          $ref: '#/definitions/models.Option'
-        type: array
-      ordercount:
-        maximum: 100
-        type: integer
-      orderminimum:
-        type: number
-      parid:
-        maxLength: 50
-        type: string
-      price:
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
-        type: number
-      qty:
-        type: number
-      recommended:
-        description: สินค้าแนะนำ
-        type: boolean
-      shoprecommended:
-        type: boolean
-      starpercent:
-        type: number
-      stockproductguidref:
-        type: string
-      tags:
-        items:
-          $ref: '#/definitions/models.InventoryTag'
-        type: array
-      unit:
-        $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit'
-      unitcode:
-        maxLength: 100
-        type: string
-      unitcost:
-        maxLength: 100
-        type: string
-      unitstandard:
-        maxLength: 100
-        type: string
-      unituses:
-        items:
-          $ref: '#/definitions/models.UnitUse'
-        type: array
-      xorder:
-        maximum: 125
-        minimum: -125
-        type: integer
-    required:
-    - name1
-    type: object
-  models.SaleinvoiceInfo:
-    properties:
-      discountamount:
-        type: number
-      docdate:
-        format: date-time
+      docdatetime:
         type: string
       docno:
         type: string
-      guidfixed:
+      docrefdate:
         type: string
-      items:
-        items:
-          $ref: '#/definitions/models.SaleinvoiceDetail'
-        type: array
-      localdate:
+      docrefno:
         type: string
-      localtime:
+      docreftype:
+        type: integer
+      doctype:
+        type: integer
+      guidref:
         type: string
-      member:
-        $ref: '#/definitions/models.Member'
-      payment:
-        $ref: '#/definitions/models.Payment'
-      sumamount:
-        type: number
-      taxamount:
-        type: number
-      taxbaseamount:
-        type: number
-      taxrate:
+      inquirytype:
+        type: integer
+      membercode:
+        type: string
+      posid:
+        type: string
+      salecode:
+        type: string
+      salename:
+        type: string
+      status:
+        type: integer
+      taxdocdate:
+        type: string
+      taxdocno:
+        type: string
+      totalaftervat:
         type: number
       totalamount:
         type: number
-    type: object
-  models.SaleinvoiceListPageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/models.SaleinvoiceInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
+      totalbeforevat:
+        type: integer
+      totalcost:
+        type: integer
+      totaldiscount:
+        type: integer
+      totalexceptvat:
+        type: integer
+      totalvalue:
+        type: integer
+      totalvatvalue:
+        type: number
+      transflag:
+        type: integer
+      vatrate:
+        type: integer
+      vattype:
+        type: integer
     type: object
   models.Shelf:
     properties:
@@ -3734,6 +3617,282 @@ definitions:
       status:
         type: integer
     type: object
+  models.StockAdjustment:
+    properties:
+      cashiercode:
+        type: string
+      custcode:
+        type: string
+      custname:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      details:
+        items:
+          $ref: '#/definitions/models.Detail'
+        type: array
+      discountword:
+        type: string
+      docdatetime:
+        type: string
+      docno:
+        type: string
+      docrefdate:
+        type: string
+      docrefno:
+        type: string
+      docreftype:
+        type: integer
+      doctype:
+        type: integer
+      guidref:
+        type: string
+      inquirytype:
+        type: integer
+      membercode:
+        type: string
+      posid:
+        type: string
+      salecode:
+        type: string
+      salename:
+        type: string
+      status:
+        type: integer
+      taxdocdate:
+        type: string
+      taxdocno:
+        type: string
+      totalaftervat:
+        type: number
+      totalamount:
+        type: number
+      totalbeforevat:
+        type: integer
+      totalcost:
+        type: integer
+      totaldiscount:
+        type: integer
+      totalexceptvat:
+        type: integer
+      totalvalue:
+        type: integer
+      totalvatvalue:
+        type: number
+      transflag:
+        type: integer
+      vatrate:
+        type: integer
+      vattype:
+        type: integer
+    type: object
+  models.StockPickupProduct:
+    properties:
+      cashiercode:
+        type: string
+      custcode:
+        type: string
+      custname:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      details:
+        items:
+          $ref: '#/definitions/models.Detail'
+        type: array
+      discountword:
+        type: string
+      docdatetime:
+        type: string
+      docno:
+        type: string
+      docrefdate:
+        type: string
+      docrefno:
+        type: string
+      docreftype:
+        type: integer
+      doctype:
+        type: integer
+      guidref:
+        type: string
+      inquirytype:
+        type: integer
+      membercode:
+        type: string
+      posid:
+        type: string
+      salecode:
+        type: string
+      salename:
+        type: string
+      status:
+        type: integer
+      taxdocdate:
+        type: string
+      taxdocno:
+        type: string
+      totalaftervat:
+        type: number
+      totalamount:
+        type: number
+      totalbeforevat:
+        type: integer
+      totalcost:
+        type: integer
+      totaldiscount:
+        type: integer
+      totalexceptvat:
+        type: integer
+      totalvalue:
+        type: integer
+      totalvatvalue:
+        type: number
+      transflag:
+        type: integer
+      vatrate:
+        type: integer
+      vattype:
+        type: integer
+    type: object
+  models.StockReceiveProduct:
+    properties:
+      cashiercode:
+        type: string
+      custcode:
+        type: string
+      custname:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      details:
+        items:
+          $ref: '#/definitions/models.Detail'
+        type: array
+      discountword:
+        type: string
+      docdatetime:
+        type: string
+      docno:
+        type: string
+      docrefdate:
+        type: string
+      docrefno:
+        type: string
+      docreftype:
+        type: integer
+      doctype:
+        type: integer
+      guidref:
+        type: string
+      inquirytype:
+        type: integer
+      membercode:
+        type: string
+      posid:
+        type: string
+      salecode:
+        type: string
+      salename:
+        type: string
+      status:
+        type: integer
+      taxdocdate:
+        type: string
+      taxdocno:
+        type: string
+      totalaftervat:
+        type: number
+      totalamount:
+        type: number
+      totalbeforevat:
+        type: integer
+      totalcost:
+        type: integer
+      totaldiscount:
+        type: integer
+      totalexceptvat:
+        type: integer
+      totalvalue:
+        type: integer
+      totalvatvalue:
+        type: number
+      transflag:
+        type: integer
+      vatrate:
+        type: integer
+      vattype:
+        type: integer
+    type: object
+  models.StockReturnProduct:
+    properties:
+      cashiercode:
+        type: string
+      custcode:
+        type: string
+      custname:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      details:
+        items:
+          $ref: '#/definitions/models.Detail'
+        type: array
+      discountword:
+        type: string
+      docdatetime:
+        type: string
+      docno:
+        type: string
+      docrefdate:
+        type: string
+      docrefno:
+        type: string
+      docreftype:
+        type: integer
+      doctype:
+        type: integer
+      guidref:
+        type: string
+      inquirytype:
+        type: integer
+      membercode:
+        type: string
+      posid:
+        type: string
+      salecode:
+        type: string
+      salename:
+        type: string
+      status:
+        type: integer
+      taxdocdate:
+        type: string
+      taxdocno:
+        type: string
+      totalaftervat:
+        type: number
+      totalamount:
+        type: number
+      totalbeforevat:
+        type: integer
+      totalcost:
+        type: integer
+      totaldiscount:
+        type: integer
+      totalexceptvat:
+        type: integer
+      totalvalue:
+        type: integer
+      totalvatvalue:
+        type: number
+      transflag:
+        type: integer
+      vatrate:
+        type: integer
+      vattype:
+        type: integer
+    type: object
   models.Storefront:
     properties:
       devices:
@@ -3857,13 +4016,6 @@ definitions:
         type: integer
       total:
         type: integer
-    type: object
-  models.TransferPayment:
-    properties:
-      amount:
-        type: number
-      bankcode:
-        type: string
     type: object
   models.TrialBalanceSheetAccountDetail:
     properties:
@@ -12148,139 +12300,6 @@ paths:
       - AccessToken: []
       tags:
       - Authentication
-  /purchase:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.PurchaseListPageResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Purchase
-    post:
-      consumes:
-      - application/json
-      description: Create Purchase Transaction
-      parameters:
-      - description: payload
-        in: body
-        name: Purchase
-        required: true
-        schema:
-          $ref: '#/definitions/models.Purchase'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Purchase
-  /purchase/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Tempolaty Delete  Purchase Transaction
-      parameters:
-      - description: Purchase Doc ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Purchase
-    get:
-      consumes:
-      - application/json
-      description: After Purchare Doc Create system will be return Id of Purchase
-        Document. this Id can get Purchase Document in this service.
-      parameters:
-      - description: Document ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.PurchaseInfo'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Purchase
-    put:
-      consumes:
-      - application/json
-      description: Update Inventory
-      parameters:
-      - description: Purchase Document ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: payload
-        in: body
-        name: Purchase
-        required: true
-        schema:
-          $ref: '#/definitions/models.Purchase'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Purchase
   /register:
     post:
       consumes:
@@ -13657,139 +13676,6 @@ paths:
       - AccessToken: []
       tags:
       - Restaurant
-  /saleinvoice:
-    get:
-      consumes:
-      - application/json
-      description: List Sale Invoice Document
-      parameters:
-      - description: Search Value
-        in: query
-        name: q
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Size
-        in: query
-        name: limit
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.SaleinvoiceListPageResponse'
-            type: array
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Sale Invoice
-    post:
-      consumes:
-      - application/json
-      description: Create Inventory
-      parameters:
-      - description: Saleinvoice
-        in: body
-        name: Saleinvoice
-        required: true
-        schema:
-          $ref: '#/definitions/models.Saleinvoice'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Sale Invoice
-  /saleinvoice/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete Document
-      parameters:
-      - description: Document ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Sale Invoice
-    get:
-      consumes:
-      - application/json
-      description: get struct array by ID
-      parameters:
-      - description: Inventory ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.SaleinvoiceInfo'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Sale Invoice
-    put:
-      consumes:
-      - application/json
-      description: Update Sale Invoice
-      parameters:
-      - description: Document ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Body
-        in: body
-        name: Invoice
-        required: true
-        schema:
-          $ref: '#/definitions/models.Saleinvoice'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Sale Invoice
   /select-shop:
     post:
       consumes:
@@ -15297,6 +15183,1982 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       tags:
       - Authentication
+  /transaction/purchase:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Purchase
+      parameters:
+      - description: Purchase GUIDs
+        in: body
+        name: Purchase
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Purchase
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Purchase
+    post:
+      consumes:
+      - application/json
+      description: Create Purchase
+      parameters:
+      - description: Purchase
+        in: body
+        name: Purchase
+        required: true
+        schema:
+          $ref: '#/definitions/models.Purchase'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Purchase
+  /transaction/purchase-return:
+    delete:
+      consumes:
+      - application/json
+      description: Delete PurchaseReturn
+      parameters:
+      - description: PurchaseReturn GUIDs
+        in: body
+        name: PurchaseReturn
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - PurchaseReturn
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - PurchaseReturn
+    post:
+      consumes:
+      - application/json
+      description: Create PurchaseReturn
+      parameters:
+      - description: PurchaseReturn
+        in: body
+        name: PurchaseReturn
+        required: true
+        schema:
+          $ref: '#/definitions/models.PurchaseReturn'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - PurchaseReturn
+  /transaction/purchase-return/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete PurchaseReturn
+      parameters:
+      - description: PurchaseReturn ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - PurchaseReturn
+    get:
+      consumes:
+      - application/json
+      description: get PurchaseReturn info by guidfixed
+      parameters:
+      - description: PurchaseReturn guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - PurchaseReturn
+    put:
+      consumes:
+      - application/json
+      description: Update PurchaseReturn
+      parameters:
+      - description: PurchaseReturn ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: PurchaseReturn
+        in: body
+        name: PurchaseReturn
+        required: true
+        schema:
+          $ref: '#/definitions/models.PurchaseReturn'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - PurchaseReturn
+  /transaction/purchase-return/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create PurchaseReturn
+      parameters:
+      - description: PurchaseReturn
+        in: body
+        name: PurchaseReturn
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.PurchaseReturn'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - PurchaseReturn
+  /transaction/purchase-return/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get PurchaseReturn info by Code
+      parameters:
+      - description: PurchaseReturn Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - PurchaseReturn
+  /transaction/purchase-return/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - PurchaseReturn
+  /transaction/purchase/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Purchase
+      parameters:
+      - description: Purchase ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Purchase
+    get:
+      consumes:
+      - application/json
+      description: get Purchase info by guidfixed
+      parameters:
+      - description: Purchase guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Purchase
+    put:
+      consumes:
+      - application/json
+      description: Update Purchase
+      parameters:
+      - description: Purchase ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Purchase
+        in: body
+        name: Purchase
+        required: true
+        schema:
+          $ref: '#/definitions/models.Purchase'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Purchase
+  /transaction/purchase/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Purchase
+      parameters:
+      - description: Purchase
+        in: body
+        name: Purchase
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Purchase'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Purchase
+  /transaction/purchase/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get Purchase info by Code
+      parameters:
+      - description: Purchase Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Purchase
+  /transaction/purchase/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Purchase
+  /transaction/sale-invoice:
+    delete:
+      consumes:
+      - application/json
+      description: Delete SaleInvoice
+      parameters:
+      - description: SaleInvoice GUIDs
+        in: body
+        name: SaleInvoice
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoice
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoice
+    post:
+      consumes:
+      - application/json
+      description: Create SaleInvoice
+      parameters:
+      - description: SaleInvoice
+        in: body
+        name: SaleInvoice
+        required: true
+        schema:
+          $ref: '#/definitions/models.SaleInvoice'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoice
+  /transaction/sale-invoice-return:
+    delete:
+      consumes:
+      - application/json
+      description: Delete SaleInvoiceReturn
+      parameters:
+      - description: SaleInvoiceReturn GUIDs
+        in: body
+        name: SaleInvoiceReturn
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoiceReturn
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoiceReturn
+    post:
+      consumes:
+      - application/json
+      description: Create SaleInvoiceReturn
+      parameters:
+      - description: SaleInvoiceReturn
+        in: body
+        name: SaleInvoiceReturn
+        required: true
+        schema:
+          $ref: '#/definitions/models.SaleInvoiceReturn'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoiceReturn
+  /transaction/sale-invoice-return/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete SaleInvoiceReturn
+      parameters:
+      - description: SaleInvoiceReturn ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoiceReturn
+    get:
+      consumes:
+      - application/json
+      description: get SaleInvoiceReturn info by guidfixed
+      parameters:
+      - description: SaleInvoiceReturn guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoiceReturn
+    put:
+      consumes:
+      - application/json
+      description: Update SaleInvoiceReturn
+      parameters:
+      - description: SaleInvoiceReturn ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: SaleInvoiceReturn
+        in: body
+        name: SaleInvoiceReturn
+        required: true
+        schema:
+          $ref: '#/definitions/models.SaleInvoiceReturn'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoiceReturn
+  /transaction/sale-invoice-return/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create SaleInvoiceReturn
+      parameters:
+      - description: SaleInvoiceReturn
+        in: body
+        name: SaleInvoiceReturn
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.SaleInvoiceReturn'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoiceReturn
+  /transaction/sale-invoice-return/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get SaleInvoiceReturn info by Code
+      parameters:
+      - description: SaleInvoiceReturn Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoiceReturn
+  /transaction/sale-invoice-return/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoiceReturn
+  /transaction/sale-invoice/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete SaleInvoice
+      parameters:
+      - description: SaleInvoice ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoice
+    get:
+      consumes:
+      - application/json
+      description: get SaleInvoice info by guidfixed
+      parameters:
+      - description: SaleInvoice guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoice
+    put:
+      consumes:
+      - application/json
+      description: Update SaleInvoice
+      parameters:
+      - description: SaleInvoice ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: SaleInvoice
+        in: body
+        name: SaleInvoice
+        required: true
+        schema:
+          $ref: '#/definitions/models.SaleInvoice'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoice
+  /transaction/sale-invoice/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create SaleInvoice
+      parameters:
+      - description: SaleInvoice
+        in: body
+        name: SaleInvoice
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.SaleInvoice'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoice
+  /transaction/sale-invoice/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get SaleInvoice info by Code
+      parameters:
+      - description: SaleInvoice Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoice
+  /transaction/sale-invoice/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleInvoice
+  /transaction/stock-adjustment:
+    delete:
+      consumes:
+      - application/json
+      description: Delete StockAdjustment
+      parameters:
+      - description: StockAdjustment GUIDs
+        in: body
+        name: StockAdjustment
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockAdjustment
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockAdjustment
+    post:
+      consumes:
+      - application/json
+      description: Create StockAdjustment
+      parameters:
+      - description: StockAdjustment
+        in: body
+        name: StockAdjustment
+        required: true
+        schema:
+          $ref: '#/definitions/models.StockAdjustment'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockAdjustment
+  /transaction/stock-adjustment/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete StockAdjustment
+      parameters:
+      - description: StockAdjustment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockAdjustment
+    get:
+      consumes:
+      - application/json
+      description: get StockAdjustment info by guidfixed
+      parameters:
+      - description: StockAdjustment guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockAdjustment
+    put:
+      consumes:
+      - application/json
+      description: Update StockAdjustment
+      parameters:
+      - description: StockAdjustment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: StockAdjustment
+        in: body
+        name: StockAdjustment
+        required: true
+        schema:
+          $ref: '#/definitions/models.StockAdjustment'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockAdjustment
+  /transaction/stock-adjustment/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create StockAdjustment
+      parameters:
+      - description: StockAdjustment
+        in: body
+        name: StockAdjustment
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.StockAdjustment'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockAdjustment
+  /transaction/stock-adjustment/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get StockAdjustment info by Code
+      parameters:
+      - description: StockAdjustment Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockAdjustment
+  /transaction/stock-adjustment/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockAdjustment
+  /transaction/stock-prickup-product:
+    delete:
+      consumes:
+      - application/json
+      description: Delete StockPickupProduct
+      parameters:
+      - description: StockPickupProduct GUIDs
+        in: body
+        name: StockPickupProduct
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockPickupProduct
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockPickupProduct
+    post:
+      consumes:
+      - application/json
+      description: Create StockPickupProduct
+      parameters:
+      - description: StockPickupProduct
+        in: body
+        name: StockPickupProduct
+        required: true
+        schema:
+          $ref: '#/definitions/models.StockPickupProduct'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockPickupProduct
+  /transaction/stock-prickup-product/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete StockPickupProduct
+      parameters:
+      - description: StockPickupProduct ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockPickupProduct
+    get:
+      consumes:
+      - application/json
+      description: get StockPickupProduct info by guidfixed
+      parameters:
+      - description: StockPickupProduct guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockPickupProduct
+    put:
+      consumes:
+      - application/json
+      description: Update StockPickupProduct
+      parameters:
+      - description: StockPickupProduct ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: StockPickupProduct
+        in: body
+        name: StockPickupProduct
+        required: true
+        schema:
+          $ref: '#/definitions/models.StockPickupProduct'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockPickupProduct
+  /transaction/stock-prickup-product/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create StockPickupProduct
+      parameters:
+      - description: StockPickupProduct
+        in: body
+        name: StockPickupProduct
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.StockPickupProduct'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockPickupProduct
+  /transaction/stock-prickup-product/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get StockPickupProduct info by Code
+      parameters:
+      - description: StockPickupProduct Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockPickupProduct
+  /transaction/stock-prickup-product/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockPickupProduct
+  /transaction/stock-receive-product:
+    delete:
+      consumes:
+      - application/json
+      description: Delete StockReceiveProduct
+      parameters:
+      - description: StockReceiveProduct GUIDs
+        in: body
+        name: StockReceiveProduct
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockReceiveProduct
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockReceiveProduct
+    post:
+      consumes:
+      - application/json
+      description: Create StockReceiveProduct
+      parameters:
+      - description: StockReceiveProduct
+        in: body
+        name: StockReceiveProduct
+        required: true
+        schema:
+          $ref: '#/definitions/models.StockReceiveProduct'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockReceiveProduct
+  /transaction/stock-receive-product/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete StockReceiveProduct
+      parameters:
+      - description: StockReceiveProduct ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockReceiveProduct
+    get:
+      consumes:
+      - application/json
+      description: get StockReceiveProduct info by guidfixed
+      parameters:
+      - description: StockReceiveProduct guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockReceiveProduct
+    put:
+      consumes:
+      - application/json
+      description: Update StockReceiveProduct
+      parameters:
+      - description: StockReceiveProduct ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: StockReceiveProduct
+        in: body
+        name: StockReceiveProduct
+        required: true
+        schema:
+          $ref: '#/definitions/models.StockReceiveProduct'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockReceiveProduct
+  /transaction/stock-receive-product/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create StockReceiveProduct
+      parameters:
+      - description: StockReceiveProduct
+        in: body
+        name: StockReceiveProduct
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.StockReceiveProduct'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockReceiveProduct
+  /transaction/stock-receive-product/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get StockReceiveProduct info by Code
+      parameters:
+      - description: StockReceiveProduct Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockReceiveProduct
+  /transaction/stock-receive-product/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockReceiveProduct
+  /transaction/stock-return-product:
+    delete:
+      consumes:
+      - application/json
+      description: Delete StockReturnProduct
+      parameters:
+      - description: StockReturnProduct GUIDs
+        in: body
+        name: StockReturnProduct
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockReturnProduct
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockReturnProduct
+    post:
+      consumes:
+      - application/json
+      description: Create StockReturnProduct
+      parameters:
+      - description: StockReturnProduct
+        in: body
+        name: StockReturnProduct
+        required: true
+        schema:
+          $ref: '#/definitions/models.StockReturnProduct'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockReturnProduct
+  /transaction/stock-return-product/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete StockReturnProduct
+      parameters:
+      - description: StockReturnProduct ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockReturnProduct
+    get:
+      consumes:
+      - application/json
+      description: get StockReturnProduct info by guidfixed
+      parameters:
+      - description: StockReturnProduct guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockReturnProduct
+    put:
+      consumes:
+      - application/json
+      description: Update StockReturnProduct
+      parameters:
+      - description: StockReturnProduct ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: StockReturnProduct
+        in: body
+        name: StockReturnProduct
+        required: true
+        schema:
+          $ref: '#/definitions/models.StockReturnProduct'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockReturnProduct
+  /transaction/stock-return-product/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create StockReturnProduct
+      parameters:
+      - description: StockReturnProduct
+        in: body
+        name: StockReturnProduct
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.StockReturnProduct'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockReturnProduct
+  /transaction/stock-return-product/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get StockReturnProduct info by Code
+      parameters:
+      - description: StockReturnProduct Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockReturnProduct
+  /transaction/stock-return-product/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockReturnProduct
   /unit:
     delete:
       consumes:
