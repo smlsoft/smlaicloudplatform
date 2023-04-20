@@ -3893,6 +3893,11 @@ definitions:
       vattype:
         type: integer
     type: object
+  models.StockTransfer:
+    properties:
+      docno:
+        type: string
+    type: object
   models.Storefront:
     properties:
       devices:
@@ -4326,7 +4331,7 @@ definitions:
           type: string
         type: array
       code:
-        type: integer
+        type: string
       departments:
         items:
           type: string
@@ -17159,6 +17164,253 @@ paths:
       - AccessToken: []
       tags:
       - StockReturnProduct
+  /transaction/stock-transfer:
+    delete:
+      consumes:
+      - application/json
+      description: Delete StockTransfer
+      parameters:
+      - description: StockTransfer GUIDs
+        in: body
+        name: StockTransfer
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockTransfer
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockTransfer
+    post:
+      consumes:
+      - application/json
+      description: Create StockTransfer
+      parameters:
+      - description: StockTransfer
+        in: body
+        name: StockTransfer
+        required: true
+        schema:
+          $ref: '#/definitions/models.StockTransfer'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockTransfer
+  /transaction/stock-transfer/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete StockTransfer
+      parameters:
+      - description: StockTransfer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockTransfer
+    get:
+      consumes:
+      - application/json
+      description: get StockTransfer info by guidfixed
+      parameters:
+      - description: StockTransfer guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockTransfer
+    put:
+      consumes:
+      - application/json
+      description: Update StockTransfer
+      parameters:
+      - description: StockTransfer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: StockTransfer
+        in: body
+        name: StockTransfer
+        required: true
+        schema:
+          $ref: '#/definitions/models.StockTransfer'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockTransfer
+  /transaction/stock-transfer/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create StockTransfer
+      parameters:
+      - description: StockTransfer
+        in: body
+        name: StockTransfer
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.StockTransfer'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockTransfer
+  /transaction/stock-transfer/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get StockTransfer info by Code
+      parameters:
+      - description: StockTransfer Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockTransfer
+  /transaction/stock-transfer/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - StockTransfer
   /unit:
     delete:
       consumes:
