@@ -48,8 +48,8 @@ type Detail struct {
 	SumAmount           float64        `json:"sumamount" bson:"sumamount"`
 	LocationNames       []models.NameX `json:"locationnames" bson:"locationnames"`
 	SumAmountExcludeVat float64        `json:"sumamountexcludevat" bson:"sumamountexcludevat"`
-	DivideValue         int            `json:"dividevalue" bson:"dividevalue"`
-	StandValue          int            `json:"standvalue" bson:"standvalue"`
+	DivideValue         float64        `json:"dividevalue" bson:"dividevalue"`
+	StandValue          float64        `json:"standvalue" bson:"standvalue"`
 	InquiryType         int8           `json:"inquirytype" bson:"inquirytype"`
 	Price               float64        `json:"price" bson:"price"`
 	Barcode             string         `json:"barcode" bson:"barcode"`
