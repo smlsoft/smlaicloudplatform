@@ -10,7 +10,7 @@ const branchCollectionName = "organizationBranches"
 
 type Branch struct {
 	models.PartitionIdentity `bson:"inline"`
-	Code                     int16           `json:"code" bson:"code"`
+	Code                     string          `json:"code" bson:"code"`
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	Departments              *[]string       `json:"departments" bson:"departments"`
 	BusinessTypes            *[]string       `json:"businesstypes" bson:"businesstypes"`

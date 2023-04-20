@@ -11,7 +11,6 @@ import (
 	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
-	"strconv"
 	"time"
 
 	"github.com/userplant/mongopagination"
@@ -259,7 +258,7 @@ func (svc BranchHttpService) SaveInBatch(shopID string, authUsername string, dat
 			return svc.repo.FindByDocIndentityGuid(shopID, "code", guid)
 		},
 		func(doc models.BranchDoc) bool {
-			return doc.Code >= 0
+			return doc.Code != ""
 		},
 		func(shopID string, authUsername string, data models.Branch, doc models.BranchDoc) error {
 
@@ -331,7 +330,7 @@ func (svc BranchHttpService) toSliceString(data []interface{}) []string {
 }
 
 func (svc BranchHttpService) getDocIDKey(doc models.Branch) string {
-	return strconv.Itoa(int(doc.Code))
+	return doc.Code
 }
 
 func (svc BranchHttpService) saveMasterSync(shopID string) {
