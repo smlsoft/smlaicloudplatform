@@ -63,6 +63,7 @@ import (
 	"smlcloudplatform/pkg/transaction/stockpickupproduct"
 	"smlcloudplatform/pkg/transaction/stockreceiveproduct"
 	"smlcloudplatform/pkg/transaction/stockreturnproduct"
+	"smlcloudplatform/pkg/transaction/stocktransfer"
 	"smlcloudplatform/pkg/vfgl/accountgroup"
 	"smlcloudplatform/pkg/vfgl/accountperiodmaster"
 	"smlcloudplatform/pkg/vfgl/chartofaccount"
@@ -212,6 +213,7 @@ func main() {
 		stockreturnproduct.NewStockReturnProductHttp(ms, cfg),
 		stockpickupproduct.NewStockPickupProductHttp(ms, cfg),
 		stockadjustment.NewStockAdjustmentHttp(ms, cfg),
+		stocktransfer.NewStockTransferHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)
