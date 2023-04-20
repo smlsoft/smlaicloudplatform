@@ -26408,19 +26408,19 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "totalbeforevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalcost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totaldiscount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalexceptvat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvatvalue": {
                     "type": "number"
@@ -26429,7 +26429,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "vatrate": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "vattype": {
                     "type": "integer"
@@ -26512,19 +26512,19 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "totalbeforevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalcost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totaldiscount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalexceptvat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvatvalue": {
                     "type": "number"
@@ -26533,7 +26533,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "vatrate": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "vattype": {
                     "type": "integer"
@@ -26831,19 +26831,19 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "totalbeforevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalcost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totaldiscount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalexceptvat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvatvalue": {
                     "type": "number"
@@ -26852,7 +26852,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "vatrate": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "vattype": {
                     "type": "integer"
@@ -26935,19 +26935,19 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "totalbeforevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalcost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totaldiscount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalexceptvat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvatvalue": {
                     "type": "number"
@@ -26956,7 +26956,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "vatrate": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "vattype": {
                     "type": "integer"
@@ -27504,19 +27504,19 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "totalbeforevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalcost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totaldiscount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalexceptvat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvatvalue": {
                     "type": "number"
@@ -27525,7 +27525,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "vatrate": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "vattype": {
                     "type": "integer"
@@ -27608,19 +27608,19 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "totalbeforevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalcost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totaldiscount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalexceptvat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvatvalue": {
                     "type": "number"
@@ -27629,7 +27629,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "vatrate": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "vattype": {
                     "type": "integer"
@@ -27712,19 +27712,19 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "totalbeforevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalcost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totaldiscount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalexceptvat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvatvalue": {
                     "type": "number"
@@ -27733,7 +27733,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "vatrate": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "vattype": {
                     "type": "integer"
@@ -27816,19 +27816,19 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "totalbeforevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalcost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totaldiscount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalexceptvat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvatvalue": {
                     "type": "number"
@@ -27837,7 +27837,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "vatrate": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "vattype": {
                     "type": "integer"
@@ -27920,19 +27920,19 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "totalbeforevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalcost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totaldiscount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalexceptvat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvatvalue": {
                     "type": "number"
@@ -27941,7 +27941,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "vatrate": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "vattype": {
                     "type": "integer"
@@ -28805,7 +28805,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "averagecost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "barcode": {
                     "type": "string"
@@ -28817,7 +28817,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "discountamount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "dividevalue": {
                     "type": "integer"
@@ -28865,13 +28865,13 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "price": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "priceexcludevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "qty": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "remark": {
                     "type": "string"
@@ -28883,13 +28883,13 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "sumamount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamountexcludevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumofcost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "taxtype": {
                     "type": "integer"
@@ -28904,7 +28904,7 @@ const docTemplate = `{
                     }
                 },
                 "totalqty": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvaluevat": {
                     "type": "number"
@@ -28945,7 +28945,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "averagecost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "barcode": {
                     "type": "string"
@@ -28957,7 +28957,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "discountamount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "dividevalue": {
                     "type": "integer"
@@ -29005,13 +29005,13 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "price": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "priceexcludevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "qty": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "remark": {
                     "type": "string"
@@ -29023,13 +29023,13 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "sumamount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamountexcludevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumofcost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "taxtype": {
                     "type": "integer"
@@ -29044,7 +29044,7 @@ const docTemplate = `{
                     }
                 },
                 "totalqty": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvaluevat": {
                     "type": "number"
@@ -29085,7 +29085,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "averagecost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "barcode": {
                     "type": "string"
@@ -29097,7 +29097,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "discountamount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "dividevalue": {
                     "type": "integer"
@@ -29145,13 +29145,13 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "price": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "priceexcludevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "qty": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "remark": {
                     "type": "string"
@@ -29163,13 +29163,13 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "sumamount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamountexcludevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumofcost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "taxtype": {
                     "type": "integer"
@@ -29184,7 +29184,7 @@ const docTemplate = `{
                     }
                 },
                 "totalqty": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvaluevat": {
                     "type": "number"
@@ -29225,7 +29225,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "averagecost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "barcode": {
                     "type": "string"
@@ -29237,7 +29237,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "discountamount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "dividevalue": {
                     "type": "integer"
@@ -29285,13 +29285,13 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "price": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "priceexcludevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "qty": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "remark": {
                     "type": "string"
@@ -29303,13 +29303,13 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "sumamount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamountexcludevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumofcost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "taxtype": {
                     "type": "integer"
@@ -29324,7 +29324,7 @@ const docTemplate = `{
                     }
                 },
                 "totalqty": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvaluevat": {
                     "type": "number"
@@ -29365,7 +29365,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "averagecost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "barcode": {
                     "type": "string"
@@ -29377,7 +29377,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "discountamount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "dividevalue": {
                     "type": "integer"
@@ -29425,13 +29425,13 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "price": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "priceexcludevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "qty": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "remark": {
                     "type": "string"
@@ -29443,13 +29443,13 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "sumamount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamountexcludevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumofcost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "taxtype": {
                     "type": "integer"
@@ -29464,7 +29464,7 @@ const docTemplate = `{
                     }
                 },
                 "totalqty": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvaluevat": {
                     "type": "number"
@@ -29505,7 +29505,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "averagecost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "barcode": {
                     "type": "string"
@@ -29517,7 +29517,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "discountamount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "dividevalue": {
                     "type": "integer"
@@ -29565,13 +29565,13 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "price": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "priceexcludevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "qty": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "remark": {
                     "type": "string"
@@ -29583,13 +29583,13 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "sumamount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamountexcludevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumofcost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "taxtype": {
                     "type": "integer"
@@ -29604,7 +29604,7 @@ const docTemplate = `{
                     }
                 },
                 "totalqty": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvaluevat": {
                     "type": "number"
@@ -29645,7 +29645,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "averagecost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "barcode": {
                     "type": "string"
@@ -29657,7 +29657,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "discountamount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "dividevalue": {
                     "type": "integer"
@@ -29705,13 +29705,13 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "price": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "priceexcludevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "qty": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "remark": {
                     "type": "string"
@@ -29723,13 +29723,13 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "sumamount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamountexcludevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumofcost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "taxtype": {
                     "type": "integer"
@@ -29744,7 +29744,7 @@ const docTemplate = `{
                     }
                 },
                 "totalqty": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvaluevat": {
                     "type": "number"
@@ -29785,7 +29785,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "averagecost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "barcode": {
                     "type": "string"
@@ -29797,7 +29797,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "discountamount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "dividevalue": {
                     "type": "integer"
@@ -29845,13 +29845,13 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "price": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "priceexcludevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "qty": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "remark": {
                     "type": "string"
@@ -29863,13 +29863,13 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "sumamount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamountexcludevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumofcost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "taxtype": {
                     "type": "integer"
@@ -29884,7 +29884,7 @@ const docTemplate = `{
                     }
                 },
                 "totalqty": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvaluevat": {
                     "type": "number"
@@ -29925,7 +29925,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "averagecost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "barcode": {
                     "type": "string"
@@ -29937,7 +29937,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "discountamount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "dividevalue": {
                     "type": "integer"
@@ -29985,13 +29985,13 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "price": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "priceexcludevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "qty": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "remark": {
                     "type": "string"
@@ -30003,13 +30003,13 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "sumamount": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamountexcludevat": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumofcost": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "taxtype": {
                     "type": "integer"
@@ -30024,7 +30024,7 @@ const docTemplate = `{
                     }
                 },
                 "totalqty": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "totalvaluevat": {
                     "type": "number"

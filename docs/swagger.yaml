@@ -2810,21 +2810,21 @@ definitions:
       totalamount:
         type: number
       totalbeforevat:
-        type: integer
+        type: number
       totalcost:
-        type: integer
+        type: number
       totaldiscount:
-        type: integer
+        type: number
       totalexceptvat:
-        type: integer
+        type: number
       totalvalue:
-        type: integer
+        type: number
       totalvatvalue:
         type: number
       transflag:
         type: integer
       vatrate:
-        type: integer
+        type: number
       vattype:
         type: integer
     type: object
@@ -2879,21 +2879,21 @@ definitions:
       totalamount:
         type: number
       totalbeforevat:
-        type: integer
+        type: number
       totalcost:
-        type: integer
+        type: number
       totaldiscount:
-        type: integer
+        type: number
       totalexceptvat:
-        type: integer
+        type: number
       totalvalue:
-        type: integer
+        type: number
       totalvatvalue:
         type: number
       transflag:
         type: integer
       vatrate:
-        type: integer
+        type: number
       vattype:
         type: integer
     type: object
@@ -3095,21 +3095,21 @@ definitions:
       totalamount:
         type: number
       totalbeforevat:
-        type: integer
+        type: number
       totalcost:
-        type: integer
+        type: number
       totaldiscount:
-        type: integer
+        type: number
       totalexceptvat:
-        type: integer
+        type: number
       totalvalue:
-        type: integer
+        type: number
       totalvatvalue:
         type: number
       transflag:
         type: integer
       vatrate:
-        type: integer
+        type: number
       vattype:
         type: integer
     type: object
@@ -3164,21 +3164,21 @@ definitions:
       totalamount:
         type: number
       totalbeforevat:
-        type: integer
+        type: number
       totalcost:
-        type: integer
+        type: number
       totaldiscount:
-        type: integer
+        type: number
       totalexceptvat:
-        type: integer
+        type: number
       totalvalue:
-        type: integer
+        type: number
       totalvatvalue:
         type: number
       transflag:
         type: integer
       vatrate:
-        type: integer
+        type: number
       vattype:
         type: integer
     type: object
@@ -3540,21 +3540,21 @@ definitions:
       totalamount:
         type: number
       totalbeforevat:
-        type: integer
+        type: number
       totalcost:
-        type: integer
+        type: number
       totaldiscount:
-        type: integer
+        type: number
       totalexceptvat:
-        type: integer
+        type: number
       totalvalue:
-        type: integer
+        type: number
       totalvatvalue:
         type: number
       transflag:
         type: integer
       vatrate:
-        type: integer
+        type: number
       vattype:
         type: integer
     type: object
@@ -3609,21 +3609,21 @@ definitions:
       totalamount:
         type: number
       totalbeforevat:
-        type: integer
+        type: number
       totalcost:
-        type: integer
+        type: number
       totaldiscount:
-        type: integer
+        type: number
       totalexceptvat:
-        type: integer
+        type: number
       totalvalue:
-        type: integer
+        type: number
       totalvatvalue:
         type: number
       transflag:
         type: integer
       vatrate:
-        type: integer
+        type: number
       vattype:
         type: integer
     type: object
@@ -3678,21 +3678,21 @@ definitions:
       totalamount:
         type: number
       totalbeforevat:
-        type: integer
+        type: number
       totalcost:
-        type: integer
+        type: number
       totaldiscount:
-        type: integer
+        type: number
       totalexceptvat:
-        type: integer
+        type: number
       totalvalue:
-        type: integer
+        type: number
       totalvatvalue:
         type: number
       transflag:
         type: integer
       vatrate:
-        type: integer
+        type: number
       vattype:
         type: integer
     type: object
@@ -3747,21 +3747,21 @@ definitions:
       totalamount:
         type: number
       totalbeforevat:
-        type: integer
+        type: number
       totalcost:
-        type: integer
+        type: number
       totaldiscount:
-        type: integer
+        type: number
       totalexceptvat:
-        type: integer
+        type: number
       totalvalue:
-        type: integer
+        type: number
       totalvatvalue:
         type: number
       transflag:
         type: integer
       vatrate:
-        type: integer
+        type: number
       vattype:
         type: integer
     type: object
@@ -3816,21 +3816,21 @@ definitions:
       totalamount:
         type: number
       totalbeforevat:
-        type: integer
+        type: number
       totalcost:
-        type: integer
+        type: number
       totaldiscount:
-        type: integer
+        type: number
       totalexceptvat:
-        type: integer
+        type: number
       totalvalue:
-        type: integer
+        type: number
       totalvatvalue:
         type: number
       transflag:
         type: integer
       vatrate:
-        type: integer
+        type: number
       vattype:
         type: integer
     type: object
@@ -4421,7 +4421,7 @@ definitions:
   smlcloudplatform_pkg_transaction_purchase_models.Detail:
     properties:
       averagecost:
-        type: integer
+        type: number
       barcode:
         type: string
       calcflag:
@@ -4429,7 +4429,7 @@ definitions:
       discount:
         type: string
       discountamount:
-        type: integer
+        type: number
       dividevalue:
         type: integer
       docdatetime:
@@ -4461,11 +4461,11 @@ definitions:
       multiunit:
         type: boolean
       price:
-        type: integer
+        type: number
       priceexcludevat:
-        type: integer
+        type: number
       qty:
-        type: integer
+        type: number
       remark:
         type: string
       shelfcode:
@@ -4473,11 +4473,11 @@ definitions:
       standvalue:
         type: integer
       sumamount:
-        type: integer
+        type: number
       sumamountexcludevat:
-        type: integer
+        type: number
       sumofcost:
-        type: integer
+        type: number
       taxtype:
         type: integer
       tolocationcode:
@@ -4487,7 +4487,7 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
       totalqty:
-        type: integer
+        type: number
       totalvaluevat:
         type: number
       towhcode:
@@ -4514,7 +4514,7 @@ definitions:
   smlcloudplatform_pkg_transaction_purchasereturn_models.Detail:
     properties:
       averagecost:
-        type: integer
+        type: number
       barcode:
         type: string
       calcflag:
@@ -4522,7 +4522,7 @@ definitions:
       discount:
         type: string
       discountamount:
-        type: integer
+        type: number
       dividevalue:
         type: integer
       docdatetime:
@@ -4554,11 +4554,11 @@ definitions:
       multiunit:
         type: boolean
       price:
-        type: integer
+        type: number
       priceexcludevat:
-        type: integer
+        type: number
       qty:
-        type: integer
+        type: number
       remark:
         type: string
       shelfcode:
@@ -4566,11 +4566,11 @@ definitions:
       standvalue:
         type: integer
       sumamount:
-        type: integer
+        type: number
       sumamountexcludevat:
-        type: integer
+        type: number
       sumofcost:
-        type: integer
+        type: number
       taxtype:
         type: integer
       tolocationcode:
@@ -4580,7 +4580,7 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
       totalqty:
-        type: integer
+        type: number
       totalvaluevat:
         type: number
       towhcode:
@@ -4607,7 +4607,7 @@ definitions:
   smlcloudplatform_pkg_transaction_saleinvoice_models.Detail:
     properties:
       averagecost:
-        type: integer
+        type: number
       barcode:
         type: string
       calcflag:
@@ -4615,7 +4615,7 @@ definitions:
       discount:
         type: string
       discountamount:
-        type: integer
+        type: number
       dividevalue:
         type: integer
       docdatetime:
@@ -4647,11 +4647,11 @@ definitions:
       multiunit:
         type: boolean
       price:
-        type: integer
+        type: number
       priceexcludevat:
-        type: integer
+        type: number
       qty:
-        type: integer
+        type: number
       remark:
         type: string
       shelfcode:
@@ -4659,11 +4659,11 @@ definitions:
       standvalue:
         type: integer
       sumamount:
-        type: integer
+        type: number
       sumamountexcludevat:
-        type: integer
+        type: number
       sumofcost:
-        type: integer
+        type: number
       taxtype:
         type: integer
       tolocationcode:
@@ -4673,7 +4673,7 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
       totalqty:
-        type: integer
+        type: number
       totalvaluevat:
         type: number
       towhcode:
@@ -4700,7 +4700,7 @@ definitions:
   smlcloudplatform_pkg_transaction_saleinvoicereturn_models.Detail:
     properties:
       averagecost:
-        type: integer
+        type: number
       barcode:
         type: string
       calcflag:
@@ -4708,7 +4708,7 @@ definitions:
       discount:
         type: string
       discountamount:
-        type: integer
+        type: number
       dividevalue:
         type: integer
       docdatetime:
@@ -4740,11 +4740,11 @@ definitions:
       multiunit:
         type: boolean
       price:
-        type: integer
+        type: number
       priceexcludevat:
-        type: integer
+        type: number
       qty:
-        type: integer
+        type: number
       remark:
         type: string
       shelfcode:
@@ -4752,11 +4752,11 @@ definitions:
       standvalue:
         type: integer
       sumamount:
-        type: integer
+        type: number
       sumamountexcludevat:
-        type: integer
+        type: number
       sumofcost:
-        type: integer
+        type: number
       taxtype:
         type: integer
       tolocationcode:
@@ -4766,7 +4766,7 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
       totalqty:
-        type: integer
+        type: number
       totalvaluevat:
         type: number
       towhcode:
@@ -4793,7 +4793,7 @@ definitions:
   smlcloudplatform_pkg_transaction_stockadjustment_models.Detail:
     properties:
       averagecost:
-        type: integer
+        type: number
       barcode:
         type: string
       calcflag:
@@ -4801,7 +4801,7 @@ definitions:
       discount:
         type: string
       discountamount:
-        type: integer
+        type: number
       dividevalue:
         type: integer
       docdatetime:
@@ -4833,11 +4833,11 @@ definitions:
       multiunit:
         type: boolean
       price:
-        type: integer
+        type: number
       priceexcludevat:
-        type: integer
+        type: number
       qty:
-        type: integer
+        type: number
       remark:
         type: string
       shelfcode:
@@ -4845,11 +4845,11 @@ definitions:
       standvalue:
         type: integer
       sumamount:
-        type: integer
+        type: number
       sumamountexcludevat:
-        type: integer
+        type: number
       sumofcost:
-        type: integer
+        type: number
       taxtype:
         type: integer
       tolocationcode:
@@ -4859,7 +4859,7 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
       totalqty:
-        type: integer
+        type: number
       totalvaluevat:
         type: number
       towhcode:
@@ -4886,7 +4886,7 @@ definitions:
   smlcloudplatform_pkg_transaction_stockpickupproduct_models.Detail:
     properties:
       averagecost:
-        type: integer
+        type: number
       barcode:
         type: string
       calcflag:
@@ -4894,7 +4894,7 @@ definitions:
       discount:
         type: string
       discountamount:
-        type: integer
+        type: number
       dividevalue:
         type: integer
       docdatetime:
@@ -4926,11 +4926,11 @@ definitions:
       multiunit:
         type: boolean
       price:
-        type: integer
+        type: number
       priceexcludevat:
-        type: integer
+        type: number
       qty:
-        type: integer
+        type: number
       remark:
         type: string
       shelfcode:
@@ -4938,11 +4938,11 @@ definitions:
       standvalue:
         type: integer
       sumamount:
-        type: integer
+        type: number
       sumamountexcludevat:
-        type: integer
+        type: number
       sumofcost:
-        type: integer
+        type: number
       taxtype:
         type: integer
       tolocationcode:
@@ -4952,7 +4952,7 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
       totalqty:
-        type: integer
+        type: number
       totalvaluevat:
         type: number
       towhcode:
@@ -4979,7 +4979,7 @@ definitions:
   smlcloudplatform_pkg_transaction_stockreceiveproduct_models.Detail:
     properties:
       averagecost:
-        type: integer
+        type: number
       barcode:
         type: string
       calcflag:
@@ -4987,7 +4987,7 @@ definitions:
       discount:
         type: string
       discountamount:
-        type: integer
+        type: number
       dividevalue:
         type: integer
       docdatetime:
@@ -5019,11 +5019,11 @@ definitions:
       multiunit:
         type: boolean
       price:
-        type: integer
+        type: number
       priceexcludevat:
-        type: integer
+        type: number
       qty:
-        type: integer
+        type: number
       remark:
         type: string
       shelfcode:
@@ -5031,11 +5031,11 @@ definitions:
       standvalue:
         type: integer
       sumamount:
-        type: integer
+        type: number
       sumamountexcludevat:
-        type: integer
+        type: number
       sumofcost:
-        type: integer
+        type: number
       taxtype:
         type: integer
       tolocationcode:
@@ -5045,7 +5045,7 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
       totalqty:
-        type: integer
+        type: number
       totalvaluevat:
         type: number
       towhcode:
@@ -5072,7 +5072,7 @@ definitions:
   smlcloudplatform_pkg_transaction_stockreturnproduct_models.Detail:
     properties:
       averagecost:
-        type: integer
+        type: number
       barcode:
         type: string
       calcflag:
@@ -5080,7 +5080,7 @@ definitions:
       discount:
         type: string
       discountamount:
-        type: integer
+        type: number
       dividevalue:
         type: integer
       docdatetime:
@@ -5112,11 +5112,11 @@ definitions:
       multiunit:
         type: boolean
       price:
-        type: integer
+        type: number
       priceexcludevat:
-        type: integer
+        type: number
       qty:
-        type: integer
+        type: number
       remark:
         type: string
       shelfcode:
@@ -5124,11 +5124,11 @@ definitions:
       standvalue:
         type: integer
       sumamount:
-        type: integer
+        type: number
       sumamountexcludevat:
-        type: integer
+        type: number
       sumofcost:
-        type: integer
+        type: number
       taxtype:
         type: integer
       tolocationcode:
@@ -5138,7 +5138,7 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
       totalqty:
-        type: integer
+        type: number
       totalvaluevat:
         type: number
       towhcode:
@@ -5165,7 +5165,7 @@ definitions:
   smlcloudplatform_pkg_transaction_stocktransfer_models.Detail:
     properties:
       averagecost:
-        type: integer
+        type: number
       barcode:
         type: string
       calcflag:
@@ -5173,7 +5173,7 @@ definitions:
       discount:
         type: string
       discountamount:
-        type: integer
+        type: number
       dividevalue:
         type: integer
       docdatetime:
@@ -5205,11 +5205,11 @@ definitions:
       multiunit:
         type: boolean
       price:
-        type: integer
+        type: number
       priceexcludevat:
-        type: integer
+        type: number
       qty:
-        type: integer
+        type: number
       remark:
         type: string
       shelfcode:
@@ -5217,11 +5217,11 @@ definitions:
       standvalue:
         type: integer
       sumamount:
-        type: integer
+        type: number
       sumamountexcludevat:
-        type: integer
+        type: number
       sumofcost:
-        type: integer
+        type: number
       taxtype:
         type: integer
       tolocationcode:
@@ -5231,7 +5231,7 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
       totalqty:
-        type: integer
+        type: number
       totalvaluevat:
         type: number
       towhcode:
