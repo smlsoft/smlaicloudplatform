@@ -23758,9 +23758,6 @@
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -28814,7 +28811,7 @@
                     "type": "number"
                 },
                 "dividevalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "docdatetime": {
                     "type": "string"
@@ -28874,7 +28871,7 @@
                     "type": "string"
                 },
                 "standvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamount": {
                     "type": "number"
@@ -28954,7 +28951,7 @@
                     "type": "number"
                 },
                 "dividevalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "docdatetime": {
                     "type": "string"
@@ -29014,7 +29011,7 @@
                     "type": "string"
                 },
                 "standvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamount": {
                     "type": "number"
@@ -29094,7 +29091,7 @@
                     "type": "number"
                 },
                 "dividevalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "docdatetime": {
                     "type": "string"
@@ -29154,7 +29151,7 @@
                     "type": "string"
                 },
                 "standvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamount": {
                     "type": "number"
@@ -29234,7 +29231,7 @@
                     "type": "number"
                 },
                 "dividevalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "docdatetime": {
                     "type": "string"
@@ -29294,7 +29291,7 @@
                     "type": "string"
                 },
                 "standvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamount": {
                     "type": "number"
@@ -29374,7 +29371,7 @@
                     "type": "number"
                 },
                 "dividevalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "docdatetime": {
                     "type": "string"
@@ -29434,7 +29431,7 @@
                     "type": "string"
                 },
                 "standvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamount": {
                     "type": "number"
@@ -29514,7 +29511,7 @@
                     "type": "number"
                 },
                 "dividevalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "docdatetime": {
                     "type": "string"
@@ -29574,7 +29571,7 @@
                     "type": "string"
                 },
                 "standvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamount": {
                     "type": "number"
@@ -29654,7 +29651,7 @@
                     "type": "number"
                 },
                 "dividevalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "docdatetime": {
                     "type": "string"
@@ -29714,7 +29711,7 @@
                     "type": "string"
                 },
                 "standvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamount": {
                     "type": "number"
@@ -29794,7 +29791,7 @@
                     "type": "number"
                 },
                 "dividevalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "docdatetime": {
                     "type": "string"
@@ -29854,7 +29851,7 @@
                     "type": "string"
                 },
                 "standvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamount": {
                     "type": "number"
@@ -29934,7 +29931,7 @@
                     "type": "number"
                 },
                 "dividevalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "docdatetime": {
                     "type": "string"
@@ -29994,7 +29991,7 @@
                     "type": "string"
                 },
                 "standvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamount": {
                     "type": "number"

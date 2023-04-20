@@ -23764,9 +23764,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -28820,7 +28817,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "dividevalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "docdatetime": {
                     "type": "string"
@@ -28880,7 +28877,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "standvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamount": {
                     "type": "number"
@@ -28960,7 +28957,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "dividevalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "docdatetime": {
                     "type": "string"
@@ -29020,7 +29017,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "standvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamount": {
                     "type": "number"
@@ -29100,7 +29097,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "dividevalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "docdatetime": {
                     "type": "string"
@@ -29160,7 +29157,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "standvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamount": {
                     "type": "number"
@@ -29240,7 +29237,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "dividevalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "docdatetime": {
                     "type": "string"
@@ -29300,7 +29297,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "standvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamount": {
                     "type": "number"
@@ -29380,7 +29377,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "dividevalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "docdatetime": {
                     "type": "string"
@@ -29440,7 +29437,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "standvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamount": {
                     "type": "number"
@@ -29520,7 +29517,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "dividevalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "docdatetime": {
                     "type": "string"
@@ -29580,7 +29577,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "standvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamount": {
                     "type": "number"
@@ -29660,7 +29657,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "dividevalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "docdatetime": {
                     "type": "string"
@@ -29720,7 +29717,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "standvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamount": {
                     "type": "number"
@@ -29800,7 +29797,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "dividevalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "docdatetime": {
                     "type": "string"
@@ -29860,7 +29857,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "standvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamount": {
                     "type": "number"
@@ -29940,7 +29937,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "dividevalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "docdatetime": {
                     "type": "string"
@@ -30000,7 +29997,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "standvalue": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "sumamount": {
                     "type": "number"
