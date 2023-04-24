@@ -36,6 +36,7 @@ import (
 	"smlcloudplatform/pkg/product/productgroup"
 	"smlcloudplatform/pkg/product/unit"
 	"smlcloudplatform/pkg/productsection/sectionbranch"
+	"smlcloudplatform/pkg/productsection/sectionbusinesstype"
 	"smlcloudplatform/pkg/productsection/sectiondepartment"
 	"smlcloudplatform/pkg/restaurant/device"
 	"smlcloudplatform/pkg/restaurant/kitchen"
@@ -245,6 +246,7 @@ func main() {
 			//product section
 			sectionbranch.NewSectionBranchHttp(ms, cfg),
 			sectiondepartment.NewSectionDepartmentHttp(ms, cfg),
+			sectionbusinesstype.NewSectionBusinessTypeHttp(ms, cfg),
 		}
 
 		startHttpServices(httpServices...)

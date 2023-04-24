@@ -1,0 +1,347 @@
+package sectionbusinesstype
+
+import (
+	"encoding/json"
+	"net/http"
+	"smlcloudplatform/internal/microservice"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
+	common "smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/productsection/sectionbusinesstype/models"
+	"smlcloudplatform/pkg/productsection/sectionbusinesstype/repositories"
+	"smlcloudplatform/pkg/productsection/sectionbusinesstype/services"
+	"smlcloudplatform/pkg/utils"
+)
+
+type ISectionBusinessTypeHttp interface{}
+
+type SectionBusinessTypeHttp struct {
+	ms  *microservice.Microservice
+	cfg microservice.IConfig
+	svc services.ISectionBusinessTypeHttpService
+}
+
+func NewSectionBusinessTypeHttp(ms *microservice.Microservice, cfg microservice.IConfig) SectionBusinessTypeHttp {
+	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
+
+	repo := repositories.NewSectionBusinessTypeRepository(pst)
+
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
+	svc := services.NewSectionBusinessTypeHttpService(repo, masterSyncCacheRepo)
+
+	return SectionBusinessTypeHttp{
+		ms:  ms,
+		cfg: cfg,
+		svc: svc,
+	}
+}
+
+func (h SectionBusinessTypeHttp) RouteSetup() {
+
+	h.ms.POST("/product-section/business-type/bulk", h.SaveBulk)
+
+	h.ms.GET("/product-section/business-type", h.SearchSectionBusinessTypePage)
+	h.ms.GET("/product-section/business-type/list", h.SearchSectionBusinessTypeStep)
+	h.ms.POST("/product-section/business-type", h.CreateSectionBusinessType)
+	h.ms.GET("/product-section/business-type/:id", h.InfoSectionBusinessType)
+	h.ms.PUT("/product-section/business-type/:id", h.UpdateSectionBusinessType)
+	h.ms.DELETE("/product-section/business-type/:id", h.DeleteSectionBusinessType)
+	h.ms.DELETE("/product-section/business-type", h.DeleteSectionBusinessTypeByGUIDs)
+}
+
+// Create SectionBusinessType godoc
+// @Description Create SectionBusinessType
+// @Tags		SectionBusinessType
+// @Param		SectionBusinessType  body      models.SectionBusinessType  true  "SectionBusinessType"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product-section/business-type [post]
+func (h SectionBusinessTypeHttp) CreateSectionBusinessType(ctx microservice.IContext) error {
+	authUsername := ctx.UserInfo().Username
+	shopID := ctx.UserInfo().ShopID
+	input := ctx.ReadInput()
+
+	docReq := &models.SectionBusinessType{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(docReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	idx, err := h.svc.CreateSectionBusinessType(shopID, authUsername, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+		ID:      idx,
+	})
+	return nil
+}
+
+// Update SectionBusinessType godoc
+// @Description Update SectionBusinessType
+// @Tags		SectionBusinessType
+// @Param		id  path      string  true  "SectionBusinessType ID"
+// @Param		SectionBusinessType  body      models.SectionBusinessType  true  "SectionBusinessType"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product-section/business-type/{id} [put]
+func (h SectionBusinessTypeHttp) UpdateSectionBusinessType(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	id := ctx.Param("id")
+	input := ctx.ReadInput()
+
+	docReq := &models.SectionBusinessType{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	if err = ctx.Validate(docReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.UpdateSectionBusinessType(shopID, id, authUsername, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+		ID:      id,
+	})
+
+	return nil
+}
+
+// Delete SectionBusinessType godoc
+// @Description Delete SectionBusinessType
+// @Tags		SectionBusinessType
+// @Param		id  path      string  true  "SectionBusinessType ID"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product-section/business-type/{id} [delete]
+func (h SectionBusinessTypeHttp) DeleteSectionBusinessType(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	id := ctx.Param("id")
+
+	err := h.svc.DeleteSectionBusinessType(shopID, id, authUsername)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		ID:      id,
+	})
+
+	return nil
+}
+
+// Delete SectionBusinessType godoc
+// @Description Delete SectionBusinessType
+// @Tags		SectionBusinessType
+// @Param		SectionBusinessType  body      []string  true  "SectionBusinessType GUIDs"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product-section/business-type [delete]
+func (h SectionBusinessTypeHttp) DeleteSectionBusinessTypeByGUIDs(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	docReq := []string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.DeleteSectionBusinessTypeByGUIDs(shopID, authUsername, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+	})
+
+	return nil
+}
+
+// Get SectionBusinessType godoc
+// @Description get SectionBusinessType info by guidfixed
+// @Tags		SectionBusinessType
+// @Param		id  path      string  true  "SectionBusinessType guidfixed"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product-section/business-type/{id} [get]
+func (h SectionBusinessTypeHttp) InfoSectionBusinessType(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	id := ctx.Param("id")
+
+	h.ms.Logger.Debugf("Get SectionBusinessType %v", id)
+	doc, err := h.svc.InfoSectionBusinessType(shopID, id)
+
+	if err != nil {
+		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// List SectionBusinessType step godoc
+// @Description get list step
+// @Tags		SectionBusinessType
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product-section/business-type [get]
+func (h SectionBusinessTypeHttp) SearchSectionBusinessTypePage(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	pageable := utils.GetPageable(ctx.QueryParam)
+
+	docList, pagination, err := h.svc.SearchSectionBusinessType(shopID, map[string]interface{}{}, pageable)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success:    true,
+		Data:       docList,
+		Pagination: pagination,
+	})
+	return nil
+}
+
+// List SectionBusinessType godoc
+// @Description search limit offset
+// @Tags		SectionBusinessType
+// @Param		q		query	string		false  "Search Value"
+// @Param		offset	query	integer		false  "offset"
+// @Param		limit	query	integer		false  "limit"
+// @Param		lang	query	string		false  "lang"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product-section/business-type/list [get]
+func (h SectionBusinessTypeHttp) SearchSectionBusinessTypeStep(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	pageableStep := utils.GetPageableStep(ctx.QueryParam)
+
+	lang := ctx.QueryParam("lang")
+
+	docList, total, err := h.svc.SearchSectionBusinessTypeStep(shopID, lang, pageableStep)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docList,
+		Total:   total,
+	})
+	return nil
+}
+
+// Create SectionBusinessType Bulk godoc
+// @Description Create SectionBusinessType
+// @Tags		SectionBusinessType
+// @Param		SectionBusinessType  body      []models.SectionBusinessType  true  "SectionBusinessType"
+// @Accept 		json
+// @Success		201	{object}	common.BulkReponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product-section/business-type/bulk [post]
+func (h SectionBusinessTypeHttp) SaveBulk(ctx microservice.IContext) error {
+
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	dataReq := []models.SectionBusinessType{}
+	err := json.Unmarshal([]byte(input), &dataReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	bulkResponse, err := h.svc.SaveInBatch(shopID, authUsername, dataReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	ctx.Response(
+		http.StatusCreated,
+		common.BulkReponse{
+			Success:    true,
+			BulkImport: bulkResponse,
+		},
+	)
+
+	return nil
+}
