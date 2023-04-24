@@ -35,6 +35,7 @@ import (
 	"smlcloudplatform/pkg/product/productcategory"
 	"smlcloudplatform/pkg/product/productgroup"
 	"smlcloudplatform/pkg/product/unit"
+	"smlcloudplatform/pkg/productsection/sectionbranch"
 	"smlcloudplatform/pkg/restaurant/device"
 	"smlcloudplatform/pkg/restaurant/kitchen"
 	"smlcloudplatform/pkg/restaurant/printer"
@@ -239,6 +240,9 @@ func main() {
 			stockreturnproduct.NewStockReturnProductHttp(ms, cfg),
 			stockpickupproduct.NewStockPickupProductHttp(ms, cfg),
 			stockadjustment.NewStockAdjustmentHttp(ms, cfg),
+
+			//product section
+			sectionbranch.NewSectionBranchHttp(ms, cfg),
 		}
 
 		startHttpServices(httpServices...)
