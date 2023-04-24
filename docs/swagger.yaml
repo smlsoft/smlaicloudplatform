@@ -820,11 +820,7 @@ definitions:
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.DocumentImage:
     properties:
@@ -3196,6 +3192,17 @@ definitions:
   models.SectionBranch:
     properties:
       branchcode:
+        type: string
+      productcodes:
+        items:
+          type: string
+        type: array
+    type: object
+  models.SectionDepartment:
+    properties:
+      branchcode:
+        type: string
+      departmentcode:
         type: string
       productcodes:
         items:
@@ -12195,6 +12202,229 @@ paths:
       - AccessToken: []
       tags:
       - SectionBranch
+  /product-section/deparment:
+    delete:
+      consumes:
+      - application/json
+      description: Delete SectionDepartment
+      parameters:
+      - description: SectionDepartment GUIDs
+        in: body
+        name: SectionDepartment
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionDepartment
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionDepartment
+    post:
+      consumes:
+      - application/json
+      description: Create SectionDepartment
+      parameters:
+      - description: SectionDepartment
+        in: body
+        name: SectionDepartment
+        required: true
+        schema:
+          $ref: '#/definitions/models.SectionDepartment'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionDepartment
+  /product-section/deparment/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete SectionDepartment
+      parameters:
+      - description: SectionDepartment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionDepartment
+    get:
+      consumes:
+      - application/json
+      description: get SectionDepartment info by guidfixed
+      parameters:
+      - description: SectionDepartment guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionDepartment
+    put:
+      consumes:
+      - application/json
+      description: Update SectionDepartment
+      parameters:
+      - description: SectionDepartment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: SectionDepartment
+        in: body
+        name: SectionDepartment
+        required: true
+        schema:
+          $ref: '#/definitions/models.SectionDepartment'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionDepartment
+  /product-section/deparment/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create SectionDepartment
+      parameters:
+      - description: SectionDepartment
+        in: body
+        name: SectionDepartment
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.SectionDepartment'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionDepartment
+  /product-section/deparment/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionDepartment
   /product/{id}:
     delete:
       consumes:
