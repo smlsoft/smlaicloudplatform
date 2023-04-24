@@ -813,6 +813,19 @@ definitions:
     required:
     - names
     type: object
+  models.Department:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - names
+    type: object
   models.DocumentImage:
     properties:
       cloneimagefrom:
@@ -3180,6 +3193,15 @@ definitions:
       vattype:
         type: integer
     type: object
+  models.SectionBranch:
+    properties:
+      branchcode:
+        type: string
+      productcodes:
+        items:
+          type: string
+        type: array
+    type: object
   models.Shelf:
     properties:
       code:
@@ -4279,19 +4301,6 @@ definitions:
     required:
     - names
     type: object
-  smlcloudplatform_pkg_organization_department_models.Department:
-    properties:
-      code:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-    required:
-    - names
-    type: object
   smlcloudplatform_pkg_product_inventory_models.Unit:
     properties:
       unitcode:
@@ -4371,7 +4380,7 @@ definitions:
         type: integer
       departments:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Department'
+          $ref: '#/definitions/models.Department'
         type: array
         uniqueItems: true
       location:
@@ -4386,20 +4395,6 @@ definitions:
         maxLength: 100
         type: string
     required:
-    - names
-    type: object
-  smlcloudplatform_pkg_shop_branch_models.Department:
-    properties:
-      code:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-    required:
-    - code
     - names
     type: object
   smlcloudplatform_pkg_shop_branch_models.Location:
@@ -10836,7 +10831,7 @@ paths:
         name: Department
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_organization_department_models.Department'
+          $ref: '#/definitions/models.Department'
       responses:
         "201":
           description: Created
@@ -10912,7 +10907,7 @@ paths:
         name: Department
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_organization_department_models.Department'
+          $ref: '#/definitions/models.Department'
       responses:
         "201":
           description: Created
@@ -10938,7 +10933,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/smlcloudplatform_pkg_organization_department_models.Department'
+            $ref: '#/definitions/models.Department'
           type: array
       responses:
         "201":
@@ -11953,6 +11948,253 @@ paths:
       - AccessToken: []
       tags:
       - Product
+  /product-section/branch:
+    delete:
+      consumes:
+      - application/json
+      description: Delete SectionBranch
+      parameters:
+      - description: SectionBranch GUIDs
+        in: body
+        name: SectionBranch
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBranch
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBranch
+    post:
+      consumes:
+      - application/json
+      description: Create SectionBranch
+      parameters:
+      - description: SectionBranch
+        in: body
+        name: SectionBranch
+        required: true
+        schema:
+          $ref: '#/definitions/models.SectionBranch'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBranch
+  /product-section/branch/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete SectionBranch
+      parameters:
+      - description: SectionBranch ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBranch
+    get:
+      consumes:
+      - application/json
+      description: get SectionBranch info by guidfixed
+      parameters:
+      - description: SectionBranch guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBranch
+    put:
+      consumes:
+      - application/json
+      description: Update SectionBranch
+      parameters:
+      - description: SectionBranch ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: SectionBranch
+        in: body
+        name: SectionBranch
+        required: true
+        schema:
+          $ref: '#/definitions/models.SectionBranch'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBranch
+  /product-section/branch/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create SectionBranch
+      parameters:
+      - description: SectionBranch
+        in: body
+        name: SectionBranch
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.SectionBranch'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBranch
+  /product-section/branch/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get SectionBranch info by Code
+      parameters:
+      - description: SectionBranch Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBranch
+  /product-section/branch/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBranch
   /product/{id}:
     delete:
       consumes:
