@@ -18,6 +18,7 @@ type ICRUDRepository[T any] interface {
 	FindByGuid(shopID string, guid string) (T, error)
 	FindByGuids(shopID string, guids []string) ([]T, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (T, error)
+	FindOneFilter(shopID string, filters map[string]interface{}) (T, error)
 }
 
 type CrudRepository[T any] struct {
@@ -171,6 +172,28 @@ func (repo CrudRepository[T]) FindByDocIndentityGuid(shopID string, indentityFie
 	doc := new(T)
 
 	err := repo.pst.FindOne(new(T), bson.M{"shopid": shopID, "deletedat": bson.M{"$exists": false}, indentityField: indentityValue}, doc)
+
+	if err != nil {
+		return *new(T), err
+	}
+
+	return *doc, nil
+}
+
+func (repo CrudRepository[T]) FindOneFilter(shopID string, filters map[string]interface{}) (T, error) {
+
+	doc := new(T)
+
+	findFilters := bson.M{}
+
+	for col, val := range filters {
+		findFilters[col] = val
+	}
+
+	findFilters["shopid"] = shopID
+	findFilters["deletedat"] = bson.M{"$exists": false}
+
+	err := repo.pst.FindOne(new(T), findFilters, doc)
 
 	if err != nil {
 		return *new(T), err
