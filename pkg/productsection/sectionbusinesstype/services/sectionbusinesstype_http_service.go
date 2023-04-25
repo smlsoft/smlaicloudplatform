@@ -18,8 +18,7 @@ import (
 )
 
 type ISectionBusinessTypeHttpService interface {
-	CreateSectionBusinessType(shopID string, authUsername string, doc models.SectionBusinessType) (string, error)
-	UpdateSectionBusinessType(shopID string, guid string, authUsername string, doc models.SectionBusinessType) error
+	SaveSectionBusinessType(shopID string, authUsername string, doc models.SectionBusinessType) (string, error)
 	DeleteSectionBusinessType(shopID string, guid string, authUsername string) error
 	DeleteSectionBusinessTypeByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoSectionBusinessType(shopID string, guid string) (models.SectionBusinessTypeInfo, error)
@@ -49,7 +48,7 @@ func NewSectionBusinessTypeHttpService(repo repositories.ISectionBusinessTypeRep
 	return insSvc
 }
 
-func (svc SectionBusinessTypeHttpService) CreateSectionBusinessType(shopID string, authUsername string, doc models.SectionBusinessType) (string, error) {
+func (svc SectionBusinessTypeHttpService) SaveSectionBusinessType(shopID string, authUsername string, doc models.SectionBusinessType) (string, error) {
 
 	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "businesstypecode", doc.BusinessTypeCode)
 
@@ -57,9 +56,22 @@ func (svc SectionBusinessTypeHttpService) CreateSectionBusinessType(shopID strin
 		return "", err
 	}
 
-	if len(findDoc.GuidFixed) > 0 {
-		return "", errors.New("BusinessTypeCode is exists")
+	guidFixed := ""
+	if len(findDoc.GuidFixed) < 1 {
+		guidFixed, err = svc.create(findDoc, shopID, authUsername, doc)
+	} else {
+		err = svc.update(findDoc, shopID, authUsername, doc)
+		guidFixed = findDoc.GuidFixed
 	}
+
+	if err != nil {
+		return "", err
+	}
+
+	return guidFixed, nil
+}
+
+func (svc SectionBusinessTypeHttpService) create(findDoc models.SectionBusinessTypeDoc, shopID string, authUsername string, doc models.SectionBusinessType) (string, error) {
 
 	newGuidFixed := utils.NewGUID()
 
@@ -71,7 +83,7 @@ func (svc SectionBusinessTypeHttpService) CreateSectionBusinessType(shopID strin
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err := svc.repo.Create(docData)
 
 	if err != nil {
 		return "", err
@@ -82,24 +94,14 @@ func (svc SectionBusinessTypeHttpService) CreateSectionBusinessType(shopID strin
 	return newGuidFixed, nil
 }
 
-func (svc SectionBusinessTypeHttpService) UpdateSectionBusinessType(shopID string, guid string, authUsername string, doc models.SectionBusinessType) error {
-
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
-
-	if err != nil {
-		return err
-	}
-
-	if len(findDoc.GuidFixed) < 1 {
-		return errors.New("document not found")
-	}
+func (svc SectionBusinessTypeHttpService) update(findDoc models.SectionBusinessTypeDoc, shopID string, authUsername string, doc models.SectionBusinessType) error {
 
 	findDoc.SectionBusinessType = doc
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err := svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
 
 	if err != nil {
 		return err

@@ -9,7 +9,6 @@ import (
 	"smlcloudplatform/pkg/productsection/sectionbranch/models"
 	"smlcloudplatform/pkg/productsection/sectionbranch/repositories"
 	"smlcloudplatform/pkg/services"
-	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
 	"time"
 
@@ -18,8 +17,7 @@ import (
 )
 
 type ISectionBranchHttpService interface {
-	CreateSectionBranch(shopID string, authUsername string, doc models.SectionBranch) (string, error)
-	UpdateSectionBranch(shopID string, guid string, authUsername string, doc models.SectionBranch) error
+	SaveSectionBranch(shopID string, authUsername string, doc models.SectionBranch) (string, error)
 	DeleteSectionBranch(shopID string, guid string, authUsername string) error
 	DeleteSectionBranchByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoSectionBranch(shopID string, guid string) (models.SectionBranchInfo, error)
@@ -36,13 +34,16 @@ type SectionBranchHttpService struct {
 
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.SectionBranchActivity, models.SectionBranchDeleteActivity]
+
+	generateGUID func() string
 }
 
-func NewSectionBranchHttpService(repo repositories.ISectionBranchRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *SectionBranchHttpService {
+func NewSectionBranchHttpService(repo repositories.ISectionBranchRepository, generateGUID func() string, syncCacheRepo mastersync.IMasterSyncCacheRepository) *SectionBranchHttpService {
 
 	insSvc := &SectionBranchHttpService{
 		repo:          repo,
 		syncCacheRepo: syncCacheRepo,
+		generateGUID:  generateGUID,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.SectionBranchActivity, models.SectionBranchDeleteActivity](repo)
@@ -50,7 +51,7 @@ func NewSectionBranchHttpService(repo repositories.ISectionBranchRepository, syn
 	return insSvc
 }
 
-func (svc SectionBranchHttpService) CreateSectionBranch(shopID string, authUsername string, doc models.SectionBranch) (string, error) {
+func (svc SectionBranchHttpService) SaveSectionBranch(shopID string, authUsername string, doc models.SectionBranch) (string, error) {
 
 	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "branchcode", doc.BranchCode)
 
@@ -58,11 +59,24 @@ func (svc SectionBranchHttpService) CreateSectionBranch(shopID string, authUsern
 		return "", err
 	}
 
-	if len(findDoc.GuidFixed) > 0 {
-		return "", errors.New("branch code is exists")
+	guidFixed := ""
+	if len(findDoc.GuidFixed) < 1 {
+		guidFixed, err = svc.create(findDoc, shopID, authUsername, doc)
+	} else {
+		err = svc.update(findDoc, shopID, authUsername, doc)
+		guidFixed = findDoc.GuidFixed
 	}
 
-	newGuidFixed := utils.NewGUID()
+	if err != nil {
+		return "", err
+	}
+
+	return guidFixed, nil
+}
+
+func (svc SectionBranchHttpService) create(findDoc models.SectionBranchDoc, shopID string, authUsername string, doc models.SectionBranch) (string, error) {
+
+	newGuidFixed := svc.generateGUID()
 
 	docData := models.SectionBranchDoc{}
 	docData.ShopID = shopID
@@ -72,7 +86,7 @@ func (svc SectionBranchHttpService) CreateSectionBranch(shopID string, authUsern
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err := svc.repo.Create(docData)
 
 	if err != nil {
 		return "", err
@@ -83,13 +97,7 @@ func (svc SectionBranchHttpService) CreateSectionBranch(shopID string, authUsern
 	return newGuidFixed, nil
 }
 
-func (svc SectionBranchHttpService) UpdateSectionBranch(shopID string, guid string, authUsername string, doc models.SectionBranch) error {
-
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
-
-	if err != nil {
-		return err
-	}
+func (svc SectionBranchHttpService) update(findDoc models.SectionBranchDoc, shopID string, authUsername string, doc models.SectionBranch) error {
 
 	if len(findDoc.GuidFixed) < 1 {
 		return errors.New("document not found")
@@ -100,7 +108,7 @@ func (svc SectionBranchHttpService) UpdateSectionBranch(shopID string, guid stri
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err := svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
 
 	if err != nil {
 		return err
@@ -240,7 +248,7 @@ func (svc SectionBranchHttpService) SaveInBatch(shopID string, authUsername stri
 		payloadList,
 		svc.getDocIDKey,
 		func(shopID string, authUsername string, doc models.SectionBranch) models.SectionBranchDoc {
-			newGuid := utils.NewGUID()
+			newGuid := svc.generateGUID()
 
 			dataDoc := models.SectionBranchDoc{}
 
