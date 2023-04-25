@@ -10776,13 +10776,13 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
+            "put": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Create SectionBranch",
+                "description": "Save SectionBranch",
                 "consumes": [
                     "application/json"
                 ],
@@ -11038,52 +11038,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update SectionBranch",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "SectionBranch"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "SectionBranch ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "SectionBranch",
-                        "name": "SectionBranch",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.SectionBranch"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
             "delete": {
                 "security": [
                     {
@@ -11174,13 +11128,13 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
+            "put": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Create SectionBusinessType",
+                "description": "Save SectionBusinessType",
                 "consumes": [
                     "application/json"
                 ],
@@ -11397,52 +11351,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update SectionBusinessType",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "SectionBusinessType"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "SectionBusinessType ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "SectionBusinessType",
-                        "name": "SectionBusinessType",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.SectionBusinessType"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
             "delete": {
                 "security": [
                     {
@@ -11533,13 +11441,13 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
+            "put": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Create SectionDepartment",
+                "description": "Save SectionDepartment",
                 "consumes": [
                     "application/json"
                 ],
@@ -11547,6 +11455,13 @@ const docTemplate = `{
                     "SectionDepartment"
                 ],
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SectionDepartment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "SectionDepartment",
                         "name": "SectionDepartment",
@@ -11746,52 +11661,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.ApiResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update SectionDepartment",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "SectionDepartment"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "SectionDepartment ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "SectionDepartment",
-                        "name": "SectionDepartment",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.SectionDepartment"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
@@ -24612,7 +24481,6 @@ const docTemplate = `{
         "models.Department": {
             "type": "object",
             "required": [
-                "code",
                 "names"
             ],
             "properties": {

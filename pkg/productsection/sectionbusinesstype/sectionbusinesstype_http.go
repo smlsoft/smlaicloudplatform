@@ -42,70 +42,26 @@ func (h SectionBusinessTypeHttp) RouteSetup() {
 
 	h.ms.GET("/product-section/business-type", h.SearchSectionBusinessTypePage)
 	h.ms.GET("/product-section/business-type/list", h.SearchSectionBusinessTypeStep)
-	h.ms.POST("/product-section/business-type", h.CreateSectionBusinessType)
 	h.ms.GET("/product-section/business-type/:id", h.InfoSectionBusinessType)
-	h.ms.PUT("/product-section/business-type/:id", h.UpdateSectionBusinessType)
+	h.ms.PUT("/product-section/business-type", h.SaveSectionBusinessType)
 	h.ms.DELETE("/product-section/business-type/:id", h.DeleteSectionBusinessType)
 	h.ms.DELETE("/product-section/business-type", h.DeleteSectionBusinessTypeByGUIDs)
 }
 
-// Create SectionBusinessType godoc
-// @Description Create SectionBusinessType
+// Save SectionBusinessType godoc
+// @Description Save SectionBusinessType
 // @Tags		SectionBusinessType
 // @Param		SectionBusinessType  body      models.SectionBusinessType  true  "SectionBusinessType"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product-section/business-type [post]
-func (h SectionBusinessTypeHttp) CreateSectionBusinessType(ctx microservice.IContext) error {
-	authUsername := ctx.UserInfo().Username
-	shopID := ctx.UserInfo().ShopID
-	input := ctx.ReadInput()
-
-	docReq := &models.SectionBusinessType{}
-	err := json.Unmarshal([]byte(input), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	if err = ctx.Validate(docReq); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	idx, err := h.svc.CreateSectionBusinessType(shopID, authUsername, *docReq)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusCreated, common.ApiResponse{
-		Success: true,
-		ID:      idx,
-	})
-	return nil
-}
-
-// Update SectionBusinessType godoc
-// @Description Update SectionBusinessType
-// @Tags		SectionBusinessType
-// @Param		id  path      string  true  "SectionBusinessType ID"
-// @Param		SectionBusinessType  body      models.SectionBusinessType  true  "SectionBusinessType"
-// @Accept 		json
-// @Success		201	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /product-section/business-type/{id} [put]
-func (h SectionBusinessTypeHttp) UpdateSectionBusinessType(ctx microservice.IContext) error {
+// @Router /product-section/business-type [put]
+func (h SectionBusinessTypeHttp) SaveSectionBusinessType(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
 
-	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
 	docReq := &models.SectionBusinessType{}
@@ -121,7 +77,7 @@ func (h SectionBusinessTypeHttp) UpdateSectionBusinessType(ctx microservice.ICon
 		return err
 	}
 
-	err = h.svc.UpdateSectionBusinessType(shopID, id, authUsername, *docReq)
+	id, err := h.svc.SaveSectionBusinessType(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

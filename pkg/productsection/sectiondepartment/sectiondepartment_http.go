@@ -42,56 +42,14 @@ func (h SectionDepartmentHttp) RouteSetup() {
 
 	h.ms.GET("/product-section/deparment", h.SearchSectionDepartmentPage)
 	h.ms.GET("/product-section/deparment/list", h.SearchSectionDepartmentStep)
-	h.ms.POST("/product-section/deparment", h.CreateSectionDepartment)
 	h.ms.GET("/product-section/deparment/:id", h.InfoSectionDepartment)
-	h.ms.PUT("/product-section/deparment/:id", h.UpdateSectionDepartment)
+	h.ms.PUT("/product-section/deparment", h.SaveSectionDepartment)
 	h.ms.DELETE("/product-section/deparment/:id", h.DeleteSectionDepartment)
 	h.ms.DELETE("/product-section/deparment", h.DeleteSectionDepartmentByGUIDs)
 }
 
-// Create SectionDepartment godoc
-// @Description Create SectionDepartment
-// @Tags		SectionDepartment
-// @Param		SectionDepartment  body      models.SectionDepartment  true  "SectionDepartment"
-// @Accept 		json
-// @Success		201	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /product-section/deparment [post]
-func (h SectionDepartmentHttp) CreateSectionDepartment(ctx microservice.IContext) error {
-	authUsername := ctx.UserInfo().Username
-	shopID := ctx.UserInfo().ShopID
-	input := ctx.ReadInput()
-
-	docReq := &models.SectionDepartment{}
-	err := json.Unmarshal([]byte(input), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	if err = ctx.Validate(docReq); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	idx, err := h.svc.CreateSectionDepartment(shopID, authUsername, *docReq)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusCreated, common.ApiResponse{
-		Success: true,
-		ID:      idx,
-	})
-	return nil
-}
-
-// Update SectionDepartment godoc
-// @Description Update SectionDepartment
+// Save SectionDepartment godoc
+// @Description Save SectionDepartment
 // @Tags		SectionDepartment
 // @Param		id  path      string  true  "SectionDepartment ID"
 // @Param		SectionDepartment  body      models.SectionDepartment  true  "SectionDepartment"
@@ -99,13 +57,12 @@ func (h SectionDepartmentHttp) CreateSectionDepartment(ctx microservice.IContext
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product-section/deparment/{id} [put]
-func (h SectionDepartmentHttp) UpdateSectionDepartment(ctx microservice.IContext) error {
+// @Router /product-section/deparment [put]
+func (h SectionDepartmentHttp) SaveSectionDepartment(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
 
-	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
 	docReq := &models.SectionDepartment{}
@@ -121,7 +78,7 @@ func (h SectionDepartmentHttp) UpdateSectionDepartment(ctx microservice.IContext
 		return err
 	}
 
-	err = h.svc.UpdateSectionDepartment(shopID, id, authUsername, *docReq)
+	id, err := h.svc.SaveSectionDepartment(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

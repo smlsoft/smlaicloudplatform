@@ -18,8 +18,7 @@ import (
 )
 
 type ISectionDepartmentHttpService interface {
-	CreateSectionDepartment(shopID string, authUsername string, doc models.SectionDepartment) (string, error)
-	UpdateSectionDepartment(shopID string, guid string, authUsername string, doc models.SectionDepartment) error
+	SaveSectionDepartment(shopID string, authUsername string, doc models.SectionDepartment) (string, error)
 	DeleteSectionDepartment(shopID string, guid string, authUsername string) error
 	DeleteSectionDepartmentByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoSectionDepartment(shopID string, guid string) (models.SectionDepartmentInfo, error)
@@ -49,8 +48,7 @@ func NewSectionDepartmentHttpService(repo repositories.ISectionDepartmentReposit
 	return insSvc
 }
 
-func (svc SectionDepartmentHttpService) CreateSectionDepartment(shopID string, authUsername string, doc models.SectionDepartment) (string, error) {
-
+func (svc SectionDepartmentHttpService) SaveSectionDepartment(shopID string, authUsername string, doc models.SectionDepartment) (string, error) {
 	findDoc, err := svc.repo.FindOneFilter(shopID, map[string]interface{}{
 		"branchcode":     doc.BranchCode,
 		"departmentcode": doc.DepartmentCode,
@@ -60,9 +58,22 @@ func (svc SectionDepartmentHttpService) CreateSectionDepartment(shopID string, a
 		return "", err
 	}
 
-	if len(findDoc.GuidFixed) > 0 {
-		return "", errors.New("branch or department is exists")
+	guidFixed := ""
+	if len(findDoc.GuidFixed) < 1 {
+		guidFixed, err = svc.create(findDoc, shopID, authUsername, doc)
+	} else {
+		err = svc.update(findDoc, shopID, authUsername, doc)
+		guidFixed = findDoc.GuidFixed
 	}
+
+	if err != nil {
+		return "", err
+	}
+
+	return guidFixed, nil
+}
+
+func (svc SectionDepartmentHttpService) create(findDoc models.SectionDepartmentDoc, shopID, authUsername string, doc models.SectionDepartment) (string, error) {
 
 	newGuidFixed := utils.NewGUID()
 
@@ -74,7 +85,7 @@ func (svc SectionDepartmentHttpService) CreateSectionDepartment(shopID string, a
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err := svc.repo.Create(docData)
 
 	if err != nil {
 		return "", err
@@ -85,13 +96,7 @@ func (svc SectionDepartmentHttpService) CreateSectionDepartment(shopID string, a
 	return newGuidFixed, nil
 }
 
-func (svc SectionDepartmentHttpService) UpdateSectionDepartment(shopID string, guid string, authUsername string, doc models.SectionDepartment) error {
-
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
-
-	if err != nil {
-		return err
-	}
+func (svc SectionDepartmentHttpService) update(findDoc models.SectionDepartmentDoc, shopID, authUsername string, doc models.SectionDepartment) error {
 
 	if len(findDoc.GuidFixed) < 1 {
 		return errors.New("document not found")
@@ -102,7 +107,7 @@ func (svc SectionDepartmentHttpService) UpdateSectionDepartment(shopID string, g
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err := svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
 
 	if err != nil {
 		return err

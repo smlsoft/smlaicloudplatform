@@ -27,7 +27,7 @@ func NewSectionBranchHttp(ms *microservice.Microservice, cfg microservice.IConfi
 	repo := repositories.NewSectionBranchRepository(pst)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewSectionBranchHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewSectionBranchHttpService(repo, utils.NewGUID, masterSyncCacheRepo)
 
 	return SectionBranchHttp{
 		ms:  ms,
@@ -42,71 +42,27 @@ func (h SectionBranchHttp) RouteSetup() {
 
 	h.ms.GET("/product-section/branch", h.SearchSectionBranchPage)
 	h.ms.GET("/product-section/branch/list", h.SearchSectionBranchStep)
-	h.ms.POST("/product-section/branch", h.CreateSectionBranch)
 	h.ms.GET("/product-section/branch/:id", h.InfoSectionBranch)
 	h.ms.GET("/product-section/branch/code/:code", h.InfoSectionBranchByCode)
-	h.ms.PUT("/product-section/branch/:id", h.UpdateSectionBranch)
+	h.ms.PUT("/product-section/branch", h.SaveSectionBranch)
 	h.ms.DELETE("/product-section/branch/:id", h.DeleteSectionBranch)
 	h.ms.DELETE("/product-section/branch", h.DeleteSectionBranchByGUIDs)
 }
 
-// Create SectionBranch godoc
-// @Description Create SectionBranch
+// Save SectionBranch godoc
+// @Description Save SectionBranch
 // @Tags		SectionBranch
 // @Param		SectionBranch  body      models.SectionBranch  true  "SectionBranch"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product-section/branch [post]
-func (h SectionBranchHttp) CreateSectionBranch(ctx microservice.IContext) error {
-	authUsername := ctx.UserInfo().Username
-	shopID := ctx.UserInfo().ShopID
-	input := ctx.ReadInput()
-
-	docReq := &models.SectionBranch{}
-	err := json.Unmarshal([]byte(input), &docReq)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	if err = ctx.Validate(docReq); err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	idx, err := h.svc.CreateSectionBranch(shopID, authUsername, *docReq)
-
-	if err != nil {
-		ctx.ResponseError(http.StatusBadRequest, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusCreated, common.ApiResponse{
-		Success: true,
-		ID:      idx,
-	})
-	return nil
-}
-
-// Update SectionBranch godoc
-// @Description Update SectionBranch
-// @Tags		SectionBranch
-// @Param		id  path      string  true  "SectionBranch ID"
-// @Param		SectionBranch  body      models.SectionBranch  true  "SectionBranch"
-// @Accept 		json
-// @Success		201	{object}	common.ResponseSuccessWithID
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /product-section/branch/{id} [put]
-func (h SectionBranchHttp) UpdateSectionBranch(ctx microservice.IContext) error {
+// @Router /product-section/branch [put]
+func (h SectionBranchHttp) SaveSectionBranch(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
 
-	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
 	docReq := &models.SectionBranch{}
@@ -122,7 +78,7 @@ func (h SectionBranchHttp) UpdateSectionBranch(ctx microservice.IContext) error 
 		return err
 	}
 
-	err = h.svc.UpdateSectionBranch(shopID, id, authUsername, *docReq)
+	id, err := h.svc.SaveSectionBranch(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
