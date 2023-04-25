@@ -272,8 +272,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -289,14 +289,7 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -831,7 +824,6 @@ definitions:
         type: array
         uniqueItems: true
     required:
-    - code
     - names
     type: object
   models.DocumentImage:
@@ -1142,8 +1134,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1161,8 +1153,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1178,11 +1168,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1291,8 +1276,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1310,8 +1295,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1327,11 +1310,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1490,8 +1468,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1509,8 +1487,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1526,11 +1502,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -2716,16 +2687,9 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
+      keynumber:
+        type: integer
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
     type: object
   models.ProductUnit:
@@ -12065,10 +12029,10 @@ paths:
       - AccessToken: []
       tags:
       - SectionBranch
-    post:
+    put:
       consumes:
       - application/json
-      description: Create SectionBranch
+      description: Save SectionBranch
       parameters:
       - description: SectionBranch
         in: body
@@ -12128,35 +12092,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - SectionBranch
-    put:
-      consumes:
-      - application/json
-      description: Update SectionBranch
-      parameters:
-      - description: SectionBranch ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: SectionBranch
-        in: body
-        name: SectionBranch
-        required: true
-        schema:
-          $ref: '#/definitions/models.SectionBranch'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
@@ -12312,10 +12247,10 @@ paths:
       - AccessToken: []
       tags:
       - SectionBusinessType
-    post:
+    put:
       consumes:
       - application/json
-      description: Create SectionBusinessType
+      description: Save SectionBusinessType
       parameters:
       - description: SectionBusinessType
         in: body
@@ -12375,35 +12310,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - SectionBusinessType
-    put:
-      consumes:
-      - application/json
-      description: Update SectionBusinessType
-      parameters:
-      - description: SectionBusinessType ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: SectionBusinessType
-        in: body
-        name: SectionBusinessType
-        required: true
-        schema:
-          $ref: '#/definitions/models.SectionBusinessType'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
@@ -12535,11 +12441,16 @@ paths:
       - AccessToken: []
       tags:
       - SectionDepartment
-    post:
+    put:
       consumes:
       - application/json
-      description: Create SectionDepartment
+      description: Save SectionDepartment
       parameters:
+      - description: SectionDepartment ID
+        in: path
+        name: id
+        required: true
+        type: string
       - description: SectionDepartment
         in: body
         name: SectionDepartment
@@ -12598,35 +12509,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.ApiResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - SectionDepartment
-    put:
-      consumes:
-      - application/json
-      description: Update SectionDepartment
-      parameters:
-      - description: SectionDepartment ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: SectionDepartment
-        in: body
-        name: SectionDepartment
-        required: true
-        schema:
-          $ref: '#/definitions/models.SectionDepartment'
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.ResponseSuccessWithID'
         "401":
           description: Unauthorized
           schema:
