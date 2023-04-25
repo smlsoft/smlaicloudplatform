@@ -9,6 +9,8 @@ import (
 	"smlcloudplatform/pkg/organization/branch/models"
 	"smlcloudplatform/pkg/organization/branch/repositories"
 	"smlcloudplatform/pkg/organization/branch/services"
+	businessTypeRepositories "smlcloudplatform/pkg/organization/businesstype/repositories"
+	deparmentRepositories "smlcloudplatform/pkg/organization/department/repositories"
 	"smlcloudplatform/pkg/utils"
 )
 
@@ -26,8 +28,11 @@ func NewBranchHttp(ms *microservice.Microservice, cfg microservice.IConfig) Bran
 
 	repo := repositories.NewBranchRepository(pst)
 
+	repoDepartment := deparmentRepositories.NewDepartmentRepository(pst)
+	repoBusinessType := businessTypeRepositories.NewBusinessTypeRepository(pst)
+
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewBranchHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewBranchHttpService(repo, repoDepartment, repoBusinessType, masterSyncCacheRepo)
 
 	return BranchHttp{
 		ms:  ms,

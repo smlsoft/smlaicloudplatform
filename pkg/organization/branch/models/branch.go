@@ -65,3 +65,21 @@ type BranchDeleteActivity struct {
 func (BranchDeleteActivity) CollectionName() string {
 	return branchCollectionName
 }
+
+type BranchInfoResponse struct {
+	BranchInfo
+	Departments   []Department   `json:"departments" bson:"departments"`
+	BusinessTypes []BusinessType `json:"businesstypes" bson:"businesstypes"`
+}
+
+type Department struct {
+	GuidFixed string         `json:"guidfixed"`
+	Code      string         `json:"code"`
+	Names     []models.NameX `json:"names"`
+}
+
+type BusinessType struct {
+	GuidFixed string         `json:"guidfixed"`
+	Code      string         `json:"code"`
+	Names     []models.NameX `json:"names"`
+}
