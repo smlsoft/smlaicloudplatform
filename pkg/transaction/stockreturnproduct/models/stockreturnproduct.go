@@ -42,6 +42,7 @@ type StockReturnProduct struct {
 	TotalAfterVat            float64        `json:"totalaftervat" bson:"totalaftervat"`
 	TransFlag                int            `json:"transflag" bson:"transflag"`
 	Status                   int8           `json:"status" bson:"status"`
+	IsCancel                 bool           `json:"iscancel" bson:"iscancel"`
 }
 
 type Detail struct {
