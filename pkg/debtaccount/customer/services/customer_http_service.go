@@ -227,6 +227,9 @@ func (svc CustomerHttpService) InfoCustomerByCode(shopID string, code string) (m
 func (svc CustomerHttpService) SearchCustomer(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.CustomerInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"code",
+		"names.name",
+		"addressforbilling.phoneprimary",
+		"addressforbilling.phonesecondary",
 	}
 
 	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
@@ -258,6 +261,9 @@ func (svc CustomerHttpService) SearchCustomer(shopID string, filters map[string]
 func (svc CustomerHttpService) SearchCustomerStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.CustomerInfo, int, error) {
 	searchInFields := []string{
 		"code",
+		"names.name",
+		"addressforbilling.phoneprimary",
+		"addressforbilling.phonesecondary",
 	}
 
 	selectFields := map[string]interface{}{}
