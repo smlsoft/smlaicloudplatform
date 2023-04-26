@@ -57,7 +57,7 @@ func (h ProductBarcodeHttp) RouteSetup() {
 // Create ProductBarcode godoc
 // @Description Create ProductBarcode
 // @Tags		ProductBarcode
-// @Param		ProductBarcode  body      models.ProductBarcode  true  "ProductBarcode"
+// @Param		ProductBarcode  body      models.ProductBarcodeRequest  true  "ProductBarcode"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -103,7 +103,7 @@ func (h ProductBarcodeHttp) CreateProductBarcode(ctx microservice.IContext) erro
 // @Description Update ProductBarcode
 // @Tags		ProductBarcode
 // @Param		id  path      string  true  "ProductBarcode ID"
-// @Param		ProductBarcode  body      models.ProductBarcode  true  "ProductBarcode"
+// @Param		ProductBarcode  body      models.ProductBarcodeRequest  true  "ProductBarcode"
 // @Accept 		json
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
