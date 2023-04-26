@@ -26,9 +26,10 @@ type ProductBarcodeBase struct {
 	ColorSelect     string           `json:"colorselect" bson:"colorselect"`
 	ColorSelectHex  string           `json:"colorselecthex" bson:"colorselecthex"`
 
-	Condition   bool    `json:"condition" bson:"condition"`
-	DivideValue float64 `json:"dividevalue" bson:"dividevalue"`
-	StandValue  float64 `json:"standvalue" bson:"standvalue"`
+	Condition        bool    `json:"condition" bson:"condition"`
+	DivideValue      float64 `json:"dividevalue" bson:"dividevalue"`
+	StandValue       float64 `json:"standvalue" bson:"standvalue"`
+	IsUseSubBarcodes bool    `json:"isusesubbarcodes" bson:"isusesubbarcodes"`
 }
 
 type ProductBarcode struct {
@@ -100,7 +101,14 @@ func (ProductBarcodeDeleteActivity) CollectionName() string {
 
 type ProductBarcodeRequest struct {
 	ProductBarcodeBase
-	Barcodes []string `json:"barcodes" bson:"barcodes"`
+	Barcodes []BarcodeRequest `json:"barcodes"`
+}
+
+type BarcodeRequest struct {
+	Barcode     string  `json:"barcode" bson:"barcode" validate:"required,min=1"`
+	Condition   bool    `json:"condition" bson:"condition"`
+	DivideValue float64 `json:"dividevalue" bson:"dividevalue"`
+	StandValue  float64 `json:"standvalue" bson:"standvalue"`
 }
 
 func (p ProductBarcodeRequest) ToProductBarcode() ProductBarcode {
