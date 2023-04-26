@@ -22,9 +22,11 @@ type IProductBarcodeRepository interface {
 	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.ProductBarcodeDoc, error)
+	FindByGuids(shopID string, guids []string) ([]models.ProductBarcodeDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.ProductBarcodeItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.ProductBarcodeDoc, error)
+	FindByDocIndentityGuids(shopID string, indentityField string, indentityValues interface{}) ([]models.ProductBarcodeDoc, error)
 
 	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, selectFields map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeInfo, int, error)
 
@@ -34,6 +36,8 @@ type IProductBarcodeRepository interface {
 	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeActivity, error)
 
 	FindMasterInCodes(codes []string) ([]models.ProductBarcodeInfo, error)
+	UpdateParentGuidByGuids(shopID string, parentGUID string, guids []string) error
+	Transaction(fnc func() error) error
 }
 
 type ProductBarcodeRepository struct {
@@ -56,6 +60,17 @@ func NewProductBarcodeRepository(pst microservice.IPersisterMongo) *ProductBarco
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.ProductBarcodeActivity, models.ProductBarcodeDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo *ProductBarcodeRepository) UpdateParentGuidByGuids(shopID string, parentGUID string, guids []string) error {
+
+	filters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+		"guidfixed": bson.M{"$in": guids},
+	}
+
+	return repo.pst.Update(models.ProductBarcodeDoc{}, filters, bson.M{"$set": bson.M{"parentguid": parentGUID}})
 }
 
 func (repo *ProductBarcodeRepository) FindMasterInCodes(codes []string) ([]models.ProductBarcodeInfo, error) {
@@ -82,4 +97,8 @@ func (repo *ProductBarcodeRepository) FindMasterInCodes(codes []string) ([]model
 	}
 
 	return docList, nil
+}
+
+func (repo *ProductBarcodeRepository) Transaction(fnc func() error) error {
+	return repo.pst.Transaction(fnc)
 }

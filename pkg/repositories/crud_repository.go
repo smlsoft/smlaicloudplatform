@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"errors"
+	"fmt"
 	"smlcloudplatform/internal/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -18,6 +19,7 @@ type ICRUDRepository[T any] interface {
 	FindByGuid(shopID string, guid string) (T, error)
 	FindByGuids(shopID string, guids []string) ([]T, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (T, error)
+	FindByDocIndentityGuids(shopID string, indentityField string, indentityValue interface{}) ([]T, error)
 	FindOneFilter(shopID string, filters map[string]interface{}) (T, error)
 }
 
@@ -175,6 +177,28 @@ func (repo CrudRepository[T]) FindByDocIndentityGuid(shopID string, indentityFie
 
 	if err != nil {
 		return *new(T), err
+	}
+
+	return *doc, nil
+}
+
+func (repo CrudRepository[T]) FindByDocIndentityGuids(shopID string, indentityField string, indentityValues interface{}) ([]T, error) {
+
+	switch v := indentityValues.(type) {
+	case []int:
+
+	case []string:
+
+	default:
+		return nil, fmt.Errorf("unsupported input type: %T", v)
+	}
+
+	doc := new([]T)
+
+	err := repo.pst.Find(new(T), bson.M{"shopid": shopID, "deletedat": bson.M{"$exists": false}, indentityField: bson.M{"$in": indentityValues}}, doc)
+
+	if err != nil {
+		return *new([]T), err
 	}
 
 	return *doc, nil

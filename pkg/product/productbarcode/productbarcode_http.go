@@ -68,7 +68,7 @@ func (h ProductBarcodeHttp) CreateProductBarcode(ctx microservice.IContext) erro
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &models.ProductBarcode{}
+	docReq := &models.ProductBarcodeRequest{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -117,7 +117,7 @@ func (h ProductBarcodeHttp) UpdateProductBarcode(ctx microservice.IContext) erro
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &models.ProductBarcode{}
+	docReq := &models.ProductBarcodeRequest{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
