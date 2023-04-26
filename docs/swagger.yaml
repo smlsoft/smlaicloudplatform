@@ -817,12 +817,14 @@ definitions:
     properties:
       code:
         type: string
-      guidfixed:
-        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
   models.DocumentImage:
     properties:
@@ -2529,10 +2531,18 @@ definitions:
       barcode:
         minLength: 1
         type: string
+      barcodes:
+        items:
+          $ref: '#/definitions/models.ProductBarcodeBase'
+        type: array
       colorselect:
         type: string
       colorselecthex:
         type: string
+      condition:
+        type: boolean
+      dividevalue:
+        type: number
       groupcode:
         type: string
       groupname:
@@ -2545,8 +2555,68 @@ definitions:
         type: array
       imageuri:
         type: string
-      ismultiplebranch:
+      itemcode:
+        type: string
+      itemunitcode:
+        type: string
+      itemunitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      options:
+        items:
+          $ref: '#/definitions/models.ProductOption'
+        type: array
+      parentguid:
+        type: string
+      prices:
+        items:
+          $ref: '#/definitions/models.ProductPrice'
+        type: array
+      standvalue:
+        type: number
+      useimageorcolor:
         type: boolean
+      xsorts:
+        items:
+          $ref: '#/definitions/models.XSort'
+        type: array
+        uniqueItems: true
+    required:
+    - barcode
+    - names
+    type: object
+  models.ProductBarcodeBase:
+    properties:
+      barcode:
+        minLength: 1
+        type: string
+      colorselect:
+        type: string
+      colorselecthex:
+        type: string
+      condition:
+        type: boolean
+      dividevalue:
+        type: number
+      groupcode:
+        type: string
+      groupname:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      images:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'
+        type: array
+      imageuri:
+        type: string
       itemcode:
         type: string
       itemunitcode:
@@ -2569,6 +2639,8 @@ definitions:
         items:
           $ref: '#/definitions/models.ProductPrice'
         type: array
+      standvalue:
+        type: number
       useimageorcolor:
         type: boolean
       xsorts:

@@ -24480,15 +24480,17 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
                 "code": {
                     "type": "string"
                 },
-                "guidfixed": {
-                    "type": "string"
-                },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -26990,11 +26992,23 @@ const docTemplate = `{
                     "type": "string",
                     "minLength": 1
                 },
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductBarcodeBase"
+                    }
+                },
                 "colorselect": {
                     "type": "string"
                 },
                 "colorselecthex": {
                     "type": "string"
+                },
+                "condition": {
+                    "type": "boolean"
+                },
+                "dividevalue": {
+                    "type": "number"
                 },
                 "groupcode": {
                     "type": "string"
@@ -27014,8 +27028,96 @@ const docTemplate = `{
                 "imageuri": {
                     "type": "string"
                 },
-                "ismultiplebranch": {
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductOption"
+                    }
+                },
+                "parentguid": {
+                    "type": "string"
+                },
+                "prices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductPrice"
+                    }
+                },
+                "standvalue": {
+                    "type": "number"
+                },
+                "useimageorcolor": {
                     "type": "boolean"
+                },
+                "xsorts": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
+                }
+            }
+        },
+        "models.ProductBarcodeBase": {
+            "type": "object",
+            "required": [
+                "barcode",
+                "names"
+            ],
+            "properties": {
+                "barcode": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "colorselect": {
+                    "type": "string"
+                },
+                "colorselecthex": {
+                    "type": "string"
+                },
+                "condition": {
+                    "type": "boolean"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupname": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage"
+                    }
+                },
+                "imageuri": {
+                    "type": "string"
                 },
                 "itemcode": {
                     "type": "string"
@@ -27048,6 +27150,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.ProductPrice"
                     }
+                },
+                "standvalue": {
+                    "type": "number"
                 },
                 "useimageorcolor": {
                     "type": "boolean"
