@@ -272,8 +272,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -289,14 +289,7 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -312,6 +305,20 @@ definitions:
         type: string
     required:
     - name1
+    type: object
+  models.BarcodeRequest:
+    properties:
+      barcode:
+        minLength: 1
+        type: string
+      condition:
+        type: boolean
+      dividevalue:
+        type: number
+      standvalue:
+        type: number
+    required:
+    - barcode
     type: object
   models.BarcodesModifyReqesut:
     type: object
@@ -1141,8 +1148,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1160,8 +1167,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1177,11 +1182,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1290,8 +1290,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1309,8 +1309,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1326,11 +1324,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1489,8 +1482,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1508,8 +1501,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1525,11 +1516,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -2583,6 +2569,8 @@ definitions:
         type: array
       imageuri:
         type: string
+      isusesubbarcodes:
+        type: boolean
       itemcode:
         type: string
       itemunitcode:
@@ -2645,6 +2633,8 @@ definitions:
         type: array
       imageuri:
         type: string
+      isusesubbarcodes:
+        type: boolean
       itemcode:
         type: string
       itemunitcode:
@@ -2687,7 +2677,7 @@ definitions:
         type: string
       barcodes:
         items:
-          type: string
+          $ref: '#/definitions/models.BarcodeRequest'
         type: array
       colorselect:
         type: string
@@ -2709,6 +2699,8 @@ definitions:
         type: array
       imageuri:
         type: string
+      isusesubbarcodes:
+        type: boolean
       itemcode:
         type: string
       itemunitcode:
@@ -2849,16 +2841,9 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
+      keynumber:
+        type: integer
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
     type: object
   models.ProductUnit:
