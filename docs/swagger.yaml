@@ -1025,6 +1025,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -2131,6 +2133,26 @@ definitions:
       success:
         type: boolean
     type: object
+  models.Name:
+    properties:
+      name1:
+        maxLength: 255
+        type: string
+      name2:
+        maxLength: 255
+        type: string
+      name3:
+        maxLength: 255
+        type: string
+      name4:
+        maxLength: 255
+        type: string
+      name5:
+        maxLength: 255
+        type: string
+    required:
+    - name1
+    type: object
   models.NameX:
     properties:
       code:
@@ -3217,7 +3239,23 @@ definitions:
   models.SaleChannel:
     properties:
       code:
+        minLength: 1
         type: string
+      gp:
+        type: number
+      gptype:
+        type: integer
+      imageuri:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.Name'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - code
+    - names
     type: object
   models.SaleInvoice:
     properties:
@@ -4179,7 +4217,19 @@ definitions:
   models.TransportChannel:
     properties:
       code:
+        minLength: 1
         type: string
+      imageuri:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.Name'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - code
+    - names
     type: object
   models.TrialBalanceSheetAccountDetail:
     properties:

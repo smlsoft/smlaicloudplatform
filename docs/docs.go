@@ -25678,6 +25678,9 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -27295,6 +27298,34 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Name": {
+            "type": "object",
+            "required": [
+                "name1"
+            ],
+            "properties": {
+                "name1": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name2": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name3": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name4": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name5": {
+                    "type": "string",
+                    "maxLength": 255
+                }
+            }
+        },
         "models.NameX": {
             "type": "object",
             "required": [
@@ -28880,9 +28911,31 @@ const docTemplate = `{
         },
         "models.SaleChannel": {
             "type": "object",
+            "required": [
+                "code",
+                "names"
+            ],
             "properties": {
                 "code": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "gp": {
+                    "type": "number"
+                },
+                "gptype": {
+                    "type": "integer"
+                },
+                "imageuri": {
                     "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Name"
+                    }
                 }
             }
         },
@@ -30334,9 +30387,25 @@ const docTemplate = `{
         },
         "models.TransportChannel": {
             "type": "object",
+            "required": [
+                "code",
+                "names"
+            ],
             "properties": {
                 "code": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "imageuri": {
                     "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Name"
+                    }
                 }
             }
         },

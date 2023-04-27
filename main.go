@@ -7,6 +7,8 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/apikeyservice"
 	"smlcloudplatform/pkg/authentication"
+	"smlcloudplatform/pkg/channel/salechannel"
+	"smlcloudplatform/pkg/channel/transportchannel"
 	"smlcloudplatform/pkg/debtaccount/creditor"
 	"smlcloudplatform/pkg/debtaccount/creditorgroup"
 	"smlcloudplatform/pkg/debtaccount/customer"
@@ -247,6 +249,10 @@ func main() {
 			sectionbranch.NewSectionBranchHttp(ms, cfg),
 			sectiondepartment.NewSectionDepartmentHttp(ms, cfg),
 			sectionbusinesstype.NewSectionBusinessTypeHttp(ms, cfg),
+
+			//channel
+			salechannel.NewSaleChannelHttp(ms, cfg),
+			transportchannel.NewTransportChannelHttp(ms, cfg),
 		}
 
 		startHttpServices(httpServices...)
