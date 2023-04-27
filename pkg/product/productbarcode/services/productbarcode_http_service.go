@@ -114,7 +114,7 @@ func (svc ProductBarcodeHttpService) CreateProductBarcode(shopID string, authUse
 
 		for _, childDoc := range findChildrenDocs {
 
-			if len(*childDoc.Barcodes) > 0 {
+			if childDoc.Barcodes != nil && len(*childDoc.Barcodes) > 0 {
 				return "", fmt.Errorf("barcode %s is parent product barcode", childDoc.Barcode)
 			}
 
@@ -235,7 +235,7 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 
 		for _, childDoc := range findChildrenDoc {
 
-			if len(*childDoc.Barcodes) > 0 {
+			if childDoc.Barcodes != nil && len(*childDoc.Barcodes) > 0 {
 				return fmt.Errorf("barcode %s is parent product barcode", childDoc.Barcode)
 			}
 
