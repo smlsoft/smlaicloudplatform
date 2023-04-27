@@ -23,7 +23,7 @@ type IDepartmentHttpService interface {
 	DeleteDepartment(shopID string, guid string, authUsername string) error
 	DeleteDepartmentByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoDepartment(shopID string, guid string) (models.DepartmentInfo, error)
-	InfoDepartmentByCode(shopID string, code string) (models.DepartmentInfo, error)
+	InfoDepartmentByCode(shopID, branchCode, departmentCode string) (models.DepartmentInfo, error)
 	SearchDepartment(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DepartmentInfo, mongopagination.PaginationData, error)
 	SearchDepartmentStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.DepartmentInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Department) (common.BulkImport, error)
@@ -162,9 +162,9 @@ func (svc DepartmentHttpService) InfoDepartment(shopID string, guid string) (mod
 	return findDoc.DepartmentInfo, nil
 }
 
-func (svc DepartmentHttpService) InfoDepartmentByCode(shopID string, code string) (models.DepartmentInfo, error) {
+func (svc DepartmentHttpService) InfoDepartmentByCode(shopID, branchCode, departmentCode string) (models.DepartmentInfo, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", code)
+	findDoc, err := svc.repo.FindOneByCode(shopID, branchCode, departmentCode)
 
 	if err != nil {
 		return models.DepartmentInfo{}, err
