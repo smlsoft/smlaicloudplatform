@@ -251,7 +251,7 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 	err = svc.repo.Transaction(func() error {
 
 		//reset previous parent guid
-		if len(*findDoc.Barcodes) > 0 {
+		if findDoc.Barcodes != nil && len(*findDoc.Barcodes) > 0 {
 
 			previousBarcodes := []string{}
 			for _, barcode := range *findDoc.Barcodes {
