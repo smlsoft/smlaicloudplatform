@@ -240,19 +240,21 @@ func (h DepartmentHttp) InfoDepartment(ctx microservice.IContext) error {
 // Get Department By Code godoc
 // @Description get Department info by Code
 // @Tags		Department
-// @Param		code  path      string  true  "Department Code"
+// @Param		departmentCode  path      string  true  "Department Code"
+// @Param		branchCode  path      string  true  "Branch Code"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /organization/department/code/{code} [get]
+// @Router /organization/department/{code}/branch/{branchCode} [get]
 func (h DepartmentHttp) InfoDepartmentByCode(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	code := ctx.Param("code")
+	branchCode := ctx.Param("branchCode")
+	departmentCode := ctx.Param("departmentCode")
 
-	doc, err := h.svc.InfoDepartmentByCode(shopID, code)
+	doc, err := h.svc.InfoDepartmentByCode(shopID, branchCode, departmentCode)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
