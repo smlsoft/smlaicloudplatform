@@ -838,7 +838,6 @@ definitions:
         type: array
         uniqueItems: true
     required:
-    - code
     - names
     type: object
   models.DocumentImage:
@@ -4535,15 +4534,11 @@ definitions:
     type: object
   smlcloudplatform_pkg_organization_branch_models.Branch:
     properties:
-      businesstypes:
-        items:
-          type: string
-        type: array
       code:
         type: string
       departments:
         items:
-          type: string
+          $ref: '#/definitions/models.Department'
         type: array
       names:
         items:

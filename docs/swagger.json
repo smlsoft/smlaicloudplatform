@@ -25384,7 +25384,6 @@
         "models.Department": {
             "type": "object",
             "required": [
-                "code",
                 "names"
             ],
             "properties": {
@@ -30840,19 +30839,13 @@
                 "names"
             ],
             "properties": {
-                "businesstypes": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "code": {
                     "type": "string"
                 },
                 "departments": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/models.Department"
                     }
                 },
                 "names": {

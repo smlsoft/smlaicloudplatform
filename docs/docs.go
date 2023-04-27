@@ -25390,7 +25390,6 @@ const docTemplate = `{
         "models.Department": {
             "type": "object",
             "required": [
-                "code",
                 "names"
             ],
             "properties": {
@@ -30846,19 +30845,13 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
-                "businesstypes": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "code": {
                     "type": "string"
                 },
                 "departments": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/models.Department"
                     }
                 },
                 "names": {
