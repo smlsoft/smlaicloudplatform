@@ -318,7 +318,7 @@ func (svc ProductBarcodeHttpService) updateChildBarcodeInParent(shopID, parentGU
 	docData := findDoc
 
 	tempChildrenBarcodes := []models.ProductBarcodeBase{}
-	if len(findDoc.GuidFixed) > 1 {
+	if findDoc.Barcodes != nil && len(findDoc.GuidFixed) > 1 {
 		for _, barcode := range *findDoc.Barcodes {
 			if barcode.Barcode != previousBarcode {
 				tempChildrenBarcodes = append(tempChildrenBarcodes, barcode)
