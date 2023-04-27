@@ -38,14 +38,15 @@ func NewSectionDepartmentHttp(ms *microservice.Microservice, cfg microservice.IC
 
 func (h SectionDepartmentHttp) RouteSetup() {
 
-	h.ms.POST("/product-section/deparment/bulk", h.SaveBulk)
+	h.ms.POST("/product-section/department/bulk", h.SaveBulk)
 
-	h.ms.GET("/product-section/deparment", h.SearchSectionDepartmentPage)
-	h.ms.GET("/product-section/deparment/list", h.SearchSectionDepartmentStep)
-	h.ms.GET("/product-section/deparment/:id", h.InfoSectionDepartment)
-	h.ms.PUT("/product-section/deparment", h.SaveSectionDepartment)
-	h.ms.DELETE("/product-section/deparment/:id", h.DeleteSectionDepartment)
-	h.ms.DELETE("/product-section/deparment", h.DeleteSectionDepartmentByGUIDs)
+	h.ms.GET("/product-section/department", h.SearchSectionDepartmentPage)
+	h.ms.GET("/product-section/department/list", h.SearchSectionDepartmentStep)
+	h.ms.GET("/product-section/department/:departmentCode/branch/:branchCode", h.InfoSectionDepartmentByCode)
+	h.ms.GET("/product-section/department/:id", h.InfoSectionDepartment)
+	h.ms.PUT("/product-section/department", h.SaveSectionDepartment)
+	h.ms.DELETE("/product-section/department/:id", h.DeleteSectionDepartment)
+	h.ms.DELETE("/product-section/department", h.DeleteSectionDepartmentByGUIDs)
 }
 
 // Save SectionDepartment godoc
@@ -57,7 +58,7 @@ func (h SectionDepartmentHttp) RouteSetup() {
 // @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product-section/deparment [put]
+// @Router /product-section/department [put]
 func (h SectionDepartmentHttp) SaveSectionDepartment(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -101,7 +102,7 @@ func (h SectionDepartmentHttp) SaveSectionDepartment(ctx microservice.IContext) 
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product-section/deparment/{id} [delete]
+// @Router /product-section/department/{id} [delete]
 func (h SectionDepartmentHttp) DeleteSectionDepartment(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -132,7 +133,7 @@ func (h SectionDepartmentHttp) DeleteSectionDepartment(ctx microservice.IContext
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product-section/deparment [delete]
+// @Router /product-section/department [delete]
 func (h SectionDepartmentHttp) DeleteSectionDepartmentByGUIDs(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -170,7 +171,7 @@ func (h SectionDepartmentHttp) DeleteSectionDepartmentByGUIDs(ctx microservice.I
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product-section/deparment/{id} [get]
+// @Router /product-section/department/{id} [get]
 func (h SectionDepartmentHttp) InfoSectionDepartment(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -193,6 +194,37 @@ func (h SectionDepartmentHttp) InfoSectionDepartment(ctx microservice.IContext) 
 	return nil
 }
 
+// Get SectionDepartment By Code godoc
+// @Description get SectionDepartment info by Code
+// @Tags		SectionDepartment
+// @Param		departmentCode  path      string  true  "SectionDepartment Code"
+// @Param		branchCode  path      string  true  "Branch Code"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product-section/department/{departmentCode}/branch/{branchCode} [get]
+func (h SectionDepartmentHttp) InfoSectionDepartmentByCode(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	branchCode := ctx.Param("branchCode")
+	departmentCode := ctx.Param("departmentCode")
+
+	doc, err := h.svc.InfoSectionDepartmentByCode(shopID, branchCode, departmentCode)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
 // List SectionDepartment step godoc
 // @Description get list step
 // @Tags		SectionDepartment
@@ -203,7 +235,7 @@ func (h SectionDepartmentHttp) InfoSectionDepartment(ctx microservice.IContext) 
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product-section/deparment [get]
+// @Router /product-section/department [get]
 func (h SectionDepartmentHttp) SearchSectionDepartmentPage(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -236,7 +268,7 @@ func (h SectionDepartmentHttp) SearchSectionDepartmentPage(ctx microservice.ICon
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product-section/deparment/list [get]
+// @Router /product-section/department/list [get]
 func (h SectionDepartmentHttp) SearchSectionDepartmentStep(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
@@ -268,7 +300,7 @@ func (h SectionDepartmentHttp) SearchSectionDepartmentStep(ctx microservice.ICon
 // @Success		201	{object}	common.BulkReponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /product-section/deparment/bulk [post]
+// @Router /product-section/department/bulk [post]
 func (h SectionDepartmentHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()

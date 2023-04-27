@@ -43,6 +43,7 @@ func (h SectionBusinessTypeHttp) RouteSetup() {
 	h.ms.GET("/product-section/business-type", h.SearchSectionBusinessTypePage)
 	h.ms.GET("/product-section/business-type/list", h.SearchSectionBusinessTypeStep)
 	h.ms.GET("/product-section/business-type/:id", h.InfoSectionBusinessType)
+	h.ms.GET("/product-section/business-type/code/:code", h.InfoSectionBusinessTypeByCode)
 	h.ms.PUT("/product-section/business-type", h.SaveSectionBusinessType)
 	h.ms.DELETE("/product-section/business-type/:id", h.DeleteSectionBusinessType)
 	h.ms.DELETE("/product-section/business-type", h.DeleteSectionBusinessTypeByGUIDs)
@@ -181,6 +182,35 @@ func (h SectionBusinessTypeHttp) InfoSectionBusinessType(ctx microservice.IConte
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// Get SectionBusinessType By Code godoc
+// @Description get SectionBusinessType info by Code
+// @Tags		SectionBusinessType
+// @Param		code  path      string  true  "SectionBusinessType Code"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product-section/business-type/code/{code} [get]
+func (h SectionBusinessTypeHttp) InfoSectionBusinessTypeByCode(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	code := ctx.Param("code")
+
+	doc, err := h.svc.InfoSectionBusinessTypeByBusinessTypeCode(shopID, code)
+
+	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}

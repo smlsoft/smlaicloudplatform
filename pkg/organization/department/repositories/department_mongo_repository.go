@@ -59,7 +59,7 @@ func NewDepartmentRepository(pst microservice.IPersisterMongo) *DepartmentReposi
 func (repo DepartmentRepository) FindOneByCode(shopID, branchCode, departmentCode string) (models.DepartmentDoc, error) {
 	doc := models.DepartmentDoc{}
 	err := repo.pst.FindOne(models.DepartmentDoc{}, bson.M{
-		"shop_id":        shopID,
+		"shopid":         shopID,
 		"deletedat":      bson.M{"$exists": false},
 		"branchcode":     branchCode,
 		"departmentcode": departmentCode,

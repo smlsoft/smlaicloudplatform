@@ -22,6 +22,7 @@ type ISectionBusinessTypeHttpService interface {
 	DeleteSectionBusinessType(shopID string, guid string, authUsername string) error
 	DeleteSectionBusinessTypeByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoSectionBusinessType(shopID string, guid string) (models.SectionBusinessTypeInfo, error)
+	InfoSectionBusinessTypeByBusinessTypeCode(shopID string, businessTypeCode string) (models.SectionBusinessTypeInfo, error)
 	SearchSectionBusinessType(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SectionBusinessTypeInfo, mongopagination.PaginationData, error)
 	SearchSectionBusinessTypeStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.SectionBusinessTypeInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.SectionBusinessType) (common.BulkImport, error)
@@ -151,6 +152,21 @@ func (svc SectionBusinessTypeHttpService) DeleteSectionBusinessTypeByGUIDs(shopI
 func (svc SectionBusinessTypeHttpService) InfoSectionBusinessType(shopID string, guid string) (models.SectionBusinessTypeInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+
+	if err != nil {
+		return models.SectionBusinessTypeInfo{}, err
+	}
+
+	if len(findDoc.GuidFixed) < 1 {
+		return models.SectionBusinessTypeInfo{}, errors.New("document not found")
+	}
+
+	return findDoc.SectionBusinessTypeInfo, nil
+}
+
+func (svc SectionBusinessTypeHttpService) InfoSectionBusinessTypeByBusinessTypeCode(shopID string, businessTypeCode string) (models.SectionBusinessTypeInfo, error) {
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "businesstypecode", businessTypeCode)
 
 	if err != nil {
 		return models.SectionBusinessTypeInfo{}, err

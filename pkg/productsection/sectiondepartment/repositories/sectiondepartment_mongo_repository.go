@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type ISectionDepartmentRepository interface {
@@ -30,6 +31,8 @@ type ISectionDepartmentRepository interface {
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SectionDepartmentActivity, mongopagination.PaginationData, error)
 	FindDeletedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SectionDepartmentDeleteActivity, error)
 	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SectionDepartmentActivity, error)
+
+	FindOneByCode(shopID, branchCode, departmentCode string) (models.SectionDepartmentDoc, error)
 }
 
 type SectionDepartmentRepository struct {
@@ -52,4 +55,20 @@ func NewSectionDepartmentRepository(pst microservice.IPersisterMongo) *SectionDe
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.SectionDepartmentActivity, models.SectionDepartmentDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo SectionDepartmentRepository) FindOneByCode(shopID, branchCode, departmentCode string) (models.SectionDepartmentDoc, error) {
+	doc := models.SectionDepartmentDoc{}
+	err := repo.pst.FindOne(models.SectionDepartmentDoc{}, bson.M{
+		"shopid":         shopID,
+		"deletedat":      bson.M{"$exists": false},
+		"branchcode":     branchCode,
+		"departmentcode": departmentCode,
+	}, &doc)
+
+	if err != nil {
+		return doc, err
+	}
+
+	return doc, nil
 }

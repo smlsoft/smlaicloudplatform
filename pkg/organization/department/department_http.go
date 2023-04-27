@@ -44,7 +44,7 @@ func (h DepartmentHttp) RouteSetup() {
 	h.ms.GET("/organization/department/list", h.SearchDepartmentStep)
 	h.ms.POST("/organization/department", h.CreateDepartment)
 	h.ms.GET("/organization/department/:id", h.InfoDepartment)
-	h.ms.GET("/organization/department/code/:code", h.InfoDepartmentByCode)
+	h.ms.GET("/organization/department/:departmentCode/branch/:branchCode", h.InfoDepartmentByCode)
 	h.ms.PUT("/organization/department/:id", h.UpdateDepartment)
 	h.ms.DELETE("/organization/department/:id", h.DeleteDepartment)
 	h.ms.DELETE("/organization/department", h.DeleteDepartmentByGUIDs)
@@ -246,7 +246,7 @@ func (h DepartmentHttp) InfoDepartment(ctx microservice.IContext) error {
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /organization/department/{code}/branch/{branchCode} [get]
+// @Router /organization/department/{departmentCode}/branch/{branchCode} [get]
 func (h DepartmentHttp) InfoDepartmentByCode(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID

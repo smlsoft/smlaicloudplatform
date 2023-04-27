@@ -838,6 +838,7 @@ definitions:
         type: array
         uniqueItems: true
     required:
+    - code
     - names
     type: object
   models.DocumentImage:
@@ -1024,8 +1025,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -3215,6 +3214,11 @@ definitions:
     - collection
     - keyid
     type: object
+  models.SaleChannel:
+    properties:
+      code:
+        type: string
+    type: object
   models.SaleInvoice:
     properties:
       cashiercode:
@@ -4171,6 +4175,11 @@ definitions:
         type: integer
       total:
         type: integer
+    type: object
+  models.TransportChannel:
+    properties:
+      code:
+        type: string
     type: object
   models.TrialBalanceSheetAccountDetail:
     properties:
@@ -11039,6 +11048,35 @@ paths:
       - AccessToken: []
       tags:
       - Department
+  /organization/department/{departmentCode}/branch/{branchCode}:
+    get:
+      consumes:
+      - application/json
+      description: get Department info by Code
+      parameters:
+      - description: Department Code
+        in: path
+        name: departmentCode
+        required: true
+        type: string
+      - description: Branch Code
+        in: path
+        name: branchCode
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Department
   /organization/department/{id}:
     delete:
       consumes:
@@ -11134,30 +11172,6 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/models.BulkReponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/models.AuthResponseFailed'
-      security:
-      - AccessToken: []
-      tags:
-      - Department
-  /organization/department/code/{code}:
-    get:
-      consumes:
-      - application/json
-      description: get Department info by Code
-      parameters:
-      - description: Department Code
-        in: path
-        name: code
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.ApiResponse'
         "401":
           description: Unauthorized
           schema:
@@ -12517,6 +12531,30 @@ paths:
       - AccessToken: []
       tags:
       - SectionBusinessType
+  /product-section/business-type/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get SectionBusinessType info by Code
+      parameters:
+      - description: SectionBusinessType Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionBusinessType
   /product-section/business-type/list:
     get:
       consumes:
@@ -12554,7 +12592,7 @@ paths:
       - AccessToken: []
       tags:
       - SectionBusinessType
-  /product-section/deparment:
+  /product-section/department:
     delete:
       consumes:
       - application/json
@@ -12642,7 +12680,36 @@ paths:
       - AccessToken: []
       tags:
       - SectionDepartment
-  /product-section/deparment/{id}:
+  /product-section/department/{departmentCode}/branch/{branchCode}:
+    get:
+      consumes:
+      - application/json
+      description: get SectionDepartment info by Code
+      parameters:
+      - description: SectionDepartment Code
+        in: path
+        name: departmentCode
+        required: true
+        type: string
+      - description: Branch Code
+        in: path
+        name: branchCode
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SectionDepartment
+  /product-section/department/{id}:
     delete:
       consumes:
       - application/json
@@ -12689,7 +12756,7 @@ paths:
       - AccessToken: []
       tags:
       - SectionDepartment
-  /product-section/deparment/bulk:
+  /product-section/department/bulk:
     post:
       consumes:
       - application/json
@@ -12716,7 +12783,7 @@ paths:
       - AccessToken: []
       tags:
       - SectionDepartment
-  /product-section/deparment/list:
+  /product-section/department/list:
     get:
       consumes:
       - application/json
@@ -15252,6 +15319,253 @@ paths:
       - AccessToken: []
       tags:
       - Restaurant
+  /sale-channel:
+    delete:
+      consumes:
+      - application/json
+      description: Delete SaleChannel
+      parameters:
+      - description: SaleChannel GUIDs
+        in: body
+        name: SaleChannel
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleChannel
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleChannel
+    post:
+      consumes:
+      - application/json
+      description: Create SaleChannel
+      parameters:
+      - description: SaleChannel
+        in: body
+        name: SaleChannel
+        required: true
+        schema:
+          $ref: '#/definitions/models.SaleChannel'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleChannel
+  /sale-channel/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete SaleChannel
+      parameters:
+      - description: SaleChannel ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleChannel
+    get:
+      consumes:
+      - application/json
+      description: get SaleChannel info by guidfixed
+      parameters:
+      - description: SaleChannel guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleChannel
+    put:
+      consumes:
+      - application/json
+      description: Update SaleChannel
+      parameters:
+      - description: SaleChannel ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: SaleChannel
+        in: body
+        name: SaleChannel
+        required: true
+        schema:
+          $ref: '#/definitions/models.SaleChannel'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleChannel
+  /sale-channel/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create SaleChannel
+      parameters:
+      - description: SaleChannel
+        in: body
+        name: SaleChannel
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.SaleChannel'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleChannel
+  /sale-channel/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get SaleChannel info by Code
+      parameters:
+      - description: SaleChannel Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleChannel
+  /sale-channel/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SaleChannel
   /select-shop:
     post:
       consumes:
@@ -18955,6 +19269,253 @@ paths:
       - AccessToken: []
       tags:
       - StockTransfer
+  /transport-channel:
+    delete:
+      consumes:
+      - application/json
+      description: Delete TransportChannel
+      parameters:
+      - description: TransportChannel GUIDs
+        in: body
+        name: TransportChannel
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - TransportChannel
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - TransportChannel
+    post:
+      consumes:
+      - application/json
+      description: Create TransportChannel
+      parameters:
+      - description: TransportChannel
+        in: body
+        name: TransportChannel
+        required: true
+        schema:
+          $ref: '#/definitions/models.TransportChannel'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - TransportChannel
+  /transport-channel/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete TransportChannel
+      parameters:
+      - description: TransportChannel ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - TransportChannel
+    get:
+      consumes:
+      - application/json
+      description: get TransportChannel info by guidfixed
+      parameters:
+      - description: TransportChannel guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - TransportChannel
+    put:
+      consumes:
+      - application/json
+      description: Update TransportChannel
+      parameters:
+      - description: TransportChannel ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: TransportChannel
+        in: body
+        name: TransportChannel
+        required: true
+        schema:
+          $ref: '#/definitions/models.TransportChannel'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - TransportChannel
+  /transport-channel/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create TransportChannel
+      parameters:
+      - description: TransportChannel
+        in: body
+        name: TransportChannel
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.TransportChannel'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - TransportChannel
+  /transport-channel/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get TransportChannel info by Code
+      parameters:
+      - description: TransportChannel Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - TransportChannel
+  /transport-channel/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - TransportChannel
   /unit:
     delete:
       consumes:

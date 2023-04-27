@@ -22,6 +22,7 @@ type ISectionDepartmentHttpService interface {
 	DeleteSectionDepartment(shopID string, guid string, authUsername string) error
 	DeleteSectionDepartmentByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoSectionDepartment(shopID string, guid string) (models.SectionDepartmentInfo, error)
+	InfoSectionDepartmentByCode(shopID, branchCode, departmentCode string) (models.SectionDepartmentInfo, error)
 	SearchSectionDepartment(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SectionDepartmentInfo, mongopagination.PaginationData, error)
 	SearchSectionDepartmentStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.SectionDepartmentInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.SectionDepartment) (common.BulkImport, error)
@@ -157,6 +158,21 @@ func (svc SectionDepartmentHttpService) DeleteSectionDepartmentByGUIDs(shopID st
 func (svc SectionDepartmentHttpService) InfoSectionDepartment(shopID string, guid string) (models.SectionDepartmentInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+
+	if err != nil {
+		return models.SectionDepartmentInfo{}, err
+	}
+
+	if len(findDoc.GuidFixed) < 1 {
+		return models.SectionDepartmentInfo{}, errors.New("document not found")
+	}
+
+	return findDoc.SectionDepartmentInfo, nil
+}
+
+func (svc SectionDepartmentHttpService) InfoSectionDepartmentByCode(shopID, branchCode, departmentCode string) (models.SectionDepartmentInfo, error) {
+
+	findDoc, err := svc.repo.FindOneByCode(shopID, branchCode, departmentCode)
 
 	if err != nil {
 		return models.SectionDepartmentInfo{}, err
