@@ -25389,17 +25389,12 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
                 "code": {
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -25677,9 +25672,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -27965,11 +27957,20 @@ const docTemplate = `{
                 "imageuri": {
                     "type": "string"
                 },
+                "isdividend": {
+                    "type": "boolean"
+                },
+                "issumpoint": {
+                    "type": "boolean"
+                },
                 "isusesubbarcodes": {
                     "type": "boolean"
                 },
                 "itemcode": {
                     "type": "string"
+                },
+                "itemtype": {
+                    "type": "integer"
                 },
                 "itemunitcode": {
                     "type": "string"
@@ -27979,6 +27980,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "maxdiscount": {
+                    "type": "string"
                 },
                 "names": {
                     "type": "array",
@@ -28006,8 +28010,14 @@ const docTemplate = `{
                 "standvalue": {
                     "type": "number"
                 },
+                "taxtype": {
+                    "type": "integer"
+                },
                 "useimageorcolor": {
                     "type": "boolean"
+                },
+                "vattype": {
+                    "type": "integer"
                 },
                 "xsorts": {
                     "type": "array",
@@ -28059,11 +28069,20 @@ const docTemplate = `{
                 "imageuri": {
                     "type": "string"
                 },
+                "isdividend": {
+                    "type": "boolean"
+                },
+                "issumpoint": {
+                    "type": "boolean"
+                },
                 "isusesubbarcodes": {
                     "type": "boolean"
                 },
                 "itemcode": {
                     "type": "string"
+                },
+                "itemtype": {
+                    "type": "integer"
                 },
                 "itemunitcode": {
                     "type": "string"
@@ -28073,6 +28092,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "maxdiscount": {
+                    "type": "string"
                 },
                 "names": {
                     "type": "array",
@@ -28097,8 +28119,14 @@ const docTemplate = `{
                 "standvalue": {
                     "type": "number"
                 },
+                "taxtype": {
+                    "type": "integer"
+                },
                 "useimageorcolor": {
                     "type": "boolean"
+                },
+                "vattype": {
+                    "type": "integer"
                 },
                 "xsorts": {
                     "type": "array",
@@ -28156,11 +28184,20 @@ const docTemplate = `{
                 "imageuri": {
                     "type": "string"
                 },
+                "isdividend": {
+                    "type": "boolean"
+                },
+                "issumpoint": {
+                    "type": "boolean"
+                },
                 "isusesubbarcodes": {
                     "type": "boolean"
                 },
                 "itemcode": {
                     "type": "string"
+                },
+                "itemtype": {
+                    "type": "integer"
                 },
                 "itemunitcode": {
                     "type": "string"
@@ -28170,6 +28207,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "maxdiscount": {
+                    "type": "string"
                 },
                 "names": {
                     "type": "array",
@@ -28194,8 +28234,14 @@ const docTemplate = `{
                 "standvalue": {
                     "type": "number"
                 },
+                "taxtype": {
+                    "type": "integer"
+                },
                 "useimageorcolor": {
                     "type": "boolean"
+                },
+                "vattype": {
+                    "type": "integer"
                 },
                 "xsorts": {
                     "type": "array",

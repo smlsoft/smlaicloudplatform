@@ -30,6 +30,13 @@ type ProductBarcodeBase struct {
 	DivideValue      float64 `json:"dividevalue" bson:"dividevalue"`
 	StandValue       float64 `json:"standvalue" bson:"standvalue"`
 	IsUseSubBarcodes bool    `json:"isusesubbarcodes" bson:"isusesubbarcodes"`
+
+	ItemType    int8   `json:"itemtype" bson:"itemtype"`
+	TaxType     int8   `json:"taxtype" bson:"taxtype"`
+	VatType     int8   `json:"vattype" bson:"vattype"`
+	IsSumPoint  bool   `json:"issumpoint" bson:"issumpoint"`
+	MaxDiscount string `json:"maxdiscount" bson:"maxdiscount"`
+	IsDividend  bool   `json:"isdividend" bson:"isdividend"`
 }
 
 type ProductBarcode struct {

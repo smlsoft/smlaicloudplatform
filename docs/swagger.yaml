@@ -834,11 +834,7 @@ definitions:
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.DocumentImage:
     properties:
@@ -1024,8 +1020,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -2589,16 +2583,24 @@ definitions:
         type: array
       imageuri:
         type: string
+      isdividend:
+        type: boolean
+      issumpoint:
+        type: boolean
       isusesubbarcodes:
         type: boolean
       itemcode:
         type: string
+      itemtype:
+        type: integer
       itemunitcode:
         type: string
       itemunitnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      maxdiscount:
+        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -2617,8 +2619,12 @@ definitions:
         type: array
       standvalue:
         type: number
+      taxtype:
+        type: integer
       useimageorcolor:
         type: boolean
+      vattype:
+        type: integer
       xsorts:
         items:
           $ref: '#/definitions/models.XSort'
@@ -2653,16 +2659,24 @@ definitions:
         type: array
       imageuri:
         type: string
+      isdividend:
+        type: boolean
+      issumpoint:
+        type: boolean
       isusesubbarcodes:
         type: boolean
       itemcode:
         type: string
+      itemtype:
+        type: integer
       itemunitcode:
         type: string
       itemunitnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      maxdiscount:
+        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -2679,8 +2693,12 @@ definitions:
         type: array
       standvalue:
         type: number
+      taxtype:
+        type: integer
       useimageorcolor:
         type: boolean
+      vattype:
+        type: integer
       xsorts:
         items:
           $ref: '#/definitions/models.XSort'
@@ -2719,16 +2737,24 @@ definitions:
         type: array
       imageuri:
         type: string
+      isdividend:
+        type: boolean
+      issumpoint:
+        type: boolean
       isusesubbarcodes:
         type: boolean
       itemcode:
         type: string
+      itemtype:
+        type: integer
       itemunitcode:
         type: string
       itemunitnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      maxdiscount:
+        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -2745,8 +2771,12 @@ definitions:
         type: array
       standvalue:
         type: number
+      taxtype:
+        type: integer
       useimageorcolor:
         type: boolean
+      vattype:
+        type: integer
       xsorts:
         items:
           $ref: '#/definitions/models.XSort'
