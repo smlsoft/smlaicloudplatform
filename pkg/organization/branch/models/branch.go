@@ -12,8 +12,8 @@ type Branch struct {
 	models.PartitionIdentity `bson:"inline"`
 	Code                     string          `json:"code" bson:"code"`
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	Departments              *[]Department   `json:"departments" bson:"departments"`
-	// BusinessTypes            *[]string       `json:"businesstypes" bson:"businesstypes"`
+	Departments              *[]string       `json:"departments" bson:"departments"`
+	BusinessTypes            *[]string       `json:"businesstypes" bson:"businesstypes"`
 }
 
 type BranchInfo struct {
@@ -68,10 +68,18 @@ func (BranchDeleteActivity) CollectionName() string {
 
 type BranchInfoResponse struct {
 	BranchInfo
-	Departments []Department `json:"departments" bson:"departments"`
+	Departments   []Department   `json:"departments" bson:"departments"`
+	BusinessTypes []BusinessType `json:"businesstypes" bson:"businesstypes"`
 }
 
 type Department struct {
-	Code  string         `json:"code"`
-	Names []models.NameX `json:"names"`
+	GuidFixed string         `json:"guidfixed"`
+	Code      string         `json:"code"`
+	Names     []models.NameX `json:"names"`
+}
+
+type BusinessType struct {
+	GuidFixed string         `json:"guidfixed"`
+	Code      string         `json:"code"`
+	Names     []models.NameX `json:"names"`
 }

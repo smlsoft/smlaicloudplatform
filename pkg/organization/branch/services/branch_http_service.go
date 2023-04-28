@@ -24,10 +24,10 @@ type IBranchHttpService interface {
 	UpdateBranch(shopID string, guid string, authUsername string, doc models.Branch) error
 	DeleteBranch(shopID string, guid string, authUsername string) error
 	DeleteBranchByGUIDs(shopID string, authUsername string, GUIDs []string) error
-	InfoBranch(shopID string, guid string) (models.BranchInfo, error)
-	InfoBranchByCode(shopID string, code string) (models.BranchInfo, error)
-	SearchBranch(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.BranchInfo, mongopagination.PaginationData, error)
-	SearchBranchStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.BranchInfo, int, error)
+	InfoBranch(shopID string, guid string) (models.BranchInfoResponse, error)
+	InfoBranchByCode(shopID string, code string) (models.BranchInfoResponse, error)
+	SearchBranch(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.BranchInfoResponse, mongopagination.PaginationData, error)
+	SearchBranchStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.BranchInfoResponse, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Branch) (common.BulkImport, error)
 
 	GetModuleName() string
@@ -153,37 +153,101 @@ func (svc BranchHttpService) DeleteBranchByGUIDs(shopID string, authUsername str
 	return nil
 }
 
-func (svc BranchHttpService) InfoBranch(shopID string, guid string) (models.BranchInfo, error) {
+func (svc BranchHttpService) InfoBranch(shopID string, guid string) (models.BranchInfoResponse, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
-		return models.BranchInfo{}, err
+		return models.BranchInfoResponse{}, err
 	}
 
 	if len(findDoc.GuidFixed) < 1 {
-		return models.BranchInfo{}, errors.New("document not found")
+		return models.BranchInfoResponse{}, errors.New("document not found")
 	}
 
-	return findDoc.BranchInfo, nil
+	resultDoc, err := svc.mapBranchInfo(findDoc.BranchInfo, shopID)
+
+	if err != nil {
+		return models.BranchInfoResponse{}, err
+	}
+
+	return resultDoc, nil
 }
 
-func (svc BranchHttpService) InfoBranchByCode(shopID string, code string) (models.BranchInfo, error) {
+func (svc BranchHttpService) mapBranchInfo(findInfo models.BranchInfo, shopID string) (models.BranchInfoResponse, error) {
+
+	if findInfo.Branch.Departments == nil {
+		findInfo.Branch.Departments = &[]string{}
+	}
+
+	if findInfo.Branch.BusinessTypes == nil {
+		findInfo.Branch.BusinessTypes = &[]string{}
+	}
+
+	departments := []models.Department{}
+	for _, departmentGUID := range *findInfo.Branch.Departments {
+		findDepartmentDoc, err := svc.repoDepartment.FindByGuid(shopID, departmentGUID)
+
+		if err != nil {
+			return models.BranchInfoResponse{}, err
+		}
+
+		if len(findDepartmentDoc.GuidFixed) > 0 {
+			departments = append(departments, models.Department{
+				GuidFixed: findDepartmentDoc.GuidFixed,
+				Code:      findDepartmentDoc.Department.Code,
+				Names:     *findDepartmentDoc.Department.Names,
+			})
+		}
+	}
+
+	businesstypes := []models.BusinessType{}
+	for _, businesstypeGUID := range *findInfo.Branch.BusinessTypes {
+		findBusinessTypeDoc, err := svc.repoBusinessType.FindByGuid(shopID, businesstypeGUID)
+
+		if err != nil {
+			return models.BranchInfoResponse{}, err
+		}
+
+		if len(findBusinessTypeDoc.GuidFixed) > 0 {
+			businesstypes = append(businesstypes, models.BusinessType{
+				GuidFixed: findBusinessTypeDoc.GuidFixed,
+				Code:      findBusinessTypeDoc.BusinessType.Code,
+				Names:     *findBusinessTypeDoc.BusinessType.Names,
+			})
+		}
+	}
+
+	resultDoc := models.BranchInfoResponse{}
+	resultDoc.BranchInfo = findInfo
+	resultDoc.Departments = departments
+	resultDoc.BusinessTypes = businesstypes
+
+	return resultDoc, nil
+}
+
+func (svc BranchHttpService) InfoBranchByCode(shopID string, code string) (models.BranchInfoResponse, error) {
 
 	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", code)
 
 	if err != nil {
-		return models.BranchInfo{}, err
+		return models.BranchInfoResponse{}, err
 	}
 
 	if len(findDoc.GuidFixed) < 1 {
-		return models.BranchInfo{}, errors.New("document not found")
+		return models.BranchInfoResponse{}, errors.New("document not found")
 	}
 
-	return findDoc.BranchInfo, nil
+	resultDoc, err := svc.mapBranchInfo(findDoc.BranchInfo, shopID)
+
+	if err != nil {
+		return models.BranchInfoResponse{}, err
+	}
+
+	return resultDoc, nil
 }
 
-func (svc BranchHttpService) SearchBranch(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.BranchInfo, mongopagination.PaginationData, error) {
+func (svc BranchHttpService) SearchBranch(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.BranchInfoResponse, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"code",
 		"names.name",
@@ -192,13 +256,25 @@ func (svc BranchHttpService) SearchBranch(shopID string, filters map[string]inte
 	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
 
 	if err != nil {
-		return []models.BranchInfo{}, pagination, err
+		return []models.BranchInfoResponse{}, pagination, err
 	}
 
-	return docList, pagination, nil
+	resultDocs := []models.BranchInfoResponse{}
+	for _, docInfo := range docList {
+
+		resultDoc, err := svc.mapBranchInfo(docInfo, shopID)
+
+		if err != nil {
+			return []models.BranchInfoResponse{}, pagination, err
+		}
+
+		resultDocs = append(resultDocs, resultDoc)
+	}
+
+	return resultDocs, pagination, nil
 }
 
-func (svc BranchHttpService) SearchBranchStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.BranchInfo, int, error) {
+func (svc BranchHttpService) SearchBranchStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.BranchInfoResponse, int, error) {
 	searchInFields := []string{
 		"code",
 		"names.name",
@@ -209,10 +285,22 @@ func (svc BranchHttpService) SearchBranchStep(shopID string, langCode string, pa
 	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
-		return []models.BranchInfo{}, 0, err
+		return []models.BranchInfoResponse{}, 0, err
 	}
 
-	return docList, total, nil
+	resultDocs := []models.BranchInfoResponse{}
+	for _, docInfo := range docList {
+
+		resultDoc, err := svc.mapBranchInfo(docInfo, shopID)
+
+		if err != nil {
+			return []models.BranchInfoResponse{}, 0, err
+		}
+
+		resultDocs = append(resultDocs, resultDoc)
+	}
+
+	return resultDocs, total, nil
 }
 
 func (svc BranchHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.Branch) (common.BulkImport, error) {
