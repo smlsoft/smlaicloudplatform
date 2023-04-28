@@ -748,9 +748,13 @@ definitions:
         type: string
       code:
         type: string
+      creditday:
+        type: integer
       customertype:
         type: integer
       email:
+        type: string
+      fundcode:
         type: string
       groups:
         items:
@@ -834,7 +838,12 @@ definitions:
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+    required:
+    - code
+    - names
     type: object
   models.DocumentImage:
     properties:
@@ -1020,6 +1029,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -4564,11 +4575,15 @@ definitions:
     type: object
   smlcloudplatform_pkg_organization_branch_models.Branch:
     properties:
+      businesstypes:
+        items:
+          type: string
+        type: array
       code:
         type: string
       departments:
         items:
-          $ref: '#/definitions/models.Department'
+          type: string
         type: array
       names:
         items:
