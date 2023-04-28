@@ -25267,10 +25267,16 @@
                 "code": {
                     "type": "string"
                 },
+                "creditday": {
+                    "type": "integer"
+                },
                 "customertype": {
                     "type": "integer"
                 },
                 "email": {
+                    "type": "string"
+                },
+                "fundcode": {
                     "type": "string"
                 },
                 "groups": {
@@ -25383,12 +25389,18 @@
         },
         "models.Department": {
             "type": "object",
+            "required": [
+                "code",
+                "names"
+            ],
             "properties": {
                 "code": {
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -25666,6 +25678,9 @@
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -30885,13 +30900,19 @@
                 "names"
             ],
             "properties": {
+                "businesstypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "code": {
                     "type": "string"
                 },
                 "departments": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Department"
+                        "type": "string"
                     }
                 },
                 "names": {

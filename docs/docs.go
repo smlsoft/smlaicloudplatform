@@ -25273,10 +25273,16 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "creditday": {
+                    "type": "integer"
+                },
                 "customertype": {
                     "type": "integer"
                 },
                 "email": {
+                    "type": "string"
+                },
+                "fundcode": {
                     "type": "string"
                 },
                 "groups": {
@@ -25389,12 +25395,18 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
+            "required": [
+                "code",
+                "names"
+            ],
             "properties": {
                 "code": {
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -25672,6 +25684,9 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -30891,13 +30906,19 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
+                "businesstypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "code": {
                     "type": "string"
                 },
                 "departments": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Department"
+                        "type": "string"
                     }
                 },
                 "names": {

@@ -24,7 +24,10 @@ type Customer struct {
 	BranchNumber       string     `json:"branchnumber" bson:"branchnumber"`
 	IsCreditor         bool       `json:"iscreditor" bson:"iscreditor"`
 	IsDebtor           bool       `json:"isdebtor" bson:"isdebtor"`
-	GroupGUIDs         *[]string  `json:"-" bson:"groups"`
+
+	FundCode   string    `json:"fundcode" bson:"fundcode"`
+	CreditDay  int       `json:"creditday" bson:"creditday"`
+	GroupGUIDs *[]string `json:"-" bson:"groups"`
 }
 
 type Address struct {
