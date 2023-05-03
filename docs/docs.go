@@ -30918,7 +30918,7 @@ const docTemplate = `{
                 "departments": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/models.Department"
                     }
                 },
                 "names": {

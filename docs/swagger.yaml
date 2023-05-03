@@ -4583,7 +4583,7 @@ definitions:
         type: string
       departments:
         items:
-          type: string
+          $ref: '#/definitions/models.Department'
         type: array
       names:
         items:
