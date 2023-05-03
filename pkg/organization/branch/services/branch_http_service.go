@@ -68,6 +68,15 @@ func (svc BranchHttpService) CreateBranch(shopID string, authUsername string, do
 		return "", errors.New("code is exists")
 	}
 
+	tempMap := map[string]struct{}{}
+
+	for _, department := range *doc.Departments {
+		if _, ok := tempMap[department.Code]; ok {
+			return "", fmt.Errorf("department code %s is duplicated", department.Code)
+		}
+		tempMap[department.Code] = struct{}{}
+	}
+
 	newGuidFixed := utils.NewGUID()
 
 	docData := models.BranchDoc{}
@@ -101,12 +110,23 @@ func (svc BranchHttpService) UpdateBranch(shopID string, guid string, authUserna
 		return errors.New("document not found")
 	}
 
-	findDoc.Branch = doc
+	tempMap := map[string]struct{}{}
+	for _, department := range *doc.Departments {
+		if _, ok := tempMap[department.Code]; ok {
+			return fmt.Errorf("department code %s is duplicated", department.Code)
+		}
+		tempMap[department.Code] = struct{}{}
+	}
 
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	docData := findDoc
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	docData.Branch = doc
+
+	docData.GuidFixed = findDoc.GuidFixed
+	docData.UpdatedBy = authUsername
+	docData.UpdatedAt = time.Now()
+
+	err = svc.repo.Update(shopID, guid, docData)
 
 	if err != nil {
 		return err
@@ -177,28 +197,11 @@ func (svc BranchHttpService) InfoBranch(shopID string, guid string) (models.Bran
 func (svc BranchHttpService) mapBranchInfo(findInfo models.BranchInfo, shopID string) (models.BranchInfoResponse, error) {
 
 	if findInfo.Branch.Departments == nil {
-		findInfo.Branch.Departments = &[]string{}
+		findInfo.Branch.Departments = &[]models.Department{}
 	}
 
 	if findInfo.Branch.BusinessTypes == nil {
 		findInfo.Branch.BusinessTypes = &[]string{}
-	}
-
-	departments := []models.Department{}
-	for _, departmentGUID := range *findInfo.Branch.Departments {
-		findDepartmentDoc, err := svc.repoDepartment.FindByGuid(shopID, departmentGUID)
-
-		if err != nil {
-			return models.BranchInfoResponse{}, err
-		}
-
-		if len(findDepartmentDoc.GuidFixed) > 0 {
-			departments = append(departments, models.Department{
-				GuidFixed: findDepartmentDoc.GuidFixed,
-				Code:      findDepartmentDoc.Department.Code,
-				Names:     *findDepartmentDoc.Department.Names,
-			})
-		}
 	}
 
 	businesstypes := []models.BusinessType{}
@@ -218,12 +221,38 @@ func (svc BranchHttpService) mapBranchInfo(findInfo models.BranchInfo, shopID st
 		}
 	}
 
+	// departments, err := svc.mapDepartmentToBranch(shopID, *findInfo.Branch.Departments)
+	// if err != nil {
+	// 	return models.BranchInfoResponse{}, err
+	// }
+
 	resultDoc := models.BranchInfoResponse{}
 	resultDoc.BranchInfo = findInfo
-	resultDoc.Departments = departments
 	resultDoc.BusinessTypes = businesstypes
+	// resultDoc.Departments = departments
 
 	return resultDoc, nil
+}
+
+func (svc BranchHttpService) mapDepartmentToBranch(shopID string, departmentGUIDs []string) ([]models.Department, error) {
+	departments := []models.Department{}
+	for _, departmentGUID := range departmentGUIDs {
+		findDepartmentDoc, err := svc.repoDepartment.FindByGuid(shopID, departmentGUID)
+
+		if err != nil {
+			return nil, err
+		}
+
+		if len(findDepartmentDoc.GuidFixed) > 0 {
+			departments = append(departments, models.Department{
+				// GuidFixed: findDepartmentDoc.GuidFixed,
+				Code:  findDepartmentDoc.Department.Code,
+				Names: *findDepartmentDoc.Department.Names,
+			})
+		}
+	}
+
+	return departments, nil
 }
 
 func (svc BranchHttpService) InfoBranchByCode(shopID string, code string) (models.BranchInfoResponse, error) {
