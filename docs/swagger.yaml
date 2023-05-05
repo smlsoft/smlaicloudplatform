@@ -834,12 +834,15 @@ definitions:
   models.Department:
     properties:
       code:
-        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
   models.DocumentImage:
     properties:
@@ -3263,15 +3266,12 @@ definitions:
         type: integer
       imageuri:
         type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
+      name:
+        minLength: 1
+        type: string
     required:
     - code
-    - names
+    - name
     type: object
   models.SaleInvoice:
     properties:
@@ -4237,15 +4237,12 @@ definitions:
         type: string
       imageuri:
         type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
+      name:
+        minLength: 1
+        type: string
     required:
     - code
-    - names
+    - name
     type: object
   models.TrialBalanceSheetAccountDetail:
     properties:

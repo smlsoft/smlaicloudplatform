@@ -25395,13 +25395,17 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
                 "code": {
-                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -28940,7 +28944,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "code",
-                "names"
+                "name"
             ],
             "properties": {
                 "code": {
@@ -28956,13 +28960,9 @@ const docTemplate = `{
                 "imageuri": {
                     "type": "string"
                 },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
+                "name": {
+                    "type": "string",
+                    "minLength": 1
                 }
             }
         },
@@ -30416,7 +30416,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "code",
-                "names"
+                "name"
             ],
             "properties": {
                 "code": {
@@ -30426,13 +30426,9 @@ const docTemplate = `{
                 "imageuri": {
                     "type": "string"
                 },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
+                "name": {
+                    "type": "string",
+                    "minLength": 1
                 }
             }
         },
