@@ -10,11 +10,11 @@ const salechannelCollectionName = "saleChannel"
 
 type SaleChannel struct {
 	models.PartitionIdentity `bson:"inline"`
-	Code                     string          `json:"code" bson:"code" validate:"required,min=1"`
-	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	GP                       float64         `json:"gp" bson:"gp"`
-	GPType                   int8            `json:"gptype" bson:"gptype"`
-	ImageUri                 string          `json:"imageuri" bson:"imageuri"`
+	Code                     string  `json:"code" bson:"code" validate:"required,min=1"`
+	Name                     string  `json:"name" bson:"name" validate:"required,min=1"`
+	GP                       float64 `json:"gp" bson:"gp"`
+	GPType                   int8    `json:"gptype" bson:"gptype"`
+	ImageUri                 string  `json:"imageuri" bson:"imageuri"`
 }
 
 type SaleChannelInfo struct {

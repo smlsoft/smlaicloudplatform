@@ -10,9 +10,9 @@ const transportchannelCollectionName = "transportChannel"
 
 type TransportChannel struct {
 	models.PartitionIdentity `bson:"inline"`
-	Code                     string          `json:"code" bson:"code" validate:"required,min=1"`
-	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	ImageUri                 string          `json:"imageuri" bson:"imageuri"`
+	Code                     string `json:"code" bson:"code" validate:"required,min=1"`
+	Name                     string `json:"name" bson:"name" validate:"required,min=1"`
+	ImageUri                 string `json:"imageuri" bson:"imageuri"`
 }
 
 type TransportChannelInfo struct {
