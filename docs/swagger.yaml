@@ -834,16 +834,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - code
-    - names
     type: object
   models.DocumentImage:
     properties:
@@ -2137,26 +2133,6 @@ definitions:
       success:
         type: boolean
     type: object
-  models.Name:
-    properties:
-      name1:
-        maxLength: 255
-        type: string
-      name2:
-        maxLength: 255
-        type: string
-      name3:
-        maxLength: 255
-        type: string
-      name4:
-        maxLength: 255
-        type: string
-      name5:
-        maxLength: 255
-        type: string
-    required:
-    - name1
-    type: object
   models.NameX:
     properties:
       code:
@@ -3289,7 +3265,7 @@ definitions:
         type: string
       names:
         items:
-          $ref: '#/definitions/models.Name'
+          $ref: '#/definitions/models.NameX'
         minItems: 1
         type: array
         uniqueItems: true
@@ -4263,7 +4239,7 @@ definitions:
         type: string
       names:
         items:
-          $ref: '#/definitions/models.Name'
+          $ref: '#/definitions/models.NameX'
         minItems: 1
         type: array
         uniqueItems: true

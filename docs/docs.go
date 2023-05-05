@@ -25395,18 +25395,13 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
-            "required": [
-                "code",
-                "names"
-            ],
             "properties": {
                 "code": {
+                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -27304,34 +27299,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Name": {
-            "type": "object",
-            "required": [
-                "name1"
-            ],
-            "properties": {
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
-                }
-            }
-        },
         "models.NameX": {
             "type": "object",
             "required": [
@@ -28994,7 +28961,7 @@ const docTemplate = `{
                     "minItems": 1,
                     "uniqueItems": true,
                     "items": {
-                        "$ref": "#/definitions/models.Name"
+                        "$ref": "#/definitions/models.NameX"
                     }
                 }
             }
@@ -30464,7 +30431,7 @@ const docTemplate = `{
                     "minItems": 1,
                     "uniqueItems": true,
                     "items": {
-                        "$ref": "#/definitions/models.Name"
+                        "$ref": "#/definitions/models.NameX"
                     }
                 }
             }
