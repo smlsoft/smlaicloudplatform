@@ -834,15 +834,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.DocumentImage:
     properties:
@@ -4557,6 +4554,10 @@ definitions:
       departments:
         items:
           $ref: '#/definitions/models.Department'
+        type: array
+      languages:
+        items:
+          type: string
         type: array
       names:
         items:
