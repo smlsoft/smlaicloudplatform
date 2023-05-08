@@ -37,6 +37,13 @@ type ProductBarcodeBase struct {
 	IsSumPoint  bool   `json:"issumpoint" bson:"issumpoint"`
 	MaxDiscount string `json:"maxdiscount" bson:"maxdiscount"`
 	IsDividend  bool   `json:"isdividend" bson:"isdividend"`
+
+	RefBarcode     string          `json:"refbarcode" bson:"refbarcode"`
+	RefUnitNames   *[]models.NameX `json:"refunitnames" bson:"refunitnames"`
+	StockBarcode   string          `json:"stockbarcode" bson:"stockbarcode"`
+	Qty            float64         `json:"qty" bson:"qty"`
+	RefDivideValue float64         `json:"refdividevalue" bson:"refdividevalue"`
+	RefStandValue  float64         `json:"refstandvalue" bson:"refstandvalue"`
 }
 
 type ProductBarcode struct {
