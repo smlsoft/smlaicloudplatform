@@ -97,10 +97,10 @@ func (svc ProductBarcodeHttpService) CreateProductBarcode(shopID string, authUse
 	tempChildrenBarcodes := []string{}
 	updateDataChildrenDocs := []models.ProductBarcodeDoc{}
 
-	if len(docReq.Barcodes) > 0 {
+	if len(docReq.RefBarcodes) > 0 {
 
 		tempBarcodes := []string{}
-		for _, barcode := range docReq.Barcodes {
+		for _, barcode := range docReq.RefBarcodes {
 			tempBarcodes = append(tempBarcodes, barcode.Barcode)
 		}
 
@@ -114,7 +114,7 @@ func (svc ProductBarcodeHttpService) CreateProductBarcode(shopID string, authUse
 
 		for _, childDoc := range findChildrenDocs {
 
-			if childDoc.Barcodes != nil && len(*childDoc.Barcodes) > 0 {
+			if childDoc.RefBarcodes != nil && len(*childDoc.RefBarcodes) > 0 {
 				return "", fmt.Errorf("barcode %s is parent product barcode", childDoc.Barcode)
 			}
 
@@ -131,7 +131,7 @@ func (svc ProductBarcodeHttpService) CreateProductBarcode(shopID string, authUse
 	err = svc.repo.Transaction(func() error {
 
 		if len(updateDataChildrenDocs) > 0 {
-			err := svc.updateChild(shopID, newGuidFixed, updateDataChildrenDocs, docReq.Barcodes)
+			err := svc.updateChild(shopID, newGuidFixed, updateDataChildrenDocs, docReq.RefBarcodes)
 
 			if err != nil {
 				return err
@@ -143,9 +143,9 @@ func (svc ProductBarcodeHttpService) CreateProductBarcode(shopID string, authUse
 				return err
 			}
 
-			docData.Barcodes = &[]models.ProductBarcodeBase{}
+			docData.RefBarcodes = &[]models.ProductBarcodeBase{}
 			for _, childDoc := range findChildrenDocs {
-				*docData.Barcodes = append(*docData.Barcodes, childDoc.ProductBarcodeBase)
+				*docData.RefBarcodes = append(*docData.RefBarcodes, childDoc.ProductBarcodeBase)
 			}
 		}
 
@@ -219,10 +219,10 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 	tempChildrenBarcodes := []string{}
 	updateDataChildrenDocs := []models.ProductBarcodeDoc{}
 
-	if len(docReq.Barcodes) > 0 {
+	if len(docReq.RefBarcodes) > 0 {
 
 		tempBarcodes := []string{}
-		for _, barcode := range docReq.Barcodes {
+		for _, barcode := range docReq.RefBarcodes {
 			tempBarcodes = append(tempBarcodes, barcode.Barcode)
 		}
 		findChildrenDoc, err := svc.repo.FindByDocIndentityGuids(shopID, "barcode", tempBarcodes)
@@ -235,7 +235,7 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 
 		for _, childDoc := range findChildrenDoc {
 
-			if childDoc.Barcodes != nil && len(*childDoc.Barcodes) > 0 {
+			if childDoc.RefBarcodes != nil && len(*childDoc.RefBarcodes) > 0 {
 				return fmt.Errorf("barcode %s is parent product barcode", childDoc.Barcode)
 			}
 
@@ -251,10 +251,10 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 	err = svc.repo.Transaction(func() error {
 
 		//reset previous parent guid
-		if findDoc.Barcodes != nil && len(*findDoc.Barcodes) > 0 {
+		if findDoc.RefBarcodes != nil && len(*findDoc.RefBarcodes) > 0 {
 
 			previousBarcodes := []string{}
-			for _, barcode := range *findDoc.Barcodes {
+			for _, barcode := range *findDoc.RefBarcodes {
 				previousBarcodes = append(previousBarcodes, barcode.Barcode)
 			}
 
@@ -266,7 +266,7 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 		}
 
 		if len(updateDataChildrenDocs) > 0 {
-			err := svc.updateChild(shopID, findDoc.GuidFixed, updateDataChildrenDocs, docReq.Barcodes)
+			err := svc.updateChild(shopID, findDoc.GuidFixed, updateDataChildrenDocs, docReq.RefBarcodes)
 
 			if err != nil {
 				return err
@@ -278,9 +278,9 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 				return err
 			}
 
-			docData.Barcodes = &[]models.ProductBarcodeBase{}
+			docData.RefBarcodes = &[]models.ProductBarcodeBase{}
 			for _, childDoc := range findChildrenDocs {
-				*docData.Barcodes = append(*docData.Barcodes, childDoc.ProductBarcodeBase)
+				*docData.RefBarcodes = append(*docData.RefBarcodes, childDoc.ProductBarcodeBase)
 			}
 		}
 
@@ -318,8 +318,8 @@ func (svc ProductBarcodeHttpService) updateChildBarcodeInParent(shopID, parentGU
 	docData := findDoc
 
 	tempChildrenBarcodes := []models.ProductBarcodeBase{}
-	if findDoc.Barcodes != nil && len(findDoc.GuidFixed) > 1 {
-		for _, barcode := range *findDoc.Barcodes {
+	if findDoc.RefBarcodes != nil && len(findDoc.GuidFixed) > 1 {
+		for _, barcode := range *findDoc.RefBarcodes {
 			if barcode.Barcode != previousBarcode {
 				tempChildrenBarcodes = append(tempChildrenBarcodes, barcode)
 			}
@@ -329,7 +329,7 @@ func (svc ProductBarcodeHttpService) updateChildBarcodeInParent(shopID, parentGU
 
 	tempChildrenBarcodes = append(tempChildrenBarcodes, docReq.ProductBarcodeBase)
 
-	docData.Barcodes = &tempChildrenBarcodes
+	docData.RefBarcodes = &tempChildrenBarcodes
 
 	err = svc.repo.Update(shopID, findDoc.GuidFixed, docData)
 
@@ -519,7 +519,7 @@ func (svc ProductBarcodeHttpService) SaveInBatch(shopID string, authUsername str
 
 			tempBarcodes := []models.BarcodeRequest{}
 
-			for _, docBarcode := range *doc.Barcodes {
+			for _, docBarcode := range *doc.RefBarcodes {
 				tempBarcodes = append(tempBarcodes, models.BarcodeRequest{
 					Barcode:     docBarcode.Barcode,
 					Condition:   docBarcode.Condition,
@@ -527,7 +527,7 @@ func (svc ProductBarcodeHttpService) SaveInBatch(shopID string, authUsername str
 					DivideValue: docBarcode.DivideValue,
 				})
 			}
-			docReq.Barcodes = tempBarcodes
+			docReq.RefBarcodes = tempBarcodes
 
 			svc.UpdateProductBarcode(shopID, doc.GuidFixed, authUsername, docReq)
 
@@ -547,7 +547,7 @@ func (svc ProductBarcodeHttpService) SaveInBatch(shopID string, authUsername str
 
 				tempBarcodes := []models.BarcodeRequest{}
 
-				for _, docBarcode := range *doc.Barcodes {
+				for _, docBarcode := range *doc.RefBarcodes {
 					tempBarcodes = append(tempBarcodes, models.BarcodeRequest{
 						Barcode:     docBarcode.Barcode,
 						Condition:   docBarcode.Condition,
@@ -556,7 +556,7 @@ func (svc ProductBarcodeHttpService) SaveInBatch(shopID string, authUsername str
 					})
 				}
 
-				docReq.Barcodes = tempBarcodes
+				docReq.RefBarcodes = tempBarcodes
 				_, err = svc.CreateProductBarcode(shopID, authUsername, docReq)
 
 				if err != nil {

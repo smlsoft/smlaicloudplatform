@@ -38,7 +38,6 @@ type ProductBarcodeBase struct {
 	MaxDiscount string `json:"maxdiscount" bson:"maxdiscount"`
 	IsDividend  bool   `json:"isdividend" bson:"isdividend"`
 
-	RefBarcode     string          `json:"refbarcode" bson:"refbarcode"`
 	RefUnitNames   *[]models.NameX `json:"refunitnames" bson:"refunitnames"`
 	StockBarcode   string          `json:"stockbarcode" bson:"stockbarcode"`
 	Qty            float64         `json:"qty" bson:"qty"`
@@ -50,7 +49,7 @@ type ProductBarcode struct {
 	models.PartitionIdentity `bson:"inline"`
 	ParentGUID               string `json:"parentguid" bson:"parentguid"`
 	ProductBarcodeBase       `bson:"inline"`
-	Barcodes                 *[]ProductBarcodeBase `json:"barcodes" bson:"barcodes"`
+	RefBarcodes              *[]ProductBarcodeBase `json:"refbarcodes" bson:"refbarcodes"`
 }
 
 type ProductImage struct {
@@ -115,7 +114,7 @@ func (ProductBarcodeDeleteActivity) CollectionName() string {
 
 type ProductBarcodeRequest struct {
 	ProductBarcodeBase
-	Barcodes []BarcodeRequest `json:"barcodes"`
+	RefBarcodes []BarcodeRequest `json:"refbarcodes"`
 }
 
 type BarcodeRequest struct {
