@@ -12114,6 +12114,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/product/barcode/pk/{barcode}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get data by barcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Barcode",
+                        "name": "barcode",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/product/barcode/xsort": {
             "put": {
                 "security": [
@@ -12269,6 +12308,59 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/barcode2": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode2"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
                         }
                     },
                     "401": {
@@ -25083,6 +25175,9 @@ const docTemplate = `{
                 "dividevalue": {
                     "type": "number"
                 },
+                "qty": {
+                    "type": "number"
+                },
                 "standvalue": {
                     "type": "number"
                 }
@@ -25842,7 +25937,6 @@ const docTemplate = `{
         "models.Department": {
             "type": "object",
             "required": [
-                "code",
                 "names"
             ],
             "properties": {

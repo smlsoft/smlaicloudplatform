@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-const RequestSearchMaxPage = 2147483647
+const RequestSearchMaxPage = 2_000_000_000 // can maximum 2_147_483_647
 const RequestSearchMinPage = 1
 const RequestSearchMaxLimit = 100_000
 const RequestSearchMinLimit = 1
@@ -14,7 +14,7 @@ const RequestSearchMinLimit = 1
 const RequestSearchDefaultOffset = 0
 const RequestSearchDefaultLimit = 20
 
-const RequestMaxOffset = 2147483647
+const RequestMaxOffset = 2_000_000_000 // can maximum 2_147_483_647
 const RequestMinOffset = 0
 
 func GetSearchQueryParam(fnGetParam func(string) string) string {
@@ -38,7 +38,7 @@ func GetPageParam(fnGetParam func(string) string) (int, int) {
 		limit = RequestSearchDefaultLimit
 	}
 
-	if page < 0 {
+	if page < 1 {
 		page = RequestSearchMinPage
 	}
 

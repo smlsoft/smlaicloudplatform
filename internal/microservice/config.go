@@ -11,6 +11,7 @@ type IConfig interface {
 	PathPrefix() string
 	PersisterConfig() IPersisterConfig
 	MongoPersisterConfig() IPersisterMongoConfig
+	ClickHouseConfig() IPersisterClickHouseConfig
 	ElkPersisterConfig() IPersisterElkConfig
 	OpenSearchPersisterConfig() IPersisterOpenSearchConfig
 	CacherConfig() ICacherConfig
@@ -71,6 +72,10 @@ func (cfg *Config) MongoPersisterConfig() IPersisterMongoConfig {
 	return NewMongoPersisterConfig()
 }
 
+func (cfg *Config) ClickHouseConfig() IPersisterClickHouseConfig {
+	return NewPersisterClickHouseConfig()
+}
+
 func (*Config) TopicName() string {
 	return os.Getenv("TOPIC_NAME")
 }
@@ -101,7 +106,6 @@ func (cfg *Config) ElkPersisterConfig() IPersisterElkConfig {
 	return NewPersisterElkConfig()
 }
 
-//
 func (cfg *Config) OpenSearchPersisterConfig() IPersisterOpenSearchConfig {
 	return NewPersisterOpenSearchConfig()
 }

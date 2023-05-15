@@ -86,7 +86,7 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) 
 	activityModuleManager.Add(svcProductCategory)
 
 	// Product Barcode
-	svcProductBarcode := productbarcodeService.NewProductBarcodeHttpService(productbarcodeRepo.NewProductBarcodeRepository(pst), nil, masterSyncCacheRepo)
+	svcProductBarcode := productbarcodeService.NewProductBarcodeHttpService(productbarcodeRepo.NewProductBarcodeRepository(pst), nil, nil, masterSyncCacheRepo)
 	activityModuleManager.Add(svcProductBarcode)
 
 	// Product Unit

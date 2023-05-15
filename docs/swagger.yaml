@@ -322,6 +322,8 @@ definitions:
         type: boolean
       dividevalue:
         type: number
+      qty:
+        type: number
       standvalue:
         type: number
     required:
@@ -849,7 +851,6 @@ definitions:
         type: array
         uniqueItems: true
     required:
-    - code
     - names
     type: object
   models.DocumentImage:
@@ -13326,6 +13327,30 @@ paths:
       - AccessToken: []
       tags:
       - ProductBarcode
+  /product/barcode/pk/{barcode}:
+    get:
+      consumes:
+      - application/json
+      description: get data by barcode
+      parameters:
+      - description: Barcode
+        in: path
+        name: barcode
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductBarcode
   /product/barcode/xsort:
     put:
       consumes:
@@ -13353,6 +13378,39 @@ paths:
       - AccessToken: []
       tags:
       - ProductBarcode
+  /product/barcode2:
+    get:
+      consumes:
+      - application/json
+      description: get struct array by ID
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductBarcode2
   /product/bulk:
     post:
       consumes:

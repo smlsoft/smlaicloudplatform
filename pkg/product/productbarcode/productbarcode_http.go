@@ -23,13 +23,15 @@ type ProductBarcodeHttp struct {
 
 func NewProductBarcodeHttp(ms *microservice.Microservice, cfg microservice.IConfig) ProductBarcodeHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	pstClickHouse := ms.ClickHousePersister(cfg.ClickHouseConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 	prod := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewProductBarcodeRepository(pst)
+	clickHouseRepo := repositories.NewProductBarcodeClickhouseRepository(pstClickHouse)
 	mqRepo := repositories.NewProductBarcodeMessageQueueRepository(prod)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewProductBarcodeHttpService(repo, mqRepo, masterSyncCacheRepo)
+	svc := services.NewProductBarcodeHttpService(repo, mqRepo, clickHouseRepo, masterSyncCacheRepo)
 
 	return ProductBarcodeHttp{
 		ms:  ms,
@@ -43,9 +45,11 @@ func (h ProductBarcodeHttp) RouteSetup() {
 	h.ms.POST("/product/barcode/bulk", h.SaveBulk)
 
 	h.ms.GET("/product/barcode", h.SearchProductBarcodePage)
+	h.ms.GET("/product/barcode2", h.SearchProductBarcodePage2)
 	h.ms.GET("/product/barcode/list", h.SearchProductBarcodeLimit)
 	h.ms.POST("/product/barcode", h.CreateProductBarcode)
 	h.ms.GET("/product/barcode/:id", h.InfoProductBarcode)
+	h.ms.GET("/product/barcode/pk/:barcode", h.InfoProductBarcodeByBarcode)
 	h.ms.GET("/product/barcode/by-code", h.InfoArray)
 	h.ms.GET("/product/barcode/master", h.InfoArrayMaster)
 	h.ms.PUT("/product/barcode/xsort", h.UpdateProductBarcodeXSort)
@@ -254,6 +258,35 @@ func (h ProductBarcodeHttp) InfoProductBarcode(ctx microservice.IContext) error 
 	return nil
 }
 
+// Get ProductBarcode By Barcode godoc
+// @Description get data by barcode
+// @Tags		ProductBarcode
+// @Param		barcode  path      string  true  "Barcode"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/barcode/pk/{barcode} [get]
+func (h ProductBarcodeHttp) InfoProductBarcodeByBarcode(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	barcode := ctx.Param("barcode")
+
+	doc, err := h.svc.InfoProductBarcodeByBarcode(shopID, barcode)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
 // Get ProductBarcode By code array godoc
 // @Description get ProductBarcode by code array
 // @Tags		ProductBarcode
@@ -354,6 +387,37 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage(ctx microservice.IContext) 
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 	docList, pagination, err := h.svc.SearchProductBarcode(shopID, pageable)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success:    true,
+		Data:       docList,
+		Pagination: pagination,
+	})
+	return nil
+}
+
+// List ProductBarcode2 godoc
+// @Description get struct array by ID
+// @Tags		ProductBarcode2
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/barcode2 [get]
+func (h ProductBarcodeHttp) SearchProductBarcodePage2(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	pageable := utils.GetPageable(ctx.QueryParam)
+	docList, pagination, err := h.svc.SearchProductBarcode2(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

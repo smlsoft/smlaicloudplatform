@@ -122,10 +122,23 @@ type BarcodeRequest struct {
 	Condition   bool    `json:"condition" bson:"condition"`
 	DivideValue float64 `json:"dividevalue" bson:"dividevalue"`
 	StandValue  float64 `json:"standvalue" bson:"standvalue"`
+	Qty         float64 `json:"qty" bson:"qty"`
 }
 
 func (p ProductBarcodeRequest) ToProductBarcode() ProductBarcode {
 	return ProductBarcode{
 		ProductBarcodeBase: p.ProductBarcodeBase,
 	}
+}
+
+type ProductBarcodeSearch struct {
+	ICCode   string   `json:"iccode" ch:"iccode"`
+	Barcode  string   `json:"barcode" ch:"barcode"`
+	UnitCode string   `json:"unitcode" ch:"unitcode"`
+	Price    string   `json:"price" ch:"price"`
+	Names    []string `json:"names" ch:"names"`
+}
+
+func (ProductBarcodeSearch) TableName() string {
+	return productBarcodeCollectionName
 }

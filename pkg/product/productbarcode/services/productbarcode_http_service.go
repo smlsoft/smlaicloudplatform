@@ -25,9 +25,12 @@ type IProductBarcodeHttpService interface {
 	DeleteProductBarcode(shopID string, guid string, authUsername string) error
 	DeleteProductBarcodeByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoProductBarcode(shopID string, guid string) (models.ProductBarcodeInfo, error)
+	InfoProductBarcodeByBarcode(shopID string, barcode string) (models.ProductBarcodeInfo, error)
 	InfoWTFArray(shopID string, codes []string) ([]interface{}, error)
 	InfoWTFArrayMaster(codes []string) ([]interface{}, error)
 	SearchProductBarcode(shopID string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
+	SearchProductBarcode2(shopID string, pageable micromodels.Pageable) ([]models.ProductBarcodeSearch, common.Pagination, error)
+
 	SearchProductBarcodeStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ProductBarcode) (common.BulkImport, error)
 
@@ -38,15 +41,17 @@ type IProductBarcodeHttpService interface {
 
 type ProductBarcodeHttpService struct {
 	repo          repositories.IProductBarcodeRepository
+	chRepo        repositories.IProductBarcodeClickhouseRepository
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 	mqRepo        repositories.IProductBarcodeMessageQueueRepository
 	services.ActivityService[models.ProductBarcodeActivity, models.ProductBarcodeDeleteActivity]
 }
 
-func NewProductBarcodeHttpService(repo repositories.IProductBarcodeRepository, mqRepo repositories.IProductBarcodeMessageQueueRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *ProductBarcodeHttpService {
+func NewProductBarcodeHttpService(repo repositories.IProductBarcodeRepository, mqRepo repositories.IProductBarcodeMessageQueueRepository, chRepo repositories.IProductBarcodeClickhouseRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *ProductBarcodeHttpService {
 
 	insSvc := &ProductBarcodeHttpService{
 		repo:          repo,
+		chRepo:        chRepo,
 		syncCacheRepo: syncCacheRepo,
 		mqRepo:        mqRepo,
 	}
@@ -384,7 +389,21 @@ func (svc ProductBarcodeHttpService) InfoProductBarcode(shopID string, guid stri
 	}
 
 	return findDoc.ProductBarcodeInfo, nil
+}
 
+func (svc ProductBarcodeHttpService) InfoProductBarcodeByBarcode(shopID string, barcode string) (models.ProductBarcodeInfo, error) {
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "barcode", barcode)
+
+	if err != nil {
+		return models.ProductBarcodeInfo{}, err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return models.ProductBarcodeInfo{}, errors.New("document not found")
+	}
+
+	return findDoc.ProductBarcodeInfo, nil
 }
 
 func (svc ProductBarcodeHttpService) InfoWTFArray(shopID string, codes []string) ([]interface{}, error) {
@@ -437,6 +456,19 @@ func (svc ProductBarcodeHttpService) SearchProductBarcode(shopID string, pageabl
 
 	if err != nil {
 		return []models.ProductBarcodeInfo{}, pagination, err
+	}
+
+	return docList, pagination, nil
+}
+
+func (svc ProductBarcodeHttpService) SearchProductBarcode2(shopID string, pageable micromodels.Pageable) ([]models.ProductBarcodeSearch, common.Pagination, error) {
+
+	//fixed shopID
+	shopID = "2Eh6e3pfWvXTp0yV3CyFEhKPjdI"
+	docList, pagination, err := svc.chRepo.Search(shopID, pageable)
+
+	if err != nil {
+		return []models.ProductBarcodeSearch{}, pagination, err
 	}
 
 	return docList, pagination, nil
