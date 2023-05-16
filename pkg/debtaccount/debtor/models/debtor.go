@@ -23,6 +23,8 @@ type Debtor struct {
 	Email              string     `json:"email" bson:"email"`
 	CustomerType       int        `json:"customertype" bson:"customertype"`
 	BranchNumber       string     `json:"branchnumber" bson:"branchnumber"`
+	FundCode           string     `json:"fundcode" bson:"fundcode"`
+	CreditDay          int        `json:"creditday" bson:"creditday"`
 	GroupGUIDs         *[]string  `json:"-" bson:"groups"`
 }
 
