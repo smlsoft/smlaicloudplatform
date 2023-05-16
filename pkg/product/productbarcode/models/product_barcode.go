@@ -45,11 +45,22 @@ type ProductBarcodeBase struct {
 	RefStandValue  float64         `json:"refstandvalue" bson:"refstandvalue"`
 }
 
+type RefProductBarcode struct {
+	GuidFixed     string          `json:"guidfixed" bson:"guidfixed"`
+	Names         *[]models.NameX `json:"names" bson:"names"`
+	ItemUnitCode  string          `json:"itemunitcode" bson:"itemunitcode"`
+	ItemUnitNames *[]models.NameX `json:"itemunitnames" bson:"itemunitnames"`
+	Barcode       string          `json:"barcode" bson:"barcode" validate:"required,min=1"`
+	Condition     bool            `json:"condition" bson:"condition"`
+	DivideValue   float64         `json:"dividevalue" bson:"dividevalue"`
+	StandValue    float64         `json:"standvalue" bson:"standvalue"`
+	Qty           float64         `json:"qty" bson:"qty"`
+}
+
 type ProductBarcode struct {
 	models.PartitionIdentity `bson:"inline"`
-	ParentGUID               string `json:"parentguid" bson:"parentguid"`
 	ProductBarcodeBase       `bson:"inline"`
-	RefBarcodes              *[]ProductBarcodeBase `json:"refbarcodes" bson:"refbarcodes"`
+	RefBarcodes              *[]RefProductBarcode `json:"refbarcodes" bson:"refbarcodes"`
 }
 
 type ProductImage struct {
@@ -84,6 +95,16 @@ type ProductBarcodeDoc struct {
 
 func (ProductBarcodeDoc) CollectionName() string {
 	return productBarcodeCollectionName
+}
+
+func (doc ProductBarcodeDoc) ToRefBarcode() RefProductBarcode {
+	return RefProductBarcode{
+		GuidFixed:     doc.GuidFixed,
+		Names:         doc.Names,
+		ItemUnitCode:  doc.ItemUnitCode,
+		ItemUnitNames: doc.ItemUnitNames,
+		Barcode:       doc.Barcode,
+	}
 }
 
 type ProductBarcodeItemGuid struct {

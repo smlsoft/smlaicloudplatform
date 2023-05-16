@@ -38,6 +38,7 @@ type IProductBarcodeRepository interface {
 	FindMasterInCodes(codes []string) ([]models.ProductBarcodeInfo, error)
 	UpdateParentGuidByGuids(shopID string, parentGUID string, guids []string) error
 	Transaction(fnc func() error) error
+	FindByRefBarcode(shopID string, barcode string) ([]models.ProductBarcodeDoc, error)
 }
 
 type ProductBarcodeRepository struct {
@@ -91,6 +92,25 @@ func (repo *ProductBarcodeRepository) FindMasterInCodes(codes []string) ([]model
 	}
 
 	err := repo.pst.Find(models.ProductBarcodeInfo{}, filters, &docList)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return docList, nil
+}
+
+func (repo *ProductBarcodeRepository) FindByRefBarcode(shopID string, barcode string) ([]models.ProductBarcodeDoc, error) {
+
+	docList := []models.ProductBarcodeDoc{}
+
+	filters := bson.M{
+		"shopid":              shopID,
+		"refbarcodes.barcode": barcode,
+		"deletedat":           bson.M{"$exists": false},
+	}
+
+	err := repo.pst.Find(models.ProductBarcodeDoc{}, filters, &docList)
 
 	if err != nil {
 		return nil, err
