@@ -813,19 +813,98 @@ definitions:
     required:
     - names
     type: object
-  models.Department:
+  models.Detail:
     properties:
-      code:
+      averagecost:
+        type: number
+      barcode:
         type: string
-      names:
+      calcflag:
+        type: integer
+      discount:
+        type: string
+      discountamount:
+        type: number
+      dividevalue:
+        type: number
+      docdatetime:
+        type: string
+      inquirytype:
+        type: integer
+      ispos:
+        type: integer
+      itemcode:
+        type: string
+      itemguid:
+        type: string
+      itemname:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - code
-    - names
+      itemtype:
+        type: integer
+      laststatus:
+        type: integer
+      linenumber:
+        type: integer
+      locationcode:
+        type: string
+      locationnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      multiunit:
+        type: boolean
+      price:
+        type: number
+      priceexcludevat:
+        type: number
+      qty:
+        type: number
+      remark:
+        type: string
+      shelfcode:
+        type: string
+      standvalue:
+        type: number
+      sumamount:
+        type: number
+      sumamountexcludevat:
+        type: number
+      sumofcost:
+        type: number
+      taxtype:
+        type: integer
+      tolocationcode:
+        type: string
+      tolocationnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      totalqty:
+        type: number
+      totalvaluevat:
+        type: number
+      towhcode:
+        type: string
+      towhnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      unitcode:
+        type: string
+      unitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      vattype:
+        type: integer
+      whcode:
+        type: string
+      whnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
     type: object
   models.DocumentImage:
     properties:
@@ -2317,6 +2396,36 @@ definitions:
       totalPage:
         type: integer
     type: object
+  models.PaymentCreditCard:
+    properties:
+      amount:
+        type: number
+      approvedcode:
+        type: string
+      bankcode:
+        type: string
+      cardnumber:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+    type: object
+  models.PaymentDetail:
+    properties:
+      cashamount:
+        type: number
+      cashamounttext:
+        type: string
+      paymentcreditcards:
+        items:
+          $ref: '#/definitions/models.PaymentCreditCard'
+        type: array
+      paymenttransfers:
+        items:
+          $ref: '#/definitions/models.PaymentTransfer'
+        type: array
+    type: object
   models.PaymentMaster:
     properties:
       countrycode:
@@ -2400,6 +2509,19 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
+    type: object
+  models.PaymentTransfer:
+    properties:
+      accountnumber:
+        type: string
+      amount:
+        type: number
+      bankcode:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
     type: object
   models.Printer:
     properties:
@@ -2782,10 +2904,12 @@ definitions:
       custname:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
       details:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_purchase_models.Detail'
+          $ref: '#/definitions/models.Detail'
         type: array
       discountword:
         type: string
@@ -2809,6 +2933,10 @@ definitions:
         type: boolean
       membercode:
         type: string
+      paymentdetails:
+        items:
+          $ref: '#/definitions/models.PaymentDetail'
+        type: array
       posid:
         type: string
       salecode:
@@ -2843,6 +2971,8 @@ definitions:
         type: number
       vattype:
         type: integer
+    required:
+    - custname
     type: object
   models.PurchaseReturn:
     properties:
@@ -2853,10 +2983,12 @@ definitions:
       custname:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
       details:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_purchasereturn_models.Detail'
+          $ref: '#/definitions/models.Detail'
         type: array
       discountword:
         type: string
@@ -2880,6 +3012,10 @@ definitions:
         type: boolean
       membercode:
         type: string
+      paymentdetails:
+        items:
+          $ref: '#/definitions/models.PaymentDetail'
+        type: array
       posid:
         type: string
       salecode:
@@ -2914,6 +3050,8 @@ definitions:
         type: number
       vattype:
         type: integer
+    required:
+    - custname
     type: object
   models.QrPayment:
     properties:
@@ -2959,6 +3097,28 @@ definitions:
         type: integer
       xtype:
         type: integer
+    type: object
+  models.ReportParam:
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  models.ReportQuery:
+    properties:
+      code:
+        type: string
+      isactived:
+        type: boolean
+      isapproved:
+        type: boolean
+      params:
+        items:
+          $ref: '#/definitions/models.ReportParam'
+        type: array
+      sql:
+        type: string
     type: object
   models.ResponseSuccess:
     properties:
@@ -3071,10 +3231,12 @@ definitions:
       custname:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
       details:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_saleinvoice_models.Detail'
+          $ref: '#/definitions/models.Detail'
         type: array
       discountword:
         type: string
@@ -3098,6 +3260,10 @@ definitions:
         type: boolean
       membercode:
         type: string
+      paymentdetails:
+        items:
+          $ref: '#/definitions/models.PaymentDetail'
+        type: array
       posid:
         type: string
       salecode:
@@ -3132,6 +3298,8 @@ definitions:
         type: number
       vattype:
         type: integer
+    required:
+    - custname
     type: object
   models.SaleInvoiceReturn:
     properties:
@@ -3142,10 +3310,12 @@ definitions:
       custname:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
       details:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_saleinvoicereturn_models.Detail'
+          $ref: '#/definitions/models.Detail'
         type: array
       discountword:
         type: string
@@ -3169,6 +3339,10 @@ definitions:
         type: boolean
       membercode:
         type: string
+      paymentdetails:
+        items:
+          $ref: '#/definitions/models.PaymentDetail'
+        type: array
       posid:
         type: string
       salecode:
@@ -3203,6 +3377,8 @@ definitions:
         type: number
       vattype:
         type: integer
+    required:
+    - custname
     type: object
   models.SectionBranch:
     properties:
@@ -3549,10 +3725,12 @@ definitions:
       custname:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
       details:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_stockadjustment_models.Detail'
+          $ref: '#/definitions/models.Detail'
         type: array
       discountword:
         type: string
@@ -3576,6 +3754,10 @@ definitions:
         type: boolean
       membercode:
         type: string
+      paymentdetails:
+        items:
+          $ref: '#/definitions/models.PaymentDetail'
+        type: array
       posid:
         type: string
       salecode:
@@ -3610,6 +3792,8 @@ definitions:
         type: number
       vattype:
         type: integer
+    required:
+    - custname
     type: object
   models.StockPickupProduct:
     properties:
@@ -3620,10 +3804,12 @@ definitions:
       custname:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
       details:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_stockpickupproduct_models.Detail'
+          $ref: '#/definitions/models.Detail'
         type: array
       discountword:
         type: string
@@ -3647,6 +3833,10 @@ definitions:
         type: boolean
       membercode:
         type: string
+      paymentdetails:
+        items:
+          $ref: '#/definitions/models.PaymentDetail'
+        type: array
       posid:
         type: string
       salecode:
@@ -3681,6 +3871,8 @@ definitions:
         type: number
       vattype:
         type: integer
+    required:
+    - custname
     type: object
   models.StockReceiveProduct:
     properties:
@@ -3691,10 +3883,12 @@ definitions:
       custname:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
       details:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_stockreceiveproduct_models.Detail'
+          $ref: '#/definitions/models.Detail'
         type: array
       discountword:
         type: string
@@ -3718,6 +3912,10 @@ definitions:
         type: boolean
       membercode:
         type: string
+      paymentdetails:
+        items:
+          $ref: '#/definitions/models.PaymentDetail'
+        type: array
       posid:
         type: string
       salecode:
@@ -3752,6 +3950,8 @@ definitions:
         type: number
       vattype:
         type: integer
+    required:
+    - custname
     type: object
   models.StockReturnProduct:
     properties:
@@ -3762,10 +3962,12 @@ definitions:
       custname:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
       details:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_stockreturnproduct_models.Detail'
+          $ref: '#/definitions/models.Detail'
         type: array
       discountword:
         type: string
@@ -3789,6 +3991,10 @@ definitions:
         type: boolean
       membercode:
         type: string
+      paymentdetails:
+        items:
+          $ref: '#/definitions/models.PaymentDetail'
+        type: array
       posid:
         type: string
       salecode:
@@ -3823,6 +4029,8 @@ definitions:
         type: number
       vattype:
         type: integer
+    required:
+    - custname
     type: object
   models.StockTransfer:
     properties:
@@ -3833,10 +4041,12 @@ definitions:
       custname:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
       details:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_transaction_stocktransfer_models.Detail'
+          $ref: '#/definitions/models.Detail'
         type: array
       discountword:
         type: string
@@ -3860,6 +4070,10 @@ definitions:
         type: boolean
       membercode:
         type: string
+      paymentdetails:
+        items:
+          $ref: '#/definitions/models.PaymentDetail'
+        type: array
       posid:
         type: string
       salecode:
@@ -3894,6 +4108,8 @@ definitions:
         type: number
       vattype:
         type: integer
+    required:
+    - custname
     type: object
   models.Storefront:
     properties:
@@ -4342,6 +4558,19 @@ definitions:
     required:
     - names
     type: object
+  smlcloudplatform_pkg_organization_department_models.Department:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - names
+    type: object
   smlcloudplatform_pkg_product_inventory_models.Unit:
     properties:
       unitcode:
@@ -4421,7 +4650,7 @@ definitions:
         type: integer
       departments:
         items:
-          $ref: '#/definitions/models.Department'
+          $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Department'
         type: array
         uniqueItems: true
       location:
@@ -4438,6 +4667,20 @@ definitions:
     required:
     - names
     type: object
+  smlcloudplatform_pkg_shop_branch_models.Department:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - code
+    - names
+    type: object
   smlcloudplatform_pkg_shop_branch_models.Location:
     properties:
       lat:
@@ -4451,843 +4694,6 @@ definitions:
         type: string
       uuid:
         type: string
-    type: object
-  smlcloudplatform_pkg_transaction_purchase_models.Detail:
-    properties:
-      averagecost:
-        type: number
-      barcode:
-        type: string
-      calcflag:
-        type: integer
-      discount:
-        type: string
-      discountamount:
-        type: number
-      dividevalue:
-        type: number
-      docdatetime:
-        type: string
-      inquirytype:
-        type: integer
-      ispos:
-        type: integer
-      itemcode:
-        type: string
-      itemguid:
-        type: string
-      itemname:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      itemtype:
-        type: integer
-      laststatus:
-        type: integer
-      linenumber:
-        type: integer
-      locationcode:
-        type: string
-      locationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      multiunit:
-        type: boolean
-      price:
-        type: number
-      priceexcludevat:
-        type: number
-      qty:
-        type: number
-      remark:
-        type: string
-      shelfcode:
-        type: string
-      standvalue:
-        type: number
-      sumamount:
-        type: number
-      sumamountexcludevat:
-        type: number
-      sumofcost:
-        type: number
-      taxtype:
-        type: integer
-      tolocationcode:
-        type: string
-      tolocationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      totalqty:
-        type: number
-      totalvaluevat:
-        type: number
-      towhcode:
-        type: string
-      towhnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      unitcode:
-        type: string
-      unitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      vattype:
-        type: integer
-      whcode:
-        type: string
-      whnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-    type: object
-  smlcloudplatform_pkg_transaction_purchasereturn_models.Detail:
-    properties:
-      averagecost:
-        type: number
-      barcode:
-        type: string
-      calcflag:
-        type: integer
-      discount:
-        type: string
-      discountamount:
-        type: number
-      dividevalue:
-        type: number
-      docdatetime:
-        type: string
-      inquirytype:
-        type: integer
-      ispos:
-        type: integer
-      itemcode:
-        type: string
-      itemguid:
-        type: string
-      itemname:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      itemtype:
-        type: integer
-      laststatus:
-        type: integer
-      linenumber:
-        type: integer
-      locationcode:
-        type: string
-      locationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      multiunit:
-        type: boolean
-      price:
-        type: number
-      priceexcludevat:
-        type: number
-      qty:
-        type: number
-      remark:
-        type: string
-      shelfcode:
-        type: string
-      standvalue:
-        type: number
-      sumamount:
-        type: number
-      sumamountexcludevat:
-        type: number
-      sumofcost:
-        type: number
-      taxtype:
-        type: integer
-      tolocationcode:
-        type: string
-      tolocationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      totalqty:
-        type: number
-      totalvaluevat:
-        type: number
-      towhcode:
-        type: string
-      towhnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      unitcode:
-        type: string
-      unitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      vattype:
-        type: integer
-      whcode:
-        type: string
-      whnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-    type: object
-  smlcloudplatform_pkg_transaction_saleinvoice_models.Detail:
-    properties:
-      averagecost:
-        type: number
-      barcode:
-        type: string
-      calcflag:
-        type: integer
-      discount:
-        type: string
-      discountamount:
-        type: number
-      dividevalue:
-        type: number
-      docdatetime:
-        type: string
-      inquirytype:
-        type: integer
-      ispos:
-        type: integer
-      itemcode:
-        type: string
-      itemguid:
-        type: string
-      itemname:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      itemtype:
-        type: integer
-      laststatus:
-        type: integer
-      linenumber:
-        type: integer
-      locationcode:
-        type: string
-      locationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      multiunit:
-        type: boolean
-      price:
-        type: number
-      priceexcludevat:
-        type: number
-      qty:
-        type: number
-      remark:
-        type: string
-      shelfcode:
-        type: string
-      standvalue:
-        type: number
-      sumamount:
-        type: number
-      sumamountexcludevat:
-        type: number
-      sumofcost:
-        type: number
-      taxtype:
-        type: integer
-      tolocationcode:
-        type: string
-      tolocationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      totalqty:
-        type: number
-      totalvaluevat:
-        type: number
-      towhcode:
-        type: string
-      towhnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      unitcode:
-        type: string
-      unitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      vattype:
-        type: integer
-      whcode:
-        type: string
-      whnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-    type: object
-  smlcloudplatform_pkg_transaction_saleinvoicereturn_models.Detail:
-    properties:
-      averagecost:
-        type: number
-      barcode:
-        type: string
-      calcflag:
-        type: integer
-      discount:
-        type: string
-      discountamount:
-        type: number
-      dividevalue:
-        type: number
-      docdatetime:
-        type: string
-      inquirytype:
-        type: integer
-      ispos:
-        type: integer
-      itemcode:
-        type: string
-      itemguid:
-        type: string
-      itemname:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      itemtype:
-        type: integer
-      laststatus:
-        type: integer
-      linenumber:
-        type: integer
-      locationcode:
-        type: string
-      locationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      multiunit:
-        type: boolean
-      price:
-        type: number
-      priceexcludevat:
-        type: number
-      qty:
-        type: number
-      remark:
-        type: string
-      shelfcode:
-        type: string
-      standvalue:
-        type: number
-      sumamount:
-        type: number
-      sumamountexcludevat:
-        type: number
-      sumofcost:
-        type: number
-      taxtype:
-        type: integer
-      tolocationcode:
-        type: string
-      tolocationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      totalqty:
-        type: number
-      totalvaluevat:
-        type: number
-      towhcode:
-        type: string
-      towhnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      unitcode:
-        type: string
-      unitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      vattype:
-        type: integer
-      whcode:
-        type: string
-      whnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-    type: object
-  smlcloudplatform_pkg_transaction_stockadjustment_models.Detail:
-    properties:
-      averagecost:
-        type: number
-      barcode:
-        type: string
-      calcflag:
-        type: integer
-      discount:
-        type: string
-      discountamount:
-        type: number
-      dividevalue:
-        type: number
-      docdatetime:
-        type: string
-      inquirytype:
-        type: integer
-      ispos:
-        type: integer
-      itemcode:
-        type: string
-      itemguid:
-        type: string
-      itemname:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      itemtype:
-        type: integer
-      laststatus:
-        type: integer
-      linenumber:
-        type: integer
-      locationcode:
-        type: string
-      locationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      multiunit:
-        type: boolean
-      price:
-        type: number
-      priceexcludevat:
-        type: number
-      qty:
-        type: number
-      remark:
-        type: string
-      shelfcode:
-        type: string
-      standvalue:
-        type: number
-      sumamount:
-        type: number
-      sumamountexcludevat:
-        type: number
-      sumofcost:
-        type: number
-      taxtype:
-        type: integer
-      tolocationcode:
-        type: string
-      tolocationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      totalqty:
-        type: number
-      totalvaluevat:
-        type: number
-      towhcode:
-        type: string
-      towhnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      unitcode:
-        type: string
-      unitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      vattype:
-        type: integer
-      whcode:
-        type: string
-      whnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-    type: object
-  smlcloudplatform_pkg_transaction_stockpickupproduct_models.Detail:
-    properties:
-      averagecost:
-        type: number
-      barcode:
-        type: string
-      calcflag:
-        type: integer
-      discount:
-        type: string
-      discountamount:
-        type: number
-      dividevalue:
-        type: number
-      docdatetime:
-        type: string
-      inquirytype:
-        type: integer
-      ispos:
-        type: integer
-      itemcode:
-        type: string
-      itemguid:
-        type: string
-      itemname:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      itemtype:
-        type: integer
-      laststatus:
-        type: integer
-      linenumber:
-        type: integer
-      locationcode:
-        type: string
-      locationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      multiunit:
-        type: boolean
-      price:
-        type: number
-      priceexcludevat:
-        type: number
-      qty:
-        type: number
-      remark:
-        type: string
-      shelfcode:
-        type: string
-      standvalue:
-        type: number
-      sumamount:
-        type: number
-      sumamountexcludevat:
-        type: number
-      sumofcost:
-        type: number
-      taxtype:
-        type: integer
-      tolocationcode:
-        type: string
-      tolocationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      totalqty:
-        type: number
-      totalvaluevat:
-        type: number
-      towhcode:
-        type: string
-      towhnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      unitcode:
-        type: string
-      unitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      vattype:
-        type: integer
-      whcode:
-        type: string
-      whnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-    type: object
-  smlcloudplatform_pkg_transaction_stockreceiveproduct_models.Detail:
-    properties:
-      averagecost:
-        type: number
-      barcode:
-        type: string
-      calcflag:
-        type: integer
-      discount:
-        type: string
-      discountamount:
-        type: number
-      dividevalue:
-        type: number
-      docdatetime:
-        type: string
-      inquirytype:
-        type: integer
-      ispos:
-        type: integer
-      itemcode:
-        type: string
-      itemguid:
-        type: string
-      itemname:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      itemtype:
-        type: integer
-      laststatus:
-        type: integer
-      linenumber:
-        type: integer
-      locationcode:
-        type: string
-      locationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      multiunit:
-        type: boolean
-      price:
-        type: number
-      priceexcludevat:
-        type: number
-      qty:
-        type: number
-      remark:
-        type: string
-      shelfcode:
-        type: string
-      standvalue:
-        type: number
-      sumamount:
-        type: number
-      sumamountexcludevat:
-        type: number
-      sumofcost:
-        type: number
-      taxtype:
-        type: integer
-      tolocationcode:
-        type: string
-      tolocationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      totalqty:
-        type: number
-      totalvaluevat:
-        type: number
-      towhcode:
-        type: string
-      towhnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      unitcode:
-        type: string
-      unitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      vattype:
-        type: integer
-      whcode:
-        type: string
-      whnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-    type: object
-  smlcloudplatform_pkg_transaction_stockreturnproduct_models.Detail:
-    properties:
-      averagecost:
-        type: number
-      barcode:
-        type: string
-      calcflag:
-        type: integer
-      discount:
-        type: string
-      discountamount:
-        type: number
-      dividevalue:
-        type: number
-      docdatetime:
-        type: string
-      inquirytype:
-        type: integer
-      ispos:
-        type: integer
-      itemcode:
-        type: string
-      itemguid:
-        type: string
-      itemname:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      itemtype:
-        type: integer
-      laststatus:
-        type: integer
-      linenumber:
-        type: integer
-      locationcode:
-        type: string
-      locationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      multiunit:
-        type: boolean
-      price:
-        type: number
-      priceexcludevat:
-        type: number
-      qty:
-        type: number
-      remark:
-        type: string
-      shelfcode:
-        type: string
-      standvalue:
-        type: number
-      sumamount:
-        type: number
-      sumamountexcludevat:
-        type: number
-      sumofcost:
-        type: number
-      taxtype:
-        type: integer
-      tolocationcode:
-        type: string
-      tolocationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      totalqty:
-        type: number
-      totalvaluevat:
-        type: number
-      towhcode:
-        type: string
-      towhnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      unitcode:
-        type: string
-      unitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      vattype:
-        type: integer
-      whcode:
-        type: string
-      whnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-    type: object
-  smlcloudplatform_pkg_transaction_stocktransfer_models.Detail:
-    properties:
-      averagecost:
-        type: number
-      barcode:
-        type: string
-      calcflag:
-        type: integer
-      discount:
-        type: string
-      discountamount:
-        type: number
-      dividevalue:
-        type: number
-      docdatetime:
-        type: string
-      inquirytype:
-        type: integer
-      ispos:
-        type: integer
-      itemcode:
-        type: string
-      itemguid:
-        type: string
-      itemname:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      itemtype:
-        type: integer
-      laststatus:
-        type: integer
-      linenumber:
-        type: integer
-      locationcode:
-        type: string
-      locationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      multiunit:
-        type: boolean
-      price:
-        type: number
-      priceexcludevat:
-        type: number
-      qty:
-        type: number
-      remark:
-        type: string
-      shelfcode:
-        type: string
-      standvalue:
-        type: number
-      sumamount:
-        type: number
-      sumamountexcludevat:
-        type: number
-      sumofcost:
-        type: number
-      taxtype:
-        type: integer
-      tolocationcode:
-        type: string
-      tolocationnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      totalqty:
-        type: number
-      totalvaluevat:
-        type: number
-      towhcode:
-        type: string
-      towhnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      unitcode:
-        type: string
-      unitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      vattype:
-        type: integer
-      whcode:
-        type: string
-      whnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
     type: object
   smlcloudplatform_pkg_warehouse_models.Location:
     properties:
@@ -10872,7 +10278,7 @@ paths:
         name: Department
         required: true
         schema:
-          $ref: '#/definitions/models.Department'
+          $ref: '#/definitions/smlcloudplatform_pkg_organization_department_models.Department'
       responses:
         "201":
           description: Created
@@ -10948,7 +10354,7 @@ paths:
         name: Department
         required: true
         schema:
-          $ref: '#/definitions/models.Department'
+          $ref: '#/definitions/smlcloudplatform_pkg_organization_department_models.Department'
       responses:
         "201":
           description: Created
@@ -10974,7 +10380,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/models.Department'
+            $ref: '#/definitions/smlcloudplatform_pkg_organization_department_models.Department'
           type: array
       responses:
         "201":
@@ -13829,6 +13235,276 @@ paths:
       summary: Register An Account
       tags:
       - Authentication
+  /report/execute:
+    post:
+      consumes:
+      - application/json
+      description: Execute ReportQuery
+      parameters:
+      - description: ReportQuery
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReportQuery'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /report/playground:
+    post:
+      consumes:
+      - application/json
+      description: Playground ReportQuery
+      parameters:
+      - description: ReportQuery
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReportQuery'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /report/query:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ReportQuery
+      parameters:
+      - description: ReportQuery GUIDs
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+    post:
+      consumes:
+      - application/json
+      description: Create ReportQuery
+      parameters:
+      - description: ReportQuery
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReportQuery'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /report/query/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ReportQuery
+      parameters:
+      - description: ReportQuery ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+    get:
+      consumes:
+      - application/json
+      description: get ReportQuery info by guidfixed
+      parameters:
+      - description: ReportQuery guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+    put:
+      consumes:
+      - application/json
+      description: Update ReportQuery
+      parameters:
+      - description: ReportQuery ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: ReportQuery
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReportQuery'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /report/query/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get ReportQuery info by Code
+      parameters:
+      - description: ReportQuery Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /report/query/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
   /restaurant/device:
     delete:
       consumes:
