@@ -8889,7 +8889,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Department"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_organization_department_models.Department"
                         }
                     }
                 ],
@@ -8974,7 +8974,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Department"
+                                "$ref": "#/definitions/smlcloudplatform_pkg_organization_department_models.Department"
                             }
                         }
                     }
@@ -9165,7 +9165,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Department"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_organization_department_models.Department"
                         }
                     }
                 ],
@@ -25936,20 +25936,140 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Department": {
+        "models.Detail": {
             "type": "object",
-            "required": [
-                "code",
-                "names"
-            ],
             "properties": {
-                "code": {
+                "averagecost": {
+                    "type": "number"
+                },
+                "barcode": {
                     "type": "string"
                 },
-                "names": {
+                "calcflag": {
+                    "type": "integer"
+                },
+                "discount": {
+                    "type": "string"
+                },
+                "discountamount": {
+                    "type": "number"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "ispos": {
+                    "type": "integer"
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemguid": {
+                    "type": "string"
+                },
+                "itemname": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "laststatus": {
+                    "type": "integer"
+                },
+                "linenumber": {
+                    "type": "integer"
+                },
+                "locationcode": {
+                    "type": "string"
+                },
+                "locationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "multiunit": {
+                    "type": "boolean"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "priceexcludevat": {
+                    "type": "number"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "shelfcode": {
+                    "type": "string"
+                },
+                "standvalue": {
+                    "type": "number"
+                },
+                "sumamount": {
+                    "type": "number"
+                },
+                "sumamountexcludevat": {
+                    "type": "number"
+                },
+                "sumofcost": {
+                    "type": "number"
+                },
+                "taxtype": {
+                    "type": "integer"
+                },
+                "tolocationcode": {
+                    "type": "string"
+                },
+                "tolocationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "totalqty": {
+                    "type": "number"
+                },
+                "totalvaluevat": {
+                    "type": "number"
+                },
+                "towhcode": {
+                    "type": "string"
+                },
+                "towhnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "unitcode": {
+                    "type": "string"
+                },
+                "unitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "vattype": {
+                    "type": "integer"
+                },
+                "whcode": {
+                    "type": "string"
+                },
+                "whnames": {
+                    "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -28129,6 +28249,52 @@ const docTemplate = `{
                 }
             }
         },
+        "models.PaymentCreditCard": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "approvedcode": {
+                    "type": "string"
+                },
+                "bankcode": {
+                    "type": "string"
+                },
+                "cardnumber": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.PaymentDetail": {
+            "type": "object",
+            "properties": {
+                "cashamount": {
+                    "type": "number"
+                },
+                "cashamounttext": {
+                    "type": "string"
+                },
+                "paymentcreditcards": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PaymentCreditCard"
+                    }
+                },
+                "paymenttransfers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PaymentTransfer"
+                    }
+                }
+            }
+        },
         "models.PaymentMaster": {
             "type": "object",
             "required": [
@@ -28249,6 +28415,26 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.PaymentTransfer": {
+            "type": "object",
+            "properties": {
+                "accountnumber": {
+                    "type": "string"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "bankcode": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 }
             }
         },
@@ -28981,6 +29167,9 @@ const docTemplate = `{
         },
         "models.Purchase": {
             "type": "object",
+            "required": [
+                "custname"
+            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -28990,6 +29179,8 @@ const docTemplate = `{
                 },
                 "custname": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -28997,7 +29188,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_purchase_models.Detail"
+                        "$ref": "#/definitions/models.Detail"
                     }
                 },
                 "discountword": {
@@ -29032,6 +29223,12 @@ const docTemplate = `{
                 },
                 "membercode": {
                     "type": "string"
+                },
+                "paymentdetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PaymentDetail"
+                    }
                 },
                 "posid": {
                     "type": "string"
@@ -29088,6 +29285,9 @@ const docTemplate = `{
         },
         "models.PurchaseReturn": {
             "type": "object",
+            "required": [
+                "custname"
+            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -29097,6 +29297,8 @@ const docTemplate = `{
                 },
                 "custname": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -29104,7 +29306,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_purchasereturn_models.Detail"
+                        "$ref": "#/definitions/models.Detail"
                     }
                 },
                 "discountword": {
@@ -29139,6 +29341,12 @@ const docTemplate = `{
                 },
                 "membercode": {
                     "type": "string"
+                },
+                "paymentdetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PaymentDetail"
+                    }
                 },
                 "posid": {
                     "type": "string"
@@ -29512,6 +29720,9 @@ const docTemplate = `{
         },
         "models.SaleInvoice": {
             "type": "object",
+            "required": [
+                "custname"
+            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -29521,6 +29732,8 @@ const docTemplate = `{
                 },
                 "custname": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -29528,7 +29741,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_saleinvoice_models.Detail"
+                        "$ref": "#/definitions/models.Detail"
                     }
                 },
                 "discountword": {
@@ -29563,6 +29776,12 @@ const docTemplate = `{
                 },
                 "membercode": {
                     "type": "string"
+                },
+                "paymentdetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PaymentDetail"
+                    }
                 },
                 "posid": {
                     "type": "string"
@@ -29619,6 +29838,9 @@ const docTemplate = `{
         },
         "models.SaleInvoiceReturn": {
             "type": "object",
+            "required": [
+                "custname"
+            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -29628,6 +29850,8 @@ const docTemplate = `{
                 },
                 "custname": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -29635,7 +29859,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_saleinvoicereturn_models.Detail"
+                        "$ref": "#/definitions/models.Detail"
                     }
                 },
                 "discountword": {
@@ -29670,6 +29894,12 @@ const docTemplate = `{
                 },
                 "membercode": {
                     "type": "string"
+                },
+                "paymentdetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PaymentDetail"
+                    }
                 },
                 "posid": {
                     "type": "string"
@@ -30236,6 +30466,9 @@ const docTemplate = `{
         },
         "models.StockAdjustment": {
             "type": "object",
+            "required": [
+                "custname"
+            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -30245,6 +30478,8 @@ const docTemplate = `{
                 },
                 "custname": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -30252,7 +30487,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_stockadjustment_models.Detail"
+                        "$ref": "#/definitions/models.Detail"
                     }
                 },
                 "discountword": {
@@ -30287,6 +30522,12 @@ const docTemplate = `{
                 },
                 "membercode": {
                     "type": "string"
+                },
+                "paymentdetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PaymentDetail"
+                    }
                 },
                 "posid": {
                     "type": "string"
@@ -30343,6 +30584,9 @@ const docTemplate = `{
         },
         "models.StockPickupProduct": {
             "type": "object",
+            "required": [
+                "custname"
+            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -30352,6 +30596,8 @@ const docTemplate = `{
                 },
                 "custname": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -30359,7 +30605,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_stockpickupproduct_models.Detail"
+                        "$ref": "#/definitions/models.Detail"
                     }
                 },
                 "discountword": {
@@ -30394,6 +30640,12 @@ const docTemplate = `{
                 },
                 "membercode": {
                     "type": "string"
+                },
+                "paymentdetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PaymentDetail"
+                    }
                 },
                 "posid": {
                     "type": "string"
@@ -30450,6 +30702,9 @@ const docTemplate = `{
         },
         "models.StockReceiveProduct": {
             "type": "object",
+            "required": [
+                "custname"
+            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -30459,6 +30714,8 @@ const docTemplate = `{
                 },
                 "custname": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -30466,7 +30723,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_stockreceiveproduct_models.Detail"
+                        "$ref": "#/definitions/models.Detail"
                     }
                 },
                 "discountword": {
@@ -30501,6 +30758,12 @@ const docTemplate = `{
                 },
                 "membercode": {
                     "type": "string"
+                },
+                "paymentdetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PaymentDetail"
+                    }
                 },
                 "posid": {
                     "type": "string"
@@ -30557,6 +30820,9 @@ const docTemplate = `{
         },
         "models.StockReturnProduct": {
             "type": "object",
+            "required": [
+                "custname"
+            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -30566,6 +30832,8 @@ const docTemplate = `{
                 },
                 "custname": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -30573,7 +30841,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_stockreturnproduct_models.Detail"
+                        "$ref": "#/definitions/models.Detail"
                     }
                 },
                 "discountword": {
@@ -30608,6 +30876,12 @@ const docTemplate = `{
                 },
                 "membercode": {
                     "type": "string"
+                },
+                "paymentdetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PaymentDetail"
+                    }
                 },
                 "posid": {
                     "type": "string"
@@ -30664,6 +30938,9 @@ const docTemplate = `{
         },
         "models.StockTransfer": {
             "type": "object",
+            "required": [
+                "custname"
+            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -30673,6 +30950,8 @@ const docTemplate = `{
                 },
                 "custname": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -30680,7 +30959,7 @@ const docTemplate = `{
                 "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_transaction_stocktransfer_models.Detail"
+                        "$ref": "#/definitions/models.Detail"
                     }
                 },
                 "discountword": {
@@ -30715,6 +30994,12 @@ const docTemplate = `{
                 },
                 "membercode": {
                     "type": "string"
+                },
+                "paymentdetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PaymentDetail"
+                    }
                 },
                 "posid": {
                     "type": "string"
@@ -31444,6 +31729,25 @@ const docTemplate = `{
                 }
             }
         },
+        "smlcloudplatform_pkg_organization_department_models.Department": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "smlcloudplatform_pkg_product_inventory_models.Unit": {
             "type": "object",
             "properties": {
@@ -31567,7 +31871,7 @@ const docTemplate = `{
                     "type": "array",
                     "uniqueItems": true,
                     "items": {
-                        "$ref": "#/definitions/models.Department"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Department"
                     }
                 },
                 "location": {
@@ -31584,6 +31888,26 @@ const docTemplate = `{
                 "telephone": {
                     "type": "string",
                     "maxLength": 100
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_branch_models.Department": {
+            "type": "object",
+            "required": [
+                "code",
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 }
             }
         },
@@ -31606,1266 +31930,6 @@ const docTemplate = `{
                 },
                 "uuid": {
                     "type": "string"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_transaction_purchase_models.Detail": {
-            "type": "object",
-            "properties": {
-                "averagecost": {
-                    "type": "number"
-                },
-                "barcode": {
-                    "type": "string"
-                },
-                "calcflag": {
-                    "type": "integer"
-                },
-                "discount": {
-                    "type": "string"
-                },
-                "discountamount": {
-                    "type": "number"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "docdatetime": {
-                    "type": "string"
-                },
-                "inquirytype": {
-                    "type": "integer"
-                },
-                "ispos": {
-                    "type": "integer"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemguid": {
-                    "type": "string"
-                },
-                "itemname": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "laststatus": {
-                    "type": "integer"
-                },
-                "linenumber": {
-                    "type": "integer"
-                },
-                "locationcode": {
-                    "type": "string"
-                },
-                "locationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "priceexcludevat": {
-                    "type": "number"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "shelfcode": {
-                    "type": "string"
-                },
-                "standvalue": {
-                    "type": "number"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "sumamountexcludevat": {
-                    "type": "number"
-                },
-                "sumofcost": {
-                    "type": "number"
-                },
-                "taxtype": {
-                    "type": "integer"
-                },
-                "tolocationcode": {
-                    "type": "string"
-                },
-                "tolocationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "totalqty": {
-                    "type": "number"
-                },
-                "totalvaluevat": {
-                    "type": "number"
-                },
-                "towhcode": {
-                    "type": "string"
-                },
-                "towhnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "unitcode": {
-                    "type": "string"
-                },
-                "unitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "whcode": {
-                    "type": "string"
-                },
-                "whnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
-        "smlcloudplatform_pkg_transaction_purchasereturn_models.Detail": {
-            "type": "object",
-            "properties": {
-                "averagecost": {
-                    "type": "number"
-                },
-                "barcode": {
-                    "type": "string"
-                },
-                "calcflag": {
-                    "type": "integer"
-                },
-                "discount": {
-                    "type": "string"
-                },
-                "discountamount": {
-                    "type": "number"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "docdatetime": {
-                    "type": "string"
-                },
-                "inquirytype": {
-                    "type": "integer"
-                },
-                "ispos": {
-                    "type": "integer"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemguid": {
-                    "type": "string"
-                },
-                "itemname": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "laststatus": {
-                    "type": "integer"
-                },
-                "linenumber": {
-                    "type": "integer"
-                },
-                "locationcode": {
-                    "type": "string"
-                },
-                "locationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "priceexcludevat": {
-                    "type": "number"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "shelfcode": {
-                    "type": "string"
-                },
-                "standvalue": {
-                    "type": "number"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "sumamountexcludevat": {
-                    "type": "number"
-                },
-                "sumofcost": {
-                    "type": "number"
-                },
-                "taxtype": {
-                    "type": "integer"
-                },
-                "tolocationcode": {
-                    "type": "string"
-                },
-                "tolocationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "totalqty": {
-                    "type": "number"
-                },
-                "totalvaluevat": {
-                    "type": "number"
-                },
-                "towhcode": {
-                    "type": "string"
-                },
-                "towhnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "unitcode": {
-                    "type": "string"
-                },
-                "unitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "whcode": {
-                    "type": "string"
-                },
-                "whnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
-        "smlcloudplatform_pkg_transaction_saleinvoice_models.Detail": {
-            "type": "object",
-            "properties": {
-                "averagecost": {
-                    "type": "number"
-                },
-                "barcode": {
-                    "type": "string"
-                },
-                "calcflag": {
-                    "type": "integer"
-                },
-                "discount": {
-                    "type": "string"
-                },
-                "discountamount": {
-                    "type": "number"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "docdatetime": {
-                    "type": "string"
-                },
-                "inquirytype": {
-                    "type": "integer"
-                },
-                "ispos": {
-                    "type": "integer"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemguid": {
-                    "type": "string"
-                },
-                "itemname": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "laststatus": {
-                    "type": "integer"
-                },
-                "linenumber": {
-                    "type": "integer"
-                },
-                "locationcode": {
-                    "type": "string"
-                },
-                "locationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "priceexcludevat": {
-                    "type": "number"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "shelfcode": {
-                    "type": "string"
-                },
-                "standvalue": {
-                    "type": "number"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "sumamountexcludevat": {
-                    "type": "number"
-                },
-                "sumofcost": {
-                    "type": "number"
-                },
-                "taxtype": {
-                    "type": "integer"
-                },
-                "tolocationcode": {
-                    "type": "string"
-                },
-                "tolocationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "totalqty": {
-                    "type": "number"
-                },
-                "totalvaluevat": {
-                    "type": "number"
-                },
-                "towhcode": {
-                    "type": "string"
-                },
-                "towhnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "unitcode": {
-                    "type": "string"
-                },
-                "unitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "whcode": {
-                    "type": "string"
-                },
-                "whnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
-        "smlcloudplatform_pkg_transaction_saleinvoicereturn_models.Detail": {
-            "type": "object",
-            "properties": {
-                "averagecost": {
-                    "type": "number"
-                },
-                "barcode": {
-                    "type": "string"
-                },
-                "calcflag": {
-                    "type": "integer"
-                },
-                "discount": {
-                    "type": "string"
-                },
-                "discountamount": {
-                    "type": "number"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "docdatetime": {
-                    "type": "string"
-                },
-                "inquirytype": {
-                    "type": "integer"
-                },
-                "ispos": {
-                    "type": "integer"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemguid": {
-                    "type": "string"
-                },
-                "itemname": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "laststatus": {
-                    "type": "integer"
-                },
-                "linenumber": {
-                    "type": "integer"
-                },
-                "locationcode": {
-                    "type": "string"
-                },
-                "locationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "priceexcludevat": {
-                    "type": "number"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "shelfcode": {
-                    "type": "string"
-                },
-                "standvalue": {
-                    "type": "number"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "sumamountexcludevat": {
-                    "type": "number"
-                },
-                "sumofcost": {
-                    "type": "number"
-                },
-                "taxtype": {
-                    "type": "integer"
-                },
-                "tolocationcode": {
-                    "type": "string"
-                },
-                "tolocationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "totalqty": {
-                    "type": "number"
-                },
-                "totalvaluevat": {
-                    "type": "number"
-                },
-                "towhcode": {
-                    "type": "string"
-                },
-                "towhnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "unitcode": {
-                    "type": "string"
-                },
-                "unitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "whcode": {
-                    "type": "string"
-                },
-                "whnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
-        "smlcloudplatform_pkg_transaction_stockadjustment_models.Detail": {
-            "type": "object",
-            "properties": {
-                "averagecost": {
-                    "type": "number"
-                },
-                "barcode": {
-                    "type": "string"
-                },
-                "calcflag": {
-                    "type": "integer"
-                },
-                "discount": {
-                    "type": "string"
-                },
-                "discountamount": {
-                    "type": "number"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "docdatetime": {
-                    "type": "string"
-                },
-                "inquirytype": {
-                    "type": "integer"
-                },
-                "ispos": {
-                    "type": "integer"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemguid": {
-                    "type": "string"
-                },
-                "itemname": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "laststatus": {
-                    "type": "integer"
-                },
-                "linenumber": {
-                    "type": "integer"
-                },
-                "locationcode": {
-                    "type": "string"
-                },
-                "locationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "priceexcludevat": {
-                    "type": "number"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "shelfcode": {
-                    "type": "string"
-                },
-                "standvalue": {
-                    "type": "number"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "sumamountexcludevat": {
-                    "type": "number"
-                },
-                "sumofcost": {
-                    "type": "number"
-                },
-                "taxtype": {
-                    "type": "integer"
-                },
-                "tolocationcode": {
-                    "type": "string"
-                },
-                "tolocationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "totalqty": {
-                    "type": "number"
-                },
-                "totalvaluevat": {
-                    "type": "number"
-                },
-                "towhcode": {
-                    "type": "string"
-                },
-                "towhnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "unitcode": {
-                    "type": "string"
-                },
-                "unitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "whcode": {
-                    "type": "string"
-                },
-                "whnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
-        "smlcloudplatform_pkg_transaction_stockpickupproduct_models.Detail": {
-            "type": "object",
-            "properties": {
-                "averagecost": {
-                    "type": "number"
-                },
-                "barcode": {
-                    "type": "string"
-                },
-                "calcflag": {
-                    "type": "integer"
-                },
-                "discount": {
-                    "type": "string"
-                },
-                "discountamount": {
-                    "type": "number"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "docdatetime": {
-                    "type": "string"
-                },
-                "inquirytype": {
-                    "type": "integer"
-                },
-                "ispos": {
-                    "type": "integer"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemguid": {
-                    "type": "string"
-                },
-                "itemname": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "laststatus": {
-                    "type": "integer"
-                },
-                "linenumber": {
-                    "type": "integer"
-                },
-                "locationcode": {
-                    "type": "string"
-                },
-                "locationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "priceexcludevat": {
-                    "type": "number"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "shelfcode": {
-                    "type": "string"
-                },
-                "standvalue": {
-                    "type": "number"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "sumamountexcludevat": {
-                    "type": "number"
-                },
-                "sumofcost": {
-                    "type": "number"
-                },
-                "taxtype": {
-                    "type": "integer"
-                },
-                "tolocationcode": {
-                    "type": "string"
-                },
-                "tolocationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "totalqty": {
-                    "type": "number"
-                },
-                "totalvaluevat": {
-                    "type": "number"
-                },
-                "towhcode": {
-                    "type": "string"
-                },
-                "towhnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "unitcode": {
-                    "type": "string"
-                },
-                "unitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "whcode": {
-                    "type": "string"
-                },
-                "whnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
-        "smlcloudplatform_pkg_transaction_stockreceiveproduct_models.Detail": {
-            "type": "object",
-            "properties": {
-                "averagecost": {
-                    "type": "number"
-                },
-                "barcode": {
-                    "type": "string"
-                },
-                "calcflag": {
-                    "type": "integer"
-                },
-                "discount": {
-                    "type": "string"
-                },
-                "discountamount": {
-                    "type": "number"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "docdatetime": {
-                    "type": "string"
-                },
-                "inquirytype": {
-                    "type": "integer"
-                },
-                "ispos": {
-                    "type": "integer"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemguid": {
-                    "type": "string"
-                },
-                "itemname": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "laststatus": {
-                    "type": "integer"
-                },
-                "linenumber": {
-                    "type": "integer"
-                },
-                "locationcode": {
-                    "type": "string"
-                },
-                "locationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "priceexcludevat": {
-                    "type": "number"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "shelfcode": {
-                    "type": "string"
-                },
-                "standvalue": {
-                    "type": "number"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "sumamountexcludevat": {
-                    "type": "number"
-                },
-                "sumofcost": {
-                    "type": "number"
-                },
-                "taxtype": {
-                    "type": "integer"
-                },
-                "tolocationcode": {
-                    "type": "string"
-                },
-                "tolocationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "totalqty": {
-                    "type": "number"
-                },
-                "totalvaluevat": {
-                    "type": "number"
-                },
-                "towhcode": {
-                    "type": "string"
-                },
-                "towhnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "unitcode": {
-                    "type": "string"
-                },
-                "unitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "whcode": {
-                    "type": "string"
-                },
-                "whnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
-        "smlcloudplatform_pkg_transaction_stockreturnproduct_models.Detail": {
-            "type": "object",
-            "properties": {
-                "averagecost": {
-                    "type": "number"
-                },
-                "barcode": {
-                    "type": "string"
-                },
-                "calcflag": {
-                    "type": "integer"
-                },
-                "discount": {
-                    "type": "string"
-                },
-                "discountamount": {
-                    "type": "number"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "docdatetime": {
-                    "type": "string"
-                },
-                "inquirytype": {
-                    "type": "integer"
-                },
-                "ispos": {
-                    "type": "integer"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemguid": {
-                    "type": "string"
-                },
-                "itemname": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "laststatus": {
-                    "type": "integer"
-                },
-                "linenumber": {
-                    "type": "integer"
-                },
-                "locationcode": {
-                    "type": "string"
-                },
-                "locationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "priceexcludevat": {
-                    "type": "number"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "shelfcode": {
-                    "type": "string"
-                },
-                "standvalue": {
-                    "type": "number"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "sumamountexcludevat": {
-                    "type": "number"
-                },
-                "sumofcost": {
-                    "type": "number"
-                },
-                "taxtype": {
-                    "type": "integer"
-                },
-                "tolocationcode": {
-                    "type": "string"
-                },
-                "tolocationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "totalqty": {
-                    "type": "number"
-                },
-                "totalvaluevat": {
-                    "type": "number"
-                },
-                "towhcode": {
-                    "type": "string"
-                },
-                "towhnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "unitcode": {
-                    "type": "string"
-                },
-                "unitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "whcode": {
-                    "type": "string"
-                },
-                "whnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
-        "smlcloudplatform_pkg_transaction_stocktransfer_models.Detail": {
-            "type": "object",
-            "properties": {
-                "averagecost": {
-                    "type": "number"
-                },
-                "barcode": {
-                    "type": "string"
-                },
-                "calcflag": {
-                    "type": "integer"
-                },
-                "discount": {
-                    "type": "string"
-                },
-                "discountamount": {
-                    "type": "number"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "docdatetime": {
-                    "type": "string"
-                },
-                "inquirytype": {
-                    "type": "integer"
-                },
-                "ispos": {
-                    "type": "integer"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemguid": {
-                    "type": "string"
-                },
-                "itemname": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "itemtype": {
-                    "type": "integer"
-                },
-                "laststatus": {
-                    "type": "integer"
-                },
-                "linenumber": {
-                    "type": "integer"
-                },
-                "locationcode": {
-                    "type": "string"
-                },
-                "locationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "priceexcludevat": {
-                    "type": "number"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "shelfcode": {
-                    "type": "string"
-                },
-                "standvalue": {
-                    "type": "number"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "sumamountexcludevat": {
-                    "type": "number"
-                },
-                "sumofcost": {
-                    "type": "number"
-                },
-                "taxtype": {
-                    "type": "integer"
-                },
-                "tolocationcode": {
-                    "type": "string"
-                },
-                "tolocationnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "totalqty": {
-                    "type": "number"
-                },
-                "totalvaluevat": {
-                    "type": "number"
-                },
-                "towhcode": {
-                    "type": "string"
-                },
-                "towhnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "unitcode": {
-                    "type": "string"
-                },
-                "unitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "whcode": {
-                    "type": "string"
-                },
-                "whnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
                 }
             }
         },
