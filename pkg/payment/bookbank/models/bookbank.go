@@ -10,6 +10,7 @@ const bookbankCollectionName = "bookBank"
 
 type BookBank struct {
 	models.PartitionIdentity `bson:"inline"`
+	BookCode                 string          `json:"bookcode" bson:"bookcode"`
 	PassBook                 string          `json:"passbook" bson:"passbook"`
 	BankCode                 string          `json:"bankcode" bson:"bankcode"`
 	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
