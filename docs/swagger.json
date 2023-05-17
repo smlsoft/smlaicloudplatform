@@ -25188,6 +25188,9 @@
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "bookcode": {
+                    "type": "string"
+                },
                 "images": {
                     "type": "array",
                     "items": {
@@ -25932,17 +25935,13 @@
         },
         "models.Department": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
                 "code": {
+                    "description": "GuidFixed string         `json:\"guidfixed\"`",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -29180,9 +29179,6 @@
         },
         "models.Purchase": {
             "type": "object",
-            "required": [
-                "custnames"
-            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -29192,8 +29188,6 @@
                 },
                 "custnames": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -29295,9 +29289,6 @@
         },
         "models.PurchaseReturn": {
             "type": "object",
-            "required": [
-                "custnames"
-            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -29307,8 +29298,6 @@
                 },
                 "custnames": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -29727,9 +29716,6 @@
         },
         "models.SaleInvoice": {
             "type": "object",
-            "required": [
-                "custnames"
-            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -29739,8 +29725,6 @@
                 },
                 "custnames": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -29842,9 +29826,6 @@
         },
         "models.SaleInvoiceReturn": {
             "type": "object",
-            "required": [
-                "custnames"
-            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -29854,8 +29835,6 @@
                 },
                 "custnames": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -30467,9 +30446,6 @@
         },
         "models.StockAdjustment": {
             "type": "object",
-            "required": [
-                "custnames"
-            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -30479,8 +30455,6 @@
                 },
                 "custnames": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -30582,9 +30556,6 @@
         },
         "models.StockPickupProduct": {
             "type": "object",
-            "required": [
-                "custnames"
-            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -30594,8 +30565,6 @@
                 },
                 "custnames": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -30697,9 +30666,6 @@
         },
         "models.StockReceiveProduct": {
             "type": "object",
-            "required": [
-                "custnames"
-            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -30709,8 +30675,6 @@
                 },
                 "custnames": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -30812,9 +30776,6 @@
         },
         "models.StockReturnProduct": {
             "type": "object",
-            "required": [
-                "custnames"
-            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -30824,8 +30785,6 @@
                 },
                 "custnames": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -30927,9 +30886,6 @@
         },
         "models.StockTransfer": {
             "type": "object",
-            "required": [
-                "custnames"
-            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -30939,8 +30895,6 @@
                 },
                 "custnames": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }

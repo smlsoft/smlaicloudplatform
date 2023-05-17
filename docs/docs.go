@@ -25194,6 +25194,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "bookcode": {
+                    "type": "string"
+                },
                 "images": {
                     "type": "array",
                     "items": {
@@ -25938,17 +25941,13 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
                 "code": {
+                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -29186,9 +29185,6 @@ const docTemplate = `{
         },
         "models.Purchase": {
             "type": "object",
-            "required": [
-                "custnames"
-            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -29198,8 +29194,6 @@ const docTemplate = `{
                 },
                 "custnames": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -29301,9 +29295,6 @@ const docTemplate = `{
         },
         "models.PurchaseReturn": {
             "type": "object",
-            "required": [
-                "custnames"
-            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -29313,8 +29304,6 @@ const docTemplate = `{
                 },
                 "custnames": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -29733,9 +29722,6 @@ const docTemplate = `{
         },
         "models.SaleInvoice": {
             "type": "object",
-            "required": [
-                "custnames"
-            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -29745,8 +29731,6 @@ const docTemplate = `{
                 },
                 "custnames": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -29848,9 +29832,6 @@ const docTemplate = `{
         },
         "models.SaleInvoiceReturn": {
             "type": "object",
-            "required": [
-                "custnames"
-            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -29860,8 +29841,6 @@ const docTemplate = `{
                 },
                 "custnames": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -30473,9 +30452,6 @@ const docTemplate = `{
         },
         "models.StockAdjustment": {
             "type": "object",
-            "required": [
-                "custnames"
-            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -30485,8 +30461,6 @@ const docTemplate = `{
                 },
                 "custnames": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -30588,9 +30562,6 @@ const docTemplate = `{
         },
         "models.StockPickupProduct": {
             "type": "object",
-            "required": [
-                "custnames"
-            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -30600,8 +30571,6 @@ const docTemplate = `{
                 },
                 "custnames": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -30703,9 +30672,6 @@ const docTemplate = `{
         },
         "models.StockReceiveProduct": {
             "type": "object",
-            "required": [
-                "custnames"
-            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -30715,8 +30681,6 @@ const docTemplate = `{
                 },
                 "custnames": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -30818,9 +30782,6 @@ const docTemplate = `{
         },
         "models.StockReturnProduct": {
             "type": "object",
-            "required": [
-                "custnames"
-            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -30830,8 +30791,6 @@ const docTemplate = `{
                 },
                 "custnames": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -30933,9 +30892,6 @@ const docTemplate = `{
         },
         "models.StockTransfer": {
             "type": "object",
-            "required": [
-                "custnames"
-            ],
             "properties": {
                 "cashiercode": {
                     "type": "string"
@@ -30945,8 +30901,6 @@ const docTemplate = `{
                 },
                 "custnames": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }

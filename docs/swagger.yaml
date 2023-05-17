@@ -334,6 +334,8 @@ definitions:
         minItems: 1
         type: array
         uniqueItems: true
+      bookcode:
+        type: string
       images:
         items:
           $ref: '#/definitions/models.Image'
@@ -844,15 +846,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.Detail:
     properties:
@@ -3069,9 +3068,7 @@ definitions:
       custnames:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
       details:
         items:
           $ref: '#/definitions/models.Detail'
@@ -3134,8 +3131,6 @@ definitions:
         type: number
       vattype:
         type: integer
-    required:
-    - custnames
     type: object
   models.PurchaseReturn:
     properties:
@@ -3146,9 +3141,7 @@ definitions:
       custnames:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
       details:
         items:
           $ref: '#/definitions/models.Detail'
@@ -3211,8 +3204,6 @@ definitions:
         type: number
       vattype:
         type: integer
-    required:
-    - custnames
     type: object
   models.QrPayment:
     properties:
@@ -3438,9 +3429,7 @@ definitions:
       custnames:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
       details:
         items:
           $ref: '#/definitions/models.Detail'
@@ -3503,8 +3492,6 @@ definitions:
         type: number
       vattype:
         type: integer
-    required:
-    - custnames
     type: object
   models.SaleInvoiceReturn:
     properties:
@@ -3515,9 +3502,7 @@ definitions:
       custnames:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
       details:
         items:
           $ref: '#/definitions/models.Detail'
@@ -3580,8 +3565,6 @@ definitions:
         type: number
       vattype:
         type: integer
-    required:
-    - custnames
     type: object
   models.SectionBranch:
     properties:
@@ -3928,9 +3911,7 @@ definitions:
       custnames:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
       details:
         items:
           $ref: '#/definitions/models.Detail'
@@ -3993,8 +3974,6 @@ definitions:
         type: number
       vattype:
         type: integer
-    required:
-    - custnames
     type: object
   models.StockPickupProduct:
     properties:
@@ -4005,9 +3984,7 @@ definitions:
       custnames:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
       details:
         items:
           $ref: '#/definitions/models.Detail'
@@ -4070,8 +4047,6 @@ definitions:
         type: number
       vattype:
         type: integer
-    required:
-    - custnames
     type: object
   models.StockReceiveProduct:
     properties:
@@ -4082,9 +4057,7 @@ definitions:
       custnames:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
       details:
         items:
           $ref: '#/definitions/models.Detail'
@@ -4147,8 +4120,6 @@ definitions:
         type: number
       vattype:
         type: integer
-    required:
-    - custnames
     type: object
   models.StockReturnProduct:
     properties:
@@ -4159,9 +4130,7 @@ definitions:
       custnames:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
       details:
         items:
           $ref: '#/definitions/models.Detail'
@@ -4224,8 +4193,6 @@ definitions:
         type: number
       vattype:
         type: integer
-    required:
-    - custnames
     type: object
   models.StockTransfer:
     properties:
@@ -4236,9 +4203,7 @@ definitions:
       custnames:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
       details:
         items:
           $ref: '#/definitions/models.Detail'
@@ -4301,8 +4266,6 @@ definitions:
         type: number
       vattype:
         type: integer
-    required:
-    - custnames
     type: object
   models.Storefront:
     properties:
