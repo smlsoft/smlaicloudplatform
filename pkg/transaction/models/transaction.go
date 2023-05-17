@@ -14,7 +14,7 @@ type Transaction struct {
 	DocRefNo       string          `json:"docrefno" bson:"docrefno"`
 	DocRefDate     time.Time       `json:"docrefdate" bson:"docrefdate"`
 	DocType        int8            `json:"doctype" bson:"doctype"`
-	CustNames      *[]models.NameX `json:"custnames" bson:"custnames" validate:"required,min=1,unique=Code,dive" `
+	CustNames      *[]models.NameX `json:"custnames" bson:"custnames"`
 	TotalExceptVat float64         `json:"totalexceptvat" bson:"totalexceptvat"`
 	CashierCode    string          `json:"cashiercode" bson:"cashiercode"`
 	Details        *[]Detail       `json:"details" bson:"details"`
