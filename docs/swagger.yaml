@@ -852,7 +852,6 @@ definitions:
         type: array
         uniqueItems: true
     required:
-    - code
     - names
     type: object
   models.Detail:
@@ -1132,6 +1131,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -3097,10 +3098,8 @@ definitions:
         type: boolean
       membercode:
         type: string
-      paymentdetails:
-        items:
-          $ref: '#/definitions/models.PaymentDetail'
-        type: array
+      paymentdetail:
+        $ref: '#/definitions/models.PaymentDetail'
       posid:
         type: string
       salecode:
@@ -3176,10 +3175,8 @@ definitions:
         type: boolean
       membercode:
         type: string
-      paymentdetails:
-        items:
-          $ref: '#/definitions/models.PaymentDetail'
-        type: array
+      paymentdetail:
+        $ref: '#/definitions/models.PaymentDetail'
       posid:
         type: string
       salecode:
@@ -3470,10 +3467,8 @@ definitions:
         type: boolean
       membercode:
         type: string
-      paymentdetails:
-        items:
-          $ref: '#/definitions/models.PaymentDetail'
-        type: array
+      paymentdetail:
+        $ref: '#/definitions/models.PaymentDetail'
       posid:
         type: string
       salecode:
@@ -3549,10 +3544,8 @@ definitions:
         type: boolean
       membercode:
         type: string
-      paymentdetails:
-        items:
-          $ref: '#/definitions/models.PaymentDetail'
-        type: array
+      paymentdetail:
+        $ref: '#/definitions/models.PaymentDetail'
       posid:
         type: string
       salecode:
@@ -3964,10 +3957,8 @@ definitions:
         type: boolean
       membercode:
         type: string
-      paymentdetails:
-        items:
-          $ref: '#/definitions/models.PaymentDetail'
-        type: array
+      paymentdetail:
+        $ref: '#/definitions/models.PaymentDetail'
       posid:
         type: string
       salecode:
@@ -4043,10 +4034,8 @@ definitions:
         type: boolean
       membercode:
         type: string
-      paymentdetails:
-        items:
-          $ref: '#/definitions/models.PaymentDetail'
-        type: array
+      paymentdetail:
+        $ref: '#/definitions/models.PaymentDetail'
       posid:
         type: string
       salecode:
@@ -4122,10 +4111,8 @@ definitions:
         type: boolean
       membercode:
         type: string
-      paymentdetails:
-        items:
-          $ref: '#/definitions/models.PaymentDetail'
-        type: array
+      paymentdetail:
+        $ref: '#/definitions/models.PaymentDetail'
       posid:
         type: string
       salecode:
@@ -4201,10 +4188,8 @@ definitions:
         type: boolean
       membercode:
         type: string
-      paymentdetails:
-        items:
-          $ref: '#/definitions/models.PaymentDetail'
-        type: array
+      paymentdetail:
+        $ref: '#/definitions/models.PaymentDetail'
       posid:
         type: string
       salecode:
@@ -4280,10 +4265,8 @@ definitions:
         type: boolean
       membercode:
         type: string
-      paymentdetails:
-        items:
-          $ref: '#/definitions/models.PaymentDetail'
-        type: array
+      paymentdetail:
+        $ref: '#/definitions/models.PaymentDetail'
       posid:
         type: string
       salecode:

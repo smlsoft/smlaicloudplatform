@@ -25933,7 +25933,6 @@
         "models.Department": {
             "type": "object",
             "required": [
-                "code",
                 "names"
             ],
             "properties": {
@@ -26361,6 +26360,9 @@
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -29235,11 +29237,8 @@
                 "membercode": {
                     "type": "string"
                 },
-                "paymentdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentDetail"
-                    }
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "posid": {
                     "type": "string"
@@ -29353,11 +29352,8 @@
                 "membercode": {
                     "type": "string"
                 },
-                "paymentdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentDetail"
-                    }
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "posid": {
                     "type": "string"
@@ -29788,11 +29784,8 @@
                 "membercode": {
                     "type": "string"
                 },
-                "paymentdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentDetail"
-                    }
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "posid": {
                     "type": "string"
@@ -29906,11 +29899,8 @@
                 "membercode": {
                     "type": "string"
                 },
-                "paymentdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentDetail"
-                    }
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "posid": {
                     "type": "string"
@@ -30534,11 +30524,8 @@
                 "membercode": {
                     "type": "string"
                 },
-                "paymentdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentDetail"
-                    }
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "posid": {
                     "type": "string"
@@ -30652,11 +30639,8 @@
                 "membercode": {
                     "type": "string"
                 },
-                "paymentdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentDetail"
-                    }
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "posid": {
                     "type": "string"
@@ -30770,11 +30754,8 @@
                 "membercode": {
                     "type": "string"
                 },
-                "paymentdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentDetail"
-                    }
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "posid": {
                     "type": "string"
@@ -30888,11 +30869,8 @@
                 "membercode": {
                     "type": "string"
                 },
-                "paymentdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentDetail"
-                    }
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "posid": {
                     "type": "string"
@@ -31006,11 +30984,8 @@
                 "membercode": {
                     "type": "string"
                 },
-                "paymentdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentDetail"
-                    }
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "posid": {
                     "type": "string"

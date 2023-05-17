@@ -25939,7 +25939,6 @@ const docTemplate = `{
         "models.Department": {
             "type": "object",
             "required": [
-                "code",
                 "names"
             ],
             "properties": {
@@ -26367,6 +26366,9 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -29241,11 +29243,8 @@ const docTemplate = `{
                 "membercode": {
                     "type": "string"
                 },
-                "paymentdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentDetail"
-                    }
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "posid": {
                     "type": "string"
@@ -29359,11 +29358,8 @@ const docTemplate = `{
                 "membercode": {
                     "type": "string"
                 },
-                "paymentdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentDetail"
-                    }
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "posid": {
                     "type": "string"
@@ -29794,11 +29790,8 @@ const docTemplate = `{
                 "membercode": {
                     "type": "string"
                 },
-                "paymentdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentDetail"
-                    }
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "posid": {
                     "type": "string"
@@ -29912,11 +29905,8 @@ const docTemplate = `{
                 "membercode": {
                     "type": "string"
                 },
-                "paymentdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentDetail"
-                    }
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "posid": {
                     "type": "string"
@@ -30540,11 +30530,8 @@ const docTemplate = `{
                 "membercode": {
                     "type": "string"
                 },
-                "paymentdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentDetail"
-                    }
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "posid": {
                     "type": "string"
@@ -30658,11 +30645,8 @@ const docTemplate = `{
                 "membercode": {
                     "type": "string"
                 },
-                "paymentdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentDetail"
-                    }
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "posid": {
                     "type": "string"
@@ -30776,11 +30760,8 @@ const docTemplate = `{
                 "membercode": {
                     "type": "string"
                 },
-                "paymentdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentDetail"
-                    }
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "posid": {
                     "type": "string"
@@ -30894,11 +30875,8 @@ const docTemplate = `{
                 "membercode": {
                     "type": "string"
                 },
-                "paymentdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentDetail"
-                    }
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "posid": {
                     "type": "string"
@@ -31012,11 +30990,8 @@ const docTemplate = `{
                 "membercode": {
                     "type": "string"
                 },
-                "paymentdetails": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PaymentDetail"
-                    }
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "posid": {
                     "type": "string"
