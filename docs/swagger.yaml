@@ -841,6 +841,20 @@ definitions:
     required:
     - names
     type: object
+  models.Department:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - code
+    - names
+    type: object
   models.Detail:
     properties:
       averagecost:
@@ -865,7 +879,7 @@ definitions:
         type: string
       itemguid:
         type: string
-      itemname:
+      itemnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
@@ -1118,8 +1132,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -3053,7 +3065,7 @@ definitions:
         type: string
       custcode:
         type: string
-      custname:
+      custnames:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
@@ -3124,7 +3136,7 @@ definitions:
       vattype:
         type: integer
     required:
-    - custname
+    - custnames
     type: object
   models.PurchaseReturn:
     properties:
@@ -3132,7 +3144,7 @@ definitions:
         type: string
       custcode:
         type: string
-      custname:
+      custnames:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
@@ -3203,7 +3215,7 @@ definitions:
       vattype:
         type: integer
     required:
-    - custname
+    - custnames
     type: object
   models.QrPayment:
     properties:
@@ -3426,7 +3438,7 @@ definitions:
         type: string
       custcode:
         type: string
-      custname:
+      custnames:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
@@ -3497,7 +3509,7 @@ definitions:
       vattype:
         type: integer
     required:
-    - custname
+    - custnames
     type: object
   models.SaleInvoiceReturn:
     properties:
@@ -3505,7 +3517,7 @@ definitions:
         type: string
       custcode:
         type: string
-      custname:
+      custnames:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
@@ -3576,7 +3588,7 @@ definitions:
       vattype:
         type: integer
     required:
-    - custname
+    - custnames
     type: object
   models.SectionBranch:
     properties:
@@ -3920,7 +3932,7 @@ definitions:
         type: string
       custcode:
         type: string
-      custname:
+      custnames:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
@@ -3991,7 +4003,7 @@ definitions:
       vattype:
         type: integer
     required:
-    - custname
+    - custnames
     type: object
   models.StockPickupProduct:
     properties:
@@ -3999,7 +4011,7 @@ definitions:
         type: string
       custcode:
         type: string
-      custname:
+      custnames:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
@@ -4070,7 +4082,7 @@ definitions:
       vattype:
         type: integer
     required:
-    - custname
+    - custnames
     type: object
   models.StockReceiveProduct:
     properties:
@@ -4078,7 +4090,7 @@ definitions:
         type: string
       custcode:
         type: string
-      custname:
+      custnames:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
@@ -4149,7 +4161,7 @@ definitions:
       vattype:
         type: integer
     required:
-    - custname
+    - custnames
     type: object
   models.StockReturnProduct:
     properties:
@@ -4157,7 +4169,7 @@ definitions:
         type: string
       custcode:
         type: string
-      custname:
+      custnames:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
@@ -4228,7 +4240,7 @@ definitions:
       vattype:
         type: integer
     required:
-    - custname
+    - custnames
     type: object
   models.StockTransfer:
     properties:
@@ -4236,7 +4248,7 @@ definitions:
         type: string
       custcode:
         type: string
-      custname:
+      custnames:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
@@ -4307,7 +4319,7 @@ definitions:
       vattype:
         type: integer
     required:
-    - custname
+    - custnames
     type: object
   models.Storefront:
     properties:
@@ -4774,19 +4786,6 @@ definitions:
     required:
     - names
     type: object
-  smlcloudplatform_pkg_organization_department_models.Department:
-    properties:
-      code:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-    required:
-    - names
-    type: object
   smlcloudplatform_pkg_product_inventory_models.Unit:
     properties:
       unitcode:
@@ -4866,7 +4865,7 @@ definitions:
         type: integer
       departments:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_shop_branch_models.Department'
+          $ref: '#/definitions/models.Department'
         type: array
         uniqueItems: true
       location:
@@ -4881,20 +4880,6 @@ definitions:
         maxLength: 100
         type: string
     required:
-    - names
-    type: object
-  smlcloudplatform_pkg_shop_branch_models.Department:
-    properties:
-      code:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-    required:
-    - code
     - names
     type: object
   smlcloudplatform_pkg_shop_branch_models.Location:
@@ -10494,7 +10479,7 @@ paths:
         name: Department
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_organization_department_models.Department'
+          $ref: '#/definitions/models.Department'
       responses:
         "201":
           description: Created
@@ -10599,7 +10584,7 @@ paths:
         name: Department
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_organization_department_models.Department'
+          $ref: '#/definitions/models.Department'
       responses:
         "201":
           description: Created
@@ -10625,7 +10610,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/smlcloudplatform_pkg_organization_department_models.Department'
+            $ref: '#/definitions/models.Department'
           type: array
       responses:
         "201":

@@ -8889,7 +8889,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_organization_department_models.Department"
+                            "$ref": "#/definitions/models.Department"
                         }
                     }
                 ],
@@ -8974,7 +8974,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_pkg_organization_department_models.Department"
+                                "$ref": "#/definitions/models.Department"
                             }
                         }
                     }
@@ -9165,7 +9165,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_organization_department_models.Department"
+                            "$ref": "#/definitions/models.Department"
                         }
                     }
                 ],
@@ -25936,6 +25936,26 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Department": {
+            "type": "object",
+            "required": [
+                "code",
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "models.Detail": {
             "type": "object",
             "properties": {
@@ -25972,7 +25992,7 @@ const docTemplate = `{
                 "itemguid": {
                     "type": "string"
                 },
-                "itemname": {
+                "itemnames": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.NameX"
@@ -26347,9 +26367,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -29168,7 +29185,7 @@ const docTemplate = `{
         "models.Purchase": {
             "type": "object",
             "required": [
-                "custname"
+                "custnames"
             ],
             "properties": {
                 "cashiercode": {
@@ -29177,7 +29194,7 @@ const docTemplate = `{
                 "custcode": {
                     "type": "string"
                 },
-                "custname": {
+                "custnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -29286,7 +29303,7 @@ const docTemplate = `{
         "models.PurchaseReturn": {
             "type": "object",
             "required": [
-                "custname"
+                "custnames"
             ],
             "properties": {
                 "cashiercode": {
@@ -29295,7 +29312,7 @@ const docTemplate = `{
                 "custcode": {
                     "type": "string"
                 },
-                "custname": {
+                "custnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -29721,7 +29738,7 @@ const docTemplate = `{
         "models.SaleInvoice": {
             "type": "object",
             "required": [
-                "custname"
+                "custnames"
             ],
             "properties": {
                 "cashiercode": {
@@ -29730,7 +29747,7 @@ const docTemplate = `{
                 "custcode": {
                     "type": "string"
                 },
-                "custname": {
+                "custnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -29839,7 +29856,7 @@ const docTemplate = `{
         "models.SaleInvoiceReturn": {
             "type": "object",
             "required": [
-                "custname"
+                "custnames"
             ],
             "properties": {
                 "cashiercode": {
@@ -29848,7 +29865,7 @@ const docTemplate = `{
                 "custcode": {
                     "type": "string"
                 },
-                "custname": {
+                "custnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -30467,7 +30484,7 @@ const docTemplate = `{
         "models.StockAdjustment": {
             "type": "object",
             "required": [
-                "custname"
+                "custnames"
             ],
             "properties": {
                 "cashiercode": {
@@ -30476,7 +30493,7 @@ const docTemplate = `{
                 "custcode": {
                     "type": "string"
                 },
-                "custname": {
+                "custnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -30585,7 +30602,7 @@ const docTemplate = `{
         "models.StockPickupProduct": {
             "type": "object",
             "required": [
-                "custname"
+                "custnames"
             ],
             "properties": {
                 "cashiercode": {
@@ -30594,7 +30611,7 @@ const docTemplate = `{
                 "custcode": {
                     "type": "string"
                 },
-                "custname": {
+                "custnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -30703,7 +30720,7 @@ const docTemplate = `{
         "models.StockReceiveProduct": {
             "type": "object",
             "required": [
-                "custname"
+                "custnames"
             ],
             "properties": {
                 "cashiercode": {
@@ -30712,7 +30729,7 @@ const docTemplate = `{
                 "custcode": {
                     "type": "string"
                 },
-                "custname": {
+                "custnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -30821,7 +30838,7 @@ const docTemplate = `{
         "models.StockReturnProduct": {
             "type": "object",
             "required": [
-                "custname"
+                "custnames"
             ],
             "properties": {
                 "cashiercode": {
@@ -30830,7 +30847,7 @@ const docTemplate = `{
                 "custcode": {
                     "type": "string"
                 },
-                "custname": {
+                "custnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -30939,7 +30956,7 @@ const docTemplate = `{
         "models.StockTransfer": {
             "type": "object",
             "required": [
-                "custname"
+                "custnames"
             ],
             "properties": {
                 "cashiercode": {
@@ -30948,7 +30965,7 @@ const docTemplate = `{
                 "custcode": {
                     "type": "string"
                 },
-                "custname": {
+                "custnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -31729,25 +31746,6 @@ const docTemplate = `{
                 }
             }
         },
-        "smlcloudplatform_pkg_organization_department_models.Department": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
         "smlcloudplatform_pkg_product_inventory_models.Unit": {
             "type": "object",
             "properties": {
@@ -31871,7 +31869,7 @@ const docTemplate = `{
                     "type": "array",
                     "uniqueItems": true,
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Department"
+                        "$ref": "#/definitions/models.Department"
                     }
                 },
                 "location": {
@@ -31888,26 +31886,6 @@ const docTemplate = `{
                 "telephone": {
                     "type": "string",
                     "maxLength": 100
-                }
-            }
-        },
-        "smlcloudplatform_pkg_shop_branch_models.Department": {
-            "type": "object",
-            "required": [
-                "code",
-                "names"
-            ],
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
                 }
             }
         },

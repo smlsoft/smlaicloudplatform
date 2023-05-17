@@ -8883,7 +8883,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_organization_department_models.Department"
+                            "$ref": "#/definitions/models.Department"
                         }
                     }
                 ],
@@ -8968,7 +8968,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_pkg_organization_department_models.Department"
+                                "$ref": "#/definitions/models.Department"
                             }
                         }
                     }
@@ -9159,7 +9159,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_organization_department_models.Department"
+                            "$ref": "#/definitions/models.Department"
                         }
                     }
                 ],
@@ -25930,6 +25930,26 @@
                 }
             }
         },
+        "models.Department": {
+            "type": "object",
+            "required": [
+                "code",
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "models.Detail": {
             "type": "object",
             "properties": {
@@ -25966,7 +25986,7 @@
                 "itemguid": {
                     "type": "string"
                 },
-                "itemname": {
+                "itemnames": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.NameX"
@@ -26341,9 +26361,6 @@
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -29162,7 +29179,7 @@
         "models.Purchase": {
             "type": "object",
             "required": [
-                "custname"
+                "custnames"
             ],
             "properties": {
                 "cashiercode": {
@@ -29171,7 +29188,7 @@
                 "custcode": {
                     "type": "string"
                 },
-                "custname": {
+                "custnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -29280,7 +29297,7 @@
         "models.PurchaseReturn": {
             "type": "object",
             "required": [
-                "custname"
+                "custnames"
             ],
             "properties": {
                 "cashiercode": {
@@ -29289,7 +29306,7 @@
                 "custcode": {
                     "type": "string"
                 },
-                "custname": {
+                "custnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -29715,7 +29732,7 @@
         "models.SaleInvoice": {
             "type": "object",
             "required": [
-                "custname"
+                "custnames"
             ],
             "properties": {
                 "cashiercode": {
@@ -29724,7 +29741,7 @@
                 "custcode": {
                     "type": "string"
                 },
-                "custname": {
+                "custnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -29833,7 +29850,7 @@
         "models.SaleInvoiceReturn": {
             "type": "object",
             "required": [
-                "custname"
+                "custnames"
             ],
             "properties": {
                 "cashiercode": {
@@ -29842,7 +29859,7 @@
                 "custcode": {
                     "type": "string"
                 },
-                "custname": {
+                "custnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -30461,7 +30478,7 @@
         "models.StockAdjustment": {
             "type": "object",
             "required": [
-                "custname"
+                "custnames"
             ],
             "properties": {
                 "cashiercode": {
@@ -30470,7 +30487,7 @@
                 "custcode": {
                     "type": "string"
                 },
-                "custname": {
+                "custnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -30579,7 +30596,7 @@
         "models.StockPickupProduct": {
             "type": "object",
             "required": [
-                "custname"
+                "custnames"
             ],
             "properties": {
                 "cashiercode": {
@@ -30588,7 +30605,7 @@
                 "custcode": {
                     "type": "string"
                 },
-                "custname": {
+                "custnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -30697,7 +30714,7 @@
         "models.StockReceiveProduct": {
             "type": "object",
             "required": [
-                "custname"
+                "custnames"
             ],
             "properties": {
                 "cashiercode": {
@@ -30706,7 +30723,7 @@
                 "custcode": {
                     "type": "string"
                 },
-                "custname": {
+                "custnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -30815,7 +30832,7 @@
         "models.StockReturnProduct": {
             "type": "object",
             "required": [
-                "custname"
+                "custnames"
             ],
             "properties": {
                 "cashiercode": {
@@ -30824,7 +30841,7 @@
                 "custcode": {
                     "type": "string"
                 },
-                "custname": {
+                "custnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -30933,7 +30950,7 @@
         "models.StockTransfer": {
             "type": "object",
             "required": [
-                "custname"
+                "custnames"
             ],
             "properties": {
                 "cashiercode": {
@@ -30942,7 +30959,7 @@
                 "custcode": {
                     "type": "string"
                 },
-                "custname": {
+                "custnames": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
@@ -31723,25 +31740,6 @@
                 }
             }
         },
-        "smlcloudplatform_pkg_organization_department_models.Department": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
         "smlcloudplatform_pkg_product_inventory_models.Unit": {
             "type": "object",
             "properties": {
@@ -31865,7 +31863,7 @@
                     "type": "array",
                     "uniqueItems": true,
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Department"
+                        "$ref": "#/definitions/models.Department"
                     }
                 },
                 "location": {
@@ -31882,26 +31880,6 @@
                 "telephone": {
                     "type": "string",
                     "maxLength": 100
-                }
-            }
-        },
-        "smlcloudplatform_pkg_shop_branch_models.Department": {
-            "type": "object",
-            "required": [
-                "code",
-                "names"
-            ],
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
                 }
             }
         },
