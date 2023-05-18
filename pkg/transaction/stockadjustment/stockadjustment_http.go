@@ -269,6 +269,7 @@ func (h StockAdjustmentHttp) InfoStockAdjustmentByCode(ctx microservice.IContext
 // List StockAdjustment step godoc
 // @Description get list step
 // @Tags		StockAdjustment
+// @Param		custcode	query	string		false  "customer code"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"

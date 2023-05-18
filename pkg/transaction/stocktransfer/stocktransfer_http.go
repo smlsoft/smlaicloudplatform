@@ -267,6 +267,7 @@ func (h StockTransferHttp) InfoStockTransferByCode(ctx microservice.IContext) er
 // List StockTransfer step godoc
 // @Description get list step
 // @Tags		StockTransfer
+// @Param		custcode	query	string		false  "customer code"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"

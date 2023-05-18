@@ -269,6 +269,7 @@ func (h StockPickupProductHttp) InfoStockPickupProductByCode(ctx microservice.IC
 // List StockPickupProduct step godoc
 // @Description get list step
 // @Tags		StockPickupProduct
+// @Param		custcode	query	string		false  "customer code"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"

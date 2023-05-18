@@ -70,6 +70,10 @@ func (svc BranchHttpService) CreateBranch(shopID string, authUsername string, do
 
 	tempMap := map[string]struct{}{}
 
+	if doc.Departments == nil {
+		doc.Departments = &[]models.Department{}
+	}
+
 	for _, department := range *doc.Departments {
 		if _, ok := tempMap[department.Code]; ok {
 			return "", fmt.Errorf("department code %s is duplicated", department.Code)

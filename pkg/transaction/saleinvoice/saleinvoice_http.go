@@ -269,6 +269,7 @@ func (h SaleInvoiceHttp) InfoSaleInvoiceByCode(ctx microservice.IContext) error 
 // List SaleInvoice step godoc
 // @Description get list step
 // @Tags		SaleInvoice
+// @Param		custcode	query	string		false  "customer code"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"

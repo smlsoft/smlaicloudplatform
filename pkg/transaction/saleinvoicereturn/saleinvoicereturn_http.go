@@ -269,6 +269,7 @@ func (h SaleInvoiceReturnHttp) InfoSaleInvoiceReturnByCode(ctx microservice.ICon
 // List SaleInvoiceReturn step godoc
 // @Description get list step
 // @Tags		SaleInvoiceReturn
+// @Param		custcode	query	string		false  "customer code"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
