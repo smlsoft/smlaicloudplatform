@@ -19196,6 +19196,12 @@
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "customer code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Search Value",
                         "name": "q",
                         "in": "query"
@@ -19328,6 +19334,12 @@
                     "PurchaseReturn"
                 ],
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "customer code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
                     {
                         "type": "string",
                         "description": "Search Value",
@@ -19992,6 +20004,12 @@
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "customer code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Search Value",
                         "name": "q",
                         "in": "query"
@@ -20124,6 +20142,12 @@
                     "SaleInvoiceReturn"
                 ],
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "customer code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
                     {
                         "type": "string",
                         "description": "Search Value",
@@ -20788,6 +20812,12 @@
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "customer code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Search Value",
                         "name": "q",
                         "in": "query"
@@ -21184,6 +21214,12 @@
                     "StockPickupProduct"
                 ],
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "customer code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
                     {
                         "type": "string",
                         "description": "Search Value",
@@ -21584,6 +21620,12 @@
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "customer code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Search Value",
                         "name": "q",
                         "in": "query"
@@ -21982,6 +22024,12 @@
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "customer code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Search Value",
                         "name": "q",
                         "in": "query"
@@ -22378,6 +22426,12 @@
                     "StockTransfer"
                 ],
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "customer code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
                     {
                         "type": "string",
                         "description": "Search Value",
@@ -25097,8 +25151,8 @@
                 "isprimary": {
                     "type": "boolean"
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "name1": {
                     "type": "string",
@@ -25120,7 +25174,17 @@
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "unitcode": {
@@ -26363,6 +26427,9 @@
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -26544,8 +26611,8 @@
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -26570,6 +26637,9 @@
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -26591,6 +26661,13 @@
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -26743,8 +26820,8 @@
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -26769,6 +26846,9 @@
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -26790,6 +26870,13 @@
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -27019,8 +27106,8 @@
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -27045,6 +27132,9 @@
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -27066,6 +27156,13 @@
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -29057,10 +29154,20 @@
         "models.ProductPrice": {
             "type": "object",
             "properties": {
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
+                },
+                "normalprice": {
+                    "type": "number"
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 }
             }
