@@ -5,9 +5,19 @@ import (
 	"errors"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	branchModel "smlcloudplatform/pkg/organization/branch/models"
+	branchRepositories "smlcloudplatform/pkg/organization/branch/repositories"
+	branchServices "smlcloudplatform/pkg/organization/branch/services"
+	businessTypeRepositories "smlcloudplatform/pkg/organization/businesstype/repositories"
+	deparmentRepositories "smlcloudplatform/pkg/organization/department/repositories"
 	"smlcloudplatform/pkg/shop/models"
 	"smlcloudplatform/pkg/utils"
+
+	warehouseModels "smlcloudplatform/pkg/warehouse/models"
+	warehouseRepositories "smlcloudplatform/pkg/warehouse/repositories"
+	warehouseServices "smlcloudplatform/pkg/warehouse/services"
 )
 
 type IShopHttp interface {
@@ -20,26 +30,42 @@ type IShopHttp interface {
 }
 
 type ShopHttp struct {
-	ms          *microservice.Microservice
-	cfg         microservice.IConfig
-	service     IShopService
-	authService *microservice.AuthService
+	ms               *microservice.Microservice
+	cfg              microservice.IConfig
+	service          IShopService
+	serviceBranch    branchServices.IBranchHttpService
+	serviceWarehouse warehouseServices.IWarehouseHttpService
+	authService      *microservice.AuthService
 }
 
 func NewShopHttp(ms *microservice.Microservice, cfg microservice.IConfig) ShopHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	repo := NewShopRepository(pst)
+	cache := ms.Cacher(cfg.CacherConfig())
 	shopUserRepo := NewShopUserRepository(pst)
 	service := NewShopService(repo, shopUserRepo, utils.NewGUID, ms.TimeNow)
 
 	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
 
+	repoBrach := branchRepositories.NewBranchRepository(pst)
+
+	repoDepartment := deparmentRepositories.NewDepartmentRepository(pst)
+	repoBusinessType := businessTypeRepositories.NewBusinessTypeRepository(pst)
+
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
+	serviceBranch := branchServices.NewBranchHttpService(repoBrach, repoDepartment, repoBusinessType, masterSyncCacheRepo)
+
+	repoWarehouse := warehouseRepositories.NewWarehouseRepository(pst)
+	svcWarehouse := warehouseServices.NewWarehouseHttpService(repoWarehouse, masterSyncCacheRepo)
+
 	return ShopHttp{
-		ms:          ms,
-		cfg:         cfg,
-		service:     service,
-		authService: authService,
+		ms:               ms,
+		cfg:              cfg,
+		service:          service,
+		serviceBranch:    serviceBranch,
+		serviceWarehouse: svcWarehouse,
+		authService:      authService,
 	}
 }
 
@@ -91,7 +117,68 @@ func (h ShopHttp) CreateShop(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.service.CreateShop(authUsername, *shopReq)
+	shopID, err := h.service.CreateShop(authUsername, *shopReq)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, &common.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	branchDefault := branchModel.Branch{}
+
+	branchDefault.Code = "00000"
+
+	branchMainCodeEN := "en"
+	branchMainNameEN := "Head Office"
+
+	branchMainCodeTH := "th"
+	branchMainNameTH := "สำนักงานใหญ่"
+
+	branchDefault.Names = &[]common.NameX{
+		{
+			Code: &branchMainCodeEN,
+			Name: &branchMainNameEN,
+		},
+		{
+			Code: &branchMainCodeTH,
+			Name: &branchMainNameTH,
+		},
+	}
+
+	_, err = h.serviceBranch.CreateBranch(shopID, authUsername, branchDefault)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, &common.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	warehouseDefault := warehouseModels.Warehouse{}
+	warehouseDefault.Code = "00000"
+
+	warehouseMainCodeEN := "en"
+	warehouseMainNameEN := "Head Office"
+
+	warehouseMainCodeTH := "th"
+	warehouseMainNameTH := "สำนักงานใหญ่"
+
+	warehouseDefault.Names = &[]common.NameX{
+		{
+			Code: &warehouseMainCodeEN,
+			Name: &warehouseMainNameEN,
+		},
+		{
+			Code: &warehouseMainCodeTH,
+			Name: &warehouseMainNameTH,
+		},
+	}
+
+	_, err = h.serviceWarehouse.CreateWarehouse(shopID, authUsername, warehouseDefault)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, &common.ApiResponse{
@@ -103,7 +190,7 @@ func (h ShopHttp) CreateShop(ctx microservice.IContext) error {
 
 	ctx.Response(http.StatusOK, &common.ApiResponse{
 		Success: true,
-		ID:      idx,
+		ID:      shopID,
 	})
 
 	return nil
