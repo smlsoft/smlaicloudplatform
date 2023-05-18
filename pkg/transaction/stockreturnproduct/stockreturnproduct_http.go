@@ -283,7 +283,14 @@ func (h StockReturnProductHttp) SearchStockReturnProductPage(ctx microservice.IC
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchStockReturnProduct(shopID, map[string]interface{}{}, pageable)
+	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+		{
+			Param: "custcode",
+			Type:  "string",
+		},
+	})
+
+	docList, pagination, err := h.svc.SearchStockReturnProduct(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

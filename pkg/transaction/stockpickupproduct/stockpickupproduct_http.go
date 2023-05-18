@@ -283,7 +283,14 @@ func (h StockPickupProductHttp) SearchStockPickupProductPage(ctx microservice.IC
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchStockPickupProduct(shopID, map[string]interface{}{}, pageable)
+	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+		{
+			Param: "custcode",
+			Type:  "string",
+		},
+	})
+
+	docList, pagination, err := h.svc.SearchStockPickupProduct(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

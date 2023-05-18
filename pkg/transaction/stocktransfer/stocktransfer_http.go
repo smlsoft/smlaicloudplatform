@@ -281,7 +281,14 @@ func (h StockTransferHttp) SearchStockTransferPage(ctx microservice.IContext) er
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchStockTransfer(shopID, map[string]interface{}{}, pageable)
+	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+		{
+			Param: "custcode",
+			Type:  "string",
+		},
+	})
+
+	docList, pagination, err := h.svc.SearchStockTransfer(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

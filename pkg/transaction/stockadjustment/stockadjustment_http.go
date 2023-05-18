@@ -283,7 +283,14 @@ func (h StockAdjustmentHttp) SearchStockAdjustmentPage(ctx microservice.IContext
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchStockAdjustment(shopID, map[string]interface{}{}, pageable)
+	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+		{
+			Param: "custcode",
+			Type:  "string",
+		},
+	})
+
+	docList, pagination, err := h.svc.SearchStockAdjustment(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

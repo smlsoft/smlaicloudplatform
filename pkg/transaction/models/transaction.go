@@ -14,6 +14,7 @@ type Transaction struct {
 	DocRefNo       string          `json:"docrefno" bson:"docrefno"`
 	DocRefDate     time.Time       `json:"docrefdate" bson:"docrefdate"`
 	DocType        int8            `json:"doctype" bson:"doctype"`
+	CustCode       string          `json:"custcode" bson:"custcode"`
 	CustNames      *[]models.NameX `json:"custnames" bson:"custnames"`
 	TotalExceptVat float64         `json:"totalexceptvat" bson:"totalexceptvat"`
 	CashierCode    string          `json:"cashiercode" bson:"cashiercode"`
@@ -33,7 +34,6 @@ type Transaction struct {
 	TaxDocNo       string          `json:"taxdocno" bson:"taxdocno"`
 	DocRefType     int8            `json:"docreftype" bson:"docreftype"`
 	VatType        int8            `json:"vattype" bson:"vattype"`
-	CustCode       string          `json:"custcode" bson:"custcode"`
 	TotalAfterVat  float64         `json:"totalaftervat" bson:"totalaftervat"`
 	TransFlag      int             `json:"transflag" bson:"transflag"`
 	Status         int8            `json:"status" bson:"status"`
