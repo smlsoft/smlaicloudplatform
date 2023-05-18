@@ -186,19 +186,7 @@ func (svc BookBankHttpService) SearchBookBankStep(shopID string, langCode string
 		"banknames.name",
 	}
 
-	selectFields := map[string]interface{}{
-		"guidfixed": 1,
-		"passbook":  1,
-		"bankcode":  1,
-		"banknames": 1,
-		"images":    1,
-	}
-
-	if langCode != "" {
-		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
-	} else {
-		selectFields["names"] = 1
-	}
+	selectFields := map[string]interface{}{}
 
 	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
