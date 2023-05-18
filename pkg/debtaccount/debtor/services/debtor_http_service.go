@@ -27,6 +27,7 @@ type IDebtorHttpService interface {
 	DeleteDebtor(shopID string, guid string, authUsername string) error
 	DeleteDebtorByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoDebtor(shopID string, guid string) (models.DebtorInfo, error)
+	InfoDebtorByCode(shopID string, code string) (models.DebtorInfo, error)
 	SearchDebtor(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DebtorInfo, mongopagination.PaginationData, error)
 	SearchDebtorStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.DebtorInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.DebtorRequest) (common.BulkImport, error)
@@ -157,6 +158,36 @@ func (svc DebtorHttpService) DeleteDebtorByGUIDs(shopID string, authUsername str
 func (svc DebtorHttpService) InfoDebtor(shopID string, guid string) (models.DebtorInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+
+	if err != nil {
+		return models.DebtorInfo{}, err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return models.DebtorInfo{}, errors.New("document not found")
+	}
+
+	findGroups, err := svc.repoGroup.FindByGuids(shopID, *findDoc.GroupGUIDs)
+
+	if err != nil {
+		return models.DebtorInfo{}, err
+	}
+
+	custGroupInfo := lo.Map[groupModels.DebtorGroupDoc, groupModels.DebtorGroupInfo](
+		findGroups,
+		func(docGroup groupModels.DebtorGroupDoc, idx int) groupModels.DebtorGroupInfo {
+			return docGroup.DebtorGroupInfo
+		})
+
+	findDoc.DebtorInfo.Groups = &custGroupInfo
+
+	return findDoc.DebtorInfo, nil
+
+}
+
+func (svc DebtorHttpService) InfoDebtorByCode(shopID string, code string) (models.DebtorInfo, error) {
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", code)
 
 	if err != nil {
 		return models.DebtorInfo{}, err

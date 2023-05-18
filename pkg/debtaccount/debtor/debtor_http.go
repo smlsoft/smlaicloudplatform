@@ -238,6 +238,35 @@ func (h DebtorHttp) InfoDebtor(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Debtor By Code godoc
+// @Description get debtor by code
+// @Tags		Debtor
+// @Param		code  path      string  true  "Debtor Code"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /debtaccount/debtor/code/{code} [get]
+func (h DebtorHttp) InfoDebtorByCode(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	code := ctx.Param("code")
+
+	doc, err := h.svc.InfoDebtorByCode(shopID, code)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
 // List Debtor godoc
 // @Description get struct array by ID
 // @Tags		Debtor

@@ -27,6 +27,7 @@ type ICreditorHttpService interface {
 	DeleteCreditor(shopID string, guid string, authUsername string) error
 	DeleteCreditorByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoCreditor(shopID string, guid string) (models.CreditorInfo, error)
+	InfoCreditorByCode(shopID string, code string) (models.CreditorInfo, error)
 	SearchCreditor(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.CreditorInfo, mongopagination.PaginationData, error)
 	SearchCreditorStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.CreditorInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.CreditorRequest) (common.BulkImport, error)
@@ -156,6 +157,36 @@ func (svc CreditorHttpService) DeleteCreditorByGUIDs(shopID string, authUsername
 func (svc CreditorHttpService) InfoCreditor(shopID string, guid string) (models.CreditorInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+
+	if err != nil {
+		return models.CreditorInfo{}, err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return models.CreditorInfo{}, errors.New("document not found")
+	}
+
+	findGroups, err := svc.repoGroup.FindByGuids(shopID, *findDoc.GroupGUIDs)
+
+	if err != nil {
+		return models.CreditorInfo{}, err
+	}
+
+	groupInfo := lo.Map[groupModels.CreditorGroupDoc, groupModels.CreditorGroupInfo](
+		findGroups,
+		func(docGroup groupModels.CreditorGroupDoc, idx int) groupModels.CreditorGroupInfo {
+			return docGroup.CreditorGroupInfo
+		})
+
+	findDoc.CreditorInfo.Groups = &groupInfo
+
+	return findDoc.CreditorInfo, nil
+
+}
+
+func (svc CreditorHttpService) InfoCreditorByCode(shopID string, code string) (models.CreditorInfo, error) {
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", code)
 
 	if err != nil {
 		return models.CreditorInfo{}, err

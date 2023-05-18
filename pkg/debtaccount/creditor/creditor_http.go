@@ -46,6 +46,7 @@ func (h CreditorHttp) RouteSetup() {
 	h.ms.GET("/debtaccount/creditor/list", h.SearchCreditorStep)
 	h.ms.POST("/debtaccount/creditor", h.CreateCreditor)
 	h.ms.GET("/debtaccount/creditor/:id", h.InfoCreditor)
+	h.ms.GET("/debtaccount/creditor/code/:code", h.InfoCreditorByCode)
 	h.ms.PUT("/debtaccount/creditor/:id", h.UpdateCreditor)
 	h.ms.DELETE("/debtaccount/creditor/:id", h.DeleteCreditor)
 	h.ms.DELETE("/debtaccount/creditor", h.DeleteCreditorByGUIDs)
@@ -227,6 +228,35 @@ func (h CreditorHttp) InfoCreditor(ctx microservice.IContext) error {
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// Get Creditor By Code godoc
+// @Description Get Creditor by code
+// @Tags		Creditor
+// @Param		code  path      string  true  "Creditor Code"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /debtaccount/creditor/code/{code} [get]
+func (h CreditorHttp) InfoCreditorByCode(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	code := ctx.Param("code")
+
+	doc, err := h.svc.InfoCreditorByCode(shopID, code)
+
+	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}
