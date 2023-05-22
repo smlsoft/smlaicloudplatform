@@ -12,20 +12,20 @@ const paidCollectionName = "paid"
 
 type Paid struct {
 	models.PartitionIdentity `bson:"inline"`
-	DocNo                    string             `json:"docno" bson:"docno"`
-	DocDate                  time.Time          `json:"docdate" bson:"docdate"`
-	DocType                  int8               `json:"doctype" bson:"doctype"`
-	TransFlag                int8               `json:"transflag" bson:"transflag"`
-	CustCode                 string             `json:"custcode" bson:"custcode"`
-	CustNames                models.NameX       `json:"custnames" bson:"custnames"`
-	SaleCode                 string             `json:"salecode" bson:"salecode"`
-	SaleName                 string             `json:"salename" bson:"salename"`
-	TotalPaymentAmount       float64            `json:"totalpaymentamount" bson:"totalpaymentamount"`
-	TotalAmount              float64            `json:"totalamount" bson:"totalamount"`
-	TotalBalance             float64            `json:"totalbalance" bson:"totalbalance"`
-	TotalValue               float64            `json:"totalvalue" bson:"totalvalue"`
-	Details                  *[]PaidDetail      `json:"details" bson:"details"`
-	PaymentDetail            transmodels.Detail `json:"paymentdetail" bson:"paymentdetail"`
+	DocNo                    string                    `json:"docno" bson:"docno"`
+	DocDate                  time.Time                 `json:"docdate" bson:"docdate"`
+	DocType                  int8                      `json:"doctype" bson:"doctype"`
+	TransFlag                int8                      `json:"transflag" bson:"transflag"`
+	CustCode                 string                    `json:"custcode" bson:"custcode"`
+	CustNames                models.NameX              `json:"custnames" bson:"custnames"`
+	SaleCode                 string                    `json:"salecode" bson:"salecode"`
+	SaleName                 string                    `json:"salename" bson:"salename"`
+	TotalPaymentAmount       float64                   `json:"totalpaymentamount" bson:"totalpaymentamount"`
+	TotalAmount              float64                   `json:"totalamount" bson:"totalamount"`
+	TotalBalance             float64                   `json:"totalbalance" bson:"totalbalance"`
+	TotalValue               float64                   `json:"totalvalue" bson:"totalvalue"`
+	Details                  *[]PaidDetail             `json:"details" bson:"details"`
+	PaymentDetail            transmodels.PaymentDetail `json:"paymentdetail" bson:"paymentdetail"`
 }
 
 type PaidDetail struct {

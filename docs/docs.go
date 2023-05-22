@@ -29263,7 +29263,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "paymentdetail": {
-                    "$ref": "#/definitions/models.Detail"
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "salecode": {
                     "type": "string"
@@ -29339,7 +29339,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "paymentdetail": {
-                    "$ref": "#/definitions/models.Detail"
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "salecode": {
                     "type": "string"

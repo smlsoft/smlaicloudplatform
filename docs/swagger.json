@@ -29257,7 +29257,7 @@
                     "type": "integer"
                 },
                 "paymentdetail": {
-                    "$ref": "#/definitions/models.Detail"
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "salecode": {
                     "type": "string"
@@ -29333,7 +29333,7 @@
                     "type": "integer"
                 },
                 "paymentdetail": {
-                    "$ref": "#/definitions/models.Detail"
+                    "$ref": "#/definitions/models.PaymentDetail"
                 },
                 "salecode": {
                     "type": "string"
