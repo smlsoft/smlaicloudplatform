@@ -13840,7 +13840,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ReportQuery"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery"
                         }
                     }
                 ],
@@ -13881,7 +13881,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ReportQuery"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery"
                         }
                     }
                 ],
@@ -13973,7 +13973,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ReportQuery"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery"
                         }
                     }
                 ],
@@ -14198,7 +14198,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ReportQuery"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery"
                         }
                     }
                 ],
@@ -26064,8 +26064,8 @@
                 "isprimary": {
                     "type": "boolean"
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "name1": {
                     "type": "string",
@@ -26087,7 +26087,17 @@
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "unitcode": {
@@ -26902,17 +26912,13 @@
         },
         "models.Department": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
                 "code": {
+                    "description": "GuidFixed string         `json:\"guidfixed\"`",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -27514,8 +27520,8 @@
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -27540,6 +27546,9 @@
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -27561,6 +27570,13 @@
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -27713,8 +27729,8 @@
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -27739,6 +27755,9 @@
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -27760,6 +27779,13 @@
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -27989,8 +28015,8 @@
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -28015,6 +28041,9 @@
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -28036,6 +28065,13 @@
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -29247,7 +29283,7 @@
                         "$ref": "#/definitions/models.PaidDetail"
                     }
                 },
-                "docdate": {
+                "docdatetime": {
                     "type": "string"
                 },
                 "docno": {
@@ -29288,7 +29324,7 @@
                 "balance": {
                     "type": "number"
                 },
-                "docdate": {
+                "docdatetime": {
                     "type": "string"
                 },
                 "docno": {
@@ -29323,7 +29359,7 @@
                         "$ref": "#/definitions/models.PayDetail"
                     }
                 },
-                "docdate": {
+                "docdatetime": {
                     "type": "string"
                 },
                 "docno": {
@@ -29364,7 +29400,7 @@
                 "balance": {
                     "type": "number"
                 },
-                "docdate": {
+                "docdatetime": {
                     "type": "string"
                 },
                 "docno": {
@@ -30179,10 +30215,20 @@
         "models.ProductPrice": {
             "type": "object",
             "properties": {
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
+                },
+                "normalprice": {
+                    "type": "number"
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 }
             }
@@ -30627,40 +30673,6 @@
                 },
                 "xtype": {
                     "type": "integer"
-                }
-            }
-        },
-        "models.ReportParam": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.ReportQuery": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "isactived": {
-                    "type": "boolean"
-                },
-                "isapproved": {
-                    "type": "boolean"
-                },
-                "params": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ReportParam"
-                    }
-                },
-                "sql": {
-                    "type": "string"
                 }
             }
         },
@@ -32869,6 +32881,74 @@
                     "type": "string"
                 },
                 "unitname5": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_report_reportqueryc_models.ReportParam": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "isactived": {
+                    "type": "boolean"
+                },
+                "isapproved": {
+                    "type": "boolean"
+                },
+                "params": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportParam"
+                    }
+                },
+                "sql": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_report_reportquerym_models.ReportParam": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_report_reportquerym_models.ReportQuery": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "isactived": {
+                    "type": "boolean"
+                },
+                "isapproved": {
+                    "type": "boolean"
+                },
+                "params": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportParam"
+                    }
+                },
+                "sql": {
                     "type": "string"
                 }
             }

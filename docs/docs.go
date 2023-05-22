@@ -13846,7 +13846,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ReportQuery"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery"
                         }
                     }
                 ],
@@ -13887,7 +13887,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ReportQuery"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery"
                         }
                     }
                 ],
@@ -13979,7 +13979,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ReportQuery"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery"
                         }
                     }
                 ],
@@ -14204,7 +14204,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ReportQuery"
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery"
                         }
                     }
                 ],
@@ -26070,8 +26070,8 @@ const docTemplate = `{
                 "isprimary": {
                     "type": "boolean"
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "name1": {
                     "type": "string",
@@ -26093,7 +26093,17 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "unitcode": {
@@ -26908,17 +26918,13 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
                 "code": {
+                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -27520,8 +27526,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -27546,6 +27552,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -27567,6 +27576,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -27719,8 +27735,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -27745,6 +27761,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -27766,6 +27785,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -27995,8 +28021,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -28021,6 +28047,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -28042,6 +28071,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -29253,7 +29289,7 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.PaidDetail"
                     }
                 },
-                "docdate": {
+                "docdatetime": {
                     "type": "string"
                 },
                 "docno": {
@@ -29294,7 +29330,7 @@ const docTemplate = `{
                 "balance": {
                     "type": "number"
                 },
-                "docdate": {
+                "docdatetime": {
                     "type": "string"
                 },
                 "docno": {
@@ -29329,7 +29365,7 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.PayDetail"
                     }
                 },
-                "docdate": {
+                "docdatetime": {
                     "type": "string"
                 },
                 "docno": {
@@ -29370,7 +29406,7 @@ const docTemplate = `{
                 "balance": {
                     "type": "number"
                 },
-                "docdate": {
+                "docdatetime": {
                     "type": "string"
                 },
                 "docno": {
@@ -30185,10 +30221,20 @@ const docTemplate = `{
         "models.ProductPrice": {
             "type": "object",
             "properties": {
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
+                },
+                "normalprice": {
+                    "type": "number"
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 }
             }
@@ -30633,40 +30679,6 @@ const docTemplate = `{
                 },
                 "xtype": {
                     "type": "integer"
-                }
-            }
-        },
-        "models.ReportParam": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.ReportQuery": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "isactived": {
-                    "type": "boolean"
-                },
-                "isapproved": {
-                    "type": "boolean"
-                },
-                "params": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ReportParam"
-                    }
-                },
-                "sql": {
-                    "type": "string"
                 }
             }
         },
@@ -32875,6 +32887,74 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "unitname5": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_report_reportqueryc_models.ReportParam": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "isactived": {
+                    "type": "boolean"
+                },
+                "isapproved": {
+                    "type": "boolean"
+                },
+                "params": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportParam"
+                    }
+                },
+                "sql": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_report_reportquerym_models.ReportParam": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_report_reportquerym_models.ReportQuery": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "isactived": {
+                    "type": "boolean"
+                },
+                "isapproved": {
+                    "type": "boolean"
+                },
+                "params": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportParam"
+                    }
+                },
+                "sql": {
                     "type": "string"
                 }
             }
