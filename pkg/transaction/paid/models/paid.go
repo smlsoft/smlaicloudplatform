@@ -13,7 +13,7 @@ const paidCollectionName = "paid"
 type Paid struct {
 	models.PartitionIdentity `bson:"inline"`
 	DocNo                    string                    `json:"docno" bson:"docno"`
-	DocDate                  time.Time                 `json:"docdate" bson:"docdate"`
+	DocDatetime              time.Time                 `json:"docdatetime" bson:"docdatetime"`
 	DocType                  int8                      `json:"doctype" bson:"doctype"`
 	TransFlag                int8                      `json:"transflag" bson:"transflag"`
 	CustCode                 string                    `json:"custcode" bson:"custcode"`
@@ -31,7 +31,7 @@ type Paid struct {
 type PaidDetail struct {
 	Selected      bool      `json:"selected" bson:"selected"`
 	DocNo         string    `json:"docno" bson:"docno"`
-	DocDate       time.Time `json:"docdate" bson:"docdate"`
+	DocDatetime   time.Time `json:"docdatetime" bson:"docdatetime"`
 	TransFlag     int8      `json:"transflag" bson:"transflag"`
 	Value         float64   `json:"value" bson:"value"`
 	Balance       float64   `json:"balance" bson:"balance"`
