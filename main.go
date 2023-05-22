@@ -53,6 +53,8 @@ import (
 	"smlcloudplatform/pkg/smsreceive/smstransaction"
 	"smlcloudplatform/pkg/sysinfo"
 	"smlcloudplatform/pkg/task"
+	"smlcloudplatform/pkg/transaction/paid"
+	"smlcloudplatform/pkg/transaction/pay"
 	"smlcloudplatform/pkg/transaction/purchase"
 	"smlcloudplatform/pkg/transaction/purchasereturn"
 	"smlcloudplatform/pkg/transaction/saleinvoice"
@@ -244,6 +246,8 @@ func main() {
 			stockreturnproduct.NewStockReturnProductHttp(ms, cfg),
 			stockpickupproduct.NewStockPickupProductHttp(ms, cfg),
 			stockadjustment.NewStockAdjustmentHttp(ms, cfg),
+			paid.NewPaidHttp(ms, cfg),
+			pay.NewPayHttp(ms, cfg),
 
 			//product section
 			sectionbranch.NewSectionBranchHttp(ms, cfg),

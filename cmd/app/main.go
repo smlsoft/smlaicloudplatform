@@ -39,6 +39,7 @@ import (
 	"smlcloudplatform/pkg/productsection/sectionbranch"
 	"smlcloudplatform/pkg/productsection/sectionbusinesstype"
 	"smlcloudplatform/pkg/productsection/sectiondepartment"
+	"smlcloudplatform/pkg/report/reportquery"
 	"smlcloudplatform/pkg/restaurant/device"
 	"smlcloudplatform/pkg/restaurant/kitchen"
 	"smlcloudplatform/pkg/restaurant/printer"
@@ -59,6 +60,8 @@ import (
 	"smlcloudplatform/pkg/sysinfo"
 	"smlcloudplatform/pkg/task"
 	"smlcloudplatform/pkg/tools"
+	"smlcloudplatform/pkg/transaction/paid"
+	"smlcloudplatform/pkg/transaction/pay"
 	"smlcloudplatform/pkg/transaction/purchase"
 	"smlcloudplatform/pkg/transaction/purchasereturn"
 	"smlcloudplatform/pkg/transaction/saleinvoice"
@@ -121,8 +124,8 @@ func main() {
 	}
 
 	ms.HttpPreRemoveTrailingSlash()
-	ms.HttpUsePrometheus()
-	ms.HttpUseJaeger()
+	// ms.HttpUsePrometheus()
+	// ms.HttpUseJaeger()
 
 	// ms.HttpMiddleware(authService.MWFuncWithRedis(cacher, publicPath...))
 	ms.HttpMiddleware(authService.MWFuncWithRedisMixShop(cacher, exceptShopPath, publicPath...))
@@ -228,6 +231,11 @@ func main() {
 		//channel
 		salechannel.NewSaleChannelHttp(ms, cfg),
 		transportchannel.NewTransportChannelHttp(ms, cfg),
+
+		paid.NewPaidHttp(ms, cfg),
+		pay.NewPayHttp(ms, cfg),
+
+		reportquery.NewReportQueryHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)
