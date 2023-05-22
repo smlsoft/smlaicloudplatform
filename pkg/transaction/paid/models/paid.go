@@ -17,7 +17,7 @@ type Paid struct {
 	DocType                  int8                      `json:"doctype" bson:"doctype"`
 	TransFlag                int8                      `json:"transflag" bson:"transflag"`
 	CustCode                 string                    `json:"custcode" bson:"custcode"`
-	CustNames                models.NameX              `json:"custnames" bson:"custnames"`
+	CustNames                *[]models.NameX           `json:"custnames" bson:"custnames"`
 	SaleCode                 string                    `json:"salecode" bson:"salecode"`
 	SaleName                 string                    `json:"salename" bson:"salename"`
 	TotalPaymentAmount       float64                   `json:"totalpaymentamount" bson:"totalpaymentamount"`
