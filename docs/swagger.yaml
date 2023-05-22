@@ -846,12 +846,15 @@ definitions:
   models.Department:
     properties:
       code:
-        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
   models.Detail:
     properties:
@@ -2435,6 +2438,106 @@ definitions:
         type: integer
       totalPage:
         type: integer
+    type: object
+  models.Paid:
+    properties:
+      custcode:
+        type: string
+      custnames:
+        $ref: '#/definitions/models.NameX'
+      details:
+        items:
+          $ref: '#/definitions/models.PaidDetail'
+        type: array
+      docdate:
+        type: string
+      docno:
+        type: string
+      doctype:
+        type: integer
+      paymentdetail:
+        $ref: '#/definitions/models.Detail'
+      salecode:
+        type: string
+      salename:
+        type: string
+      totalamount:
+        type: number
+      totalbalance:
+        type: number
+      totalpaymentamount:
+        type: number
+      totalvalue:
+        type: number
+      transflag:
+        type: integer
+    type: object
+  models.PaidDetail:
+    properties:
+      balance:
+        type: number
+      docdate:
+        type: string
+      docno:
+        type: string
+      paymentamount:
+        type: number
+      selected:
+        type: boolean
+      transflag:
+        type: integer
+      value:
+        type: number
+    type: object
+  models.Pay:
+    properties:
+      custcode:
+        type: string
+      custnames:
+        $ref: '#/definitions/models.NameX'
+      details:
+        items:
+          $ref: '#/definitions/models.PayDetail'
+        type: array
+      docdate:
+        type: string
+      docno:
+        type: string
+      doctype:
+        type: integer
+      paymentdetail:
+        $ref: '#/definitions/models.Detail'
+      salecode:
+        type: string
+      salename:
+        type: string
+      totalamount:
+        type: number
+      totalbalance:
+        type: number
+      totalpaymentamount:
+        type: number
+      totalvalue:
+        type: number
+      transflag:
+        type: integer
+    type: object
+  models.PayDetail:
+    properties:
+      balance:
+        type: number
+      docdate:
+        type: string
+      docno:
+        type: string
+      paymentamount:
+        type: number
+      selected:
+        type: boolean
+      transflag:
+        type: integer
+      value:
+        type: number
     type: object
   models.PaymentCreditCard:
     properties:
@@ -16050,6 +16153,30 @@ paths:
       - AccessToken: []
       tags:
       - SMLTransaction
+    get:
+      consumes:
+      - application/json
+      description: Create SMLTransaction
+      parameters:
+      - description: SMLTransactionRequest
+        in: body
+        name: SMLTransactionRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.SMLTransactionRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - SMLTransaction
     post:
       consumes:
       - application/json
@@ -16839,6 +16966,500 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       tags:
       - Authentication
+  /transaction/paid:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Paid
+      parameters:
+      - description: Paid GUIDs
+        in: body
+        name: Paid
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Paid
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Paid
+    post:
+      consumes:
+      - application/json
+      description: Create Paid
+      parameters:
+      - description: Paid
+        in: body
+        name: Paid
+        required: true
+        schema:
+          $ref: '#/definitions/models.Paid'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Paid
+  /transaction/paid/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Paid
+      parameters:
+      - description: Paid ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Paid
+    get:
+      consumes:
+      - application/json
+      description: get Paid info by guidfixed
+      parameters:
+      - description: Paid guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Paid
+    put:
+      consumes:
+      - application/json
+      description: Update Paid
+      parameters:
+      - description: Paid ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Paid
+        in: body
+        name: Paid
+        required: true
+        schema:
+          $ref: '#/definitions/models.Paid'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Paid
+  /transaction/paid/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Paid
+      parameters:
+      - description: Paid
+        in: body
+        name: Paid
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Paid'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Paid
+  /transaction/paid/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get Paid info by Code
+      parameters:
+      - description: Paid Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Paid
+  /transaction/paid/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Paid
+  /transaction/pay:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Pay
+      parameters:
+      - description: Pay GUIDs
+        in: body
+        name: Pay
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Pay
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Pay
+    post:
+      consumes:
+      - application/json
+      description: Create Pay
+      parameters:
+      - description: Pay
+        in: body
+        name: Pay
+        required: true
+        schema:
+          $ref: '#/definitions/models.Pay'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Pay
+  /transaction/pay/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Pay
+      parameters:
+      - description: Pay ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Pay
+    get:
+      consumes:
+      - application/json
+      description: get Pay info by guidfixed
+      parameters:
+      - description: Pay guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Pay
+    put:
+      consumes:
+      - application/json
+      description: Update Pay
+      parameters:
+      - description: Pay ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Pay
+        in: body
+        name: Pay
+        required: true
+        schema:
+          $ref: '#/definitions/models.Pay'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Pay
+  /transaction/pay/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Pay
+      parameters:
+      - description: Pay
+        in: body
+        name: Pay
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Pay'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Pay
+  /transaction/pay/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get Pay info by Code
+      parameters:
+      - description: Pay Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Pay
+  /transaction/pay/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Pay
   /transaction/purchase:
     delete:
       consumes:
