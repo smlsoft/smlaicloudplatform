@@ -271,6 +271,8 @@ func (h SaleInvoiceReturnHttp) InfoSaleInvoiceReturnByCode(ctx microservice.ICon
 // @Tags		SaleInvoiceReturn
 // @Param		custcode	query	string		false  "customer code"
 // @Param		q		query	string		false  "Search Value"
+// @Param		fromdate	query	string		false  "from date"
+// @Param		todate	query	string		false  "to date"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
@@ -288,6 +290,11 @@ func (h SaleInvoiceReturnHttp) SearchSaleInvoiceReturnPage(ctx microservice.ICon
 		{
 			Param: "custcode",
 			Type:  "string",
+		},
+		{
+			Param: "-",
+			Field: "docdatetime",
+			Type:  "rangeDate",
 		},
 	})
 
@@ -310,6 +317,8 @@ func (h SaleInvoiceReturnHttp) SearchSaleInvoiceReturnPage(ctx microservice.ICon
 // @Description search limit offset
 // @Tags		SaleInvoiceReturn
 // @Param		q		query	string		false  "Search Value"
+// @Param		fromdate	query	string		false  "from date"
+// @Param		todate	query	string		false  "to date"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
 // @Param		lang	query	string		false  "lang"
@@ -326,7 +335,19 @@ func (h SaleInvoiceReturnHttp) SearchSaleInvoiceReturnStep(ctx microservice.ICon
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchSaleInvoiceReturnStep(shopID, lang, pageableStep)
+	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+		{
+			Param: "custcode",
+			Type:  "string",
+		},
+		{
+			Param: "-",
+			Field: "docdatetime",
+			Type:  "rangeDate",
+		},
+	})
+
+	docList, total, err := h.svc.SearchSaleInvoiceReturnStep(shopID, lang, filters, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

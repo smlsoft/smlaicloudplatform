@@ -270,6 +270,8 @@ func (h PaidHttp) InfoPaidByCode(ctx microservice.IContext) error {
 // @Description get list step
 // @Tags		Paid
 // @Param		q		query	string		false  "Search Value"
+// @Param		fromdate	query	string		false  "from date"
+// @Param		todate	query	string		false  "to date"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
@@ -283,7 +285,19 @@ func (h PaidHttp) SearchPaidPage(ctx microservice.IContext) error {
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchPaid(shopID, map[string]interface{}{}, pageable)
+	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+		{
+			Param: "custcode",
+			Type:  "string",
+		},
+		{
+			Param: "-",
+			Field: "docdatetime",
+			Type:  "rangeDate",
+		},
+	})
+
+	docList, pagination, err := h.svc.SearchPaid(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -302,6 +316,8 @@ func (h PaidHttp) SearchPaidPage(ctx microservice.IContext) error {
 // @Description search limit offset
 // @Tags		Paid
 // @Param		q		query	string		false  "Search Value"
+// @Param		fromdate	query	string		false  "from date"
+// @Param		todate	query	string		false  "to date"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
 // @Param		lang	query	string		false  "lang"
@@ -318,7 +334,19 @@ func (h PaidHttp) SearchPaidStep(ctx microservice.IContext) error {
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchPaidStep(shopID, lang, pageableStep)
+	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+		{
+			Param: "custcode",
+			Type:  "string",
+		},
+		{
+			Param: "-",
+			Field: "docdatetime",
+			Type:  "rangeDate",
+		},
+	})
+
+	docList, total, err := h.svc.SearchPaidStep(shopID, lang, filters, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

@@ -25,7 +25,7 @@ type IPurchaseHttpService interface {
 	InfoPurchase(shopID string, guid string) (models.PurchaseInfo, error)
 	InfoPurchaseByCode(shopID string, code string) (models.PurchaseInfo, error)
 	SearchPurchase(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.PurchaseInfo, mongopagination.PaginationData, error)
-	SearchPurchaseStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.PurchaseInfo, int, error)
+	SearchPurchaseStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.PurchaseInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Purchase) (common.BulkImport, error)
 
 	GetModuleName() string
@@ -191,14 +191,14 @@ func (svc PurchaseHttpService) SearchPurchase(shopID string, filters map[string]
 	return docList, pagination, nil
 }
 
-func (svc PurchaseHttpService) SearchPurchaseStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.PurchaseInfo, int, error) {
+func (svc PurchaseHttpService) SearchPurchaseStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.PurchaseInfo, int, error) {
 	searchInFields := []string{
 		"docno",
 	}
 
 	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.PurchaseInfo{}, 0, err

@@ -25,7 +25,7 @@ type IPayHttpService interface {
 	InfoPay(shopID string, guid string) (models.PayInfo, error)
 	InfoPayByCode(shopID string, code string) (models.PayInfo, error)
 	SearchPay(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.PayInfo, mongopagination.PaginationData, error)
-	SearchPayStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.PayInfo, int, error)
+	SearchPayStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.PayInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Pay) (common.BulkImport, error)
 
 	GetModuleName() string
@@ -191,14 +191,14 @@ func (svc PayHttpService) SearchPay(shopID string, filters map[string]interface{
 	return docList, pagination, nil
 }
 
-func (svc PayHttpService) SearchPayStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.PayInfo, int, error) {
+func (svc PayHttpService) SearchPayStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.PayInfo, int, error) {
 	searchInFields := []string{
 		"docno",
 	}
 
 	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.PayInfo{}, 0, err
