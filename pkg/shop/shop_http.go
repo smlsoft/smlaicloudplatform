@@ -131,20 +131,20 @@ func (h ShopHttp) CreateShop(ctx microservice.IContext) error {
 
 	branchDefault.Code = "00000"
 
-	branchMainCodeEN := "en"
-	branchMainNameEN := "Head Office"
-
 	branchMainCodeTH := "th"
 	branchMainNameTH := "สำนักงานใหญ่"
 
+	branchMainCodeEN := "en"
+	branchMainNameEN := "Head Office"
+
 	branchDefault.Names = &[]common.NameX{
-		{
-			Code: &branchMainCodeEN,
-			Name: &branchMainNameEN,
-		},
 		{
 			Code: &branchMainCodeTH,
 			Name: &branchMainNameTH,
+		},
+		{
+			Code: &branchMainCodeEN,
+			Name: &branchMainNameEN,
 		},
 	}
 
@@ -161,20 +161,20 @@ func (h ShopHttp) CreateShop(ctx microservice.IContext) error {
 	warehouseDefault := warehouseModels.Warehouse{}
 	warehouseDefault.Code = "00000"
 
-	warehouseMainCodeEN := "en"
-	warehouseMainNameEN := "Head Office"
-
 	warehouseMainCodeTH := "th"
 	warehouseMainNameTH := "สำนักงานใหญ่"
 
+	warehouseMainCodeEN := "en"
+	warehouseMainNameEN := "Head Office"
+
 	warehouseDefault.Names = &[]common.NameX{
-		{
-			Code: &warehouseMainCodeEN,
-			Name: &warehouseMainNameEN,
-		},
 		{
 			Code: &warehouseMainCodeTH,
 			Name: &warehouseMainNameTH,
+		},
+		{
+			Code: &warehouseMainCodeEN,
+			Name: &warehouseMainNameEN,
 		},
 	}
 
