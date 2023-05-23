@@ -269,6 +269,7 @@ func (repo SearchRepository[T]) generateFieldFilters(searchFields []string, sear
 			termFilters = append(termFilters, bson.M{
 				field: primitive.Regex{
 					Pattern: searchTerm,
+					Options: "i",
 				},
 			})
 		}

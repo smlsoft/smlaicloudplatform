@@ -472,7 +472,7 @@ func (repo DocumentImageGroupRepository) FindPageImageGroup(shopID string, filte
 	for _, colName := range searchInFields {
 		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
 			Pattern: ".*" + pageable.Query + ".*",
-			Options: "",
+			Options: "i",
 		}}})
 	}
 

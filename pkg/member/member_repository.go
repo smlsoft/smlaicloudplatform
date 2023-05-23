@@ -86,7 +86,7 @@ func (repo MemberRepository) FindPage(shopID string, pageable micromodels.Pageab
 		"$or": []interface{}{
 			bson.M{"name": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + pageable.Query + ".*",
-				Options: "",
+				Options: "i",
 			}}},
 		},
 	}

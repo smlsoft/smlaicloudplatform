@@ -254,7 +254,7 @@ func (repo InventoryRepository) FindPage(shopID string, filters map[string]inter
 			bson.M{"itemcode": pageable.Query},
 			bson.M{"name1": bson.M{"$regex": primitive.Regex{
 				Pattern: ".*" + pageable.Query + ".*",
-				Options: "",
+				Options: "i",
 			}}},
 		},
 	}
