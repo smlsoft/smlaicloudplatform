@@ -20,7 +20,6 @@ import (
 
 	"github.com/apex/log"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
-	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo-contrib/jaegertracing"
 	"github.com/labstack/echo-contrib/prometheus"
@@ -78,7 +77,8 @@ func NewMicroservice(config IConfig) (*Microservice, error) {
 	e := echo.New()
 	e.HideBanner = true
 	e.HidePort = true
-	e.Validator = &msValidator.CustomValidator{Validator: validator.New()}
+	// e.Validator = &msValidator.CustomValidator{Validator: validator.New()}
+	e.Validator = msValidator.NewCustomValidator()
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},

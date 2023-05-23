@@ -2,6 +2,8 @@ package validator
 
 import (
 	"errors"
+	"reflect"
+	"strings"
 
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
@@ -15,6 +17,16 @@ type CustomValidator struct {
 
 func NewCustomValidator() *CustomValidator {
 	validate := validator.New()
+
+	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+
+		if name == "-" {
+			return ""
+		}
+
+		return name
+	})
 
 	customValidator := &CustomValidator{Validator: validate}
 	return customValidator
