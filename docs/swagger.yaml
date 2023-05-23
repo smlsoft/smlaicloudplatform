@@ -1130,6 +1130,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -4876,6 +4878,8 @@ definitions:
   smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery:
     properties:
       code:
+        maxLength: 50
+        minLength: 1
         type: string
       isactived:
         type: boolean
@@ -4887,6 +4891,8 @@ definitions:
         type: array
       sql:
         type: string
+    required:
+    - code
     type: object
   smlcloudplatform_pkg_report_reportquerym_models.ReportParam:
     properties:
@@ -4898,6 +4904,16 @@ definitions:
   smlcloudplatform_pkg_report_reportquerym_models.ReportQuery:
     properties:
       code:
+        maxLength: 50
+        minLength: 1
+        type: string
+      collection:
+        type: string
+      fields:
+        items:
+          type: string
+        type: array
+      filter:
         type: string
       isactived:
         type: boolean
@@ -4907,8 +4923,8 @@ definitions:
         items:
           $ref: '#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportParam'
         type: array
-      sql:
-        type: string
+    required:
+    - code
     type: object
   smlcloudplatform_pkg_restaurant_device_models.Device:
     properties:
@@ -13623,7 +13639,7 @@ paths:
         name: ReportQuery
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery'
+          $ref: '#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery'
       responses:
         "201":
           description: Created
@@ -13706,7 +13722,7 @@ paths:
         name: ReportQuery
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery'
+          $ref: '#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery'
       responses:
         "201":
           description: Created
@@ -13782,7 +13798,7 @@ paths:
         name: ReportQuery
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery'
+          $ref: '#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery'
       responses:
         "201":
           description: Created
@@ -13821,6 +13837,276 @@ paths:
       tags:
       - ReportQuery
   /report/query/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /reportm/execute:
+    post:
+      consumes:
+      - application/json
+      description: Execute ReportQuery
+      parameters:
+      - description: ReportQuery
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          $ref: '#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /reportm/playground:
+    post:
+      consumes:
+      - application/json
+      description: Playground ReportQuery
+      parameters:
+      - description: ReportQuery
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          $ref: '#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /reportm/query:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ReportQuery
+      parameters:
+      - description: ReportQuery GUIDs
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+    post:
+      consumes:
+      - application/json
+      description: Create ReportQuery
+      parameters:
+      - description: ReportQuery
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          $ref: '#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /reportm/query/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ReportQuery
+      parameters:
+      - description: ReportQuery ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+    get:
+      consumes:
+      - application/json
+      description: get ReportQuery info by guidfixed
+      parameters:
+      - description: ReportQuery guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+    put:
+      consumes:
+      - application/json
+      description: Update ReportQuery
+      parameters:
+      - description: ReportQuery ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: ReportQuery
+        in: body
+        name: ReportQuery
+        required: true
+        schema:
+          $ref: '#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /reportm/query/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get ReportQuery info by Code
+      parameters:
+      - description: ReportQuery Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ReportQuery
+  /reportm/query/list:
     get:
       consumes:
       - application/json
@@ -17023,6 +17309,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
+        type: string
       - description: Page
         in: query
         name: page
@@ -17207,6 +17501,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
+        type: string
       - description: offset
         in: query
         name: offset
@@ -17269,6 +17571,14 @@ paths:
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
         type: string
       - description: Page
         in: query
@@ -17454,6 +17764,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
+        type: string
       - description: offset
         in: query
         name: offset
@@ -17520,6 +17838,14 @@ paths:
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
         type: string
       - description: Page
         in: query
@@ -17607,6 +17933,14 @@ paths:
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
         type: string
       - description: Page
         in: query
@@ -17792,6 +18126,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
+        type: string
       - description: offset
         in: query
         name: offset
@@ -17956,6 +18298,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
+        type: string
       - description: offset
         in: query
         name: offset
@@ -18018,6 +18368,14 @@ paths:
       - description: customer code
         in: query
         name: custcode
+        type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
         type: string
       - description: Search Value
         in: query
@@ -18109,6 +18467,14 @@ paths:
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
         type: string
       - description: Page
         in: query
@@ -18294,6 +18660,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
+        type: string
       - description: offset
         in: query
         name: offset
@@ -18458,6 +18832,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
+        type: string
       - description: offset
         in: query
         name: offset
@@ -18524,6 +18906,14 @@ paths:
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
         type: string
       - description: Page
         in: query
@@ -18709,6 +19099,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
+        type: string
       - description: offset
         in: query
         name: offset
@@ -18775,6 +19173,14 @@ paths:
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
         type: string
       - description: Page
         in: query
@@ -18960,6 +19366,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
+        type: string
       - description: offset
         in: query
         name: offset
@@ -19026,6 +19440,14 @@ paths:
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
         type: string
       - description: Page
         in: query
@@ -19211,6 +19633,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
+        type: string
       - description: offset
         in: query
         name: offset
@@ -19277,6 +19707,14 @@ paths:
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
         type: string
       - description: Page
         in: query
@@ -19462,6 +19900,14 @@ paths:
         in: query
         name: q
         type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
+        type: string
       - description: offset
         in: query
         name: offset
@@ -19528,6 +19974,14 @@ paths:
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
         type: string
       - description: Page
         in: query
@@ -19685,6 +20139,14 @@ paths:
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: from date
+        in: query
+        name: fromdate
+        type: string
+      - description: to date
+        in: query
+        name: todate
         type: string
       - description: offset
         in: query

@@ -25,7 +25,7 @@ type ISaleInvoiceReturnHttpService interface {
 	InfoSaleInvoiceReturn(shopID string, guid string) (models.SaleInvoiceReturnInfo, error)
 	InfoSaleInvoiceReturnByCode(shopID string, code string) (models.SaleInvoiceReturnInfo, error)
 	SearchSaleInvoiceReturn(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SaleInvoiceReturnInfo, mongopagination.PaginationData, error)
-	SearchSaleInvoiceReturnStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.SaleInvoiceReturnInfo, int, error)
+	SearchSaleInvoiceReturnStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SaleInvoiceReturnInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.SaleInvoiceReturn) (common.BulkImport, error)
 
 	GetModuleName() string
@@ -191,14 +191,14 @@ func (svc SaleInvoiceReturnHttpService) SearchSaleInvoiceReturn(shopID string, f
 	return docList, pagination, nil
 }
 
-func (svc SaleInvoiceReturnHttpService) SearchSaleInvoiceReturnStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.SaleInvoiceReturnInfo, int, error) {
+func (svc SaleInvoiceReturnHttpService) SearchSaleInvoiceReturnStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SaleInvoiceReturnInfo, int, error) {
 	searchInFields := []string{
 		"docno",
 	}
 
 	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.SaleInvoiceReturnInfo{}, 0, err

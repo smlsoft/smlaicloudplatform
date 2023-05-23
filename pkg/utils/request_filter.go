@@ -1,6 +1,12 @@
 package utils
 
-import "strconv"
+import (
+	"strconv"
+	"strings"
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+)
 
 type FilterRequest struct {
 	Param string
@@ -16,9 +22,12 @@ func GetFilters(getParamFunc func(string) string, filterFields []FilterRequest) 
 			continue
 		}
 
-		filterValue := getParamFunc(field.Param)
-		if filterValue == "" {
-			continue
+		filterValue := ""
+		if field.Param != "-" {
+			filterValue = getParamFunc(field.Param)
+			if filterValue == "" {
+				continue
+			}
 		}
 
 		if field.Field == "" {
@@ -40,6 +49,24 @@ func GetFilters(getParamFunc func(string) string, filterFields []FilterRequest) 
 			if val, err := strconv.ParseBool(filterValue); err == nil {
 				filters[field.Field] = val
 			}
+
+		case "rangeDate":
+
+			fromDateStr := strings.TrimSpace(getParamFunc("fromdate"))
+			toDateStr := strings.TrimSpace(getParamFunc("todate"))
+
+			if len(fromDateStr) > 0 && len(toDateStr) > 0 {
+				fromDate, err1 := time.Parse("2006-01-02", fromDateStr)
+				toDate, err2 := time.Parse("2006-01-02", toDateStr)
+
+				if err1 == nil && err2 == nil {
+					filters[field.Field] = bson.M{
+						"$gte": fromDate,
+						"$lt":  toDate.AddDate(0, 0, 1),
+					}
+				}
+			}
+
 		default:
 			filters[field.Field] = filterValue
 		}

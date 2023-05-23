@@ -25,7 +25,7 @@ type IStockTransferHttpService interface {
 	InfoStockTransfer(shopID string, guid string) (models.StockTransferInfo, error)
 	InfoStockTransferByCode(shopID string, code string) (models.StockTransferInfo, error)
 	SearchStockTransfer(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockTransferInfo, mongopagination.PaginationData, error)
-	SearchStockTransferStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.StockTransferInfo, int, error)
+	SearchStockTransferStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockTransferInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.StockTransfer) (common.BulkImport, error)
 
 	GetModuleName() string
@@ -201,20 +201,14 @@ func (svc StockTransferHttpService) SearchStockTransfer(shopID string, filters m
 	return docList, pagination, nil
 }
 
-func (svc StockTransferHttpService) SearchStockTransferStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.StockTransferInfo, int, error) {
+func (svc StockTransferHttpService) SearchStockTransferStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockTransferInfo, int, error) {
 	searchInFields := []string{
 		"docno",
 	}
 
 	selectFields := map[string]interface{}{}
 
-	if langCode != "" {
-		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
-	} else {
-		selectFields["names"] = 1
-	}
-
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.StockTransferInfo{}, 0, err

@@ -25,7 +25,7 @@ type IStockReturnProductHttpService interface {
 	InfoStockReturnProduct(shopID string, guid string) (models.StockReturnProductInfo, error)
 	InfoStockReturnProductByCode(shopID string, code string) (models.StockReturnProductInfo, error)
 	SearchStockReturnProduct(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockReturnProductInfo, mongopagination.PaginationData, error)
-	SearchStockReturnProductStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.StockReturnProductInfo, int, error)
+	SearchStockReturnProductStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockReturnProductInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.StockReturnProduct) (common.BulkImport, error)
 
 	GetModuleName() string
@@ -191,14 +191,14 @@ func (svc StockReturnProductHttpService) SearchStockReturnProduct(shopID string,
 	return docList, pagination, nil
 }
 
-func (svc StockReturnProductHttpService) SearchStockReturnProductStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.StockReturnProductInfo, int, error) {
+func (svc StockReturnProductHttpService) SearchStockReturnProductStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockReturnProductInfo, int, error) {
 	searchInFields := []string{
 		"docno",
 	}
 
 	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.StockReturnProductInfo{}, 0, err

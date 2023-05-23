@@ -269,6 +269,8 @@ func (h StockTransferHttp) InfoStockTransferByCode(ctx microservice.IContext) er
 // @Tags		StockTransfer
 // @Param		custcode	query	string		false  "customer code"
 // @Param		q		query	string		false  "Search Value"
+// @Param		fromdate	query	string		false  "from date"
+// @Param		todate	query	string		false  "to date"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
@@ -286,6 +288,11 @@ func (h StockTransferHttp) SearchStockTransferPage(ctx microservice.IContext) er
 		{
 			Param: "custcode",
 			Type:  "string",
+		},
+		{
+			Param: "-",
+			Field: "docdatetime",
+			Type:  "rangeDate",
 		},
 	})
 
@@ -308,6 +315,8 @@ func (h StockTransferHttp) SearchStockTransferPage(ctx microservice.IContext) er
 // @Description search limit offset
 // @Tags		StockTransfer
 // @Param		q		query	string		false  "Search Value"
+// @Param		fromdate	query	string		false  "from date"
+// @Param		todate	query	string		false  "to date"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
 // @Param		lang	query	string		false  "lang"
@@ -324,7 +333,19 @@ func (h StockTransferHttp) SearchStockTransferStep(ctx microservice.IContext) er
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchStockTransferStep(shopID, lang, pageableStep)
+	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+		{
+			Param: "custcode",
+			Type:  "string",
+		},
+		{
+			Param: "-",
+			Field: "docdatetime",
+			Type:  "rangeDate",
+		},
+	})
+
+	docList, total, err := h.svc.SearchStockTransferStep(shopID, lang, filters, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
