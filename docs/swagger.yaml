@@ -90,37 +90,6 @@ definitions:
       startdate:
         type: string
     type: object
-  models.Address:
-    properties:
-      address:
-        items:
-          type: string
-        type: array
-      contactnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      guid:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phoneprimary:
-        type: string
-      phonesecondary:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
-    type: object
   models.ApiResponse:
     properties:
       data: {}
@@ -272,8 +241,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       name1:
         maxLength: 255
         type: string
@@ -289,7 +258,14 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -693,10 +669,10 @@ definitions:
   models.CreditorRequest:
     properties:
       addressforbilling:
-        $ref: '#/definitions/models.Address'
+        $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_creditor_models.Address'
       addressforshipping:
         items:
-          $ref: '#/definitions/models.Address'
+          $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_creditor_models.Address'
         type: array
       branchnumber:
         type: string
@@ -747,10 +723,10 @@ definitions:
   models.CustomerRequest:
     properties:
       addressforbilling:
-        $ref: '#/definitions/models.Address'
+        $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_customer_models.Address'
       addressforshipping:
         items:
-          $ref: '#/definitions/models.Address'
+          $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_customer_models.Address'
         type: array
       branchnumber:
         type: string
@@ -805,10 +781,10 @@ definitions:
   models.DebtorRequest:
     properties:
       addressforbilling:
-        $ref: '#/definitions/models.Address'
+        $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_debtor_models.Address'
       addressforshipping:
         items:
-          $ref: '#/definitions/models.Address'
+          $ref: '#/definitions/smlcloudplatform_pkg_debtaccount_debtor_models.Address'
         type: array
       branchnumber:
         type: string
@@ -846,12 +822,15 @@ definitions:
   models.Department:
     properties:
       code:
-        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
   models.Detail:
     properties:
@@ -1254,8 +1233,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1273,6 +1252,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1288,6 +1269,11 @@ definitions:
         maxLength: 50
         type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1396,8 +1382,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1415,6 +1401,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1430,6 +1418,11 @@ definitions:
         maxLength: 50
         type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1588,8 +1581,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1607,6 +1600,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1622,6 +1617,11 @@ definitions:
         maxLength: 50
         type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -3078,9 +3078,16 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
+      normalprice:
+        type: number
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
     type: object
   models.ProductUnit:
@@ -4789,8 +4796,124 @@ definitions:
         minimum: 0
         type: integer
     type: object
+  smlcloudplatform_pkg_debtaccount_creditor_models.Address:
+    properties:
+      address:
+        items:
+          type: string
+        type: array
+      contactnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      guid:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phoneprimary:
+        type: string
+      phonesecondary:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
+    type: object
+  smlcloudplatform_pkg_debtaccount_customer_models.Address:
+    properties:
+      address:
+        items:
+          type: string
+        type: array
+      contactnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      guid:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phoneprimary:
+        type: string
+      phonesecondary:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
+    type: object
+  smlcloudplatform_pkg_debtaccount_debtor_models.Address:
+    properties:
+      address:
+        items:
+          type: string
+        type: array
+      contactnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      guid:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phoneprimary:
+        type: string
+      phonesecondary:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
+    type: object
+  smlcloudplatform_pkg_organization_branch_models.Address:
+    properties:
+      addressdetail:
+        type: string
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phone:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
+    type: object
   smlcloudplatform_pkg_organization_branch_models.Branch:
     properties:
+      address:
+        $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Address'
       businesstypes:
         items:
           type: string

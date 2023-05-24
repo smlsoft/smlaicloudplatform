@@ -15,6 +15,19 @@ type Branch struct {
 	Departments              *[]Department   `json:"departments" bson:"departments"`
 	BusinessTypes            *[]string       `json:"businesstypes" bson:"businesstypes"`
 	Languages                *[]string       `json:"languages" bson:"languages"`
+	Address                  Address         `json:"address" bson:"address"`
+}
+
+type Address struct {
+	AddressDetail   string  `json:"addressdetail" bson:"addressdetail"`
+	CountryCode     string  `json:"countrycode" bson:"countrycode"`
+	ProvinceCode    string  `json:"provincecode" bson:"provincecode"`
+	DistrictCode    string  `json:"districtcode" bson:"districtcode"`
+	SubDistrictCode string  `json:"subdistrictcode" bson:"subdistrictcode"`
+	ZipCode         string  `json:"zipcode" bson:"zipcode"`
+	Phone           string  `json:"phone" bson:"phone"`
+	Latitude        float64 `json:"latitude" bson:"latitude"`
+	Longitude       float64 `json:"longitude" bson:"longitude"`
 }
 
 type BranchInfo struct {

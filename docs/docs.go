@@ -26504,53 +26504,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Address": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "contactnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "districtcode": {
-                    "type": "string"
-                },
-                "guid": {
-                    "type": "string"
-                },
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                },
-                "phoneprimary": {
-                    "type": "string"
-                },
-                "phonesecondary": {
-                    "type": "string"
-                },
-                "provincecode": {
-                    "type": "string"
-                },
-                "subdistrictcode": {
-                    "type": "string"
-                },
-                "zipcode": {
-                    "type": "string"
-                }
-            }
-        },
         "models.ApiResponse": {
             "type": "object",
             "properties": {
@@ -26770,8 +26723,8 @@ const docTemplate = `{
                 "isprimary": {
                     "type": "boolean"
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "name1": {
                     "type": "string",
@@ -26793,7 +26746,17 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "unitcode": {
@@ -27386,12 +27349,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "addressforbilling": {
-                    "$ref": "#/definitions/models.Address"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_creditor_models.Address"
                 },
                 "addressforshipping": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Address"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_creditor_models.Address"
                     }
                 },
                 "branchnumber": {
@@ -27466,12 +27429,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "addressforbilling": {
-                    "$ref": "#/definitions/models.Address"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_customer_models.Address"
                 },
                 "addressforshipping": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Address"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_customer_models.Address"
                     }
                 },
                 "branchnumber": {
@@ -27552,12 +27515,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "addressforbilling": {
-                    "$ref": "#/definitions/models.Address"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_debtor_models.Address"
                 },
                 "addressforshipping": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Address"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_debtaccount_debtor_models.Address"
                     }
                 },
                 "branchnumber": {
@@ -27608,13 +27571,17 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
                 "code": {
-                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -28216,8 +28183,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -28242,6 +28209,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -28263,6 +28233,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -28415,8 +28392,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -28441,6 +28418,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -28462,6 +28442,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -28691,8 +28678,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -28717,6 +28704,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -28738,6 +28728,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -30887,10 +30884,20 @@ const docTemplate = `{
         "models.ProductPrice": {
             "type": "object",
             "properties": {
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
+                },
+                "normalprice": {
+                    "type": "number"
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 }
             }
@@ -33429,12 +33436,188 @@ const docTemplate = `{
                 }
             }
         },
+        "smlcloudplatform_pkg_debtaccount_creditor_models.Address": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "contactnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "guid": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phoneprimary": {
+                    "type": "string"
+                },
+                "phonesecondary": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_debtaccount_customer_models.Address": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "contactnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "guid": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phoneprimary": {
+                    "type": "string"
+                },
+                "phonesecondary": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_debtaccount_debtor_models.Address": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "contactnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "guid": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phoneprimary": {
+                    "type": "string"
+                },
+                "phonesecondary": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_organization_branch_models.Address": {
+            "type": "object",
+            "properties": {
+                "addressdetail": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
         "smlcloudplatform_pkg_organization_branch_models.Branch": {
             "type": "object",
             "required": [
                 "names"
             ],
             "properties": {
+                "address": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Address"
+                },
                 "businesstypes": {
                     "type": "array",
                     "items": {
