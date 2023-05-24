@@ -624,8 +624,7 @@ func (svc ProductBarcodeHttpService) XSortsSave(shopID string, authUsername stri
 func (svc ProductBarcodeHttpService) DeleteProductBarcodeByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
 	deleteFilterQuery := map[string]interface{}{
-		"parentguid": bson.M{"$eq": ""},
-		"guidfixed":  bson.M{"$in": GUIDs},
+		"guidfixed": bson.M{"$in": GUIDs},
 	}
 
 	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
