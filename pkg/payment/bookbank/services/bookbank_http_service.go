@@ -165,6 +165,8 @@ func (svc BookBankHttpService) InfoBookBank(shopID string, guid string) (models.
 
 func (svc BookBankHttpService) SearchBookBank(shopID string, pageable micromodels.Pageable) ([]models.BookBankInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
+		"bookcode",
+		"bankcode",
 		"passbook",
 		"names.name",
 		"banknames.name",
@@ -181,6 +183,8 @@ func (svc BookBankHttpService) SearchBookBank(shopID string, pageable micromodel
 
 func (svc BookBankHttpService) SearchBookBankStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.BookBankInfo, int, error) {
 	searchInFields := []string{
+		"bookcode",
+		"bankcode",
 		"passbook",
 		"names.name",
 		"banknames.name",

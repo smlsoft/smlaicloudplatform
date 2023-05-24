@@ -166,6 +166,7 @@ func (svc CreditorGroupHttpService) InfoCreditorGroup(shopID string, guid string
 func (svc CreditorGroupHttpService) SearchCreditorGroup(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.CreditorGroupInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"groupcode",
+		"names.name",
 	}
 
 	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
@@ -180,6 +181,7 @@ func (svc CreditorGroupHttpService) SearchCreditorGroup(shopID string, filters m
 func (svc CreditorGroupHttpService) SearchCreditorGroupStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.CreditorGroupInfo, int, error) {
 	searchInFields := []string{
 		"groupcode",
+		"names.name",
 	}
 
 	selectFields := map[string]interface{}{}

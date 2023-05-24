@@ -219,6 +219,10 @@ func (svc DebtorHttpService) SearchDebtor(shopID string, filters map[string]inte
 	searchInFields := []string{
 		"code",
 		"names.name",
+		"groups",
+		"addressforbilling.address.0",
+		"addressforbilling.phoneprimary",
+		"addressforbilling.phonesecondary",
 	}
 
 	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
@@ -251,6 +255,10 @@ func (svc DebtorHttpService) SearchDebtorStep(shopID string, langCode string, pa
 	searchInFields := []string{
 		"code",
 		"names.name",
+		"groups",
+		"addressforbilling.address.0",
+		"addressforbilling.phoneprimary",
+		"addressforbilling.phonesecondary",
 	}
 
 	selectFields := map[string]interface{}{}

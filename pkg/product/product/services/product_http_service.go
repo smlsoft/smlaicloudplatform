@@ -301,6 +301,8 @@ func (svc ProductHttpService) SearchProduct(shopID string, filters map[string]in
 	searchInFields := []string{
 		"itemcode",
 		"names.name",
+		"itemcode",
+		"groupcode",
 	}
 
 	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
@@ -316,33 +318,11 @@ func (svc ProductHttpService) SearchProductStep(shopID string, langCode string, 
 	searchInFields := []string{
 		"itemcode",
 		"names.name",
+		"itemcode",
+		"groupcode",
 	}
 
-	selectFields := map[string]interface{}{
-		// "guidfixed":       1,
-		// "itemcode":        1,
-		// "barcodes":        1,
-		// "names":           1,
-		// "multiunit":       1,
-		// "useserialnumber": 1,
-		// "units":           1,
-		// "unitcost":        1,
-		// "itemstocktype":   1,
-		// "itemtype":        1,
-		// "vattype":         1,
-		// "issumpoint":      1,
-		// "images":          1,
-		// "prices":          1,
-		// "groupcode":       1,
-		// "groupname":       1,
-		// "branches":        1,
-	}
-
-	// if langCode != "" {
-	// 	selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
-	// } else {
-	// 	selectFields["names"] = 1
-	// }
+	selectFields := map[string]interface{}{}
 
 	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
 

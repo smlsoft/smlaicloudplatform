@@ -225,6 +225,7 @@ func (svc ProductGroupHttpService) InfoWTFArray(shopID string, codes []string) (
 
 func (svc ProductGroupHttpService) SearchProductGroup(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductGroupInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
+		"code",
 		"names.name",
 	}
 
@@ -240,6 +241,7 @@ func (svc ProductGroupHttpService) SearchProductGroup(shopID string, filters map
 func (svc ProductGroupHttpService) SearchProductGroupStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ProductGroupInfo, int, error) {
 	searchInFields := []string{
 		"code",
+		"names.name",
 	}
 
 	selectFields := map[string]interface{}{

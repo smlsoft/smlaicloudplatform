@@ -166,6 +166,7 @@ func (svc DebtorGroupHttpService) InfoDebtorGroup(shopID string, guid string) (m
 func (svc DebtorGroupHttpService) SearchDebtorGroup(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DebtorGroupInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"groupcode",
+		"names.name",
 	}
 
 	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
@@ -180,6 +181,7 @@ func (svc DebtorGroupHttpService) SearchDebtorGroup(shopID string, filters map[s
 func (svc DebtorGroupHttpService) SearchDebtorGroupStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.DebtorGroupInfo, int, error) {
 	searchInFields := []string{
 		"groupcode",
+		"names.name",
 	}
 
 	selectFields := map[string]interface{}{}
