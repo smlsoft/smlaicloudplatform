@@ -114,6 +114,10 @@ func (svc BranchHttpService) UpdateBranch(shopID string, guid string, authUserna
 		return errors.New("document not found")
 	}
 
+	if doc.Departments == nil {
+		doc.Departments = &[]models.Department{}
+	}
+
 	tempMap := map[string]struct{}{}
 	for _, department := range *doc.Departments {
 		if _, ok := tempMap[department.Code]; ok {

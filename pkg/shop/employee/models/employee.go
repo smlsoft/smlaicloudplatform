@@ -19,7 +19,7 @@ type Employee struct {
 }
 
 type Contact struct {
-	Address         string  `json:"addressdetail" bson:"addressdetail"`
+	Address         string  `json:"address" bson:"address"`
 	CountryCode     string  `json:"countrycode" bson:"countrycode"`
 	ProvinceCode    string  `json:"provincecode" bson:"provincecode"`
 	DistrictCode    string  `json:"districtcode" bson:"districtcode"`
