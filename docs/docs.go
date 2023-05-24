@@ -33483,7 +33483,7 @@ const docTemplate = `{
         "smlcloudplatform_pkg_organization_branch_models.Contact": {
             "type": "object",
             "properties": {
-                "addressdetail": {
+                "address": {
                     "type": "string"
                 },
                 "countrycode": {
@@ -33756,7 +33756,7 @@ const docTemplate = `{
         "smlcloudplatform_pkg_shop_employee_models.Contact": {
             "type": "object",
             "properties": {
-                "addressdetail": {
+                "address": {
                     "type": "string"
                 },
                 "countrycode": {

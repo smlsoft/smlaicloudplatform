@@ -4826,7 +4826,7 @@ definitions:
     type: object
   smlcloudplatform_pkg_organization_branch_models.Contact:
     properties:
-      addressdetail:
+      address:
         type: string
       countrycode:
         type: string
@@ -5008,7 +5008,7 @@ definitions:
     type: object
   smlcloudplatform_pkg_shop_employee_models.Contact:
     properties:
-      addressdetail:
+      address:
         type: string
       countrycode:
         type: string
