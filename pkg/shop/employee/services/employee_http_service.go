@@ -233,6 +233,8 @@ func (svc EmployeeHttpService) InfoEmployee(shopID string, guid string) (models.
 func (svc EmployeeHttpService) SearchEmployee(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.EmployeeInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"code",
+		"name",
+		"contact.phonenumber",
 	}
 
 	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
@@ -248,6 +250,7 @@ func (svc EmployeeHttpService) SearchEmployeeStep(shopID string, langCode string
 	searchInFields := []string{
 		"code",
 		"name",
+		"contact.phonenumber",
 	}
 
 	selectFields := map[string]interface{}{}
