@@ -114,6 +114,7 @@ func (svc EmployeeHttpService) UpdateEmployee(shopID string, guid string, authUs
 	findDoc.Roles = doc.Roles
 	findDoc.ProfilePicture = doc.ProfilePicture
 	findDoc.IsEnabled = doc.IsEnabled
+	findDoc.Contact = doc.Contact
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
