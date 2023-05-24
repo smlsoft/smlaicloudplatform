@@ -15,6 +15,19 @@ type Employee struct {
 	ProfilePicture string    `json:"profilepicture" bson:"profilepicture"`
 	Roles          *[]string `json:"roles" bson:"roles"`
 	IsEnabled      bool      `json:"isenabled" bson:"isenabled"`
+	Contact        Contact   `json:"contact" bson:"contact"`
+}
+
+type Contact struct {
+	Address         string  `json:"addressdetail" bson:"addressdetail"`
+	CountryCode     string  `json:"countrycode" bson:"countrycode"`
+	ProvinceCode    string  `json:"provincecode" bson:"provincecode"`
+	DistrictCode    string  `json:"districtcode" bson:"districtcode"`
+	SubDistrictCode string  `json:"subdistrictcode" bson:"subdistrictcode"`
+	ZipCode         string  `json:"zipcode" bson:"zipcode"`
+	PhoneNumber     string  `json:"phonenumber" bson:"phonenumber"`
+	Latitude        float64 `json:"latitude" bson:"latitude"`
+	Longitude       float64 `json:"longitude" bson:"longitude"`
 }
 
 type EmployeeInfo struct {
