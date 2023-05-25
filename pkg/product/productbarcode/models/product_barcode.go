@@ -43,6 +43,7 @@ type ProductBarcodeBase struct {
 	Qty            float64         `json:"qty" bson:"qty"`
 	RefDivideValue float64         `json:"refdividevalue" bson:"refdividevalue"`
 	RefStandValue  float64         `json:"refstandvalue" bson:"refstandvalue"`
+	VatCal         int             `json:"vatcal" bson:"vatcal"`
 }
 
 type RefProductBarcode struct {
