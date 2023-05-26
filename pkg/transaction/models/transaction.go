@@ -39,6 +39,7 @@ type Transaction struct {
 	Status         int8            `json:"status" bson:"status"`
 	IsCancel       bool            `json:"iscancel" bson:"iscancel"`
 	PaymentDetail  PaymentDetail   `json:"paymentdetail" bson:"paymentdetail"`
+	Description    string          `json:"description" bson:"description"`
 }
 
 type Detail struct {
