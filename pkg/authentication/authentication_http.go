@@ -30,13 +30,15 @@ type AuthenticationHttp struct {
 func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConfig) AuthenticationHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
 	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
 
 	shopRepo := shop.NewShopRepository(pst)
 	shopUserRepo := shop.NewShopUserRepository(pst)
 	shopUserAccessLogRepo := shop.NewShopUserAccessLogRepository(pst)
-	authRepo := NewAuthenticationRepository(pst)
+	// authRepo := NewAuthenticationRepository(pst)
+	authRepo := NewAuthenticationMongoCacheRepository(pst, cache)
 	firebaseAdapter := firebase.NewFirebaseAdapter()
 	authenticationService := NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, authService, utils.HashPassword, utils.CheckHashPassword, ms.TimeNow, firebaseAdapter)
 

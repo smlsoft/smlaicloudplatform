@@ -23,6 +23,7 @@ type IPersisterMongo interface {
 	AggregatePage(model interface{}, pageable models.Pageable, criteria ...interface{}) (*mongopagination.PaginatedData, error)
 	Find(model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOptions) error
 	FindPage(model interface{}, filter interface{}, pageable models.Pageable, decode interface{}) (mongopagination.PaginationData, error)
+	FindSelectPage(model interface{}, selectFields interface{}, filter interface{}, pageable models.Pageable, decode interface{}) (mongopagination.PaginationData, error)
 	// FindPage(model interface{}, limit int, page int, filter interface{}, decode interface{}) (mongopagination.PaginationData, error)
 	// FindPageSort(model interface{}, limit int, page int, filter interface{}, sorts map[string]int, decode interface{}) (mongopagination.PaginationData, error)
 	FindOne(model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOneOptions) error
@@ -221,6 +222,41 @@ func (pst *PersisterMongo) FindPage(model interface{}, filter interface{}, pagea
 	var page64 int64 = int64(pageable.Page)
 
 	pagingQuery := mongopagination.New(db.Collection(collectionName)).Context(pst.ctx).Limit(limit64).Page(page64).Filter(filter)
+
+	for _, tempSort := range pageable.Sorts {
+		tempSortVal := 1
+		if tempSort.Value < 1 {
+			tempSortVal = -1
+		}
+		pagingQuery = pagingQuery.Sort(tempSort.Key, tempSortVal)
+	}
+
+	paginatedData, err := pagingQuery.Decode(decode).Find()
+	if err != nil {
+		return emptyPage, err
+	}
+
+	return paginatedData.Pagination, nil
+}
+
+func (pst *PersisterMongo) FindSelectPage(model interface{}, selectFields interface{}, filter interface{}, pageable models.Pageable, decode interface{}) (mongopagination.PaginationData, error) {
+	db, err := pst.getClient()
+
+	emptyPage := mongopagination.PaginationData{}
+
+	if err != nil {
+		return emptyPage, err
+	}
+
+	collectionName, err := pst.getCollectionName(model)
+	if err != nil {
+		return emptyPage, err
+	}
+
+	var limit64 int64 = int64(pageable.Limit)
+	var page64 int64 = int64(pageable.Page)
+
+	pagingQuery := mongopagination.New(db.Collection(collectionName)).Context(pst.ctx).Select(selectFields).Limit(limit64).Page(page64).Filter(filter)
 
 	for _, tempSort := range pageable.Sorts {
 		tempSortVal := 1

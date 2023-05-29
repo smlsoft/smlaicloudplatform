@@ -3,6 +3,7 @@ package microservice
 import (
 	"fmt"
 	"net/http"
+	"smlcloudplatform/internal/cache"
 	"smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/encrypt"
 	"strconv"
@@ -38,19 +39,8 @@ type TokenContext struct {
 	tokenType TokenType
 }
 
-func NewAuthService(cacher ICacher, expireHour int) *AuthService {
-
-	return &AuthService{
-		cacher:                cacher,
-		expireBearer:          time.Duration(expireHour) * time.Hour,
-		prefixBearerCacheKey:  "auth-",
-		prefixBearerToken:     "Bearer",
-		prefixXApiKeyCacheKey: "xapikey-",
-		encrypt:               *encrypt.NewEncrypt(),
-	}
-}
-
 type AuthService struct {
+	cacheMemory           cache.IMemoryCache
 	cacher                ICacher
 	expireBearer          time.Duration
 	prefixBearerCacheKey  string
@@ -60,10 +50,24 @@ type AuthService struct {
 	encrypt               encrypt.Encrypt
 }
 
+func NewAuthService(cacher ICacher, expireHour int) *AuthService {
+
+	return &AuthService{
+		cacher:                cacher,
+		expireBearer:          time.Duration(expireHour) * time.Hour,
+		prefixBearerCacheKey:  "auth-",
+		prefixBearerToken:     "Bearer",
+		prefixXApiKeyCacheKey: "xapikey-",
+		encrypt:               *encrypt.NewEncrypt(),
+		cacheMemory:           cache.NewMemoryCache(),
+	}
+}
+
 func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath []string, publicPath ...string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 
+			stime := time.Now()
 			currentPath := c.Path()
 
 			for _, publicPath := range publicPath {
@@ -83,16 +87,43 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 
 			cacheKey := authService.GetPrefixCacheKey(tokenCtx.tokenType) + tokenCtx.token
 
-			tempUserInfo, err := authService.cacher.HMGet(cacheKey, []string{"username", "name", "shopid", "role"})
+			tempUserInfo := models.UserInfo{}
 
-			if err != nil || tempUserInfo[0] == nil {
+			memTempUserInfo, memExists := authService.cacheMemory.Get(cacheKey)
+
+			if memExists {
+				tempUserInfo = memTempUserInfo.(models.UserInfo)
+			} else {
+
+				tempUserInfoRaw, err := authService.cacher.HMGet(cacheKey, []string{"username", "name", "shopid", "role"})
+
+				if err != nil {
+					return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
+				}
+
+				if tempUserInfoRaw[0] != nil {
+					tempUserInfo.Username = fmt.Sprintf("%v", tempUserInfoRaw[0])
+					tempUserInfo.Name = fmt.Sprintf("%v", tempUserInfoRaw[1])
+					tempUserInfo.ShopID = fmt.Sprintf("%v", tempUserInfoRaw[2])
+				}
+
+				userRole, err := strconv.Atoi(fmt.Sprintf("%v", tempUserInfoRaw[3]))
+				tempUserInfo.Role = uint8(userRole)
+
+				if err != nil {
+					return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
+				}
+
+			}
+
+			if tempUserInfo.Username == "" {
 				return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
 			}
 
 			tempShopID := ""
 
-			if tempUserInfo[2] != nil {
-				tempShopID = fmt.Sprintf("%v", tempUserInfo[2])
+			if tempUserInfo.ShopID != "" {
+				tempShopID = tempUserInfo.ShopID
 			}
 
 			// check accept shop path
@@ -108,8 +139,8 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 			}
 
 			userInfo := models.UserInfo{
-				Username: fmt.Sprintf("%v", tempUserInfo[0]),
-				Name:     fmt.Sprintf("%v", tempUserInfo[1]),
+				Username: tempUserInfo.Username,
+				Name:     tempUserInfo.Name,
 			}
 
 			if !thisPathExceptShopSelected {
@@ -117,18 +148,18 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 					return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Shop not selected."})
 				}
 
-				userRole, err := strconv.Atoi(fmt.Sprintf("%v", tempUserInfo[3]))
-				if err != nil {
-					return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "User role invalid."})
-				}
-
-				userInfo.ShopID = fmt.Sprintf("%v", tempUserInfo[2])
-				userInfo.Role = uint8(userRole)
+				userInfo.ShopID = tempUserInfo.ShopID
+				userInfo.Role = tempUserInfo.Role
 			}
 
-			authService.ReTokenExpire(tokenCtx.tokenType, cacheKey)
+			go func() {
+				authService.ReTokenExpire(tokenCtx.tokenType, cacheKey)
+				authService.cacheMemory.Set(cacheKey, userInfo, time.Second*10)
+			}()
 
 			c.Set("UserInfo", userInfo)
+
+			fmt.Println("Middleware Auth Time: ", time.Since(stime))
 
 			return next(c)
 		}
