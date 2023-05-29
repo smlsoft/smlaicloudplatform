@@ -3,7 +3,7 @@ package microservice
 import (
 	"fmt"
 	"net/http"
-	"smlcloudplatform/internal/cache"
+	"smlcloudplatform/internal/memorycache"
 	"smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/encrypt"
 	"strconv"
@@ -40,7 +40,7 @@ type TokenContext struct {
 }
 
 type AuthService struct {
-	cacheMemory           cache.IMemoryCache
+	cacheMemory           memorycache.IMemoryCache
 	cacher                ICacher
 	expireBearer          time.Duration
 	prefixBearerCacheKey  string
@@ -59,7 +59,7 @@ func NewAuthService(cacher ICacher, expireHour int) *AuthService {
 		prefixBearerToken:     "Bearer",
 		prefixXApiKeyCacheKey: "xapikey-",
 		encrypt:               *encrypt.NewEncrypt(),
-		cacheMemory:           cache.NewMemoryCache(),
+		cacheMemory:           memorycache.NewMemoryCache(),
 	}
 }
 
@@ -104,14 +104,19 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 				if tempUserInfoRaw[0] != nil {
 					tempUserInfo.Username = fmt.Sprintf("%v", tempUserInfoRaw[0])
 					tempUserInfo.Name = fmt.Sprintf("%v", tempUserInfoRaw[1])
-					tempUserInfo.ShopID = fmt.Sprintf("%v", tempUserInfoRaw[2])
+
+					if tempUserInfoRaw[2] != nil {
+						tempUserInfo.ShopID = fmt.Sprintf("%v", tempUserInfoRaw[2])
+					}
 				}
 
-				userRole, err := strconv.Atoi(fmt.Sprintf("%v", tempUserInfoRaw[3]))
-				tempUserInfo.Role = uint8(userRole)
+				if tempUserInfoRaw[3] != nil {
+					userRole, err := strconv.Atoi(fmt.Sprintf("%v", tempUserInfoRaw[3]))
+					tempUserInfo.Role = uint8(userRole)
 
-				if err != nil {
-					return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
+					if err != nil {
+						return c.JSON(http.StatusUnauthorized, map[string]interface{}{"success": false, "message": "Token Invalid."})
+					}
 				}
 
 			}
@@ -154,7 +159,10 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 
 			go func() {
 				authService.ReTokenExpire(tokenCtx.tokenType, cacheKey)
-				authService.cacheMemory.Set(cacheKey, userInfo, time.Second*10)
+
+				if userInfo.ShopID != "" {
+					authService.cacheMemory.Set(cacheKey, userInfo, time.Second*10)
+				}
 			}()
 
 			c.Set("UserInfo", userInfo)
