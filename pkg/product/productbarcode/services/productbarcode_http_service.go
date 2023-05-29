@@ -360,6 +360,8 @@ func (svc ProductBarcodeHttpService) SearchProductBarcode(shopID string, pageabl
 		"names.name",
 		"itemcode",
 		"groupcode",
+		"groupnames.name",
+		"itemunitnames.name",
 	}
 
 	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
@@ -390,6 +392,8 @@ func (svc ProductBarcodeHttpService) SearchProductBarcodeStep(shopID string, lan
 		"names.name",
 		"itemcode",
 		"groupcode",
+		"groupnames.name",
+		"itemunitnames.name",
 	}
 
 	selectFields := map[string]interface{}{}

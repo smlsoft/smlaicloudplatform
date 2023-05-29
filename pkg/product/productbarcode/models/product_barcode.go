@@ -12,7 +12,7 @@ type ProductBarcodeBase struct {
 	ItemCode  string          `json:"itemcode" bson:"itemcode"`
 	Barcode   string          `json:"barcode" bson:"barcode" validate:"required,min=1"`
 	GroupCode string          `json:"groupcode" bson:"groupcode"`
-	GroupName *[]models.NameX `json:"groupname" bson:"groupname"`
+	GroupName *[]models.NameX `json:"groupnames" bson:"groupnames"`
 	Names     *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	XSorts    *[]models.XSort `json:"xsorts" bson:"xsorts" validate:"unique=Code,dive"`
 
