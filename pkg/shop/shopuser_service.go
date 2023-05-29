@@ -18,7 +18,8 @@ type IShopUserService interface {
 }
 
 type ShopUserService struct {
-	repo IShopUserRepository
+	repo     IShopUserRepository
+	repoUser IShopUserRepository
 }
 
 func NewShopUserService(shopUserRepo IShopUserRepository) ShopUserService {
@@ -90,11 +91,21 @@ func (svc ShopUserService) DeleteUserPermissionShop(shopID string, authUsername 
 		return err
 	}
 
-	if authUser.Role != models.ROLE_OWNER {
+	if authUser.Role != models.ROLE_OWNER && authUser.Role != models.ROLE_ADMIN {
 		return errors.New("permission denied")
 	}
 
-	if authUser.Username == authUsername {
+	findUser, err := svc.repo.FindByShopIDAndUsername(shopID, username)
+
+	if err != nil {
+		return err
+	}
+
+	if authUser.Role == models.ROLE_ADMIN && findUser.Role == models.ROLE_OWNER {
+		return errors.New("permission denied")
+	}
+
+	if findUser.Username == authUsername {
 		return errors.New("can't delete your permission")
 	}
 
