@@ -83,6 +83,8 @@ type Detail struct {
 	UnitNames           *[]models.NameX `json:"unitnames" bson:"unitnames" `
 	SumOfCost           float64         `json:"sumofcost" bson:"sumofcost"`
 	VatCal              int             `json:"vatcal" bson:"vatcal"`
+	DocRef              string          `json:"docref" bson:"docref"`
+	DocRefDatetime      time.Time       `json:"docrefdatetime" bson:"docrefdatetime"`
 }
 
 type PaymentDetail struct {
