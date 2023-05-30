@@ -67,7 +67,7 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 
-			stime := time.Now()
+			// stime := time.Now()
 			currentPath := c.Path()
 
 			for _, publicPath := range publicPath {
@@ -167,7 +167,7 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 
 			c.Set("UserInfo", userInfo)
 
-			fmt.Println("Middleware Auth Time: ", time.Since(stime))
+			// fmt.Println("Middleware Auth Time: ", time.Since(stime))
 
 			return next(c)
 		}

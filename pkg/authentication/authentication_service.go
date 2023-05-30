@@ -29,7 +29,7 @@ type IAuthenticationService interface {
 
 type AuthenticationService struct {
 	authService           microservice.IAuthService
-	authRepo              IAuthenticationRepository
+	authRepo              IAuthenticationMongoCacheRepository
 	shopUserRepo          shop.IShopUserRepository
 	shopUserAccessLogRepo shop.IShopUserAccessLogRepository
 	passwordEncoder       func(string) (string, error)
@@ -231,6 +231,7 @@ func (svc AuthenticationService) Logout(authorizationHeader string) error {
 }
 
 func (svc AuthenticationService) Profile(username string) (models.UserProfile, error) {
+	stime := time.Now()
 	userProfile := models.UserProfile{}
 	user, err := svc.authRepo.FindUser(username)
 	if err != nil {
@@ -238,6 +239,7 @@ func (svc AuthenticationService) Profile(username string) (models.UserProfile, e
 	}
 	userProfile.Username = user.Username
 	userProfile.Name = user.Name
+	fmt.Println("total time :: ", time.Since(stime))
 	return userProfile, nil
 }
 

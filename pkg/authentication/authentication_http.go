@@ -306,6 +306,7 @@ func (h AuthenticationHttp) Logout(ctx microservice.IContext) error {
 // @Router /profile [get]
 func (h AuthenticationHttp) Profile(ctx microservice.IContext) error {
 
+	// stime := time.Now()
 	userProfile, err := h.authenticationService.Profile(ctx.UserInfo().Username)
 
 	if err != nil {
@@ -320,6 +321,8 @@ func (h AuthenticationHttp) Profile(ctx microservice.IContext) error {
 		Success: true,
 		Data:    userProfile,
 	})
+
+	// fmt.Println("Time Profile", time.Since(stime))
 	return nil
 }
 
