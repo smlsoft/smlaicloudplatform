@@ -850,16 +850,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - code
-    - names
     type: object
   models.Detail:
     properties:
@@ -2562,20 +2558,16 @@ definitions:
     properties:
       amount:
         type: number
-      approvedcode:
-        type: string
-      bankcode:
-        type: string
-      banknames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
       cardnumber:
         type: string
-      charge:
+      chargevalue:
         type: number
+      chargeword:
+        type: string
       docdatetime:
         type: string
+      totalnetworth:
+        type: number
     type: object
   models.PaymentDetail:
     properties:

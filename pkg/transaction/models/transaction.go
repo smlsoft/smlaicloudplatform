@@ -95,13 +95,12 @@ type PaymentDetail struct {
 }
 
 type PaymentCreditCard struct {
-	DocDatetime  time.Time       `json:"docdatetime" bson:"docdatetime"`
-	BankCode     string          `json:"bankcode" bson:"bankcode"`
-	BankNames    *[]models.NameX `json:"banknames" bson:"banknames"`
-	CardNumber   string          `json:"cardnumber" bson:"cardnumber"`
-	ApprovedCode string          `json:"approvedcode" bson:"approvedcode"`
-	Amount       float64         `json:"amount" bson:"amount"`
-	Charge       float64         `json:"charge" bson:"charge"`
+	DocDatetime   time.Time `json:"docdatetime" bson:"docdatetime"`
+	CardNumber    string    `json:"cardnumber" bson:"cardnumber"`
+	Amount        float64   `json:"amount" bson:"amount"`
+	ChargeWord    string    `json:"chargeword" bson:"chargeword"`
+	ChargeValue   float64   `json:"chargevalue" bson:"chargevalue"`
+	TotalNetWorth float64   `json:"totalnetworth" bson:"totalnetworth"`
 }
 
 type PaymentTransfer struct {

@@ -27614,18 +27614,13 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
-            "required": [
-                "code",
-                "names"
-            ],
             "properties": {
                 "code": {
+                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -30124,26 +30119,20 @@ const docTemplate = `{
                 "amount": {
                     "type": "number"
                 },
-                "approvedcode": {
-                    "type": "string"
-                },
-                "bankcode": {
-                    "type": "string"
-                },
-                "banknames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
                 "cardnumber": {
                     "type": "string"
                 },
-                "charge": {
+                "chargevalue": {
                     "type": "number"
+                },
+                "chargeword": {
+                    "type": "string"
                 },
                 "docdatetime": {
                     "type": "string"
+                },
+                "totalnetworth": {
+                    "type": "number"
                 }
             }
         },
