@@ -2,15 +2,16 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
+	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
 	"smlcloudplatform/pkg/vfgl/journalbook/models"
 	"smlcloudplatform/pkg/vfgl/journalbook/repositories"
 	"time"
 
-	common "smlcloudplatform/pkg/models"
-
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -19,7 +20,7 @@ type IJournalBookHttpService interface {
 	Update(guid string, shopID string, authUsername string, doc models.JournalBook) error
 	Delete(guid string, shopID string, authUsername string) error
 	Info(guid string, shopID string) (models.JournalBookInfo, error)
-	Search(shopID string, q string, page int, limit int, sort map[string]int) ([]models.JournalBookInfo, mongopagination.PaginationData, error)
+	Search(shopID string, pageable micromodels.Pageable) ([]models.JournalBookInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.JournalBook) (common.BulkImport, error)
 }
 
@@ -38,9 +39,7 @@ func NewJournalBookHttpService(repo repositories.JournalBookMongoRepository, mqR
 
 func (svc JournalBookHttpService) Create(shopID string, authUsername string, doc models.JournalBook) (string, error) {
 
-	findDoc, err := svc.repo.FindOne(shopID, map[string]interface{}{
-		"code": doc.Code,
-	})
+	findDoc, err := svc.repo.FindOne(shopID, bson.M{"code": doc.Code})
 
 	if err != nil {
 		return "", err
@@ -86,9 +85,7 @@ func (svc JournalBookHttpService) Update(guid string, shopID string, authUsernam
 		return errors.New("document not found")
 	}
 
-	findDocCode, err := svc.repo.FindOne(shopID, map[string]interface{}{
-		"code": doc.Code,
-	})
+	findDocCode, err := svc.repo.FindOne(shopID, bson.M{"code": doc.Code})
 
 	if err != nil {
 		return err
@@ -136,13 +133,13 @@ func (svc JournalBookHttpService) Info(guid string, shopID string) (models.Journ
 
 }
 
-func (svc JournalBookHttpService) Search(shopID string, q string, page int, limit int, sort map[string]int) ([]models.JournalBookInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc JournalBookHttpService) Search(shopID string, pageable micromodels.Pageable) ([]models.JournalBookInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"code",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.JournalBookInfo{}, pagination, err

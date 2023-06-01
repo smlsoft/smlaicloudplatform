@@ -2,10 +2,11 @@ package shop
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/shop/models"
 	"time"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -14,7 +15,7 @@ type IShopService interface {
 	UpdateShop(guid string, username string, shop models.Shop) error
 	DeleteShop(guid string, username string) error
 	InfoShop(guid string) (models.ShopInfo, error)
-	SearchShop(q string, page int, limit int) ([]models.ShopInfo, paginate.PaginationData, error)
+	SearchShop(pageable micromodels.Pageable) ([]models.ShopInfo, mongopagination.PaginationData, error)
 }
 
 type ShopService struct {
@@ -107,8 +108,8 @@ func (svc ShopService) InfoShop(guid string) (models.ShopInfo, error) {
 	return findShop.ShopInfo, nil
 }
 
-func (svc ShopService) SearchShop(q string, page int, limit int) ([]models.ShopInfo, paginate.PaginationData, error) {
-	shopList, pagination, err := svc.shopRepo.FindPage(q, page, limit)
+func (svc ShopService) SearchShop(pageable micromodels.Pageable) ([]models.ShopInfo, mongopagination.PaginationData, error) {
+	shopList, pagination, err := svc.shopRepo.FindPage(pageable)
 
 	if err != nil {
 		return shopList, pagination, err

@@ -2,10 +2,11 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/smsreceive/smspaymentsettings/models"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 )
 
 type ISmsPaymentSettingsRepository interface {
@@ -14,8 +15,8 @@ type ISmsPaymentSettingsRepository interface {
 	CreateInBatch(docList []models.SmsPaymentSettingsDoc) error
 	Update(shopID string, guid string, doc models.SmsPaymentSettingsDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindOne(shopID string, filters map[string]interface{}) (models.SmsPaymentSettingsDoc, error)
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.SmsPaymentSettingsInfo, mongopagination.PaginationData, error)
+	FindOne(shopID string, filters interface{}) (models.SmsPaymentSettingsDoc, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SmsPaymentSettingsInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.SmsPaymentSettingsDoc, error)
 }
 

@@ -1,10 +1,27 @@
 package repositories
 
 import (
+	"errors"
+	"fmt"
 	"smlcloudplatform/internal/microservice"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
+
+type ICRUDRepository[T any] interface {
+	Count(shopID string) (int, error)
+	Create(doc T) (string, error)
+	CreateInBatch(docList []T) error
+	Update(shopID string, guid string, doc T) error
+	Delete(shopID string, username string, filters map[string]interface{}) error
+	DeleteByGuidfixed(shopID string, guid string, username string) error
+	FindOne(shopID string, filters interface{}) (T, error)
+	FindByGuid(shopID string, guid string) (T, error)
+	FindByGuids(shopID string, guids []string) ([]T, error)
+	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (T, error)
+	FindByDocIndentityGuids(shopID string, indentityField string, indentityValue interface{}) ([]T, error)
+	FindOneFilter(shopID string, filters map[string]interface{}) (T, error)
+}
 
 type CrudRepository[T any] struct {
 	pst microservice.IPersisterMongo
@@ -95,18 +112,27 @@ func (repo CrudRepository[T]) DeleteByGuidfixed(shopID string, guid string, user
 	return nil
 }
 
-func (repo CrudRepository[T]) FindOne(shopID string, filters map[string]interface{}) (T, error) {
+func (repo CrudRepository[T]) FindOne(shopID string, filters interface{}) (T, error) {
 
-	doc := new(T)
+	var filterQuery interface{}
 
-	filterQuery := bson.M{}
+	switch filters.(type) {
+	case bson.M:
+		tempFilterQuery := filters.(bson.M)
+		tempFilterQuery["shopid"] = shopID
+		tempFilterQuery["deletedat"] = bson.M{"$exists": false}
+		filterQuery = tempFilterQuery
+	case bson.D:
+		tempFilterQuery := filters.(bson.D)
+		tempFilterQuery = append(tempFilterQuery, bson.E{"shopid", shopID})
+		tempFilterQuery = append(tempFilterQuery, bson.E{"deletedat", bson.D{{"$exists", false}}})
 
-	for col, val := range filters {
-		filterQuery[col] = val
+		filterQuery = tempFilterQuery
+	default:
+		return *new(T), errors.New("invalid query filter type")
 	}
 
-	filterQuery["shopid"] = shopID
-	filterQuery["deletedat"] = bson.M{"$exists": false}
+	doc := new(T)
 
 	err := repo.pst.FindOne(new(T), filterQuery, doc)
 
@@ -130,11 +156,68 @@ func (repo CrudRepository[T]) FindByGuid(shopID string, guid string) (T, error) 
 	return *doc, nil
 }
 
+func (repo CrudRepository[T]) FindByGuids(shopID string, guids []string) ([]T, error) {
+
+	doc := new([]T)
+
+	err := repo.pst.Find(new(T), bson.M{"guidfixed": bson.M{"$in": guids}, "shopid": shopID, "deletedat": bson.M{"$exists": false}}, doc)
+
+	if err != nil {
+		return *new([]T), err
+	}
+
+	return *doc, nil
+}
+
 func (repo CrudRepository[T]) FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (T, error) {
 
 	doc := new(T)
 
-	err := repo.pst.FindOne(new(T), bson.M{indentityField: indentityValue, "shopid": shopID, "deletedat": bson.M{"$exists": false}}, doc)
+	err := repo.pst.FindOne(new(T), bson.M{"shopid": shopID, "deletedat": bson.M{"$exists": false}, indentityField: indentityValue}, doc)
+
+	if err != nil {
+		return *new(T), err
+	}
+
+	return *doc, nil
+}
+
+func (repo CrudRepository[T]) FindByDocIndentityGuids(shopID string, indentityField string, indentityValues interface{}) ([]T, error) {
+
+	switch v := indentityValues.(type) {
+	case []int:
+
+	case []string:
+
+	default:
+		return nil, fmt.Errorf("unsupported input type: %T", v)
+	}
+
+	doc := new([]T)
+
+	err := repo.pst.Find(new(T), bson.M{"shopid": shopID, "deletedat": bson.M{"$exists": false}, indentityField: bson.M{"$in": indentityValues}}, doc)
+
+	if err != nil {
+		return *new([]T), err
+	}
+
+	return *doc, nil
+}
+
+func (repo CrudRepository[T]) FindOneFilter(shopID string, filters map[string]interface{}) (T, error) {
+
+	doc := new(T)
+
+	findFilters := bson.M{}
+
+	for col, val := range filters {
+		findFilters[col] = val
+	}
+
+	findFilters["shopid"] = shopID
+	findFilters["deletedat"] = bson.M{"$exists": false}
+
+	err := repo.pst.FindOne(new(T), findFilters, doc)
 
 	if err != nil {
 		return *new(T), err

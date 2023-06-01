@@ -2,24 +2,29 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/vfgl/journal/models"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type IJournalRepository interface {
+	FindAll() ([]models.JournalDoc, error)
 	Count(shopID string) (int, error)
 	Create(category models.JournalDoc) (string, error)
 	CreateInBatch(docList []models.JournalDoc) error
 	Update(shopID string, guid string, category models.JournalDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.JournalInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.JournalInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.JournalDoc, error)
-	FindOne(shopID string, filters map[string]interface{}) (models.JournalDoc, error)
+	FindOne(shopID string, filters interface{}) (models.JournalDoc, error)
 	IsAccountCodeUsed(shopID string, accountCode string) (bool, error)
+
+	// FindLastDocno(shopID string, docFormat string) (string, error)
 }
 
 type JournalRepository struct {
@@ -59,5 +64,42 @@ func (repo *JournalRepository) IsAccountCodeUsed(shopID string, accountCode stri
 	}
 
 	return findDoc.ID != primitive.NilObjectID, nil
+
+}
+
+func (repo *JournalRepository) FindLastDocno(shopID string, docFormat string) (string, error) {
+
+	findDocList := []models.JournalDoc{}
+
+	filters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+	}
+
+	if len(docFormat) < 1 {
+		filters["$or"] = []interface{}{
+			bson.M{"docformat": ""},
+			bson.M{"docformat": bson.M{"$exists": false}},
+		}
+	} else {
+		filters["docformat"] = docFormat
+	}
+
+	findOptions := options.Find()
+
+	findOptions.SetSort(bson.M{"docformat": -1})
+	findOptions.SetLimit(1)
+
+	err := repo.pst.Find(models.JournalDoc{}, filters, &findDocList, findOptions)
+
+	if err != nil {
+		return "", nil
+	}
+
+	if len(findDocList) < 1 {
+		return "", nil
+	}
+
+	return findDocList[0].DocNo, nil
 
 }

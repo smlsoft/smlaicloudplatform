@@ -2,9 +2,10 @@ package optiongroup
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/optiongroup/models"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -15,7 +16,7 @@ type IOptionGroupRepository interface {
 	Update(shopID string, guid string, category models.InventoryOptionGroup) error
 	Delete(shopID string, guid string, username string) error
 	FindByGuid(shopID string, guid string) (models.InventoryOptionGroup, error)
-	FindPage(shopID string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error)
+	FindPage(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionGroup, mongopagination.PaginationData, error)
 }
 
 type OptionGroupRepository struct {
@@ -84,23 +85,24 @@ func (repo OptionGroupRepository) FindByGuid(shopID string, guid string) (models
 	return *doc, nil
 }
 
-func (repo OptionGroupRepository) FindPage(shopID string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error) {
-
-	docList := []models.InventoryOptionGroup{}
-	pagination, err := repo.pst.FindPage(&models.InventoryOptionGroup{}, limit, page, bson.M{
+func (repo OptionGroupRepository) FindPage(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionGroup, mongopagination.PaginationData, error) {
+	filterQueries := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$exists": false},
 		"$or": []interface{}{
-			bson.M{"guidfixed": q},
+			bson.M{"guidfixed": pageable.Query},
 			bson.M{"optionName1": bson.M{"$regex": primitive.Regex{
-				Pattern: ".*" + q + ".*",
+				Pattern: ".*" + pageable.Query + ".*",
 				Options: "",
 			}}},
 		},
-	}, &docList)
+	}
+
+	docList := []models.InventoryOptionGroup{}
+	pagination, err := repo.pst.FindPage(&models.InventoryOptionGroup{}, filterQueries, pageable, &docList)
 
 	if err != nil {
-		return []models.InventoryOptionGroup{}, paginate.PaginationData{}, err
+		return []models.InventoryOptionGroup{}, mongopagination.PaginationData{}, err
 	}
 
 	return docList, pagination, nil

@@ -2,11 +2,11 @@ package kitchen
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/restaurant/kitchen/models"
-	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 )
 
 type IKitchenRepository interface {
@@ -15,11 +15,15 @@ type IKitchenRepository interface {
 	CreateInBatch(docList []models.KitchenDoc) error
 	Update(shopID string, guid string, category models.KitchenDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.KitchenInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.KitchenInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.KitchenDoc, error)
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.KitchenItemGuid, error)
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.KitchenDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.KitchenActivity, mongopagination.PaginationData, error)
+
+	// FindDeletedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.KitchenDeleteActivity, mongopagination.PaginationData, error)
+	// FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.KitchenActivity, mongopagination.PaginationData, error)
+	// FindDeletedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.KitchenDeleteActivity, error)
+	// FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.KitchenActivity, error)
+	// FindStep(shopID string, searchInFields []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.KitchenInfo, int, error)
 }
 
 type KitchenRepository struct {

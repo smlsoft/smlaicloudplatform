@@ -2,10 +2,12 @@ package member
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/member/models"
+	"smlcloudplatform/pkg/repositories"
 	"time"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -15,19 +17,28 @@ type IMemberRepository interface {
 	Update(shopID string, guid string, doc models.MemberDoc) error
 	Delete(shopID string, guid string, username string) error
 	FindByGuid(shopID string, guid string) (models.MemberDoc, error)
-	FindPage(shopID string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error)
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.MemberDeleteActivity, paginate.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.MemberActivity, paginate.PaginationData, error)
+	FindPage(shopID string, pageable micromodels.Pageable) ([]models.MemberInfo, mongopagination.PaginationData, error)
+
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.MemberDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.MemberActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.MemberDeleteActivity, error)
+	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.MemberActivity, error)
 }
 
 type MemberRepository struct {
 	pst microservice.IPersisterMongo
+	repositories.ActivityRepository[models.MemberActivity, models.MemberDeleteActivity]
 }
 
-func NewMemberRepository(pst microservice.IPersisterMongo) MemberRepository {
-	return MemberRepository{
+func NewMemberRepository(pst microservice.IPersisterMongo) *MemberRepository {
+
+	insRepo := &MemberRepository{
 		pst: pst,
 	}
+
+	insRepo.ActivityRepository = repositories.NewActivityRepository[models.MemberActivity, models.MemberDeleteActivity](pst)
+
+	return insRepo
 }
 
 func (repo MemberRepository) Create(doc models.MemberDoc) (primitive.ObjectID, error) {
@@ -67,56 +78,24 @@ func (repo MemberRepository) FindByGuid(shopID string, guid string) (models.Memb
 	return *doc, nil
 }
 
-func (repo MemberRepository) FindPage(shopID string, q string, page int, limit int) ([]models.MemberInfo, paginate.PaginationData, error) {
+func (repo MemberRepository) FindPage(shopID string, pageable micromodels.Pageable) ([]models.MemberInfo, mongopagination.PaginationData, error) {
 
-	docList := []models.MemberInfo{}
-	pagination, err := repo.pst.FindPage(&models.MemberInfo{}, limit, page, bson.M{
+	filterQueries := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$exists": false},
 		"$or": []interface{}{
 			bson.M{"name": bson.M{"$regex": primitive.Regex{
-				Pattern: ".*" + q + ".*",
-				Options: "",
+				Pattern: ".*" + pageable.Query + ".*",
+				Options: "i",
 			}}},
 		},
-	}, &docList)
-
-	if err != nil {
-		return []models.MemberInfo{}, paginate.PaginationData{}, err
 	}
 
-	return docList, pagination, nil
-}
-
-func (repo MemberRepository) FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.MemberDeleteActivity, paginate.PaginationData, error) {
-
-	docList := []models.MemberDeleteActivity{}
-	pagination, err := repo.pst.FindPage(&models.MemberDeleteActivity{}, limit, page, bson.M{
-		"shopid":    shopID,
-		"deletedat": bson.M{"$gte": lastUpdatedDate},
-	}, &docList)
+	docList := []models.MemberInfo{}
+	pagination, err := repo.pst.FindPage(&models.MemberInfo{}, filterQueries, pageable, &docList)
 
 	if err != nil {
-		return []models.MemberDeleteActivity{}, paginate.PaginationData{}, err
-	}
-
-	return docList, pagination, nil
-}
-
-func (repo MemberRepository) FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.MemberActivity, paginate.PaginationData, error) {
-
-	docList := []models.MemberActivity{}
-	pagination, err := repo.pst.FindPage(&models.MemberActivity{}, limit, page, bson.M{
-		"shopid":    shopID,
-		"deletedat": bson.M{"$not": bson.M{"$gte": lastUpdatedDate}},
-		"$or": []interface{}{
-			bson.M{"createdat": bson.M{"$gte": lastUpdatedDate}},
-			bson.M{"updatedat": bson.M{"$gte": lastUpdatedDate}},
-		},
-	}, &docList)
-
-	if err != nil {
-		return []models.MemberActivity{}, paginate.PaginationData{}, err
+		return []models.MemberInfo{}, mongopagination.PaginationData{}, err
 	}
 
 	return docList, pagination, nil

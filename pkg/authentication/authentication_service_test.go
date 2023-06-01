@@ -3,16 +3,17 @@ package authentication_test
 import (
 	"errors"
 	"smlcloudplatform/internal/microservice"
-	micromodel "smlcloudplatform/internal/microservice/models"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/authentication"
+	"smlcloudplatform/pkg/firebase"
 	"smlcloudplatform/pkg/shop/models"
 	"testing"
 	"time"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -44,7 +45,7 @@ func mockLoginData(authRepo *AuthenticationRepositoryMock, shopUserRepo *ShopUse
 	authRepo.On("CreateUser", userDoc2).Return(MockObjectID(), nil)
 
 	//microAuth
-	microAuthServiceMock.On("GenerateTokenWithRedis", micromodel.UserInfo{
+	microAuthServiceMock.On("GenerateTokenWithRedis", micromodels.UserInfo{
 		Username: userDoc1.Username,
 		Name:     userDoc1.Name,
 	}).Return(tokenMock, nil)
@@ -67,6 +68,7 @@ func TestAuthService_Login(t *testing.T) {
 
 	authRepo := new(AuthenticationRepositoryMock)
 	shopUserRepo := new(ShopUserRepositoryMock)
+	shopUserAccessLogRepo := new(ShopUserAccessLogRepositoryMock)
 	microAuthServiceMock := &AuthServiceMock{}
 
 	mockLoginData(authRepo, shopUserRepo, microAuthServiceMock)
@@ -144,7 +146,7 @@ func TestAuthService_Login(t *testing.T) {
 		},
 	}
 
-	authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
+	authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime, MockFirebaseAdapter())
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
 
@@ -153,7 +155,11 @@ func TestAuthService_Login(t *testing.T) {
 			userReq.Password = tt.args.password
 			userReq.ShopID = tt.args.shopID
 
-			tokenResult, err := authService.Login(userReq)
+			authContext := authentication.AuthenticationContext{
+				Ip: "localhost",
+			}
+
+			tokenResult, err := authService.Login(userReq, authContext)
 
 			if tt.wantErr {
 				assert.NotNil(t, err)
@@ -170,6 +176,7 @@ func TestAuthService_Login(t *testing.T) {
 func TestAuthService_Register(t *testing.T) {
 	authRepo := new(AuthenticationRepositoryMock)
 	shopUserRepo := new(ShopUserRepositoryMock)
+	shopUserAccessLogRepo := new(ShopUserAccessLogRepositoryMock)
 	microAuthServiceMock := &AuthServiceMock{}
 
 	mockLoginData(authRepo, shopUserRepo, microAuthServiceMock)
@@ -210,7 +217,7 @@ func TestAuthService_Register(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
+			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime, MockFirebaseAdapter())
 
 			userReq := models.UserRequest{}
 			userReq.Username = tt.args.username
@@ -234,6 +241,7 @@ func TestAuthService_Register(t *testing.T) {
 func TestAuthService_Update(t *testing.T) {
 	authRepo := new(AuthenticationRepositoryMock)
 	shopUserRepo := new(ShopUserRepositoryMock)
+	shopUserAccessLogRepo := new(ShopUserAccessLogRepositoryMock)
 	microAuthServiceMock := &AuthServiceMock{}
 
 	userDoc := &models.UserDoc{}
@@ -273,7 +281,7 @@ func TestAuthService_Update(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
+			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime, MockFirebaseAdapter())
 
 			userReq := models.UserProfileRequest{}
 			userReq.Name = tt.args.name
@@ -293,6 +301,7 @@ func TestAuthService_Update(t *testing.T) {
 func TestAuthService_UpdatePassword(t *testing.T) {
 	authRepo := new(AuthenticationRepositoryMock)
 	shopUserRepo := new(ShopUserRepositoryMock)
+	shopUserAccessLogRepo := new(ShopUserAccessLogRepositoryMock)
 	microAuthServiceMock := &AuthServiceMock{}
 
 	userDoc := &models.UserDoc{}
@@ -343,7 +352,7 @@ func TestAuthService_UpdatePassword(t *testing.T) {
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
+			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime, MockFirebaseAdapter())
 
 			err := authService.UpdatePassword(tt.args.username, tt.args.currentPassword, tt.args.newPassword)
 
@@ -360,6 +369,7 @@ func TestAuthService_UpdatePassword(t *testing.T) {
 func TestAuthService_AccessShop(t *testing.T) {
 	authRepo := new(AuthenticationRepositoryMock)
 	shopUserRepo := new(ShopUserRepositoryMock)
+	shopUserAccessLogRepo := new(ShopUserAccessLogRepositoryMock)
 	microAuthServiceMock := &AuthServiceMock{}
 
 	microAuthServiceMock.On("GetTokenFromAuthorizationHeader", "authorization_header_valid").Return("valid_token", nil)
@@ -426,11 +436,14 @@ func TestAuthService_AccessShop(t *testing.T) {
 		},
 	}
 
+	authContext := authentication.AuthenticationContext{
+		Ip: "localhost",
+	}
+
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime)
-
-			err := authService.AccessShop(tt.args.shopID, tt.args.username, tt.args.authorizationHeader)
+			authService := authentication.NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, microAuthServiceMock, MockHashPassword, MockCheckPasswordHash, MockTime, MockFirebaseAdapter())
+			err := authService.AccessShop(tt.args.shopID, tt.args.username, tt.args.authorizationHeader, authContext)
 
 			if tt.wantErr {
 				assert.NotNil(t, err)
@@ -470,6 +483,16 @@ func (m *ShopUserRepositoryMock) Save(shopID string, username string, role model
 	return args.Error(0)
 }
 
+func (m *ShopUserRepositoryMock) UpdateLastAccess(shopID string, username string, lastAccessedAt time.Time) error {
+	args := m.Called(shopID, username, lastAccessedAt)
+	return args.Error(0)
+}
+
+func (m *ShopUserRepositoryMock) SaveFavorite(shopID string, username string, isFavorite bool) error {
+	args := m.Called(shopID, username, isFavorite)
+	return args.Error(0)
+}
+
 func (m *ShopUserRepositoryMock) Delete(shopID string, username string) error {
 	args := m.Called(shopID, username)
 	return args.Error(0)
@@ -498,13 +521,23 @@ func (m *ShopUserRepositoryMock) FindByUsername(username string) (*[]models.Shop
 	args := m.Called(username)
 	return args.Get(0).(*[]models.ShopUser), args.Error(1)
 }
-func (m *ShopUserRepositoryMock) FindByUsernamePage(username string, q string, page int, limit int) ([]models.ShopUserInfo, paginate.PaginationData, error) {
-	args := m.Called(username, q, page, limit)
-	return args.Get(0).([]models.ShopUserInfo), args.Get(1).(paginate.PaginationData), args.Error(2)
+func (m *ShopUserRepositoryMock) FindByUsernamePage(username string, pageable micromodels.Pageable) ([]models.ShopUserInfo, mongopagination.PaginationData, error) {
+	args := m.Called(username, pageable)
+	return args.Get(0).([]models.ShopUserInfo), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
-func (m *ShopUserRepositoryMock) FindByUserInShopPage(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ShopUser, paginate.PaginationData, error) {
-	args := m.Called(shopID, q, page, limit, sort)
-	return args.Get(0).([]models.ShopUser), args.Get(1).(paginate.PaginationData), args.Error(2)
+func (m *ShopUserRepositoryMock) FindByUserInShopPage(shopID string, pageable micromodels.Pageable) ([]models.ShopUser, mongopagination.PaginationData, error) {
+	args := m.Called(shopID, pageable)
+	return args.Get(0).([]models.ShopUser), args.Get(1).(mongopagination.PaginationData), args.Error(2)
+}
+
+// Shop User Access Log
+type ShopUserAccessLogRepositoryMock struct {
+	mock.Mock
+}
+
+func (m *ShopUserAccessLogRepositoryMock) Create(shopUserAccessLog models.ShopUserAccessLog) error {
+	args := m.Called(shopUserAccessLog)
+	return args.Error(0)
 }
 
 type AuthServiceMock struct {
@@ -545,13 +578,13 @@ func (m *AuthServiceMock) GetTokenFromAuthorizationHeader(tokenType microservice
 	return args.String(0), args.Error(1)
 }
 
-func (m *AuthServiceMock) GenerateTokenWithRedis(tokenType microservice.TokenType, userInfo micromodel.UserInfo) (string, error) {
+func (m *AuthServiceMock) GenerateTokenWithRedis(tokenType microservice.TokenType, userInfo micromodels.UserInfo) (string, error) {
 
 	args := m.Called(tokenType, userInfo)
 	return args.String(0), args.Error(1)
 }
 
-func (m *AuthServiceMock) GenerateTokenWithRedisExpire(tokenType microservice.TokenType, userInfo micromodel.UserInfo, expireTime time.Duration) (string, error) {
+func (m *AuthServiceMock) GenerateTokenWithRedisExpire(tokenType microservice.TokenType, userInfo micromodels.UserInfo, expireTime time.Duration) (string, error) {
 
 	args := m.Called(tokenType, userInfo, expireTime)
 	return args.String(0), args.Error(1)
@@ -584,4 +617,8 @@ func MockCheckPasswordHash(password string, hash string) bool {
 func MockTime() time.Time {
 	timeVal, _ := time.Parse("2006-01-02 15:04:05", "2022-08-30 00:00:00")
 	return timeVal
+}
+
+func MockFirebaseAdapter() firebase.IFirebaseAdapter {
+	return &firebase.FirebaseAdapter{}
 }

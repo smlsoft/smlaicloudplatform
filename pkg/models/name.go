@@ -25,7 +25,12 @@ type Description struct {
 }
 
 type NameX struct {
-	Code   *string `json:"code" bson:"code" validate:"required,min=1,max=255"`
-	Name   *string `json:"name" bson:"name" validate:"required,max=255"`
-	IsAuto bool    `json:"isauto" bson:"isauto"`
+	Code     *string `json:"code" bson:"code" validate:"required,min=1,max=255"`
+	Name     *string `json:"name" bson:"name" validate:"required,max=255"`
+	IsAuto   bool    `json:"isauto" bson:"isauto"`
+	IsDelete bool    `json:"isdelete"`
+}
+
+func NewNameXWithCodeName(code, name string) *NameX {
+	return &NameX{Code: &code, Name: &name, IsAuto: false, IsDelete: false}
 }

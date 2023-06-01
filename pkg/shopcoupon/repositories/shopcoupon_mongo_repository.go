@@ -2,10 +2,11 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/shopcoupon/models"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 )
 
 type IShopCouponRepository interface {
@@ -14,9 +15,9 @@ type IShopCouponRepository interface {
 	CreateInBatch(docList []models.ShopCouponDoc) error
 	Update(shopID string, guid string, doc models.ShopCouponDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.ShopCouponInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ShopCouponInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.ShopCouponDoc, error)
-	FindPageFilterSort(shopID string, filters map[string]interface{}, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.ShopCouponInfo, mongopagination.PaginationData, error)
+	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.ShopCouponInfo, mongopagination.PaginationData, error)
 }
 
 type ShopCouponRepository struct {

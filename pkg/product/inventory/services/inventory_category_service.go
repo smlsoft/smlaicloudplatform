@@ -1,8 +1,8 @@
 package services
 
 import (
-	categoryRepo "smlcloudplatform/pkg/product/category/repositories"
 	"smlcloudplatform/pkg/product/inventory/repositories"
+	categoryRepo "smlcloudplatform/pkg/product/productcategory/repositories"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -14,11 +14,11 @@ type IInventoryCategoryService interface {
 
 type InventoryCategoryService struct {
 	inventoryRepository repositories.IInventoryRepository
-	categoryRepository  categoryRepo.ICategoryRepository
+	categoryRepository  categoryRepo.IProductCategoryRepository
 	invMqRepo           repositories.IInventoryMQRepository
 }
 
-func NewInventorycategoryService(inventoryRepository repositories.InventoryRepository, categoryRepository categoryRepo.CategoryRepository, inventoryMqRepo repositories.IInventoryMQRepository) *InventoryCategoryService {
+func NewInventorycategoryService(inventoryRepository repositories.InventoryRepository, categoryRepository categoryRepo.ProductCategoryRepository, inventoryMqRepo repositories.IInventoryMQRepository) *InventoryCategoryService {
 	return &InventoryCategoryService{
 		inventoryRepository: inventoryRepository,
 		categoryRepository:  categoryRepository,
@@ -38,7 +38,7 @@ func (ics *InventoryCategoryService) UpdateInventoryCategoryBulk(shopID string, 
 	for _, findDoc := range itemsList {
 
 		findDoc.CategoryGuid = catId
-		findDoc.Category = &findCategory.Category
+		findDoc.Category = &findCategory.ProductCategory
 		findDoc.UpdatedBy = authUsername
 		findDoc.UpdatedAt = time.Now()
 

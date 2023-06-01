@@ -185,8 +185,8 @@ func (h StorefrontHttp) InfoStorefront(ctx microservice.IContext) error {
 // @Description get struct array by ID
 // @Tags		Storefront
 // @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -196,10 +196,8 @@ func (h StorefrontHttp) SearchStorefront(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	sort := utils.GetSortParam(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchStorefront(shopID, q, page, limit, sort)
+	pageable := utils.GetPageable(ctx.QueryParam)
+	docList, pagination, err := h.svc.SearchStorefront(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

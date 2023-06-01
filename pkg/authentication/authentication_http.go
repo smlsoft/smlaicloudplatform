@@ -4,15 +4,16 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/firebase"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/shop"
 	shopmodel "smlcloudplatform/pkg/shop/models"
 	"smlcloudplatform/pkg/utils"
-	"strconv"
 )
 
 type IAuthenticationHttp interface {
 	Login(ctx microservice.IContext) error
+	TokenLogin(ctx microservice.IContext) error
 	Register(ctx microservice.IContext) error
 	Logout(ctx microservice.IContext) error
 	Profile(ctx microservice.IContext) error
@@ -34,8 +35,10 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 
 	shopRepo := shop.NewShopRepository(pst)
 	shopUserRepo := shop.NewShopUserRepository(pst)
+	shopUserAccessLogRepo := shop.NewShopUserAccessLogRepository(pst)
 	authRepo := NewAuthenticationRepository(pst)
-	authenticationService := NewAuthenticationService(authRepo, shopUserRepo, authService, utils.HashPassword, utils.CheckHashPassword, ms.TimeNow)
+	firebaseAdapter := firebase.NewFirebaseAdapter()
+	authenticationService := NewAuthenticationService(authRepo, shopUserRepo, shopUserAccessLogRepo, authService, utils.HashPassword, utils.CheckHashPassword, ms.TimeNow, firebaseAdapter)
 
 	shopService := shop.NewShopService(shopRepo, shopUserRepo, utils.NewGUID, ms.TimeNow)
 	shopUserService := shop.NewShopUserService(shopUserRepo)
@@ -52,6 +55,7 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConf
 func (h AuthenticationHttp) RouteSetup() {
 
 	h.ms.POST("/login", h.Login)
+	h.ms.POST("/tokenlogin", h.TokenLogin)
 	h.ms.POST("/logout", h.Logout)
 
 	h.ms.POST("/register", h.Register)
@@ -61,11 +65,13 @@ func (h AuthenticationHttp) RouteSetup() {
 	h.ms.PUT("/profile", h.Update)
 	h.ms.PUT("/profile/password", h.UpdatePassword)
 
-	h.ms.GET("/list-shop", h.ListShopCanAccess, h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig())))
-	h.ms.POST("/select-shop", h.SelectShop, h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig())))
+	middlewareShop := h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig()))
+	h.ms.GET("/list-shop", h.ListShopCanAccess, middlewareShop)
+	h.ms.POST("/select-shop", h.SelectShop, middlewareShop)
+	h.ms.PUT("/favorite-shop", h.UpdateShopFavorite, middlewareShop)
 
 	shopHttp := shop.NewShopHttp(h.ms, h.cfg)
-	h.ms.POST("/create-shop", shopHttp.CreateShop, h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig())))
+	h.ms.POST("/create-shop", shopHttp.CreateShop, middlewareShop)
 }
 
 // Login login
@@ -93,7 +99,46 @@ func (h AuthenticationHttp) Login(ctx microservice.IContext) error {
 		return err
 	}
 
-	tokenString, err := h.authenticationService.Login(userReq)
+	authContext := AuthenticationContext{
+		Ip: ctx.RealIp(),
+	}
+
+	tokenString, err := h.authenticationService.Login(userReq, authContext)
+
+	if err != nil {
+		ctx.ResponseError(400, "login failed.")
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.AuthResponse{
+		Success: true,
+		Token:   tokenString,
+	})
+
+	return nil
+}
+
+// Login login
+// @Description get struct array by ID
+// @Tags		Authentication
+// @Param		TokenLoginRequest  body      TokenLoginRequest  true  "User Account"
+// @Accept 		json
+// @Success		200	{object}	common.AuthResponse
+// @Failure		400 {object}	common.AuthResponseFailed
+// @Router /tokenlogin [post]
+func (h AuthenticationHttp) TokenLogin(ctx microservice.IContext) error {
+
+	input := ctx.ReadInput()
+
+	tokenReq := &TokenLoginRequest{}
+	err := json.Unmarshal([]byte(input), &tokenReq)
+
+	if err != nil {
+		ctx.ResponseError(400, "user payload invalid")
+		return err
+	}
+
+	tokenString, err := h.authenticationService.LoginWithFirebaseToken(tokenReq.Token)
 
 	if err != nil {
 		ctx.ResponseError(400, "login failed.")
@@ -363,7 +408,11 @@ func (h AuthenticationHttp) SelectShop(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.authenticationService.AccessShop(shopSelectReq.ShopID, authUsername, authorizationHeader)
+	authContext := AuthenticationContext{
+		Ip: ctx.RealIp(),
+	}
+
+	err = h.authenticationService.AccessShop(shopSelectReq.ShopID, authUsername, authorizationHeader, authContext)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, common.ApiResponse{
@@ -380,7 +429,7 @@ func (h AuthenticationHttp) SelectShop(ctx microservice.IContext) error {
 	return nil
 }
 
-// List Merchant godoc
+// List Shop godoc
 // @Description List Merchant In My Account
 // @Tags		Authentication
 // @Accept 		json
@@ -391,19 +440,9 @@ func (h AuthenticationHttp) SelectShop(ctx microservice.IContext) error {
 func (h AuthenticationHttp) ListShopCanAccess(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 
-	q := ctx.QueryParam("q")
-	page, err := strconv.Atoi(ctx.QueryParam("page"))
-	if err != nil {
-		page = 1
-	}
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	limit, err := strconv.Atoi(ctx.QueryParam("limit"))
-
-	if err != nil {
-		limit = 20
-	}
-
-	docList, pagination, err := h.shopUserService.ListShopByUser(authUsername, q, page, limit)
+	docList, pagination, err := h.shopUserService.ListShopByUser(authUsername, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -415,6 +454,44 @@ func (h AuthenticationHttp) ListShopCanAccess(ctx microservice.IContext) error {
 			Success:    true,
 			Data:       docList,
 			Pagination: pagination,
+		},
+	)
+
+	return nil
+}
+
+// Favorite Shop godoc
+// @Description Favorite Shop In Account
+// @Tags		Authentication
+// @Accept 		json
+// @Param		ShopFavoriteRequest  body      ShopFavoriteRequest  true  "Shop Favorite Request"
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.ApiResponse
+// @Security     AccessToken
+// @Router /favorite-shop [put]
+func (h AuthenticationHttp) UpdateShopFavorite(ctx microservice.IContext) error {
+	authUsername := ctx.UserInfo().Username
+
+	input := ctx.ReadInput()
+
+	reqBody := ShopFavoriteRequest{}
+	err := json.Unmarshal([]byte(input), &reqBody)
+
+	if err != nil {
+		ctx.ResponseError(400, "request payload invalid")
+		return err
+	}
+
+	err = h.authenticationService.UpdateFavoriteShop(reqBody.ShopID, authUsername, reqBody.IsFavorite)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return nil
+	}
+
+	ctx.Response(http.StatusOK,
+		common.ApiResponse{
+			Success: true,
 		},
 	)
 

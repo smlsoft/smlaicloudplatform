@@ -77,312 +77,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/category": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "List Inventory Category",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Add Category",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Add Category",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.CategoryPageResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Inventory Category",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "description": "Add Category",
-                        "name": "Category",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Category"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/category/bulk": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Category",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "description": "Category",
-                        "name": "Category",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Category"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.CategoryBulkReponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/category/fetchupdate": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Fetch Update Category By Date",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "DateTime",
-                        "name": "lastUpdate",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.CategoryFetchUpdateResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/category/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Get Inventory Category",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Category Id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.CategoryInfoResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update Inventory",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Category ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Category",
-                        "name": "Category",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Category"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete Category",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Category ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/checksms": {
             "get": {
                 "security": [
@@ -457,13 +151,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Page",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Limit",
                         "name": "limit",
                         "in": "query"
                     }
@@ -559,6 +253,109 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/color/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Color"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/color/pk": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Color by code array",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "description": "Code Array",
+                        "name": "[]string",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     },
                     "401": {
@@ -722,6 +519,2301 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.Shop"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/creditor": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Creditor"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Creditor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Creditor"
+                ],
+                "parameters": [
+                    {
+                        "description": "Creditor",
+                        "name": "Creditor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreditorRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Creditor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Creditor"
+                ],
+                "parameters": [
+                    {
+                        "description": "Creditor GUIDs",
+                        "name": "Creditor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/creditor-group": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CreditorGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create CreditorGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CreditorGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "CreditorGroup",
+                        "name": "CreditorGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreditorGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete CreditorGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CreditorGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "CreditorGroup GUIDs",
+                        "name": "CreditorGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/creditor-group/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create CreditorGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CreditorGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "CreditorGroup",
+                        "name": "CreditorGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CreditorGroup"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/creditor-group/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CreditorGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/creditor-group/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CreditorGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CreditorGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update CreditorGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CreditorGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CreditorGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "CreditorGroup",
+                        "name": "CreditorGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreditorGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete CreditorGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CreditorGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CreditorGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/creditor/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Creditor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Creditor"
+                ],
+                "parameters": [
+                    {
+                        "description": "Creditor",
+                        "name": "Creditor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CreditorRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/creditor/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Creditor by code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Creditor"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Creditor Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/creditor/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Creditor"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/creditor/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Creditor"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Creditor ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Creditor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Creditor"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Creditor ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Creditor",
+                        "name": "Creditor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreditorRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Creditor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Creditor"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Creditor ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/customer": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customer"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "creditor",
+                        "name": "iscreditor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "debtor",
+                        "name": "isdebtor",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customer"
+                ],
+                "parameters": [
+                    {
+                        "description": "Customer",
+                        "name": "Customer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CustomerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customer"
+                ],
+                "parameters": [
+                    {
+                        "description": "Customer GUIDs",
+                        "name": "Customer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/customer-group": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create CustomerGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "CustomerGroup",
+                        "name": "CustomerGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CustomerGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete CustomerGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "CustomerGroup GUIDs",
+                        "name": "CustomerGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/customer-group/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create CustomerGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "CustomerGroup",
+                        "name": "CustomerGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CustomerGroup"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/customer-group/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/customer-group/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CustomerGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update CustomerGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CustomerGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "CustomerGroup",
+                        "name": "CustomerGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CustomerGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete CustomerGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CustomerGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CustomerGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/customer/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customer"
+                ],
+                "parameters": [
+                    {
+                        "description": "Customer",
+                        "name": "Customer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CustomerRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/customer/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Customer By Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customer"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Customer Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/customer/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customer"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "creditor",
+                        "name": "iscreditor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "debtor",
+                        "name": "isdebtor",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/customer/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get info Customer by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customer"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Customer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customer"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Customer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Customer",
+                        "name": "Customer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CustomerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Customer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customer"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Customer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/debtor": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Debtor"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Debtor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Debtor"
+                ],
+                "parameters": [
+                    {
+                        "description": "Debtor",
+                        "name": "Debtor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DebtorRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Debtor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Debtor"
+                ],
+                "parameters": [
+                    {
+                        "description": "Debtor GUIDs",
+                        "name": "Debtor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/debtor-group": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DebtorGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create DebtorGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DebtorGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "DebtorGroup",
+                        "name": "DebtorGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DebtorGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete DebtorGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DebtorGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "DebtorGroup GUIDs",
+                        "name": "DebtorGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/debtor-group/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create DebtorGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DebtorGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "DebtorGroup",
+                        "name": "DebtorGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DebtorGroup"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/debtor-group/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DebtorGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/debtor-group/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DebtorGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "DebtorGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update DebtorGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DebtorGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "DebtorGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "DebtorGroup",
+                        "name": "DebtorGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DebtorGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete DebtorGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DebtorGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "DebtorGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/debtor/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Debtor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Debtor"
+                ],
+                "parameters": [
+                    {
+                        "description": "Debtor",
+                        "name": "Debtor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DebtorRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/debtor/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get debtor by code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Debtor"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Debtor Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/debtor/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Debtor"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/debtaccount/debtor/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Debtor"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Debtor ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Debtor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Debtor"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Debtor ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Debtor",
+                        "name": "Debtor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DebtorRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Debtor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Debtor"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Debtor ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
@@ -998,21 +3090,23 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/documentimage/{guid}/comment": {
             "put": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Update Document Image",
+                "description": "Create Document Image Comment",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "DocumentImage"
                 ],
-                "summary": "Update Document Image",
+                "summary": "Create Document Image Comment",
                 "parameters": [
                     {
                         "type": "string",
@@ -1022,51 +3116,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "DocumentImage",
-                        "name": "DocumentImage",
+                        "description": "CommentRequest",
+                        "name": "CommentRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.DocumentImage"
+                            "$ref": "#/definitions/models.CommentRequest"
                         }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Delete Document Image",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DocumentImage"
-                ],
-                "summary": "Delete Document Image",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "document image guid",
-                        "name": "guid",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -1085,21 +3141,21 @@ const docTemplate = `{
                 }
             }
         },
-        "/documentimage/{guid}/reject": {
+        "/documentimage/{guid}/imageedit": {
             "put": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Update Reject Document Image",
+                "description": "Create Document Image Edit",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "DocumentImage"
                 ],
-                "summary": "Update Reject Document Image",
+                "summary": "Create Document Image Edit",
                 "parameters": [
                     {
                         "type": "string",
@@ -1109,12 +3165,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Document Image Reject",
-                        "name": "RequestDocumentImageReject",
+                        "description": "ImageEditRequest",
+                        "name": "ImageEditRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.RequestDocumentImageReject"
+                            "$ref": "#/definitions/models.ImageEditRequest"
                         }
                     }
                 ],
@@ -1168,6 +3224,48 @@ const docTemplate = `{
                         "description": "Size",
                         "name": "limit",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter Path Job",
+                        "name": "pathtask",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by Job guidfixed",
+                        "name": "taskguid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "เอกสารที่มีการจอง,0 not filter, 1 filter",
+                        "name": "reserve",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ex. status=0 status=1,2,3",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "document reference: empty not filter, 1 not reference, 2 referenced",
+                        "name": "ref",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "From Date (YYYY-MM-DD)",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "To Date (YYYY-MM-DD)",
+                        "name": "todate",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1214,6 +3312,220 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Many Document Image Group",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImageGroup"
+                ],
+                "summary": "Delete Many Document Image Group",
+                "parameters": [
+                    {
+                        "description": "document image group guids",
+                        "name": "guids",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimagegroup/docref/{docref}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Document Image Group By document reference Infomation",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImageGroup"
+                ],
+                "summary": "Get Document Image Group By document reference Infomation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document reference",
+                        "name": "docref",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.DocumentImageInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimagegroup/task/{taskguid}/recount": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "ReCount Status Document Image Group By Task",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImageGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "task guid",
+                        "name": "taskguid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimagegroup/task/{taskguid}/status": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Status Document Image Group By Task",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImageGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "task guid",
+                        "name": "taskguid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "status",
+                        "name": "models.Status",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Status"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimagegroup/xsort/{taskguid}": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update XSort Document Image Group",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImageGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "XSort",
+                        "name": "XSort",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.XSortDocumentImageGroupRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
@@ -1283,6 +3595,15 @@ const docTemplate = `{
                         "name": "guid",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Document Image Group",
+                        "name": "DocumentImageGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DocumentImageGroup"
+                        }
                     }
                 ],
                 "responses": {
@@ -1290,6 +3611,44 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Document Image Group",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImageGroup"
+                ],
+                "summary": "Delete Document Image Group",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document image group guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
@@ -1322,6 +3681,162 @@ const docTemplate = `{
                         "name": "guid",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Image Reference",
+                        "name": "ImageReferenceBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ImageReferenceBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimagegroup/{guid}/reference": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Reference In Document Image Group",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImageGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document image group guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Reference",
+                        "name": "Reference",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Reference"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimagegroup/{guid}/status": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Status Document Image Group",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImageGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document image group guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "status",
+                        "name": "models.Status",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Status"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/documentimagegroup/{guid}/tags": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Status Document Image Group",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DocumentImageGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "document image group guid",
+                        "name": "guid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "tags",
+                        "name": "[]string",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
                     }
                 ],
                 "responses": {
@@ -1379,155 +3894,21 @@ const docTemplate = `{
                 }
             }
         },
-        "/employee": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "List Employee",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Employee"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Size",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.EmployeePageResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "For Create Employee",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Employee"
-                ],
-                "summary": "Create Employee",
-                "parameters": [
-                    {
-                        "description": "Register Employee",
-                        "name": "User",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Employee"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/employee/login": {
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Validate Employee",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Employee"
-                ],
-                "parameters": [
-                    {
-                        "description": "EmployeeUserPassword",
-                        "name": "EmployeeUserPassword",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.EmployeeRequestLogin"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.EmployeeInfo"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/employee/password/{id}": {
+        "/employee/password": {
             "put": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "For User Register Application",
+                "description": "Update Password Employee",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "Employee"
                 ],
-                "summary": "Register An Account",
+                "summary": "Update Password Employee",
                 "parameters": [
                     {
                         "type": "string",
@@ -1562,67 +3943,28 @@ const docTemplate = `{
                 }
             }
         },
-        "/employee/{username}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "List Employee",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Employee"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.EmployeePageResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
+        "/favorite-shop": {
             "put": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Update Employee",
+                "description": "Favorite Shop In Account",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Employee"
+                    "Authentication"
                 ],
-                "summary": "Update Employee",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Employee username",
-                        "name": "username",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Employee",
-                        "name": "Employee",
+                        "description": "Shop Favorite Request",
+                        "name": "ShopFavoriteRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.EmployeeRequestUpdate"
+                            "$ref": "#/definitions/authentication.ShopFavoriteRequest"
                         }
                     }
                 ],
@@ -1630,13 +3972,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccess"
+                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
+                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     }
                 }
@@ -1722,6 +4064,51 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/accountgroup/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "นำเข้ากลุ่มบัญชี",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "นำเข้ากลุ่มบัญชี",
+                "parameters": [
+                    {
+                        "description": "กลุ่มบัญชี",
+                        "name": "AccountGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.AccountGroup"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkInsertResponse"
                         }
                     },
                     "401": {
@@ -1837,6 +4224,403 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/accountperiodmaster": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create AccountPeriodMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "description": "AccountPeriodMaster",
+                        "name": "AccountPeriodMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AccountPeriodMaster"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete AccountPeriodMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "description": "AccountPeriodMaster GUIDs",
+                        "name": "AccountPeriodMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/accountperiodmaster/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Bulk Create AccountPeriodMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "description": "Array AccountPeriodMaster",
+                        "name": "AccountPeriodMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.AccountPeriodMaster"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/accountperiodmaster/by-date": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get AccountPeriodMaster by date",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "date-list",
+                        "name": "date-list",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/accountperiodmaster/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/accountperiodmaster/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "AccountPeriodMaster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update AccountPeriodMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "AccountPeriodMaster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "AccountPeriodMaster",
+                        "name": "AccountPeriodMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AccountPeriodMaster"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete AccountPeriodMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AccountPeriodMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "AccountPeriodMaster ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -2142,6 +4926,54 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "DocNo",
+                        "name": "docno",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "DocDate ex. 2020-01-01",
+                        "name": "docdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account Year",
+                        "name": "accountyear",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account Period",
+                        "name": "accountperiod",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account Description",
+                        "name": "accountdescription",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Amount",
+                        "name": "amount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created By",
+                        "name": "createdby",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Create Date ex. 2020-01-01",
+                        "name": "createdat",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "Page",
                         "name": "page",
@@ -2192,6 +5024,46 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.Journal"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journal/batchid/{batchid}": {
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "ลบข้อมูลรายวัน By Batch ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "ลบข้อมูลรายวัน By Batch ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Journal Batch ID",
+                        "name": "batchid",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2434,6 +5306,37 @@ const docTemplate = `{
                         "required": true
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JournalInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/gl/journal/last-docno": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "แสดงรายละเอียดข้อมูลรายวัน",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GL"
+                ],
+                "summary": "แสดงรายละเอียดข้อมูลรายวัน",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -3527,13 +6430,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Page",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Limit",
                         "name": "limit",
                         "in": "query"
                     }
@@ -3754,13 +6657,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Page",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Limit",
                         "name": "limit",
                         "in": "query"
                     }
@@ -4131,6 +7034,142 @@ const docTemplate = `{
                 }
             }
         },
+        "/master-sync": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Master Sync",
+                "tags": [
+                    "MasterSync"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "last update date ex: 2020-01-01T00:00:00",
+                        "name": "lastupdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "module code ex: product,productcategory,productbarcode",
+                        "name": "module",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "action code (all, new, remove)",
+                        "name": "action",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "filter data ex. filter=branch:1,department:x01",
+                        "name": "filter",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/master-sync/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Master Sync Offset",
+                "tags": [
+                    "MasterSync"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "last update date ex: 2020-01-01T00:00:00",
+                        "name": "lastupdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "module code ex: product,productcategory,productbarcode",
+                        "name": "module",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "action code (all, new, remove)",
+                        "name": "action",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/master-sync/status": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Master Sync Status",
+                "tags": [
+                    "MasterSync"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/member": {
             "get": {
                 "security": [
@@ -4209,45 +7248,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/member/fetchupdate": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Fetch Update Member By Date",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Member"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "DateTime",
-                        "name": "lastUpdate",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.MemberFetchUpdateResponse"
                         }
                     },
                     "401": {
@@ -4376,39 +7376,6 @@ const docTemplate = `{
                         "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/merchant": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Access to Merchant",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Merchant"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.ShopInfo"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     }
                 }
@@ -4648,13 +7615,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Page",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Limit",
                         "name": "limit",
                         "in": "query"
                     }
@@ -4703,6 +7670,44 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/option/by-code": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Inventory Option by code array",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Code filter, json array encode ",
+                        "name": "codes",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     },
                     "401": {
@@ -4859,13 +7864,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Page",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Limit",
                         "name": "limit",
                         "in": "query"
                     }
@@ -5073,6 +8078,2284 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "OptionPattern ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/organization/branch": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Branch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Branch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Branch"
+                ],
+                "parameters": [
+                    {
+                        "description": "Branch",
+                        "name": "Branch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Branch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Branch"
+                ],
+                "parameters": [
+                    {
+                        "description": "Branch GUIDs",
+                        "name": "Branch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/organization/branch/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Branch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Branch"
+                ],
+                "parameters": [
+                    {
+                        "description": "Branch",
+                        "name": "Branch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/organization/branch/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Branch info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Branch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Branch Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/organization/branch/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Branch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/organization/branch/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Branch info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Branch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Branch guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Branch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Branch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Branch ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Branch",
+                        "name": "Branch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Branch"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Branch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Branch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Branch ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/organization/business-type": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BusinessType"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create BusinessType",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BusinessType"
+                ],
+                "parameters": [
+                    {
+                        "description": "BusinessType",
+                        "name": "BusinessType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BusinessType"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete BusinessType",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BusinessType"
+                ],
+                "parameters": [
+                    {
+                        "description": "BusinessType GUIDs",
+                        "name": "BusinessType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/organization/business-type/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create BusinessType",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BusinessType"
+                ],
+                "parameters": [
+                    {
+                        "description": "BusinessType",
+                        "name": "BusinessType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.BusinessType"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/organization/business-type/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get BusinessType info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BusinessType"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "BusinessType Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/organization/business-type/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BusinessType"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/organization/business-type/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get BusinessType info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BusinessType"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "BusinessType guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update BusinessType",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BusinessType"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "BusinessType ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "BusinessType",
+                        "name": "BusinessType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BusinessType"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete BusinessType",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BusinessType"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "BusinessType ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/organization/department": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Department"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Department",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Department"
+                ],
+                "parameters": [
+                    {
+                        "description": "Department",
+                        "name": "Department",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Department"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Department",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Department"
+                ],
+                "parameters": [
+                    {
+                        "description": "Department GUIDs",
+                        "name": "Department",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/organization/department/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Department",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Department"
+                ],
+                "parameters": [
+                    {
+                        "description": "Department",
+                        "name": "Department",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Department"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/organization/department/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Department"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/organization/department/{departmentCode}/branch/{branchCode}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Department info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Department"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Department Code",
+                        "name": "departmentCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Branch Code",
+                        "name": "branchCode",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/organization/department/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Department info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Department"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Department guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Department",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Department"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Department ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Department",
+                        "name": "Department",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Department"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Department",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Department"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Department ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/bankmaster": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create BankMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankMaster"
+                ],
+                "parameters": [
+                    {
+                        "description": "BankMaster",
+                        "name": "BankMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BankMaster"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete BankMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankMaster"
+                ],
+                "parameters": [
+                    {
+                        "description": "BankMaster GUIDs",
+                        "name": "BankMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/bankmaster/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create BankMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankMaster"
+                ],
+                "parameters": [
+                    {
+                        "description": "BankMaster",
+                        "name": "BankMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.BankMaster"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/bankmaster/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/bankmaster/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "BankMaster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update BankMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "BankMaster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "BankMaster",
+                        "name": "BankMaster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BankMaster"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete BankMaster",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankMaster"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "BankMaster ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/bookbank": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BookBank"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create BookBank",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BookBank"
+                ],
+                "parameters": [
+                    {
+                        "description": "BookBank",
+                        "name": "BookBank",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BookBank"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete BookBank",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BookBank"
+                ],
+                "parameters": [
+                    {
+                        "description": "BookBank GUIDs",
+                        "name": "BookBank",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/bookbank/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create BookBank",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BookBank"
+                ],
+                "parameters": [
+                    {
+                        "description": "BookBank",
+                        "name": "BookBank",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.BookBank"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/bookbank/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BookBank"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/bookbank/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BookBank"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "BookBank ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update BookBank",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BookBank"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "BookBank ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "BookBank",
+                        "name": "BookBank",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BookBank"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete BookBank",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BookBank"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "BookBank ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/qrpayment": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "QrPayment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create QrPayment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "QrPayment"
+                ],
+                "parameters": [
+                    {
+                        "description": "QrPayment",
+                        "name": "QrPayment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.QrPayment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete QrPayment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "QrPayment"
+                ],
+                "parameters": [
+                    {
+                        "description": "QrPayment GUIDs",
+                        "name": "QrPayment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/qrpayment/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create QrPayment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "QrPayment"
+                ],
+                "parameters": [
+                    {
+                        "description": "QrPayment",
+                        "name": "QrPayment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.QrPayment"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/qrpayment/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "QrPayment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/payment/qrpayment/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "QrPayment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "QrPayment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update QrPayment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "QrPayment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "QrPayment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "QrPayment",
+                        "name": "QrPayment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.QrPayment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete QrPayment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "QrPayment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "QrPayment ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -5386,6 +10669,3059 @@ const docTemplate = `{
                 }
             }
         },
+        "/product": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "category guid",
+                        "name": "category",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "description": "Product",
+                        "name": "Product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Product"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "description": "Product GUIDs",
+                        "name": "Product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-section/branch": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBranch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Save SectionBranch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBranch"
+                ],
+                "parameters": [
+                    {
+                        "description": "SectionBranch",
+                        "name": "SectionBranch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SectionBranch"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SectionBranch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBranch"
+                ],
+                "parameters": [
+                    {
+                        "description": "SectionBranch GUIDs",
+                        "name": "SectionBranch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-section/branch/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create SectionBranch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBranch"
+                ],
+                "parameters": [
+                    {
+                        "description": "SectionBranch",
+                        "name": "SectionBranch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.SectionBranch"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-section/branch/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SectionBranch info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBranch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SectionBranch Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-section/branch/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBranch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-section/branch/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SectionBranch info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBranch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SectionBranch guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SectionBranch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBranch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SectionBranch ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-section/business-type": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBusinessType"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Save SectionBusinessType",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBusinessType"
+                ],
+                "parameters": [
+                    {
+                        "description": "SectionBusinessType",
+                        "name": "SectionBusinessType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SectionBusinessType"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SectionBusinessType",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBusinessType"
+                ],
+                "parameters": [
+                    {
+                        "description": "SectionBusinessType GUIDs",
+                        "name": "SectionBusinessType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-section/business-type/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create SectionBusinessType",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBusinessType"
+                ],
+                "parameters": [
+                    {
+                        "description": "SectionBusinessType",
+                        "name": "SectionBusinessType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.SectionBusinessType"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-section/business-type/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SectionBusinessType info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBusinessType"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SectionBusinessType Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-section/business-type/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBusinessType"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-section/business-type/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SectionBusinessType info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBusinessType"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SectionBusinessType guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SectionBusinessType",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionBusinessType"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SectionBusinessType ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-section/department": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionDepartment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Save SectionDepartment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionDepartment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SectionDepartment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "SectionDepartment",
+                        "name": "SectionDepartment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SectionDepartment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SectionDepartment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionDepartment"
+                ],
+                "parameters": [
+                    {
+                        "description": "SectionDepartment GUIDs",
+                        "name": "SectionDepartment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-section/department/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create SectionDepartment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionDepartment"
+                ],
+                "parameters": [
+                    {
+                        "description": "SectionDepartment",
+                        "name": "SectionDepartment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.SectionDepartment"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-section/department/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionDepartment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-section/department/{departmentCode}/branch/{branchCode}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SectionDepartment info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionDepartment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SectionDepartment Code",
+                        "name": "departmentCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Branch Code",
+                        "name": "branchCode",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product-section/department/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SectionDepartment info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionDepartment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SectionDepartment guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SectionDepartment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SectionDepartment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SectionDepartment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/barcode": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ProductBarcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductBarcode",
+                        "name": "ProductBarcode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductBarcodeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductBarcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductBarcode GUIDs",
+                        "name": "ProductBarcode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/barcode/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ProductBarcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductBarcode",
+                        "name": "ProductBarcode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ProductBarcode"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/barcode/by-code": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get ProductBarcode by code array",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Code filter, json array encode ",
+                        "name": "codes",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/barcode/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/barcode/master": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get master ProductBarcode by code array",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Code filter, json array encode ",
+                        "name": "codes",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/barcode/pk/{barcode}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get data by barcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Barcode",
+                        "name": "barcode",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/barcode/xsort": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update XSort ProductBarcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "description": "XSort",
+                        "name": "XSort",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.XSortModifyReqesut"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/barcode/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductBarcode ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update ProductBarcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductBarcode ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ProductBarcode",
+                        "name": "ProductBarcode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductBarcodeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductBarcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductBarcode ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/barcode2": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode2"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "description": "Product",
+                        "name": "Product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Product"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/by-barcode": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get product by barcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "barcode number",
+                        "name": "code",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/by-code": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Product by code array",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Code filter, json array encode ",
+                        "name": "codes",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/category": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ProductCategory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductCategory",
+                        "name": "ProductCategory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductCategory"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductCategory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductCategory GUIDs",
+                        "name": "ProductCategory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/category/barcodes": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Barcodes Category",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "description": "Barcodes",
+                        "name": "Barcodes",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.BarcodesModifyReqesut"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/category/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ProductCategory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductCategory",
+                        "name": "ProductCategory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ProductCategory"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/category/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/category/xsort": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update XSort Category",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "description": "XSort",
+                        "name": "XSort",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.XSortModifyReqesut"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/category/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductCategory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update ProductCategory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductCategory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ProductCategory",
+                        "name": "ProductCategory",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductCategory"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductCategory",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductCategory"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductCategory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/group": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ProductGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductGroup",
+                        "name": "ProductGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductGroup GUIDs",
+                        "name": "ProductGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/group/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ProductGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductGroup",
+                        "name": "ProductGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ProductGroup"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/group/by-code": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Product Group by code array",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Code filter, json array encode ",
+                        "name": "codes",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/group/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/group/save": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Save ProductGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "description": "ProductGroup",
+                        "name": "ProductGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/group/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update ProductGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ProductGroup",
+                        "name": "ProductGroup",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductGroup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ProductGroup",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductGroup"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ProductGroup ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "category guid",
+                        "name": "category",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/master/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get master Product by code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Code",
+                        "name": "codes",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/save": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Save Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "description": "Product",
+                        "name": "Product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Product"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Product",
+                        "name": "Product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Product"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Product",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/profile": {
             "get": {
                 "security": [
@@ -5452,219 +13788,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/purchase": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Purchase"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search Value",
-                        "name": "q",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Add Category",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Add Category",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.PurchaseListPageResponse"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Create Purchase Transaction",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Purchase"
-                ],
-                "parameters": [
-                    {
-                        "description": "payload",
-                        "name": "Purchase",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Purchase"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/purchase/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "After Purchare Doc Create system will be return Id of Purchase Document. this Id can get Purchase Document in this service.",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Purchase"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Document ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.PurchaseInfo"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update Inventory",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Purchase"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Purchase Document ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "payload",
-                        "name": "Purchase",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Purchase"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Tempolaty Delete  Purchase Transaction",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Purchase"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Purchase Doc ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/register": {
             "post": {
                 "description": "For User Register Application",
@@ -5695,6 +13818,1237 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/report/execute": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Execute ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/report/playground": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Playground ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/report/query": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery GUIDs",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/report/query/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get ReportQuery info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/report/query/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/report/query/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get ReportQuery info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/reportm/execute": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Execute ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/reportm/playground": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Playground ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/reportm/query": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "description": "ReportQuery GUIDs",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/reportm/query/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get ReportQuery info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/reportm/query/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/reportm/query/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get ReportQuery info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "ReportQuery",
+                        "name": "ReportQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete ReportQuery",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ReportQuery"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReportQuery ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/device": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Device",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "Device",
+                        "name": "Device",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_restaurant_device_models.Device"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Device",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "Device GUIDs",
+                        "name": "Device",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/device/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Device",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "Device",
+                        "name": "Device",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/smlcloudplatform_pkg_restaurant_device_models.Device"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/device/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/device/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Device ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Device",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Device ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Device",
+                        "name": "Device",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_restaurant_device_models.Device"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Device",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Device ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
                         }
@@ -5835,14 +15189,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/restaurant/kitchen/fetchupdate": {
+        "/restaurant/kitchen/list": {
             "get": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Fetch Restaurant Kitchen Update By Date",
+                "description": "search limit offset",
                 "consumes": [
                     "application/json"
                 ],
@@ -5852,20 +15206,19 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "DateTime YYYY-MM-DDTHH:mm",
-                        "name": "lastUpdate",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Add Category",
-                        "name": "page",
+                        "description": "Search Value",
+                        "name": "q",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
                         "name": "limit",
                         "in": "query"
                     }
@@ -5874,7 +15227,10 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.KitchenFetchUpdateResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
                         }
                     },
                     "401": {
@@ -6046,7 +15402,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.PrinterTerminalPageResponse"
+                            "$ref": "#/definitions/models.PrinterPageResponse"
                         }
                     },
                     "401": {
@@ -6077,7 +15433,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.PrinterTerminal"
+                            "$ref": "#/definitions/models.Printer"
                         }
                     }
                 ],
@@ -6120,7 +15476,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.PrinterTerminal"
+                                "$ref": "#/definitions/models.Printer"
                             }
                         }
                     }
@@ -6141,14 +15497,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/restaurant/printer/fetchupdate": {
+        "/restaurant/printer/list": {
             "get": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "Fetch Restaurant Printer Update By Date",
+                "description": "search limit offset",
                 "consumes": [
                     "application/json"
                 ],
@@ -6158,20 +15514,19 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "DateTime YYYY-MM-DDTHH:mm",
-                        "name": "lastUpdate",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Add Category",
-                        "name": "page",
+                        "description": "Search Value",
+                        "name": "q",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
                         "name": "limit",
                         "in": "query"
                     }
@@ -6180,7 +15535,10 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.PrinterTerminalFetchUpdateResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
                         }
                     },
                     "401": {
@@ -6219,7 +15577,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.PrinterTerminalInfoResponse"
+                            "$ref": "#/definitions/models.PrinterInfoResponse"
                         }
                     },
                     "401": {
@@ -6257,7 +15615,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.PrinterTerminal"
+                            "$ref": "#/definitions/models.Printer"
                         }
                     }
                 ],
@@ -6293,6 +15651,701 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Printer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/settings": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "List Restaurant Settings Category",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.RestaurantSettingsPageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Restaurant Settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "Settings",
+                        "name": "Settings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RestaurantSettings"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Restaurant Settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "Restaurant Settings GUIDs",
+                        "name": "Settings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/settings/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create RestaurantSettings",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "RestaurantSettings",
+                        "name": "RestaurantSettings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.RestaurantSettings"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkInsertResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/settings/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Restaurant Settings By Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "RestaurantSettings Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.RestaurantSettingsInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/settings/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Get Restaurant Settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "RestaurantSettings Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.RestaurantSettingsInfoResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Restaurant Settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Settings ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Settings",
+                        "name": "Settings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RestaurantSettings"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Restaurant Settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "RestaurantSettings ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/staff": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Staff",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "Staff",
+                        "name": "Staff",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Staff"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Staff",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "Staff GUIDs",
+                        "name": "Staff",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/staff/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Staff",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "description": "Staff",
+                        "name": "Staff",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Staff"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/staff/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/staff/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Staff ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Staff",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Staff ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Staff",
+                        "name": "Staff",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Staff"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Staff",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Staff ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -6436,57 +16489,6 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.BulkInsertResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/restaurant/table/fetchupdate": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Fetch Restaurant ShopTable Update By Date",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Restaurant"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "DateTime YYYY-MM-DDTHH:mm",
-                        "name": "lastUpdate",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Add Category",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Add Category",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ShopTableFetchUpdateResponse"
                         }
                     },
                     "401": {
@@ -6753,57 +16755,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/restaurant/zone/fetchupdate": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Fetch Restaurant ShopZone Update By Date",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Restaurant"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "DateTime YYYY-MM-DDTHH:mm",
-                        "name": "lastUpdate",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Add Category",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Add Category",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.ShopZoneFetchUpdateResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
         "/restaurant/zone/{id}": {
             "get": {
                 "security": [
@@ -6926,19 +16877,19 @@ const docTemplate = `{
                 }
             }
         },
-        "/saleinvoice": {
+        "/sale-channel": {
             "get": {
                 "security": [
                     {
                         "AccessToken": []
                     }
                 ],
-                "description": "List Sale Invoice Document",
+                "description": "get list step",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Sale Invoice"
+                    "SaleChannel"
                 ],
                 "parameters": [
                     {
@@ -6955,7 +16906,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Size",
+                        "description": "Limit",
                         "name": "limit",
                         "in": "query"
                     }
@@ -6966,7 +16917,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.SaleinvoiceListPageResponse"
+                                "$ref": "#/definitions/models.ApiResponse"
                             }
                         }
                     },
@@ -6984,106 +16935,21 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Create Inventory",
+                "description": "Create SaleChannel",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Sale Invoice"
+                    "SaleChannel"
                 ],
                 "parameters": [
                     {
-                        "description": "Saleinvoice",
-                        "name": "Saleinvoice",
+                        "description": "SaleChannel",
+                        "name": "SaleChannel",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Saleinvoice"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/models.ResponseSuccessWithID"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            }
-        },
-        "/saleinvoice/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "get struct array by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Sale Invoice"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Inventory ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.SaleinvoiceInfo"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.AuthResponseFailed"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ],
-                "description": "Update Sale Invoice",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Sale Invoice"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Document ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Body",
-                        "name": "Invoice",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Saleinvoice"
+                            "$ref": "#/definitions/models.SaleChannel"
                         }
                     }
                 ],
@@ -7108,17 +16974,286 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Delete Document",
+                "description": "Delete SaleChannel",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
-                    "Sale Invoice"
+                    "SaleChannel"
+                ],
+                "parameters": [
+                    {
+                        "description": "SaleChannel GUIDs",
+                        "name": "SaleChannel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/sale-channel/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create SaleChannel",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleChannel"
+                ],
+                "parameters": [
+                    {
+                        "description": "SaleChannel",
+                        "name": "SaleChannel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.SaleChannel"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/sale-channel/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SaleChannel info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleChannel"
                 ],
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Document ID",
+                        "description": "SaleChannel Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/sale-channel/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleChannel"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/sale-channel/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SaleChannel info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleChannel"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleChannel guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update SaleChannel",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleChannel"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleChannel ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "SaleChannel",
+                        "name": "SaleChannel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SaleChannel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SaleChannel",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleChannel"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleChannel ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -7250,7 +17385,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Create Shop rt1wer11",
+                "description": "Create Shop",
                 "consumes": [
                     "application/json"
                 ],
@@ -7273,6 +17408,675 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.Shop"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/shop/branch": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Branch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Branch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Branch"
+                ],
+                "parameters": [
+                    {
+                        "description": "Branch",
+                        "name": "Branch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Branch"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Branch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Branch"
+                ],
+                "parameters": [
+                    {
+                        "description": "Branch GUIDs",
+                        "name": "Branch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/shop/branch/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Branch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/shop/branch/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Branch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Branch ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Branch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Branch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Branch ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Branch",
+                        "name": "Branch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Branch"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Branch",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Branch"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Branch ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/shop/employee": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Employee",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "parameters": [
+                    {
+                        "description": "Employee",
+                        "name": "Employee",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.EmployeeRequestRegister"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Employee",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "parameters": [
+                    {
+                        "description": "Employee GUIDs",
+                        "name": "Employee",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/shop/employee/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get employee by code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Employee code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/shop/employee/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/shop/employee/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Employee ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Employee",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Employee ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Employee",
+                        "name": "Employee",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.EmployeeRequestUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Employee",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Employee ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
@@ -7452,6 +18256,291 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/models.ApiResponse"
                             }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/shop/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Infomation Shop Profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Shop ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ShopInfo"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Shop",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Shop ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Shop Body",
+                        "name": "Shop",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Shop"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Shop"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Shop",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shop"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Shop ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Shop"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/sml-transaction": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create SMLTransaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMLTransaction"
+                ],
+                "parameters": [
+                    {
+                        "description": "SMLTransactionRequest",
+                        "name": "SMLTransactionRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SMLTransactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create SMLTransaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMLTransaction"
+                ],
+                "parameters": [
+                    {
+                        "description": "SMLTransactionRequest",
+                        "name": "SMLTransactionRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SMLTransactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SMLTransaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMLTransaction"
+                ],
+                "parameters": [
+                    {
+                        "description": "SMLTransaction Key Request",
+                        "name": "SMLTransactionKeyRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SMLTransactionKeyRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/sml-transaction/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Bulk Create SMLTransaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMLTransaction"
+                ],
+                "parameters": [
+                    {
+                        "description": "SMLTransaction Bulk Request",
+                        "name": "SMLTransactionBulkRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SMLTransactionBulkRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
@@ -7692,6 +18781,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/smstransaction/confirm/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "รับข้อมูล sms",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMS"
+                ],
+                "summary": "รับข้อมูล sms",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Size",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SmsTransactionPageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/smstransaction/{id}": {
             "get": {
                 "security": [
@@ -7840,13 +18980,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Page",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "Limit",
                         "name": "limit",
                         "in": "query"
                     }
@@ -8072,6 +19212,5582 @@ const docTemplate = `{
                 }
             }
         },
+        "/task": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Module",
+                        "name": "module",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ex. status=0 status=1,2,3",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Task",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "description": "Task",
+                        "name": "Task",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Task"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Task",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "description": "Task GUIDs",
+                        "name": "Task",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/task/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Task",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "description": "Task",
+                        "name": "Task",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Task"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/task/generate-code": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "generate new Task Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Task"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/task/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/task/reject/{guid}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Task Reject by task guid",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Module",
+                        "name": "module",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/task/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Task",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Task",
+                        "name": "Task",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Task"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Task",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/task/{id}/status": {
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Task Status",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Task"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Task Status",
+                        "name": "TaskStatus",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.TaskStatus"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/tokenlogin": {
+            "post": {
+                "description": "get struct array by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "parameters": [
+                    {
+                        "description": "User Account",
+                        "name": "TokenLoginRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/authentication.TokenLoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/paid": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Paid"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Paid",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Paid"
+                ],
+                "parameters": [
+                    {
+                        "description": "Paid",
+                        "name": "Paid",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Paid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Paid",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Paid"
+                ],
+                "parameters": [
+                    {
+                        "description": "Paid GUIDs",
+                        "name": "Paid",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/paid/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Paid",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Paid"
+                ],
+                "parameters": [
+                    {
+                        "description": "Paid",
+                        "name": "Paid",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Paid"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/paid/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Paid info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Paid"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Paid Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/paid/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Paid"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/paid/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Paid info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Paid"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Paid guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Paid",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Paid"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Paid ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Paid",
+                        "name": "Paid",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Paid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Paid",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Paid"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Paid ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/pay": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pay"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Pay",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pay"
+                ],
+                "parameters": [
+                    {
+                        "description": "Pay",
+                        "name": "Pay",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Pay"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Pay",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pay"
+                ],
+                "parameters": [
+                    {
+                        "description": "Pay GUIDs",
+                        "name": "Pay",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/pay/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Pay",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pay"
+                ],
+                "parameters": [
+                    {
+                        "description": "Pay",
+                        "name": "Pay",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Pay"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/pay/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Pay info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pay"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Pay Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/pay/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pay"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/pay/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Pay info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pay"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Pay guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Pay",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pay"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Pay ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Pay",
+                        "name": "Pay",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Pay"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Pay",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pay"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Pay ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "customer code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Purchase",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "description": "Purchase",
+                        "name": "Purchase",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Purchase"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Purchase",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "description": "Purchase GUIDs",
+                        "name": "Purchase",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase-return": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "customer code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create PurchaseReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseReturn"
+                ],
+                "parameters": [
+                    {
+                        "description": "PurchaseReturn",
+                        "name": "PurchaseReturn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PurchaseReturn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete PurchaseReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseReturn"
+                ],
+                "parameters": [
+                    {
+                        "description": "PurchaseReturn GUIDs",
+                        "name": "PurchaseReturn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase-return/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create PurchaseReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseReturn"
+                ],
+                "parameters": [
+                    {
+                        "description": "PurchaseReturn",
+                        "name": "PurchaseReturn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.PurchaseReturn"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase-return/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get PurchaseReturn info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PurchaseReturn Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase-return/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase-return/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get PurchaseReturn info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PurchaseReturn guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update PurchaseReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PurchaseReturn ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "PurchaseReturn",
+                        "name": "PurchaseReturn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PurchaseReturn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete PurchaseReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PurchaseReturn ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Purchase",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "description": "Purchase",
+                        "name": "Purchase",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Purchase"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Purchase info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Purchase Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/purchase/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Purchase info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Purchase guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Purchase",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Purchase ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Purchase",
+                        "name": "Purchase",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Purchase"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Purchase",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchase"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Purchase ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "customer code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create SaleInvoice",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "description": "SaleInvoice",
+                        "name": "SaleInvoice",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SaleInvoice"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SaleInvoice",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "description": "SaleInvoice GUIDs",
+                        "name": "SaleInvoice",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice-return": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoiceReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "customer code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create SaleInvoiceReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoiceReturn"
+                ],
+                "parameters": [
+                    {
+                        "description": "SaleInvoiceReturn",
+                        "name": "SaleInvoiceReturn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SaleInvoiceReturn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SaleInvoiceReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoiceReturn"
+                ],
+                "parameters": [
+                    {
+                        "description": "SaleInvoiceReturn GUIDs",
+                        "name": "SaleInvoiceReturn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice-return/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create SaleInvoiceReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoiceReturn"
+                ],
+                "parameters": [
+                    {
+                        "description": "SaleInvoiceReturn",
+                        "name": "SaleInvoiceReturn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.SaleInvoiceReturn"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice-return/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SaleInvoiceReturn info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoiceReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleInvoiceReturn Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice-return/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoiceReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice-return/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SaleInvoiceReturn info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoiceReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleInvoiceReturn guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update SaleInvoiceReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoiceReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleInvoiceReturn ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "SaleInvoiceReturn",
+                        "name": "SaleInvoiceReturn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SaleInvoiceReturn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SaleInvoiceReturn",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoiceReturn"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleInvoiceReturn ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create SaleInvoice",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "description": "SaleInvoice",
+                        "name": "SaleInvoice",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.SaleInvoice"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SaleInvoice info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleInvoice Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/sale-invoice/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get SaleInvoice info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleInvoice guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update SaleInvoice",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleInvoice ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "SaleInvoice",
+                        "name": "SaleInvoice",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SaleInvoice"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete SaleInvoice",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SaleInvoice"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SaleInvoice ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-adjustment": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockAdjustment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "customer code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create StockAdjustment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockAdjustment"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockAdjustment",
+                        "name": "StockAdjustment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockAdjustment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockAdjustment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockAdjustment"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockAdjustment GUIDs",
+                        "name": "StockAdjustment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-adjustment/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create StockAdjustment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockAdjustment"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockAdjustment",
+                        "name": "StockAdjustment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.StockAdjustment"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-adjustment/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get StockAdjustment info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockAdjustment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockAdjustment Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-adjustment/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockAdjustment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-adjustment/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get StockAdjustment info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockAdjustment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockAdjustment guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update StockAdjustment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockAdjustment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockAdjustment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "StockAdjustment",
+                        "name": "StockAdjustment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockAdjustment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockAdjustment",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockAdjustment"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockAdjustment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-prickup-product": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockPickupProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "customer code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create StockPickupProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockPickupProduct"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockPickupProduct",
+                        "name": "StockPickupProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockPickupProduct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockPickupProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockPickupProduct"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockPickupProduct GUIDs",
+                        "name": "StockPickupProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-prickup-product/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create StockPickupProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockPickupProduct"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockPickupProduct",
+                        "name": "StockPickupProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.StockPickupProduct"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-prickup-product/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get StockPickupProduct info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockPickupProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockPickupProduct Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-prickup-product/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockPickupProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-prickup-product/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get StockPickupProduct info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockPickupProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockPickupProduct guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update StockPickupProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockPickupProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockPickupProduct ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "StockPickupProduct",
+                        "name": "StockPickupProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockPickupProduct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockPickupProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockPickupProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockPickupProduct ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-receive-product": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReceiveProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "customer code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create StockReceiveProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReceiveProduct"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockReceiveProduct",
+                        "name": "StockReceiveProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockReceiveProduct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockReceiveProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReceiveProduct"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockReceiveProduct GUIDs",
+                        "name": "StockReceiveProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-receive-product/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create StockReceiveProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReceiveProduct"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockReceiveProduct",
+                        "name": "StockReceiveProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.StockReceiveProduct"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-receive-product/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get StockReceiveProduct info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReceiveProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockReceiveProduct Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-receive-product/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReceiveProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-receive-product/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get StockReceiveProduct info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReceiveProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockReceiveProduct guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update StockReceiveProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReceiveProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockReceiveProduct ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "StockReceiveProduct",
+                        "name": "StockReceiveProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockReceiveProduct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockReceiveProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReceiveProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockReceiveProduct ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-return-product": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReturnProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "customer code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create StockReturnProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReturnProduct"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockReturnProduct",
+                        "name": "StockReturnProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockReturnProduct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockReturnProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReturnProduct"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockReturnProduct GUIDs",
+                        "name": "StockReturnProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-return-product/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create StockReturnProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReturnProduct"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockReturnProduct",
+                        "name": "StockReturnProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.StockReturnProduct"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-return-product/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get StockReturnProduct info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReturnProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockReturnProduct Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-return-product/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReturnProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-return-product/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get StockReturnProduct info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReturnProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockReturnProduct guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update StockReturnProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReturnProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockReturnProduct ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "StockReturnProduct",
+                        "name": "StockReturnProduct",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockReturnProduct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockReturnProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockReturnProduct"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockReturnProduct ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-transfer": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockTransfer"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "customer code",
+                        "name": "custcode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create StockTransfer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockTransfer"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockTransfer",
+                        "name": "StockTransfer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockTransfer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockTransfer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockTransfer"
+                ],
+                "parameters": [
+                    {
+                        "description": "StockTransfer GUIDs",
+                        "name": "StockTransfer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-transfer/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get StockTransfer info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockTransfer"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockTransfer Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-transfer/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockTransfer"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "from date",
+                        "name": "fromdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "to date",
+                        "name": "todate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transaction/stock-transfer/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get StockTransfer info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockTransfer"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockTransfer guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update StockTransfer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockTransfer"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockTransfer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "StockTransfer",
+                        "name": "StockTransfer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockTransfer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete StockTransfer",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StockTransfer"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "StockTransfer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transport-channel": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TransportChannel"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create TransportChannel",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TransportChannel"
+                ],
+                "parameters": [
+                    {
+                        "description": "TransportChannel",
+                        "name": "TransportChannel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.TransportChannel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete TransportChannel",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TransportChannel"
+                ],
+                "parameters": [
+                    {
+                        "description": "TransportChannel GUIDs",
+                        "name": "TransportChannel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transport-channel/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create TransportChannel",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TransportChannel"
+                ],
+                "parameters": [
+                    {
+                        "description": "TransportChannel",
+                        "name": "TransportChannel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.TransportChannel"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transport-channel/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get TransportChannel info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TransportChannel"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "TransportChannel Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transport-channel/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TransportChannel"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/transport-channel/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get TransportChannel info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TransportChannel"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "TransportChannel guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update TransportChannel",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TransportChannel"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "TransportChannel ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "TransportChannel",
+                        "name": "TransportChannel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.TransportChannel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete TransportChannel",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TransportChannel"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "TransportChannel ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/unit": {
             "get": {
                 "security": [
@@ -8095,14 +24811,20 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Add ",
+                        "description": "page ",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Add ",
+                        "description": "liumit ",
                         "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "unitcode filter ex. \\",
+                        "name": "unitcode",
                         "in": "query"
                     }
                 ],
@@ -8250,6 +24972,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/unit/by-code": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get unit by unit code array",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Code filter, json array encode ",
+                        "name": "codes",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/unit/list": {
             "get": {
                 "security": [
@@ -8257,7 +25017,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "get struct array by ID",
+                "description": "search limit offset",
                 "consumes": [
                     "application/json"
                 ],
@@ -8282,6 +25042,18 @@ const docTemplate = `{
                         "description": "limit",
                         "name": "limit",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang ex. en,th",
+                        "name": "lang",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "unitcode filter ex. \\",
+                        "name": "unitcode",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -8292,6 +25064,44 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/models.ApiResponse"
                             }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/unit/master": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get master Unit by code array",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unit"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Code filter, json array encode ",
+                        "name": "codes",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     },
                     "401": {
@@ -8639,7 +25449,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "get struct array by ID",
+                "description": "List Warehouse",
                 "consumes": [
                     "application/json"
                 ],
@@ -8655,13 +25465,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "page",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "description": "Add Category",
+                        "description": "limit",
                         "name": "limit",
                         "in": "query"
                     }
@@ -8722,6 +25532,48 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Warehouse",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "description": "Warehouse GUIDs",
+                        "name": "Warehouse",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
             }
         },
         "/warehouse/bulk": {
@@ -8757,6 +25609,210 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Warehouse by code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/location": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get data warehouse location list",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/location/shelf": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get data warehouse location shelf list",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
                         }
                     },
                     "401": {
@@ -8889,9 +25945,450 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/warehouse/{warehouseCode}/location": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Warehouse Location",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse Code",
+                        "name": "warehouseCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Location Request",
+                        "name": "LocationRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LocationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/{warehouseCode}/location/": {
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Warehouse Location",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse Code",
+                        "name": "warehouseCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Location Code",
+                        "name": "LocationCode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/{warehouseCode}/location/{locationCode}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Location by code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse Code",
+                        "name": "warehouseCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Location Code",
+                        "name": "locationCode",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Warehouse Location",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse Code",
+                        "name": "warehouseCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "location Code",
+                        "name": "locationCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Location Request",
+                        "name": "LocationRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LocationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/{warehouseCode}/location/{locationCode}/shelf": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create Warehouse Shelf",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse Code",
+                        "name": "warehouseCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Location Code",
+                        "name": "locationCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Shelf Request",
+                        "name": "ShelfRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ShelfRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete Warehouse Shelf",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse Code",
+                        "name": "warehouseCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "location Code",
+                        "name": "locationCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Shelf Code",
+                        "name": "ShelfCode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/{warehouseCode}/location/{locationCode}/shelf/{shelfCode}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get Shelf by code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse Code",
+                        "name": "warehouseCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Location Code",
+                        "name": "locationCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Shelf Code",
+                        "name": "shelfCode",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update Warehouse Shelf",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Warehouse"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warehouse Code",
+                        "name": "warehouseCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "location Code",
+                        "name": "locationCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "shelf Code",
+                        "name": "shelfCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Shelf Request",
+                        "name": "ShelfRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ShelfRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "authentication.ShopFavoriteRequest": {
+            "type": "object",
+            "properties": {
+                "isfavorite": {
+                    "type": "boolean"
+                },
+                "shopid": {
+                    "type": "string"
+                }
+            }
+        },
+        "authentication.TokenLoginRequest": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "models.AccountGroup": {
             "type": "object",
             "required": [
@@ -8984,6 +26481,73 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.AccountPeriodMaster": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "enddate": {
+                    "type": "string"
+                },
+                "isdisabled": {
+                    "type": "boolean"
+                },
+                "period": {
+                    "type": "integer"
+                },
+                "startdate": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Address": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "contactnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "guid": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phoneprimary": {
+                    "type": "string"
+                },
+                "phonesecondary": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
                 }
             }
         },
@@ -9149,6 +26713,28 @@ const docTemplate = `{
                 }
             }
         },
+        "models.BankMaster": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "models.Barcode": {
             "type": "object",
             "required": [
@@ -9240,6 +26826,73 @@ const docTemplate = `{
                 }
             }
         },
+        "models.BarcodeRequest": {
+            "type": "object",
+            "required": [
+                "barcode"
+            ],
+            "properties": {
+                "barcode": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "condition": {
+                    "type": "boolean"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "standvalue": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.BarcodesModifyReqesut": {
+            "type": "object"
+        },
+        "models.BookBank": {
+            "type": "object",
+            "required": [
+                "banknames",
+                "names"
+            ],
+            "properties": {
+                "bankcode": {
+                    "type": "string"
+                },
+                "banknames": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "bookcode": {
+                    "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Image"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "passbook": {
+                    "type": "string"
+                }
+            }
+        },
         "models.BulkInsertResponse": {
             "type": "object",
             "properties": {
@@ -9304,283 +26957,142 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Category": {
+        "models.BusinessType": {
             "type": "object",
             "required": [
-                "categoryguid",
-                "name1"
+                "names"
             ],
             "properties": {
-                "categoryguid": {
-                    "type": "string",
-                    "maxLength": 100
-                },
                 "code": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "image": {
                     "type": "string"
                 },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "parentguid": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "xorder": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                }
-            }
-        },
-        "models.CategoryActivity": {
-            "type": "object",
-            "required": [
-                "categoryguid",
-                "name1"
-            ],
-            "properties": {
-                "categoryguid": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "code": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "image": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "parentguid": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                },
-                "xorder": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                }
-            }
-        },
-        "models.CategoryBulkReponse": {
-            "type": "object",
-            "properties": {
-                "created": {
+                "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/models.NameX"
                     }
-                },
-                "payloadDuplicate": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "success": {
-                    "type": "boolean"
-                },
-                "updateFailed": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "updated": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "models.CategoryDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.CategoryFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.CategoryLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
                 }
             }
         },
         "models.CategoryImport": {
             "type": "object",
             "required": [
-                "categoryguid",
-                "name1"
+                "names"
             ],
             "properties": {
-                "categoryguid": {
-                    "type": "string",
-                    "maxLength": 100
+                "childcount": {
+                    "type": "integer"
                 },
-                "code": {
-                    "type": "string",
-                    "maxLength": 100
+                "codelist": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.CodeXSort"
+                    }
                 },
-                "image": {
+                "colorselect": {
                     "type": "string"
                 },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
+                "colorselecthex": {
+                    "type": "string"
                 },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
+                "guidfixed": {
+                    "type": "string"
                 },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
+                "id": {
+                    "type": "string"
                 },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
+                "imageuri": {
+                    "type": "string"
                 },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "parentguid": {
-                    "type": "string",
-                    "maxLength": 100
+                    "type": "string"
                 },
-                "xorder": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
+                "parentguidall": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "useimageorcolor": {
+                    "type": "boolean"
+                },
+                "xsorts": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
                 }
             }
         },
         "models.CategoryImportInfo": {
             "type": "object",
             "required": [
-                "categoryguid",
-                "name1"
+                "names"
             ],
             "properties": {
-                "categoryguid": {
-                    "type": "string",
-                    "maxLength": 100
+                "childcount": {
+                    "type": "integer"
                 },
-                "code": {
-                    "type": "string",
-                    "maxLength": 100
+                "codelist": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.CodeXSort"
+                    }
+                },
+                "colorselect": {
+                    "type": "string"
+                },
+                "colorselecthex": {
+                    "type": "string"
                 },
                 "guidfixed": {
                     "type": "string"
                 },
-                "image": {
+                "id": {
                     "type": "string"
                 },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
+                "imageuri": {
+                    "type": "string"
                 },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "parentguid": {
-                    "type": "string",
-                    "maxLength": 100
+                    "type": "string"
                 },
-                "xorder": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
+                "parentguidall": {
+                    "type": "string"
+                },
+                "shopid": {
+                    "type": "string"
+                },
+                "useimageorcolor": {
+                    "type": "boolean"
+                },
+                "xsorts": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
                 }
             }
         },
@@ -9591,103 +27103,6 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.CategoryImportInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.CategoryInfo": {
-            "type": "object",
-            "required": [
-                "categoryguid",
-                "name1"
-            ],
-            "properties": {
-                "categoryguid": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "code": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "image": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "parentguid": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "xorder": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                }
-            }
-        },
-        "models.CategoryInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.CategoryInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.CategoryLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.CategoryActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.CategoryDeleteActivity"
-                    }
-                }
-            }
-        },
-        "models.CategoryPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.CategoryInfo"
                     }
                 },
                 "pagination": {
@@ -9865,6 +27280,37 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CodeXSort": {
+            "type": "object",
+            "properties": {
+                "barcode": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "unitcode": {
+                    "type": "string"
+                },
+                "unitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "xorder": {
+                    "type": "integer",
+                    "maximum": 4294967295,
+                    "minimum": 0
+                }
+            }
+        },
         "models.Color": {
             "type": "object",
             "required": [
@@ -9874,10 +27320,19 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "colorhex": {
+                    "type": "string"
+                },
                 "colorselect": {
                     "type": "string"
                 },
+                "colorselecthex": {
+                    "type": "string"
+                },
                 "colorsystem": {
+                    "type": "string"
+                },
+                "colorsystemhex": {
                     "type": "string"
                 },
                 "names": {
@@ -9890,45 +27345,455 @@ const docTemplate = `{
                 }
             }
         },
-        "models.CreditCardPayment": {
+        "models.Comment": {
             "type": "object",
             "properties": {
-                "amount": {
-                    "type": "number"
-                },
-                "approvedcode": {
+                "comment": {
                     "type": "string"
                 },
-                "cardnumber": {
+                "commentedat": {
                     "type": "string"
                 },
-                "cardtype": {
+                "commentedby": {
                     "type": "string"
                 },
-                "remark": {
+                "guidfixed": {
                     "type": "string"
                 }
             }
         },
-        "models.Device": {
+        "models.CommentRequest": {
             "type": "object",
             "properties": {
-                "os": {
+                "comment": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CreditorGroup": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "groupcode": {
                     "type": "string"
                 },
-                "uuid": {
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.CreditorRequest": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "addressforbilling": {
+                    "$ref": "#/definitions/models.Address"
+                },
+                "addressforshipping": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Address"
+                    }
+                },
+                "branchnumber": {
                     "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "creditday": {
+                    "type": "integer"
+                },
+                "customertype": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "fundcode": {
+                    "type": "string"
+                },
+                "groups": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Image"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "personaltype": {
+                    "type": "integer"
+                },
+                "taxid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CustomerGroup": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "groupcode": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.CustomerRequest": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "addressforbilling": {
+                    "$ref": "#/definitions/models.Address"
+                },
+                "addressforshipping": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Address"
+                    }
+                },
+                "branchnumber": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "creditday": {
+                    "type": "integer"
+                },
+                "customertype": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "fundcode": {
+                    "type": "string"
+                },
+                "groups": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Image"
+                    }
+                },
+                "iscreditor": {
+                    "type": "boolean"
+                },
+                "isdebtor": {
+                    "type": "boolean"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "personaltype": {
+                    "type": "integer"
+                },
+                "taxid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DebtorGroup": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "groupcode": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.DebtorRequest": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "addressforbilling": {
+                    "$ref": "#/definitions/models.Address"
+                },
+                "addressforshipping": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Address"
+                    }
+                },
+                "branchnumber": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "creditday": {
+                    "type": "integer"
+                },
+                "customertype": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "fundcode": {
+                    "type": "string"
+                },
+                "groups": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Image"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "personaltype": {
+                    "type": "integer"
+                },
+                "taxid": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Department": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.Detail": {
+            "type": "object",
+            "properties": {
+                "averagecost": {
+                    "type": "number"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "calcflag": {
+                    "type": "integer"
+                },
+                "discount": {
+                    "type": "string"
+                },
+                "discountamount": {
+                    "type": "number"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "ispos": {
+                    "type": "integer"
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemguid": {
+                    "type": "string"
+                },
+                "itemnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "laststatus": {
+                    "type": "integer"
+                },
+                "linenumber": {
+                    "type": "integer"
+                },
+                "locationcode": {
+                    "type": "string"
+                },
+                "locationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "multiunit": {
+                    "type": "boolean"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "priceexcludevat": {
+                    "type": "number"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "shelfcode": {
+                    "type": "string"
+                },
+                "standvalue": {
+                    "type": "number"
+                },
+                "sumamount": {
+                    "type": "number"
+                },
+                "sumamountexcludevat": {
+                    "type": "number"
+                },
+                "sumofcost": {
+                    "type": "number"
+                },
+                "taxtype": {
+                    "type": "integer"
+                },
+                "tolocationcode": {
+                    "type": "string"
+                },
+                "tolocationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "totalqty": {
+                    "type": "number"
+                },
+                "totalvaluevat": {
+                    "type": "number"
+                },
+                "towhcode": {
+                    "type": "string"
+                },
+                "towhnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "unitcode": {
+                    "type": "string"
+                },
+                "unitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "vatcal": {
+                    "type": "integer"
+                },
+                "vattype": {
+                    "type": "integer"
+                },
+                "whcode": {
+                    "type": "string"
+                },
+                "whnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 }
             }
         },
         "models.DocumentImage": {
             "type": "object",
             "properties": {
-                "imageuri": {
+                "cloneimagefrom": {
                     "type": "string"
                 },
-                "isreject": {
-                    "type": "boolean"
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Comment"
+                    }
+                },
+                "edits": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ImageEdit"
+                    }
+                },
+                "imageuri": {
+                    "type": "string"
                 },
                 "metafileat": {
                     "type": "string"
@@ -9936,7 +27801,14 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "referencegroups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ReferenceGroup"
+                    }
+                },
                 "references": {
+                    "description": "IsReject        bool             ` + "`" + `json:\"isreject\" bson:\"isreject\"` + "`" + `\nStatus          int8             ` + "`" + `json:\"status\" bson:\"status\"` + "`" + `",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Reference"
@@ -9952,12 +27824,24 @@ const docTemplate = `{
         },
         "models.DocumentImageGroup": {
             "type": "object",
+            "required": [
+                "taskguid"
+            ],
             "properties": {
+                "description": {
+                    "type": "string"
+                },
                 "imagereferences": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.ImageReference"
                     }
+                },
+                "iscompleted": {
+                    "type": "boolean"
+                },
+                "pathtask": {
+                    "type": "string"
                 },
                 "references": {
                     "type": "array",
@@ -9965,11 +27849,36 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.Reference"
                     }
                 },
+                "rejectfromgroupguid": {
+                    "type": "string"
+                },
+                "rejectremark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "statuschangedat": {
+                    "type": "string"
+                },
+                "statuschangedby": {
+                    "type": "string"
+                },
+                "statushistories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.StatusHistory"
+                    }
+                },
                 "tags": {
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
+                },
+                "taskguid": {
+                    "type": "string",
+                    "minLength": 1
                 },
                 "title": {
                     "description": "DocumentRef     string            ` + "`" + `json:\"documentref\" bson:\"documentref\"` + "`" + `",
@@ -9980,20 +27889,35 @@ const docTemplate = `{
                 },
                 "uploadedby": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
         "models.DocumentImageInfo": {
             "type": "object",
             "properties": {
+                "cloneimagefrom": {
+                    "type": "string"
+                },
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Comment"
+                    }
+                },
+                "edits": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ImageEdit"
+                    }
+                },
                 "guidfixed": {
                     "type": "string"
                 },
                 "imageuri": {
                     "type": "string"
-                },
-                "isreject": {
-                    "type": "boolean"
                 },
                 "metafileat": {
                     "type": "string"
@@ -10001,7 +27925,14 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "referencegroups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ReferenceGroup"
+                    }
+                },
                 "references": {
+                    "description": "IsReject        bool             ` + "`" + `json:\"isreject\" bson:\"isreject\"` + "`" + `\nStatus          int8             ` + "`" + `json:\"status\" bson:\"status\"` + "`" + `",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Reference"
@@ -10043,94 +27974,46 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Employee": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "profilepicture": {
-                    "type": "string"
-                },
-                "roles": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.EmployeeInfo": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "profilepicture": {
-                    "type": "string"
-                },
-                "roles": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.EmployeePageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.EmployeeInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.EmployeeRequestLogin": {
-            "type": "object",
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
         "models.EmployeeRequestPassword": {
             "type": "object",
             "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.EmployeeRequestRegister": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "contact": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "isenabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
                 "password": {
                     "type": "string"
                 },
-                "username": {
+                "profilepicture": {
                     "type": "string"
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -10140,6 +28023,15 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "contact": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "isenabled": {
+                    "type": "boolean"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -10151,9 +28043,6 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
-                },
-                "username": {
-                    "type": "string"
                 }
             }
         },
@@ -10162,12 +28051,46 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.ImageEdit": {
+            "type": "object",
+            "properties": {
+                "editedat": {
+                    "type": "string"
+                },
+                "editedby": {
+                    "type": "string"
+                },
+                "imageuri": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ImageEditRequest": {
+            "type": "object",
+            "properties": {
+                "editedat": {
+                    "type": "string"
+                },
+                "editedby": {
+                    "type": "string"
+                },
+                "imageuri": {
+                    "type": "string"
                 }
             }
         },
         "models.ImageReference": {
             "type": "object",
             "properties": {
+                "cloneimagefrom": {
+                    "type": "string"
+                },
                 "documentimageguid": {
                     "type": "string"
                 },
@@ -10177,10 +28100,26 @@ const docTemplate = `{
                 "metafileat": {
                     "type": "string"
                 },
+                "name": {
+                    "description": "ImageEditURI       string ` + "`" + `json:\"imageedituri\" bson:\"imageedituri\"` + "`" + `",
+                    "type": "string"
+                },
                 "uploadedat": {
                     "type": "string"
                 },
                 "uploadedby": {
+                    "description": "IsReject           bool      ` + "`" + `json:\"isreject\" bson:\"isreject\"` + "`" + `",
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.ImageReferenceBody": {
+            "type": "object",
+            "properties": {
+                "documentimageguid": {
                     "type": "string"
                 },
                 "xorder": {
@@ -10232,7 +28171,7 @@ const docTemplate = `{
                     }
                 },
                 "category": {
-                    "$ref": "#/definitions/models.Category"
+                    "$ref": "#/definitions/models.ProductCategory"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
@@ -10432,7 +28371,7 @@ const docTemplate = `{
                     }
                 },
                 "category": {
-                    "$ref": "#/definitions/models.Category"
+                    "$ref": "#/definitions/models.ProductCategory"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
@@ -10724,7 +28663,7 @@ const docTemplate = `{
                     }
                 },
                 "category": {
-                    "$ref": "#/definitions/models.Category"
+                    "$ref": "#/definitions/models.ProductCategory"
                 },
                 "categoryguid": {
                     "description": "Guid กลุ่มสินค้า",
@@ -11238,7 +29177,7 @@ const docTemplate = `{
                 "amount": {
                     "type": "number"
                 },
-                "batchId": {
+                "batchid": {
                     "type": "string"
                 },
                 "bookcode": {
@@ -11247,6 +29186,9 @@ const docTemplate = `{
                 "docdate": {
                     "type": "string",
                     "format": "dateTime"
+                },
+                "docformat": {
+                    "type": "string"
                 },
                 "docno": {
                     "type": "string"
@@ -11413,15 +29355,24 @@ const docTemplate = `{
                 "amount": {
                     "type": "number"
                 },
-                "batchId": {
+                "batchid": {
                     "type": "string"
                 },
                 "bookcode": {
                     "type": "string"
                 },
+                "createdat": {
+                    "type": "string"
+                },
+                "createdby": {
+                    "type": "string"
+                },
                 "docdate": {
                     "type": "string",
                     "format": "dateTime"
+                },
+                "docformat": {
+                    "type": "string"
                 },
                 "docno": {
                     "type": "string"
@@ -11501,12 +29452,6 @@ const docTemplate = `{
         "models.Kitchen": {
             "type": "object",
             "properties": {
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Category"
-                    }
-                },
                 "code": {
                     "type": "string"
                 },
@@ -11528,128 +29473,26 @@ const docTemplate = `{
                 "printers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.PrinterTerminal"
+                        "type": "string"
                     }
                 },
                 "products": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Inventory"
+                        "type": "string"
                     }
                 },
                 "zones": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ShopZone"
+                        "type": "string"
                     }
-                }
-            }
-        },
-        "models.KitchenActivity": {
-            "type": "object",
-            "properties": {
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Category"
-                    }
-                },
-                "code": {
-                    "type": "string"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "printers": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PrinterTerminal"
-                    }
-                },
-                "products": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Inventory"
-                    }
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                },
-                "zones": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ShopZone"
-                    }
-                }
-            }
-        },
-        "models.KitchenDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.KitchenFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.KitchenLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
                 }
             }
         },
         "models.KitchenInfo": {
             "type": "object",
             "properties": {
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Category"
-                    }
-                },
                 "code": {
                     "type": "string"
                 },
@@ -11674,19 +29517,19 @@ const docTemplate = `{
                 "printers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.PrinterTerminal"
+                        "type": "string"
                     }
                 },
                 "products": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Inventory"
+                        "type": "string"
                     }
                 },
                 "zones": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ShopZone"
+                        "type": "string"
                     }
                 }
             }
@@ -11699,23 +29542,6 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
-                }
-            }
-        },
-        "models.KitchenLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.KitchenActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.KitchenDeleteActivity"
-                    }
                 }
             }
         },
@@ -11736,34 +29562,30 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Location": {
+        "models.LocationRequest": {
             "type": "object",
             "required": [
-                "name1"
+                "locationcode",
+                "warehousecode"
             ],
             "properties": {
-                "code": {
+                "locationcode": {
                     "type": "string"
                 },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
+                "locationnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
+                "shelf": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Shelf"
+                    }
                 },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
+                "warehousecode": {
+                    "type": "string"
                 }
             }
         },
@@ -11810,90 +29632,6 @@ const docTemplate = `{
                 },
                 "zipcode": {
                     "type": "string"
-                }
-            }
-        },
-        "models.MemberActivity": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "branchcode": {
-                    "type": "string"
-                },
-                "branchtype": {
-                    "type": "integer"
-                },
-                "contacttype": {
-                    "type": "integer"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "personaltype": {
-                    "type": "integer"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "surname": {
-                    "type": "string"
-                },
-                "taxid": {
-                    "type": "string"
-                },
-                "telephone": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                },
-                "zipcode": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.MemberDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.MemberFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.MemberLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
                 }
             }
         },
@@ -11946,23 +29684,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.MemberLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.MemberActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.MemberDeleteActivity"
-                    }
-                }
-            }
-        },
         "models.MemberPageResponse": {
             "type": "object",
             "properties": {
@@ -11993,6 +29714,9 @@ const docTemplate = `{
                     "minLength": 1
                 },
                 "isauto": {
+                    "type": "boolean"
+                },
+                "isdelete": {
                     "type": "boolean"
                 },
                 "name": {
@@ -12259,28 +29983,206 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Payment": {
+        "models.Paid": {
             "type": "object",
             "properties": {
-                "cash": {
-                    "type": "number"
+                "custcode": {
+                    "type": "string"
                 },
-                "creditcard": {
-                    "type": "number"
-                },
-                "creditcarddetails": {
+                "custnames": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.CreditCardPayment"
+                        "$ref": "#/definitions/models.NameX"
                     }
                 },
-                "transfer": {
-                    "type": "number"
-                },
-                "transferdetails": {
+                "details": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.TransferPayment"
+                        "$ref": "#/definitions/models.PaidDetail"
+                    }
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "doctype": {
+                    "type": "integer"
+                },
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "totalamount": {
+                    "type": "number"
+                },
+                "totalbalance": {
+                    "type": "number"
+                },
+                "totalpaymentamount": {
+                    "type": "number"
+                },
+                "totalvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.PaidDetail": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "type": "number"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "paymentamount": {
+                    "type": "number"
+                },
+                "selected": {
+                    "type": "boolean"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.Pay": {
+            "type": "object",
+            "properties": {
+                "custcode": {
+                    "type": "string"
+                },
+                "custnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PayDetail"
+                    }
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "doctype": {
+                    "type": "integer"
+                },
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "totalamount": {
+                    "type": "number"
+                },
+                "totalbalance": {
+                    "type": "number"
+                },
+                "totalpaymentamount": {
+                    "type": "number"
+                },
+                "totalvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.PayDetail": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "type": "number"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "paymentamount": {
+                    "type": "number"
+                },
+                "selected": {
+                    "type": "boolean"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.PaymentCreditCard": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "approvedcode": {
+                    "type": "string"
+                },
+                "bankcode": {
+                    "type": "string"
+                },
+                "cardnumber": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.PaymentDetail": {
+            "type": "object",
+            "properties": {
+                "cashamount": {
+                    "type": "number"
+                },
+                "cashamounttext": {
+                    "type": "string"
+                },
+                "paymentcreditcards": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PaymentCreditCard"
+                    }
+                },
+                "paymenttransfers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PaymentTransfer"
                     }
                 }
             }
@@ -12408,7 +30310,27 @@ const docTemplate = `{
                 }
             }
         },
-        "models.PrinterTerminal": {
+        "models.PaymentTransfer": {
+            "type": "object",
+            "properties": {
+                "accountnumber": {
+                    "type": "string"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "bankcode": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.Printer": {
             "type": "object",
             "properties": {
                 "address": {
@@ -12437,19 +30359,13 @@ const docTemplate = `{
                 }
             }
         },
-        "models.PrinterTerminalActivity": {
+        "models.PrinterInfo": {
             "type": "object",
             "properties": {
                 "address": {
                     "type": "string"
                 },
                 "code": {
-                    "type": "string"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
                     "type": "string"
                 },
                 "guidfixed": {
@@ -12470,118 +30386,29 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
-                "shopid": {
-                    "type": "string"
-                },
                 "type": {
                     "type": "integer"
-                },
-                "updatedat": {
-                    "type": "string"
                 }
             }
         },
-        "models.PrinterTerminalDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.PrinterTerminalFetchUpdateResponse": {
+        "models.PrinterInfoResponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/models.PrinterTerminalLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
+                    "$ref": "#/definitions/models.PrinterInfo"
                 },
                 "success": {
                     "type": "boolean"
                 }
             }
         },
-        "models.PrinterTerminalInfo": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.PrinterTerminalInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.PrinterTerminalInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.PrinterTerminalLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PrinterTerminalActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PrinterTerminalDeleteActivity"
-                    }
-                }
-            }
-        },
-        "models.PrinterTerminalPageResponse": {
+        "models.PrinterPageResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.PrinterTerminalInfo"
+                        "$ref": "#/definitions/models.PrinterInfo"
                     }
                 },
                 "pagination": {
@@ -12589,6 +30416,573 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.Product": {
+            "type": "object",
+            "required": [
+                "itemcode",
+                "names",
+                "unit"
+            ],
+            "properties": {
+                "barcodes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupname": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductImage"
+                    }
+                },
+                "issumpoint": {
+                    "type": "boolean"
+                },
+                "itemcode": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "itemstocktype": {
+                    "type": "integer"
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "multiunit": {
+                    "type": "boolean"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "prices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductPrice"
+                    }
+                },
+                "taxtype": {
+                    "description": "0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี",
+                    "type": "integer"
+                },
+                "unit": {
+                    "$ref": "#/definitions/models.ProductUnit"
+                },
+                "unitcost": {
+                    "type": "string"
+                },
+                "unitcostnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "units": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductUnit"
+                    }
+                },
+                "unitstandard": {
+                    "type": "string"
+                },
+                "unitstandardnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "useserialnumber": {
+                    "type": "boolean"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.ProductBarcode": {
+            "type": "object",
+            "required": [
+                "barcode",
+                "names"
+            ],
+            "properties": {
+                "barcode": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "colorselect": {
+                    "type": "string"
+                },
+                "colorselecthex": {
+                    "type": "string"
+                },
+                "condition": {
+                    "type": "boolean"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupname": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage"
+                    }
+                },
+                "imageuri": {
+                    "type": "string"
+                },
+                "isdividend": {
+                    "type": "boolean"
+                },
+                "issumpoint": {
+                    "type": "boolean"
+                },
+                "isusesubbarcodes": {
+                    "type": "boolean"
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "maxdiscount": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductOption"
+                    }
+                },
+                "prices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductPrice"
+                    }
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "refbarcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.RefProductBarcode"
+                    }
+                },
+                "refdividevalue": {
+                    "type": "number"
+                },
+                "refstandvalue": {
+                    "type": "number"
+                },
+                "refunitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "standvalue": {
+                    "type": "number"
+                },
+                "stockbarcode": {
+                    "type": "string"
+                },
+                "taxtype": {
+                    "type": "integer"
+                },
+                "useimageorcolor": {
+                    "type": "boolean"
+                },
+                "vatcal": {
+                    "type": "integer"
+                },
+                "vattype": {
+                    "type": "integer"
+                },
+                "xsorts": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
+                }
+            }
+        },
+        "models.ProductBarcodeRequest": {
+            "type": "object",
+            "required": [
+                "barcode",
+                "names"
+            ],
+            "properties": {
+                "barcode": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "colorselect": {
+                    "type": "string"
+                },
+                "colorselecthex": {
+                    "type": "string"
+                },
+                "condition": {
+                    "type": "boolean"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupname": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage"
+                    }
+                },
+                "imageuri": {
+                    "type": "string"
+                },
+                "isdividend": {
+                    "type": "boolean"
+                },
+                "issumpoint": {
+                    "type": "boolean"
+                },
+                "isusesubbarcodes": {
+                    "type": "boolean"
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "maxdiscount": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductOption"
+                    }
+                },
+                "prices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductPrice"
+                    }
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "refbarcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.BarcodeRequest"
+                    }
+                },
+                "refdividevalue": {
+                    "type": "number"
+                },
+                "refstandvalue": {
+                    "type": "number"
+                },
+                "refunitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "standvalue": {
+                    "type": "number"
+                },
+                "stockbarcode": {
+                    "type": "string"
+                },
+                "taxtype": {
+                    "type": "integer"
+                },
+                "useimageorcolor": {
+                    "type": "boolean"
+                },
+                "vatcal": {
+                    "type": "integer"
+                },
+                "vattype": {
+                    "type": "integer"
+                },
+                "xsorts": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
+                }
+            }
+        },
+        "models.ProductCategory": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "childcount": {
+                    "type": "integer"
+                },
+                "codelist": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.CodeXSort"
+                    }
+                },
+                "colorselect": {
+                    "type": "string"
+                },
+                "colorselecthex": {
+                    "type": "string"
+                },
+                "imageuri": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "parentguid": {
+                    "type": "string"
+                },
+                "parentguidall": {
+                    "type": "string"
+                },
+                "useimageorcolor": {
+                    "type": "boolean"
+                },
+                "xsorts": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
+                    }
+                }
+            }
+        },
+        "models.ProductChoice": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "guid": {
+                    "type": "string"
+                },
+                "isdefault": {
+                    "type": "boolean"
+                },
+                "isstock": {
+                    "description": "QtyMax         float64         ` + "`" + `json:\"qtymax\" bson:\"qtymax\"` + "`" + `",
+                    "type": "boolean"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "price": {
+                    "type": "string"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "refbarcode": {
+                    "type": "string"
+                },
+                "refproductcode": {
+                    "type": "string"
+                },
+                "refunitcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ProductGroup": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.ProductOption": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "choices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductChoice"
+                    }
+                },
+                "choicetype": {
+                    "type": "integer"
+                },
+                "guid": {
+                    "type": "string"
+                },
+                "maxselect": {
+                    "type": "integer",
+                    "maximum": 60000,
+                    "minimum": 0
+                },
+                "minselect": {
+                    "type": "integer",
+                    "maximum": 60000,
+                    "minimum": 0
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "memberprice": {
+                    "type": "number"
+                },
+                "normalprice": {
+                    "type": "number"
+                },
+                "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.ProductUnit": {
+            "type": "object",
+            "properties": {
+                "divider": {
+                    "type": "number"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "stand": {
+                    "type": "number"
+                },
+                "stockcount": {
+                    "type": "boolean"
+                },
+                "unitcode": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -12682,322 +31076,302 @@ const docTemplate = `{
         "models.Purchase": {
             "type": "object",
             "properties": {
-                "discountamount": {
-                    "type": "number"
+                "cashiercode": {
+                    "type": "string"
                 },
-                "docdate": {
+                "custcode": {
+                    "type": "string"
+                },
+                "custnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Detail"
+                    }
+                },
+                "discountword": {
+                    "type": "string"
+                },
+                "docdatetime": {
                     "type": "string"
                 },
                 "docno": {
                     "type": "string"
                 },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PurchaseDetail"
-                    }
+                "docrefdate": {
+                    "type": "string"
                 },
-                "member": {
-                    "$ref": "#/definitions/models.Member"
+                "docrefno": {
+                    "type": "string"
                 },
-                "payment": {
-                    "$ref": "#/definitions/models.Payment"
+                "docreftype": {
+                    "type": "integer"
                 },
-                "sumamount": {
-                    "type": "number"
+                "doctype": {
+                    "type": "integer"
                 },
-                "taxamount": {
-                    "type": "number"
+                "guidref": {
+                    "type": "string"
                 },
-                "taxbaseamount": {
-                    "type": "number"
+                "inquirytype": {
+                    "type": "integer"
                 },
-                "taxrate": {
+                "iscancel": {
+                    "type": "boolean"
+                },
+                "membercode": {
+                    "type": "string"
+                },
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
+                },
+                "posid": {
+                    "type": "string"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxdocdate": {
+                    "type": "string"
+                },
+                "taxdocno": {
+                    "type": "string"
+                },
+                "totalaftervat": {
                     "type": "number"
                 },
                 "totalamount": {
                     "type": "number"
+                },
+                "totalbeforevat": {
+                    "type": "number"
+                },
+                "totalcost": {
+                    "type": "number"
+                },
+                "totaldiscount": {
+                    "type": "number"
+                },
+                "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalvalue": {
+                    "type": "number"
+                },
+                "totalvatvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "number"
+                },
+                "vattype": {
+                    "type": "integer"
                 }
             }
         },
-        "models.PurchaseDetail": {
+        "models.PurchaseReturn": {
+            "type": "object",
+            "properties": {
+                "cashiercode": {
+                    "type": "string"
+                },
+                "custcode": {
+                    "type": "string"
+                },
+                "custnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Detail"
+                    }
+                },
+                "discountword": {
+                    "type": "string"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "docrefdate": {
+                    "type": "string"
+                },
+                "docrefno": {
+                    "type": "string"
+                },
+                "docreftype": {
+                    "type": "integer"
+                },
+                "doctype": {
+                    "type": "integer"
+                },
+                "guidref": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "iscancel": {
+                    "type": "boolean"
+                },
+                "membercode": {
+                    "type": "string"
+                },
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
+                },
+                "posid": {
+                    "type": "string"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxdocdate": {
+                    "type": "string"
+                },
+                "taxdocno": {
+                    "type": "string"
+                },
+                "totalaftervat": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                },
+                "totalbeforevat": {
+                    "type": "number"
+                },
+                "totalcost": {
+                    "type": "number"
+                },
+                "totaldiscount": {
+                    "type": "number"
+                },
+                "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalvalue": {
+                    "type": "number"
+                },
+                "totalvatvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "number"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.QrPayment": {
             "type": "object",
             "required": [
-                "name1"
+                "names"
             ],
             "properties": {
-                "activated": {
-                    "description": "เปิดใช้งานอยู่",
-                    "type": "boolean"
+                "bankcode": {
+                    "type": "string"
                 },
-                "amount": {
+                "bookbankcode": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "feerate": {
                     "type": "number"
                 },
-                "availablepatternoptions": {
+                "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
-                        "$ref": "#/definitions/models.AvailablePatternOption"
+                        "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "paymentcode": {
+                    "type": "string"
+                },
+                "paymentlogo": {
+                    "type": "string"
+                },
+                "paymenttype": {
+                    "type": "integer"
+                },
+                "wallettype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.RefProductBarcode": {
+            "type": "object",
+            "required": [
+                "barcode"
+            ],
+            "properties": {
                 "barcode": {
                     "type": "string",
-                    "maxLength": 100
+                    "minLength": 1
                 },
-                "barcodedescriptionfromproduct": {
+                "condition": {
                     "type": "boolean"
                 },
-                "barcodedetail": {
-                    "$ref": "#/definitions/models.Barcode"
-                },
-                "barcodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Barcode"
-                    }
-                },
-                "category": {
-                    "$ref": "#/definitions/models.Category"
-                },
-                "categoryguid": {
-                    "description": "Guid กลุ่มสินค้า",
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "description1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "discountamount": {
+                "dividevalue": {
                     "type": "number"
-                },
-                "discounttext": {
-                    "type": "string"
                 },
                 "guidfixed": {
                     "type": "string"
                 },
-                "havepoint": {
-                    "type": "boolean"
-                },
-                "haveserialno": {
-                    "type": "boolean"
-                },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryImage"
-                    }
-                },
-                "isstockproduct": {
-                    "type": "boolean"
-                },
-                "itemcode": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemguid": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemsku": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemtype": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                },
-                "itemvat": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                },
-                "linenumber": {
-                    "type": "integer"
-                },
-                "memberprice": {
-                    "type": "number"
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "normalprice": {
-                    "type": "number"
-                },
-                "optionpatternmaster": {
+                "itemunitcode": {
                     "type": "string"
                 },
-                "options": {
+                "itemunitnames": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Option"
+                        "$ref": "#/definitions/models.NameX"
                     }
                 },
-                "ordercount": {
-                    "type": "integer",
-                    "maximum": 100
-                },
-                "orderminimum": {
-                    "type": "number"
-                },
-                "parid": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "price": {
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
-                    "type": "number"
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "qty": {
                     "type": "number"
                 },
-                "recommended": {
-                    "description": "สินค้าแนะนำ",
-                    "type": "boolean"
-                },
-                "shoprecommended": {
-                    "type": "boolean"
-                },
-                "starpercent": {
+                "standvalue": {
                     "type": "number"
-                },
-                "stockproductguidref": {
-                    "type": "string"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryTag"
-                    }
-                },
-                "unit": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
-                },
-                "unitcode": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unitcost": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unitstandard": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unituses": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.UnitUse"
-                    }
-                },
-                "xorder": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                }
-            }
-        },
-        "models.PurchaseInfo": {
-            "type": "object",
-            "properties": {
-                "discountamount": {
-                    "type": "number"
-                },
-                "docdate": {
-                    "type": "string"
-                },
-                "docno": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PurchaseDetail"
-                    }
-                },
-                "member": {
-                    "$ref": "#/definitions/models.Member"
-                },
-                "payment": {
-                    "$ref": "#/definitions/models.Payment"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "taxamount": {
-                    "type": "number"
-                },
-                "taxbaseamount": {
-                    "type": "number"
-                },
-                "taxrate": {
-                    "type": "number"
-                },
-                "totalamount": {
-                    "type": "number"
-                }
-            }
-        },
-        "models.PurchaseListPageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.PurchaseInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
                 }
             }
         },
@@ -13012,11 +31386,20 @@ const docTemplate = `{
                 }
             }
         },
-        "models.RequestDocumentImageReject": {
+        "models.ReferenceGroup": {
             "type": "object",
             "properties": {
-                "isreject": {
-                    "type": "boolean"
+                "grouptype": {
+                    "type": "string"
+                },
+                "parentguid": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                },
+                "xtype": {
+                    "type": "integer"
                 }
             }
         },
@@ -13037,332 +31420,49 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Saleinvoice": {
+        "models.RestaurantSettings": {
             "type": "object",
             "properties": {
-                "discountamount": {
-                    "type": "number"
-                },
-                "docdate": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "docno": {
+                "body": {
                     "type": "string"
                 },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.SaleinvoiceDetail"
-                    }
-                },
-                "localdate": {
+                "code": {
                     "type": "string"
-                },
-                "localtime": {
-                    "type": "string"
-                },
-                "member": {
-                    "$ref": "#/definitions/models.Member"
-                },
-                "payment": {
-                    "$ref": "#/definitions/models.Payment"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "taxamount": {
-                    "type": "number"
-                },
-                "taxbaseamount": {
-                    "type": "number"
-                },
-                "taxrate": {
-                    "type": "number"
-                },
-                "totalamount": {
-                    "type": "number"
                 }
             }
         },
-        "models.SaleinvoiceDetail": {
+        "models.RestaurantSettingsInfo": {
             "type": "object",
-            "required": [
-                "name1"
-            ],
             "properties": {
-                "activated": {
-                    "description": "เปิดใช้งานอยู่",
-                    "type": "boolean"
+                "body": {
+                    "type": "string"
                 },
-                "amount": {
-                    "type": "number"
-                },
-                "availablepatternoptions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.AvailablePatternOption"
-                    }
-                },
-                "barcode": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "barcodedescriptionfromproduct": {
-                    "type": "boolean"
-                },
-                "barcodedetail": {
-                    "$ref": "#/definitions/models.Barcode"
-                },
-                "barcodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Barcode"
-                    }
-                },
-                "category": {
-                    "$ref": "#/definitions/models.Category"
-                },
-                "categoryguid": {
-                    "description": "Guid กลุ่มสินค้า",
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "description1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "description5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "discountamount": {
-                    "type": "number"
-                },
-                "discounttext": {
+                "code": {
                     "type": "string"
                 },
                 "guidfixed": {
                     "type": "string"
-                },
-                "havepoint": {
-                    "type": "boolean"
-                },
-                "haveserialno": {
-                    "type": "boolean"
-                },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryImage"
-                    }
-                },
-                "isstockproduct": {
-                    "type": "boolean"
-                },
-                "itemcode": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemguid": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemsku": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "itemtype": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                },
-                "itemvat": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
-                },
-                "linenumber": {
-                    "type": "integer"
-                },
-                "memberprice": {
-                    "type": "number"
-                },
-                "multiunit": {
-                    "type": "boolean"
-                },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name2": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "normalprice": {
-                    "type": "number"
-                },
-                "optionpatternmaster": {
-                    "type": "string"
-                },
-                "options": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Option"
-                    }
-                },
-                "ordercount": {
-                    "type": "integer",
-                    "maximum": 100
-                },
-                "orderminimum": {
-                    "type": "number"
-                },
-                "parid": {
-                    "type": "string",
-                    "maxLength": 50
-                },
-                "price": {
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
-                    "type": "number"
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "recommended": {
-                    "description": "สินค้าแนะนำ",
-                    "type": "boolean"
-                },
-                "shoprecommended": {
-                    "type": "boolean"
-                },
-                "starpercent": {
-                    "type": "number"
-                },
-                "stockproductguidref": {
-                    "type": "string"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.InventoryTag"
-                    }
-                },
-                "unit": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.Unit"
-                },
-                "unitcode": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unitcost": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unitstandard": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "unituses": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.UnitUse"
-                    }
-                },
-                "xorder": {
-                    "type": "integer",
-                    "maximum": 125,
-                    "minimum": -125
                 }
             }
         },
-        "models.SaleinvoiceInfo": {
+        "models.RestaurantSettingsInfoResponse": {
             "type": "object",
             "properties": {
-                "discountamount": {
-                    "type": "number"
+                "data": {
+                    "$ref": "#/definitions/models.RestaurantSettingsInfo"
                 },
-                "docdate": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "docno": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.SaleinvoiceDetail"
-                    }
-                },
-                "localdate": {
-                    "type": "string"
-                },
-                "localtime": {
-                    "type": "string"
-                },
-                "member": {
-                    "$ref": "#/definitions/models.Member"
-                },
-                "payment": {
-                    "$ref": "#/definitions/models.Payment"
-                },
-                "sumamount": {
-                    "type": "number"
-                },
-                "taxamount": {
-                    "type": "number"
-                },
-                "taxbaseamount": {
-                    "type": "number"
-                },
-                "taxrate": {
-                    "type": "number"
-                },
-                "totalamount": {
-                    "type": "number"
+                "success": {
+                    "type": "boolean"
                 }
             }
         },
-        "models.SaleinvoiceListPageResponse": {
+        "models.RestaurantSettingsPageResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.SaleinvoiceInfo"
+                        "$ref": "#/definitions/models.RestaurantSettingsInfo"
                     }
                 },
                 "pagination": {
@@ -13373,10 +31473,421 @@ const docTemplate = `{
                 }
             }
         },
+        "models.SMLTransactionBulkRequest": {
+            "type": "object",
+            "required": [
+                "body",
+                "collection",
+                "keyid"
+            ],
+            "properties": {
+                "body": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                    }
+                },
+                "collection": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "keyid": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                }
+            }
+        },
+        "models.SMLTransactionKeyRequest": {
+            "type": "object",
+            "required": [
+                "collection",
+                "deletekeys",
+                "keyid"
+            ],
+            "properties": {
+                "collection": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "deletekeys": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "keyid": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                }
+            }
+        },
+        "models.SMLTransactionRequest": {
+            "type": "object",
+            "required": [
+                "body",
+                "collection",
+                "keyid"
+            ],
+            "properties": {
+                "body": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "collection": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "keyid": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                }
+            }
+        },
+        "models.SaleChannel": {
+            "type": "object",
+            "required": [
+                "code",
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "gp": {
+                    "type": "number"
+                },
+                "gptype": {
+                    "type": "integer"
+                },
+                "imageuri": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "models.SaleInvoice": {
+            "type": "object",
+            "properties": {
+                "cashiercode": {
+                    "type": "string"
+                },
+                "custcode": {
+                    "type": "string"
+                },
+                "custnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Detail"
+                    }
+                },
+                "discountword": {
+                    "type": "string"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "docrefdate": {
+                    "type": "string"
+                },
+                "docrefno": {
+                    "type": "string"
+                },
+                "docreftype": {
+                    "type": "integer"
+                },
+                "doctype": {
+                    "type": "integer"
+                },
+                "guidref": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "iscancel": {
+                    "type": "boolean"
+                },
+                "membercode": {
+                    "type": "string"
+                },
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
+                },
+                "posid": {
+                    "type": "string"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxdocdate": {
+                    "type": "string"
+                },
+                "taxdocno": {
+                    "type": "string"
+                },
+                "totalaftervat": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                },
+                "totalbeforevat": {
+                    "type": "number"
+                },
+                "totalcost": {
+                    "type": "number"
+                },
+                "totaldiscount": {
+                    "type": "number"
+                },
+                "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalvalue": {
+                    "type": "number"
+                },
+                "totalvatvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "number"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.SaleInvoiceReturn": {
+            "type": "object",
+            "properties": {
+                "cashiercode": {
+                    "type": "string"
+                },
+                "custcode": {
+                    "type": "string"
+                },
+                "custnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Detail"
+                    }
+                },
+                "discountword": {
+                    "type": "string"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "docrefdate": {
+                    "type": "string"
+                },
+                "docrefno": {
+                    "type": "string"
+                },
+                "docreftype": {
+                    "type": "integer"
+                },
+                "doctype": {
+                    "type": "integer"
+                },
+                "guidref": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "iscancel": {
+                    "type": "boolean"
+                },
+                "membercode": {
+                    "type": "string"
+                },
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
+                },
+                "posid": {
+                    "type": "string"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxdocdate": {
+                    "type": "string"
+                },
+                "taxdocno": {
+                    "type": "string"
+                },
+                "totalaftervat": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                },
+                "totalbeforevat": {
+                    "type": "number"
+                },
+                "totalcost": {
+                    "type": "number"
+                },
+                "totaldiscount": {
+                    "type": "number"
+                },
+                "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalvalue": {
+                    "type": "number"
+                },
+                "totalvatvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "number"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.SectionBranch": {
+            "type": "object",
+            "properties": {
+                "branchcode": {
+                    "type": "string"
+                },
+                "productcodes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.SectionBusinessType": {
+            "type": "object",
+            "properties": {
+                "businesstypecode": {
+                    "type": "string"
+                },
+                "productcodes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.SectionDepartment": {
+            "type": "object",
+            "properties": {
+                "branchcode": {
+                    "type": "string"
+                },
+                "departmentcode": {
+                    "type": "string"
+                },
+                "productcodes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.Shelf": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "models.ShelfRequest": {
+            "type": "object",
+            "required": [
+                "locationcode",
+                "shelfcode",
+                "warehousecode"
+            ],
+            "properties": {
+                "locationcode": {
+                    "type": "string"
+                },
+                "shelfcode": {
+                    "type": "string"
+                },
+                "shelfname": {
+                    "type": "string"
+                },
+                "warehousecode": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Shop": {
             "type": "object",
             "properties": {
+                "branchcode": {
+                    "type": "string"
+                },
                 "name1": {
+                    "type": "string"
+                },
+                "profilepicture": {
                     "type": "string"
                 },
                 "telephone": {
@@ -13387,10 +31898,16 @@ const docTemplate = `{
         "models.ShopInfo": {
             "type": "object",
             "properties": {
+                "branchcode": {
+                    "type": "string"
+                },
                 "guidfixed": {
                     "type": "string"
                 },
                 "name1": {
+                    "type": "string"
+                },
+                "profilepicture": {
                     "type": "string"
                 },
                 "telephone": {
@@ -13411,6 +31928,9 @@ const docTemplate = `{
         },
         "models.ShopTable": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
                 "name1": {
                     "type": "string"
@@ -13427,43 +31947,13 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
-                "number": {
-                    "type": "string"
-                },
-                "seat": {
-                    "type": "integer"
-                },
-                "zone": {
-                    "$ref": "#/definitions/models.ShopZone"
-                }
-            }
-        },
-        "models.ShopTableActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "number": {
                     "type": "string"
@@ -13471,53 +31961,16 @@ const docTemplate = `{
                 "seat": {
                     "type": "integer"
                 },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                },
                 "zone": {
-                    "$ref": "#/definitions/models.ShopZone"
-                }
-            }
-        },
-        "models.ShopTableDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
                     "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.ShopTableFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.ShopTableLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
                 }
             }
         },
         "models.ShopTableInfo": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
                 "guidfixed": {
                     "type": "string"
@@ -13537,6 +31990,14 @@ const docTemplate = `{
                 "name5": {
                     "type": "string"
                 },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
                 "number": {
                     "type": "string"
                 },
@@ -13544,7 +32005,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "zone": {
-                    "$ref": "#/definitions/models.ShopZone"
+                    "type": "string"
                 }
             }
         },
@@ -13556,23 +32017,6 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
-                }
-            }
-        },
-        "models.ShopTableLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ShopTableActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ShopTableDeleteActivity"
-                    }
                 }
             }
         },
@@ -13596,6 +32040,15 @@ const docTemplate = `{
         "models.ShopUserInfo": {
             "type": "object",
             "properties": {
+                "branchcode": {
+                    "type": "string"
+                },
+                "isfavorite": {
+                    "type": "boolean"
+                },
+                "lastaccessedat": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -13629,82 +32082,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "printer": {
-                    "$ref": "#/definitions/models.PrinterTerminal"
-                }
-            }
-        },
-        "models.ShopZoneActivity": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "printer": {
-                    "$ref": "#/definitions/models.PrinterTerminal"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.ShopZoneDeleteActivity": {
-            "type": "object",
-            "properties": {
-                "createdat": {
-                    "type": "string"
-                },
-                "deletedat": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "shopid": {
-                    "type": "string"
-                },
-                "updatedat": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.ShopZoneFetchUpdateResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.ShopZoneLastActivityResponse"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
+                    "$ref": "#/definitions/models.Printer"
                 }
             }
         },
@@ -13733,7 +32111,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "printer": {
-                    "$ref": "#/definitions/models.PrinterTerminal"
+                    "$ref": "#/definitions/models.Printer"
                 }
             }
         },
@@ -13745,23 +32123,6 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
-                }
-            }
-        },
-        "models.ShopZoneLastActivityResponse": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ShopZoneActivity"
-                    }
-                },
-                "remove": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ShopZoneDeleteActivity"
-                    }
                 }
             }
         },
@@ -13895,6 +32256,606 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Staff": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "cashier": {
+                    "type": "boolean"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "order": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.Status": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.StatusHistory": {
+            "type": "object",
+            "properties": {
+                "changedat": {
+                    "type": "string"
+                },
+                "changedby": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.StockAdjustment": {
+            "type": "object",
+            "properties": {
+                "cashiercode": {
+                    "type": "string"
+                },
+                "custcode": {
+                    "type": "string"
+                },
+                "custnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Detail"
+                    }
+                },
+                "discountword": {
+                    "type": "string"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "docrefdate": {
+                    "type": "string"
+                },
+                "docrefno": {
+                    "type": "string"
+                },
+                "docreftype": {
+                    "type": "integer"
+                },
+                "doctype": {
+                    "type": "integer"
+                },
+                "guidref": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "iscancel": {
+                    "type": "boolean"
+                },
+                "membercode": {
+                    "type": "string"
+                },
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
+                },
+                "posid": {
+                    "type": "string"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxdocdate": {
+                    "type": "string"
+                },
+                "taxdocno": {
+                    "type": "string"
+                },
+                "totalaftervat": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                },
+                "totalbeforevat": {
+                    "type": "number"
+                },
+                "totalcost": {
+                    "type": "number"
+                },
+                "totaldiscount": {
+                    "type": "number"
+                },
+                "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalvalue": {
+                    "type": "number"
+                },
+                "totalvatvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "number"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.StockPickupProduct": {
+            "type": "object",
+            "properties": {
+                "cashiercode": {
+                    "type": "string"
+                },
+                "custcode": {
+                    "type": "string"
+                },
+                "custnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Detail"
+                    }
+                },
+                "discountword": {
+                    "type": "string"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "docrefdate": {
+                    "type": "string"
+                },
+                "docrefno": {
+                    "type": "string"
+                },
+                "docreftype": {
+                    "type": "integer"
+                },
+                "doctype": {
+                    "type": "integer"
+                },
+                "guidref": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "iscancel": {
+                    "type": "boolean"
+                },
+                "membercode": {
+                    "type": "string"
+                },
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
+                },
+                "posid": {
+                    "type": "string"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxdocdate": {
+                    "type": "string"
+                },
+                "taxdocno": {
+                    "type": "string"
+                },
+                "totalaftervat": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                },
+                "totalbeforevat": {
+                    "type": "number"
+                },
+                "totalcost": {
+                    "type": "number"
+                },
+                "totaldiscount": {
+                    "type": "number"
+                },
+                "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalvalue": {
+                    "type": "number"
+                },
+                "totalvatvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "number"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.StockReceiveProduct": {
+            "type": "object",
+            "properties": {
+                "cashiercode": {
+                    "type": "string"
+                },
+                "custcode": {
+                    "type": "string"
+                },
+                "custnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Detail"
+                    }
+                },
+                "discountword": {
+                    "type": "string"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "docrefdate": {
+                    "type": "string"
+                },
+                "docrefno": {
+                    "type": "string"
+                },
+                "docreftype": {
+                    "type": "integer"
+                },
+                "doctype": {
+                    "type": "integer"
+                },
+                "guidref": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "iscancel": {
+                    "type": "boolean"
+                },
+                "membercode": {
+                    "type": "string"
+                },
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
+                },
+                "posid": {
+                    "type": "string"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxdocdate": {
+                    "type": "string"
+                },
+                "taxdocno": {
+                    "type": "string"
+                },
+                "totalaftervat": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                },
+                "totalbeforevat": {
+                    "type": "number"
+                },
+                "totalcost": {
+                    "type": "number"
+                },
+                "totaldiscount": {
+                    "type": "number"
+                },
+                "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalvalue": {
+                    "type": "number"
+                },
+                "totalvatvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "number"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.StockReturnProduct": {
+            "type": "object",
+            "properties": {
+                "cashiercode": {
+                    "type": "string"
+                },
+                "custcode": {
+                    "type": "string"
+                },
+                "custnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Detail"
+                    }
+                },
+                "discountword": {
+                    "type": "string"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "docrefdate": {
+                    "type": "string"
+                },
+                "docrefno": {
+                    "type": "string"
+                },
+                "docreftype": {
+                    "type": "integer"
+                },
+                "doctype": {
+                    "type": "integer"
+                },
+                "guidref": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "iscancel": {
+                    "type": "boolean"
+                },
+                "membercode": {
+                    "type": "string"
+                },
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
+                },
+                "posid": {
+                    "type": "string"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxdocdate": {
+                    "type": "string"
+                },
+                "taxdocno": {
+                    "type": "string"
+                },
+                "totalaftervat": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                },
+                "totalbeforevat": {
+                    "type": "number"
+                },
+                "totalcost": {
+                    "type": "number"
+                },
+                "totaldiscount": {
+                    "type": "number"
+                },
+                "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalvalue": {
+                    "type": "number"
+                },
+                "totalvatvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "number"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.StockTransfer": {
+            "type": "object",
+            "properties": {
+                "cashiercode": {
+                    "type": "string"
+                },
+                "custcode": {
+                    "type": "string"
+                },
+                "custnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Detail"
+                    }
+                },
+                "discountword": {
+                    "type": "string"
+                },
+                "docdatetime": {
+                    "type": "string"
+                },
+                "docno": {
+                    "type": "string"
+                },
+                "docrefdate": {
+                    "type": "string"
+                },
+                "docrefno": {
+                    "type": "string"
+                },
+                "docreftype": {
+                    "type": "integer"
+                },
+                "doctype": {
+                    "type": "integer"
+                },
+                "guidref": {
+                    "type": "string"
+                },
+                "inquirytype": {
+                    "type": "integer"
+                },
+                "iscancel": {
+                    "type": "boolean"
+                },
+                "membercode": {
+                    "type": "string"
+                },
+                "paymentdetail": {
+                    "$ref": "#/definitions/models.PaymentDetail"
+                },
+                "posid": {
+                    "type": "string"
+                },
+                "salecode": {
+                    "type": "string"
+                },
+                "salename": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxdocdate": {
+                    "type": "string"
+                },
+                "taxdocno": {
+                    "type": "string"
+                },
+                "totalaftervat": {
+                    "type": "number"
+                },
+                "totalamount": {
+                    "type": "number"
+                },
+                "totalbeforevat": {
+                    "type": "number"
+                },
+                "totalcost": {
+                    "type": "number"
+                },
+                "totaldiscount": {
+                    "type": "number"
+                },
+                "totalexceptvat": {
+                    "type": "number"
+                },
+                "totalvalue": {
+                    "type": "number"
+                },
+                "totalvatvalue": {
+                    "type": "number"
+                },
+                "transflag": {
+                    "type": "integer"
+                },
+                "vatrate": {
+                    "type": "number"
+                },
+                "vattype": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.Storefront": {
             "type": "object",
             "required": [
@@ -13904,7 +32865,7 @@ const docTemplate = `{
                 "devices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Device"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_storefront_models.Device"
                     }
                 },
                 "name1": {
@@ -13943,6 +32904,73 @@ const docTemplate = `{
                 },
                 "tablecode": {
                     "type": "string"
+                }
+            }
+        },
+        "models.Task": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "isfavorit": {
+                    "type": "boolean"
+                },
+                "module": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "ownerat": {
+                    "type": "string"
+                },
+                "ownerby": {
+                    "type": "string"
+                },
+                "parentguidfixed": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "rejectedat": {
+                    "type": "string"
+                },
+                "rejectedby": {
+                    "type": "string"
+                },
+                "rejectfromtaskguid": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "totaldocument": {
+                    "type": "integer"
+                },
+                "totaldocumentstatus": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TotalStatus"
+                    }
+                }
+            }
+        },
+        "models.TaskStatus": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer"
                 }
             }
         },
@@ -14004,14 +33032,34 @@ const docTemplate = `{
                 }
             }
         },
-        "models.TransferPayment": {
+        "models.TotalStatus": {
             "type": "object",
             "properties": {
-                "amount": {
-                    "type": "number"
+                "status": {
+                    "type": "integer"
                 },
-                "bankcode": {
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.TransportChannel": {
+            "type": "object",
+            "required": [
+                "code",
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "imageuri": {
                     "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1
                 }
             }
         },
@@ -14084,6 +33132,26 @@ const docTemplate = `{
                 },
                 "shopid": {
                     "type": "string"
+                },
+                "sumbalancecredit": {
+                    "type": "number"
+                },
+                "sumbalancedebit": {
+                    "type": "number"
+                },
+                "sumcredit": {
+                    "description": "ยอดเครดิต",
+                    "type": "number"
+                },
+                "sumdebit": {
+                    "description": "ยอดเครดิต",
+                    "type": "number"
+                },
+                "sumnextbalancecredit": {
+                    "type": "number"
+                },
+                "sumnextbalancedebit": {
+                    "type": "number"
                 }
             }
         },
@@ -14357,37 +33425,144 @@ const docTemplate = `{
         "models.Warehouse": {
             "type": "object",
             "required": [
-                "name1"
+                "names"
             ],
             "properties": {
                 "code": {
                     "type": "string"
                 },
-                "locations": {
+                "location": {
                     "type": "array",
+                    "uniqueItems": true,
                     "items": {
-                        "$ref": "#/definitions/models.Location"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_warehouse_models.Location"
                     }
                 },
-                "name1": {
-                    "type": "string",
-                    "maxLength": 255
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "models.XSort": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
                 },
-                "name2": {
+                "xorder": {
+                    "type": "integer",
+                    "maximum": 4294967295,
+                    "minimum": 0
+                }
+            }
+        },
+        "models.XSortDocumentImageGroupRequest": {
+            "type": "object",
+            "required": [
+                "guidfixed"
+            ],
+            "properties": {
+                "guidfixed": {
                     "type": "string",
-                    "maxLength": 255
+                    "minLength": 1
                 },
-                "name3": {
-                    "type": "string",
-                    "maxLength": 255
+                "xorder": {
+                    "type": "integer",
+                    "maximum": 4294967295,
+                    "minimum": 0
+                }
+            }
+        },
+        "models.XSortModifyReqesut": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
                 },
-                "name4": {
-                    "type": "string",
-                    "maxLength": 255
+                "guidfixed": {
+                    "type": "string"
                 },
-                "name5": {
-                    "type": "string",
-                    "maxLength": 255
+                "xorder": {
+                    "type": "integer",
+                    "maximum": 4294967295,
+                    "minimum": 0
+                }
+            }
+        },
+        "smlcloudplatform_pkg_organization_branch_models.Branch": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "businesstypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "code": {
+                    "type": "string"
+                },
+                "contact": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact"
+                },
+                "departments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Department"
+                    }
+                },
+                "languages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
+        "smlcloudplatform_pkg_organization_branch_models.Contact": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
                 }
             }
         },
@@ -14411,6 +33586,28 @@ const docTemplate = `{
                 },
                 "unitname5": {
                     "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_product_models.ProductImage": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_productbarcode_models.ProductImage": {
+            "type": "object",
+            "properties": {
+                "uri": {
+                    "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -14447,6 +33644,235 @@ const docTemplate = `{
                 },
                 "unitname5": {
                     "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_report_reportqueryc_models.ReportParam": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_report_reportqueryc_models.ReportQuery": {
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 1
+                },
+                "isactived": {
+                    "type": "boolean"
+                },
+                "isapproved": {
+                    "type": "boolean"
+                },
+                "params": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_report_reportqueryc_models.ReportParam"
+                    }
+                },
+                "sql": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_report_reportquerym_models.ReportParam": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_report_reportquerym_models.ReportQuery": {
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 1
+                },
+                "collection": {
+                    "type": "string"
+                },
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "filter": {
+                    "type": "string"
+                },
+                "isactived": {
+                    "type": "boolean"
+                },
+                "isapproved": {
+                    "type": "boolean"
+                },
+                "params": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_report_reportquerym_models.ReportParam"
+                    }
+                }
+            }
+        },
+        "smlcloudplatform_pkg_restaurant_device_models.Device": {
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name1": {
+                    "type": "string"
+                },
+                "name2": {
+                    "type": "string"
+                },
+                "name3": {
+                    "type": "string"
+                },
+                "name4": {
+                    "type": "string"
+                },
+                "name5": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_branch_models.Branch": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "departments": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Department"
+                    }
+                },
+                "location": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_branch_models.Location"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "telephone": {
+                    "type": "string",
+                    "maxLength": 100
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_branch_models.Location": {
+            "type": "object",
+            "properties": {
+                "lat": {
+                    "type": "string"
+                },
+                "lng": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_employee_models.Contact": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_storefront_models.Device": {
+            "type": "object",
+            "properties": {
+                "os": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_warehouse_models.Location": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "shelf": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Shelf"
+                    }
                 }
             }
         }

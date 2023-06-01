@@ -10,14 +10,61 @@ const warehouseCollectionName = "warehouse"
 
 type Warehouse struct {
 	models.PartitionIdentity `bson:"inline"`
-	Code                     string `json:"code" bson:"code"`
-	models.Name              `bson:"inline"`
-	Locations                *[]Location `json:"locations" bson:"locations"`
+	Code                     string          `json:"code" bson:"code"`
+	Names                    *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	Location                 *[]Location     `json:"location" bson:"location" validate:"omitempty,unique=Code,dive"`
 }
 
 type Location struct {
-	Code        string `json:"code" bson:"code"`
-	models.Name `bson:"inline"`
+	Code  string          `json:"code" bson:"code"`
+	Names *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	Shelf *[]Shelf        `json:"shelf" bson:"shelf" validate:"omitempty,unique=Code,dive"`
+}
+
+type Shelf struct {
+	Code string `json:"code" bson:"code"`
+	Name string `json:"name" bson:"name" validate:"required,min=1"`
+}
+
+type LocationInfo struct {
+	GuidFixed      string          `json:"guidfixed" bson:"guidfixed"`
+	WarehouseCode  string          `json:"warehousecode" bson:"warehousecode"`
+	WarehouseNames *[]models.NameX `json:"warehousenames" bson:"warehousenames"`
+	LocationCode   string          `json:"locationcode" bson:"locationcode"`
+	LocationNames  *[]models.NameX `json:"locationnames" bson:"locationnames"`
+	Shelf          []Shelf         `json:"shelf" bson:"shelf"`
+}
+
+func (LocationInfo) CollectionName() string {
+	return warehouseCollectionName
+}
+
+type ShelfInfo struct {
+	GuidFixed      string          `json:"guidfixed" bson:"guidfixed"`
+	WarehouseCode  string          `json:"warehousecode" bson:"warehousecode"`
+	WarehouseNames *[]models.NameX `json:"warehousenames" bson:"warehousenames"`
+	LocationCode   string          `json:"locationcode" bson:"locationcode"`
+	LocationNames  *[]models.NameX `json:"locationnames" bson:"locationnames"`
+	ShelfCode      string          `json:"shelfcode" bson:"shelfcode"`
+	ShelfName      string          `json:"shelfname" bson:"shelfname"`
+}
+
+func (ShelfInfo) CollectionName() string {
+	return warehouseCollectionName
+}
+
+type LocationRequest struct {
+	WarehouseCode string          `json:"warehousecode" bson:"warehousecode" validate:"required"`
+	Code          string          `json:"locationcode" bson:"locationcode" validate:"required"`
+	Names         *[]models.NameX `json:"locationnames" bson:"locationnames"`
+	Shelf         []Shelf         `json:"shelf" bson:"shelf"`
+}
+
+type ShelfRequest struct {
+	WarehouseCode string `json:"warehousecode" bson:"warehousecode" validate:"required"`
+	LocationCode  string `json:"locationcode" bson:"locationcode" validate:"required"`
+	Code          string `json:"shelfcode" bson:"shelfcode" validate:"required"`
+	Name          string `json:"shelfname" bson:"shelfname"`
 }
 
 type WarehouseInfo struct {

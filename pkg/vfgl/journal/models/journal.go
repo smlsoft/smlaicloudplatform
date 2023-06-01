@@ -12,7 +12,7 @@ import (
 const journalCollectionName = "journals"
 
 type JournalBody struct {
-	BatchID            string    `json:"batchId" bson:"batch" gorm:"column:batchid"`
+	BatchID            string    `json:"batchid" bson:"batchid" gorm:"column:batchid"`
 	DocNo              string    `json:"docno" bson:"docno" gorm:"column:docno;primaryKey"`
 	DocDate            time.Time `json:"docdate" bson:"docdate" format:"dateTime" gorm:"column:docdate"`
 	DocumentRef        string    `json:"documentref" bson:"documentref" gorm:"column:documentref"`
@@ -27,6 +27,7 @@ type JournalBody struct {
 	JournalType        int       `json:"journaltype" bson:"journaltype" gorm:"column:journaltype"` // ประเภทข้อมูลรายวัน (0 = ทั่วไป, 1=ปิดยอด)
 	ExDocRefNo         string    `json:"exdocrefno" bson:"exdocrefno" gorm:"column:exdocrefno" `
 	ExDocRefDate       time.Time `json:"exdocrefdate" bson:"exdocrefdate" gorm:"exdocrefdate"`
+	DocFormat          string    `json:"docformat" bson:"docformat" gorm:"column:docformat"`
 }
 
 type Journal struct {
@@ -45,6 +46,9 @@ type JournalDetail struct {
 type JournalInfo struct {
 	models.DocIdentity `bson:"inline"`
 	Journal            `bson:"inline"`
+
+	CreatedBy string    `json:"createdby" bson:"createdby"`
+	CreatedAt time.Time `json:"createdat" bson:"createdat"`
 }
 
 func (JournalInfo) CollectionName() string {

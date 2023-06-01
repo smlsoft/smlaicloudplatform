@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/color/models"
 	"smlcloudplatform/pkg/product/color/repositories"
@@ -9,7 +10,8 @@ import (
 	"smlcloudplatform/pkg/utils/importdata"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -18,7 +20,9 @@ type IColorHttpService interface {
 	UpdateColor(shopID string, guid string, authUsername string, doc models.Color) error
 	DeleteColor(shopID string, guid string, authUsername string) error
 	InfoColor(shopID string, guid string) (models.ColorInfo, error)
-	SearchColor(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ColorInfo, mongopagination.PaginationData, error)
+	InfoWTFArray(shopID string, codes []string) ([]interface{}, error)
+	SearchColor(shopID string, pageable micromodels.Pageable) ([]models.ColorInfo, mongopagination.PaginationData, error)
+	SearchColorStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ColorInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Color) (common.BulkImport, error)
 }
 
@@ -126,19 +130,66 @@ func (svc ColorHttpService) InfoColor(shopID string, guid string) (models.ColorI
 
 }
 
-func (svc ColorHttpService) SearchColor(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ColorInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
-		"guidfixed",
-		"code",
+func (svc ColorHttpService) InfoWTFArray(shopID string, codes []string) ([]interface{}, error) {
+	docList := []interface{}{}
+
+	for _, code := range codes {
+		findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", code)
+		if err != nil || findDoc.ID == primitive.NilObjectID {
+			// add item empty
+			docList = append(docList, nil)
+		} else {
+			docList = append(docList, findDoc.ColorInfo)
+		}
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	return docList, nil
+}
+
+func (svc ColorHttpService) SearchColor(shopID string, pageable micromodels.Pageable) ([]models.ColorInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
+		"code",
+		"names.name",
+	}
+
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ColorInfo{}, pagination, err
 	}
 
 	return docList, pagination, nil
+}
+
+func (svc ColorHttpService) SearchColorStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ColorInfo, int, error) {
+	searchInFields := []string{
+		"code",
+		"names.name",
+	}
+
+	selectFields := map[string]interface{}{
+		"guidfixed":      1,
+		"code":           1,
+		"colorselect":    1,
+		"colorsystem":    1,
+		"colorhex":       1,
+		"colorselecthex": 1,
+		"colorsystemhex": 1,
+	}
+
+	if langCode != "" {
+		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
+	} else {
+		selectFields["names"] = 1
+	}
+
+	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+
+	if err != nil {
+		return []models.ColorInfo{}, 0, err
+	}
+
+	return docList, total, nil
 }
 
 func (svc ColorHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.Color) (common.BulkImport, error) {

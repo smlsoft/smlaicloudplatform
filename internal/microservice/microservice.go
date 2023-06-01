@@ -20,7 +20,6 @@ import (
 
 	"github.com/apex/log"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
-	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo-contrib/jaegertracing"
 	"github.com/labstack/echo-contrib/prometheus"
@@ -56,6 +55,8 @@ type Microservice struct {
 	persistersMutex           sync.Mutex
 	mongoPersisters           map[string]IPersisterMongo
 	persistersMongoMutex      sync.Mutex
+	clickHousePersisters      map[string]IPersisterClickHouse
+	persistersClickHouseMutex sync.Mutex
 	elkPersisters             map[string]IPersisterElk
 	persistersElkMutex        sync.Mutex
 	openSearchPersisters      map[string]IPersisterOpenSearch
@@ -76,7 +77,8 @@ func NewMicroservice(config IConfig) (*Microservice, error) {
 	e := echo.New()
 	e.HideBanner = true
 	e.HidePort = true
-	e.Validator = &msValidator.CustomValidator{Validator: validator.New()}
+	// e.Validator = &msValidator.CustomValidator{Validator: validator.New()}
+	e.Validator = msValidator.NewCustomValidator()
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
@@ -99,17 +101,18 @@ func NewMicroservice(config IConfig) (*Microservice, error) {
 	}
 
 	m := &Microservice{
-		echo:            e,
-		cachers:         map[string]ICacher{},
-		persisters:      map[string]IPersister{},
-		mongoPersisters: map[string]IPersisterMongo{},
-		elkPersisters:   map[string]IPersisterElk{},
-		prods:           map[string]IProducer{},
-		pathPrefix:      config.PathPrefix(),
-		config:          config,
-		Logger:          logctx,
-		Mode:            os.Getenv("MODE"),
-		websocketPool:   &websocketPool,
+		echo:                 e,
+		cachers:              map[string]ICacher{},
+		persisters:           map[string]IPersister{},
+		mongoPersisters:      map[string]IPersisterMongo{},
+		clickHousePersisters: map[string]IPersisterClickHouse{},
+		elkPersisters:        map[string]IPersisterElk{},
+		prods:                map[string]IProducer{},
+		pathPrefix:           config.PathPrefix(),
+		config:               config,
+		Logger:               logctx,
+		Mode:                 os.Getenv("MODE"),
+		websocketPool:        &websocketPool,
 	}
 
 	m.Logger.Info("Initial Microservice.")
@@ -305,6 +308,22 @@ func (ms *Microservice) MongoPersister(cfg IPersisterMongoConfig) IPersisterMong
 		ms.persistersMongoMutex.Lock()
 		ms.mongoPersisters[cfg.MongodbURI()] = pst
 		ms.persistersMongoMutex.Unlock()
+	}
+	return pst
+}
+
+func (ms *Microservice) ClickHousePersister(cfg IPersisterClickHouseConfig) IPersisterClickHouse {
+
+	indexCfg := strings.Join(cfg.ServerAddress(), "_")
+
+	pst, ok := ms.clickHousePersisters[indexCfg]
+	if !ok {
+		pst = NewPersisterClickHouse(cfg)
+
+		ms.persistersClickHouseMutex.Lock()
+		ms.clickHousePersisters[indexCfg] = pst
+		ms.persistersClickHouseMutex.Unlock()
+
 	}
 	return pst
 }

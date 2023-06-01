@@ -2,10 +2,11 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/color/models"
 	"smlcloudplatform/pkg/repositories"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 )
 
 type IColorRepository interface {
@@ -14,12 +15,13 @@ type IColorRepository interface {
 	CreateInBatch(docList []models.ColorDoc) error
 	Update(shopID string, guid string, doc models.ColorDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.ColorInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ColorInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.ColorDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.ColorItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.ColorDoc, error)
-	FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.ColorInfo, mongopagination.PaginationData, error)
+
+	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, selectFields map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ColorInfo, int, error)
 }
 
 type ColorRepository struct {

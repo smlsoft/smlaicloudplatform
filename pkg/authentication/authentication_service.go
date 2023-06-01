@@ -2,7 +2,9 @@ package authentication
 
 import (
 	"errors"
+	"fmt"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/firebase"
 	"smlcloudplatform/pkg/shop"
 	"smlcloudplatform/pkg/shop/models"
 	"strings"
@@ -14,36 +16,49 @@ import (
 )
 
 type IAuthenticationService interface {
-	Login(userReq *models.UserLoginRequest) (string, error)
+	Login(userReq *models.UserLoginRequest, authContext AuthenticationContext) (string, error)
 	Register(userRequest models.UserRequest) (string, error)
 	Update(username string, userRequest models.UserProfileRequest) error
 	UpdatePassword(username string, currentPassword string, newPassword string) error
 	Logout(authorizationHeader string) error
 	Profile(username string) (models.UserProfile, error)
-	AccessShop(shopID string, username string, authorizationHeader string) error
+	AccessShop(shopID string, username string, authorizationHeader string, authContext AuthenticationContext) error
+	UpdateFavoriteShop(shopID string, username string, isFavorite bool) error
+	LoginWithFirebaseToken(token string) (string, error)
 }
 
 type AuthenticationService struct {
-	authService       microservice.IAuthService
-	authRepo          IAuthenticationRepository
-	shopUserRepo      shop.IShopUserRepository
-	passwordEncoder   func(string) (string, error)
-	checkHashPassword func(password string, hash string) bool
-	timeNow           func() time.Time
+	authService           microservice.IAuthService
+	authRepo              IAuthenticationRepository
+	shopUserRepo          shop.IShopUserRepository
+	shopUserAccessLogRepo shop.IShopUserAccessLogRepository
+	passwordEncoder       func(string) (string, error)
+	checkHashPassword     func(password string, hash string) bool
+	timeNow               func() time.Time
+	firebaseAdapter       firebase.IFirebaseAdapter
 }
 
-func NewAuthenticationService(authRepo IAuthenticationRepository, shopUserRepo shop.IShopUserRepository, authService microservice.IAuthService, passwordEncoder func(string) (string, error), checkHashPassword func(password string, hash string) bool, timeNow func() time.Time) AuthenticationService {
+func NewAuthenticationService(
+	authRepo IAuthenticationRepository,
+	shopUserRepo shop.IShopUserRepository,
+	shopUserAccessLogRepo shop.IShopUserAccessLogRepository,
+	authService microservice.IAuthService,
+	passwordEncoder func(string) (string, error),
+	checkHashPassword func(password string, hash string) bool, timeNow func() time.Time,
+	firebaseAdapter firebase.IFirebaseAdapter) AuthenticationService {
 	return AuthenticationService{
-		authRepo:          authRepo,
-		authService:       authService,
-		shopUserRepo:      shopUserRepo,
-		passwordEncoder:   passwordEncoder,
-		checkHashPassword: checkHashPassword,
-		timeNow:           timeNow,
+		authRepo:              authRepo,
+		authService:           authService,
+		shopUserRepo:          shopUserRepo,
+		shopUserAccessLogRepo: shopUserAccessLogRepo,
+		passwordEncoder:       passwordEncoder,
+		checkHashPassword:     checkHashPassword,
+		timeNow:               timeNow,
+		firebaseAdapter:       firebaseAdapter,
 	}
 }
 
-func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest) (string, error) {
+func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, authContext AuthenticationContext) (string, error) {
 
 	userLoginReq.Username = strings.TrimSpace(userLoginReq.Username)
 	userLoginReq.ShopID = strings.TrimSpace(userLoginReq.ShopID)
@@ -86,6 +101,26 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest) (s
 
 		if err != nil {
 			return "", errors.New("failed shop select")
+		}
+
+		lastAccessedAt := svc.timeNow()
+
+		err = svc.shopUserRepo.UpdateLastAccess(userLoginReq.ShopID, userLoginReq.Username, lastAccessedAt)
+		if err != nil {
+			// implement log
+			fmt.Println("error :: ", err.Error())
+		}
+
+		err = svc.shopUserAccessLogRepo.Create(models.ShopUserAccessLog{
+			ShopID:         userLoginReq.ShopID,
+			Username:       userLoginReq.Username,
+			Ip:             authContext.Ip,
+			LastAccessedAt: lastAccessedAt,
+		})
+
+		if err != nil {
+			// implement log
+			fmt.Println("error :: ", err.Error())
 		}
 	}
 
@@ -206,7 +241,7 @@ func (svc AuthenticationService) Profile(username string) (models.UserProfile, e
 	return userProfile, nil
 }
 
-func (svc AuthenticationService) AccessShop(shopID string, username string, authorizationHeader string) error {
+func (svc AuthenticationService) AccessShop(shopID string, username string, authorizationHeader string, authContext AuthenticationContext) error {
 
 	if shopID == "" {
 		return errors.New("shop invalid")
@@ -241,5 +276,94 @@ func (svc AuthenticationService) AccessShop(shopID string, username string, auth
 	if err != nil {
 		return errors.New("failed shop select")
 	}
+
+	lastAccessedAt := svc.timeNow()
+	err = svc.shopUserRepo.UpdateLastAccess(shopID, username, lastAccessedAt)
+	if err != nil {
+		// implement log
+		fmt.Println("error :: ", err.Error())
+	}
+
+	err = svc.shopUserAccessLogRepo.Create(models.ShopUserAccessLog{
+		ShopID:         shopID,
+		Username:       username,
+		Ip:             authContext.Ip,
+		LastAccessedAt: lastAccessedAt,
+	})
+
+	if err != nil {
+		// implement log
+		fmt.Println("error :: ", err.Error())
+	}
+
 	return nil
+}
+
+func (svc AuthenticationService) UpdateFavoriteShop(shopID string, username string, isFavorite bool) error {
+
+	if shopID == "" {
+		return errors.New("shop invalid")
+	}
+
+	if username == "" {
+		return errors.New("username invalid")
+	}
+
+	shopUser, err := svc.shopUserRepo.FindByShopIDAndUsername(shopID, username)
+
+	if err != nil {
+		return err
+	}
+
+	if shopUser.ID == primitive.NilObjectID {
+		return errors.New("shop invalid")
+	}
+
+	err = svc.shopUserRepo.SaveFavorite(shopID, username, isFavorite)
+	if err != nil {
+		return errors.New("favorite failed")
+	}
+
+	return nil
+}
+
+func (svc AuthenticationService) LoginWithFirebaseToken(token string) (string, error) {
+
+	userInfo, err := svc.firebaseAdapter.ValidateToken(token)
+	if err != nil {
+		return "", err
+	}
+
+	// find
+	userFind, err := svc.authRepo.FindUser(userInfo.Email)
+	if err != nil && err.Error() != "mongo: no documents in result" {
+		return "", err
+	}
+
+	if len(userFind.Username) == 0 {
+		// register
+		user := models.UserDoc{}
+
+		user.Username = userInfo.Email
+		user.Password = ""
+		user.UserDetail.Name = userInfo.Name
+		user.CreatedAt = svc.timeNow()
+
+		_, err := svc.authRepo.CreateUser(user)
+		if err != nil {
+			return "", err
+		}
+		userFind, err = svc.authRepo.FindUser(userInfo.Email)
+		if err != nil && err.Error() != "mongo: no documents in result" {
+			return "", err
+		}
+	}
+
+	tokenString, err := svc.authService.GenerateTokenWithRedis(microservice.AUTHTYPE_BEARER, micromodel.UserInfo{Username: userFind.Username, Name: userFind.Name})
+
+	if err != nil {
+		return "", errors.New("generate token error")
+	}
+
+	return tokenString, nil
 }

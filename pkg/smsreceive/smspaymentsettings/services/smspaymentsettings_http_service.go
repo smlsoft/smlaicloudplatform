@@ -2,21 +2,23 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	smspatternsrepo "smlcloudplatform/pkg/smsreceive/smspatterns/repositories"
 	"smlcloudplatform/pkg/smsreceive/smspaymentsettings/models"
 	"smlcloudplatform/pkg/smsreceive/smspaymentsettings/repositories"
 	"smlcloudplatform/pkg/utils"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ISmsPaymentSettingsHttpService interface {
 	SaveSmsPaymentSettings(shopID string, authUsername string, storefrontGUID string, doc models.SmsPaymentSettings) error
 	InfoSmsPaymentSettings(shopID string, storefrontGUID string) (models.SmsPaymentSettingsInfo, error)
-	SearchSmsPaymentSettings(shopID string, q string, page int, limit int, sorts map[string]int) ([]models.SmsPaymentSettingsInfo, mongopagination.PaginationData, error)
+	SearchSmsPaymentSettings(shopID string, pageable micromodels.Pageable) ([]models.SmsPaymentSettingsInfo, mongopagination.PaginationData, error)
 }
 
 type SmsPaymentSettingsHttpService struct {
@@ -44,7 +46,7 @@ func (svc SmsPaymentSettingsHttpService) SaveSmsPaymentSettings(shopID string, a
 		return errors.New("pattern code not found")
 	}
 
-	findDoc, err := svc.repo.FindOne(shopID, map[string]interface{}{})
+	findDoc, err := svc.repo.FindOne(shopID, bson.M{})
 
 	if err != nil {
 		return err
@@ -123,10 +125,7 @@ func (svc SmsPaymentSettingsHttpService) updateSmsPaymentSettings(shopID string,
 
 func (svc SmsPaymentSettingsHttpService) InfoSmsPaymentSettings(shopID string, storefrontGUID string) (models.SmsPaymentSettingsInfo, error) {
 
-	findDoc, err := svc.repo.FindOne(shopID,
-		map[string]interface{}{
-			"storefrontguid": storefrontGUID,
-		})
+	findDoc, err := svc.repo.FindOne(shopID, bson.M{"storefrontguid": storefrontGUID})
 
 	if err != nil {
 		return models.SmsPaymentSettingsInfo{}, err
@@ -136,9 +135,9 @@ func (svc SmsPaymentSettingsHttpService) InfoSmsPaymentSettings(shopID string, s
 
 }
 
-func (svc SmsPaymentSettingsHttpService) SearchSmsPaymentSettings(shopID string, q string, page int, limit int, sorts map[string]int) ([]models.SmsPaymentSettingsInfo, mongopagination.PaginationData, error) {
+func (svc SmsPaymentSettingsHttpService) SearchSmsPaymentSettings(shopID string, pageable micromodels.Pageable) ([]models.SmsPaymentSettingsInfo, mongopagination.PaginationData, error) {
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, []string{}, q, page, limit, sorts)
+	docList, pagination, err := svc.repo.FindPage(shopID, []string{}, pageable)
 
 	if err != nil {
 		return []models.SmsPaymentSettingsInfo{}, mongopagination.PaginationData{}, err

@@ -6,126 +6,179 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/member"
 	"smlcloudplatform/pkg/models"
-	categoryRepo "smlcloudplatform/pkg/product/category/repositories"
-	categoryService "smlcloudplatform/pkg/product/category/services"
-	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/utils"
 	"strings"
 	"time"
 
 	"smlcloudplatform/pkg/restaurant/kitchen"
-	"smlcloudplatform/pkg/restaurant/shopprinter"
+	"smlcloudplatform/pkg/restaurant/printer"
 	"smlcloudplatform/pkg/restaurant/shoptable"
 	"smlcloudplatform/pkg/restaurant/shopzone"
 
 	"smlcloudplatform/pkg/mastersync/services"
-	inventoryRepo "smlcloudplatform/pkg/product/inventory/repositories"
-	inventoryService "smlcloudplatform/pkg/product/inventory/services"
+
+	employeeRepo "smlcloudplatform/pkg/shop/employee/repositories"
+	employeeService "smlcloudplatform/pkg/shop/employee/services"
+
+	productRepo "smlcloudplatform/pkg/product/product/repositories"
+	productService "smlcloudplatform/pkg/product/product/services"
+
+	productcategoryRepo "smlcloudplatform/pkg/product/productcategory/repositories"
+	productcategoryService "smlcloudplatform/pkg/product/productcategory/services"
 
 	productbarcodeRepo "smlcloudplatform/pkg/product/productbarcode/repositories"
 	productbarcodeService "smlcloudplatform/pkg/product/productbarcode/services"
 
-	"smlcloudplatform/pkg/mastersync/repositories"
+	productunitRepo "smlcloudplatform/pkg/product/unit/repositories"
+	productunitService "smlcloudplatform/pkg/product/unit/services"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	bankmasterRepo "smlcloudplatform/pkg/payment/bankmaster/repositories"
+	bankmasterService "smlcloudplatform/pkg/payment/bankmaster/services"
+
+	bookbankRepo "smlcloudplatform/pkg/payment/bookbank/repositories"
+	bookbankService "smlcloudplatform/pkg/payment/bookbank/services"
+
+	qrpaymentRepo "smlcloudplatform/pkg/payment/qrpayment/repositories"
+	qrpaymentService "smlcloudplatform/pkg/payment/qrpayment/services"
+
+	restaurantDeviceRepo "smlcloudplatform/pkg/restaurant/device/repositories"
+	restaurantDeviceService "smlcloudplatform/pkg/restaurant/device/services"
+
+	restaurantStaffRepo "smlcloudplatform/pkg/restaurant/staff/repositories"
+	restaurantStaffService "smlcloudplatform/pkg/restaurant/staff/services"
+
+	"smlcloudplatform/pkg/mastersync/repositories"
 )
 
 type MasterSyncHttp struct {
-	ms                *microservice.Microservice
-	cfg               microservice.IConfig
-	svcMasterSync     services.IMasterSyncService
-	svcCategory       categoryService.ICategoryService
-	svcMember         member.IMemberService
-	svcInventory      inventoryService.IInventoryService
-	svcKitchen        kitchen.IKitchenService
-	svcShopPrinter    shopprinter.IShopPrinterService
-	svcShopTable      shoptable.ShopTableService
-	svcShopZone       shopzone.ShopZoneService
-	svcEmployee       employee.EmployeeService
-	svcProductBarcode productbarcodeService.ProductBarcodeService
+	ms                    *microservice.Microservice
+	cfg                   microservice.IConfig
+	activityModuleManager *ActivityModuleManager
+
+	svcMasterSync services.IMasterSyncService
+	// svcProductBarcode productbarcodeService.ProductBarcodeHttpService
 }
 
 func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) MasterSyncHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	pstPg := ms.Persister(cfg.PersisterConfig())
-	prod := ms.Producer(cfg.MQConfig())
+	// prod := ms.Producer(cfg.MQConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
-	// Category
-	repoCategory := categoryRepo.NewCategoryRepository(pst)
-	repoCacheSyncCategory := repositories.NewMasterSyncCacheRepository(cache, "category")
-	svcCategory := categoryService.NewCategoryService(repoCategory, repoCacheSyncCategory)
+	activityModuleManager := NewActivityModuleManager(pst)
+
+	masterSyncCacheRepo := repositories.NewMasterSyncCacheRepository(cache)
+
+	//############
+
+	// pdt1 := productRepo.ProductRepository{}
+	// pdt1.InitialActivityRepository(pst)
+
+	// pdt2 := productService.ProductHttpService{}
+	// pdt2.InitialActivityService(pst, &productRepo.ProductRepository{})
+
+	// Product
+	svcProduct := productService.NewProductHttpService(productRepo.NewProductRepository(pst), nil, masterSyncCacheRepo)
+	activityModuleManager.Add(svcProduct)
+
+	// Product Category
+	svcProductCategory := productcategoryService.NewProductCategoryHttpService(productcategoryRepo.NewProductCategoryRepository(pst), masterSyncCacheRepo)
+	activityModuleManager.Add(svcProductCategory)
+
+	// Product Barcode
+	svcProductBarcode := productbarcodeService.NewProductBarcodeHttpService(productbarcodeRepo.NewProductBarcodeRepository(pst), nil, nil, masterSyncCacheRepo)
+	activityModuleManager.Add(svcProductBarcode)
+
+	// Product Unit
+	svcProductUnit := productunitService.NewUnitHttpService(productunitRepo.NewUnitRepository(pst), masterSyncCacheRepo)
+	activityModuleManager.Add(svcProductUnit)
+
+	// Kitchen
+	repoKitchen := kitchen.NewKitchenRepository(pst)
+	svcKitchen := kitchen.NewKitchenService(repoKitchen, masterSyncCacheRepo)
+	activityModuleManager.Add(svcKitchen)
+
+	// Shop Printer
+	repoShopPrinter := printer.NewPrinterRepository(pst)
+	svcShopPrinter := printer.NewPrinterService(repoShopPrinter, masterSyncCacheRepo)
+	activityModuleManager.Add(svcShopPrinter)
+
+	// Shop Table
+	repoShopTable := shoptable.NewShopTableRepository(pst)
+	svcShopTable := shoptable.NewShopTableService(repoShopTable, masterSyncCacheRepo)
+	activityModuleManager.Add(svcShopTable)
+
+	// Shop Zone
+	repoShopZone := shopzone.NewShopZoneRepository(pst)
+	svcShopZone := shopzone.NewShopZoneService(repoShopZone, masterSyncCacheRepo)
+	activityModuleManager.Add(svcShopZone)
+
+	// device
+	repoRestaurantDevice := restaurantDeviceRepo.NewDeviceRepository(pst)
+	svcRestaurantDevice := restaurantDeviceService.NewDeviceHttpService(repoRestaurantDevice, masterSyncCacheRepo)
+	activityModuleManager.Add(svcRestaurantDevice)
+
+	// staff
+	repoRestaurantStaff := restaurantStaffRepo.NewStaffRepository(pst)
+	svcRestaurantStaff := restaurantStaffService.NewStaffHttpService(repoRestaurantStaff, masterSyncCacheRepo)
+	activityModuleManager.Add(svcRestaurantStaff)
 
 	// Member
 	repoMember := member.NewMemberRepository(pst)
 	pgRepoMember := member.NewMemberPGRepository(pstPg)
-	repoCacheSyncMember := repositories.NewMasterSyncCacheRepository(cache, "member")
-	svcMember := member.NewMemberService(repoMember, pgRepoMember, repoCacheSyncMember)
-
-	// Inventory
-	repoInv := inventoryRepo.NewInventoryRepository(pst)
-	mqRepoInv := inventoryRepo.NewInventoryMQRepository(prod)
-	invCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "inventory")
-	svcInventory := inventoryService.NewInventoryService(repoInv, mqRepoInv, invCacheSyncRepo)
-
-	// Kitchen
-	repoKitchen := kitchen.NewKitchenRepository(pst)
-	kitchenCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "kitchen")
-	svcKitchen := kitchen.NewKitchenService(repoKitchen, kitchenCacheSyncRepo)
-
-	// Shop Printer
-	repoShopPrinter := shopprinter.NewShopPrinterRepository(pst)
-	shopPrinterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "shopprinter")
-	svcShopPrinter := shopprinter.NewShopPrinterService(repoShopPrinter, shopPrinterCacheSyncRepo)
-
-	// Shop Table
-	repoShopTable := shoptable.NewShopTableRepository(pst)
-	shopTableCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "shoptable")
-	svcShopTable := shoptable.NewShopTableService(repoShopTable, shopTableCacheSyncRepo)
-
-	// Shop Zone
-	repoShopZone := shopzone.NewShopZoneRepository(pst)
-	shopZoneCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "shopzone")
-	svcShopZone := shopzone.NewShopZoneService(repoShopZone, shopZoneCacheSyncRepo)
+	svcMember := member.NewMemberService(repoMember, pgRepoMember, masterSyncCacheRepo)
+	activityModuleManager.Add(svcMember)
 
 	// Employee
-	repoEmployee := employee.NewEmployeeRepository(pst)
-	employeeCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "employee")
-	svcEmployee := employee.NewEmployeeService(repoEmployee, employeeCacheSyncRepo)
+	repoEmployee := employeeRepo.NewEmployeeRepository(pst)
+	svcEmployee := employeeService.NewEmployeeHttpService(repoEmployee, masterSyncCacheRepo, utils.HashPassword)
+	activityModuleManager.Add(svcEmployee)
 
-	// Product Barcode
-	repoProductBarcode := productbarcodeRepo.NewProductBarcodeRepository(pst)
-	barcodeMasterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "inventory")
-	svcProductBarcode := productbarcodeService.NewProductBarcodeService(repoProductBarcode, barcodeMasterCacheSyncRepo)
+	// Bank Master
+	repoBankMaster := bankmasterRepo.NewBankMasterRepository(pst)
+	svcBankMaster := bankmasterService.NewBankMasterHttpService(repoBankMaster, masterSyncCacheRepo)
+	activityModuleManager.Add(svcBankMaster)
 
-	masterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache, "mastersync")
+	// Book Bank
+	repoBookBank := bookbankRepo.NewBookBankRepository(pst)
+	svcBookBank := bookbankService.NewBookBankHttpService(repoBookBank, masterSyncCacheRepo)
+	activityModuleManager.Add(svcBookBank)
+
+	// Qr Payment
+	qrpaymentRepo := qrpaymentRepo.NewQrPaymentRepository(pst)
+	svcQrPayment := qrpaymentService.NewQrPaymentHttpService(qrpaymentRepo, masterSyncCacheRepo)
+	activityModuleManager.Add(svcQrPayment)
+
+	masterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache)
 	svcMasterSync := services.NewMasterSyncService(masterCacheSyncRepo)
 
 	return MasterSyncHttp{
-		ms:                ms,
-		cfg:               cfg,
-		svcMasterSync:     svcMasterSync,
-		svcCategory:       svcCategory,
-		svcInventory:      svcInventory,
-		svcMember:         svcMember,
-		svcKitchen:        svcKitchen,
-		svcShopPrinter:    svcShopPrinter,
-		svcShopTable:      svcShopTable,
-		svcShopZone:       svcShopZone,
-		svcEmployee:       *svcEmployee,
-		svcProductBarcode: svcProductBarcode,
+		ms:                    ms,
+		cfg:                   cfg,
+		activityModuleManager: activityModuleManager,
+
+		svcMasterSync: svcMasterSync,
+		// svcProductBarcode: *svcProductBarcode,
 	}
 }
 
 func (h MasterSyncHttp) RouteSetup() {
 	h.ms.GET("/master-sync", h.LastActivitySync)
 	h.ms.GET("/master-sync/status", h.SyncStatus)
+	h.ms.GET("/master-sync/list", h.LastActivitySyncOffset)
 }
 
+// List Master Sync Status godoc
+// @Description  Master Sync Status
+// @Tags		MasterSync
+// @Success		200	{array}		interface{}
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /master-sync/status [get]
 func (h MasterSyncHttp) SyncStatus(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
-	status, _ := h.svcMasterSync.GetStatus(shopID)
+	status, _ := h.svcMasterSync.GetStatus(shopID, h.activityModuleManager.GetModules())
 
 	ctx.Response(
 		http.StatusOK,
@@ -135,16 +188,30 @@ func (h MasterSyncHttp) SyncStatus(ctx microservice.IContext) error {
 	return nil
 }
 
+// List Master Sync godoc
+// @Description  Master Sync
+// @Tags		MasterSync
+// @Param		lastupdate		query	string		false  "last update date ex: 2020-01-01T00:00:00"
+// @Param		module		query	string		false  "module code ex: product,productcategory,productbarcode"
+// @Param		action		query	string		false  "action code (all, new, remove)"
+// @Param		filter		query	string		false  "filter data ex. filter=branch:1,department:x01"
+// @Success		200	{array}		models.ApiResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /master-sync [get]
 func (h MasterSyncHttp) LastActivitySync(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	layout := "2006-01-02T15:04"
-	lastUpdateStr := ctx.QueryParam("lastUpdate")
+	layout := "2006-01-02T15:04:05"
+	lastUpdateStr := ctx.QueryParam("lastupdate")
+	if len(lastUpdateStr) < 1 {
+		lastUpdateStr = ctx.QueryParam("lastUpdate")
+	}
 
 	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
 	if len(lastUpdateStr) < 1 {
-		ctx.ResponseError(400, "lastUpdate format invalid.")
+		ctx.ResponseError(400, "lastupdate format invalid.")
 		return nil
 	}
 
@@ -155,46 +222,33 @@ func (h MasterSyncHttp) LastActivitySync(ctx microservice.IContext) error {
 		return err
 	}
 
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
 	moduleParam := strings.Trim(ctx.QueryParam("module"), " ")
+	action := strings.Trim(ctx.QueryParam("action"), " ")
+	filterParam := strings.Trim(ctx.QueryParam("filter"), " ")
 
-	moduleSelectList := []string{}
-	keySelectList := map[string]bool{}
+	requestModuleSelectList := []string{}
+	moduleSelectList := map[string]struct{}{}
 
 	if moduleParam != "" {
-		moduleSelectList = strings.Split(moduleParam, ",")
-		for _, module := range moduleSelectList {
+		requestModuleSelectList = strings.Split(moduleParam, ",")
+		for _, module := range requestModuleSelectList {
 			module = strings.ToLower(module)
-			keySelectList[module] = true
+			moduleSelectList[module] = struct{}{}
 		}
 	}
 
-	isSelectAll := false
-
-	if len(moduleSelectList) < 1 {
-		isSelectAll = true
-	} else if strings.ToLower(moduleSelectList[0]) == "all" {
-		isSelectAll = true
+	if len(requestModuleSelectList) > 0 && strings.ToLower(requestModuleSelectList[0]) == "all" {
+		moduleSelectList = map[string]struct{}{}
 	}
 
-	moduleList := map[string]ActivityModule{}
-
-	moduleList["category"] = h.svcCategory
-	moduleList["member"] = h.svcMember
-	moduleList["inventory"] = h.svcInventory
-	moduleList["kitchen"] = h.svcKitchen
-	moduleList["shopprinter"] = h.svcShopPrinter
-	moduleList["shoptable"] = h.svcShopTable
-	moduleList["shopzone"] = h.svcShopZone
-	moduleList["employee"] = h.svcEmployee
-	moduleList["productbarcode"] = h.svcProductBarcode
-
-	result, pagination, err := runModule(moduleList, isSelectAll, keySelectList, ActivityParam{
+	results, pagination, err := listDataModulePage(h.activityModuleManager.GetList(), moduleSelectList, ActivityParamPage{
 		ShopID:     shopID,
+		Action:     action,
 		LastUpdate: lastUpdate,
-		Page:       page,
-		Limit:      limit,
+		Filters:    filterParam,
+		Pageable:   pageable,
 	})
 
 	if err != nil {
@@ -205,51 +259,85 @@ func (h MasterSyncHttp) LastActivitySync(ctx microservice.IContext) error {
 		http.StatusOK,
 		models.ApiResponse{
 			Success:    true,
-			Data:       result,
+			Data:       results,
 			Pagination: pagination,
 		})
 
 	return nil
 }
 
-type ActivityModule interface {
-	LastActivity(string, time.Time, int, int) (models.LastActivity, mongopagination.PaginationData, error)
-}
+// List Master Sync Offset godoc
+// @Description  Master Sync Offset
+// @Tags		MasterSync
+// @Param		lastupdate		query	string		false  "last update date ex: 2020-01-01T00:00:00"
+// @Param		module		query	string		false  "module code ex: product,productcategory,productbarcode"
+// @Param		action		query	string		false  "action code (all, new, remove)"
+// @Success		200	{array}		models.ApiResponse
+// @Failure		401 {object}	models.AuthResponseFailed
+// @Security     AccessToken
+// @Router /master-sync/list [get]
+func (h MasterSyncHttp) LastActivitySyncOffset(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
 
-type ActivityParam struct {
-	ShopID     string
-	LastUpdate time.Time
-	Page       int
-	Limit      int
-}
+	layout := "2006-01-02T15:04:05"
+	lastUpdateStr := ctx.QueryParam("lastupdate")
+	if len(lastUpdateStr) < 1 {
+		lastUpdateStr = ctx.QueryParam("lastUpdate")
+	}
 
-func runModule(appModules map[string]ActivityModule, isSelectAll bool, keySelectList map[string]bool, param ActivityParam) (map[string]interface{}, mongopagination.PaginationData, error) {
+	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
+	if len(lastUpdateStr) < 1 {
+		ctx.ResponseError(400, "lastupdate format invalid.")
+		return nil
+	}
 
-	result := map[string]interface{}{}
+	lastUpdate, err := time.Parse(layout, lastUpdateStr)
 
-	resultPagination := mongopagination.PaginationData{}
-	for moduleName, appModule := range appModules {
-		if isSelectAll || isSelect(keySelectList, moduleName) {
-			docList, pagination, err := appModule.LastActivity(param.ShopID, param.LastUpdate, param.Page, param.Limit)
+	if err != nil {
+		ctx.ResponseError(400, "lastUpdate format invalid.")
+		return err
+	}
 
-			if err != nil {
-				return map[string]interface{}{}, mongopagination.PaginationData{}, err
-			}
+	pageableStep := utils.GetPageableStep(ctx.QueryParam)
 
-			result[moduleName] = docList
+	moduleParam := strings.Trim(ctx.QueryParam("module"), " ")
+	action := strings.Trim(ctx.QueryParam("action"), " ")
+	filterParam := strings.Trim(ctx.QueryParam("filter"), " ")
 
-			if pagination.Total > resultPagination.Total {
-				resultPagination = pagination
-			}
+	requestModuleSelectList := []string{}
+	moduleSelectList := map[string]struct{}{}
+
+	if moduleParam != "" {
+		requestModuleSelectList = strings.Split(moduleParam, ",")
+		for _, module := range requestModuleSelectList {
+			module = strings.ToLower(module)
+			moduleSelectList[module] = struct{}{}
 		}
 	}
 
-	return result, resultPagination, nil
-}
-
-func isSelect(keyList map[string]bool, key string) bool {
-	if _, ok := keyList[key]; ok {
-		return true
+	if len(requestModuleSelectList) > 0 && strings.ToLower(requestModuleSelectList[0]) == "all" {
+		moduleSelectList = map[string]struct{}{}
 	}
-	return false
+
+	results, err := listDataModuleOffset(h.activityModuleManager.GetList(), moduleSelectList, ActivityParamOffset{
+		ShopID:       shopID,
+		Action:       action,
+		LastUpdate:   lastUpdate,
+		Filters:      filterParam,
+		PageableStep: pageableStep,
+	})
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	ctx.Response(
+		http.StatusOK,
+		models.ApiResponse{
+			Success: true,
+			Data:    results,
+		})
+
+	return nil
 }

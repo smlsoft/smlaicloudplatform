@@ -2,10 +2,11 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/paymentmaster/models"
 	"smlcloudplatform/pkg/repositories"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 )
 
 type IPaymentMasterRepository interface {
@@ -14,8 +15,8 @@ type IPaymentMasterRepository interface {
 	CreateInBatch(docList []models.PaymentMasterDoc) error
 	Update(shopID string, guid string, category models.PaymentMasterDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
-	Find(shopID string, colNameSearch []string, q string) ([]models.PaymentMasterInfo, error)
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.PaymentMasterInfo, mongopagination.PaginationData, error)
+	Find(shopID string, searchInFields []string, q string) ([]models.PaymentMasterInfo, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.PaymentMasterInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.PaymentMasterDoc, error)
 }
 

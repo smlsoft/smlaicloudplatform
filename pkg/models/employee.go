@@ -13,11 +13,13 @@ type EmployeePassword struct {
 }
 
 type Employee struct {
-	Code           string    `json:"code" bson:"code"`
-	Username       string    `json:"username" bson:"username"`
+	Code  string `json:"code" bson:"code"`
+	Email string `json:"email" bson:"email"`
+	// Username       string    `json:"username" bson:"username"`
 	Name           string    `json:"name" bson:"name"`
 	ProfilePicture string    `json:"profilepicture" bson:"profilepicture"`
 	Roles          *[]string `json:"roles" bson:"roles"`
+	IsEnabled      bool      `json:"isenabled" bson:"isenabled"`
 }
 
 type EmployeeInfo struct {
@@ -52,7 +54,7 @@ type EmployeeRequestRegister struct {
 
 type EmployeeRequestLogin struct {
 	ShopIdentity
-	Username string `json:"username" bson:"username"`
+	Code     string `json:"code" bson:"code"`
 	Password string `json:"password" bson:"password"`
 }
 
@@ -61,7 +63,7 @@ type EmployeeRequestUpdate struct {
 }
 
 type EmployeeRequestPassword struct {
-	Username string `json:"username" bson:"username"`
+	Code     string `json:"code" bson:"code"`
 	Password string `json:"password" bson:"password"`
 }
 

@@ -6,6 +6,7 @@ import (
 	"os"
 	"reflect"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/mock"
 	"testing"
 
@@ -239,7 +240,7 @@ func TestMongodbFindPage(t *testing.T) {
 		pst := microservice.NewPersisterMongoWithDBContext(mt.DB)
 
 		products := []Product{}
-		pagination, err := pst.FindPage(&Product{}, 1, 1, bson.M{}, &products)
+		pagination, err := pst.FindPage(&Product{}, bson.M{}, models.Pageable{Page: 1, Limit: 10}, &products)
 
 		if err != nil {
 			t.Error(err.Error())

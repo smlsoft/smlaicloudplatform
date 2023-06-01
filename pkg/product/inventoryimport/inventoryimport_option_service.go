@@ -1,17 +1,18 @@
 package inventoryimport
 
 import (
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/inventoryimport/models"
 	"smlcloudplatform/pkg/utils"
 	"time"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 )
 
 type IInventoryOptionMainImportService interface {
 	CreateInBatch(shopID string, authUsername string, options []models.InventoryOptionMainImport) error
 	Delete(shopID string, guidList []string) error
-	ListInventory(shopID string, page int, limit int) ([]models.InventoryOptionMainImportInfo, paginate.PaginationData, error)
+	ListInventory(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionMainImportInfo, mongopagination.PaginationData, error)
 }
 
 type InventoryOptionMainImportService struct {
@@ -70,8 +71,8 @@ func (svc InventoryOptionMainImportService) Delete(shopID string, guidList []str
 	return nil
 }
 
-func (svc InventoryOptionMainImportService) ListInventory(shopID string, page int, limit int) ([]models.InventoryOptionMainImportInfo, paginate.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindPage(shopID, page, limit)
+func (svc InventoryOptionMainImportService) ListInventory(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionMainImportInfo, mongopagination.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindPage(shopID, pageable)
 
 	if err != nil {
 		return []models.InventoryOptionMainImportInfo{}, pagination, err

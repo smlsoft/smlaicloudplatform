@@ -3,15 +3,16 @@ package shoptable
 import (
 	"errors"
 	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/shoptable/models"
+	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
-	"sync"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -20,21 +21,27 @@ type IShopTableService interface {
 	UpdateShopTable(shopID string, guid string, authUsername string, doc models.ShopTable) error
 	DeleteShopTable(shopID string, guid string, authUsername string) error
 	InfoShopTable(shopID string, guid string) (models.ShopTableInfo, error)
-	SearchShopTable(shopID string, q string, page int, limit int) ([]models.ShopTableInfo, mongopagination.PaginationData, error)
-	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error)
+	SearchShopTable(shopID string, pageable micromodels.Pageable) ([]models.ShopTableInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ShopTable) (common.BulkImport, error)
+
+	GetModuleName() string
 }
 
 type ShopTableService struct {
-	repo      ShopTableRepository
-	cacheRepo mastersync.IMasterSyncCacheRepository
+	repo          ShopTableRepository
+	syncCacheRepo mastersync.IMasterSyncCacheRepository
+
+	services.ActivityService[models.ShopTableActivity, models.ShopTableDeleteActivity]
 }
 
-func NewShopTableService(repo ShopTableRepository, cacheRepo mastersync.IMasterSyncCacheRepository) ShopTableService {
-	return ShopTableService{
-		repo:      repo,
-		cacheRepo: cacheRepo,
+func NewShopTableService(repo ShopTableRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) ShopTableService {
+	insSvc := ShopTableService{
+		repo:          repo,
+		syncCacheRepo: syncCacheRepo,
 	}
+
+	insSvc.ActivityService = services.NewActivityService[models.ShopTableActivity, models.ShopTableDeleteActivity](repo)
+	return insSvc
 }
 
 func (svc ShopTableService) CreateShopTable(shopID string, authUsername string, doc models.ShopTable) (string, error) {
@@ -116,70 +123,23 @@ func (svc ShopTableService) InfoShopTable(shopID string, guid string) (models.Sh
 
 }
 
-func (svc ShopTableService) SearchShopTable(shopID string, q string, page int, limit int) ([]models.ShopTableInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
-		"guidfixed",
+func (svc ShopTableService) SearchShopTable(shopID string, pageable micromodels.Pageable) ([]models.ShopTableInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"code",
+		"names.name",
 	}
 
 	for i := range [5]bool{} {
-		searchCols = append(searchCols, fmt.Sprintf("name%d", (i+1)))
+		searchInFields = append(searchInFields, fmt.Sprintf("name%d", (i+1)))
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ShopTableInfo{}, pagination, err
 	}
 
 	return docList, pagination, nil
-}
-
-func (svc ShopTableService) LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error) {
-	var wg sync.WaitGroup
-
-	wg.Add(1)
-	var deleteDocList []models.ShopTableDeleteActivity
-	var pagination1 mongopagination.PaginationData
-	var err1 error
-
-	go func() {
-		deleteDocList, pagination1, err1 = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
-		wg.Done()
-	}()
-
-	wg.Add(1)
-	var createAndUpdateDocList []models.ShopTableActivity
-	var pagination2 mongopagination.PaginationData
-	var err2 error
-
-	go func() {
-		createAndUpdateDocList, pagination2, err2 = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
-		wg.Done()
-	}()
-
-	wg.Wait()
-
-	if err1 != nil {
-		return common.LastActivity{}, pagination1, err1
-	}
-
-	if err2 != nil {
-		return common.LastActivity{}, pagination2, err2
-	}
-
-	lastActivity := common.LastActivity{}
-
-	lastActivity.Remove = &deleteDocList
-	lastActivity.New = &createAndUpdateDocList
-
-	pagination := pagination1
-
-	if pagination.Total < pagination2.Total {
-		pagination = pagination2
-	}
-
-	return lastActivity, pagination, nil
 }
 
 func (svc ShopTableService) SaveInBatch(shopID string, authUsername string, dataList []models.ShopTable) (common.BulkImport, error) {
@@ -288,9 +248,15 @@ func (svc ShopTableService) getDocIDKey(doc models.ShopTable) string {
 }
 
 func (svc ShopTableService) saveMasterSync(shopID string) {
-	err := svc.cacheRepo.Save(shopID)
+	if svc.syncCacheRepo != nil {
+		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
 
-	if err != nil {
-		fmt.Println("save shop table master cache error :: " + err.Error())
+		if err != nil {
+			fmt.Printf("save %s cache error :: %s", svc.GetModuleName(), err.Error())
+		}
 	}
+}
+
+func (svc ShopTableService) GetModuleName() string {
+	return "shoptable"
 }

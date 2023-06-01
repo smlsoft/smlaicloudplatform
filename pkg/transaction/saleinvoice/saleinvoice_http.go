@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/transaction/saleinvoice/models"
 	"smlcloudplatform/pkg/transaction/saleinvoice/repositories"
@@ -11,98 +12,96 @@ import (
 	"smlcloudplatform/pkg/utils"
 )
 
-type ISaleinvoiceHttp interface {
-	RouteSetup()
-	CreateSaleinvoice(ctx microservice.IContext) error
-	UpdateSaleinvoice(ctx microservice.IContext) error
-	DeleteSaleinvoice(ctx microservice.IContext) error
-	InfoSaleinvoice(ctx microservice.IContext) error
-	SearchSaleinvoice(ctx microservice.IContext) error
-	SearchSaleinvoiceItems(ctx microservice.IContext) error
+type ISaleInvoiceHttp interface{}
+
+type SaleInvoiceHttp struct {
+	ms  *microservice.Microservice
+	cfg microservice.IConfig
+	svc services.ISaleInvoiceHttpService
 }
 
-type SaleinvoiceHttp struct {
-	ms      *microservice.Microservice
-	cfg     microservice.IConfig
-	service services.ISaleinvoiceService
-}
-
-func NewSaleinvoiceHttp(ms *microservice.Microservice, cfg microservice.IConfig) SaleinvoiceHttp {
-
+func NewSaleInvoiceHttp(ms *microservice.Microservice, cfg microservice.IConfig) SaleInvoiceHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
-	prod := ms.Producer(cfg.MQConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
-	transRepo := repositories.NewSaleinvoiceRepository(pst)
-	mqRepo := repositories.NewSaleinvoiceMQRepository(prod)
+	repo := repositories.NewSaleInvoiceRepository(pst)
 
-	service := services.NewSaleinvoiceService(transRepo, mqRepo)
-	return SaleinvoiceHttp{
-		ms:      ms,
-		cfg:     cfg,
-		service: service,
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
+	svc := services.NewSaleInvoiceHttpService(repo, masterSyncCacheRepo)
+
+	return SaleInvoiceHttp{
+		ms:  ms,
+		cfg: cfg,
+		svc: svc,
 	}
 }
 
-func (h SaleinvoiceHttp) RouteSetup() {
+func (h SaleInvoiceHttp) RouteSetup() {
 
-	h.ms.GET("/saleinvoice/:id", h.InfoSaleinvoice)
-	h.ms.GET("/saleinvoice", h.SearchSaleinvoice)
-	h.ms.GET("/saleinvoice/:id/items", h.SearchSaleinvoiceItems)
+	h.ms.POST("/transaction/sale-invoice/bulk", h.SaveBulk)
 
-	h.ms.POST("/saleinvoice", h.CreateSaleinvoice)
-	h.ms.PUT("/saleinvoice/:id", h.UpdateSaleinvoice)
-	h.ms.DELETE("/saleinvoice/:id", h.DeleteSaleinvoice)
+	h.ms.GET("/transaction/sale-invoice", h.SearchSaleInvoicePage)
+	h.ms.GET("/transaction/sale-invoice/list", h.SearchSaleInvoiceStep)
+	h.ms.POST("/transaction/sale-invoice", h.CreateSaleInvoice)
+	h.ms.GET("/transaction/sale-invoice/:id", h.InfoSaleInvoice)
+	h.ms.GET("/transaction/sale-invoice/code/:code", h.InfoSaleInvoiceByCode)
+	h.ms.PUT("/transaction/sale-invoice/:id", h.UpdateSaleInvoice)
+	h.ms.DELETE("/transaction/sale-invoice/:id", h.DeleteSaleInvoice)
+	h.ms.DELETE("/transaction/sale-invoice", h.DeleteSaleInvoiceByGUIDs)
 }
 
-// Create Sale Invoice godoc
-// @Description Create Inventory
-// @Tags		Sale Invoice
-// @Param		Saleinvoice  body      models.Saleinvoice  true  "Saleinvoice"
+// Create SaleInvoice godoc
+// @Description Create SaleInvoice
+// @Tags		SaleInvoice
+// @Param		SaleInvoice  body      models.SaleInvoice  true  "SaleInvoice"
 // @Accept 		json
-// @Success		201	{object}	models.ResponseSuccessWithID
+// @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /saleinvoice [post]
-func (h SaleinvoiceHttp) CreateSaleinvoice(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
-	authUsername := userInfo.Username
-	shopID := userInfo.ShopID
-
+// @Router /transaction/sale-invoice [post]
+func (h SaleInvoiceHttp) CreateSaleInvoice(ctx microservice.IContext) error {
+	authUsername := ctx.UserInfo().Username
+	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	trans := models.Saleinvoice{}
-	err := json.Unmarshal([]byte(input), &trans)
+	docReq := &models.SaleInvoice{}
+	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	idx, err := h.service.CreateSaleinvoice(shopID, authUsername, trans)
+	if err = ctx.Validate(docReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	idx, err := h.svc.CreateSaleInvoice(shopID, authUsername, *docReq)
 
 	if err != nil {
-		ctx.ResponseError(400, err.Error())
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
 	}
 
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
 	})
-
 	return nil
 }
 
-// Update Sale Invoice godoc
-// @Description Update Sale Invoice
-// @Tags		Sale Invoice
-// @Param		id  path      string  true  "Document ID"
-// @Param		Invoice  body      models.Saleinvoice  true  "Body"
+// Update SaleInvoice godoc
+// @Description Update SaleInvoice
+// @Tags		SaleInvoice
+// @Param		id  path      string  true  "SaleInvoice ID"
+// @Param		SaleInvoice  body      models.SaleInvoice  true  "SaleInvoice"
 // @Accept 		json
-// @Success		201	{object}	models.ResponseSuccessWithID
+// @Success		201	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /saleinvoice/{id} [put]
-func (h SaleinvoiceHttp) UpdateSaleinvoice(ctx microservice.IContext) error {
+// @Router /transaction/sale-invoice/{id} [put]
+func (h SaleInvoiceHttp) UpdateSaleInvoice(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -110,106 +109,285 @@ func (h SaleinvoiceHttp) UpdateSaleinvoice(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	transReq := &models.Saleinvoice{}
-	err := json.Unmarshal([]byte(input), &transReq)
+	docReq := &models.SaleInvoice{}
+	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	err = h.service.UpdateSaleinvoice(shopID, id, authUsername, *transReq)
+	if err = ctx.Validate(docReq); err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.UpdateSaleInvoice(shopID, id, authUsername, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+		ID:      id,
+	})
+
+	return nil
+}
+
+// Delete SaleInvoice godoc
+// @Description Delete SaleInvoice
+// @Tags		SaleInvoice
+// @Param		id  path      string  true  "SaleInvoice ID"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /transaction/sale-invoice/{id} [delete]
+func (h SaleInvoiceHttp) DeleteSaleInvoice(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	id := ctx.Param("id")
+
+	err := h.svc.DeleteSaleInvoice(shopID, id, authUsername)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		ID:      id,
+	})
+
+	return nil
+}
+
+// Delete SaleInvoice godoc
+// @Description Delete SaleInvoice
+// @Tags		SaleInvoice
+// @Param		SaleInvoice  body      []string  true  "SaleInvoice GUIDs"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /transaction/sale-invoice [delete]
+func (h SaleInvoiceHttp) DeleteSaleInvoiceByGUIDs(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	docReq := []string{}
+	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.DeleteSaleInvoiceByGUIDs(shopID, authUsername, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}
 
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 	})
+
 	return nil
 }
 
-// Delete Sale Invoice Document godoc
-// @Description Delete Document
-// @Tags		Sale Invoice
-// @Param		id  path      string  true  "Document ID"
+// Get SaleInvoice godoc
+// @Description get SaleInvoice info by guidfixed
+// @Tags		SaleInvoice
+// @Param		id  path      string  true  "SaleInvoice guidfixed"
 // @Accept 		json
-// @Success		200	{object}	models.ResponseSuccessWithID
+// @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /saleinvoice/{id} [delete]
-func (h SaleinvoiceHttp) DeleteSaleinvoice(ctx microservice.IContext) error {
+// @Router /transaction/sale-invoice/{id} [get]
+func (h SaleInvoiceHttp) InfoSaleInvoice(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	id := ctx.Param("id")
+
+	h.ms.Logger.Debugf("Get SaleInvoice %v", id)
+	doc, err := h.svc.InfoSaleInvoice(shopID, id)
+
+	if err != nil {
+		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// Get SaleInvoice By Code godoc
+// @Description get SaleInvoice info by Code
+// @Tags		SaleInvoice
+// @Param		code  path      string  true  "SaleInvoice Code"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /transaction/sale-invoice/code/{code} [get]
+func (h SaleInvoiceHttp) InfoSaleInvoiceByCode(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	code := ctx.Param("code")
+
+	doc, err := h.svc.InfoSaleInvoiceByCode(shopID, code)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// List SaleInvoice step godoc
+// @Description get list step
+// @Tags		SaleInvoice
+// @Param		custcode	query	string		false  "customer code"
+// @Param		fromdate	query	string		false  "from date"
+// @Param		todate	query	string		false  "to date"
+// @Param		q		query	string		false  "Search Value"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /transaction/sale-invoice [get]
+func (h SaleInvoiceHttp) SearchSaleInvoicePage(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	pageable := utils.GetPageable(ctx.QueryParam)
+
+	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+		{
+			Param: "custcode",
+			Type:  "string",
+		},
+		{
+			Param: "-",
+			Field: "docdatetime",
+			Type:  "rangeDate",
+		},
+	})
+
+	docList, pagination, err := h.svc.SearchSaleInvoice(shopID, filters, pageable)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success:    true,
+		Data:       docList,
+		Pagination: pagination,
+	})
+	return nil
+}
+
+// List SaleInvoice godoc
+// @Description search limit offset
+// @Tags		SaleInvoice
+// @Param		q		query	string		false  "Search Value"
+// @Param		fromdate	query	string		false  "from date"
+// @Param		todate	query	string		false  "to date"
+// @Param		offset	query	integer		false  "offset"
+// @Param		limit	query	integer		false  "limit"
+// @Param		lang	query	string		false  "lang"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /transaction/sale-invoice/list [get]
+func (h SaleInvoiceHttp) SearchSaleInvoiceStep(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	pageableStep := utils.GetPageableStep(ctx.QueryParam)
+
+	lang := ctx.QueryParam("lang")
+
+	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+		{
+			Param: "custcode",
+			Type:  "string",
+		},
+		{
+			Param: "-",
+			Field: "docdatetime",
+			Type:  "rangeDate",
+		},
+	})
+
+	docList, total, err := h.svc.SearchSaleInvoiceStep(shopID, lang, filters, pageableStep)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docList,
+		Total:   total,
+	})
+	return nil
+}
+
+// Create SaleInvoice Bulk godoc
+// @Description Create SaleInvoice
+// @Tags		SaleInvoice
+// @Param		SaleInvoice  body      []models.SaleInvoice  true  "SaleInvoice"
+// @Accept 		json
+// @Success		201	{object}	common.BulkReponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /transaction/sale-invoice/bulk [post]
+func (h SaleInvoiceHttp) SaveBulk(ctx microservice.IContext) error {
+
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
 
-	id := ctx.Param("id")
+	input := ctx.ReadInput()
 
-	err := h.service.DeleteSaleinvoice(shopID, id, authUsername)
+	dataReq := []models.SaleInvoice{}
+	err := json.Unmarshal([]byte(input), &dataReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
 
-	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success: true,
-	})
-	return nil
-}
-
-// Get Sale Invoice Document Info godoc
-// @Description get struct array by ID
-// @Tags		Sale Invoice
-// @Param		id  path      string  true  "Inventory ID"
-// @Accept 		json
-// @Success		200	{object}	models.SaleinvoiceInfo
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /saleinvoice/{id} [get]
-func (h SaleinvoiceHttp) InfoSaleinvoice(ctx microservice.IContext) error {
-
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-
-	id := ctx.Param("id")
-
-	trans, err := h.service.InfoSaleinvoice(shopID, id)
-
-	if err != nil && err.Error() != "mongo: no documents in result" {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	ctx.Response(http.StatusOK, common.ApiResponse{
-		Success: true,
-		Data:    trans,
-	})
-	return nil
-}
-
-// List Sale Invoice godoc
-// @Description List Sale Invoice Document
-// @Tags		Sale Invoice
-// @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Page"
-// @Param		limit	query	integer		false  "Size"
-// @Accept 		json
-// @Success		200	{array}	models.SaleinvoiceListPageResponse
-// @Failure		401 {object}	common.AuthResponseFailed
-// @Security     AccessToken
-// @Router /saleinvoice [get]
-func (h SaleinvoiceHttp) SearchSaleinvoice(ctx microservice.IContext) error {
-
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-
-	docList, pagination, err := h.service.SearchSaleinvoice(shopID, q, page, limit)
+	bulkResponse, err := h.svc.SaveInBatch(shopID, authUsername, dataReq)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -217,39 +395,12 @@ func (h SaleinvoiceHttp) SearchSaleinvoice(ctx microservice.IContext) error {
 	}
 
 	ctx.Response(
-		http.StatusOK,
-		common.ApiResponse{
+		http.StatusCreated,
+		common.BulkReponse{
 			Success:    true,
-			Data:       docList,
-			Pagination: pagination,
-		})
+			BulkImport: bulkResponse,
+		},
+	)
 
-	return nil
-}
-
-func (h SaleinvoiceHttp) SearchSaleinvoiceItems(ctx microservice.IContext) error {
-
-	userInfo := ctx.UserInfo()
-	shopID := userInfo.ShopID
-
-	transID := ctx.Param("id")
-
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-
-	docList, pagination, err := h.service.SearchItemsSaleinvoice(transID, shopID, q, page, limit)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	ctx.Response(
-		http.StatusOK,
-		common.ApiResponse{
-			Success:    true,
-			Data:       docList,
-			Pagination: pagination,
-		})
 	return nil
 }

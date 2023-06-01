@@ -3,15 +3,16 @@ package kitchen
 import (
 	"errors"
 	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/kitchen/models"
+	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
-	"sync"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -21,22 +22,30 @@ type IKitchenService interface {
 	UpdateKitchen(shopID string, guid string, authUsername string, doc models.Kitchen) error
 	DeleteKitchen(shopID string, guid string, authUsername string) error
 	InfoKitchen(shopID string, guid string) (models.KitchenInfo, error)
-	SearchKitchen(shopID string, q string, page int, limit int) ([]models.KitchenInfo, mongopagination.PaginationData, error)
-	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error)
+	SearchKitchen(shopID string, pageable micromodels.Pageable) ([]models.KitchenInfo, mongopagination.PaginationData, error)
+	SearchKitchenStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.KitchenInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Kitchen) (common.BulkImport, error)
+
+	// LastActivity(shopID string, action string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error)
+
+	GetModuleName() string
 }
 
 type KitchenService struct {
-	repo      KitchenRepository
-	cacheRepo mastersync.IMasterSyncCacheRepository
+	repo          KitchenRepository
+	syncCacheRepo mastersync.IMasterSyncCacheRepository
+	services.ActivityService[models.KitchenActivity, models.KitchenDeleteActivity]
 }
 
-func NewKitchenService(repo KitchenRepository, cacheRepo mastersync.IMasterSyncCacheRepository) KitchenService {
+func NewKitchenService(repo KitchenRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) KitchenService {
 
-	return KitchenService{
-		repo:      repo,
-		cacheRepo: cacheRepo,
+	insSvc := KitchenService{
+		repo:          repo,
+		syncCacheRepo: syncCacheRepo,
 	}
+
+	insSvc.ActivityService = services.NewActivityService[models.KitchenActivity, models.KitchenDeleteActivity](repo)
+	return insSvc
 }
 
 func (svc KitchenService) CreateKitchen(shopID string, authUsername string, doc models.Kitchen) (string, error) {
@@ -119,17 +128,21 @@ func (svc KitchenService) InfoKitchen(shopID string, guid string) (models.Kitche
 
 }
 
-func (svc KitchenService) SearchKitchen(shopID string, q string, page int, limit int) ([]models.KitchenInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
-		"guidfixed",
+func (svc KitchenService) SearchKitchen(shopID string, pageable micromodels.Pageable) ([]models.KitchenInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"code",
+		"name1",
+		"name2",
+		"name3",
+		"name4",
+		"name5",
 	}
 
 	for i := range [5]bool{} {
-		searchCols = append(searchCols, fmt.Sprintf("name%d", (i+1)))
+		searchInFields = append(searchInFields, fmt.Sprintf("name%d", (i+1)))
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.KitchenInfo{}, pagination, err
@@ -138,51 +151,25 @@ func (svc KitchenService) SearchKitchen(shopID string, q string, page int, limit
 	return docList, pagination, nil
 }
 
-func (svc KitchenService) LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error) {
-	var wg sync.WaitGroup
-
-	wg.Add(1)
-	var deleteDocList []models.KitchenDeleteActivity
-	var pagination1 mongopagination.PaginationData
-	var err1 error
-
-	go func() {
-		deleteDocList, pagination1, err1 = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
-		wg.Done()
-	}()
-
-	wg.Add(1)
-	var createAndUpdateDocList []models.KitchenActivity
-	var pagination2 mongopagination.PaginationData
-	var err2 error
-
-	go func() {
-		createAndUpdateDocList, pagination2, err2 = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
-		wg.Done()
-	}()
-
-	wg.Wait()
-
-	if err1 != nil {
-		return common.LastActivity{}, pagination1, err1
+func (svc KitchenService) SearchKitchenStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.KitchenInfo, int, error) {
+	searchInFields := []string{
+		"code",
+		"name1",
+		"name2",
+		"name3",
+		"name4",
+		"name5",
 	}
 
-	if err2 != nil {
-		return common.LastActivity{}, pagination2, err2
+	selectFields := map[string]interface{}{}
+
+	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+
+	if err != nil {
+		return []models.KitchenInfo{}, 0, err
 	}
 
-	lastActivity := common.LastActivity{}
-
-	lastActivity.Remove = &deleteDocList
-	lastActivity.New = &createAndUpdateDocList
-
-	pagination := pagination1
-
-	if pagination.Total < pagination2.Total {
-		pagination = pagination2
-	}
-
-	return lastActivity, pagination, nil
+	return docList, total, nil
 }
 
 func (svc KitchenService) SaveInBatch(shopID string, authUsername string, dataList []models.Kitchen) (common.BulkImport, error) {
@@ -291,9 +278,15 @@ func (svc KitchenService) getDocIDKey(doc models.Kitchen) string {
 }
 
 func (svc KitchenService) saveMasterSync(shopID string) {
-	err := svc.cacheRepo.Save(shopID)
+	if svc.syncCacheRepo != nil {
+		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
 
-	if err != nil {
-		fmt.Println("save kitchen master cache error :: " + err.Error())
+		if err != nil {
+			fmt.Printf("save %s cache error :: %s", svc.GetModuleName(), err.Error())
+		}
 	}
+}
+
+func (svc KitchenService) GetModuleName() string {
+	return "kitchen"
 }

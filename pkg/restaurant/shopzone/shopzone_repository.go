@@ -2,11 +2,12 @@ package shopzone
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/restaurant/shopzone/models"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 )
 
 type IShopZoneRepository interface {
@@ -15,11 +16,14 @@ type IShopZoneRepository interface {
 	CreateInBatch(docList []models.ShopZoneDoc) error
 	Update(shopID string, guid string, category models.ShopZoneDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.ShopZoneInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ShopZoneInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.ShopZoneDoc, error)
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.ShopZoneItemGuid, error)
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.ShopZoneDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, page int, limit int) ([]models.ShopZoneActivity, mongopagination.PaginationData, error)
+
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ShopZoneDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ShopZoneActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ShopZoneDeleteActivity, error)
+	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ShopZoneActivity, error)
 }
 
 type ShopZoneRepository struct {

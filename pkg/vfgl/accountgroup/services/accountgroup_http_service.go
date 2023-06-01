@@ -2,15 +2,16 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
+	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
 	"smlcloudplatform/pkg/vfgl/accountgroup/models"
 	"smlcloudplatform/pkg/vfgl/accountgroup/repositories"
 	"time"
 
-	common "smlcloudplatform/pkg/models"
-
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -19,7 +20,7 @@ type IAccountGroupHttpService interface {
 	Update(guid string, shopID string, authUsername string, doc models.AccountGroup) error
 	Delete(guid string, shopID string, authUsername string) error
 	Info(guid string, shopID string) (models.AccountGroupInfo, error)
-	Search(shopID string, q string, page int, limit int, sort map[string]int) ([]models.AccountGroupInfo, mongopagination.PaginationData, error)
+	Search(shopID string, pageable micromodels.Pageable) ([]models.AccountGroupInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.AccountGroup) (common.BulkImport, error)
 }
 
@@ -38,9 +39,7 @@ func NewAccountGroupHttpService(repo repositories.AccountGroupMongoRepository, m
 
 func (svc AccountGroupHttpService) Create(shopID string, authUsername string, doc models.AccountGroup) (string, error) {
 
-	findDoc, err := svc.repo.FindOne(shopID, map[string]interface{}{
-		"code": doc.Code,
-	})
+	findDoc, err := svc.repo.FindOne(shopID, bson.M{"code": doc.Code})
 
 	if err != nil {
 		return "", err
@@ -86,9 +85,7 @@ func (svc AccountGroupHttpService) Update(guid string, shopID string, authUserna
 		return errors.New("document not found")
 	}
 
-	findDocCode, err := svc.repo.FindOne(shopID, map[string]interface{}{
-		"code": doc.Code,
-	})
+	findDocCode, err := svc.repo.FindOne(shopID, bson.M{"code": doc.Code})
 
 	if err != nil {
 		return err
@@ -136,13 +133,13 @@ func (svc AccountGroupHttpService) Info(guid string, shopID string) (models.Acco
 
 }
 
-func (svc AccountGroupHttpService) Search(shopID string, q string, page int, limit int, sort map[string]int) ([]models.AccountGroupInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc AccountGroupHttpService) Search(shopID string, pageable micromodels.Pageable) ([]models.AccountGroupInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"code",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.AccountGroupInfo{}, pagination, err

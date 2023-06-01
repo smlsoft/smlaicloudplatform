@@ -6,50 +6,36 @@ import (
 )
 
 type TrialBalanceSheetReport struct {
-	// วันที่ทำรายการ
-	ReportDate time.Time `json:"reportdate"`
-	// วันที่เริ่มต้น
-	StartDate time.Time `json:"startdate"`
-	// วันที่สิ้นสุด
-	EndDate time.Time `json:"enddate"`
-	// เล่มบัญชี
-	AccountGroup string `json:"accountgroup"`
-	// รายละเอียดบัญชี
-	AccountDetails *[]TrialBalanceSheetAccountDetail `json:"accountdetails"`
-	// รวมยอดยกมาเดบิต
-	TotalBalanceDebit float64 `json:"totalbalancedebit"`
-	// รวมยอดยกมาเครดิต
-	TotalBalanceCredit float64 `json:"totalbalancecredit"`
-	// รวมเดบิต
-	TotalAmountDebit float64 `json:"totalamountdebit"`
-	// รวมเครดิต
-	TotalAmountCredit float64 `json:"totalamountcredit"`
-	// รวมยอดสะสมเดบิต
-	TotalNextBalanceDebit float64 `json:"totalnextbalancedebit"`
-	// รวมยอดสะสมเครดิต
-	TotalNextBalanceCredit float64 `json:"totalnextbalancecredit"`
+	ReportDate             time.Time                         `json:"reportdate"`             // วันที่ทำรายการ
+	StartDate              time.Time                         `json:"startdate"`              // วันที่เริ่มต้น
+	EndDate                time.Time                         `json:"enddate"`                // วันที่สิ้นสุด
+	AccountGroup           string                            `json:"accountgroup"`           // เล่มบัญชี
+	AccountDetails         *[]TrialBalanceSheetAccountDetail `json:"accountdetails"`         // รายละเอียดบัญชี
+	TotalBalanceDebit      float64                           `json:"totalbalancedebit"`      // รวมยอดยกมาเดบิต
+	TotalBalanceCredit     float64                           `json:"totalbalancecredit"`     // รวมยอดยกมาเครดิต
+	TotalAmountDebit       float64                           `json:"totalamountdebit"`       // รวมเดบิต
+	TotalAmountCredit      float64                           `json:"totalamountcredit"`      // รวมเครดิต
+	TotalNextBalanceDebit  float64                           `json:"totalnextbalancedebit"`  // รวมยอดสะสมเดบิต
+	TotalNextBalanceCredit float64                           `json:"totalnextbalancecredit"` // รวมยอดสะสมเครดิต
 }
 
 type TrialBalanceSheetAccountDetail struct {
 	chartofaccountModel.ChartOfAccountPG
-	// ยอดคงเหลือ(ประจำงวด)
-	Amount float64 `json:"amount" gorm:"column:amount"`
-	// ยอดคงเหลือยกมา
-	BalanceAmount float64 `json:"balanceamount" gorm:"column:balanceamount"`
-	// ยอดคงเหลือสะสม
-	NextBalanceAmount float64 `json:"nextbalanceamount" gorm:"column:nextbalanceamount"`
-	// ยอดเดบิต
-	DebitAmount float64 `json:"debitamount" gorm:"column:debitamount"`
-	// ยอดเครดิต
-	CreditAmount float64 `json:"creditamount" gorm:"column:creditamount"`
-	// ยอดยกมาเดบิต
-	BalanceDebitAmount float64 `json:"balancedebitamount" gorm:"column:balancedebitamount"`
-	// ยอดยกมาเครดิต
-	BalanceCreditAmount float64 `json:"balancecreditamount" gorm:"column:balancecreditamount"`
-	// ยอดสะสมเดบิต
-	NextBalanceDebitAmount float64 `json:"nextbalancedebitamount" gorm:"column:nextbalancedebitamount"`
-	// ยอดสะสมเครดิต
-	NextBalanceCreditAmount float64 `json:"nextbalancecreditamount" gorm:"column:nextbalancecreditamount"`
+	Amount                  float64 `json:"amount" gorm:"column:amount"`                                // ยอดคงเหลือ(ประจำงวด)
+	BalanceAmount           float64 `json:"balanceamount" gorm:"column:balanceamount"`                  // ยอดคงเหลือยกมา
+	NextBalanceAmount       float64 `json:"nextbalanceamount" gorm:"column:nextbalanceamount"`          // ยอดคงเหลือสะสม
+	DebitAmount             float64 `json:"debitamount" gorm:"-"`                                       // ยอดเดบิต
+	CreditAmount            float64 `json:"creditamount" gorm:"-"`                                      // ยอดเครดิต
+	SumDebit                float64 `json:"sumdebit" gorm:"column:debitamount"`                         // ยอดเครดิต
+	SumCredit               float64 `json:"sumcredit" gorm:"column:creditamount"`                       // ยอดเครดิต
+	BalanceDebitAmount      float64 `json:"balancedebitamount" gorm:"-"`                                // ยอดยกมาเดบิต
+	BalanceCreditAmount     float64 `json:"balancecreditamount" gorm:"-"`                               // ยอดยกมาเครดิต
+	SumBalanceDebit         float64 `json:"sumbalancedebit" gorm:"column:balancedebitamount"`           //
+	SumBalanceCredit        float64 `json:"sumbalancecredit" gorm:"column:balancecreditamount"`         //
+	NextBalanceDebitAmount  float64 `json:"nextbalancedebitamount" gorm:"-"`                            // ยอดสะสมเดบิต
+	NextBalanceCreditAmount float64 `json:"nextbalancecreditamount" gorm:"-"`                           // ยอดสะสมเครดิต
+	SumNextBalanceDebit     float64 `json:"sumnextbalancedebit" gorm:"column:nextbalancedebitamount"`   //
+	SumNextBalanceCredit    float64 `json:"sumnextbalancecredit" gorm:"column:nextbalancecreditamount"` //
 }
 
 type BalanceSheetReport struct {
@@ -154,9 +140,31 @@ type LedgerAccountDetail struct {
 	Debit              float64   `json:"debit" gorm:"column:debit"`
 	Credit             float64   `json:"credit" gorm:"column:credit"`
 	Amount             float64   `json:"amount" gorm:"column:amount"`
+	CountVat           int       `json:"countvat"`
+	CountTax           int       `json:"counttax"`
+	CountImage         int       `json:"countimage"`
 }
 
 type LedgerAccountCodeRange struct {
 	Start string
 	End   string
+}
+
+type JournalSummary struct {
+	DocNo    string `json:"docno" bson:"docno"`
+	CountVat int    `json:"countvat" bson:"countvat"`
+	CountTax int    `json:"counttax" bson:"counttax"`
+}
+
+func (JournalSummary) CollectionName() string {
+	return "journals"
+}
+
+type JournalImageSummary struct {
+	DocNo      string `json:"docno" bson:"docno"`
+	CountImage int    `json:"countimage" bson:"countimage"`
+}
+
+func (JournalImageSummary) CollectionName() string {
+	return "documentImageGroups"
 }

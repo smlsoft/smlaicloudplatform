@@ -150,9 +150,7 @@ func (h ShopCouponHttp) SearchShopCoupon(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	sort := utils.GetSortParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
 	filterMatch := map[string]interface{}{}
 
@@ -165,7 +163,7 @@ func (h ShopCouponHttp) SearchShopCoupon(ctx microservice.IContext) error {
 		}
 	}
 
-	docList, pagination, err := h.svc.SearchShopCoupon(shopID, filterMatch, q, page, limit, sort)
+	docList, pagination, err := h.svc.SearchShopCoupon(shopID, filterMatch, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

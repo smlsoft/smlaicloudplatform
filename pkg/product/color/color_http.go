@@ -38,6 +38,7 @@ func (h ColorHttp) RouteSetup() {
 	h.ms.POST("/color/bulk", h.SaveBulk)
 
 	h.ms.GET("/color", h.SearchColor)
+	h.ms.GET("/color/list", h.SearchColorStep)
 	h.ms.POST("/color", h.CreateColor)
 	h.ms.GET("/color/:id", h.InfoColor)
 	h.ms.PUT("/color/:id", h.UpdateColor)
@@ -193,12 +194,50 @@ func (h ColorHttp) InfoColor(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Color By code array godoc
+// @Description get Color by code array
+// @Tags		Unit
+// @Param		[]string  body      []string  true  "Code Array"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /color/pk [get]
+func (h ColorHttp) InfoArray(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	input := ctx.ReadInput()
+
+	docReq := &[]string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	// where to filter array
+	doc, err := h.svc.InfoWTFArray(shopID, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
 // List Color godoc
 // @Description get struct array by ID
 // @Tags		Color
 // @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -208,10 +247,8 @@ func (h ColorHttp) SearchColor(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	sort := utils.GetSortParam(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchColor(shopID, q, page, limit, sort)
+	pageable := utils.GetPageable(ctx.QueryParam)
+	docList, pagination, err := h.svc.SearchColor(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -222,6 +259,41 @@ func (h ColorHttp) SearchColor(ctx microservice.IContext) error {
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
+	})
+	return nil
+}
+
+// List Color godoc
+// @Description search limit offset
+// @Tags		Color
+// @Param		q		query	string		false  "Search Value"
+// @Param		offset	query	integer		false  "offset"
+// @Param		limit	query	integer		false  "limit"
+// @Param		lang	query	string		false  "lang"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /color/list [get]
+func (h ColorHttp) SearchColorStep(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	pageableStep := utils.GetPageableStep(ctx.QueryParam)
+
+	lang := ctx.QueryParam("lang")
+
+	docList, total, err := h.svc.SearchColorStep(shopID, lang, pageableStep)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docList,
+		Total:   total,
 	})
 	return nil
 }

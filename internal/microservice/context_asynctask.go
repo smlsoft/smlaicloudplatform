@@ -94,6 +94,10 @@ func (ctx *AsyncTaskContext) Header(attribute string) string {
 	return ""
 }
 
+func (ctx *AsyncTaskContext) RealIp() string {
+	return ""
+}
+
 func (ctx *AsyncTaskContext) FormFile(attribute string) (*multipart.FileHeader, error) {
 	return nil, nil
 }

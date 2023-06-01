@@ -126,12 +126,12 @@ func (svc PaymentMasterHttpService) InfoPaymentMaster(guid string, shopID string
 }
 
 func (svc PaymentMasterHttpService) SearchPaymentMaster(shopID string, q string) ([]models.PaymentMasterInfo, error) {
-	searchCols := []string{
+	searchInFields := []string{
 		"guidfixed",
 		"paymentcode",
 	}
 
-	docList, err := svc.repo.Find(shopID, searchCols, q)
+	docList, err := svc.repo.Find(shopID, searchInFields, q)
 
 	if err != nil {
 		return []models.PaymentMasterInfo{}, err

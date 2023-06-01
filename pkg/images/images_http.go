@@ -3,6 +3,7 @@ package images
 import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/images/models"
 	common "smlcloudplatform/pkg/models"
 	inventoryRepo "smlcloudplatform/pkg/product/inventory/repositories"
 	"strconv"
@@ -134,6 +135,7 @@ func (svc ImagesHttp) UploadImage(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopId := userInfo.ShopID
 	fileHeader, _ := ctx.FormFile("file")
+	var image *models.Image
 	image, err := svc.service.UploadImage(shopId, fileHeader)
 
 	if err != nil {

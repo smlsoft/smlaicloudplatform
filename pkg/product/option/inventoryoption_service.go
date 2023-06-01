@@ -2,11 +2,12 @@ package option
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/option/models"
 	"smlcloudplatform/pkg/utils"
 	"time"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -15,7 +16,8 @@ type IOptionService interface {
 	UpdateOption(shopID string, guid string, authUsername string, invOpt models.InventoryOptionMain) error
 	DeleteOption(shopID string, guid string, username string) error
 	InfoOption(shopID string, guid string) (models.InventoryOptionMainInfo, error)
-	SearchOption(shopID string, q string, page int, limit int) ([]models.InventoryOptionMainInfo, paginate.PaginationData, error)
+	InfoWTFArray(shopID string, codes []string) ([]interface{}, error)
+	SearchOption(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionMainInfo, mongopagination.PaginationData, error)
 }
 
 type OptionService struct {
@@ -109,8 +111,24 @@ func (svc OptionService) InfoOption(shopID string, guid string) (models.Inventor
 	return findDoc.InventoryOptionMainInfo, nil
 }
 
-func (svc OptionService) SearchOption(shopID string, q string, page int, limit int) ([]models.InventoryOptionMainInfo, paginate.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
+func (svc OptionService) InfoWTFArray(shopID string, codes []string) ([]interface{}, error) {
+	docList := []interface{}{}
+
+	for _, code := range codes {
+		findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", code)
+		if err != nil || findDoc.ID == primitive.NilObjectID {
+			// add item empty
+			docList = append(docList, nil)
+		} else {
+			docList = append(docList, findDoc.InventoryOptionMainInfo)
+		}
+	}
+
+	return docList, nil
+}
+
+func (svc OptionService) SearchOption(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionMainInfo, mongopagination.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindPage(shopID, pageable)
 
 	if err != nil {
 		return []models.InventoryOptionMainInfo{}, pagination, err

@@ -54,6 +54,10 @@ func (ctx *HTTPContext) Header(attribute string) string {
 	return ctx.c.Request().Header.Get(attribute)
 }
 
+func (ctx *HTTPContext) RealIp() string {
+	return ctx.c.RealIP()
+}
+
 func (ctx *HTTPContext) FormFile(attribute string) (*multipart.FileHeader, error) {
 	return ctx.c.FormFile(attribute)
 }

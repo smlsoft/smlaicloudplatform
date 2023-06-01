@@ -4,7 +4,10 @@ import (
 	"fmt"
 	chartofaccountModel "smlcloudplatform/pkg/vfgl/chartofaccount/models"
 	"smlcloudplatform/pkg/vfgl/journalreport/models"
+	"smlcloudplatform/pkg/vfgl/journalreport/usecase"
 	"time"
+
+	"github.com/shopspring/decimal"
 )
 
 type IJournalReportService interface {
@@ -15,19 +18,26 @@ type IJournalReportService interface {
 }
 
 type JournalReportService struct {
-	repo IJournalReportRepository
+	repoPg    IJournalReportPgRepository
+	repoMongo IJournalReportMongoRepository
+	usecase   usecase.ITrialBalanceSheetReportUsecase
 }
 
-func NewJournalReportService(repo IJournalReportRepository) JournalReportService {
+func NewJournalReportService(repoPg IJournalReportPgRepository, repoMongo IJournalReportMongoRepository) JournalReportService {
+
+	usecase := &usecase.TrialBalanceSheetReportUsecase{}
+
 	return JournalReportService{
-		repo: repo,
+		repoPg:    repoPg,
+		repoMongo: repoMongo,
+		usecase:   usecase,
 	}
 }
 
 func (svc JournalReportService) ProcessTrialBalanceSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) (*models.TrialBalanceSheetReport, error) {
 	// mock := MockTrialBalanceSheetReport(shopId, accountGroup, startDate, endDate)
 	// return mock, nil
-	details, err := svc.repo.GetDataTrialBalance(shopId, accountGroup, includeCloseAccountMode, startDate, endDate)
+	details, err := svc.repoPg.GetDataTrialBalance(shopId, accountGroup, includeCloseAccountMode, startDate, endDate)
 
 	var totalBalanceDebit float64
 	var totalBalanceCredit float64
@@ -36,13 +46,36 @@ func (svc JournalReportService) ProcessTrialBalanceSheetReport(shopId string, ac
 	var totalNextBalanceDebit float64
 	var totalnextBalanceCredit float64
 
-	for _, v := range details {
-		totalBalanceDebit += v.BalanceDebitAmount
-		totalBalanceCredit += v.BalanceCreditAmount
-		totalAmountDebit += v.DebitAmount
-		totalAmountCredit += v.CreditAmount
-		totalNextBalanceDebit += v.NextBalanceDebitAmount
-		totalnextBalanceCredit += v.NextBalanceCreditAmount
+	for index, v := range details {
+
+		// is lower than zero
+		isBalanceDebit := svc.usecase.IsAmountDebitSide(v.AccountCategory, v.BalanceAmount)
+		if isBalanceDebit {
+			details[index].BalanceDebitAmount = svc.usecase.DisplayAmount(v.BalanceAmount)
+		} else {
+			details[index].BalanceCreditAmount = svc.usecase.DisplayAmount(v.BalanceAmount)
+		}
+
+		isDebit := svc.usecase.IsAmountDebitSide(v.AccountCategory, v.Amount)
+		if isDebit {
+			details[index].DebitAmount = svc.usecase.DisplayAmount(v.Amount)
+		} else {
+			details[index].CreditAmount = svc.usecase.DisplayAmount(v.Amount)
+		}
+
+		isNextDebit := svc.usecase.IsAmountDebitSide(v.AccountCategory, v.NextBalanceAmount)
+		if isNextDebit {
+			details[index].NextBalanceDebitAmount = svc.usecase.DisplayAmount(v.NextBalanceAmount)
+		} else {
+			details[index].NextBalanceCreditAmount = svc.usecase.DisplayAmount(v.NextBalanceAmount)
+		}
+
+		totalBalanceDebit += details[index].BalanceDebitAmount
+		totalBalanceCredit += details[index].BalanceCreditAmount
+		totalAmountDebit += details[index].DebitAmount
+		totalAmountCredit += details[index].CreditAmount
+		totalNextBalanceDebit += details[index].NextBalanceDebitAmount
+		totalnextBalanceCredit += details[index].NextBalanceCreditAmount
 	}
 
 	result := &models.TrialBalanceSheetReport{
@@ -64,7 +97,7 @@ func (svc JournalReportService) ProcessTrialBalanceSheetReport(shopId string, ac
 func (svc JournalReportService) ProcessProfitAndLossSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) (*models.ProfitAndLossSheetReport, error) {
 	// mock := MockProfitAndLossSheetReport(shopId, accountGroup, startDate, endDate)
 	// return mock, nil
-	details, err := svc.repo.GetDataProfitAndLoss(shopId, accountGroup, includeCloseAccountMode, startDate, endDate)
+	details, err := svc.repoPg.GetDataProfitAndLoss(shopId, accountGroup, includeCloseAccountMode, startDate, endDate)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +142,7 @@ func (svc JournalReportService) ProcessProfitAndLossSheetReport(shopId string, a
 func (svc JournalReportService) ProcessBalanceSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, endDate time.Time) (*models.BalanceSheetReport, error) {
 	// mock := MockBalanceSheetReport(shopId, accountGroup, endDate)
 	// return mock, nil
-	details, err := svc.repo.GetDataBalanceSheet(shopId, accountGroup, includeCloseAccountMode, endDate)
+	details, err := svc.repoPg.GetDataBalanceSheet(shopId, accountGroup, includeCloseAccountMode, endDate)
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +218,7 @@ func (svc JournalReportService) ProcessBalanceSheetReport(shopId string, account
 
 func (svc JournalReportService) ProcessLedgerAccount(shopID string, accountGroup string, consolidateAccountCode string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccount, error) {
 
-	rawDocList, err := svc.repo.GetDataLedgerAccount(shopID, accountGroup, consolidateAccountCode, accountRanges, startDate, endDate)
+	rawDocList, err := svc.repoPg.GetDataLedgerAccount(shopID, accountGroup, consolidateAccountCode, accountRanges, startDate, endDate)
 
 	if err != nil {
 		return nil, err
@@ -194,8 +227,10 @@ func (svc JournalReportService) ProcessLedgerAccount(shopID string, accountGroup
 	docList := []models.LedgerAccount{}
 
 	lastAccountCode := ""
-	lastAmount := 0.0
+	lastAmount := decimal.NewFromFloat(0.0)
 	tempDoc := models.LedgerAccount{}
+
+	docNoList := map[string]struct{}{}
 
 	currentIndexAccount := -1
 	for _, doc := range rawDocList {
@@ -209,16 +244,21 @@ func (svc JournalReportService) ProcessLedgerAccount(shopID string, accountGroup
 			tempDoc.AccountGroup = doc.AccountGroup
 			tempDoc.ConsolidateAccountCode = doc.ConsolidateAccountCode
 
-			lastAmount = doc.Amount
-			tempDoc.Balance = lastAmount
-			tempDoc.NextBalance = lastAmount
+			lastAmount = decimal.NewFromFloat(doc.Amount)
+			tempDoc.Balance, _ = lastAmount.Float64()
+			tempDoc.NextBalance, _ = lastAmount.Float64()
 
 			docList = append(docList, tempDoc)
 		}
 
 		if doc.RowMode == 0 && currentIndexAccount != -1 {
-			lastAmount = (lastAmount + doc.DebitAmount) - doc.CreditAmount
-			docList[currentIndexAccount].NextBalance = lastAmount
+			debDecimal := decimal.NewFromFloat(doc.DebitAmount)
+			credDecimal := decimal.NewFromFloat(doc.CreditAmount)
+
+			lastAmount = lastAmount.Add(debDecimal).Sub(credDecimal)
+			tempLastAmount, _ := lastAmount.Float64()
+
+			docList[currentIndexAccount].NextBalance = tempLastAmount
 
 			detail := models.LedgerAccountDetail{
 				DocNo:              doc.DocNo,
@@ -226,12 +266,63 @@ func (svc JournalReportService) ProcessLedgerAccount(shopID string, accountGroup
 				DocDate:            doc.DocDate,
 				Debit:              doc.DebitAmount,
 				Credit:             doc.CreditAmount,
-				Amount:             lastAmount,
+				Amount:             tempLastAmount,
 			}
 			*tempDoc.Details = append(*tempDoc.Details, detail)
+
+			docNoList[doc.DocNo] = struct{}{}
 		}
 
 		lastAccountCode = doc.AccountCode
+	}
+
+	if len(docNoList) > 0 {
+		tempDocNoList := []string{}
+		for k := range docNoList {
+			tempDocNoList = append(tempDocNoList, k)
+		}
+
+		journalSummaryList, err := svc.repoMongo.FindCountDetailByDocs(shopID, tempDocNoList)
+
+		if err != nil {
+			return nil, err
+		}
+
+		tempMapJournalSummary := map[string]models.JournalSummary{}
+
+		for _, v := range journalSummaryList {
+			tempMapJournalSummary[v.DocNo] = v
+		}
+
+		for _, doc := range docList {
+			for i, detail := range *doc.Details {
+				if v, ok := tempMapJournalSummary[detail.DocNo]; ok {
+					(*doc.Details)[i].CountVat = v.CountVat
+					(*doc.Details)[i].CountTax = v.CountTax
+				}
+			}
+		}
+
+		journalImageSummaryList, err := svc.repoMongo.FindCountImageByDocs(shopID, tempDocNoList)
+
+		if err != nil {
+			return nil, err
+		}
+
+		tempMapJournalImageSummary := map[string]models.JournalImageSummary{}
+
+		for _, v := range journalImageSummaryList {
+			tempMapJournalImageSummary[v.DocNo] = v
+		}
+
+		for _, doc := range docList {
+			for i, detail := range *doc.Details {
+				if v, ok := tempMapJournalImageSummary[detail.DocNo]; ok {
+					(*doc.Details)[i].CountImage = v.CountImage
+				}
+			}
+		}
+
 	}
 
 	return docList, nil

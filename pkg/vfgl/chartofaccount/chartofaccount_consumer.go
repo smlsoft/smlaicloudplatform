@@ -20,7 +20,7 @@ func MigrationChartOfAccountTable(ms *microservice.Microservice, cfg microservic
 
 func StartChartOfAccountConsumerCreated(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
 
-	topicCreated := config.MQ_TOPIC_CHARTOFACCOUNT_CREATED
+	topicCreated := config.MQ_TOPIC_CREATED
 	timeout := time.Duration(-1)
 	mqConfig := cfg.MQConfig()
 	mq := microservice.NewMQ(mqConfig, ms.Logger)
@@ -53,7 +53,7 @@ func StartChartOfAccountConsumerCreated(ms *microservice.Microservice, cfg micro
 
 func StartChartOfAccountConsumerUpdated(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
 
-	topicUpdated := config.MQ_TOPIC_CHARTOFACCOUNT_UPDATED
+	topicUpdated := config.MQ_TOPIC_UPDATED
 	timeout := time.Duration(-1)
 	mqConfig := cfg.MQConfig()
 	mq := microservice.NewMQ(mqConfig, ms.Logger)
@@ -86,7 +86,7 @@ func StartChartOfAccountConsumerUpdated(ms *microservice.Microservice, cfg micro
 
 func StartChartOfAccountConsumerDeleted(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
 
-	topicDeleted := config.MQ_TOPIC_CHARTOFACCOUNT_DELETED
+	topicDeleted := config.MQ_TOPIC_DELETED
 	timeout := time.Duration(-1)
 	mqConfig := cfg.MQConfig()
 	mq := microservice.NewMQ(mqConfig, ms.Logger)
@@ -119,7 +119,7 @@ func StartChartOfAccountConsumerDeleted(ms *microservice.Microservice, cfg micro
 
 func StartChartOfAccountConsumerBlukCreated(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
 
-	topicCreated := config.MQ_TOPIC_CHARTOFACCOUNT_BULK_CREATED
+	topicCreated := config.MQ_TOPIC_BULK_CREATED
 	timeout := time.Duration(-1)
 	mqConfig := cfg.MQConfig()
 	mq := microservice.NewMQ(mqConfig, ms.Logger)

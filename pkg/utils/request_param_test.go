@@ -8,7 +8,7 @@ import (
 )
 
 func TestRequestPage(t *testing.T) {
-	page, limit := utils.GetPaginationParam(getParam)
+	page, limit := utils.GetPageParam(getParam)
 
 	assert.Equal(t, 2, page)
 	assert.Equal(t, 20, limit)

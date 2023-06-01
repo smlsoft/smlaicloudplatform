@@ -7,22 +7,25 @@ import (
 	"sync"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/event"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"smlcloudplatform/internal/microservice/models"
 )
 
 // IPersister is interface for persister
 type IPersisterMongo interface {
 	Aggregate(model interface{}, pipeline interface{}, decode interface{}) error
-	AggregatePage(model interface{}, limit int, page int, criteria ...interface{}) (*mongopagination.PaginatedData, error)
+	AggregatePage(model interface{}, pageable models.Pageable, criteria ...interface{}) (*mongopagination.PaginatedData, error)
 	Find(model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOptions) error
-	FindPage(model interface{}, limit int, page int, filter interface{}, decode interface{}) (mongopagination.PaginationData, error)
-	FindPageSort(model interface{}, limit int, page int, filter interface{}, sorts map[string]int, decode interface{}) (mongopagination.PaginationData, error)
-	FindOne(model interface{}, filter interface{}, decode interface{}) error
+	FindPage(model interface{}, filter interface{}, pageable models.Pageable, decode interface{}) (mongopagination.PaginationData, error)
+	// FindPage(model interface{}, limit int, page int, filter interface{}, decode interface{}) (mongopagination.PaginationData, error)
+	// FindPageSort(model interface{}, limit int, page int, filter interface{}, sorts map[string]int, decode interface{}) (mongopagination.PaginationData, error)
+	FindOne(model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOneOptions) error
 	FindByID(model interface{}, keyName string, id interface{}, decode interface{}) error
 	Create(model interface{}, data interface{}) (primitive.ObjectID, error)
 	UpdateOne(model interface{}, filterConditions map[string]interface{}, data interface{}) error
@@ -40,12 +43,14 @@ type IPersisterMongo interface {
 	Cleanup() error
 	TestConnect() error
 	Healthcheck() error
+	CreateIndex(model interface{}, indexName string, keys interface{}) (string, error)
 }
 
 // IPersisterConfig is interface for persister
 type IPersisterMongoConfig interface {
 	MongodbURI() string
 	DB() string
+	Debug() bool
 }
 
 type MongoModel interface {
@@ -111,27 +116,32 @@ func (pst *PersisterMongo) getClient() (*mongo.Database, error) {
 		return nil, err
 	}
 
-	cmdMonitor := &event.CommandMonitor{
-		Started: func(_ context.Context, evt *event.CommandStartedEvent) {
-			log.Print(evt.Command)
-		},
+	if pst.config.Debug() {
+		cmdMonitor := &event.CommandMonitor{
+			Started: func(_ context.Context, evt *event.CommandStartedEvent) {
+				log.Print(evt.Command)
+			},
+		}
+
+		pst.client, err = mongo.NewClient(options.Client().ApplyURI(connectionStr).SetMonitor(cmdMonitor))
+		if err != nil {
+			return nil, err
+		}
+
+	} else {
+		pst.client, err = mongo.NewClient(options.Client().ApplyURI(connectionStr))
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr).SetMonitor(cmdMonitor))
-	// client, err := mongo.NewClient(options.Client().ApplyURI(connectionStr))
-	if err != nil {
-		return nil, err
-	}
-
-	pst.client = client
-
-	err = client.Connect(pst.ctx)
+	err = pst.client.Connect(pst.ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	// check connection
-	err = client.Ping(context.TODO(), nil)
+	err = pst.client.Ping(context.TODO(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +153,7 @@ func (pst *PersisterMongo) getClient() (*mongo.Database, error) {
 	// }
 	// fmt.Println(databases)
 
-	db := client.Database(pst.config.DB())
+	db := pst.client.Database(pst.config.DB())
 
 	pst.db = db
 
@@ -193,7 +203,7 @@ func (pst *PersisterMongo) PersisterCount(collectionName string, filter interfac
 	return int(count), nil
 }
 
-func (pst *PersisterMongo) FindPage(model interface{}, limit int, page int, filter interface{}, decode interface{}) (mongopagination.PaginationData, error) {
+func (pst *PersisterMongo) FindPage(model interface{}, filter interface{}, pageable models.Pageable, decode interface{}) (mongopagination.PaginationData, error) {
 	db, err := pst.getClient()
 
 	emptyPage := mongopagination.PaginationData{}
@@ -207,44 +217,17 @@ func (pst *PersisterMongo) FindPage(model interface{}, limit int, page int, filt
 		return emptyPage, err
 	}
 
-	var limit64 int64 = int64(limit)
-	var page64 int64 = int64(page)
+	var limit64 int64 = int64(pageable.Limit)
+	var page64 int64 = int64(pageable.Page)
 
 	pagingQuery := mongopagination.New(db.Collection(collectionName)).Context(pst.ctx).Limit(limit64).Page(page64).Filter(filter)
 
-	paginatedData, err := pagingQuery.Decode(decode).Find()
-	if err != nil {
-		return emptyPage, err
-	}
-
-	return paginatedData.Pagination, nil
-}
-
-func (pst *PersisterMongo) FindPageSort(model interface{}, limit int, page int, filter interface{}, sorts map[string]int, decode interface{}) (mongopagination.PaginationData, error) {
-	db, err := pst.getClient()
-
-	emptyPage := mongopagination.PaginationData{}
-
-	if err != nil {
-		return emptyPage, err
-	}
-
-	collectionName, err := pst.getCollectionName(model)
-	if err != nil {
-		return emptyPage, err
-	}
-
-	var limit64 int64 = int64(limit)
-	var page64 int64 = int64(page)
-
-	pagingQuery := mongopagination.New(db.Collection(collectionName)).Context(pst.ctx).Limit(limit64).Page(page64).Filter(filter)
-
-	for sortKey, sortVal := range sorts {
+	for _, tempSort := range pageable.Sorts {
 		tempSortVal := 1
-		if sortVal < 1 {
+		if tempSort.Value < 1 {
 			tempSortVal = -1
 		}
-		pagingQuery = pagingQuery.Sort(sortKey, tempSortVal)
+		pagingQuery = pagingQuery.Sort(tempSort.Key, tempSortVal)
 	}
 
 	paginatedData, err := pagingQuery.Decode(decode).Find()
@@ -278,7 +261,7 @@ func (pst *PersisterMongo) Find(model interface{}, filter interface{}, decode in
 	return nil
 }
 
-func (pst *PersisterMongo) FindOne(model interface{}, filter interface{}, decode interface{}) error {
+func (pst *PersisterMongo) FindOne(model interface{}, filter interface{}, decode interface{}, opts ...*options.FindOneOptions) error {
 	db, err := pst.getClient()
 	if err != nil {
 		return err
@@ -289,7 +272,7 @@ func (pst *PersisterMongo) FindOne(model interface{}, filter interface{}, decode
 		return err
 	}
 
-	result := db.Collection(collectionName).FindOne(context.TODO(), filter)
+	result := db.Collection(collectionName).FindOne(context.TODO(), filter, opts...)
 
 	err = result.Decode(decode)
 	if err != nil && err.Error() != "mongo: no documents in result" {
@@ -630,7 +613,7 @@ func (pst *PersisterMongo) Aggregate(model interface{}, pipeline interface{}, de
 	return nil
 }
 
-func (pst *PersisterMongo) AggregatePage(model interface{}, limit int, page int, criteria ...interface{}) (*mongopagination.PaginatedData, error) {
+func (pst *PersisterMongo) AggregatePage(model interface{}, pageable models.Pageable, criteria ...interface{}) (*mongopagination.PaginatedData, error) {
 	db, err := pst.getClient()
 
 	emptyPage := &mongopagination.PaginatedData{}
@@ -644,8 +627,8 @@ func (pst *PersisterMongo) AggregatePage(model interface{}, limit int, page int,
 		return emptyPage, err
 	}
 
-	var limit64 int64 = int64(limit)
-	var page64 int64 = int64(page)
+	var page64 int64 = int64(pageable.Page)
+	var limit64 int64 = int64(pageable.Limit)
 
 	paginatedData, err := mongopagination.New(db.Collection(collectionName)).Context(pst.ctx).Limit(limit64).Page(page64).Aggregate(criteria...)
 	if err != nil {
@@ -717,4 +700,31 @@ func (pst *PersisterMongo) Transaction(queryFunc func() error) error {
 	session.EndSession(pst.ctx)
 
 	return nil
+}
+
+func (pst *PersisterMongo) CreateIndex(model interface{}, indexName string, keys interface{}) (string, error) {
+	db, err := pst.getClient()
+	if err != nil {
+		return "", err
+	}
+
+	collectionName, err := pst.getCollectionName(model)
+	if err != nil {
+		return "", err
+	}
+
+	indexModel := mongo.IndexModel{
+		Keys:    keys,
+		Options: options.Index().SetUnique(true).SetName(indexName),
+	}
+
+	mongoCollection := db.Collection(collectionName)
+
+	resultIndexName, err := mongoCollection.Indexes().CreateOne(pst.ctx, indexModel)
+
+	if err != nil {
+		return "", err
+	}
+
+	return resultIndexName, nil
 }

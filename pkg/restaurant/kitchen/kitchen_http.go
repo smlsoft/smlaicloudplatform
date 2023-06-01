@@ -8,8 +8,6 @@ import (
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/kitchen/models"
 	"smlcloudplatform/pkg/utils"
-	"strings"
-	"time"
 )
 
 type IKitchenHttp interface{}
@@ -25,7 +23,7 @@ func NewKitchenHttp(ms *microservice.Microservice, cfg microservice.IConfig) Kit
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := NewKitchenRepository(pst)
-	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "kitchen")
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
 	svc := NewKitchenService(repo, masterSyncCacheRepo)
 
 	return KitchenHttp{
@@ -38,9 +36,9 @@ func NewKitchenHttp(ms *microservice.Microservice, cfg microservice.IConfig) Kit
 func (h KitchenHttp) RouteSetup() {
 
 	h.ms.POST("/restaurant/kitchen/bulk", h.SaveBulk)
-	h.ms.GET("/restaurant/kitchen/fetchupdate", h.FetchUpdate)
 
 	h.ms.GET("/restaurant/kitchen", h.SearchKitchen)
+	h.ms.GET("/restaurant/kitchen/list", h.SearchKitchenStep)
 	h.ms.POST("/restaurant/kitchen", h.CreateKitchen)
 	h.ms.GET("/restaurant/kitchen/:id", h.InfoKitchen)
 	h.ms.PUT("/restaurant/kitchen/:id", h.UpdateKitchen)
@@ -201,9 +199,8 @@ func (h KitchenHttp) SearchKitchen(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchKitchen(shopID, q, page, limit)
+	pageable := utils.GetPageable(ctx.QueryParam)
+	docList, pagination, err := h.svc.SearchKitchen(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -218,54 +215,35 @@ func (h KitchenHttp) SearchKitchen(ctx microservice.IContext) error {
 	return nil
 }
 
-// Fetch Restaurant Kitchen Update By Date godoc
-// @Description Fetch Restaurant Kitchen Update By Date
+// List Restaurant Kitchen Search Step godoc
+// @Description search limit offset
 // @Tags		Restaurant
-// @Param		lastUpdate query string true "DateTime YYYY-MM-DDTHH:mm"
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
-// @Accept		json
-// @Success		200 {object} models.KitchenFetchUpdateResponse
-// @Failure		401 {object} common.AuthResponseFailed
-// @Security	AccessToken
-// @Router		/restaurant/kitchen/fetchupdate [get]
-func (h KitchenHttp) FetchUpdate(ctx microservice.IContext) error {
+// @Param		q		query	string		false  "Search Value"
+// @Param		offset	query	integer		false  "offset"
+// @Param		limit	query	integer		false  "limit"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/kitchen/list [get]
+func (h KitchenHttp) SearchKitchenStep(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	layout := "2006-01-02T15:04" //
-	lastUpdateStr := ctx.QueryParam("lastUpdate")
+	pageableStep := utils.GetPageableStep(ctx.QueryParam)
 
-	lastUpdateStr = strings.Trim(lastUpdateStr, " ")
-	if len(lastUpdateStr) < 1 {
-		ctx.ResponseError(400, "lastUpdate format invalid.")
-		return nil
-	}
-
-	lastUpdate, err := time.Parse(layout, lastUpdateStr)
+	docList, total, err := h.svc.SearchKitchenStep(shopID, "", pageableStep)
 
 	if err != nil {
-		ctx.ResponseError(400, "lastUpdate format invalid.")
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err
 	}
 
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-
-	docList, pagination, err := h.svc.LastActivity(shopID, lastUpdate, page, limit)
-
-	if err != nil {
-		ctx.ResponseError(400, err.Error())
-		return err
-	}
-
-	ctx.Response(
-		http.StatusOK,
-		common.ApiResponse{
-			Success:    true,
-			Data:       docList,
-			Pagination: pagination,
-		})
-
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docList,
+		Total:   total,
+	})
 	return nil
 }
 

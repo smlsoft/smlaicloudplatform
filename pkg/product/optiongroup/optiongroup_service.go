@@ -1,12 +1,13 @@
 package optiongroup
 
 import (
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/optiongroup/models"
 	"smlcloudplatform/pkg/utils"
 	"time"
 
-	paginate "github.com/gobeam/mongo-go-pagination"
 	"github.com/pkg/errors"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -15,7 +16,7 @@ type IOptionGroupService interface {
 	UpdateOptionGroup(shopID string, guid string, authUsername string, doc models.InventoryOptionGroup) error
 	DeleteOptionGroup(shopID string, guid string, username string) error
 	InfoOptionGroup(shopID string, guid string) (models.InventoryOptionGroup, error)
-	SearchOptionGroup(shopID string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error)
+	SearchOptionGroup(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionGroup, mongopagination.PaginationData, error)
 }
 
 type OptionGroupService struct {
@@ -103,8 +104,8 @@ func (svc OptionGroupService) InfoOptionGroup(shopID string, guid string) (model
 
 }
 
-func (svc OptionGroupService) SearchOptionGroup(shopID string, q string, page int, limit int) ([]models.InventoryOptionGroup, paginate.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindPage(shopID, q, page, limit)
+func (svc OptionGroupService) SearchOptionGroup(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionGroup, mongopagination.PaginationData, error) {
+	docList, pagination, err := svc.repo.FindPage(shopID, pageable)
 
 	if err != nil {
 		return []models.InventoryOptionGroup{}, pagination, err

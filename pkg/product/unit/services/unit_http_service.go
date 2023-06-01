@@ -2,14 +2,19 @@ package services
 
 import (
 	"errors"
+	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/unit/models"
 	"smlcloudplatform/pkg/product/unit/repositories"
+	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/samber/lo"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -21,20 +26,31 @@ type IUnitHttpService interface {
 	DeleteUnit(shopID string, guid string, authUsername string) error
 	DeleteUnitByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoUnit(shopID string, guid string) (models.UnitInfo, error)
-	SearchUnit(shopID string, q string, page int, limit int, sort map[string]int) ([]models.UnitInfo, mongopagination.PaginationData, error)
-	SearchUnitLimit(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.UnitInfo, int, error)
+	InfoUnitWTFArray(shopID string, unitCodes []string) ([]interface{}, error)
+	InfoWTFArrayMaster(codes []string) ([]interface{}, error)
+	SearchUnit(shopID string, codeFilters []string, pageable micromodels.Pageable) ([]models.UnitInfo, mongopagination.PaginationData, error)
+	SearchUnitLimit(shopID string, langCode string, codeFilters []string, pageableStep micromodels.PageableStep) ([]models.UnitInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Unit) (common.BulkImport, error)
+
+	GetModuleName() string
 }
 
 type UnitHttpService struct {
-	repo repositories.IUnitRepository
+	repo          repositories.IUnitRepository
+	syncCacheRepo mastersync.IMasterSyncCacheRepository
+
+	services.ActivityService[models.UnitActivity, models.UnitDeleteActivity]
 }
 
-func NewUnitHttpService(repo repositories.IUnitRepository) *UnitHttpService {
+func NewUnitHttpService(repo repositories.IUnitRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *UnitHttpService {
 
-	return &UnitHttpService{
-		repo: repo,
+	insSvc := &UnitHttpService{
+		repo:          repo,
+		syncCacheRepo: syncCacheRepo,
 	}
+
+	insSvc.ActivityService = services.NewActivityService[models.UnitActivity, models.UnitDeleteActivity](repo)
+	return insSvc
 }
 
 func (svc UnitHttpService) CreateUnit(shopID string, authUsername string, doc models.Unit) (string, error) {
@@ -64,6 +80,8 @@ func (svc UnitHttpService) CreateUnit(shopID string, authUsername string, doc mo
 	if err != nil {
 		return "", err
 	}
+
+	svc.saveMasterSync(shopID)
 
 	return newGuidFixed, nil
 }
@@ -96,6 +114,8 @@ func (svc UnitHttpService) UpdateUnit(shopID string, guid string, authUsername s
 		return err
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -127,6 +147,11 @@ func (svc UnitHttpService) UpdateFieldUnit(shopID string, guid string, authUsern
 		tempNames = append(tempNames, v)
 	}
 
+	lo.Filter[common.NameX](tempNames, func(n common.NameX, i int) bool {
+		notDelete := !n.IsDelete
+		return notDelete
+	})
+
 	findDoc.Unit.Names = &tempNames
 
 	findDoc.UpdatedBy = authUsername
@@ -137,6 +162,8 @@ func (svc UnitHttpService) UpdateFieldUnit(shopID string, guid string, authUsern
 	if err != nil {
 		return err
 	}
+
+	svc.saveMasterSync(shopID)
 
 	return nil
 }
@@ -158,6 +185,8 @@ func (svc UnitHttpService) DeleteUnit(shopID string, guid string, authUsername s
 		return err
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return nil
 }
 
@@ -171,6 +200,8 @@ func (svc UnitHttpService) DeleteUnitByGUIDs(shopID string, authUsername string,
 	if err != nil {
 		return err
 	}
+
+	svc.saveMasterSync(shopID)
 
 	return nil
 }
@@ -191,13 +222,61 @@ func (svc UnitHttpService) InfoUnit(shopID string, guid string) (models.UnitInfo
 
 }
 
-func (svc UnitHttpService) SearchUnit(shopID string, q string, page int, limit int, sort map[string]int) ([]models.UnitInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
-		"guidfixed",
-		"unitcode",
+func (svc UnitHttpService) InfoUnitWTFArray(shopID string, unitCodes []string) ([]interface{}, error) {
+
+	docList := []interface{}{}
+
+	for _, unitCode := range unitCodes {
+		findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "unitcode", unitCode)
+		if err != nil || findDoc.ID == primitive.NilObjectID {
+			// add item empty
+			emptyDoc := models.UnitInfo{}
+			emptyDoc.UnitCode = unitCode
+			docList = append(docList, nil)
+		} else {
+			docList = append(docList, findDoc.UnitInfo)
+		}
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	return docList, nil
+}
+
+func (svc UnitHttpService) InfoWTFArrayMaster(codes []string) ([]interface{}, error) {
+	docList := []interface{}{}
+
+	findDocList, err := svc.repo.FindMasterInCodes(codes)
+
+	if err != nil {
+		return []interface{}{}, err
+	}
+
+	for _, code := range codes {
+		findDoc, ok := lo.Find(findDocList, func(item models.UnitInfo) bool {
+			return item.UnitCode == code
+		})
+		if !ok {
+			// add item empty
+			docList = append(docList, nil)
+		} else {
+			docList = append(docList, findDoc)
+		}
+	}
+
+	return docList, nil
+}
+
+func (svc UnitHttpService) SearchUnit(shopID string, codeFilters []string, pageable micromodels.Pageable) ([]models.UnitInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
+		"unitcode",
+		"names.name",
+	}
+
+	filters := map[string]interface{}{}
+	if len(codeFilters) > 0 {
+		filters["unitcode"] = bson.M{"$in": codeFilters}
+	}
+
+	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.UnitInfo{}, pagination, err
@@ -206,24 +285,32 @@ func (svc UnitHttpService) SearchUnit(shopID string, q string, page int, limit i
 	return docList, pagination, nil
 }
 
-func (svc UnitHttpService) SearchUnitLimit(shopID string, langCode string, q string, skip int, limit int, sort map[string]int) ([]models.UnitInfo, int, error) {
-	searchCols := []string{
-		"guidfixed",
+func (svc UnitHttpService) SearchUnitLimit(shopID string, langCode string, codeFilters []string, pageableStep micromodels.PageableStep) ([]models.UnitInfo, int, error) {
+	searchInFields := []string{
 		"unitcode",
+		"names.name",
 	}
 
-	projectQuery := map[string]interface{}{
+	selectFields := map[string]interface{}{
 		"guidfixed": 1,
 		"unitcode":  1,
 	}
 
 	if langCode != "" {
-		projectQuery["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
+		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
 	} else {
-		projectQuery["names"] = 1
+		selectFields["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindLimit(shopID, searchCols, q, skip, limit, sort, map[string]interface{}{})
+	filters := map[string]interface{}{}
+	if len(codeFilters) > 0 {
+
+		filters["$or"] = []interface{}{
+			bson.M{"unitcode": bson.M{"$in": codeFilters}},
+		}
+	}
+
+	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.UnitInfo{}, 0, err
@@ -249,7 +336,7 @@ func (svc UnitHttpService) SaveInBatch(shopID string, authUsername string, dataL
 
 	foundItemGuidList := []string{}
 	for _, doc := range findItemGuid {
-		foundItemGuidList = append(foundItemGuidList, doc.DocNo)
+		foundItemGuidList = append(foundItemGuidList, doc.UnitCode)
 	}
 
 	duplicateDataList, createDataList := importdata.PreparePayloadData[models.Unit, models.UnitDoc](
@@ -330,6 +417,8 @@ func (svc UnitHttpService) SaveInBatch(shopID string, authUsername string, dataL
 		updateFailDataKey = append(updateFailDataKey, svc.getDocIDKey(doc))
 	}
 
+	svc.saveMasterSync(shopID)
+
 	return common.BulkImport{
 		Created:          createDataKey,
 		Updated:          updateDataKey,
@@ -340,4 +429,18 @@ func (svc UnitHttpService) SaveInBatch(shopID string, authUsername string, dataL
 
 func (svc UnitHttpService) getDocIDKey(doc models.Unit) string {
 	return doc.UnitCode
+}
+
+func (svc UnitHttpService) saveMasterSync(shopID string) {
+	if svc.syncCacheRepo != nil {
+		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
+
+		if err != nil {
+			fmt.Printf("save %s cache error :: %s", svc.GetModuleName(), err.Error())
+		}
+	}
+}
+
+func (svc UnitHttpService) GetModuleName() string {
+	return "productunit"
 }

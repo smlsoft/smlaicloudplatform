@@ -4,12 +4,15 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	documentImageModel "smlcloudplatform/pkg/documentwarehouse/documentimage/models"
+	repoDocumentimage "smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
 	serviceDocumentimage "smlcloudplatform/pkg/documentwarehouse/documentimage/services"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/vfgl/journal/models"
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
 	"smlcloudplatform/pkg/vfgl/journal/services"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -21,6 +24,7 @@ type JournalHttp struct {
 	cfg         microservice.IConfig
 	svc         services.IJournalHttpService
 	svcDocImage serviceDocumentimage.DocumentImageService
+	Module      string
 	// svcWebsocket services.IJournalWebsocketService
 }
 
@@ -36,14 +40,18 @@ func NewJournalHttp(ms *microservice.Microservice, cfg microservice.IConfig) Jou
 	// cacheRepo := repositories.NewJournalCacheRepository(cache)
 	// svcWebsocket := services.NewJournalWebsocketService(repo, cacheRepo, time.Duration(30)*time.Minute)
 
-	// repoDocImage := repoDocumentimage.NewDocumentImageRepository(pst)
-	// svcDocImage := serviceDocumentimage.NewDocumentImageService(repoDocImage, nil)
+	repoDocImage := repoDocumentimage.NewDocumentImageRepository(pst)
+	repoDocImageGroup := repoDocumentimage.NewDocumentImageGroupRepository(pst)
+	repoDocImageGroupMessagequeue := repoDocumentimage.NewDocumentImageMessageQueueRepository(prod)
+
+	svcDocImage := serviceDocumentimage.NewDocumentImageService(repoDocImage, repoDocImageGroup, repoDocImageGroupMessagequeue, nil)
 
 	return JournalHttp{
-		ms:  ms,
-		cfg: cfg,
-		svc: svc,
-		// svcDocImage: svcDocImage,
+		Module:      "GL",
+		ms:          ms,
+		cfg:         cfg,
+		svc:         svc,
+		svcDocImage: svcDocImage,
 		// svcWebsocket: svcWebsocket,
 	}
 }
@@ -54,11 +62,13 @@ func (h JournalHttp) RouteSetup() {
 
 	h.ms.GET("/gl/journal", h.SearchJournal)
 	h.ms.POST("/gl/journal", h.CreateJournal)
+	h.ms.GET("/gl/journal/last-docno", h.GetLastDocNo)
 	h.ms.GET("/gl/journal/:id", h.InfoJournal)
 	h.ms.GET("/gl/journal/docno/:docno", h.InfoJournalByDocno)
 	h.ms.GET("/gl/journal/docref/:doc", h.InfoJournalByDocumentRef)
 	h.ms.PUT("/gl/journal/:id", h.UpdateJournal)
 	h.ms.DELETE("/gl/journal/:id", h.DeleteJournal)
+	h.ms.DELETE("/gl/journal/batchid/:batchid", h.DeleteJournalByBatchID)
 
 }
 
@@ -73,36 +83,61 @@ func (h JournalHttp) RouteSetup() {
 // @Security     AccessToken
 // @Router /gl/journal [post]
 func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
-	// authUsername := ctx.UserInfo().Username
-	// shopID := ctx.UserInfo().ShopID
-	// input := ctx.ReadInput()
+	authUsername := ctx.UserInfo().Username
+	shopID := ctx.UserInfo().ShopID
+	input := ctx.ReadInput()
 
-	// docReq := &models.Journal{}
-	// err := json.Unmarshal([]byte(input), &docReq)
+	docReq := &models.Journal{}
+	err := json.Unmarshal([]byte(input), &docReq)
 
-	// if err != nil {
-	// 	ctx.ResponseError(400, err.Error())
-	// 	return err
-	// }
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
 
-	// idx, err := h.svc.CreateJournal(shopID, authUsername, *docReq)
+	if len(docReq.DocumentRef) > 0 {
+		docImageGroup, err := h.svcDocImage.GetDocumentImageDocRefGroup(shopID, docReq.DocumentRef)
+		if err != nil {
+			messageError := ""
+			if err.Error() == "document not found" {
+				messageError = "document image group not found"
+			} else {
+				messageError = err.Error()
+			}
 
-	// if err != nil {
-	// 	ctx.ResponseError(http.StatusBadRequest, err.Error())
-	// 	return err
-	// }
+			ctx.ResponseError(400, messageError)
+			return err
+		}
 
-	// err = h.svcDocImage.UpdateDocumentImageStatusByDocumentRef(shopID, docReq.DocumentRef, docReq.DocNo, modelDocumentimage.ImageCompleted)
+		if len(docImageGroup.GuidFixed) < 1 {
+			if err != nil {
+				ctx.ResponseError(400, "document image group not found")
+				return err
+			}
+		}
 
-	// if err != nil {
-	// 	ctx.ResponseError(http.StatusBadRequest, err.Error())
-	// 	return err
-	// }
+		err = h.svcDocImage.UpdateReferenceByDocumentImageGroup(shopID, authUsername, docReq.DocumentRef, documentImageModel.Reference{
+			Module: h.Module,
+			DocNo:  docReq.DocNo,
+		})
 
-	// ctx.Response(http.StatusCreated, common.ApiResponse{
-	// 	Success: true,
-	// 	ID:      idx,
-	// })
+		if err != nil {
+			ctx.ResponseError(http.StatusBadRequest, err.Error())
+			return err
+		}
+	}
+
+	idx, err := h.svc.CreateJournal(shopID, authUsername, *docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+		ID:      idx,
+	})
 	return nil
 }
 
@@ -118,55 +153,75 @@ func (h JournalHttp) CreateJournal(ctx microservice.IContext) error {
 // @Security     AccessToken
 // @Router /gl/journal/{id} [put]
 func (h JournalHttp) UpdateJournal(ctx microservice.IContext) error {
-	// userInfo := ctx.UserInfo()
-	// authUsername := userInfo.Username
-	// shopID := userInfo.ShopID
+	userInfo := ctx.UserInfo()
+	authUsername := userInfo.Username
+	shopID := userInfo.ShopID
 
-	// id := ctx.Param("id")
-	// input := ctx.ReadInput()
+	id := ctx.Param("id")
+	input := ctx.ReadInput()
 
-	// docReq := &models.Journal{}
-	// err := json.Unmarshal([]byte(input), &docReq)
+	docReq := &models.Journal{}
+	err := json.Unmarshal([]byte(input), &docReq)
 
-	// if err != nil {
-	// 	ctx.ResponseError(400, err.Error())
-	// 	return err
-	// }
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
 
-	// journalInfo, _ := h.svc.InfoJournal(shopID, id)
+	if len(docReq.DocumentRef) > 0 {
+		docImageGroup, err := h.svcDocImage.GetDocumentImageDocRefGroup(shopID, docReq.DocumentRef)
+		if err != nil {
+			messageError := ""
+			if err.Error() == "document not found" {
+				messageError = "document image group not found"
+			} else {
+				messageError = err.Error()
+			}
 
-	// err = h.svc.UpdateJournal(id, shopID, authUsername, *docReq)
+			ctx.ResponseError(400, messageError)
+			return err
+		}
 
-	// if err != nil {
-	// 	ctx.ResponseError(http.StatusBadRequest, err.Error())
-	// 	return err
-	// }
+		if len(docImageGroup.GuidFixed) < 1 {
+			if err != nil {
+				ctx.ResponseError(400, "document image group not found")
+				return err
+			}
+		}
+	}
 
-	// if journalInfo.DocumentRef != docReq.DocumentRef {
+	journalInfo, err := h.svc.InfoJournal(shopID, id)
 
-	// 	if len(journalInfo.DocumentRef) > 0 {
-	// 		err = h.svcDocImage.UpdateDocumentImageStatusByDocumentRef(shopID, journalInfo.DocumentRef, journalInfo.DocNo, modelDocumentimage.ImageReject)
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
 
-	// 		if err != nil {
-	// 			ctx.ResponseError(http.StatusBadRequest, err.Error())
-	// 			return err
-	// 		}
-	// 	}
+	err = h.svc.UpdateJournal(id, shopID, authUsername, *docReq)
 
-	// 	if len(docReq.DocumentRef) > 0 {
-	// 		err = h.svcDocImage.UpdateDocumentImageStatusByDocumentRef(shopID, docReq.DocumentRef, journalInfo.DocNo, modelDocumentimage.ImageCompleted)
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
 
-	// 		if err != nil {
-	// 			ctx.ResponseError(http.StatusBadRequest, err.Error())
-	// 			return err
-	// 		}
-	// 	}
-	// }
+	if journalInfo.DocumentRef != docReq.DocumentRef {
 
-	// ctx.Response(http.StatusCreated, common.ApiResponse{
-	// 	Success: true,
-	// 	ID:      id,
-	// })
+		if len(docReq.DocumentRef) > 0 {
+			err = h.svcDocImage.UpdateReferenceByDocumentImageGroup(shopID, authUsername, docReq.DocumentRef, documentImageModel.Reference{
+				Module: h.Module,
+				DocNo:  docReq.DocNo,
+			})
+			if err != nil {
+				ctx.ResponseError(http.StatusBadRequest, err.Error())
+				return err
+			}
+		}
+	}
+
+	ctx.Response(http.StatusCreated, common.ApiResponse{
+		Success: true,
+		ID:      id,
+	})
 
 	return nil
 }
@@ -188,7 +243,54 @@ func (h JournalHttp) DeleteJournal(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	err := h.svc.DeleteJournal(id, shopID, authUsername)
+	journal, err := h.svc.InfoJournal(shopID, id)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	err = h.svc.DeleteJournal(id, shopID, authUsername)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	if len(journal.DocumentRef) > 0 {
+		imageRef := documentImageModel.Reference{
+			Module: h.Module,
+			DocNo:  journal.DocNo,
+		}
+		h.svcDocImage.DeleteReferenceByDocumentImageGroup(shopID, authUsername, journal.DocumentRef, imageRef)
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		ID:      id,
+	})
+
+	return nil
+}
+
+// Delete Journal By Batch ID godoc
+// @Summary		ลบข้อมูลรายวัน By Batch ID
+// @Description ลบข้อมูลรายวัน By Batch ID
+// @Tags		GL
+// @Param		batchid  path      string  true  "Journal Batch ID"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /gl/journal/batchid/{batchid} [delete]
+func (h JournalHttp) DeleteJournalByBatchID(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	batchID := ctx.Param("batchid")
+
+	err := h.svc.DeleteJournalByBatchID(shopID, authUsername, batchID)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -197,7 +299,6 @@ func (h JournalHttp) DeleteJournal(ctx microservice.IContext) error {
 
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
-		ID:      id,
 	})
 
 	return nil
@@ -304,6 +405,14 @@ func (h JournalHttp) InfoJournalByDocumentRef(ctx microservice.IContext) error {
 // @Description แสดงรายการข้อมูลรายวัน
 // @Tags		GL
 // @Param		q		query	string		false  "Search Value"
+// @Param		docno		query	string		false  "DocNo"
+// @Param		docdate		query	string		false  "DocDate ex. 2020-01-01"
+// @Param		accountyear		query	int		false  "Account Year"
+// @Param		accountperiod		query	int		false  "Account Period"
+// @Param		accountdescription		query	int		false  "Account Description"
+// @Param		amount		query	int		false  "Amount"
+// @Param		createdby		query	string		false  "Created By"
+// @Param		createdat		query	string		false  "Create Date ex. 2020-01-01"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
 // @Accept 		json
@@ -315,9 +424,7 @@ func (h JournalHttp) SearchJournal(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	sort := utils.GetSortParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
 	accountGroup := ctx.QueryParam("accountgroup")
 
@@ -345,7 +452,81 @@ func (h JournalHttp) SearchJournal(ctx microservice.IContext) error {
 		}
 	}
 
-	docList, pagination, err := h.svc.SearchJournal(shopID, q, page, limit, sort, startDate, endDate, accountGroup)
+	// filterFields := []string{"docno", "docdate", "accountyear", "amount"}
+	filterFields := []common.SearchFilter{
+		{
+			Field: "docno",
+			Type:  "string",
+		},
+		{
+			Field: "docdate",
+			Type:  "time.Time",
+		},
+		{
+			Field: "accountyear",
+			Type:  "int16",
+		},
+		{
+			Field: "accountperiod",
+			Type:  "int16",
+		},
+		{
+			Field: "accountdescription",
+			Type:  "string",
+		},
+		{
+			Field: "amount",
+			Type:  "float64",
+		},
+		{
+			Field: "createdby",
+			Type:  "string",
+		},
+		{
+			Field: "createdat",
+			Type:  "time.Time",
+		},
+	}
+	searchFilters := map[string]interface{}{}
+
+	for _, searchFilter := range filterFields {
+		qVal := strings.TrimSpace(ctx.QueryParam(searchFilter.Field))
+
+		if len(qVal) > 0 {
+
+			switch searchFilter.Type {
+			case "string":
+				searchFilters[searchFilter.Field] = qVal
+			case "int":
+				intVal, err := strconv.Atoi(qVal)
+				if err == nil {
+					searchFilters[searchFilter.Field] = intVal
+				}
+			case "int16":
+				intVal, err := strconv.Atoi(qVal)
+				if err == nil {
+					searchFilters[searchFilter.Field] = int16(intVal)
+				}
+			case "float64":
+				floatVal, err := strconv.ParseFloat(qVal, 64)
+				if err == nil {
+					searchFilters[searchFilter.Field] = floatVal
+				}
+			case "time.Time":
+				dateVal, err := time.Parse("2006-01-02", qVal)
+				if err == nil {
+					searchFilters[searchFilter.Field] = dateVal
+				}
+			case "bool":
+				boolVal, err := strconv.ParseBool(qVal)
+				if err == nil {
+					searchFilters[searchFilter.Field] = boolVal
+				}
+			}
+		}
+	}
+
+	docList, pagination, err := h.svc.SearchJournal(shopID, pageable, searchFilters, startDate, endDate, accountGroup)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -401,5 +582,34 @@ func (h JournalHttp) SaveBulk(ctx microservice.IContext) error {
 		},
 	)
 
+	return nil
+}
+
+// Get Journal Last DocNo godoc
+// @Summary		แสดงรายละเอียดข้อมูลรายวัน
+// @Description แสดงรายละเอียดข้อมูลรายวัน
+// @Tags		GL
+// @Accept 		json
+// @Success		200	{object}	models.JournalInfoResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /gl/journal/last-docno [get]
+func (h JournalHttp) GetLastDocNo(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	docFormat := ctx.QueryParam("docformat")
+
+	doc, err := h.svc.FindLastDocnoFromFormat(shopID, docFormat)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
 	return nil
 }

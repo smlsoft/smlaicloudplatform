@@ -1,7 +1,7 @@
 package mogoutil
 
 import (
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -15,6 +15,10 @@ func AggregatePageDecode[T any](paginatedData *mongopagination.PaginatedData) ([
 			return aggList, marshallErr
 		}
 		aggList = append(aggList, *item)
+	}
+
+	if aggList == nil {
+		aggList = make([]T, 0)
 	}
 
 	return aggList, nil

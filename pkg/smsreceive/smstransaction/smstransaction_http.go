@@ -205,10 +205,8 @@ func (h SmsTransactionHttp) SearchSmsTransaction(ctx microservice.IContext) erro
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	sort := utils.GetSortParam(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchSmsTransaction(shopID, q, page, limit, sort)
+	pageable := utils.GetPageable(ctx.QueryParam)
+	docList, pagination, err := h.svc.SearchSmsTransaction(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -280,7 +278,7 @@ func (h SmsTransactionHttp) CheckSMS(ctx microservice.IContext) error {
 // @Success		200	{object}	models.SmsTransactionPageResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /checksms [get]
+// @Router /smstransaction/confirm/{id} [get]
 func (h SmsTransactionHttp) ConfirmSmsTransaction(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID

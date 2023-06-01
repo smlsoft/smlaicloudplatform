@@ -28,6 +28,8 @@ func (ShopInfo) CollectionName() string {
 }
 
 type Shop struct {
-	Name1     string `json:"name1" bson:"name1"`
-	Telephone string `json:"telephone" bson:"telephone"`
+	ProfilePicture string `json:"profilepicture" bson:"profilepicture"`
+	Name1          string `json:"name1" bson:"name1"`
+	Telephone      string `json:"telephone" bson:"telephone"`
+	BranchCode     string `json:"branchcode" bson:"branchcode"`
 }

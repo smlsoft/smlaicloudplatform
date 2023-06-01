@@ -3,12 +3,15 @@ package unit
 import (
 	"encoding/json"
 	"net/http"
+	"net/url"
 	"smlcloudplatform/internal/microservice"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/unit/models"
 	"smlcloudplatform/pkg/product/unit/repositories"
 	"smlcloudplatform/pkg/product/unit/services"
 	"smlcloudplatform/pkg/utils"
+	"strings"
 )
 
 type IUnitHttp interface{}
@@ -21,10 +24,12 @@ type UnitHttp struct {
 
 func NewUnitHttp(ms *microservice.Microservice, cfg microservice.IConfig) UnitHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
+	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := repositories.NewUnitRepository(pst)
 
-	svc := services.NewUnitHttpService(repo)
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
+	svc := services.NewUnitHttpService(repo, masterSyncCacheRepo)
 
 	return UnitHttp{
 		ms:  ms,
@@ -41,6 +46,8 @@ func (h UnitHttp) RouteSetup() {
 	h.ms.GET("/unit/list", h.SearchUnitLimit)
 	h.ms.POST("/unit", h.CreateUnit)
 	h.ms.GET("/unit/:id", h.InfoUnit)
+	h.ms.GET("/unit/by-code", h.InfoArray)
+	h.ms.GET("/unit/master", h.InfoArrayMaster)
 	h.ms.PUT("/unit/:id", h.UpdateUnit)
 	h.ms.PATCH("/unit/:id", h.UpdateFieldUnit)
 	h.ms.DELETE("/unit/:id", h.DeleteUnit)
@@ -227,12 +234,96 @@ func (h UnitHttp) InfoUnit(ctx microservice.IContext) error {
 	return nil
 }
 
+// Get Unit By unit code array godoc
+// @Description get unit by unit code array
+// @Tags		Unit
+// @Param		codes	query	string		false  "Code filter, json array encode "
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /unit/by-code [get]
+func (h UnitHttp) InfoArray(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	codesReq, err := url.QueryUnescape(ctx.QueryParam("codes"))
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	docReq := []string{}
+	err = json.Unmarshal([]byte(codesReq), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	// where to filter array
+	doc, err := h.svc.InfoUnitWTFArray(shopID, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// Get Master Unit By code array godoc
+// @Description get master Unit by code array
+// @Tags		Unit
+// @Param		codes	query	string		false  "Code filter, json array encode "
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /unit/master [get]
+func (h UnitHttp) InfoArrayMaster(ctx microservice.IContext) error {
+	codesReq, err := url.QueryUnescape(ctx.QueryParam("codes"))
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	docReq := []string{}
+	err = json.Unmarshal([]byte(codesReq), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	// where to filter array master
+	doc, err := h.svc.InfoWTFArrayMaster(docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
 // List Unit godoc
 // @Description get struct array by ID
 // @Tags		Unit
 // @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Add "
-// @Param		limit	query	integer		false  "Add "
+// @Param		page	query	integer		false  "page "
+// @Param		limit	query	integer		false  "liumit "
+// @Param		unitcode	query	string		false  "unitcode filter ex. \"u001,u002,u003\""
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -242,10 +333,16 @@ func (h UnitHttp) SearchUnit(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	sort := utils.GetSortParam(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchUnit(shopID, q, page, limit, sort)
+	pageable := utils.GetPageable(ctx.QueryParam)
+
+	unitCode := ctx.QueryParam("unitcode")
+
+	unitCodeFilters := []string{}
+	if len(unitCode) > 0 {
+		unitCodeFilters = strings.Split(unitCode, ",")
+	}
+
+	docList, pagination, err := h.svc.SearchUnit(shopID, unitCodeFilters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -261,11 +358,13 @@ func (h UnitHttp) SearchUnit(ctx microservice.IContext) error {
 }
 
 // List Unit godoc
-// @Description get struct array by ID
+// @Description search limit offset
 // @Tags		Unit
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
+// @Param		lang	query	string		false  "lang ex. en,th"
+// @Param		unitcode	query	string		false  "unitcode filter ex. \"u001,u002,u003\" "
 // @Accept 		json
 // @Success		200	{array}		common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -275,13 +374,18 @@ func (h UnitHttp) SearchUnitLimit(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	offset, limit := utils.GetParamOffsetLimit(ctx.QueryParam)
-	sorts := utils.GetSortParam(ctx.QueryParam)
+	pageableStep := utils.GetPageableStep(ctx.QueryParam)
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchUnitLimit(shopID, lang, q, offset, limit, sorts)
+	unitCode := ctx.QueryParam("unitcode")
+
+	unitCodeFilters := []string{}
+	if len(unitCode) > 0 {
+		unitCodeFilters = strings.Split(unitCode, ",")
+	}
+
+	docList, total, err := h.svc.SearchUnitLimit(shopID, lang, unitCodeFilters, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

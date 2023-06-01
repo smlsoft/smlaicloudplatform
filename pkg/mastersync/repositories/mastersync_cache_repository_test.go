@@ -19,7 +19,7 @@ var repoCacheMock repositories.MasterSyncCacheRepository
 func init() {
 	cacheConfig := mock.NewCacherConfig()
 	cache = microservice.NewCacher(cacheConfig)
-	repoCacheMock = repositories.NewMasterSyncCacheRepository(cache, "test")
+	repoCacheMock = repositories.NewMasterSyncCacheRepository(cache)
 	// repoMock = category.NewCategoryRepository(mongoPersister)
 }
 
@@ -28,7 +28,7 @@ func TestSetCache(t *testing.T) {
 	if os.Getenv("SERVERLESS") == "serverless" {
 		t.Skip()
 	}
-	err := repoCacheMock.Save(MockShopID)
+	err := repoCacheMock.Save(MockShopID, "XTEST")
 
 	if err != nil {
 		t.Error(err)
@@ -39,7 +39,7 @@ func TestGetCache(t *testing.T) {
 	if os.Getenv("SERVERLESS") == "serverless" {
 		t.Skip()
 	}
-	val, err := repoCacheMock.Get(MockShopID)
+	val, err := repoCacheMock.Get(MockShopID, "XTEST")
 
 	if err != nil {
 		t.Error(err)
@@ -54,7 +54,7 @@ func TestSetCacheWithModule(t *testing.T) {
 	if os.Getenv("SERVERLESS") == "serverless" {
 		t.Skip()
 	}
-	err := repoCacheMock.SaveWithModule(MockShopID, "XTEST")
+	err := repoCacheMock.Save(MockShopID, "XTEST")
 
 	if err != nil {
 		t.Error(err)
@@ -66,7 +66,7 @@ func TestGetCacheWithModule(t *testing.T) {
 	if os.Getenv("SERVERLESS") == "serverless" {
 		t.Skip()
 	}
-	val, err := repoCacheMock.GetWithModule(MockShopID, "XTEST")
+	val, err := repoCacheMock.Get(MockShopID, "XTEST")
 
 	if err != nil {
 		t.Error(err)

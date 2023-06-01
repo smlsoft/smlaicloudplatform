@@ -2,11 +2,12 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/smsreceive/smstransaction/models"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -16,10 +17,9 @@ type ISmsTransactionRepository interface {
 	CreateInBatch(docList []models.SmsTransactionDoc) error
 	Update(shopID string, guid string, doc models.SmsTransactionDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.SmsTransactionDoc, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.SmsTransactionDoc, error)
-	FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error)
 
 	FindFilterSms(shopID string, storefrontGUID string, address string, startTime time.Time, endTime time.Time) ([]models.SmsTransactionInfo, error)
 }

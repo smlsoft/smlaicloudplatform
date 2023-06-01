@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
@@ -9,7 +10,7 @@ import (
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -18,11 +19,14 @@ type IJournalHttpService interface {
 	CreateJournal(shopID string, authUsername string, doc models.Journal) (string, error)
 	UpdateJournal(guid string, shopID string, authUsername string, doc models.Journal) error
 	DeleteJournal(guid string, shopID string, authUsername string) error
+	DeleteJournalByBatchID(shopID string, authUsername string, batchID string) error
 	InfoJournal(shopID string, guid string) (models.JournalInfo, error)
 	InfoJournalByDocNo(shopID string, docNo string) (models.JournalInfo, error)
 	InfoJournalByDocumentRef(shopID string, documentRef string) (models.JournalInfo, error)
-	SearchJournal(shopID string, q string, page int, limit int, sort map[string]int, startDate time.Time, endDate time.Time, accountGroup string) ([]models.JournalInfo, mongopagination.PaginationData, error)
+	SearchJournal(shopID string, pagable micromodels.Pageable, searchFilters map[string]interface{}, startDate time.Time, endDate time.Time, accountGroup string) ([]models.JournalInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Journal) (common.BulkImport, error)
+
+	FindLastDocnoFromFormat(shopID string, docFormat string) (string, error)
 }
 
 type JournalHttpService struct {
@@ -47,7 +51,7 @@ func (svc JournalHttpService) CreateJournal(shopID string, authUsername string, 
 	}
 
 	if findDoc.DocNo != "" {
-		return "", errors.New("DocNo is exists")
+		return "", errors.New("docno is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -56,6 +60,9 @@ func (svc JournalHttpService) CreateJournal(shopID string, authUsername string, 
 	docData.ShopID = shopID
 	docData.GuidFixed = newGuidFixed
 	docData.Journal = doc
+
+	// docDate := doc.DocDate.Format("2006-01-02")
+	docData.DocDate = time.Date(doc.DocDate.Year(), doc.DocDate.Month(), doc.DocDate.Day(), 0, 0, 0, 0, time.UTC)
 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
@@ -86,7 +93,11 @@ func (svc JournalHttpService) UpdateJournal(guid string, shopID string, authUser
 		return errors.New("document not found")
 	}
 
+	tempDocNo := findDoc.DocNo
+
 	findDoc.Journal = doc
+
+	findDoc.DocNo = tempDocNo
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
@@ -128,6 +139,30 @@ func (svc JournalHttpService) DeleteJournal(guid string, shopID string, authUser
 	return nil
 }
 
+func (svc JournalHttpService) DeleteJournalByBatchID(shopID string, authUsername string, batchID string) error {
+
+	findDoc, err := svc.repo.FindOne(shopID, bson.M{"batchid": batchID})
+
+	if err != nil {
+		return err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return errors.New("document not found")
+	}
+
+	err = svc.repo.Delete(shopID, authUsername, map[string]interface{}{"batchid": batchID})
+	if err != nil {
+		return err
+	}
+	svc.mqRepo.Delete(findDoc)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (svc JournalHttpService) InfoJournal(shopID string, guid string) (models.JournalInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
@@ -140,15 +175,17 @@ func (svc JournalHttpService) InfoJournal(shopID string, guid string) (models.Jo
 		return models.JournalInfo{}, errors.New("document not found")
 	}
 
+	findDoc.JournalInfo.CreatedBy = findDoc.ActivityDoc.CreatedBy
+	findDoc.JournalInfo.CreatedAt = findDoc.ActivityDoc.CreatedAt
+
 	return findDoc.JournalInfo, nil
 
 }
 
 func (svc JournalHttpService) InfoJournalByDocNo(shopID string, docNo string) (models.JournalInfo, error) {
 
-	filters := map[string]interface{}{
-		"docno": docNo,
-	}
+	filters := bson.M{"docno": docNo}
+
 	findDoc, err := svc.repo.FindOne(shopID, filters)
 
 	if err != nil {
@@ -183,9 +220,8 @@ func (svc JournalHttpService) InfoJournalByDocumentRef(shopID string, documentRe
 
 }
 
-func (svc JournalHttpService) SearchJournal(shopID string, q string, page int, limit int, sort map[string]int, startDate time.Time, endDate time.Time, accountGroup string) ([]models.JournalInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
-		"guidfixed",
+func (svc JournalHttpService) SearchJournal(shopID string, pageable micromodels.Pageable, searchFilters map[string]interface{}, startDate time.Time, endDate time.Time, accountGroup string) ([]models.JournalInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"docno",
 	}
 
@@ -203,7 +239,22 @@ func (svc JournalHttpService) SearchJournal(shopID string, q string, page int, l
 		filters["accountgroup"] = accountGroup
 	}
 
-	docList, pagination, err := svc.repo.FindPageFilterSort(shopID, filters, searchCols, q, page, limit, sort)
+	for key, value := range searchFilters {
+
+		switch tempVal := value.(type) {
+		case string:
+			filters[key] = bson.M{"$regex": primitive.Regex{
+				Pattern: ".*" + tempVal + ".*",
+				Options: "i",
+			}}
+		case int, int16, int32, float64, bool:
+			filters[key] = value
+		case time.Time:
+			filters[key] = value
+		}
+	}
+
+	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.JournalInfo{}, pagination, err
@@ -328,4 +379,16 @@ func (svc JournalHttpService) SaveInBatch(shopID string, authUsername string, da
 
 func (svc JournalHttpService) getDocIDKey(doc models.Journal) string {
 	return doc.DocNo
+}
+
+func (svc JournalHttpService) FindLastDocnoFromFormat(shopID string, docFormat string) (string, error) {
+
+	lastDocNo, err := svc.repo.FindLastDocno(shopID, docFormat)
+
+	if err != nil {
+		return "", err
+	}
+
+	return lastDocNo, nil
+
 }

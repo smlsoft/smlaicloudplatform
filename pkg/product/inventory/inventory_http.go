@@ -6,10 +6,10 @@ import (
 	"smlcloudplatform/internal/microservice"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
-	categoryRepo "smlcloudplatform/pkg/product/category/repositories"
 	"smlcloudplatform/pkg/product/inventory/models"
 	"smlcloudplatform/pkg/product/inventory/repositories"
 	"smlcloudplatform/pkg/product/inventory/services"
+	categoryRepo "smlcloudplatform/pkg/product/productcategory/repositories"
 	"smlcloudplatform/pkg/utils"
 	"strings"
 	"time"
@@ -45,11 +45,11 @@ func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) *
 
 	invRepo := repositories.NewInventoryRepository(pst)
 	invMqRepo := repositories.NewInventoryMQRepository(prod)
-	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "inventory")
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
 	invService := services.NewInventoryService(invRepo, invMqRepo, masterSyncCacheRepo)
 
-	categoryRepo := categoryRepo.NewCategoryRepository(pst)
-	inventoryCategoryService := services.NewInventorycategoryService(invRepo, categoryRepo, invMqRepo)
+	categoryRepo := categoryRepo.NewProductCategoryRepository(pst)
+	inventoryCategoryService := services.NewInventorycategoryService(invRepo, *categoryRepo, invMqRepo)
 
 	return &InventoryHttp{
 		ms:                       ms,
@@ -436,8 +436,8 @@ func (h InventoryHttp) InfoInventoryBarcode(ctx microservice.IContext) error {
 // @Description get struct array by ID
 // @Tags		Inventory
 // @Param		q		query	string		false  "Search Value"
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
 // @Success		200	{array}		models.InventoryPageResponse
 // @Failure		401 {object}	common.AuthResponseFailed
@@ -447,8 +447,7 @@ func (h InventoryHttp) SearchInventory(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
 	filters := map[string]interface{}{}
 
@@ -458,7 +457,7 @@ func (h InventoryHttp) SearchInventory(ctx microservice.IContext) error {
 		filters["isstockproduct"] = stock == "true"
 	}
 
-	docList, pagination, err := h.invService.SearchInventory(shopID, filters, q, page, limit)
+	docList, pagination, err := h.invService.SearchInventory(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())
@@ -502,8 +501,8 @@ func (h InventoryHttp) InfoMongoInventory(ctx microservice.IContext) error {
 // @Description Fetch Update Inventory By Date
 // @Tags		Inventory
 // @Param		lastUpdate query string true "DateTime YYYY-MM-DDTHH:mm"
-// @Param		page	query	integer		false  "Add Category"
-// @Param		limit	query	integer		false  "Add Category"
+// @Param		page	query	integer		false  "Page"
+// @Param		limit	query	integer		false  "Limit"
 // @Accept		json
 // @Success		200 {object} models.InventoryFetchUpdateResponse
 // @Failure		401 {object} common.AuthResponseFailed
@@ -529,9 +528,9 @@ func (h InventoryHttp) LastActivityInventory(ctx microservice.IContext) error {
 		return err
 	}
 
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.invService.LastActivity(shopID, lastUpdate, page, limit)
+	docList, pagination, err := h.invService.LastActivity(shopID, lastUpdate, pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, err.Error())

@@ -2,10 +2,11 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/vfgl/journalbook/models"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 )
 
 type IJournalBookMongoRepository interface {
@@ -14,8 +15,8 @@ type IJournalBookMongoRepository interface {
 	CreateInBatch(docList []models.JournalBookDoc) error
 	Update(shopID string, guid string, category models.JournalBookDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindOne(shopID string, filters map[string]interface{}) (models.JournalBookDoc, error)
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.JournalBookInfo, mongopagination.PaginationData, error)
+	FindOne(shopID string, filters interface{}) (models.JournalBookDoc, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.JournalBookInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.JournalBookDoc, error)
 }
 

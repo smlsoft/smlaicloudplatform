@@ -203,10 +203,8 @@ func (h AccountGroupHttp) SearchAccountGroup(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	sort := utils.GetSortParam(ctx.QueryParam)
-	docList, pagination, err := h.svc.Search(shopID, q, page, limit, sort)
+	pageable := utils.GetPageable(ctx.QueryParam)
+	docList, pagination, err := h.svc.Search(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -230,7 +228,7 @@ func (h AccountGroupHttp) SearchAccountGroup(ctx microservice.IContext) error {
 // @Success		201	{object}	common.BulkInsertResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /gl/chartofaccount/bulk [post]
+// @Router /gl/accountgroup/bulk [post]
 func (h AccountGroupHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()

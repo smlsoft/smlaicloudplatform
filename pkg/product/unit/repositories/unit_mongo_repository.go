@@ -1,11 +1,16 @@
 package repositories
 
 import (
+	"errors"
+	"os"
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/unit/models"
 	"smlcloudplatform/pkg/repositories"
+	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IUnitRepository interface {
@@ -15,13 +20,20 @@ type IUnitRepository interface {
 	Update(shopID string, guid string, doc models.UnitDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	Delete(shopID string, username string, filters map[string]interface{}) error
-	FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.UnitInfo, mongopagination.PaginationData, error)
+	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.UnitInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.UnitDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.UnitItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.UnitDoc, error)
-	FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.UnitInfo, mongopagination.PaginationData, error)
-	FindLimit(shopID string, colNameSearch []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.UnitInfo, int, error)
+
+	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.UnitInfo, mongopagination.PaginationData, error)
+	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, selectFields map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.UnitInfo, int, error)
+
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.UnitDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.UnitActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.UnitDeleteActivity, error)
+	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.UnitActivity, error)
+	FindMasterInCodes(codes []string) ([]models.UnitInfo, error)
 }
 
 type UnitRepository struct {
@@ -29,6 +41,7 @@ type UnitRepository struct {
 	repositories.CrudRepository[models.UnitDoc]
 	repositories.SearchRepository[models.UnitInfo]
 	repositories.GuidRepository[models.UnitItemGuid]
+	repositories.ActivityRepository[models.UnitActivity, models.UnitDeleteActivity]
 }
 
 func NewUnitRepository(pst microservice.IPersisterMongo) *UnitRepository {
@@ -40,6 +53,33 @@ func NewUnitRepository(pst microservice.IPersisterMongo) *UnitRepository {
 	insRepo.CrudRepository = repositories.NewCrudRepository[models.UnitDoc](pst)
 	insRepo.SearchRepository = repositories.NewSearchRepository[models.UnitInfo](pst)
 	insRepo.GuidRepository = repositories.NewGuidRepository[models.UnitItemGuid](pst)
+	insRepo.ActivityRepository = repositories.NewActivityRepository[models.UnitActivity, models.UnitDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo UnitRepository) FindMasterInCodes(codes []string) ([]models.UnitInfo, error) {
+
+	masterShopID := os.Getenv("MASTER_SHOP_ID")
+
+	if len(masterShopID) == 0 {
+		return []models.UnitInfo{}, errors.New("master shop id is empty")
+	}
+
+	docList := []models.UnitInfo{}
+
+	filters := bson.M{
+		"shopid": masterShopID,
+		"unitcode": bson.M{
+			"$in": codes,
+		},
+	}
+
+	err := repo.pst.Find([]models.UnitInfo{}, filters, &docList)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return docList, nil
 }

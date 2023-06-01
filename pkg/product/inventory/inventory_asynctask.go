@@ -19,7 +19,7 @@ func StartInventoryAsync(ms *microservice.Microservice, cfg microservice.IConfig
 
 	invRepo := repositories.NewInventoryRepository(pst)
 	invMqRepo := repositories.NewInventoryMQRepository(prod)
-	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "inventory")
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
 	invService := services.NewInventoryService(invRepo, invMqRepo, masterSyncCacheRepo)
 
 	err := ms.AsyncPOST("/inv", cfg.CacherConfig(), cfg.MQConfig(), func(ctx microservice.IContext) error {

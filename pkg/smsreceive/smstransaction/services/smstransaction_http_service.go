@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"regexp"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	smspatternsRepo "smlcloudplatform/pkg/smsreceive/smspatterns/repositories"
 	smssetingsRepo "smlcloudplatform/pkg/smsreceive/smspaymentsettings/repositories"
 	"smlcloudplatform/pkg/smsreceive/smstransaction/models"
@@ -10,7 +11,8 @@ import (
 	"strconv"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -19,7 +21,7 @@ type ISmsTransactionHttpService interface {
 	UpdateSmsTransaction(guid string, shopID string, authUsername string, doc models.SmsTransaction) error
 	DeleteSmsTransaction(guid string, shopID string, authUsername string) error
 	InfoSmsTransaction(guid string, shopID string) (models.SmsTransactionInfo, error)
-	SearchSmsTransaction(shopID string, q string, page int, limit int, sort map[string]int) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error)
+	SearchSmsTransaction(shopID string, pageable micromodels.Pageable) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error)
 	CheckSMS(shopID string, storefrontGUID string, amountCheck float64, checkTime time.Time) (models.SmsTransactionCheck, error)
 	ConfirmSmsTransaction(shopID string, smsTransactionGUIDFixed string) error
 }
@@ -144,13 +146,13 @@ func (svc SmsTransactionHttpService) InfoSmsTransaction(guid string, shopID stri
 
 }
 
-func (svc SmsTransactionHttpService) SearchSmsTransaction(shopID string, q string, page int, limit int, sort map[string]int) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc SmsTransactionHttpService) SearchSmsTransaction(shopID string, pageable micromodels.Pageable) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"guidfixed",
 		"transid",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.SmsTransactionInfo{}, pagination, err
@@ -161,10 +163,7 @@ func (svc SmsTransactionHttpService) SearchSmsTransaction(shopID string, q strin
 
 func (svc SmsTransactionHttpService) CheckSMS(shopID string, storefrontGUID string, amountCheck float64, checkTime time.Time) (models.SmsTransactionCheck, error) {
 
-	storefrontSmsPaymentSettingDoc, err := svc.smsSetingsRepo.FindOne(shopID,
-		map[string]interface{}{
-			"storefrontguid": storefrontGUID,
-		})
+	storefrontSmsPaymentSettingDoc, err := svc.smsSetingsRepo.FindOne(shopID, bson.M{"storefrontguid": storefrontGUID})
 
 	if err != nil {
 		return models.SmsTransactionCheck{

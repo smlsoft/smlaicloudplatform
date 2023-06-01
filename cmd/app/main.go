@@ -9,21 +9,47 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/apikeyservice"
 	"smlcloudplatform/pkg/authentication"
+	"smlcloudplatform/pkg/channel/salechannel"
+	"smlcloudplatform/pkg/channel/transportchannel"
+	"smlcloudplatform/pkg/debtaccount/creditor"
+	"smlcloudplatform/pkg/debtaccount/creditorgroup"
+	"smlcloudplatform/pkg/debtaccount/customer"
+	"smlcloudplatform/pkg/debtaccount/customergroup"
+	"smlcloudplatform/pkg/debtaccount/debtor"
+	"smlcloudplatform/pkg/debtaccount/debtorgroup"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage"
 	"smlcloudplatform/pkg/mastersync"
 	"smlcloudplatform/pkg/member"
+	"smlcloudplatform/pkg/organization/branch"
+	"smlcloudplatform/pkg/organization/businesstype"
+	"smlcloudplatform/pkg/organization/department"
+	"smlcloudplatform/pkg/payment/bankmaster"
+	"smlcloudplatform/pkg/payment/bookbank"
+	"smlcloudplatform/pkg/payment/qrpayment"
 	"smlcloudplatform/pkg/paymentmaster"
-	"smlcloudplatform/pkg/product/category"
 	"smlcloudplatform/pkg/product/color"
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
 	"smlcloudplatform/pkg/product/optionpattern"
+	"smlcloudplatform/pkg/product/product"
+	"smlcloudplatform/pkg/product/productbarcode"
+	"smlcloudplatform/pkg/product/productcategory"
+	"smlcloudplatform/pkg/product/productgroup"
 	"smlcloudplatform/pkg/product/unit"
+	"smlcloudplatform/pkg/productsection/sectionbranch"
+	"smlcloudplatform/pkg/productsection/sectionbusinesstype"
+	"smlcloudplatform/pkg/productsection/sectiondepartment"
+	"smlcloudplatform/pkg/report/reportquery"
+	"smlcloudplatform/pkg/restaurant/device"
 	"smlcloudplatform/pkg/restaurant/kitchen"
-	"smlcloudplatform/pkg/restaurant/shopprinter"
+	"smlcloudplatform/pkg/restaurant/printer"
+	"smlcloudplatform/pkg/restaurant/restaurantsettings"
 	"smlcloudplatform/pkg/restaurant/shoptable"
 	"smlcloudplatform/pkg/restaurant/shopzone"
+	"smlcloudplatform/pkg/restaurant/staff"
 	"smlcloudplatform/pkg/shop"
+
+	// "smlcloudplatform/pkg/shop/branch"
 	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
 	"smlcloudplatform/pkg/smsreceive/smspatterns"
@@ -31,10 +57,23 @@ import (
 	"smlcloudplatform/pkg/smsreceive/smstransaction"
 	"smlcloudplatform/pkg/storefront"
 	"smlcloudplatform/pkg/syncdata"
+	"smlcloudplatform/pkg/sysinfo"
+	"smlcloudplatform/pkg/task"
 	"smlcloudplatform/pkg/tools"
+	"smlcloudplatform/pkg/transaction/paid"
+	"smlcloudplatform/pkg/transaction/pay"
 	"smlcloudplatform/pkg/transaction/purchase"
+	"smlcloudplatform/pkg/transaction/purchasereturn"
 	"smlcloudplatform/pkg/transaction/saleinvoice"
+	"smlcloudplatform/pkg/transaction/saleinvoicereturn"
+	"smlcloudplatform/pkg/transaction/smltransaction"
+	"smlcloudplatform/pkg/transaction/stockadjustment"
+	"smlcloudplatform/pkg/transaction/stockpickupproduct"
+	"smlcloudplatform/pkg/transaction/stockreceiveproduct"
+	"smlcloudplatform/pkg/transaction/stockreturnproduct"
+	"smlcloudplatform/pkg/transaction/stocktransfer"
 	"smlcloudplatform/pkg/vfgl/accountgroup"
+	"smlcloudplatform/pkg/vfgl/accountperiodmaster"
 	"smlcloudplatform/pkg/vfgl/chartofaccount"
 	"smlcloudplatform/pkg/vfgl/journal"
 	"smlcloudplatform/pkg/vfgl/journalbook"
@@ -85,8 +124,8 @@ func main() {
 	}
 
 	ms.HttpPreRemoveTrailingSlash()
-	ms.HttpUsePrometheus()
-	ms.HttpUseJaeger()
+	// ms.HttpUsePrometheus()
+	// ms.HttpUseJaeger()
 
 	// ms.HttpMiddleware(authService.MWFuncWithRedis(cacher, publicPath...))
 	ms.HttpMiddleware(authService.MWFuncWithRedisMixShop(cacher, exceptShopPath, publicPath...))
@@ -97,27 +136,33 @@ func main() {
 		authentication.NewAuthenticationHttp(ms, cfg),
 		shop.NewShopHttp(ms, cfg),
 		shop.NewShopMemberHttp(ms, cfg),
-		category.NewCategoryHttp(ms, cfg),
 		inventory.NewInventoryHttp(ms, cfg),
-		saleinvoice.NewSaleinvoiceHttp(ms, cfg),
-		purchase.NewPurchaseHttp(ms, cfg),
+
 		syncdata.NewSyncDataHttp(ms, cfg),
 		member.NewMemberHttp(ms, cfg),
 		employee.NewEmployeeHttp(ms, cfg),
 		inventoryimport.NewInventoryImportHttp(ms, cfg),
 		inventoryimport.NewInventoryImporOptionMaintHttp(ms, cfg),
 		inventoryimport.NewCategoryImportHttp(ms, cfg),
+
+		//restaurants
 		shopzone.NewShopZoneHttp(ms, cfg),
 		shoptable.NewShopTableHttp(ms, cfg),
-		shopprinter.NewShopPrinterHttp(ms, cfg),
+		printer.NewPrinterHttp(ms, cfg),
 		kitchen.NewKitchenHttp(ms, cfg),
+		restaurantsettings.NewRestaurantSettingsHttp(ms, cfg),
+		device.NewDeviceHttp(ms, cfg),
+		staff.NewStaffHttp(ms, cfg),
+
 		//Journal
 		journal.NewJournalHttp(ms, cfg),
 		journal.NewJournalWs(ms, cfg),
 		accountgroup.NewAccountGroupHttp(ms, cfg),
 		journalbook.NewJournalBookHttp(ms, cfg),
 		zonedesign.NewZoneDesignHttp(ms, cfg),
+
 		mastersync.NewMasterSyncHttp(ms, cfg),
+
 		documentimage.NewDocumentImageHttp(ms, cfg),
 		chartofaccount.NewChartOfAccountHttp(ms, cfg),
 		//new
@@ -137,6 +182,60 @@ func main() {
 
 		optionpattern.NewOptionPatternHttp(ms, cfg),
 		color.NewColorHttp(ms, cfg),
+		productcategory.NewProductCategoryHttp(ms, cfg),
+		productbarcode.NewProductBarcodeHttp(ms, cfg),
+		product.NewProductHttp(ms, cfg),
+		productgroup.NewProductGroupHttp(ms, cfg),
+
+		accountperiodmaster.NewAccountPeriodMasterHttp(ms, cfg),
+
+		bankmaster.NewBankMasterHttp(ms, cfg),
+		bookbank.NewBookBankHttp(ms, cfg),
+		qrpayment.NewQrPaymentHttp(ms, cfg),
+
+		task.NewTaskHttp(ms, cfg),
+		smltransaction.NewSMLTransactionHttp(ms, cfg),
+
+		sysinfo.NewSysInfoHttp(ms, cfg),
+		// branch.NewBranchHttp(ms, cfg),
+
+		// debt account
+		creditor.NewCreditorHttp(ms, cfg),
+		creditorgroup.NewCreditorGroupHttp(ms, cfg),
+		debtor.NewDebtorHttp(ms, cfg),
+		debtorgroup.NewDebtorGroupHttp(ms, cfg),
+
+		customer.NewCustomerHttp(ms, cfg),
+		customergroup.NewCustomerGroupHttp(ms, cfg),
+
+		department.NewDepartmentHttp(ms, cfg),
+		businesstype.NewBusinessTypeHttp(ms, cfg),
+		branch.NewBranchHttp(ms, cfg),
+
+		//transaction
+		purchase.NewPurchaseHttp(ms, cfg),
+		purchasereturn.NewPurchaseReturnHttp(ms, cfg),
+		saleinvoice.NewSaleInvoiceHttp(ms, cfg),
+		saleinvoicereturn.NewSaleInvoiceReturnHttp(ms, cfg),
+		stockreceiveproduct.NewStockReceiveProductHttp(ms, cfg),
+		stockreturnproduct.NewStockReturnProductHttp(ms, cfg),
+		stockpickupproduct.NewStockPickupProductHttp(ms, cfg),
+		stockadjustment.NewStockAdjustmentHttp(ms, cfg),
+		stocktransfer.NewStockTransferHttp(ms, cfg),
+
+		//product section
+		sectionbranch.NewSectionBranchHttp(ms, cfg),
+		sectiondepartment.NewSectionDepartmentHttp(ms, cfg),
+		sectionbusinesstype.NewSectionBusinessTypeHttp(ms, cfg),
+
+		//channel
+		salechannel.NewSaleChannelHttp(ms, cfg),
+		transportchannel.NewTransportChannelHttp(ms, cfg),
+
+		paid.NewPaidHttp(ms, cfg),
+		pay.NewPayHttp(ms, cfg),
+
+		reportquery.NewReportQueryHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)
@@ -144,8 +243,7 @@ func main() {
 	inventory.StartInventoryAsync(ms, cfg)
 	inventory.StartInventoryComsumeCreated(ms, cfg)
 
-	saleinvoice.StartSaleinvoiceAsync(ms, cfg)
-	purchase.StartPurchaseAsync(ms, cfg)
+	task.NewTaskConsumer(ms, cfg).RegisterConsumer()
 
 	toolSvc := tools.NewToolsService(ms, cfg)
 

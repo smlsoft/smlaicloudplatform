@@ -20,8 +20,12 @@ func NewJournalReportHttp(ms *microservice.Microservice, cfg microservice.IConfi
 
 	pstConfig := microservice.NewPersisterConfig()
 	pst := microservice.NewPersister(pstConfig)
-	repo := NewJournalReportRepository(pst)
-	jouralReportService := NewJournalReportService(repo)
+	repoPg := NewJournalReportPgRepository(pst)
+
+	pstMongo := microservice.NewPersisterMongo(microservice.NewMongoPersisterConfig())
+	repoMongo := NewJournalMongoRepository(pstMongo)
+
+	jouralReportService := NewJournalReportService(repoPg, repoMongo)
 	return JournalReportHttp{
 		ms:  ms,
 		cfg: cfg,
@@ -73,8 +77,7 @@ func (r JournalReportHttp) ProcessReportTrialBalanceSheet(ctx microservice.ICont
 
 	includeCloseAccountMode := ctx.QueryParam("ica") == "1"
 
-	//lastUpdateStr = strings.Trim(lastUpdateStr, " ")
-	if len(accountGroup) < 1 || len(startDateStr) < 1 || len(endDateStr) < 1 {
+	if len(startDateStr) < 1 || len(endDateStr) < 1 {
 		ctx.ResponseError(400, "Invalid Payload.")
 		return nil
 	}
@@ -140,9 +143,8 @@ func (r JournalReportHttp) ProcessBalanceSheetReport(ctx microservice.IContext) 
 		endDateStr = endDateStr + " +0000"
 	}
 
-	//lastUpdateStr = strings.Trim(lastUpdateStr, " ")
-	if len(accountGroup) < 1 || len(endDateStr) < 1 {
-		ctx.ResponseError(400, "lastUpdate format invalid.")
+	if len(endDateStr) < 1 {
+		ctx.ResponseError(400, "enddate format invalid.")
 		return nil
 	}
 
@@ -205,9 +207,8 @@ func (r JournalReportHttp) ProcessProfitAndLossReport(ctx microservice.IContext)
 		endDateStr = endDateStr + " +0000"
 	}
 
-	//lastUpdateStr = strings.Trim(lastUpdateStr, " ")
-	if len(accountGroup) < 1 || len(startDateStr) < 1 || len(endDateStr) < 1 {
-		ctx.ResponseError(400, "lastUpdate format invalid.")
+	if len(startDateStr) < 1 || len(endDateStr) < 1 {
+		ctx.ResponseError(400, "date format invalid.")
 		return nil
 	}
 
@@ -311,7 +312,6 @@ func (r JournalReportHttp) ProcessReportLedgerAccount(ctx microservice.IContext)
 	}
 
 	r.ms.Logger.Debugf("Start Process Ledger Account %v:%v", startDate, endDate)
-	// reportData, err := r.svc.ProcessLedgerAccount(shopID, accRanges, startDate.UTC(), endDate.UTC())
 	reportData, err := r.svc.ProcessLedgerAccount(shopID, accountGroup, consolidateAccountCode, accRanges, startDate.UTC(), endDate.UTC())
 	if err != nil {
 		ctx.ResponseError(500, fmt.Sprintf("Failed on Process Report : %v.", err.Error()))

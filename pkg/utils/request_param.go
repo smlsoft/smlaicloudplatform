@@ -1,20 +1,20 @@
 package utils
 
 import (
-	"smlcloudplatform/pkg/models"
+	"smlcloudplatform/internal/microservice/models"
 	"strconv"
 	"strings"
 )
 
-const RequestSearchMaxPage = 2147483647
+const RequestSearchMaxPage = 2_000_000_000 // can maximum 2_147_483_647
 const RequestSearchMinPage = 1
-const RequestSearchMaxLimit = 1000
+const RequestSearchMaxLimit = 100_000
 const RequestSearchMinLimit = 1
 
-const RequestSearchDefaultPage = 1
+const RequestSearchDefaultOffset = 0
 const RequestSearchDefaultLimit = 20
 
-const RequestMaxOffset = 2147483647
+const RequestMaxOffset = 2_000_000_000 // can maximum 2_147_483_647
 const RequestMinOffset = 0
 
 func GetSearchQueryParam(fnGetParam func(string) string) string {
@@ -22,14 +22,14 @@ func GetSearchQueryParam(fnGetParam func(string) string) string {
 	return q
 }
 
-func GetPaginationParam(fnGetParam func(string) string) (int, int) {
+func GetPageParam(fnGetParam func(string) string) (int, int) {
 
 	pageRawText := fnGetParam("page")
 	limitRawText := fnGetParam("limit")
 
 	page, err := strconv.Atoi(pageRawText) //strconv.ParseUint(pageRawText, 10, 32)
 	if err != nil {
-		page = RequestSearchDefaultPage
+		page = RequestSearchDefaultOffset
 	}
 
 	limit, err := strconv.Atoi(limitRawText) //strconv.ParseUint(limitRawText, 10, 32)
@@ -38,7 +38,7 @@ func GetPaginationParam(fnGetParam func(string) string) (int, int) {
 		limit = RequestSearchDefaultLimit
 	}
 
-	if page < 0 {
+	if page < 1 {
 		page = RequestSearchMinPage
 	}
 
@@ -57,14 +57,14 @@ func GetPaginationParam(fnGetParam func(string) string) (int, int) {
 	return page, limit
 }
 
-func GetParamOffsetLimit(fnGetParam func(string) string) (int, int) {
+func GetStepParam(fnGetParam func(string) string) (int, int) {
 
-	pageRawText := fnGetParam("offset")
+	offsetRawText := fnGetParam("offset")
 	limitRawText := fnGetParam("limit")
 
-	offset, err := strconv.Atoi(pageRawText) //strconv.ParseUint(pageRawText, 10, 32)
+	offset, err := strconv.Atoi(offsetRawText) //strconv.ParseUint(pageRawText, 10, 32)
 	if err != nil {
-		offset = RequestSearchDefaultPage
+		offset = RequestSearchDefaultOffset
 	}
 
 	limit, err := strconv.Atoi(limitRawText) //strconv.ParseUint(limitRawText, 10, 32)
@@ -92,8 +92,8 @@ func GetParamOffsetLimit(fnGetParam func(string) string) (int, int) {
 	return offset, limit
 }
 
-func GetSortParam(fnGetParam func(string) string) map[string]int {
-	tempSort := make(map[string]int)
+func GetSortParam(fnGetParam func(string) string) []models.KeyInt {
+	tempSort := []models.KeyInt{}
 
 	sortRawText := strings.Trim(fnGetParam("sort"), " ")
 
@@ -117,28 +117,36 @@ func GetSortParam(fnGetParam func(string) string) map[string]int {
 			sortVal = 1
 		}
 
-		tempSort[sortKey] = sortVal
+		tempSort = append(tempSort, models.KeyInt{
+			Key:   sortKey,
+			Value: int8(sortVal),
+		})
 	}
 
 	return tempSort
 }
 
-func GetSearchParam(fnGetParam func(string) string) (string, int, int, map[string]int) {
+func GetPageable(fnGetParam func(string) string) models.Pageable {
 	q := GetSearchQueryParam(fnGetParam)
-	page, limit := GetPaginationParam(fnGetParam)
-	sorts := GetSortParam(fnGetParam)
-
-	return q, page, limit, sorts
-}
-
-func GetSearchPageable(fnGetParam func(string) string) models.Pageable {
-	q := GetSearchQueryParam(fnGetParam)
-	page, limit := GetPaginationParam(fnGetParam)
+	page, limit := GetPageParam(fnGetParam)
 	sorts := GetSortParam(fnGetParam)
 
 	return models.Pageable{
-		Q:     q,
+		Query: q,
 		Page:  page,
+		Limit: limit,
+		Sorts: sorts,
+	}
+}
+
+func GetPageableStep(fnGetParam func(string) string) models.PageableStep {
+	q := GetSearchQueryParam(fnGetParam)
+	skip, limit := GetStepParam(fnGetParam)
+	sorts := GetSortParam(fnGetParam)
+
+	return models.PageableStep{
+		Query: q,
+		Skip:  skip,
 		Limit: limit,
 		Sorts: sorts,
 	}

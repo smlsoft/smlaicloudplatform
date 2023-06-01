@@ -5,9 +5,19 @@ import (
 	"errors"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	branchModel "smlcloudplatform/pkg/organization/branch/models"
+	branchRepositories "smlcloudplatform/pkg/organization/branch/repositories"
+	branchServices "smlcloudplatform/pkg/organization/branch/services"
+	businessTypeRepositories "smlcloudplatform/pkg/organization/businesstype/repositories"
+	deparmentRepositories "smlcloudplatform/pkg/organization/department/repositories"
 	"smlcloudplatform/pkg/shop/models"
 	"smlcloudplatform/pkg/utils"
+
+	warehouseModels "smlcloudplatform/pkg/warehouse/models"
+	warehouseRepositories "smlcloudplatform/pkg/warehouse/repositories"
+	warehouseServices "smlcloudplatform/pkg/warehouse/services"
 )
 
 type IShopHttp interface {
@@ -20,26 +30,42 @@ type IShopHttp interface {
 }
 
 type ShopHttp struct {
-	ms          *microservice.Microservice
-	cfg         microservice.IConfig
-	service     IShopService
-	authService *microservice.AuthService
+	ms               *microservice.Microservice
+	cfg              microservice.IConfig
+	service          IShopService
+	serviceBranch    branchServices.IBranchHttpService
+	serviceWarehouse warehouseServices.IWarehouseHttpService
+	authService      *microservice.AuthService
 }
 
 func NewShopHttp(ms *microservice.Microservice, cfg microservice.IConfig) ShopHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	repo := NewShopRepository(pst)
+	cache := ms.Cacher(cfg.CacherConfig())
 	shopUserRepo := NewShopUserRepository(pst)
 	service := NewShopService(repo, shopUserRepo, utils.NewGUID, ms.TimeNow)
 
 	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
 
+	repoBrach := branchRepositories.NewBranchRepository(pst)
+
+	repoDepartment := deparmentRepositories.NewDepartmentRepository(pst)
+	repoBusinessType := businessTypeRepositories.NewBusinessTypeRepository(pst)
+
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
+	serviceBranch := branchServices.NewBranchHttpService(repoBrach, repoDepartment, repoBusinessType, masterSyncCacheRepo)
+
+	repoWarehouse := warehouseRepositories.NewWarehouseRepository(pst)
+	svcWarehouse := warehouseServices.NewWarehouseHttpService(repoWarehouse, masterSyncCacheRepo)
+
 	return ShopHttp{
-		ms:          ms,
-		cfg:         cfg,
-		service:     service,
-		authService: authService,
+		ms:               ms,
+		cfg:              cfg,
+		service:          service,
+		serviceBranch:    serviceBranch,
+		serviceWarehouse: svcWarehouse,
+		authService:      authService,
 	}
 }
 
@@ -66,7 +92,7 @@ func Docs() {
 }
 
 // Create Shop godoc
-// @Description Create Shop rt1wer11
+// @Description Create Shop
 // @Tags		Shop
 // @Accept 		json
 // @Param		Shop  body      models.Shop  true  "Add Shop"
@@ -91,7 +117,68 @@ func (h ShopHttp) CreateShop(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.service.CreateShop(authUsername, *shopReq)
+	shopID, err := h.service.CreateShop(authUsername, *shopReq)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, &common.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	branchDefault := branchModel.Branch{}
+
+	branchDefault.Code = "00000"
+
+	branchMainCodeTH := "th"
+	branchMainNameTH := "สำนักงานใหญ่"
+
+	branchMainCodeEN := "en"
+	branchMainNameEN := "Head Office"
+
+	branchDefault.Names = &[]common.NameX{
+		{
+			Code: &branchMainCodeTH,
+			Name: &branchMainNameTH,
+		},
+		{
+			Code: &branchMainCodeEN,
+			Name: &branchMainNameEN,
+		},
+	}
+
+	_, err = h.serviceBranch.CreateBranch(shopID, authUsername, branchDefault)
+
+	if err != nil {
+		ctx.Response(http.StatusBadRequest, &common.ApiResponse{
+			Success: false,
+			Message: err.Error(),
+		})
+		return err
+	}
+
+	warehouseDefault := warehouseModels.Warehouse{}
+	warehouseDefault.Code = "00000"
+
+	warehouseMainCodeTH := "th"
+	warehouseMainNameTH := "สำนักงานใหญ่"
+
+	warehouseMainCodeEN := "en"
+	warehouseMainNameEN := "Head Office"
+
+	warehouseDefault.Names = &[]common.NameX{
+		{
+			Code: &warehouseMainCodeTH,
+			Name: &warehouseMainNameTH,
+		},
+		{
+			Code: &warehouseMainCodeEN,
+			Name: &warehouseMainNameEN,
+		},
+	}
+
+	_, err = h.serviceWarehouse.CreateWarehouse(shopID, authUsername, warehouseDefault)
 
 	if err != nil {
 		ctx.Response(http.StatusBadRequest, &common.ApiResponse{
@@ -103,12 +190,22 @@ func (h ShopHttp) CreateShop(ctx microservice.IContext) error {
 
 	ctx.Response(http.StatusOK, &common.ApiResponse{
 		Success: true,
-		ID:      idx,
+		ID:      shopID,
 	})
 
 	return nil
 }
 
+// Update Shop godoc
+// @Description Update Shop
+// @Tags		Shop
+// @Accept 		json
+// @Param		id	path     string  true  "Shop ID"
+// @Param		Shop  body      models.Shop  true  "Shop Body"
+// @Success		200	{object}		models.Shop
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /shop/{id} [put]
 func (h ShopHttp) UpdateShop(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -149,6 +246,15 @@ func (h ShopHttp) UpdateShop(ctx microservice.IContext) error {
 	return nil
 }
 
+// Delete Shop godoc
+// @Description Delete Shop
+// @Tags		Shop
+// @Accept 		json
+// @Param		id	path     string  true  "Shop ID"
+// @Success		200	{object}		models.Shop
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /shop/{id} [delete]
 func (h ShopHttp) DeleteShop(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
@@ -181,14 +287,15 @@ func (h ShopHttp) DeleteShop(ctx microservice.IContext) error {
 	return nil
 }
 
-// List Merchant godoc
-// @Description Access to Merchant
-// @Tags		Merchant
+// Info Shop godoc
+// @Description Infomation Shop Profile
+// @Tags		Shop
 // @Accept 		json
+// @Param		id	path     string  true  "Shop ID"
 // @Success		200	{array}	models.ShopInfo
 // @Failure		401 {object}	common.ApiResponse
 // @Security     AccessToken
-// @Router /merchant [get]
+// @Router /shop/{id} [get]
 func (h ShopHttp) InfoShop(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	id := ctx.Param("id")
@@ -229,10 +336,9 @@ func (h ShopHttp) InfoShop(ctx microservice.IContext) error {
 // @Router /shop [get]
 func (h ShopHttp) SearchShop(ctx microservice.IContext) error {
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
+	pageable := utils.GetPageable(ctx.QueryParam)
 
-	shopList, pagination, err := h.service.SearchShop(q, page, limit)
+	shopList, pagination, err := h.service.SearchShop(pageable)
 
 	if err != nil {
 		ctx.ResponseError(400, "database error")

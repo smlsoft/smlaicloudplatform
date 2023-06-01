@@ -32,15 +32,15 @@ func NewSyncDataHttp(ms *microservice.Microservice, cfg microservice.IConfig) Sy
 	prod := ms.Producer(cfg.MQConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
+	masterSyncRepo := mastersync.NewMasterSyncCacheRepository(cache)
+
 	invRepo := inventoryRepo.NewInventoryRepository(pst)
 	invMqRepo := inventoryRepo.NewInventoryMQRepository(prod)
-	invSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "inventory")
-	invService := inventoryService.NewInventoryService(invRepo, invMqRepo, invSyncCacheRepo)
+	invService := inventoryService.NewInventoryService(invRepo, invMqRepo, masterSyncRepo)
 
 	memberRepo := member.NewMemberRepository(pst)
 	memberPgRepo := member.NewMemberPGRepository(pstPg)
-	memberSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache, "member")
-	memberService := member.NewMemberService(memberRepo, memberPgRepo, memberSyncCacheRepo)
+	memberService := member.NewMemberService(memberRepo, memberPgRepo, masterSyncRepo)
 
 	return SyncDataHttp{
 		ms:               ms,

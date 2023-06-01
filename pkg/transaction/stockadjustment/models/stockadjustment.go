@@ -1,54 +1,64 @@
 package models
 
 import (
-	common "smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/models"
+	transmodels "smlcloudplatform/pkg/transaction/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const stockAdjustmentCollectionName = "stockAdjustments"
-const stockAdjustmentIndexName = "stockAdjustments"
+const stockadjustmentCollectionName = "transactionStockAdjustment"
 
 type StockAdjustment struct {
-	Items     *[]StockAdjustmentDetail `json:"items" bson:"items" `
-	SumAmount float64                  `json:"sumamount" bson:"sumamount" `
+	models.PartitionIdentity `bson:"inline"`
+	transmodels.Transaction  `bson:"inline"`
 }
-
-type StockAdjustmentDetail struct {
-	InventoryID    string  `json:"inventoryid" bson:"inventoryid"`
-	ItemSku        string  `json:"itemsku,omitempty" bson:"itemsku,omitempty"`
-	CategoryGuid   string  `json:"categoryguid" bson:"categoryguid"`
-	LineNumber     int     `json:"linenumber" bson:"linenumber"`
-	Price          float64 `json:"price" bson:"price" `
-	Qty            float64 `json:"qty" bson:"qty" `
-	DiscountAmount float64 `json:"discountamount" bson:"discountamount"`
-	DiscountText   string  `json:"discounttext" bson:"discounttext"`
-}
-
 type StockAdjustmentInfo struct {
-	common.DocIdentity `bson:"inline"`
+	models.DocIdentity `bson:"inline"`
 	StockAdjustment    `bson:"inline"`
 }
 
 func (StockAdjustmentInfo) CollectionName() string {
-	return stockAdjustmentCollectionName
+	return stockadjustmentCollectionName
 }
 
 type StockAdjustmentData struct {
-	common.ShopIdentity `bson:"inline"`
+	models.ShopIdentity `bson:"inline"`
 	StockAdjustmentInfo `bson:"inline"`
-}
-
-func (StockAdjustmentData) IndexName() string {
-	return stockAdjustmentIndexName
 }
 
 type StockAdjustmentDoc struct {
 	ID                  primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	StockAdjustmentData `bson:"inline"`
-	common.ActivityDoc  `bson:"inline"`
+	models.ActivityDoc  `bson:"inline"`
 }
 
 func (StockAdjustmentDoc) CollectionName() string {
-	return stockAdjustmentCollectionName
+	return stockadjustmentCollectionName
+}
+
+type StockAdjustmentItemGuid struct {
+	Docno string `json:"docno" bson:"docno"`
+}
+
+func (StockAdjustmentItemGuid) CollectionName() string {
+	return stockadjustmentCollectionName
+}
+
+type StockAdjustmentActivity struct {
+	StockAdjustmentData `bson:"inline"`
+	models.ActivityTime `bson:"inline"`
+}
+
+func (StockAdjustmentActivity) CollectionName() string {
+	return stockadjustmentCollectionName
+}
+
+type StockAdjustmentDeleteActivity struct {
+	models.Identity     `bson:"inline"`
+	models.ActivityTime `bson:"inline"`
+}
+
+func (StockAdjustmentDeleteActivity) CollectionName() string {
+	return stockadjustmentCollectionName
 }

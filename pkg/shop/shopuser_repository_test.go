@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/mock"
 	"smlcloudplatform/pkg/shop"
 	"smlcloudplatform/pkg/shop/models"
@@ -52,8 +53,12 @@ func TestFindByUsernamePage(t *testing.T) {
 	t.Log(mongoPersisterConfig.DB())
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := shop.NewShopUserRepository(mongoPersister)
-
-	docList, paginated, err := repo.FindByUsernamePage("dev01", "", 1, 20)
+	pageable := micromodels.Pageable{
+		Page:  1,
+		Limit: 20,
+		Query: "",
+	}
+	docList, paginated, err := repo.FindByUsernamePage("dev01", pageable)
 
 	if err != nil {
 		t.Error(err.Error())

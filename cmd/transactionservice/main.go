@@ -3,7 +3,6 @@ package main
 import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/transaction/purchase"
-	"smlcloudplatform/pkg/transaction/saleinvoice"
 )
 
 func main() {
@@ -20,7 +19,5 @@ func main() {
 	purchase := purchase.NewPurchaseHttp(ms, cfg)
 	purchase.RouteSetup()
 
-	saleinvoice := saleinvoice.NewSaleinvoiceHttp(ms, cfg)
-	saleinvoice.RouteSetup()
 	ms.Start()
 }

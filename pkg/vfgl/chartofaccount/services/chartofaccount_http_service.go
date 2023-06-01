@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
@@ -10,7 +11,8 @@ import (
 	journalRepo "smlcloudplatform/pkg/vfgl/journal/repositories"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -19,7 +21,7 @@ type IChartOfAccountHttpService interface {
 	Update(guid string, shopID string, authUsername string, doc models.ChartOfAccount) error
 	Delete(guid string, shopID string, authUsername string) error
 	Info(guid string, shopID string) (models.ChartOfAccountInfo, error)
-	Search(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ChartOfAccountInfo, mongopagination.PaginationData, error)
+	Search(shopID string, accountCodeRanges []models.AccountCodeRange, pageable micromodels.Pageable) ([]models.ChartOfAccountInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ChartOfAccount) (common.BulkImport, error)
 }
 
@@ -39,9 +41,7 @@ func NewChartOfAccountHttpService(repo repositories.ChartOfAccountRepository, re
 
 func (svc ChartOfAccountHttpService) Create(shopID string, authUsername string, doc models.ChartOfAccount) (string, error) {
 
-	findDoc, err := svc.repo.FindOne(shopID, map[string]interface{}{
-		"accountcode": doc.AccountCode,
-	})
+	findDoc, err := svc.repo.FindOne(shopID, bson.M{"accountcode": doc.AccountCode})
 
 	if err != nil {
 		return "", err
@@ -87,9 +87,7 @@ func (svc ChartOfAccountHttpService) Update(guid string, shopID string, authUser
 		return errors.New("document not found")
 	}
 
-	findDocCode, err := svc.repo.FindOne(shopID, map[string]interface{}{
-		"accountcode": doc.AccountCode,
-	})
+	findDocCode, err := svc.repo.FindOne(shopID, bson.M{"accountcode": doc.AccountCode})
 
 	if err != nil {
 		return err
@@ -168,13 +166,28 @@ func (svc ChartOfAccountHttpService) Info(guid string, shopID string) (models.Ch
 
 }
 
-func (svc ChartOfAccountHttpService) Search(shopID string, q string, page int, limit int, sort map[string]int) ([]models.ChartOfAccountInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc ChartOfAccountHttpService) Search(shopID string, accountCodeRanges []models.AccountCodeRange, pageable micromodels.Pageable) ([]models.ChartOfAccountInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"accountcode",
 		"accountname",
 	}
 
-	docList, pagination, err := svc.repo.FindPageSort(shopID, searchCols, q, page, limit, sort)
+	filterQuery := map[string]interface{}{}
+	accountCodeRangeQuery := []bson.M{}
+	for _, aaccountCodeRange := range accountCodeRanges {
+		accountCodeRangeQuery = append(accountCodeRangeQuery, bson.M{
+			"accountcode": map[string]interface{}{
+				"$gte": aaccountCodeRange.Start,
+				"$lte": aaccountCodeRange.End,
+			},
+		})
+	}
+
+	if len(accountCodeRangeQuery) > 0 {
+		filterQuery["$or"] = accountCodeRangeQuery
+	}
+
+	docList, pagination, err := svc.repo.FindPageFilter(shopID, filterQuery, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ChartOfAccountInfo{}, pagination, err
@@ -184,9 +197,6 @@ func (svc ChartOfAccountHttpService) Search(shopID string, q string, page int, l
 }
 
 func (svc ChartOfAccountHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.ChartOfAccount) (common.BulkImport, error) {
-
-	createDataList := []models.ChartOfAccountDoc{}
-	duplicateDataList := []models.ChartOfAccount{}
 
 	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.ChartOfAccount](dataList, svc.getDocIDKey)
 
@@ -206,7 +216,7 @@ func (svc ChartOfAccountHttpService) SaveInBatch(shopID string, authUsername str
 		foundItemGuidList = append(foundItemGuidList, doc.AccountCode)
 	}
 
-	duplicateDataList, createDataList = importdata.PreparePayloadData[models.ChartOfAccount, models.ChartOfAccountDoc](
+	duplicateDataList, createDataList := importdata.PreparePayloadData[models.ChartOfAccount, models.ChartOfAccountDoc](
 		shopID,
 		authUsername,
 		foundItemGuidList,

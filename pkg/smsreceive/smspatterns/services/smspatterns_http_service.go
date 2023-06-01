@@ -3,13 +3,14 @@ package services
 import (
 	"errors"
 	"regexp"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/smsreceive/smspatterns/models"
 	"smlcloudplatform/pkg/smsreceive/smspatterns/repositories"
 	"smlcloudplatform/pkg/utils"
 	"strconv"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -18,7 +19,7 @@ type ISmsPatternsHttpService interface {
 	UpdateSmsPatterns(guid string, authUsername string, doc models.SmsPatterns) error
 	DeleteSmsPatterns(guid string) error
 	InfoSmsPatterns(guid string) (models.SmsPatternsInfo, error)
-	SearchSmsPatterns(q string, page int, limit int) ([]models.SmsPatternsInfo, mongopagination.PaginationData, error)
+	SearchSmsPatterns(pageable micromodels.Pageable) ([]models.SmsPatternsInfo, mongopagination.PaginationData, error)
 }
 
 type SmsPatternsHttpService struct {
@@ -117,13 +118,13 @@ func (svc SmsPatternsHttpService) InfoSmsPatterns(guid string) (models.SmsPatter
 
 }
 
-func (svc SmsPatternsHttpService) SearchSmsPatterns(q string, page int, limit int) ([]models.SmsPatternsInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
+func (svc SmsPatternsHttpService) SearchSmsPatterns(pageable micromodels.Pageable) ([]models.SmsPatternsInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"name",
 		"address",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(searchCols, q, page, limit)
+	docList, pagination, err := svc.repo.FindPage(searchInFields, pageable)
 
 	if err != nil {
 		return []models.SmsPatternsInfo{}, pagination, err

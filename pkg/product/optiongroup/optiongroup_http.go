@@ -191,9 +191,8 @@ func (h *OptionGroupHttp) SearchOptionGroup(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
-	q := ctx.QueryParam("q")
-	page, limit := utils.GetPaginationParam(ctx.QueryParam)
-	docList, pagination, err := h.optGroupService.SearchOptionGroup(shopID, q, page, limit)
+	pageable := utils.GetPageable(ctx.QueryParam)
+	docList, pagination, err := h.optGroupService.SearchOptionGroup(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

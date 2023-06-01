@@ -17,7 +17,7 @@ import (
 
 	utilmock "smlcloudplatform/mock"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -51,8 +51,8 @@ func (m *SmsTransactionRepositoryMock) DeleteByGuidfixed(shopID string, guid str
 	return args.Error(0)
 }
 
-func (m *SmsTransactionRepositoryMock) FindPage(shopID string, colNameSearch []string, q string, page int, limit int) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error) {
-	args := m.Called(shopID, colNameSearch, q, page, limit)
+func (m *SmsTransactionRepositoryMock) FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable)([]models.SmsTransactionInfo, mongopagination.PaginationData, error) {
+	args := m.Called(shopID, searchInFields, pageable)
 	return args.Get(0).([]models.SmsTransactionInfo), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
 
@@ -66,8 +66,8 @@ func (m *SmsTransactionRepositoryMock) FindByDocIndentityGuid(shopID string, ind
 	return args.Get(0).(models.SmsTransactionDoc), args.Error(1)
 }
 
-func (m *SmsTransactionRepositoryMock) FindPageSort(shopID string, colNameSearch []string, q string, page int, limit int, sorts map[string]int) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error) {
-	args := m.Called(shopID, colNameSearch, q, page, limit, sorts)
+func (m *SmsTransactionRepositoryMock) FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SmsTransactionInfo, mongopagination.PaginationData, error) {
+	args := m.Called(shopID, searchInFields, pageable, sorts)
 	return args.Get(0).([]models.SmsTransactionInfo), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
 

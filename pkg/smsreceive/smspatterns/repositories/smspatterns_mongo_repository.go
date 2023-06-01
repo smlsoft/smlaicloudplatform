@@ -2,9 +2,10 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/smsreceive/smspatterns/models"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -15,7 +16,7 @@ type ISmsPatternsRepository interface {
 	DeleteByGuid(guid string) error
 	FindByCode(code string) (models.SmsPatternsDoc, error)
 	FindByGuid(guid string) (models.SmsPatternsDoc, error)
-	FindPage(colNameSearch []string, q string, page int, limit int) ([]models.SmsPatternsInfo, mongopagination.PaginationData, error)
+	FindPage(searchInFields []string, pageable micromodels.Pageable) ([]models.SmsPatternsInfo, mongopagination.PaginationData, error)
 }
 
 type SmsPatternsRepository struct {
@@ -118,21 +119,23 @@ func (repo SmsPatternsRepository) FindByGuid(guidFixed string) (models.SmsPatter
 	return doc, nil
 }
 
-func (repo SmsPatternsRepository) FindPage(colNameSearch []string, q string, page int, limit int) ([]models.SmsPatternsInfo, mongopagination.PaginationData, error) {
+func (repo SmsPatternsRepository) FindPage(searchInFields []string, pageable micromodels.Pageable) ([]models.SmsPatternsInfo, mongopagination.PaginationData, error) {
 
 	searchFilterList := []interface{}{}
 
-	for _, colName := range colNameSearch {
+	for _, colName := range searchInFields {
 		searchFilterList = append(searchFilterList, bson.M{colName: bson.M{"$regex": primitive.Regex{
-			Pattern: ".*" + q + ".*",
+			Pattern: ".*" + pageable.Query + ".*",
 			Options: "",
 		}}})
 	}
 
-	docList := []models.SmsPatternsInfo{}
-	pagination, err := repo.pst.FindPage(models.SmsPatternsInfo{}, limit, page, bson.M{
+	filterQueries := bson.M{
 		"$or": searchFilterList,
-	}, &docList)
+	}
+
+	docList := []models.SmsPatternsInfo{}
+	pagination, err := repo.pst.FindPage(models.SmsPatternsInfo{}, filterQueries, pageable, &docList)
 
 	if err != nil {
 		return []models.SmsPatternsInfo{}, mongopagination.PaginationData{}, err

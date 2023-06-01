@@ -3,15 +3,16 @@ package shopzone
 import (
 	"errors"
 	"fmt"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/shopzone/models"
+	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
-	"sync"
 	"time"
 
-	mongopagination "github.com/gobeam/mongo-go-pagination"
+	"github.com/userplant/mongopagination"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -21,21 +22,27 @@ type IShopZoneService interface {
 	UpdateShopZone(shopID string, guid string, authUsername string, doc models.ShopZone) error
 	DeleteShopZone(shopID string, guid string, authUsername string) error
 	InfoShopZone(shopID string, guid string) (models.ShopZoneInfo, error)
-	SearchShopZone(shopID string, q string, page int, limit int) ([]models.ShopZoneInfo, mongopagination.PaginationData, error)
-	LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error)
+	SearchShopZone(shopID string, pageable micromodels.Pageable) ([]models.ShopZoneInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ShopZone) (common.BulkImport, error)
+
+	GetModuleName() string
 }
 
 type ShopZoneService struct {
-	repo      IShopZoneRepository
-	cacheRepo mastersync.IMasterSyncCacheRepository
+	repo          IShopZoneRepository
+	syncCacheRepo mastersync.IMasterSyncCacheRepository
+
+	services.ActivityService[models.ShopZoneActivity, models.ShopZoneDeleteActivity]
 }
 
-func NewShopZoneService(repo IShopZoneRepository, cacheRepo mastersync.IMasterSyncCacheRepository) ShopZoneService {
-	return ShopZoneService{
-		repo:      repo,
-		cacheRepo: cacheRepo,
+func NewShopZoneService(repo IShopZoneRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) ShopZoneService {
+	insSvc := ShopZoneService{
+		repo:          repo,
+		syncCacheRepo: syncCacheRepo,
 	}
+
+	insSvc.ActivityService = services.NewActivityService[models.ShopZoneActivity, models.ShopZoneDeleteActivity](repo)
+	return insSvc
 }
 
 func (svc ShopZoneService) CreateShopZone(shopID string, authUsername string, doc models.ShopZone) (string, error) {
@@ -121,70 +128,27 @@ func (svc ShopZoneService) InfoShopZone(shopID string, guid string) (models.Shop
 
 }
 
-func (svc ShopZoneService) SearchShopZone(shopID string, q string, page int, limit int) ([]models.ShopZoneInfo, mongopagination.PaginationData, error) {
-	searchCols := []string{
-		"guidfixed",
+func (svc ShopZoneService) SearchShopZone(shopID string, pageable micromodels.Pageable) ([]models.ShopZoneInfo, mongopagination.PaginationData, error) {
+	searchInFields := []string{
 		"code",
+		"name1",
+		"name2",
+		"name3",
+		"name4",
+		"name5",
 	}
 
 	for i := range [5]bool{} {
-		searchCols = append(searchCols, fmt.Sprintf("name%d", (i+1)))
+		searchInFields = append(searchInFields, fmt.Sprintf("name%d", (i+1)))
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchCols, q, page, limit)
+	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ShopZoneInfo{}, pagination, err
 	}
 
 	return docList, pagination, nil
-}
-
-func (svc ShopZoneService) LastActivity(shopID string, lastUpdatedDate time.Time, page int, limit int) (common.LastActivity, mongopagination.PaginationData, error) {
-	var wg sync.WaitGroup
-
-	wg.Add(1)
-	var deleteDocList []models.ShopZoneDeleteActivity
-	var pagination1 mongopagination.PaginationData
-	var err1 error
-
-	go func() {
-		deleteDocList, pagination1, err1 = svc.repo.FindDeletedPage(shopID, lastUpdatedDate, page, limit)
-		wg.Done()
-	}()
-
-	wg.Add(1)
-	var createAndUpdateDocList []models.ShopZoneActivity
-	var pagination2 mongopagination.PaginationData
-	var err2 error
-
-	go func() {
-		createAndUpdateDocList, pagination2, err2 = svc.repo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, page, limit)
-		wg.Done()
-	}()
-
-	wg.Wait()
-
-	if err1 != nil {
-		return common.LastActivity{}, pagination1, err1
-	}
-
-	if err2 != nil {
-		return common.LastActivity{}, pagination2, err2
-	}
-
-	lastActivity := common.LastActivity{}
-
-	lastActivity.Remove = &deleteDocList
-	lastActivity.New = &createAndUpdateDocList
-
-	pagination := pagination1
-
-	if pagination.Total < pagination2.Total {
-		pagination = pagination2
-	}
-
-	return lastActivity, pagination, nil
 }
 
 func (svc ShopZoneService) SaveInBatch(shopID string, authUsername string, dataList []models.ShopZone) (common.BulkImport, error) {
@@ -293,9 +257,15 @@ func (svc ShopZoneService) getDocIDKey(doc models.ShopZone) string {
 }
 
 func (svc ShopZoneService) saveMasterSync(shopID string) {
-	err := svc.cacheRepo.Save(shopID)
+	if svc.syncCacheRepo != nil {
+		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
 
-	if err != nil {
-		fmt.Println("save shop zone master cache error :: " + err.Error())
+		if err != nil {
+			fmt.Printf("save %s cache error :: %s", svc.GetModuleName(), err.Error())
+		}
 	}
+}
+
+func (svc ShopZoneService) GetModuleName() string {
+	return "shopzone"
 }

@@ -8,31 +8,23 @@ import (
 )
 
 type IMasterSyncCacheRepository interface {
-	Save(shopID string) error
-	SaveWithModule(shopID string, moduleName string) error
-	Get(shopID string) (time.Time, error)
-	GetWithModule(shopID string, moduleName string) (time.Time, error)
+	Save(shopID string, moduleName string) error
+	Get(shopID string, moduleName string) (time.Time, error)
 }
 
 type MasterSyncCacheRepository struct {
 	cache        microservice.ICacher
-	moduleName   string
 	allMasterKey string
 }
 
-func NewMasterSyncCacheRepository(cache microservice.ICacher, moduleName string) MasterSyncCacheRepository {
+func NewMasterSyncCacheRepository(cache microservice.ICacher) MasterSyncCacheRepository {
 	return MasterSyncCacheRepository{
 		cache:        cache,
-		moduleName:   moduleName,
 		allMasterKey: "all",
 	}
 }
 
-func (repo MasterSyncCacheRepository) Save(shopID string) error {
-	return repo.SaveWithModule(shopID, repo.moduleName)
-}
-
-func (repo MasterSyncCacheRepository) SaveWithModule(shopID string, moduleName string) error {
+func (repo MasterSyncCacheRepository) Save(shopID string, moduleName string) error {
 	changeTime := time.Now().Format(time.RFC3339)
 	cacheModuleKey := repo.getCacheModuleKeyWithModule(shopID, moduleName)
 	cacheModuleAllMasterKey := repo.getCacheModuleKeyWithModule(shopID, repo.allMasterKey)
@@ -41,25 +33,24 @@ func (repo MasterSyncCacheRepository) SaveWithModule(shopID string, moduleName s
 	return repo.cache.SetNoExpire(cacheModuleKey, changeTime)
 }
 
-func (repo MasterSyncCacheRepository) Get(shopID string) (time.Time, error) {
-	return repo.GetWithModule(shopID, repo.moduleName)
-}
-
-func (repo MasterSyncCacheRepository) GetWithModule(shopID string, moduleName string) (time.Time, error) {
+func (repo MasterSyncCacheRepository) Get(shopID string, moduleName string) (time.Time, error) {
 	cacheModuleKey := repo.getCacheModuleKeyWithModule(shopID, moduleName)
 
 	strTime, err := repo.cache.Get(cacheModuleKey)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println(err)
+		return time.Time{}, nil
+	}
+
+	if len(strTime) == 0 {
 		return time.Time{}, nil
 	}
 
 	strTime = strings.ReplaceAll(strTime, "\"", "")
 
-	fmt.Println(strTime)
 	valTime, err := time.Parse(time.RFC3339, strTime)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println(err)
 		return time.Time{}, nil
 	}
 
