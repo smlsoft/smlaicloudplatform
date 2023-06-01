@@ -29,7 +29,7 @@ type IDebtorHttpService interface {
 	InfoDebtor(shopID string, guid string) (models.DebtorInfo, error)
 	InfoDebtorByCode(shopID string, code string) (models.DebtorInfo, error)
 	SearchDebtor(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DebtorInfo, mongopagination.PaginationData, error)
-	SearchDebtorStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.DebtorInfo, int, error)
+	SearchDebtorStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.DebtorInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.DebtorRequest) (common.BulkImport, error)
 
 	GetModuleName() string
@@ -252,7 +252,7 @@ func (svc DebtorHttpService) SearchDebtor(shopID string, filters map[string]inte
 	return docList, pagination, nil
 }
 
-func (svc DebtorHttpService) SearchDebtorStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.DebtorInfo, int, error) {
+func (svc DebtorHttpService) SearchDebtorStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.DebtorInfo, int, error) {
 	searchInFields := []string{
 		"code",
 		"names.name",
@@ -265,7 +265,7 @@ func (svc DebtorHttpService) SearchDebtorStep(shopID string, langCode string, pa
 
 	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.DebtorInfo{}, 0, err

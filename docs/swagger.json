@@ -546,6 +546,12 @@
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "groups guidfixed",
+                        "name": "groups",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "page",
                         "name": "page",
@@ -1119,6 +1125,12 @@
                         "type": "string",
                         "description": "Search Value",
                         "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "groups guidfixed",
+                        "name": "groups",
                         "in": "query"
                     },
                     {
@@ -2084,6 +2096,12 @@
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "groups guidfixed",
+                        "name": "groups",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "page",
                         "name": "page",
@@ -2657,6 +2675,12 @@
                         "type": "string",
                         "description": "Search Value",
                         "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "groups guidfixed",
+                        "name": "groups",
                         "in": "query"
                     },
                     {

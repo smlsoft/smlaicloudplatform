@@ -29,7 +29,7 @@ type ICreditorHttpService interface {
 	InfoCreditor(shopID string, guid string) (models.CreditorInfo, error)
 	InfoCreditorByCode(shopID string, code string) (models.CreditorInfo, error)
 	SearchCreditor(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.CreditorInfo, mongopagination.PaginationData, error)
-	SearchCreditorStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.CreditorInfo, int, error)
+	SearchCreditorStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.CreditorInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.CreditorRequest) (common.BulkImport, error)
 
 	GetModuleName() string
@@ -251,7 +251,7 @@ func (svc CreditorHttpService) SearchCreditor(shopID string, filters map[string]
 	return docList, pagination, nil
 }
 
-func (svc CreditorHttpService) SearchCreditorStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.CreditorInfo, int, error) {
+func (svc CreditorHttpService) SearchCreditorStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.CreditorInfo, int, error) {
 	searchInFields := []string{
 		"code",
 		"names.name",
@@ -264,7 +264,7 @@ func (svc CreditorHttpService) SearchCreditorStep(shopID string, langCode string
 
 	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.CreditorInfo{}, 0, err

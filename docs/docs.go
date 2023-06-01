@@ -552,6 +552,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "groups guidfixed",
+                        "name": "groups",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "page",
                         "name": "page",
@@ -1125,6 +1131,12 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Search Value",
                         "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "groups guidfixed",
+                        "name": "groups",
                         "in": "query"
                     },
                     {
@@ -2090,6 +2102,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "groups guidfixed",
+                        "name": "groups",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "page",
                         "name": "page",
@@ -2663,6 +2681,12 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Search Value",
                         "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "groups guidfixed",
+                        "name": "groups",
                         "in": "query"
                     },
                     {

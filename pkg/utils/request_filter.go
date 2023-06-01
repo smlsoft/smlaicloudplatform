@@ -49,6 +49,10 @@ func GetFilters(getParamFunc func(string) string, filterFields []FilterRequest) 
 			if val, err := strconv.ParseBool(filterValue); err == nil {
 				filters[field.Field] = val
 			}
+		case "array":
+			filters[field.Field] = bson.M{
+				"$in": strings.Split(filterValue, ","),
+			}
 
 		case "rangeDate":
 

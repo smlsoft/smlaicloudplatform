@@ -5447,6 +5447,10 @@ paths:
         in: query
         name: q
         type: string
+      - description: groups guidfixed
+        in: query
+        name: groups
+        type: string
       - description: page
         in: query
         name: page
@@ -5853,6 +5857,10 @@ paths:
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: groups guidfixed
+        in: query
+        name: groups
         type: string
       - description: offset
         in: query
@@ -6403,6 +6411,10 @@ paths:
         in: query
         name: q
         type: string
+      - description: groups guidfixed
+        in: query
+        name: groups
+        type: string
       - description: page
         in: query
         name: page
@@ -6809,6 +6821,10 @@ paths:
       - description: Search Value
         in: query
         name: q
+        type: string
+      - description: groups guidfixed
+        in: query
+        name: groups
         type: string
       - description: offset
         in: query
