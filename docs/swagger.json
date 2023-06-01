@@ -28002,6 +28002,9 @@
                 "password": {
                     "type": "string"
                 },
+                "pincode": {
+                    "type": "string"
+                },
                 "profilepicture": {
                     "type": "string"
                 },
@@ -28029,6 +28032,9 @@
                     "type": "boolean"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "pincode": {
                     "type": "string"
                 },
                 "profilepicture": {

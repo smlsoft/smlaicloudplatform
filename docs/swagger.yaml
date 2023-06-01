@@ -1114,6 +1114,8 @@ definitions:
         type: string
       password:
         type: string
+      pincode:
+        type: string
       profilepicture:
         type: string
       roles:
@@ -1132,6 +1134,8 @@ definitions:
       isenabled:
         type: boolean
       name:
+        type: string
+      pincode:
         type: string
       profilepicture:
         type: string

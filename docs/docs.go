@@ -28008,6 +28008,9 @@ const docTemplate = `{
                 "password": {
                     "type": "string"
                 },
+                "pincode": {
+                    "type": "string"
+                },
                 "profilepicture": {
                     "type": "string"
                 },
@@ -28035,6 +28038,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "pincode": {
                     "type": "string"
                 },
                 "profilepicture": {

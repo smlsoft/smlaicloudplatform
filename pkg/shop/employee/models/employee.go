@@ -16,6 +16,7 @@ type Employee struct {
 	Roles          *[]string `json:"roles" bson:"roles"`
 	IsEnabled      bool      `json:"isenabled" bson:"isenabled"`
 	Contact        Contact   `json:"contact" bson:"contact"`
+	PinCode        string    `json:"pincode" bson:"pincode"`
 }
 
 type Contact struct {
