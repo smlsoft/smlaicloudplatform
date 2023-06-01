@@ -271,6 +271,7 @@ func (h DebtorHttp) InfoDebtorByCode(ctx microservice.IContext) error {
 // @Description get struct array by ID
 // @Tags		Debtor
 // @Param		q		query	string		false  "Search Value"
+// @Param		groups		query	string		false  "groups guidfixed"
 // @Param		page	query	integer		false  "page"
 // @Param		limit	query	integer		false  "limit"
 // @Accept 		json
@@ -284,7 +285,15 @@ func (h DebtorHttp) SearchDebtorPage(ctx microservice.IContext) error {
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchDebtor(shopID, map[string]interface{}{}, pageable)
+	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+		{
+			Param: "groups",
+			Field: "groups",
+			Type:  "array",
+		},
+	})
+
+	docList, pagination, err := h.svc.SearchDebtor(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -303,6 +312,7 @@ func (h DebtorHttp) SearchDebtorPage(ctx microservice.IContext) error {
 // @Description search limit offset
 // @Tags		Debtor
 // @Param		q		query	string		false  "Search Value"
+// @Param		groups		query	string		false  "groups guidfixed"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
 // @Param		lang	query	string		false  "lang"
@@ -319,7 +329,15 @@ func (h DebtorHttp) SearchDebtorStep(ctx microservice.IContext) error {
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchDebtorStep(shopID, lang, pageableStep)
+	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+		{
+			Param: "groups",
+			Field: "groups",
+			Type:  "array",
+		},
+	})
+
+	docList, total, err := h.svc.SearchDebtorStep(shopID, lang, filters, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
