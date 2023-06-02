@@ -9,6 +9,7 @@ import (
 
 	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type IPaidRepository interface {
@@ -67,8 +68,14 @@ func (repo PaidRepository) FindLastDocNo(shopID string, prefixDocNo string) (mod
 		},
 	}
 
+	optSort := options.FindOneOptions{}
+
+	optSort.SetSort(bson.M{
+		"docno": -1,
+	})
+
 	doc := models.PaidDoc{}
-	err := repo.pst.FindOne(models.PaidDoc{}, filters, &doc)
+	err := repo.pst.FindOne(models.PaidDoc{}, filters, &doc, &optSort)
 
 	if err != nil {
 		return doc, err

@@ -87,7 +87,17 @@ func (svc PurchaseHttpService) generateNewDocNo(shopID, prefixDocNo string, docN
 	}
 
 	newDocNumber := prevoiusDocNumber + 1
-	newDocNo := fmt.Sprintf("%s%05d", prefixDocNo, docNumber)
+	newDocNo := fmt.Sprintf("%s%05d", prefixDocNo, newDocNumber)
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", newDocNo)
+
+	if err != nil {
+		return "", 0, err
+	}
+
+	if len(findDoc.GuidFixed) > 0 {
+		return "", 0, errors.New("DocNo is exists")
+	}
 
 	return newDocNo, newDocNumber, nil
 }
@@ -101,16 +111,6 @@ func (svc PurchaseHttpService) CreatePurchase(shopID string, authUsername string
 
 	if err != nil {
 		return "", "", err
-	}
-
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", doc.DocNo)
-
-	if err != nil {
-		return "", "", err
-	}
-
-	if len(findDoc.GuidFixed) > 0 {
-		return "", "", errors.New("DocNo is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()

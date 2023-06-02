@@ -87,7 +87,17 @@ func (svc StockTransferHttpService) generateNewDocNo(shopID, prefixDocNo string,
 	}
 
 	newDocNumber := prevoiusDocNumber + 1
-	newDocNo := fmt.Sprintf("%s%05d", prefixDocNo, docNumber)
+	newDocNo := fmt.Sprintf("%s%05d", prefixDocNo, newDocNumber)
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", newDocNo)
+
+	if err != nil {
+		return "", 0, err
+	}
+
+	if len(findDoc.GuidFixed) > 0 {
+		return "", 0, errors.New("DocNo is exists")
+	}
 
 	return newDocNo, newDocNumber, nil
 }
@@ -101,16 +111,6 @@ func (svc StockTransferHttpService) CreateStockTransfer(shopID string, authUsern
 
 	if err != nil {
 		return "", "", err
-	}
-
-	findDoc, err := svc.repo.FindDocOne(shopID, doc.DocNo, doc.TransFlag)
-
-	if err != nil {
-		return "", "", err
-	}
-
-	if len(findDoc.GuidFixed) > 0 {
-		return "", "", errors.New("docno and trans flag is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()

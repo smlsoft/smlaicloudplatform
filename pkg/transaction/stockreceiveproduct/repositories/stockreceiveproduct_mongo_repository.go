@@ -9,6 +9,7 @@ import (
 
 	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type IStockReceiveProductRepository interface {
@@ -67,8 +68,13 @@ func (repo StockReceiveProductRepository) FindLastDocNo(shopID string, prefixDoc
 		},
 	}
 
+	optSort := options.FindOneOptions{}
+	optSort.SetSort(bson.M{
+		"docno": -1,
+	})
+
 	doc := models.StockReceiveProductDoc{}
-	err := repo.pst.FindOne(models.StockReceiveProductDoc{}, filters, &doc)
+	err := repo.pst.FindOne(models.StockReceiveProductDoc{}, filters, &doc, &optSort)
 
 	if err != nil {
 		return doc, err
