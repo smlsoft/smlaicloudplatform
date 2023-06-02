@@ -109,17 +109,15 @@ func (svc EmployeeHttpService) UpdateEmployee(shopID string, guid string, authUs
 		}
 	}
 
-	findDoc.Email = doc.Email
-	findDoc.Name = doc.Name
-	findDoc.Roles = doc.Roles
-	findDoc.ProfilePicture = doc.ProfilePicture
-	findDoc.IsEnabled = doc.IsEnabled
-	findDoc.Contact = doc.Contact
+	docData := findDoc
+	docData.Employee = doc.Employee
+
+	docData.Code = doc.Code
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(shopID, guid, docData)
 
 	if err != nil {
 		return err
