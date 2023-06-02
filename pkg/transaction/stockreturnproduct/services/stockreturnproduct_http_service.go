@@ -120,6 +120,7 @@ func (svc StockReturnProductHttpService) CreateStockReturnProduct(shopID string,
 	docData.GuidFixed = newGuidFixed
 	docData.StockReturnProduct = doc
 
+	docData.DocNo = newDocNo
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
