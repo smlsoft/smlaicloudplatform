@@ -104,8 +104,8 @@ func (svc PurchaseHttpService) generateNewDocNo(shopID, prefixDocNo string, docN
 
 func (svc PurchaseHttpService) CreatePurchase(shopID string, authUsername string, doc models.Purchase) (string, string, error) {
 
-	timeNow := time.Now()
-	prefixDocNo := svc.getDocNoPrefix(timeNow)
+	docDate := doc.DocDatetime
+	prefixDocNo := svc.getDocNoPrefix(docDate)
 
 	newDocNo, newDocNumber, err := svc.generateNewDocNo(shopID, prefixDocNo, 1)
 

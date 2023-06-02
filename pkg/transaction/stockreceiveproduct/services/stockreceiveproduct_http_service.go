@@ -103,8 +103,8 @@ func (svc StockReceiveProductHttpService) generateNewDocNo(shopID, prefixDocNo s
 }
 func (svc StockReceiveProductHttpService) CreateStockReceiveProduct(shopID string, authUsername string, doc models.StockReceiveProduct) (string, string, error) {
 
-	timeNow := time.Now()
-	prefixDocNo := svc.getDocNoPrefix(timeNow)
+	docDate := doc.DocDatetime
+	prefixDocNo := svc.getDocNoPrefix(docDate)
 
 	newDocNo, newDocNumber, err := svc.generateNewDocNo(shopID, prefixDocNo, 1)
 

@@ -104,8 +104,8 @@ func (svc SaleInvoiceHttpService) generateNewDocNo(shopID, prefixDocNo string, d
 
 func (svc SaleInvoiceHttpService) CreateSaleInvoice(shopID string, authUsername string, doc models.SaleInvoice) (string, string, error) {
 
-	timeNow := time.Now()
-	prefixDocNo := svc.getDocNoPrefix(timeNow)
+	docDate := doc.DocDatetime
+	prefixDocNo := svc.getDocNoPrefix(docDate)
 
 	newDocNo, newDocNumber, err := svc.generateNewDocNo(shopID, prefixDocNo, 1)
 

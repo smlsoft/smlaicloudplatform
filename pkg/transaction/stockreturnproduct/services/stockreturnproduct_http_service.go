@@ -104,8 +104,8 @@ func (svc StockReturnProductHttpService) generateNewDocNo(shopID, prefixDocNo st
 
 func (svc StockReturnProductHttpService) CreateStockReturnProduct(shopID string, authUsername string, doc models.StockReturnProduct) (string, string, error) {
 
-	timeNow := time.Now()
-	prefixDocNo := svc.getDocNoPrefix(timeNow)
+	docDate := doc.DocDatetime
+	prefixDocNo := svc.getDocNoPrefix(docDate)
 
 	newDocNo, newDocNumber, err := svc.generateNewDocNo(shopID, prefixDocNo, 1)
 
