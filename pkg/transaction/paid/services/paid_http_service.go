@@ -9,8 +9,11 @@ import (
 	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/transaction/paid/models"
 	"smlcloudplatform/pkg/transaction/paid/repositories"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/userplant/mongopagination"
@@ -18,7 +21,7 @@ import (
 )
 
 type IPaidHttpService interface {
-	CreatePaid(shopID string, authUsername string, doc models.Paid) (string, error)
+	CreatePaid(shopID string, authUsername string, doc models.Paid) (string, string, error)
 	UpdatePaid(shopID string, guid string, authUsername string, doc models.Paid) error
 	DeletePaid(shopID string, guid string, authUsername string) error
 	DeletePaidByGUIDs(shopID string, authUsername string, GUIDs []string) error
@@ -31,18 +34,25 @@ type IPaidHttpService interface {
 	GetModuleName() string
 }
 
-type PaidHttpService struct {
-	repo repositories.IPaidRepository
+const (
+	MODULE_NAME = "EE"
+)
 
-	syncCacheRepo mastersync.IMasterSyncCacheRepository
+type PaidHttpService struct {
+	repo             repositories.IPaidRepository
+	repoCache        trancache.ICacheRepository
+	cacheExpireDocNo time.Duration
+	syncCacheRepo    mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.PaidActivity, models.PaidDeleteActivity]
 }
 
-func NewPaidHttpService(repo repositories.IPaidRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *PaidHttpService {
+func NewPaidHttpService(repo repositories.IPaidRepository, repoCache trancache.ICacheRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *PaidHttpService {
 
 	insSvc := &PaidHttpService{
-		repo:          repo,
-		syncCacheRepo: syncCacheRepo,
+		repo:             repo,
+		repoCache:        repoCache,
+		syncCacheRepo:    syncCacheRepo,
+		cacheExpireDocNo: time.Hour * 24,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.PaidActivity, models.PaidDeleteActivity](repo)
@@ -50,16 +60,57 @@ func NewPaidHttpService(repo repositories.IPaidRepository, syncCacheRepo masters
 	return insSvc
 }
 
-func (svc PaidHttpService) CreatePaid(shopID string, authUsername string, doc models.Paid) (string, error) {
+func (svc PaidHttpService) getDocNoPrefix(docDate time.Time) string {
+	docDateStr := docDate.Format("20060102")
+	return fmt.Sprintf("%s%s", MODULE_NAME, docDateStr)
+}
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", doc.DocNo)
+func (svc PaidHttpService) generateNewDocNo(shopID, prefixDocNo string, docNumber int) (string, int, error) {
+	prevoiusDocNumber, err := svc.repoCache.Get(shopID, prefixDocNo)
+
+	if prevoiusDocNumber == 0 || err != nil {
+		lastDoc, err := svc.repo.FindLastDocNo(shopID, prefixDocNo)
+
+		if err != nil {
+			return "", 0, err
+		}
+
+		if len(lastDoc.DocNo) > 0 {
+			rawNumber := strings.Replace(lastDoc.DocNo, prefixDocNo, "", -1)
+			prevoiusDocNumber, err = strconv.Atoi(rawNumber)
+
+			if err != nil {
+				prevoiusDocNumber = 0
+			}
+		}
+
+	}
+
+	newDocNumber := prevoiusDocNumber + 1
+	newDocNo := fmt.Sprintf("%s%05d", prefixDocNo, docNumber)
+
+	return newDocNo, newDocNumber, nil
+}
+
+func (svc PaidHttpService) CreatePaid(shopID string, authUsername string, doc models.Paid) (string, string, error) {
+
+	timeNow := time.Now()
+	prefixDocNo := svc.getDocNoPrefix(timeNow)
+
+	newDocNo, newDocNumber, err := svc.generateNewDocNo(shopID, prefixDocNo, 1)
 
 	if err != nil {
-		return "", err
+		return "", "", err
+	}
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", newDocNo)
+
+	if err != nil {
+		return "", "", err
 	}
 
 	if len(findDoc.GuidFixed) > 0 {
-		return "", errors.New("DocNo is exists")
+		return "", "", errors.New("DocNo is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -69,18 +120,21 @@ func (svc PaidHttpService) CreatePaid(shopID string, authUsername string, doc mo
 	docData.GuidFixed = newGuidFixed
 	docData.Paid = doc
 
+	docData.DocNo = newDocNo
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
 	_, err = svc.repo.Create(docData)
 
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
+
+	go svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
 
 	svc.saveMasterSync(shopID)
 
-	return newGuidFixed, nil
+	return newGuidFixed, newDocNo, nil
 }
 
 func (svc PaidHttpService) UpdatePaid(shopID string, guid string, authUsername string, doc models.Paid) error {

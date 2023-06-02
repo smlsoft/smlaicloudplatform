@@ -6,6 +6,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/stockpickupproduct/models"
 	"smlcloudplatform/pkg/transaction/stockpickupproduct/repositories"
 	"smlcloudplatform/pkg/transaction/stockpickupproduct/services"
@@ -26,8 +27,9 @@ func NewStockPickupProductHttp(ms *microservice.Microservice, cfg microservice.I
 
 	repo := repositories.NewStockPickupProductRepository(pst)
 
+	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockPickupProductHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewStockPickupProductHttpService(repo, transRepo, masterSyncCacheRepo)
 
 	return StockPickupProductHttp{
 		ms:  ms,
@@ -77,7 +79,7 @@ func (h StockPickupProductHttp) CreateStockPickupProduct(ctx microservice.IConte
 		return err
 	}
 
-	idx, err := h.svc.CreateStockPickupProduct(shopID, authUsername, *docReq)
+	idx, docNo, err := h.svc.CreateStockPickupProduct(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -87,6 +89,7 @@ func (h StockPickupProductHttp) CreateStockPickupProduct(ctx microservice.IConte
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
+		Data:    docNo,
 	})
 	return nil
 }

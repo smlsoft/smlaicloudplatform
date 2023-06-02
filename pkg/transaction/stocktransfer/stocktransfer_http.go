@@ -6,6 +6,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/stocktransfer/models"
 	"smlcloudplatform/pkg/transaction/stocktransfer/repositories"
 	"smlcloudplatform/pkg/transaction/stocktransfer/services"
@@ -26,8 +27,9 @@ func NewStockTransferHttp(ms *microservice.Microservice, cfg microservice.IConfi
 
 	repo := repositories.NewStockTransferRepository(pst)
 
+	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockTransferHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewStockTransferHttpService(repo, transRepo, masterSyncCacheRepo)
 
 	return StockTransferHttp{
 		ms:  ms,
@@ -75,7 +77,7 @@ func (h StockTransferHttp) CreateStockTransfer(ctx microservice.IContext) error 
 		return err
 	}
 
-	idx, err := h.svc.CreateStockTransfer(shopID, authUsername, *docReq)
+	idx, docNo, err := h.svc.CreateStockTransfer(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -85,6 +87,7 @@ func (h StockTransferHttp) CreateStockTransfer(ctx microservice.IContext) error 
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
+		Data:    docNo,
 	})
 	return nil
 }

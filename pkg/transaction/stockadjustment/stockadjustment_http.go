@@ -6,6 +6,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/stockadjustment/models"
 	"smlcloudplatform/pkg/transaction/stockadjustment/repositories"
 	"smlcloudplatform/pkg/transaction/stockadjustment/services"
@@ -26,8 +27,9 @@ func NewStockAdjustmentHttp(ms *microservice.Microservice, cfg microservice.ICon
 
 	repo := repositories.NewStockAdjustmentRepository(pst)
 
+	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockAdjustmentHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewStockAdjustmentHttpService(repo, transRepo, masterSyncCacheRepo)
 
 	return StockAdjustmentHttp{
 		ms:  ms,
@@ -77,7 +79,7 @@ func (h StockAdjustmentHttp) CreateStockAdjustment(ctx microservice.IContext) er
 		return err
 	}
 
-	idx, err := h.svc.CreateStockAdjustment(shopID, authUsername, *docReq)
+	idx, docNo, err := h.svc.CreateStockAdjustment(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -87,6 +89,7 @@ func (h StockAdjustmentHttp) CreateStockAdjustment(ctx microservice.IContext) er
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
+		Data:    docNo,
 	})
 	return nil
 }

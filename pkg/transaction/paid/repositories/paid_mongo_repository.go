@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IPaidRepository interface {
@@ -29,6 +30,8 @@ type IPaidRepository interface {
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.PaidActivity, mongopagination.PaginationData, error)
 	FindDeletedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.PaidDeleteActivity, error)
 	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.PaidActivity, error)
+
+	FindLastDocNo(shopID string, prefixDocNo string) (models.PaidDoc, error)
 }
 
 type PaidRepository struct {
@@ -51,4 +54,25 @@ func NewPaidRepository(pst microservice.IPersisterMongo) *PaidRepository {
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.PaidActivity, models.PaidDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo PaidRepository) FindLastDocNo(shopID string, prefixDocNo string) (models.PaidDoc, error) {
+	filters := bson.M{
+		"shopid": shopID,
+		"deletedat": bson.M{
+			"$exists": false,
+		},
+		"docno": bson.M{
+			"$regex": "^" + prefixDocNo + ".*$",
+		},
+	}
+
+	doc := models.PaidDoc{}
+	err := repo.pst.FindOne(models.PaidDoc{}, filters, &doc)
+
+	if err != nil {
+		return doc, err
+	}
+
+	return doc, nil
 }

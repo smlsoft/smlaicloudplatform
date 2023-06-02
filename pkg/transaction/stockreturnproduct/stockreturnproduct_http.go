@@ -6,6 +6,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/stockreturnproduct/models"
 	"smlcloudplatform/pkg/transaction/stockreturnproduct/repositories"
 	"smlcloudplatform/pkg/transaction/stockreturnproduct/services"
@@ -26,8 +27,9 @@ func NewStockReturnProductHttp(ms *microservice.Microservice, cfg microservice.I
 
 	repo := repositories.NewStockReturnProductRepository(pst)
 
+	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockReturnProductHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewStockReturnProductHttpService(repo, transRepo, masterSyncCacheRepo)
 
 	return StockReturnProductHttp{
 		ms:  ms,
@@ -77,7 +79,7 @@ func (h StockReturnProductHttp) CreateStockReturnProduct(ctx microservice.IConte
 		return err
 	}
 
-	idx, err := h.svc.CreateStockReturnProduct(shopID, authUsername, *docReq)
+	idx, docNo, err := h.svc.CreateStockReturnProduct(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -87,6 +89,7 @@ func (h StockReturnProductHttp) CreateStockReturnProduct(ctx microservice.IConte
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
+		Data:    docNo,
 	})
 	return nil
 }

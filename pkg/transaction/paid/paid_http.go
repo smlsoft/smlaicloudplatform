@@ -9,6 +9,7 @@ import (
 	"smlcloudplatform/pkg/transaction/paid/models"
 	"smlcloudplatform/pkg/transaction/paid/repositories"
 	"smlcloudplatform/pkg/transaction/paid/services"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/utils"
 )
 
@@ -26,8 +27,9 @@ func NewPaidHttp(ms *microservice.Microservice, cfg microservice.IConfig) PaidHt
 
 	repo := repositories.NewPaidRepository(pst)
 
+	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewPaidHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewPaidHttpService(repo, transRepo, masterSyncCacheRepo)
 
 	return PaidHttp{
 		ms:  ms,
@@ -77,7 +79,7 @@ func (h PaidHttp) CreatePaid(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.svc.CreatePaid(shopID, authUsername, *docReq)
+	idx, docNo, err := h.svc.CreatePaid(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -87,6 +89,7 @@ func (h PaidHttp) CreatePaid(ctx microservice.IContext) error {
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
+		Data:    docNo,
 	})
 	return nil
 }

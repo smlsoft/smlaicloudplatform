@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IStockAdjustmentRepository interface {
@@ -29,6 +30,8 @@ type IStockAdjustmentRepository interface {
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockAdjustmentActivity, mongopagination.PaginationData, error)
 	FindDeletedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockAdjustmentDeleteActivity, error)
 	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockAdjustmentActivity, error)
+
+	FindLastDocNo(shopID string, prefixDocNo string) (models.StockAdjustmentDoc, error)
 }
 
 type StockAdjustmentRepository struct {
@@ -51,4 +54,24 @@ func NewStockAdjustmentRepository(pst microservice.IPersisterMongo) *StockAdjust
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.StockAdjustmentActivity, models.StockAdjustmentDeleteActivity](pst)
 
 	return insRepo
+}
+func (repo StockAdjustmentRepository) FindLastDocNo(shopID string, prefixDocNo string) (models.StockAdjustmentDoc, error) {
+	filters := bson.M{
+		"shopid": shopID,
+		"deletedat": bson.M{
+			"$exists": false,
+		},
+		"docno": bson.M{
+			"$regex": "^" + prefixDocNo + ".*$",
+		},
+	}
+
+	doc := models.StockAdjustmentDoc{}
+	err := repo.pst.FindOne(models.StockAdjustmentDoc{}, filters, &doc)
+
+	if err != nil {
+		return doc, err
+	}
+
+	return doc, nil
 }

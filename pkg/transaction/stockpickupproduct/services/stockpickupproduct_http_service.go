@@ -7,10 +7,13 @@ import (
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/services"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/stockpickupproduct/models"
 	"smlcloudplatform/pkg/transaction/stockpickupproduct/repositories"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/userplant/mongopagination"
@@ -18,7 +21,7 @@ import (
 )
 
 type IStockPickupProductHttpService interface {
-	CreateStockPickupProduct(shopID string, authUsername string, doc models.StockPickupProduct) (string, error)
+	CreateStockPickupProduct(shopID string, authUsername string, doc models.StockPickupProduct) (string, string, error)
 	UpdateStockPickupProduct(shopID string, guid string, authUsername string, doc models.StockPickupProduct) error
 	DeleteStockPickupProduct(shopID string, guid string, authUsername string) error
 	DeleteStockPickupProductByGUIDs(shopID string, authUsername string, GUIDs []string) error
@@ -31,18 +34,25 @@ type IStockPickupProductHttpService interface {
 	GetModuleName() string
 }
 
-type StockPickupProductHttpService struct {
-	repo repositories.IStockPickupProductRepository
+const (
+	MODULE_NAME = "IM"
+)
 
-	syncCacheRepo mastersync.IMasterSyncCacheRepository
+type StockPickupProductHttpService struct {
+	repo             repositories.IStockPickupProductRepository
+	repoCache        trancache.ICacheRepository
+	cacheExpireDocNo time.Duration
+	syncCacheRepo    mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.StockPickupProductActivity, models.StockPickupProductDeleteActivity]
 }
 
-func NewStockPickupProductHttpService(repo repositories.IStockPickupProductRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *StockPickupProductHttpService {
+func NewStockPickupProductHttpService(repo repositories.IStockPickupProductRepository, repoCache trancache.ICacheRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *StockPickupProductHttpService {
 
 	insSvc := &StockPickupProductHttpService{
-		repo:          repo,
-		syncCacheRepo: syncCacheRepo,
+		repo:             repo,
+		repoCache:        repoCache,
+		syncCacheRepo:    syncCacheRepo,
+		cacheExpireDocNo: time.Hour * 24,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.StockPickupProductActivity, models.StockPickupProductDeleteActivity](repo)
@@ -50,16 +60,56 @@ func NewStockPickupProductHttpService(repo repositories.IStockPickupProductRepos
 	return insSvc
 }
 
-func (svc StockPickupProductHttpService) CreateStockPickupProduct(shopID string, authUsername string, doc models.StockPickupProduct) (string, error) {
+func (svc StockPickupProductHttpService) getDocNoPrefix(docDate time.Time) string {
+	docDateStr := docDate.Format("20060102")
+	return fmt.Sprintf("%s%s", MODULE_NAME, docDateStr)
+}
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", doc.Docno)
+func (svc StockPickupProductHttpService) generateNewDocNo(shopID, prefixDocNo string, docNumber int) (string, int, error) {
+	prevoiusDocNumber, err := svc.repoCache.Get(shopID, prefixDocNo)
+
+	if prevoiusDocNumber == 0 || err != nil {
+		lastDoc, err := svc.repo.FindLastDocNo(shopID, prefixDocNo)
+
+		if err != nil {
+			return "", 0, err
+		}
+
+		if len(lastDoc.DocNo) > 0 {
+			rawNumber := strings.Replace(lastDoc.DocNo, prefixDocNo, "", -1)
+			prevoiusDocNumber, err = strconv.Atoi(rawNumber)
+
+			if err != nil {
+				prevoiusDocNumber = 0
+			}
+		}
+
+	}
+
+	newDocNumber := prevoiusDocNumber + 1
+	newDocNo := fmt.Sprintf("%s%05d", prefixDocNo, docNumber)
+
+	return newDocNo, newDocNumber, nil
+}
+
+func (svc StockPickupProductHttpService) CreateStockPickupProduct(shopID string, authUsername string, doc models.StockPickupProduct) (string, string, error) {
+	timeNow := time.Now()
+	prefixDocNo := svc.getDocNoPrefix(timeNow)
+
+	newDocNo, newDocNumber, err := svc.generateNewDocNo(shopID, prefixDocNo, 1)
 
 	if err != nil {
-		return "", err
+		return "", "", err
+	}
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", doc.DocNo)
+
+	if err != nil {
+		return "", "", err
 	}
 
 	if len(findDoc.GuidFixed) > 0 {
-		return "", errors.New("Docno is exists")
+		return "", "", errors.New("DocNo is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -69,18 +119,21 @@ func (svc StockPickupProductHttpService) CreateStockPickupProduct(shopID string,
 	docData.GuidFixed = newGuidFixed
 	docData.StockPickupProduct = doc
 
+	docData.DocNo = newDocNo
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
 	_, err = svc.repo.Create(docData)
 
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
+
+	go svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
 
 	svc.saveMasterSync(shopID)
 
-	return newGuidFixed, nil
+	return newGuidFixed, newDocNo, nil
 }
 
 func (svc StockPickupProductHttpService) UpdateStockPickupProduct(shopID string, guid string, authUsername string, doc models.StockPickupProduct) error {
@@ -213,7 +266,7 @@ func (svc StockPickupProductHttpService) SaveInBatch(shopID string, authUsername
 
 	itemCodeGuidList := []string{}
 	for _, doc := range payloadList {
-		itemCodeGuidList = append(itemCodeGuidList, doc.Docno)
+		itemCodeGuidList = append(itemCodeGuidList, doc.DocNo)
 	}
 
 	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "docno", itemCodeGuidList)
@@ -224,7 +277,7 @@ func (svc StockPickupProductHttpService) SaveInBatch(shopID string, authUsername
 
 	foundItemGuidList := []string{}
 	for _, doc := range findItemGuid {
-		foundItemGuidList = append(foundItemGuidList, doc.Docno)
+		foundItemGuidList = append(foundItemGuidList, doc.DocNo)
 	}
 
 	duplicateDataList, createDataList := importdata.PreparePayloadData[models.StockPickupProduct, models.StockPickupProductDoc](
@@ -258,7 +311,7 @@ func (svc StockPickupProductHttpService) SaveInBatch(shopID string, authUsername
 			return svc.repo.FindByDocIndentityGuid(shopID, "docno", guid)
 		},
 		func(doc models.StockPickupProductDoc) bool {
-			return doc.Docno != ""
+			return doc.DocNo != ""
 		},
 		func(shopID string, authUsername string, data models.StockPickupProduct, doc models.StockPickupProductDoc) error {
 
@@ -286,18 +339,18 @@ func (svc StockPickupProductHttpService) SaveInBatch(shopID string, authUsername
 	createDataKey := []string{}
 
 	for _, doc := range createDataList {
-		createDataKey = append(createDataKey, doc.Docno)
+		createDataKey = append(createDataKey, doc.DocNo)
 	}
 
 	payloadDuplicateDataKey := []string{}
 	for _, doc := range payloadDuplicateList {
-		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.Docno)
+		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.DocNo)
 	}
 
 	updateDataKey := []string{}
 	for _, doc := range updateSuccessDataList {
 
-		updateDataKey = append(updateDataKey, doc.Docno)
+		updateDataKey = append(updateDataKey, doc.DocNo)
 	}
 
 	updateFailDataKey := []string{}
@@ -316,7 +369,7 @@ func (svc StockPickupProductHttpService) SaveInBatch(shopID string, authUsername
 }
 
 func (svc StockPickupProductHttpService) getDocIDKey(doc models.StockPickupProduct) string {
-	return doc.Docno
+	return doc.DocNo
 }
 
 func (svc StockPickupProductHttpService) saveMasterSync(shopID string) {

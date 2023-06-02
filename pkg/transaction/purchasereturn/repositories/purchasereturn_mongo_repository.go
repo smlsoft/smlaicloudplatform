@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IPurchaseReturnRepository interface {
@@ -29,6 +30,8 @@ type IPurchaseReturnRepository interface {
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.PurchaseReturnActivity, mongopagination.PaginationData, error)
 	FindDeletedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.PurchaseReturnDeleteActivity, error)
 	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.PurchaseReturnActivity, error)
+
+	FindLastDocNo(shopID string, prefixDocNo string) (models.PurchaseReturnDoc, error)
 }
 
 type PurchaseReturnRepository struct {
@@ -51,4 +54,25 @@ func NewPurchaseReturnRepository(pst microservice.IPersisterMongo) *PurchaseRetu
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.PurchaseReturnActivity, models.PurchaseReturnDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo PurchaseReturnRepository) FindLastDocNo(shopID string, prefixDocNo string) (models.PurchaseReturnDoc, error) {
+	filters := bson.M{
+		"shopid": shopID,
+		"deletedat": bson.M{
+			"$exists": false,
+		},
+		"docno": bson.M{
+			"$regex": "^" + prefixDocNo + ".*$",
+		},
+	}
+
+	doc := models.PurchaseReturnDoc{}
+	err := repo.pst.FindOne(models.PurchaseReturnDoc{}, filters, &doc)
+
+	if err != nil {
+		return doc, err
+	}
+
+	return doc, nil
 }
