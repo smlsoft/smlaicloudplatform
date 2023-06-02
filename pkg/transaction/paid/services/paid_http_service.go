@@ -103,8 +103,8 @@ func (svc PaidHttpService) generateNewDocNo(shopID, prefixDocNo string, docNumbe
 
 func (svc PaidHttpService) CreatePaid(shopID string, authUsername string, doc models.Paid) (string, string, error) {
 
-	timeNow := time.Now()
-	prefixDocNo := svc.getDocNoPrefix(timeNow)
+	docDate := doc.DocDatetime
+	prefixDocNo := svc.getDocNoPrefix(docDate)
 
 	newDocNo, newDocNumber, err := svc.generateNewDocNo(shopID, prefixDocNo, 1)
 

@@ -104,8 +104,8 @@ func (svc PayHttpService) generateNewDocNo(shopID, prefixDocNo string, docNumber
 
 func (svc PayHttpService) CreatePay(shopID string, authUsername string, doc models.Pay) (string, string, error) {
 
-	timeNow := time.Now()
-	prefixDocNo := svc.getDocNoPrefix(timeNow)
+	docDate := doc.DocDatetime
+	prefixDocNo := svc.getDocNoPrefix(docDate)
 
 	newDocNo, newDocNumber, err := svc.generateNewDocNo(shopID, prefixDocNo, 1)
 

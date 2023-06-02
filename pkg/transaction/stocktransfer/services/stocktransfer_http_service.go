@@ -104,8 +104,8 @@ func (svc StockTransferHttpService) generateNewDocNo(shopID, prefixDocNo string,
 
 func (svc StockTransferHttpService) CreateStockTransfer(shopID string, authUsername string, doc models.StockTransfer) (string, string, error) {
 
-	timeNow := time.Now()
-	prefixDocNo := svc.getDocNoPrefix(timeNow)
+	docDate := doc.DocDatetime
+	prefixDocNo := svc.getDocNoPrefix(docDate)
 
 	newDocNo, newDocNumber, err := svc.generateNewDocNo(shopID, prefixDocNo, 1)
 
