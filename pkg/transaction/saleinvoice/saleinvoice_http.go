@@ -6,6 +6,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/saleinvoice/models"
 	"smlcloudplatform/pkg/transaction/saleinvoice/repositories"
 	"smlcloudplatform/pkg/transaction/saleinvoice/services"
@@ -26,8 +27,9 @@ func NewSaleInvoiceHttp(ms *microservice.Microservice, cfg microservice.IConfig)
 
 	repo := repositories.NewSaleInvoiceRepository(pst)
 
+	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewSaleInvoiceHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewSaleInvoiceHttpService(repo, transRepo, masterSyncCacheRepo)
 
 	return SaleInvoiceHttp{
 		ms:  ms,
@@ -77,7 +79,7 @@ func (h SaleInvoiceHttp) CreateSaleInvoice(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.svc.CreateSaleInvoice(shopID, authUsername, *docReq)
+	idx, docNo, err := h.svc.CreateSaleInvoice(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -87,6 +89,7 @@ func (h SaleInvoiceHttp) CreateSaleInvoice(ctx microservice.IContext) error {
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
+		Data:    docNo,
 	})
 	return nil
 }

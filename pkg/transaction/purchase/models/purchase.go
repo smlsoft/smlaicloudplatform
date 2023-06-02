@@ -39,7 +39,7 @@ func (PurchaseDoc) CollectionName() string {
 }
 
 type PurchaseItemGuid struct {
-	Docno string `json:"docno" bson:"docno"`
+	DocNo string `json:"docno" bson:"docno"`
 }
 
 func (PurchaseItemGuid) CollectionName() string {

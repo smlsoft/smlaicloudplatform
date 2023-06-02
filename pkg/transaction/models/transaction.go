@@ -6,7 +6,7 @@ import (
 )
 
 type Transaction struct {
-	Docno          string          `json:"docno" bson:"docno"`
+	DocNo          string          `json:"docno" bson:"docno"`
 	TotalDiscount  float64         `json:"totaldiscount" bson:"totaldiscount"`
 	TotalBeforeVat float64         `json:"totalbeforevat" bson:"totalbeforevat"`
 	GuidRef        string          `json:"guidref" bson:"guidref"`

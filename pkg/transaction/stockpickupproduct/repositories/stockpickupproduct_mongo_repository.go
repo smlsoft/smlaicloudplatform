@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IStockPickupProductRepository interface {
@@ -29,6 +30,8 @@ type IStockPickupProductRepository interface {
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockPickupProductActivity, mongopagination.PaginationData, error)
 	FindDeletedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockPickupProductDeleteActivity, error)
 	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockPickupProductActivity, error)
+
+	FindLastDocNo(shopID string, prefixDocNo string) (models.StockPickupProductDoc, error)
 }
 
 type StockPickupProductRepository struct {
@@ -51,4 +54,24 @@ func NewStockPickupProductRepository(pst microservice.IPersisterMongo) *StockPic
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.StockPickupProductActivity, models.StockPickupProductDeleteActivity](pst)
 
 	return insRepo
+}
+func (repo StockPickupProductRepository) FindLastDocNo(shopID string, prefixDocNo string) (models.StockPickupProductDoc, error) {
+	filters := bson.M{
+		"shopid": shopID,
+		"deletedat": bson.M{
+			"$exists": false,
+		},
+		"docno": bson.M{
+			"$regex": "^" + prefixDocNo + ".*$",
+		},
+	}
+
+	doc := models.StockPickupProductDoc{}
+	err := repo.pst.FindOne(models.StockPickupProductDoc{}, filters, &doc)
+
+	if err != nil {
+		return doc, err
+	}
+
+	return doc, nil
 }

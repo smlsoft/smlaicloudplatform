@@ -7,10 +7,13 @@ import (
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/services"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/stockadjustment/models"
 	"smlcloudplatform/pkg/transaction/stockadjustment/repositories"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/userplant/mongopagination"
@@ -18,7 +21,7 @@ import (
 )
 
 type IStockAdjustmentHttpService interface {
-	CreateStockAdjustment(shopID string, authUsername string, doc models.StockAdjustment) (string, error)
+	CreateStockAdjustment(shopID string, authUsername string, doc models.StockAdjustment) (string, string, error)
 	UpdateStockAdjustment(shopID string, guid string, authUsername string, doc models.StockAdjustment) error
 	DeleteStockAdjustment(shopID string, guid string, authUsername string) error
 	DeleteStockAdjustmentByGUIDs(shopID string, authUsername string, GUIDs []string) error
@@ -31,18 +34,25 @@ type IStockAdjustmentHttpService interface {
 	GetModuleName() string
 }
 
-type StockAdjustmentHttpService struct {
-	repo repositories.IStockAdjustmentRepository
+const (
+	MODULE_NAME = "AJ"
+)
 
-	syncCacheRepo mastersync.IMasterSyncCacheRepository
+type StockAdjustmentHttpService struct {
+	repo             repositories.IStockAdjustmentRepository
+	repoCache        trancache.ICacheRepository
+	cacheExpireDocNo time.Duration
+	syncCacheRepo    mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.StockAdjustmentActivity, models.StockAdjustmentDeleteActivity]
 }
 
-func NewStockAdjustmentHttpService(repo repositories.IStockAdjustmentRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *StockAdjustmentHttpService {
+func NewStockAdjustmentHttpService(repo repositories.IStockAdjustmentRepository, repoCache trancache.ICacheRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *StockAdjustmentHttpService {
 
 	insSvc := &StockAdjustmentHttpService{
-		repo:          repo,
-		syncCacheRepo: syncCacheRepo,
+		repo:             repo,
+		repoCache:        repoCache,
+		syncCacheRepo:    syncCacheRepo,
+		cacheExpireDocNo: time.Hour * 24,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.StockAdjustmentActivity, models.StockAdjustmentDeleteActivity](repo)
@@ -50,16 +60,56 @@ func NewStockAdjustmentHttpService(repo repositories.IStockAdjustmentRepository,
 	return insSvc
 }
 
-func (svc StockAdjustmentHttpService) CreateStockAdjustment(shopID string, authUsername string, doc models.StockAdjustment) (string, error) {
+func (svc StockAdjustmentHttpService) getDocNoPrefix(docDate time.Time) string {
+	docDateStr := docDate.Format("20060102")
+	return fmt.Sprintf("%s%s", MODULE_NAME, docDateStr)
+}
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", doc.Docno)
+func (svc StockAdjustmentHttpService) generateNewDocNo(shopID, prefixDocNo string, docNumber int) (string, int, error) {
+	prevoiusDocNumber, err := svc.repoCache.Get(shopID, prefixDocNo)
+
+	if prevoiusDocNumber == 0 || err != nil {
+		lastDoc, err := svc.repo.FindLastDocNo(shopID, prefixDocNo)
+
+		if err != nil {
+			return "", 0, err
+		}
+
+		if len(lastDoc.DocNo) > 0 {
+			rawNumber := strings.Replace(lastDoc.DocNo, prefixDocNo, "", -1)
+			prevoiusDocNumber, err = strconv.Atoi(rawNumber)
+
+			if err != nil {
+				prevoiusDocNumber = 0
+			}
+		}
+
+	}
+
+	newDocNumber := prevoiusDocNumber + 1
+	newDocNo := fmt.Sprintf("%s%05d", prefixDocNo, docNumber)
+
+	return newDocNo, newDocNumber, nil
+}
+
+func (svc StockAdjustmentHttpService) CreateStockAdjustment(shopID string, authUsername string, doc models.StockAdjustment) (string, string, error) {
+	timeNow := time.Now()
+	prefixDocNo := svc.getDocNoPrefix(timeNow)
+
+	newDocNo, newDocNumber, err := svc.generateNewDocNo(shopID, prefixDocNo, 1)
 
 	if err != nil {
-		return "", err
+		return "", "", err
+	}
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", doc.DocNo)
+
+	if err != nil {
+		return "", "", err
 	}
 
 	if len(findDoc.GuidFixed) > 0 {
-		return "", errors.New("Docno is exists")
+		return "", "", errors.New("DocNo is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -69,18 +119,21 @@ func (svc StockAdjustmentHttpService) CreateStockAdjustment(shopID string, authU
 	docData.GuidFixed = newGuidFixed
 	docData.StockAdjustment = doc
 
+	docData.DocNo = newDocNo
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
 	_, err = svc.repo.Create(docData)
 
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
+
+	go svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
 
 	svc.saveMasterSync(shopID)
 
-	return newGuidFixed, nil
+	return newGuidFixed, newDocNo, nil
 }
 
 func (svc StockAdjustmentHttpService) UpdateStockAdjustment(shopID string, guid string, authUsername string, doc models.StockAdjustment) error {
@@ -213,7 +266,7 @@ func (svc StockAdjustmentHttpService) SaveInBatch(shopID string, authUsername st
 
 	itemCodeGuidList := []string{}
 	for _, doc := range payloadList {
-		itemCodeGuidList = append(itemCodeGuidList, doc.Docno)
+		itemCodeGuidList = append(itemCodeGuidList, doc.DocNo)
 	}
 
 	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "docno", itemCodeGuidList)
@@ -224,7 +277,7 @@ func (svc StockAdjustmentHttpService) SaveInBatch(shopID string, authUsername st
 
 	foundItemGuidList := []string{}
 	for _, doc := range findItemGuid {
-		foundItemGuidList = append(foundItemGuidList, doc.Docno)
+		foundItemGuidList = append(foundItemGuidList, doc.DocNo)
 	}
 
 	duplicateDataList, createDataList := importdata.PreparePayloadData[models.StockAdjustment, models.StockAdjustmentDoc](
@@ -258,7 +311,7 @@ func (svc StockAdjustmentHttpService) SaveInBatch(shopID string, authUsername st
 			return svc.repo.FindByDocIndentityGuid(shopID, "docno", guid)
 		},
 		func(doc models.StockAdjustmentDoc) bool {
-			return doc.Docno != ""
+			return doc.DocNo != ""
 		},
 		func(shopID string, authUsername string, data models.StockAdjustment, doc models.StockAdjustmentDoc) error {
 
@@ -286,18 +339,18 @@ func (svc StockAdjustmentHttpService) SaveInBatch(shopID string, authUsername st
 	createDataKey := []string{}
 
 	for _, doc := range createDataList {
-		createDataKey = append(createDataKey, doc.Docno)
+		createDataKey = append(createDataKey, doc.DocNo)
 	}
 
 	payloadDuplicateDataKey := []string{}
 	for _, doc := range payloadDuplicateList {
-		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.Docno)
+		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.DocNo)
 	}
 
 	updateDataKey := []string{}
 	for _, doc := range updateSuccessDataList {
 
-		updateDataKey = append(updateDataKey, doc.Docno)
+		updateDataKey = append(updateDataKey, doc.DocNo)
 	}
 
 	updateFailDataKey := []string{}
@@ -316,7 +369,7 @@ func (svc StockAdjustmentHttpService) SaveInBatch(shopID string, authUsername st
 }
 
 func (svc StockAdjustmentHttpService) getDocIDKey(doc models.StockAdjustment) string {
-	return doc.Docno
+	return doc.DocNo
 }
 
 func (svc StockAdjustmentHttpService) saveMasterSync(shopID string) {

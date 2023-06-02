@@ -7,10 +7,13 @@ import (
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/services"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/stockreturnproduct/models"
 	"smlcloudplatform/pkg/transaction/stockreturnproduct/repositories"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/userplant/mongopagination"
@@ -18,7 +21,7 @@ import (
 )
 
 type IStockReturnProductHttpService interface {
-	CreateStockReturnProduct(shopID string, authUsername string, doc models.StockReturnProduct) (string, error)
+	CreateStockReturnProduct(shopID string, authUsername string, doc models.StockReturnProduct) (string, string, error)
 	UpdateStockReturnProduct(shopID string, guid string, authUsername string, doc models.StockReturnProduct) error
 	DeleteStockReturnProduct(shopID string, guid string, authUsername string) error
 	DeleteStockReturnProductByGUIDs(shopID string, authUsername string, GUIDs []string) error
@@ -31,18 +34,25 @@ type IStockReturnProductHttpService interface {
 	GetModuleName() string
 }
 
-type StockReturnProductHttpService struct {
-	repo repositories.IStockReturnProductRepository
+const (
+	MODULE_NAME = "IR"
+)
 
-	syncCacheRepo mastersync.IMasterSyncCacheRepository
+type StockReturnProductHttpService struct {
+	repo             repositories.IStockReturnProductRepository
+	repoCache        trancache.ICacheRepository
+	cacheExpireDocNo time.Duration
+	syncCacheRepo    mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.StockReturnProductActivity, models.StockReturnProductDeleteActivity]
 }
 
-func NewStockReturnProductHttpService(repo repositories.IStockReturnProductRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *StockReturnProductHttpService {
+func NewStockReturnProductHttpService(repo repositories.IStockReturnProductRepository, repoCache trancache.ICacheRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *StockReturnProductHttpService {
 
 	insSvc := &StockReturnProductHttpService{
-		repo:          repo,
-		syncCacheRepo: syncCacheRepo,
+		repo:             repo,
+		repoCache:        repoCache,
+		syncCacheRepo:    syncCacheRepo,
+		cacheExpireDocNo: time.Hour * 24,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.StockReturnProductActivity, models.StockReturnProductDeleteActivity](repo)
@@ -50,16 +60,57 @@ func NewStockReturnProductHttpService(repo repositories.IStockReturnProductRepos
 	return insSvc
 }
 
-func (svc StockReturnProductHttpService) CreateStockReturnProduct(shopID string, authUsername string, doc models.StockReturnProduct) (string, error) {
+func (svc StockReturnProductHttpService) getDocNoPrefix(docDate time.Time) string {
+	docDateStr := docDate.Format("20060102")
+	return fmt.Sprintf("%s%s", MODULE_NAME, docDateStr)
+}
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", doc.Docno)
+func (svc StockReturnProductHttpService) generateNewDocNo(shopID, prefixDocNo string, docNumber int) (string, int, error) {
+	prevoiusDocNumber, err := svc.repoCache.Get(shopID, prefixDocNo)
+
+	if prevoiusDocNumber == 0 || err != nil {
+		lastDoc, err := svc.repo.FindLastDocNo(shopID, prefixDocNo)
+
+		if err != nil {
+			return "", 0, err
+		}
+
+		if len(lastDoc.DocNo) > 0 {
+			rawNumber := strings.Replace(lastDoc.DocNo, prefixDocNo, "", -1)
+			prevoiusDocNumber, err = strconv.Atoi(rawNumber)
+
+			if err != nil {
+				prevoiusDocNumber = 0
+			}
+		}
+
+	}
+
+	newDocNumber := prevoiusDocNumber + 1
+	newDocNo := fmt.Sprintf("%s%05d", prefixDocNo, docNumber)
+
+	return newDocNo, newDocNumber, nil
+}
+
+func (svc StockReturnProductHttpService) CreateStockReturnProduct(shopID string, authUsername string, doc models.StockReturnProduct) (string, string, error) {
+
+	timeNow := time.Now()
+	prefixDocNo := svc.getDocNoPrefix(timeNow)
+
+	newDocNo, newDocNumber, err := svc.generateNewDocNo(shopID, prefixDocNo, 1)
 
 	if err != nil {
-		return "", err
+		return "", "", err
+	}
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", doc.DocNo)
+
+	if err != nil {
+		return "", "", err
 	}
 
 	if len(findDoc.GuidFixed) > 0 {
-		return "", errors.New("Docno is exists")
+		return "", "", errors.New("DocNo is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -75,12 +126,14 @@ func (svc StockReturnProductHttpService) CreateStockReturnProduct(shopID string,
 	_, err = svc.repo.Create(docData)
 
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
+
+	go svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
 
 	svc.saveMasterSync(shopID)
 
-	return newGuidFixed, nil
+	return newGuidFixed, newDocNo, nil
 }
 
 func (svc StockReturnProductHttpService) UpdateStockReturnProduct(shopID string, guid string, authUsername string, doc models.StockReturnProduct) error {
@@ -213,7 +266,7 @@ func (svc StockReturnProductHttpService) SaveInBatch(shopID string, authUsername
 
 	itemCodeGuidList := []string{}
 	for _, doc := range payloadList {
-		itemCodeGuidList = append(itemCodeGuidList, doc.Docno)
+		itemCodeGuidList = append(itemCodeGuidList, doc.DocNo)
 	}
 
 	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "docno", itemCodeGuidList)
@@ -224,7 +277,7 @@ func (svc StockReturnProductHttpService) SaveInBatch(shopID string, authUsername
 
 	foundItemGuidList := []string{}
 	for _, doc := range findItemGuid {
-		foundItemGuidList = append(foundItemGuidList, doc.Docno)
+		foundItemGuidList = append(foundItemGuidList, doc.DocNo)
 	}
 
 	duplicateDataList, createDataList := importdata.PreparePayloadData[models.StockReturnProduct, models.StockReturnProductDoc](
@@ -258,7 +311,7 @@ func (svc StockReturnProductHttpService) SaveInBatch(shopID string, authUsername
 			return svc.repo.FindByDocIndentityGuid(shopID, "docno", guid)
 		},
 		func(doc models.StockReturnProductDoc) bool {
-			return doc.Docno != ""
+			return doc.DocNo != ""
 		},
 		func(shopID string, authUsername string, data models.StockReturnProduct, doc models.StockReturnProductDoc) error {
 
@@ -286,18 +339,18 @@ func (svc StockReturnProductHttpService) SaveInBatch(shopID string, authUsername
 	createDataKey := []string{}
 
 	for _, doc := range createDataList {
-		createDataKey = append(createDataKey, doc.Docno)
+		createDataKey = append(createDataKey, doc.DocNo)
 	}
 
 	payloadDuplicateDataKey := []string{}
 	for _, doc := range payloadDuplicateList {
-		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.Docno)
+		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.DocNo)
 	}
 
 	updateDataKey := []string{}
 	for _, doc := range updateSuccessDataList {
 
-		updateDataKey = append(updateDataKey, doc.Docno)
+		updateDataKey = append(updateDataKey, doc.DocNo)
 	}
 
 	updateFailDataKey := []string{}
@@ -316,7 +369,7 @@ func (svc StockReturnProductHttpService) SaveInBatch(shopID string, authUsername
 }
 
 func (svc StockReturnProductHttpService) getDocIDKey(doc models.StockReturnProduct) string {
-	return doc.Docno
+	return doc.DocNo
 }
 
 func (svc StockReturnProductHttpService) saveMasterSync(shopID string) {

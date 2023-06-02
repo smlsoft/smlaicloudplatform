@@ -6,6 +6,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/stockreceiveproduct/models"
 	"smlcloudplatform/pkg/transaction/stockreceiveproduct/repositories"
 	"smlcloudplatform/pkg/transaction/stockreceiveproduct/services"
@@ -26,8 +27,9 @@ func NewStockReceiveProductHttp(ms *microservice.Microservice, cfg microservice.
 
 	repo := repositories.NewStockReceiveProductRepository(pst)
 
+	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockReceiveProductHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewStockReceiveProductHttpService(repo, transRepo, masterSyncCacheRepo)
 
 	return StockReceiveProductHttp{
 		ms:  ms,
@@ -77,7 +79,7 @@ func (h StockReceiveProductHttp) CreateStockReceiveProduct(ctx microservice.ICon
 		return err
 	}
 
-	idx, err := h.svc.CreateStockReceiveProduct(shopID, authUsername, *docReq)
+	idx, docNo, err := h.svc.CreateStockReceiveProduct(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -87,6 +89,7 @@ func (h StockReceiveProductHttp) CreateStockReceiveProduct(ctx microservice.ICon
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
+		Data:    docNo,
 	})
 	return nil
 }

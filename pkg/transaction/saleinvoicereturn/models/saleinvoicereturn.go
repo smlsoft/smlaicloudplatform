@@ -39,7 +39,7 @@ func (SaleInvoiceReturnDoc) CollectionName() string {
 }
 
 type SaleInvoiceReturnItemGuid struct {
-	Docno string `json:"docno" bson:"docno"`
+	DocNo string `json:"docno" bson:"docno"`
 }
 
 func (SaleInvoiceReturnItemGuid) CollectionName() string {

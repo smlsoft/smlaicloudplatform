@@ -7,10 +7,13 @@ import (
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/services"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/transaction/saleinvoicereturn/models"
 	"smlcloudplatform/pkg/transaction/saleinvoicereturn/repositories"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/userplant/mongopagination"
@@ -18,7 +21,7 @@ import (
 )
 
 type ISaleInvoiceReturnHttpService interface {
-	CreateSaleInvoiceReturn(shopID string, authUsername string, doc models.SaleInvoiceReturn) (string, error)
+	CreateSaleInvoiceReturn(shopID string, authUsername string, doc models.SaleInvoiceReturn) (string, string, error)
 	UpdateSaleInvoiceReturn(shopID string, guid string, authUsername string, doc models.SaleInvoiceReturn) error
 	DeleteSaleInvoiceReturn(shopID string, guid string, authUsername string) error
 	DeleteSaleInvoiceReturnByGUIDs(shopID string, authUsername string, GUIDs []string) error
@@ -31,18 +34,25 @@ type ISaleInvoiceReturnHttpService interface {
 	GetModuleName() string
 }
 
-type SaleInvoiceReturnHttpService struct {
-	repo repositories.ISaleInvoiceReturnRepository
+const (
+	MODULE_NAME = "ST"
+)
 
-	syncCacheRepo mastersync.IMasterSyncCacheRepository
+type SaleInvoiceReturnHttpService struct {
+	repo             repositories.ISaleInvoiceReturnRepository
+	repoCache        trancache.ICacheRepository
+	cacheExpireDocNo time.Duration
+	syncCacheRepo    mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.SaleInvoiceReturnActivity, models.SaleInvoiceReturnDeleteActivity]
 }
 
-func NewSaleInvoiceReturnHttpService(repo repositories.ISaleInvoiceReturnRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *SaleInvoiceReturnHttpService {
+func NewSaleInvoiceReturnHttpService(repo repositories.ISaleInvoiceReturnRepository, repoCache trancache.ICacheRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *SaleInvoiceReturnHttpService {
 
 	insSvc := &SaleInvoiceReturnHttpService{
-		repo:          repo,
-		syncCacheRepo: syncCacheRepo,
+		repo:             repo,
+		repoCache:        repoCache,
+		syncCacheRepo:    syncCacheRepo,
+		cacheExpireDocNo: time.Hour * 24,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.SaleInvoiceReturnActivity, models.SaleInvoiceReturnDeleteActivity](repo)
@@ -50,16 +60,55 @@ func NewSaleInvoiceReturnHttpService(repo repositories.ISaleInvoiceReturnReposit
 	return insSvc
 }
 
-func (svc SaleInvoiceReturnHttpService) CreateSaleInvoiceReturn(shopID string, authUsername string, doc models.SaleInvoiceReturn) (string, error) {
+func (svc SaleInvoiceReturnHttpService) getDocNoPrefix(docDate time.Time) string {
+	docDateStr := docDate.Format("20060102")
+	return fmt.Sprintf("%s%s", MODULE_NAME, docDateStr)
+}
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", doc.Docno)
+func (svc SaleInvoiceReturnHttpService) generateNewDocNo(shopID, prefixDocNo string, docNumber int) (string, int, error) {
+	prevoiusDocNumber, err := svc.repoCache.Get(shopID, prefixDocNo)
+
+	if prevoiusDocNumber == 0 || err != nil {
+		lastDoc, err := svc.repo.FindLastDocNo(shopID, prefixDocNo)
+
+		if err != nil {
+			return "", 0, err
+		}
+
+		if len(lastDoc.DocNo) > 0 {
+			rawNumber := strings.Replace(lastDoc.DocNo, prefixDocNo, "", -1)
+			prevoiusDocNumber, err = strconv.Atoi(rawNumber)
+
+			if err != nil {
+				prevoiusDocNumber = 0
+			}
+		}
+
+	}
+
+	newDocNumber := prevoiusDocNumber + 1
+	newDocNo := fmt.Sprintf("%s%05d", prefixDocNo, docNumber)
+
+	return newDocNo, newDocNumber, nil
+}
+func (svc SaleInvoiceReturnHttpService) CreateSaleInvoiceReturn(shopID string, authUsername string, doc models.SaleInvoiceReturn) (string, string, error) {
+	timeNow := time.Now()
+	prefixDocNo := svc.getDocNoPrefix(timeNow)
+
+	newDocNo, newDocNumber, err := svc.generateNewDocNo(shopID, prefixDocNo, 1)
 
 	if err != nil {
-		return "", err
+		return "", "", err
+	}
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", doc.DocNo)
+
+	if err != nil {
+		return "", "", err
 	}
 
 	if len(findDoc.GuidFixed) > 0 {
-		return "", errors.New("Docno is exists")
+		return "", "", errors.New("DocNo is exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -69,18 +118,21 @@ func (svc SaleInvoiceReturnHttpService) CreateSaleInvoiceReturn(shopID string, a
 	docData.GuidFixed = newGuidFixed
 	docData.SaleInvoiceReturn = doc
 
+	docData.DocNo = newDocNo
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
 	_, err = svc.repo.Create(docData)
 
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
+
+	go svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
 
 	svc.saveMasterSync(shopID)
 
-	return newGuidFixed, nil
+	return newGuidFixed, newDocNo, nil
 }
 
 func (svc SaleInvoiceReturnHttpService) UpdateSaleInvoiceReturn(shopID string, guid string, authUsername string, doc models.SaleInvoiceReturn) error {
@@ -213,7 +265,7 @@ func (svc SaleInvoiceReturnHttpService) SaveInBatch(shopID string, authUsername 
 
 	itemCodeGuidList := []string{}
 	for _, doc := range payloadList {
-		itemCodeGuidList = append(itemCodeGuidList, doc.Docno)
+		itemCodeGuidList = append(itemCodeGuidList, doc.DocNo)
 	}
 
 	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "docno", itemCodeGuidList)
@@ -224,7 +276,7 @@ func (svc SaleInvoiceReturnHttpService) SaveInBatch(shopID string, authUsername 
 
 	foundItemGuidList := []string{}
 	for _, doc := range findItemGuid {
-		foundItemGuidList = append(foundItemGuidList, doc.Docno)
+		foundItemGuidList = append(foundItemGuidList, doc.DocNo)
 	}
 
 	duplicateDataList, createDataList := importdata.PreparePayloadData[models.SaleInvoiceReturn, models.SaleInvoiceReturnDoc](
@@ -258,7 +310,7 @@ func (svc SaleInvoiceReturnHttpService) SaveInBatch(shopID string, authUsername 
 			return svc.repo.FindByDocIndentityGuid(shopID, "docno", guid)
 		},
 		func(doc models.SaleInvoiceReturnDoc) bool {
-			return doc.Docno != ""
+			return doc.DocNo != ""
 		},
 		func(shopID string, authUsername string, data models.SaleInvoiceReturn, doc models.SaleInvoiceReturnDoc) error {
 
@@ -286,18 +338,18 @@ func (svc SaleInvoiceReturnHttpService) SaveInBatch(shopID string, authUsername 
 	createDataKey := []string{}
 
 	for _, doc := range createDataList {
-		createDataKey = append(createDataKey, doc.Docno)
+		createDataKey = append(createDataKey, doc.DocNo)
 	}
 
 	payloadDuplicateDataKey := []string{}
 	for _, doc := range payloadDuplicateList {
-		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.Docno)
+		payloadDuplicateDataKey = append(payloadDuplicateDataKey, doc.DocNo)
 	}
 
 	updateDataKey := []string{}
 	for _, doc := range updateSuccessDataList {
 
-		updateDataKey = append(updateDataKey, doc.Docno)
+		updateDataKey = append(updateDataKey, doc.DocNo)
 	}
 
 	updateFailDataKey := []string{}
@@ -316,7 +368,7 @@ func (svc SaleInvoiceReturnHttpService) SaveInBatch(shopID string, authUsername 
 }
 
 func (svc SaleInvoiceReturnHttpService) getDocIDKey(doc models.SaleInvoiceReturn) string {
-	return doc.Docno
+	return doc.DocNo
 }
 
 func (svc SaleInvoiceReturnHttpService) saveMasterSync(shopID string) {

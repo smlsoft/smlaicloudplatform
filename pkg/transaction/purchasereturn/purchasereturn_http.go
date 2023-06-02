@@ -9,6 +9,7 @@ import (
 	"smlcloudplatform/pkg/transaction/purchasereturn/models"
 	"smlcloudplatform/pkg/transaction/purchasereturn/repositories"
 	"smlcloudplatform/pkg/transaction/purchasereturn/services"
+	trancache "smlcloudplatform/pkg/transaction/repositories"
 	"smlcloudplatform/pkg/utils"
 )
 
@@ -26,8 +27,9 @@ func NewPurchaseReturnHttp(ms *microservice.Microservice, cfg microservice.IConf
 
 	repo := repositories.NewPurchaseReturnRepository(pst)
 
+	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewPurchaseReturnHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewPurchaseReturnHttpService(repo, transRepo, masterSyncCacheRepo)
 
 	return PurchaseReturnHttp{
 		ms:  ms,
@@ -77,7 +79,7 @@ func (h PurchaseReturnHttp) CreatePurchaseReturn(ctx microservice.IContext) erro
 		return err
 	}
 
-	idx, err := h.svc.CreatePurchaseReturn(shopID, authUsername, *docReq)
+	idx, docNo, err := h.svc.CreatePurchaseReturn(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -87,6 +89,7 @@ func (h PurchaseReturnHttp) CreatePurchaseReturn(ctx microservice.IContext) erro
 	ctx.Response(http.StatusCreated, common.ApiResponse{
 		Success: true,
 		ID:      idx,
+		Data:    docNo,
 	})
 	return nil
 }

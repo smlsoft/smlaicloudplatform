@@ -31,6 +31,8 @@ type IStockTransferRepository interface {
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockTransferActivity, mongopagination.PaginationData, error)
 	FindDeletedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockTransferDeleteActivity, error)
 	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockTransferActivity, error)
+
+	FindLastDocNo(shopID string, prefixDocNo string) (models.StockTransferDoc, error)
 }
 
 type StockTransferRepository struct {
@@ -58,6 +60,27 @@ func NewStockTransferRepository(pst microservice.IPersisterMongo) *StockTransfer
 func (repo StockTransferRepository) FindDocOne(shopID, docno string, transFlag int) (models.StockTransferDoc, error) {
 	doc := models.StockTransferDoc{}
 	err := repo.pst.FindOne(models.StockTransferDoc{}, bson.M{"shopid": shopID, "docno": docno, "transflag": transFlag}, &doc)
+
+	if err != nil {
+		return doc, err
+	}
+
+	return doc, nil
+}
+
+func (repo StockTransferRepository) FindLastDocNo(shopID string, prefixDocNo string) (models.StockTransferDoc, error) {
+	filters := bson.M{
+		"shopid": shopID,
+		"deletedat": bson.M{
+			"$exists": false,
+		},
+		"docno": bson.M{
+			"$regex": "^" + prefixDocNo + ".*$",
+		},
+	}
+
+	doc := models.StockTransferDoc{}
+	err := repo.pst.FindOne(models.StockTransferDoc{}, filters, &doc)
 
 	if err != nil {
 		return doc, err

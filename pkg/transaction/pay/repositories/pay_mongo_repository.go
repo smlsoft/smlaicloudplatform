@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type IPayRepository interface {
@@ -29,6 +30,8 @@ type IPayRepository interface {
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.PayActivity, mongopagination.PaginationData, error)
 	FindDeletedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.PayDeleteActivity, error)
 	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.PayActivity, error)
+
+	FindLastDocNo(shopID string, prefixDocNo string) (models.PayDoc, error)
 }
 
 type PayRepository struct {
@@ -51,4 +54,25 @@ func NewPayRepository(pst microservice.IPersisterMongo) *PayRepository {
 	insRepo.ActivityRepository = repositories.NewActivityRepository[models.PayActivity, models.PayDeleteActivity](pst)
 
 	return insRepo
+}
+
+func (repo PayRepository) FindLastDocNo(shopID string, prefixDocNo string) (models.PayDoc, error) {
+	filters := bson.M{
+		"shopid": shopID,
+		"deletedat": bson.M{
+			"$exists": false,
+		},
+		"docno": bson.M{
+			"$regex": "^" + prefixDocNo + ".*$",
+		},
+	}
+
+	doc := models.PayDoc{}
+	err := repo.pst.FindOne(models.PayDoc{}, filters, &doc)
+
+	if err != nil {
+		return doc, err
+	}
+
+	return doc, nil
 }
