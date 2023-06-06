@@ -1152,6 +1152,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -7529,6 +7531,80 @@ paths:
       - AccessToken: []
       tags:
       - DocumentImageGroup
+  /e-order/category:
+    get:
+      consumes:
+      - application/json
+      description: List Product Category
+      parameters:
+      - description: Shop ID
+        in: query
+        name: shopid
+        type: string
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - E-Order
+  /e-order/product:
+    get:
+      consumes:
+      - application/json
+      description: List Product
+      parameters:
+      - description: Shop ID
+        in: query
+        name: shopid
+        type: string
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - E-Order
   /employee/password:
     put:
       consumes:

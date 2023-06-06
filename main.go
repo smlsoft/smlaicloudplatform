@@ -27,6 +27,7 @@ import (
 	"smlcloudplatform/pkg/payment/qrpayment"
 	"smlcloudplatform/pkg/paymentmaster"
 	"smlcloudplatform/pkg/product/color"
+	"smlcloudplatform/pkg/product/eorder"
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
 	"smlcloudplatform/pkg/product/inventorysearchconsumer"
@@ -142,6 +143,7 @@ func main() {
 			"/healthz",
 			"/ws",
 			"/metrics",
+			"/e-order/*",
 		}
 
 		exceptShopPath := []string{
@@ -257,6 +259,9 @@ func main() {
 			//channel
 			salechannel.NewSaleChannelHttp(ms, cfg),
 			transportchannel.NewTransportChannelHttp(ms, cfg),
+
+			// e-order
+			eorder.NewEOrderHttp(ms, cfg),
 		}
 
 		startHttpServices(httpServices...)
