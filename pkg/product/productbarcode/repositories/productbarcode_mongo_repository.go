@@ -42,17 +42,19 @@ type IProductBarcodeRepository interface {
 }
 
 type ProductBarcodeRepository struct {
-	pst microservice.IPersisterMongo
+	pst   microservice.IPersisterMongo
+	cache microservice.ICacher
 	repositories.CrudRepository[models.ProductBarcodeDoc]
 	repositories.SearchRepository[models.ProductBarcodeInfo]
 	repositories.GuidRepository[models.ProductBarcodeItemGuid]
 	repositories.ActivityRepository[models.ProductBarcodeActivity, models.ProductBarcodeDeleteActivity]
 }
 
-func NewProductBarcodeRepository(pst microservice.IPersisterMongo) *ProductBarcodeRepository {
+func NewProductBarcodeRepository(pst microservice.IPersisterMongo, cache microservice.ICacher) *ProductBarcodeRepository {
 
 	insRepo := &ProductBarcodeRepository{
-		pst: pst,
+		pst:   pst,
+		cache: cache,
 	}
 
 	insRepo.CrudRepository = repositories.NewCrudRepository[models.ProductBarcodeDoc](pst)
@@ -121,4 +123,16 @@ func (repo *ProductBarcodeRepository) FindByRefBarcode(shopID string, barcode st
 
 func (repo *ProductBarcodeRepository) Transaction(fnc func() error) error {
 	return repo.pst.Transaction(fnc)
+}
+
+func (repo *ProductBarcodeRepository) FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
+
+	results, pagination, err := repo.SearchRepository.FindPage(shopID, searchInFields, pageable)
+
+	if err != nil {
+		return nil, mongopagination.PaginationData{}, err
+	}
+
+	return results, pagination, nil
+
 }

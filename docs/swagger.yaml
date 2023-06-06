@@ -853,12 +853,16 @@ definitions:
   models.Department:
     properties:
       code:
-        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+    required:
+    - code
+    - names
     type: object
   models.Detail:
     properties:
@@ -2848,7 +2852,7 @@ definitions:
         type: number
       groupcode:
         type: string
-      groupname:
+      groupnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
@@ -2940,7 +2944,7 @@ definitions:
         type: number
       groupcode:
         type: string
-      groupname:
+      groupnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
@@ -12864,6 +12868,30 @@ paths:
       description: get data by barcode
       parameters:
       - description: Barcode
+        in: path
+        name: barcode
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductBarcode
+  /product/barcode/ref/{barcode}:
+    get:
+      consumes:
+      - application/json
+      description: get by reference barcode
+      parameters:
+      - description: Reference Barcode
         in: path
         name: barcode
         required: true
