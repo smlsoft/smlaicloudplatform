@@ -18,6 +18,7 @@ type ProductBarcodeBase struct {
 
 	ItemUnitCode    string           `json:"itemunitcode" bson:"itemunitcode"`
 	ItemUnitNames   *[]models.NameX  `json:"itemunitnames" bson:"itemunitnames"`
+	ItemUnitSize    float64          `json:"itemunitsize" bson:"itemunitsize"`
 	Prices          *[]ProductPrice  `json:"prices" bson:"prices"`
 	ImageURI        string           `json:"imageuri" bson:"imageuri"`
 	Options         *[]ProductOption `json:"options" bson:"options"`
