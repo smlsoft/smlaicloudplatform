@@ -30745,6 +30745,9 @@
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "itemunitsize": {
+                    "type": "number"
+                },
                 "maxdiscount": {
                     "type": "string"
                 },
@@ -30880,6 +30883,9 @@
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "itemunitsize": {
+                    "type": "number"
                 },
                 "maxdiscount": {
                     "type": "string"

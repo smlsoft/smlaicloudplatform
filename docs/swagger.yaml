@@ -2858,6 +2858,8 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      itemunitsize:
+        type: number
       maxdiscount:
         type: string
       names:
@@ -2950,6 +2952,8 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
+      itemunitsize:
+        type: number
       maxdiscount:
         type: string
       names:

@@ -30751,6 +30751,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
+                "itemunitsize": {
+                    "type": "number"
+                },
                 "maxdiscount": {
                     "type": "string"
                 },
@@ -30886,6 +30889,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "itemunitsize": {
+                    "type": "number"
                 },
                 "maxdiscount": {
                     "type": "string"
