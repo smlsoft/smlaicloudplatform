@@ -426,6 +426,8 @@ definitions:
         type: string
       imageuri:
         type: string
+      isdisabled:
+        type: boolean
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -467,6 +469,8 @@ definitions:
         type: string
       imageuri:
         type: string
+      isdisabled:
+        type: boolean
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -850,12 +854,15 @@ definitions:
   models.Department:
     properties:
       code:
-        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
   models.Detail:
     properties:
@@ -1148,8 +1155,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -3012,6 +3017,8 @@ definitions:
         type: string
       imageuri:
         type: string
+      isdisabled:
+        type: boolean
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -12853,6 +12860,30 @@ paths:
       description: get data by barcode
       parameters:
       - description: Barcode
+        in: path
+        name: barcode
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductBarcode
+  /product/barcode/ref/{barcode}:
+    get:
+      consumes:
+      - application/json
+      description: get by reference barcode
+      parameters:
+      - description: Reference Barcode
         in: path
         name: barcode
         required: true

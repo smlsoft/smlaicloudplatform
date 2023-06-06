@@ -12255,6 +12255,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/product/barcode/ref/{barcode}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get by reference barcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Reference Barcode",
+                        "name": "barcode",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/product/barcode/xsort": {
             "put": {
                 "security": [
@@ -27021,6 +27060,9 @@ const docTemplate = `{
                 "imageuri": {
                     "type": "string"
                 },
+                "isdisabled": {
+                    "type": "boolean"
+                },
                 "names": {
                     "type": "array",
                     "minItems": 1,
@@ -27080,6 +27122,9 @@ const docTemplate = `{
                 },
                 "imageuri": {
                     "type": "string"
+                },
+                "isdisabled": {
+                    "type": "boolean"
                 },
                 "names": {
                     "type": "array",
@@ -27638,13 +27683,17 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
                 "code": {
-                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -28083,9 +28132,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -30819,6 +30865,9 @@ const docTemplate = `{
                 },
                 "imageuri": {
                     "type": "string"
+                },
+                "isdisabled": {
+                    "type": "boolean"
                 },
                 "names": {
                     "type": "array",
