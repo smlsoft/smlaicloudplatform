@@ -27,7 +27,7 @@ func NewProductBarcodeHttp(ms *microservice.Microservice, cfg microservice.IConf
 	cache := ms.Cacher(cfg.CacherConfig())
 	prod := ms.Producer(cfg.MQConfig())
 
-	repo := repositories.NewProductBarcodeRepository(pst)
+	repo := repositories.NewProductBarcodeRepository(pst, cache)
 	clickHouseRepo := repositories.NewProductBarcodeClickhouseRepository(pstClickHouse)
 	mqRepo := repositories.NewProductBarcodeMessageQueueRepository(prod)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
@@ -49,6 +49,7 @@ func (h ProductBarcodeHttp) RouteSetup() {
 	h.ms.GET("/product/barcode/list", h.SearchProductBarcodeLimit)
 	h.ms.POST("/product/barcode", h.CreateProductBarcode)
 	h.ms.GET("/product/barcode/:id", h.InfoProductBarcode)
+	h.ms.GET("/product/barcode/ref/:barcode", h.GetroductBarcodeByRef)
 	h.ms.GET("/product/barcode/pk/:barcode", h.InfoProductBarcodeByBarcode)
 	h.ms.GET("/product/barcode/by-code", h.InfoArray)
 	h.ms.GET("/product/barcode/master", h.InfoArrayMaster)
@@ -254,6 +255,35 @@ func (h ProductBarcodeHttp) InfoProductBarcode(ctx microservice.IContext) error 
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		Data:    doc,
+	})
+	return nil
+}
+
+// Get ProductBarcode By Reference Barcode godoc
+// @Description get by reference barcode
+// @Tags		ProductBarcode
+// @Param		barcode  path      string  true  "Reference Barcode"
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/barcode/ref/{barcode} [get]
+func (h ProductBarcodeHttp) GetroductBarcodeByRef(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	refBarcode := ctx.Param("barcode")
+
+	docs, err := h.svc.GetProductBarcodeByBarcodeRef(shopID, refBarcode)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docs,
 	})
 	return nil
 }

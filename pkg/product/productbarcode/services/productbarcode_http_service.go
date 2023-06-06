@@ -28,6 +28,7 @@ type IProductBarcodeHttpService interface {
 	InfoProductBarcodeByBarcode(shopID string, barcode string) (models.ProductBarcodeInfo, error)
 	InfoWTFArray(shopID string, codes []string) ([]interface{}, error)
 	InfoWTFArrayMaster(codes []string) ([]interface{}, error)
+	GetProductBarcodeByBarcodeRef(shopID string, barcodeRef string) ([]models.ProductBarcodeInfo, error)
 	SearchProductBarcode(shopID string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 	SearchProductBarcode2(shopID string, pageable micromodels.Pageable) ([]models.ProductBarcodeSearch, common.Pagination, error)
 
@@ -352,6 +353,21 @@ func (svc ProductBarcodeHttpService) InfoWTFArrayMaster(codes []string) ([]inter
 	}
 
 	return docList, nil
+}
+
+func (svc ProductBarcodeHttpService) GetProductBarcodeByBarcodeRef(shopID string, barcodeRef string) ([]models.ProductBarcodeInfo, error) {
+	findDocs, err := svc.repo.FindByRefBarcode(shopID, barcodeRef)
+	if err != nil {
+		return nil, err
+	}
+
+	resultDocs := []models.ProductBarcodeInfo{}
+	for _, findDoc := range findDocs {
+		resultDocs = append(resultDocs, findDoc.ProductBarcodeInfo)
+	}
+
+	return resultDocs, nil
+
 }
 
 func (svc ProductBarcodeHttpService) SearchProductBarcode(shopID string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
