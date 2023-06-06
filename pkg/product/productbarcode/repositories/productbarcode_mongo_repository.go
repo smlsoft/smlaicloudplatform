@@ -109,6 +109,7 @@ func (repo *ProductBarcodeRepository) FindByRefBarcode(shopID string, barcode st
 	filters := bson.M{
 		"shopid":              shopID,
 		"refbarcodes.barcode": barcode,
+		"itemtype":            bson.M{"$ne": 2},
 		"deletedat":           bson.M{"$exists": false},
 	}
 
