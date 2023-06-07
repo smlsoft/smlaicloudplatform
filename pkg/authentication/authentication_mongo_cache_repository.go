@@ -35,9 +35,19 @@ func NewAuthenticationMongoCacheRepository(pst microservice.IPersisterMongo, cac
 	}
 }
 
+func (r AuthenticationMongoCacheRepository) getCacheKey(username string) string {
+	return fmt.Sprintf("user:%s", username)
+}
+
+func (r AuthenticationMongoCacheRepository) clearnCache(username string) {
+	cacheKey := r.getCacheKey(username)
+	r.memorycache.Delete(cacheKey)
+	r.cache.Del(cacheKey)
+}
+
 func (r AuthenticationMongoCacheRepository) FindUser(username string) (*models.UserDoc, error) {
 
-	cacheKey := fmt.Sprintf("user:%s", username)
+	cacheKey := r.getCacheKey(username)
 
 	cacheItem := r.memorycache.Get(cacheKey)
 
@@ -98,6 +108,9 @@ func (r AuthenticationMongoCacheRepository) CreateUser(user models.UserDoc) (pri
 	if err != nil {
 		return primitive.NilObjectID, err
 	}
+
+	r.clearnCache(user.Username)
+
 	return idx, nil
 }
 
@@ -112,5 +125,8 @@ func (r AuthenticationMongoCacheRepository) UpdateUser(username string, user mod
 	if err != nil {
 		return err
 	}
+
+	r.clearnCache(user.Username)
+
 	return nil
 }
