@@ -16,7 +16,7 @@ func (ms *Microservice) startAsyncTaskConsumer(path string, cacheConfig ICacherC
 	ms.Logger.Debugf("Create Topic \"%s\".", topic)
 	err := mq.CreateTopicR(topic, 5, 1, time.Hour*24*30) // retain message for 30 days
 	if err != nil {
-		ms.Logger.WithError(err).Error("Failed on Create Topic.")
+		ms.Logger.Error("Failed on Create Topic.", err)
 		return err
 	}
 

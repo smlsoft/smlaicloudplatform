@@ -39,7 +39,8 @@ import (
 	"smlcloudplatform/pkg/productsection/sectionbranch"
 	"smlcloudplatform/pkg/productsection/sectionbusinesstype"
 	"smlcloudplatform/pkg/productsection/sectiondepartment"
-	"smlcloudplatform/pkg/report/reportquery"
+
+	// "smlcloudplatform/pkg/report/reportquery"
 	"smlcloudplatform/pkg/restaurant/device"
 	"smlcloudplatform/pkg/restaurant/kitchen"
 	"smlcloudplatform/pkg/restaurant/printer"
@@ -235,7 +236,7 @@ func main() {
 		paid.NewPaidHttp(ms, cfg),
 		pay.NewPayHttp(ms, cfg),
 
-		reportquery.NewReportQueryHttp(ms, cfg),
+		//reportquery.NewReportQueryHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)

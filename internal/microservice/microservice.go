@@ -15,10 +15,8 @@ import (
 
 	"smlcloudplatform/internal/microservice/models"
 	msValidator "smlcloudplatform/internal/validator"
+	"smlcloudplatform/pkg/logger"
 
-	_ "smlcloudplatform/logger"
-
-	"github.com/apex/log"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo-contrib/jaegertracing"
@@ -67,13 +65,18 @@ type Microservice struct {
 	pathPrefix                string
 	config                    IConfig
 	jaegerCloser              io.Closer
-	Logger                    *log.Entry
+	Logger                    logger.ILogger
 	Mode                      string
 }
 
 type ServiceHandleFunc func(context IContext) error
 
 func NewMicroservice(config IConfig) (*Microservice, error) {
+
+	loggerConfig := NewLoggerConfig()
+	logger := logger.NewAppLogger(loggerConfig)
+	logger.InitLogger()
+
 	e := echo.New()
 	e.HideBanner = true
 	e.HidePort = true
@@ -84,10 +87,6 @@ func NewMicroservice(config IConfig) (*Microservice, error) {
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 	}))
-
-	logctx := log.WithFields(log.Fields{
-		"name": config.ApplicationName(),
-	})
 
 	websocketPool := WebsocketPool{
 		Handler: websocket.Upgrader{
@@ -110,7 +109,7 @@ func NewMicroservice(config IConfig) (*Microservice, error) {
 		prods:                map[string]IProducer{},
 		pathPrefix:           config.PathPrefix(),
 		config:               config,
-		Logger:               logctx,
+		Logger:               logger,
 		Mode:                 os.Getenv("MODE"),
 		websocketPool:        &websocketPool,
 	}
@@ -134,7 +133,7 @@ func (ms *Microservice) CheckReadyToStart() error {
 		pst := NewPersisterMongo(ms.config.MongoPersisterConfig())
 		err := pst.TestConnect()
 		if err != nil {
-			ms.Logger.WithError(err).Errorf("[MONGODB]Connection Failed(%v).", mongodbUri)
+			ms.Logger.Errorf("[MONGODB]Connection Failed(%v)., with error %v", mongodbUri, err)
 			return err
 		}
 		ms.mongoPersisters[mongodbUri] = pst
@@ -148,7 +147,7 @@ func (ms *Microservice) CheckReadyToStart() error {
 		producer := ms.Producer(ms.config.MQConfig())
 		err := producer.TestConnect()
 		if err != nil {
-			ms.Logger.WithError(err).Error("[KAFKA]Connection Failed.")
+			ms.Logger.Error("[KAFKA]Connection Failed.", err)
 			return err
 		}
 
@@ -169,7 +168,7 @@ func (ms *Microservice) CheckReadyToStart() error {
 		}
 		err := cacher.Healthcheck()
 		if err != nil {
-			ms.Logger.WithError(err).Error("[REDIS_CACHER]Connection Failed.")
+			ms.Logger.Error("[REDIS_CACHER]Connection Failed.", err)
 			return err
 		}
 		ms.Logger.Debug("[REDIS_CACHER]Connection Success.")
@@ -183,7 +182,7 @@ func (ms *Microservice) CheckReadyToStart() error {
 		postgresqlPst := ms.Persister(persisterConfig)
 		err := postgresqlPst.TestConnect()
 		if err != nil {
-			ms.Logger.WithError(err).Error("[PostgreSQL]Connection Failed.")
+			ms.Logger.Error("[PostgreSQL]Connection Failed.", err)
 			return err
 		}
 	}

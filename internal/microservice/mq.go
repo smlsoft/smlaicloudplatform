@@ -3,9 +3,9 @@ package microservice
 import (
 	"context"
 	"fmt"
+	"smlcloudplatform/pkg/logger"
 	"time"
 
-	"github.com/apex/log"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
@@ -22,12 +22,12 @@ type IMQConfig interface {
 
 // MQ is message queue
 type MQ struct {
-	logger  *log.Entry
+	logger  logger.ILogger
 	servers string
 }
 
 // NewMQ return new MQ
-func NewMQ(mqConfig IMQConfig, logger *log.Entry) *MQ {
+func NewMQ(mqConfig IMQConfig, logger logger.ILogger) *MQ {
 
 	return &MQ{
 		servers: mqConfig.URI(),
@@ -38,7 +38,7 @@ func NewMQ(mqConfig IMQConfig, logger *log.Entry) *MQ {
 func (q *MQ) getAdminClient() (*kafka.AdminClient, error) {
 	admin, err := kafka.NewAdminClient(&kafka.ConfigMap{"bootstrap.servers": q.servers})
 	if err != nil {
-		q.logger.WithError(err).Error("Failed to Connect to Kafka")
+		q.logger.Error("Failed to Connect to Kafka", err)
 		return nil, err
 	}
 	return admin, nil
