@@ -134,7 +134,7 @@ func (svc StockTransferHttpService) CreateStockTransfer(shopID string, authUsern
 
 	svc.saveMasterSync(shopID)
 
-	return newGuidFixed, doc.DocNo, nil
+	return newGuidFixed, newDocNo, nil
 }
 
 func (svc StockTransferHttpService) UpdateStockTransfer(shopID string, guid string, authUsername string, doc models.StockTransfer) error {
