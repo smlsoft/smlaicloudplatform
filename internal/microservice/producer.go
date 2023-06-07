@@ -2,8 +2,8 @@ package microservice
 
 import (
 	"encoding/json"
+	"smlcloudplatform/pkg/logger"
 
-	"github.com/apex/log"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
@@ -18,13 +18,13 @@ type IProducer interface {
 
 // Producer implement IProducer, is the service to send message to Kafka
 type Producer struct {
-	logger  *log.Entry
+	logger  logger.ILogger
 	servers string
 	prod    *kafka.Producer
 }
 
 // NewProducer return new instance of Producer
-func NewProducer(servers string, logger *log.Entry) *Producer {
+func NewProducer(servers string, logger logger.ILogger) *Producer {
 	return &Producer{
 		logger:  logger,
 		servers: servers,

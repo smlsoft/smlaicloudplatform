@@ -67,7 +67,7 @@ func (ms *Microservice) startHTTP(exitChannel chan bool) error {
 
 	err := ms.echo.Start("0.0.0.0:" + port)
 	if err == nil {
-		ms.Logger.WithError(err).Error("Failed After Start")
+		ms.Logger.Error("Failed After Start", err)
 	}
 
 	return err
