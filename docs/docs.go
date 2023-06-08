@@ -4043,7 +4043,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "List Product Barcode",
+                "description": "List Product By Barcodes",
                 "consumes": [
                     "application/json"
                 ],
@@ -27858,17 +27858,13 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
                 "code": {
+                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -28307,9 +28303,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },

@@ -861,15 +861,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.Detail:
     properties:
@@ -1162,8 +1159,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -7651,7 +7646,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: List Product Barcode
+      description: List Product By Barcodes
       parameters:
       - description: Shop ID
         in: query
