@@ -119,6 +119,10 @@ func (svc SaleInvoiceReturnHttpService) CreateSaleInvoiceReturn(shopID string, a
 	docData.SaleInvoiceReturn = doc
 
 	docData.DocNo = newDocNo
+	if doc.TaxDocNo == "" {
+		docData.TaxDocNo = newDocNo
+	}
+
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
