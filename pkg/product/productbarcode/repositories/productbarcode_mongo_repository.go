@@ -39,6 +39,8 @@ type IProductBarcodeRepository interface {
 	UpdateParentGuidByGuids(shopID string, parentGUID string, guids []string) error
 	Transaction(fnc func() error) error
 	FindByRefBarcode(shopID string, barcode string) ([]models.ProductBarcodeDoc, error)
+
+	FindByBarcodes(shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error)
 }
 
 type ProductBarcodeRepository struct {
@@ -135,5 +137,22 @@ func (repo *ProductBarcodeRepository) FindPage(shopID string, searchInFields []s
 	}
 
 	return results, pagination, nil
+}
 
+func (repo *ProductBarcodeRepository) FindByBarcodes(shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error) {
+
+	filters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+		"barcode":   bson.M{"$in": barcodes},
+	}
+
+	var results []models.ProductBarcodeInfo
+	err := repo.pst.Find(models.ProductBarcodeInfo{}, filters, &results)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }

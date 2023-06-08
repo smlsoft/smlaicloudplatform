@@ -1,6 +1,7 @@
 package eorder
 
 import (
+	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
@@ -51,6 +52,7 @@ func (h EOrderHttp) RouteSetup() {
 
 	h.ms.GET("/e-order/category", h.SearchProductCategoryPage)
 	h.ms.GET("/e-order/product", h.SearchProductBarcodePage)
+	h.ms.GET("/e-order/product-barcode", h.GetProductBarcodeByBarcodes)
 
 }
 
@@ -122,6 +124,45 @@ func (h EOrderHttp) SearchProductBarcodePage(ctx microservice.IContext) error {
 		Success:    true,
 		Data:       docList,
 		Pagination: pagination,
+	})
+	return nil
+}
+
+// List Product Barcode
+// @Description List Product Barcode
+// @Tags		E-Order
+// @Param		shopid		query	string		false  "Shop ID"
+// @Param		barcodes		query	string		false  "barcode json array"
+// @Accept 		json
+// @Success		200	{array}		common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /e-order/product-barcode [get]
+func (h EOrderHttp) GetProductBarcodeByBarcodes(ctx microservice.IContext) error {
+	shopID := ctx.QueryParam("shopid")
+
+	if len(shopID) == 0 {
+		ctx.ResponseError(http.StatusBadRequest, "shopid is empty")
+		return nil
+	}
+
+	rawBarcodes := ctx.QueryParam("barcodes")
+
+	barcodes := []string{}
+	if len(rawBarcodes) > 0 {
+		json.Unmarshal([]byte(rawBarcodes), &barcodes)
+	}
+
+	docList, err := h.svcProduct.GetProductBarcodeByBarcodes(shopID, barcodes)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    docList,
 	})
 	return nil
 }
