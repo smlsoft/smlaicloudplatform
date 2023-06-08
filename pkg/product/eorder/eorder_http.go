@@ -128,8 +128,8 @@ func (h EOrderHttp) SearchProductBarcodePage(ctx microservice.IContext) error {
 	return nil
 }
 
-// List Product Barcode
-// @Description List Product Barcode
+// List Product By Barcodes
+// @Description List Product By Barcodes
 // @Tags		E-Order
 // @Param		shopid		query	string		false  "Shop ID"
 // @Param		barcodes		query	string		false  "barcode json array"
