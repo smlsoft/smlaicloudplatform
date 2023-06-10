@@ -58,7 +58,15 @@ func NewAuthenticationService(
 	}
 }
 
+func (svc AuthenticationService) normalizeUsername(username string) string {
+	username = strings.TrimSpace(username)
+	username = strings.ToLower(username)
+	return username
+}
+
 func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, authContext AuthenticationContext) (string, error) {
+
+	userLoginReq.Username = svc.normalizeUsername(userLoginReq.Username)
 
 	userLoginReq.Username = strings.TrimSpace(userLoginReq.Username)
 	userLoginReq.ShopID = strings.TrimSpace(userLoginReq.ShopID)
@@ -128,6 +136,8 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, au
 }
 
 func (svc AuthenticationService) Register(userRequest models.UserRequest) (string, error) {
+
+	userRequest.Username = svc.normalizeUsername(userRequest.Username)
 
 	userFind, err := svc.authRepo.FindUser(userRequest.Username)
 	if err != nil && err.Error() != "mongo: no documents in result" {

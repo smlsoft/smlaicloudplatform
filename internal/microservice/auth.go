@@ -67,7 +67,6 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 
-			// stime := time.Now()
 			currentPath := c.Path()
 
 			for _, publicPath := range publicPath {
@@ -166,8 +165,6 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 			}()
 
 			c.Set("UserInfo", userInfo)
-
-			// fmt.Println("Middleware Auth Time: ", time.Since(stime))
 
 			return next(c)
 		}
@@ -401,6 +398,9 @@ func (authService *AuthService) GenerateTokenWithRedisExpire(tokenType TokenType
 
 func (authService *AuthService) SelectShop(tokenType TokenType, tokenStr string, shopID string, role uint8) error {
 	cacheKey := authService.GetPrefixCacheKey(tokenType) + tokenStr
+
+	authService.cacheMemory.Delete(cacheKey)
+
 	err := authService.cacher.HMSet(cacheKey, map[string]interface{}{
 		"shopid": shopID,
 		"role":   role,

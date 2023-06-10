@@ -36,6 +36,7 @@ type IProductBarcodeHttpService interface {
 	SaveInBatch(shopID string, authUsername string, dataList []models.ProductBarcode) (common.BulkImport, error)
 
 	XSortsSave(shopID string, authUsername string, xsorts []common.XSortModifyReqesut) error
+	GetProductBarcodeByBarcodes(shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error)
 
 	GetModuleName() string
 }
@@ -364,6 +365,29 @@ func (svc ProductBarcodeHttpService) GetProductBarcodeByBarcodeRef(shopID string
 	resultDocs := []models.ProductBarcodeInfo{}
 	for _, findDoc := range findDocs {
 		resultDocs = append(resultDocs, findDoc.ProductBarcodeInfo)
+	}
+
+	return resultDocs, nil
+}
+
+func (svc ProductBarcodeHttpService) GetProductBarcodeByBarcodes(shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error) {
+	results, err := svc.repo.FindByBarcodes(shopID, barcodes)
+	if err != nil {
+		return nil, err
+	}
+
+	tempResults := map[string]models.ProductBarcodeInfo{}
+	for _, result := range results {
+		tempResults[result.Barcode] = result
+	}
+
+	resultDocs := []models.ProductBarcodeInfo{}
+	for _, barcode := range barcodes {
+
+		temp, ok := tempResults[barcode]
+		if ok {
+			resultDocs = append(resultDocs, temp)
+		}
 	}
 
 	return resultDocs, nil

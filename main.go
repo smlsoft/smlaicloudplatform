@@ -130,8 +130,6 @@ func main() {
 		cacher := ms.Cacher(cfg.CacherConfig())
 		authService := microservice.NewAuthService(cacher, 24*3)
 		publicPath := []string{
-			"/e-order/product",
-			"/e-order/category",
 			"/swagger",
 			"/login",
 			"/tokenlogin",
@@ -145,6 +143,9 @@ func main() {
 			"/healthz",
 			"/ws",
 			"/metrics",
+			"/e-order/product",
+			"/e-order/category",
+			"/e-order/product-barcode",
 		}
 
 		exceptShopPath := []string{

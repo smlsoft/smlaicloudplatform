@@ -13,7 +13,7 @@ type UserDetail struct {
 }
 
 type UsernameCode struct {
-	Username string `json:"username,omitempty" bson:"username" validate:"required,gte=5,max=233"`
+	Username string `json:"username,omitempty" bson:"username" validate:"required,alphanum,gte=5,max=233"`
 }
 
 type UserPassword struct {
