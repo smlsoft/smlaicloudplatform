@@ -7,6 +7,7 @@ import (
 	"smlcloudplatform/pkg/channel/transportchannel/models"
 	"smlcloudplatform/pkg/channel/transportchannel/repositories"
 	"smlcloudplatform/pkg/channel/transportchannel/services"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
@@ -16,11 +17,11 @@ type ITransportChannelHttp interface{}
 
 type TransportChannelHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.ITransportChannelHttpService
 }
 
-func NewTransportChannelHttp(ms *microservice.Microservice, cfg microservice.IConfig) TransportChannelHttp {
+func NewTransportChannelHttp(ms *microservice.Microservice, cfg config.IConfig) TransportChannelHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

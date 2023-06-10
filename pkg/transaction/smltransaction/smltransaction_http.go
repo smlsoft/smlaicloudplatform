@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/transaction/smltransaction/models"
 	"smlcloudplatform/pkg/transaction/smltransaction/repositories"
@@ -14,11 +15,11 @@ type ISMLTransactionHttp interface{}
 
 type SMLTransactionHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.ISMLTransactionHttpService
 }
 
-func NewSMLTransactionHttp(ms *microservice.Microservice, cfg microservice.IConfig) SMLTransactionHttp {
+func NewSMLTransactionHttp(ms *microservice.Microservice, cfg config.IConfig) SMLTransactionHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
 

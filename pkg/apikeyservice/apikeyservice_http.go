@@ -6,6 +6,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/apikeyservice/models"
 	"smlcloudplatform/pkg/apikeyservice/services"
+	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
 	"time"
 )
@@ -14,12 +15,12 @@ type IApiKeyServiceHttp interface{}
 
 type ApiKeyServiceHttp struct {
 	ms          *microservice.Microservice
-	cfg         microservice.IConfig
+	cfg         config.IConfig
 	svc         services.IApiKeyServiceHttpService
 	authService microservice.IAuthService
 }
 
-func NewApiKeyServiceHttp(ms *microservice.Microservice, cfg microservice.IConfig) ApiKeyServiceHttp {
+func NewApiKeyServiceHttp(ms *microservice.Microservice, cfg config.IConfig) ApiKeyServiceHttp {
 
 	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
 	svc := services.NewApiKeyServiceHttpService(authService)

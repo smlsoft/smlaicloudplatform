@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/transaction/pay/models"
@@ -17,11 +18,11 @@ type IPayHttp interface{}
 
 type PayHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IPayHttpService
 }
 
-func NewPayHttp(ms *microservice.Microservice, cfg microservice.IConfig) PayHttp {
+func NewPayHttp(ms *microservice.Microservice, cfg config.IConfig) PayHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

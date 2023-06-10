@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/shop/models"
 	"smlcloudplatform/pkg/utils"
@@ -16,7 +17,7 @@ type ShopMemberHttp struct {
 	svc IShopUserService
 }
 
-func NewShopMemberHttp(ms *microservice.Microservice, cfg microservice.IConfig) *ShopMemberHttp {
+func NewShopMemberHttp(ms *microservice.Microservice, cfg config.IConfig) *ShopMemberHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	repo := NewShopUserRepository(pst)

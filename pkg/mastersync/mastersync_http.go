@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/member"
 	"smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
@@ -52,14 +53,14 @@ import (
 
 type MasterSyncHttp struct {
 	ms                    *microservice.Microservice
-	cfg                   microservice.IConfig
+	cfg                   config.IConfig
 	activityModuleManager *ActivityModuleManager
 
 	svcMasterSync services.IMasterSyncService
 	// svcProductBarcode productbarcodeService.ProductBarcodeHttpService
 }
 
-func NewMasterSyncHttp(ms *microservice.Microservice, cfg microservice.IConfig) MasterSyncHttp {
+func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) MasterSyncHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	pstPg := ms.Persister(cfg.PersisterConfig())
 	// prod := ms.Producer(cfg.MQConfig())

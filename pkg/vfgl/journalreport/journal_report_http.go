@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/vfgl/journalreport/models"
 	"strings"
@@ -12,17 +13,17 @@ import (
 
 type JournalReportHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc IJournalReportService
 }
 
-func NewJournalReportHttp(ms *microservice.Microservice, cfg microservice.IConfig) JournalReportHttp {
+func NewJournalReportHttp(ms *microservice.Microservice, cfg config.IConfig) JournalReportHttp {
 
-	pstConfig := microservice.NewPersisterConfig()
+	pstConfig := config.NewPersisterConfig()
 	pst := microservice.NewPersister(pstConfig)
 	repoPg := NewJournalReportPgRepository(pst)
 
-	pstMongo := microservice.NewPersisterMongo(microservice.NewMongoPersisterConfig())
+	pstMongo := microservice.NewPersisterMongo(config.NewMongoPersisterConfig())
 	repoMongo := NewJournalMongoRepository(pstMongo)
 
 	jouralReportService := NewJournalReportService(repoPg, repoMongo)

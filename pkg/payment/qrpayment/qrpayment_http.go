@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/payment/qrpayment/models"
@@ -16,11 +17,11 @@ type IQrPaymentHttp interface{}
 
 type QrPaymentHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IQrPaymentHttpService
 }
 
-func NewQrPaymentHttp(ms *microservice.Microservice, cfg microservice.IConfig) QrPaymentHttp {
+func NewQrPaymentHttp(ms *microservice.Microservice, cfg config.IConfig) QrPaymentHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

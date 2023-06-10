@@ -1,6 +1,18 @@
-package microservice
+package config
 
 import "os"
+
+// IPersisterConfig is interface for persister
+type IPersisterConfig interface {
+	Host() string
+	Port() string
+	DB() string
+	Username() string
+	Password() string
+	SSLMode() string
+	TimeZone() string
+	LoggerLevel() string
+}
 
 type PersisterConfig struct{}
 

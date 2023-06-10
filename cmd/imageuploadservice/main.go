@@ -2,12 +2,13 @@ package main
 
 import (
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/images"
 )
 
 func main() {
 
-	cfg := microservice.NewConfig()
+	cfg := config.NewConfig()
 	ms, err := microservice.NewMicroservice(cfg)
 	if err != nil {
 		panic(err)
@@ -22,7 +23,7 @@ func main() {
 	authService := microservice.NewAuthService(cacher, 24*3)
 	ms.HttpMiddleware(authService.MWFuncWithRedis(cacher, publicPath...))
 
-	filePersister := microservice.NewPersisterFile(microservice.NewStorageFileConfig())
+	filePersister := microservice.NewPersisterFile(config.NewStorageFileConfig())
 	imagePersister := microservice.NewPersisterImage(filePersister)
 
 	ms.Logger.Debugf("Store File Path %v", filePersister.StoreFilePath)

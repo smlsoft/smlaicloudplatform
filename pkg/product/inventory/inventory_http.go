@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/inventory/models"
@@ -32,12 +33,12 @@ type IInventoryHttp interface {
 
 type InventoryHttp struct {
 	ms                       *microservice.Microservice
-	cfg                      microservice.IConfig
+	cfg                      config.IConfig
 	invService               services.IInventoryService
 	inventoryCategoryService services.IInventoryCategoryService
 }
 
-func NewInventoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) *InventoryHttp {
+func NewInventoryHttp(ms *microservice.Microservice, cfg config.IConfig) *InventoryHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())

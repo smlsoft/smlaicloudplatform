@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	trancache "smlcloudplatform/pkg/transaction/repositories"
@@ -17,11 +18,11 @@ type ISaleInvoiceHttp interface{}
 
 type SaleInvoiceHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.ISaleInvoiceHttpService
 }
 
-func NewSaleInvoiceHttp(ms *microservice.Microservice, cfg microservice.IConfig) SaleInvoiceHttp {
+func NewSaleInvoiceHttp(ms *microservice.Microservice, cfg config.IConfig) SaleInvoiceHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

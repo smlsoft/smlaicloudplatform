@@ -6,6 +6,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"smlcloudplatform/internal/microservice/models"
+	"smlcloudplatform/pkg/config"
 
 	"github.com/labstack/echo/v4"
 )
@@ -94,22 +95,22 @@ func (ctx *HTTPContext) ResponseError(responseCode int, errorMessage string) {
 }
 
 // Persister return perister
-func (ctx *HTTPContext) Persister(cfg IPersisterConfig) IPersister {
+func (ctx *HTTPContext) Persister(cfg config.IPersisterConfig) IPersister {
 	return ctx.ms.Persister(cfg)
 }
 
 // Cacher return cacher
-func (ctx *HTTPContext) Cacher(cacheConfig ICacherConfig) ICacher {
+func (ctx *HTTPContext) Cacher(cacheConfig config.ICacherConfig) ICacher {
 	return ctx.ms.Cacher(cacheConfig)
 }
 
 // Producer return producer
-func (ctx *HTTPContext) Producer(mqConfig IMQConfig) IProducer {
+func (ctx *HTTPContext) Producer(mqConfig config.IMQConfig) IProducer {
 	return ctx.ms.Producer(mqConfig)
 }
 
 // MQ return MQ
-func (ctx *HTTPContext) MQ(mqConfig IMQConfig) IMQ {
+func (ctx *HTTPContext) MQ(mqConfig config.IMQConfig) IMQ {
 	return NewMQ(mqConfig, ctx.ms.Logger)
 }
 

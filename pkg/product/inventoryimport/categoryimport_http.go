@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/product/inventoryimport/models"
 	"smlcloudplatform/pkg/utils"
 
@@ -12,7 +13,7 @@ import (
 
 type CategoryImportHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc ICategoryImportService
 }
 
@@ -20,7 +21,7 @@ type ICategoryImportHttp interface {
 	RouteSetup()
 }
 
-func NewCategoryImportHttp(ms *microservice.Microservice, cfg microservice.IConfig) ICategoryImportHttp {
+func NewCategoryImportHttp(ms *microservice.Microservice, cfg config.IConfig) ICategoryImportHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 

@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"net/http"
 	"smlcloudplatform/internal/microservice/models"
+	"smlcloudplatform/pkg/config"
 	"time"
 )
 
 // startAsyncTaskConsumer read async task message from message queue and execute with handler
-func (ms *Microservice) startAsyncTaskConsumer(path string, cacheConfig ICacherConfig, mqConfig IMQConfig, h ServiceHandleFunc) error {
+func (ms *Microservice) startAsyncTaskConsumer(path string, cacheConfig config.ICacherConfig, mqConfig config.IMQConfig, h ServiceHandleFunc) error {
 
 	topic := escapeName(path)
 	mq := NewMQ(mqConfig, ms.Logger)
@@ -45,7 +46,7 @@ func (ms *Microservice) startAsyncTaskConsumer(path string, cacheConfig ICacherC
 }
 
 // handleAsyncTaskRequest accept async task request and send it to message queue
-func (ms *Microservice) handleAsyncTaskRequest(path string, cacheConfig ICacherConfig, mqConfig IMQConfig, ctx IContext) error {
+func (ms *Microservice) handleAsyncTaskRequest(path string, cacheConfig config.ICacherConfig, mqConfig config.IMQConfig, ctx IContext) error {
 	topic := escapeName(path)
 
 	// 1. Read Input
@@ -85,7 +86,7 @@ func (ms *Microservice) handleAsyncTaskRequest(path string, cacheConfig ICacherC
 	return nil
 }
 
-func (ms *Microservice) handleAsyncTaskResponse(path string, cacheConfig ICacherConfig, ctx IContext) error {
+func (ms *Microservice) handleAsyncTaskResponse(path string, cacheConfig config.ICacherConfig, ctx IContext) error {
 	// 1. ReadInput (REF from query string)
 	ref := ctx.QueryParam("ref")
 
@@ -107,7 +108,7 @@ func (ms *Microservice) handleAsyncTaskResponse(path string, cacheConfig ICacher
 }
 
 // AsyncPOST register async task service for HTTP POST
-func (ms *Microservice) AsyncPOST(path string, cacheConfig ICacherConfig, mqConfig IMQConfig, h ServiceHandleFunc) error {
+func (ms *Microservice) AsyncPOST(path string, cacheConfig config.ICacherConfig, mqConfig config.IMQConfig, h ServiceHandleFunc) error {
 	ms.Logger.Debugf("Register HTTP Handler Async POST %s", path)
 	err := ms.startAsyncTaskConsumer(path, cacheConfig, mqConfig, h)
 	if err != nil {
@@ -124,7 +125,7 @@ func (ms *Microservice) AsyncPOST(path string, cacheConfig ICacherConfig, mqConf
 }
 
 // AsyncPUT register async task service for HTTP PUT
-func (ms *Microservice) AsyncPUT(path string, cacheConfig ICacherConfig, mqConfig IMQConfig, h ServiceHandleFunc) {
+func (ms *Microservice) AsyncPUT(path string, cacheConfig config.ICacherConfig, mqConfig config.IMQConfig, h ServiceHandleFunc) {
 	ms.startAsyncTaskConsumer(path, cacheConfig, mqConfig, h)
 	ms.GET(path, func(ctx IContext) error {
 		return ms.handleAsyncTaskResponse(path, cacheConfig, ctx)

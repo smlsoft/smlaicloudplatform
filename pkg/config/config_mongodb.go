@@ -1,9 +1,16 @@
-package microservice
+package config
 
 import (
 	"fmt"
 	"strings"
 )
+
+// IPersisterConfig is interface for persister
+type IPersisterMongoConfig interface {
+	MongodbURI() string
+	DB() string
+	Debug() bool
+}
 
 type MongoPersisterConfig struct{}
 

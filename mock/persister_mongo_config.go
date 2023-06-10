@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 
 	"github.com/joho/godotenv"
 )
@@ -23,7 +23,7 @@ func (*PersisterMongoConfig) Debug() bool {
 	return os.Getenv("MONGODB_DEBUG") == "true"
 }
 
-func NewPersisterMongoConfig() microservice.IPersisterMongoConfig {
+func NewPersisterMongoConfig() config.IPersisterMongoConfig {
 	re := regexp.MustCompile(`^(.*` + projectDirName + `)`)
 	cwd, _ := os.Getwd()
 	rootPath := re.Find([]byte(cwd))

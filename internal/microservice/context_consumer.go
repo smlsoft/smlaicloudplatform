@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"runtime"
 	"smlcloudplatform/internal/microservice/models"
+	"smlcloudplatform/pkg/config"
 	"strings"
 	"time"
 
@@ -89,7 +90,7 @@ func (ctx *ConsumerContext) UserInfo() models.UserInfo {
 }
 
 // Persister return perister
-func (ctx *ConsumerContext) Persister(cfg IPersisterConfig) IPersister {
+func (ctx *ConsumerContext) Persister(cfg config.IPersisterConfig) IPersister {
 	return ctx.ms.Persister(cfg)
 }
 
@@ -99,17 +100,17 @@ func (ctx *ConsumerContext) Now() time.Time {
 }
 
 // Cacher return cacher
-func (ctx *ConsumerContext) Cacher(cacheConfig ICacherConfig) ICacher {
+func (ctx *ConsumerContext) Cacher(cacheConfig config.ICacherConfig) ICacher {
 	return ctx.ms.Cacher(cacheConfig)
 }
 
 // Producer return producer
-func (ctx *ConsumerContext) Producer(mqConfig IMQConfig) IProducer {
+func (ctx *ConsumerContext) Producer(mqConfig config.IMQConfig) IProducer {
 	return ctx.ms.Producer(mqConfig)
 }
 
 // MQ return MQ
-func (ctx *ConsumerContext) MQ(mqConfig IMQConfig) IMQ {
+func (ctx *ConsumerContext) MQ(mqConfig config.IMQConfig) IMQ {
 	return NewMQ(mqConfig, ctx.ms.Logger)
 }
 

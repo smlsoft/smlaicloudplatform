@@ -1,8 +1,8 @@
-package microservice_test
+package config_test
 
 import (
 	"fmt"
-	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -28,7 +28,7 @@ func TestMongodbConfigWithSSL(t *testing.T) {
 	t.Setenv("MONGODB_SSL", giveSSLMode)
 	t.Setenv("MONGODB_TLS_CA_FILE", giveCAFile)
 
-	mongoConfig := &microservice.MongoPersisterConfig{}
+	mongoConfig := &config.MongoPersisterConfig{}
 
 	want := fmt.Sprintf(
 		"%s://%s:%s@%s:%s/?ssl=%s&tlsCAFile=%s",
@@ -62,7 +62,7 @@ func TestMongodbSVCConfigWithSSL(t *testing.T) {
 	t.Setenv("MONGODB_SSL", giveSSLMode)
 	t.Setenv("MONGODB_TLS_CA_FILE", giveCAFile)
 
-	mongoConfig := &microservice.MongoPersisterConfig{}
+	mongoConfig := &config.MongoPersisterConfig{}
 
 	want := fmt.Sprintf(
 		"%s://%s:%s@%s/?ssl=%s&tlsCAFile=%s",

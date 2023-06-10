@@ -2,6 +2,7 @@ package main
 
 import (
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/member"
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/productcategory"
@@ -9,7 +10,7 @@ import (
 
 func main() {
 
-	cfg := microservice.NewConfig()
+	cfg := config.NewConfig()
 	ms, err := microservice.NewMicroservice(cfg)
 	if err != nil {
 		panic(err)

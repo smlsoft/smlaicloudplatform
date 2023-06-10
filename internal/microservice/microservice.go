@@ -15,7 +15,9 @@ import (
 
 	"smlcloudplatform/internal/microservice/models"
 	msValidator "smlcloudplatform/internal/validator"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/logger"
+	"smlcloudplatform/pkg/middlewares"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/gorilla/websocket"
@@ -63,18 +65,18 @@ type Microservice struct {
 	prodMutex                 sync.Mutex
 	websocketPool             *WebsocketPool
 	pathPrefix                string
-	config                    IConfig
+	config                    config.IConfig
 	jaegerCloser              io.Closer
 	Logger                    logger.ILogger
 	Mode                      string
+	middlewareManager         middlewares.IMiddlewareManager
 }
 
 type ServiceHandleFunc func(context IContext) error
 
-func NewMicroservice(config IConfig) (*Microservice, error) {
+func NewMicroservice(config config.IConfig) (*Microservice, error) {
 
-	loggerConfig := NewLoggerConfig()
-	logger := logger.NewAppLogger(loggerConfig)
+	logger := logger.NewAppLogger(config.LoggerConfig())
 	logger.InitLogger()
 
 	e := echo.New()
@@ -113,6 +115,9 @@ func NewMicroservice(config IConfig) (*Microservice, error) {
 		Mode:                 os.Getenv("MODE"),
 		websocketPool:        &websocketPool,
 	}
+
+	// Init logger
+	m.middlewareManager = middlewares.NewMiddlewareManager(logger, config, m.getHttpMetricsCb())
 
 	m.Logger.Info("Initial Microservice.")
 	err := m.CheckReadyToStart()
@@ -289,7 +294,7 @@ func (ms *Microservice) Log(tag string, message string) {
 
 }
 
-func (ms *Microservice) Persister(cfg IPersisterConfig) IPersister {
+func (ms *Microservice) Persister(cfg config.IPersisterConfig) IPersister {
 	pst, ok := ms.persisters[cfg.Host()]
 	if !ok {
 		pst = NewPersister(cfg)
@@ -300,7 +305,7 @@ func (ms *Microservice) Persister(cfg IPersisterConfig) IPersister {
 	return pst
 }
 
-func (ms *Microservice) MongoPersister(cfg IPersisterMongoConfig) IPersisterMongo {
+func (ms *Microservice) MongoPersister(cfg config.IPersisterMongoConfig) IPersisterMongo {
 	pst, ok := ms.mongoPersisters[cfg.MongodbURI()]
 	if !ok {
 		pst = NewPersisterMongo(cfg)
@@ -311,7 +316,7 @@ func (ms *Microservice) MongoPersister(cfg IPersisterMongoConfig) IPersisterMong
 	return pst
 }
 
-func (ms *Microservice) ClickHousePersister(cfg IPersisterClickHouseConfig) IPersisterClickHouse {
+func (ms *Microservice) ClickHousePersister(cfg config.IPersisterClickHouseConfig) IPersisterClickHouse {
 
 	indexCfg := strings.Join(cfg.ServerAddress(), "_")
 
@@ -327,7 +332,7 @@ func (ms *Microservice) ClickHousePersister(cfg IPersisterClickHouseConfig) IPer
 	return pst
 }
 
-func (ms *Microservice) ElkPersister(cfg IPersisterElkConfig) IPersisterElk {
+func (ms *Microservice) ElkPersister(cfg config.IPersisterElkConfig) IPersisterElk {
 	if len(cfg.ElkAddress()) < 1 {
 		return nil
 	}
@@ -344,7 +349,7 @@ func (ms *Microservice) ElkPersister(cfg IPersisterElkConfig) IPersisterElk {
 	return pst
 }
 
-func (ms *Microservice) SearchPersister(cfg IPersisterOpenSearchConfig) IPersisterOpenSearch {
+func (ms *Microservice) SearchPersister(cfg config.IPersisterOpenSearchConfig) IPersisterOpenSearch {
 	if len(cfg.Address()) < 1 {
 		return nil
 	}
@@ -361,7 +366,7 @@ func (ms *Microservice) SearchPersister(cfg IPersisterOpenSearchConfig) IPersist
 	return pst
 }
 
-func (ms *Microservice) Cacher(cfg ICacherConfig) ICacher {
+func (ms *Microservice) Cacher(cfg config.ICacherConfig) ICacher {
 	cacher, ok := ms.cachers[cfg.Endpoint()]
 	if !ok {
 		cacher = NewCacher(cfg)
@@ -372,7 +377,7 @@ func (ms *Microservice) Cacher(cfg ICacherConfig) ICacher {
 	return cacher
 }
 
-func (ms *Microservice) Producer(cfg IMQConfig) IProducer {
+func (ms *Microservice) Producer(cfg config.IMQConfig) IProducer {
 	prod, ok := ms.prods[cfg.URI()]
 	if !ok {
 		prod = NewProducer(cfg.URI(), ms.Logger)

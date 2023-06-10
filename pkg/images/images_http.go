@@ -3,6 +3,7 @@ package images
 import (
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/images/models"
 	common "smlcloudplatform/pkg/models"
 	inventoryRepo "smlcloudplatform/pkg/product/inventory/repositories"
@@ -17,12 +18,12 @@ type IImageHttp interface {
 
 type ImagesHttp struct {
 	ms      *microservice.Microservice
-	cfg     microservice.IConfig
+	cfg     config.IConfig
 	service IImagesService
 }
 
 func NewImagesHttp(
-	ms *microservice.Microservice, cfg microservice.IConfig,
+	ms *microservice.Microservice, cfg config.IConfig,
 	persisterImage *microservice.PersisterImage,
 ) ImagesHttp {
 
@@ -38,7 +39,7 @@ func NewImagesHttp(
 
 func (svc ImagesHttp) RouteSetup() {
 
-	storageConfig := microservice.NewStorageFileConfig()
+	storageConfig := config.NewStorageFileConfig()
 
 	svc.ms.POST("/upload/images", svc.UploadImage)
 	svc.ms.POST("/upload/productimage", svc.UploadImageToProduct)

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/member"
 	memberModel "smlcloudplatform/pkg/member/models"
@@ -20,12 +21,12 @@ import (
 
 type SyncDataHttp struct {
 	ms               *microservice.Microservice
-	cfg              microservice.IConfig
+	cfg              config.IConfig
 	inventoryService inventoryService.IInventoryService
 	memberService    member.IMemberService
 }
 
-func NewSyncDataHttp(ms *microservice.Microservice, cfg microservice.IConfig) SyncDataHttp {
+func NewSyncDataHttp(ms *microservice.Microservice, cfg config.IConfig) SyncDataHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	pstPg := ms.Persister(cfg.PersisterConfig())

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	branchModel "smlcloudplatform/pkg/organization/branch/models"
@@ -31,14 +32,14 @@ type IShopHttp interface {
 
 type ShopHttp struct {
 	ms               *microservice.Microservice
-	cfg              microservice.IConfig
+	cfg              config.IConfig
 	service          IShopService
 	serviceBranch    branchServices.IBranchHttpService
 	serviceWarehouse warehouseServices.IWarehouseHttpService
 	authService      *microservice.AuthService
 }
 
-func NewShopHttp(ms *microservice.Microservice, cfg microservice.IConfig) ShopHttp {
+func NewShopHttp(ms *microservice.Microservice, cfg config.IConfig) ShopHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	repo := NewShopRepository(pst)

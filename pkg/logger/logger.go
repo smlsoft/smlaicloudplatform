@@ -2,9 +2,9 @@ package logger
 
 import (
 	"os"
+	"smlcloudplatform/pkg/config"
 	"time"
 
-	"github.com/smlsoft/smlgomicro/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

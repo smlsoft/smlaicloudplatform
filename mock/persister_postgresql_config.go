@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 
 	"github.com/joho/godotenv"
 )
 
 type PersisterPostgresqlConfig struct{}
 
-func NewPersisterPostgresqlConfig() microservice.IPersisterConfig {
+func NewPersisterPostgresqlConfig() config.IPersisterConfig {
 
 	env := os.Getenv("MODE")
 	if env == "" {

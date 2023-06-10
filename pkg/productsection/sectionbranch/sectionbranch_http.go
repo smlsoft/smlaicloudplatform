@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/productsection/sectionbranch/models"
@@ -16,11 +17,11 @@ type ISectionBranchHttp interface{}
 
 type SectionBranchHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.ISectionBranchHttpService
 }
 
-func NewSectionBranchHttp(ms *microservice.Microservice, cfg microservice.IConfig) SectionBranchHttp {
+func NewSectionBranchHttp(ms *microservice.Microservice, cfg config.IConfig) SectionBranchHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

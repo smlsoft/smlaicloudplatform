@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/transaction/purchase/models"
@@ -17,11 +18,11 @@ type IPurchaseHttp interface{}
 
 type PurchaseHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IPurchaseHttpService
 }
 
-func NewPurchaseHttp(ms *microservice.Microservice, cfg microservice.IConfig) PurchaseHttp {
+func NewPurchaseHttp(ms *microservice.Microservice, cfg config.IConfig) PurchaseHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

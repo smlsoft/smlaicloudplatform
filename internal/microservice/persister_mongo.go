@@ -15,6 +15,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"smlcloudplatform/internal/microservice/models"
+	"smlcloudplatform/pkg/config"
 )
 
 // IPersister is interface for persister
@@ -47,19 +48,12 @@ type IPersisterMongo interface {
 	CreateIndex(model interface{}, indexName string, keys interface{}) (string, error)
 }
 
-// IPersisterConfig is interface for persister
-type IPersisterMongoConfig interface {
-	MongodbURI() string
-	DB() string
-	Debug() bool
-}
-
 type MongoModel interface {
 	CollectionName() string
 }
 
 type PersisterMongo struct {
-	config    IPersisterMongoConfig
+	config    config.IPersisterMongoConfig
 	db        *mongo.Database
 	dbMutex   sync.Mutex
 	client    *mongo.Client
@@ -67,7 +61,7 @@ type PersisterMongo struct {
 	ctxCancel context.CancelFunc
 }
 
-func NewPersisterMongo(config IPersisterMongoConfig) *PersisterMongo {
+func NewPersisterMongo(config config.IPersisterMongoConfig) *PersisterMongo {
 	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	ctx := context.Background()
 	// defer cancel()

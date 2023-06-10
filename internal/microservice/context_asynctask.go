@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"runtime"
 	"smlcloudplatform/internal/microservice/models"
+	"smlcloudplatform/pkg/config"
 	"strings"
 	"time"
 
@@ -15,14 +16,14 @@ import (
 // AsyncTaskContext implement IContext it is context for Consumer
 type AsyncTaskContext struct {
 	ms          *Microservice
-	cacheConfig ICacherConfig
+	cacheConfig config.ICacherConfig
 	userInfo    models.UserInfo
 	ref         string
 	input       string
 }
 
 // NewAsyncTaskContext is the constructor function for AsyncTaskContext
-func NewAsyncTaskContext(ms *Microservice, cacheConfig ICacherConfig, userInfo models.UserInfo, ref string, input string) *AsyncTaskContext {
+func NewAsyncTaskContext(ms *Microservice, cacheConfig config.ICacherConfig, userInfo models.UserInfo, ref string, input string) *AsyncTaskContext {
 	return &AsyncTaskContext{
 		ms:          ms,
 		cacheConfig: cacheConfig,
@@ -108,7 +109,7 @@ func (ctx *AsyncTaskContext) UserInfo() models.UserInfo {
 }
 
 // Persister return perister
-func (ctx *AsyncTaskContext) Persister(cfg IPersisterConfig) IPersister {
+func (ctx *AsyncTaskContext) Persister(cfg config.IPersisterConfig) IPersister {
 	return ctx.ms.Persister(cfg)
 }
 
@@ -118,17 +119,17 @@ func (ctx *AsyncTaskContext) Now() time.Time {
 }
 
 // Cacher return cacher
-func (ctx *AsyncTaskContext) Cacher(cacherConfig ICacherConfig) ICacher {
+func (ctx *AsyncTaskContext) Cacher(cacherConfig config.ICacherConfig) ICacher {
 	return ctx.ms.Cacher(cacherConfig)
 }
 
 // Producer return producer
-func (ctx *AsyncTaskContext) Producer(mqConfig IMQConfig) IProducer {
+func (ctx *AsyncTaskContext) Producer(mqConfig config.IMQConfig) IProducer {
 	return ctx.ms.Producer(mqConfig)
 }
 
 // MQ return MQ
-func (ctx *AsyncTaskContext) MQ(mqConfig IMQConfig) IMQ {
+func (ctx *AsyncTaskContext) MQ(mqConfig config.IMQConfig) IMQ {
 	return NewMQ(mqConfig, ctx.ms.Logger)
 }
 

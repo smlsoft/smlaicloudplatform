@@ -11,6 +11,7 @@ import (
 	"smlcloudplatform/pkg/authentication"
 	"smlcloudplatform/pkg/channel/salechannel"
 	"smlcloudplatform/pkg/channel/transportchannel"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/debtaccount/creditor"
 	"smlcloudplatform/pkg/debtaccount/creditorgroup"
 	"smlcloudplatform/pkg/debtaccount/customer"
@@ -88,7 +89,7 @@ import (
 
 func main() {
 
-	cfg := microservice.NewConfig()
+	cfg := config.NewConfig()
 	ms, err := microservice.NewMicroservice(cfg)
 	if err != nil {
 		panic(err)

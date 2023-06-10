@@ -1,6 +1,11 @@
-package microservice
+package config
 
-//MQ and Producer configuration
+// IMQConfig is mq configuration interface
+type IMQConfig interface {
+	URI() string
+}
+
+// MQ and Producer configuration
 type MQConfig struct{}
 
 func NewMQConfig() *MQConfig {

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/organization/department/models"
@@ -16,11 +17,11 @@ type IDepartmentHttp interface{}
 
 type DepartmentHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IDepartmentHttpService
 }
 
-func NewDepartmentHttp(ms *microservice.Microservice, cfg microservice.IConfig) DepartmentHttp {
+func NewDepartmentHttp(ms *microservice.Microservice, cfg config.IConfig) DepartmentHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

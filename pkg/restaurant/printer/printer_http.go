@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/printer/models"
@@ -14,11 +15,11 @@ type IPrinterHttp interface{}
 
 type PrinterHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc IPrinterService
 }
 
-func NewPrinterHttp(ms *microservice.Microservice, cfg microservice.IConfig) PrinterHttp {
+func NewPrinterHttp(ms *microservice.Microservice, cfg config.IConfig) PrinterHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

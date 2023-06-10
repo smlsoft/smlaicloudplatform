@@ -7,6 +7,7 @@ import (
 	"smlcloudplatform/pkg/channel/salechannel/models"
 	"smlcloudplatform/pkg/channel/salechannel/repositories"
 	"smlcloudplatform/pkg/channel/salechannel/services"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
@@ -16,11 +17,11 @@ type ISaleChannelHttp interface{}
 
 type SaleChannelHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.ISaleChannelHttpService
 }
 
-func NewSaleChannelHttp(ms *microservice.Microservice, cfg microservice.IConfig) SaleChannelHttp {
+func NewSaleChannelHttp(ms *microservice.Microservice, cfg config.IConfig) SaleChannelHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

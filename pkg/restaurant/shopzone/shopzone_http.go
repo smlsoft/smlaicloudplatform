@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/shopzone/models"
 	"smlcloudplatform/pkg/utils"
@@ -15,11 +16,11 @@ type IShopZoneHttp interface{}
 
 type ShopZoneHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc IShopZoneService
 }
 
-func NewShopZoneHttp(ms *microservice.Microservice, cfg microservice.IConfig) ShopZoneHttp {
+func NewShopZoneHttp(ms *microservice.Microservice, cfg config.IConfig) ShopZoneHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

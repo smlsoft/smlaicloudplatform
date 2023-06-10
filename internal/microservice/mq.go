@@ -3,6 +3,7 @@ package microservice
 import (
 	"context"
 	"fmt"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/logger"
 	"time"
 
@@ -15,11 +16,6 @@ type IMQ interface {
 	CreateTopicR(topic string, partitions int, replications int, retentionPeriod time.Duration) error
 }
 
-// IMQConfig is mq configuration interface
-type IMQConfig interface {
-	URI() string
-}
-
 // MQ is message queue
 type MQ struct {
 	logger  logger.ILogger
@@ -27,7 +23,7 @@ type MQ struct {
 }
 
 // NewMQ return new MQ
-func NewMQ(mqConfig IMQConfig, logger logger.ILogger) *MQ {
+func NewMQ(mqConfig config.IMQConfig, logger logger.ILogger) *MQ {
 
 	return &MQ{
 		servers: mqConfig.URI(),

@@ -3,6 +3,7 @@ package chartofaccount
 import (
 	"encoding/json"
 	"smlcloudplatform/internal/microservice"
+	msConfig "smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/config"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/models"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/repositories"
@@ -10,7 +11,7 @@ import (
 	"time"
 )
 
-func MigrationChartOfAccountTable(ms *microservice.Microservice, cfg microservice.IConfig) error {
+func MigrationChartOfAccountTable(ms *microservice.Microservice, cfg msConfig.IConfig) error {
 	pst := ms.Persister(cfg.PersisterConfig())
 	pst.AutoMigrate(
 		models.ChartOfAccountPG{},
@@ -18,7 +19,7 @@ func MigrationChartOfAccountTable(ms *microservice.Microservice, cfg microservic
 	return nil
 }
 
-func StartChartOfAccountConsumerCreated(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
+func StartChartOfAccountConsumerCreated(ms *microservice.Microservice, cfg msConfig.IConfig, groupID string) {
 
 	topicCreated := config.MQ_TOPIC_CREATED
 	timeout := time.Duration(-1)
@@ -51,7 +52,7 @@ func StartChartOfAccountConsumerCreated(ms *microservice.Microservice, cfg micro
 	})
 }
 
-func StartChartOfAccountConsumerUpdated(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
+func StartChartOfAccountConsumerUpdated(ms *microservice.Microservice, cfg msConfig.IConfig, groupID string) {
 
 	topicUpdated := config.MQ_TOPIC_UPDATED
 	timeout := time.Duration(-1)
@@ -84,7 +85,7 @@ func StartChartOfAccountConsumerUpdated(ms *microservice.Microservice, cfg micro
 	})
 }
 
-func StartChartOfAccountConsumerDeleted(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
+func StartChartOfAccountConsumerDeleted(ms *microservice.Microservice, cfg msConfig.IConfig, groupID string) {
 
 	topicDeleted := config.MQ_TOPIC_DELETED
 	timeout := time.Duration(-1)
@@ -117,7 +118,7 @@ func StartChartOfAccountConsumerDeleted(ms *microservice.Microservice, cfg micro
 	})
 }
 
-func StartChartOfAccountConsumerBlukCreated(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
+func StartChartOfAccountConsumerBlukCreated(ms *microservice.Microservice, cfg msConfig.IConfig, groupID string) {
 
 	topicCreated := config.MQ_TOPIC_BULK_CREATED
 	timeout := time.Duration(-1)

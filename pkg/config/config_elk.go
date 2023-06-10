@@ -1,4 +1,10 @@
-package microservice
+package config
+
+type IPersisterElkConfig interface {
+	ElkAddress() []string
+	Username() string
+	Password() string
+}
 
 type PersisterElkConfig struct{}
 

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/debtaccount/creditor/models"
 	"smlcloudplatform/pkg/debtaccount/creditor/repositories"
 	"smlcloudplatform/pkg/debtaccount/creditor/services"
@@ -17,11 +18,11 @@ type ICreditorHttp interface{}
 
 type CreditorHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.ICreditorHttpService
 }
 
-func NewCreditorHttp(ms *microservice.Microservice, cfg microservice.IConfig) CreditorHttp {
+func NewCreditorHttp(ms *microservice.Microservice, cfg config.IConfig) CreditorHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

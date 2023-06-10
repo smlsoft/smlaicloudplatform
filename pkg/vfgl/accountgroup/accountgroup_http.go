@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/vfgl/accountgroup/models"
 	"smlcloudplatform/pkg/vfgl/accountgroup/repositories"
@@ -14,11 +15,11 @@ import (
 
 type AccountGroupHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IAccountGroupHttpService
 }
 
-func NewAccountGroupHttp(ms *microservice.Microservice, cfg microservice.IConfig) AccountGroupHttp {
+func NewAccountGroupHttp(ms *microservice.Microservice, cfg config.IConfig) AccountGroupHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
 

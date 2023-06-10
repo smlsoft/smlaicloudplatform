@@ -2,6 +2,7 @@ package main
 
 import (
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/shop"
 )
 
@@ -11,7 +12,7 @@ func main() {
 	// 	log.Fatal("Error loading .env file")
 	// }
 
-	cfg := microservice.NewConfig()
+	cfg := config.NewConfig()
 	ms, err := microservice.NewMicroservice(cfg)
 	if err != nil {
 		panic(err)

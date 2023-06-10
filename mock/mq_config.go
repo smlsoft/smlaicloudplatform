@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 
 	"github.com/joho/godotenv"
 )
@@ -15,7 +15,7 @@ func (MqConfig) URI() string {
 	return os.Getenv("KAFKA_SERVER_URL")
 }
 
-func NewMqConfig() microservice.IMQConfig {
+func NewMqConfig() config.IMQConfig {
 	re := regexp.MustCompile(`^(.*` + projectDirName + `)`)
 	cwd, _ := os.Getwd()
 	rootPath := re.Find([]byte(cwd))

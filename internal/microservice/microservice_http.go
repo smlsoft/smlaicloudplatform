@@ -7,6 +7,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type IMicroserviceHTTP interface {
+	RegisterHttp(ms *Microservice)
+}
+
 // GET register service endpoint for HTTP GET
 func (ms *Microservice) GET(path string, h ServiceHandleFunc, m ...echo.MiddlewareFunc) {
 
@@ -56,7 +60,9 @@ func (ms *Microservice) DELETE(path string, h ServiceHandleFunc, m ...echo.Middl
 // startHTTP will start HTTP service, this function will block thread
 func (ms *Microservice) startHTTP(exitChannel chan bool) error {
 
-	port := getEnv("SERVICE_PORT", "8080")
+	ms.echo.Use(ms.middlewareManager.RequestLoggerMiddleware)
+
+	port := ms.config.HttpConfig().Port()
 	// Caller can exit by sending value to exitChannel
 	go func() {
 		<-exitChannel
@@ -77,4 +83,8 @@ func (ms *Microservice) stopHTTP() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	ms.echo.Shutdown(ctx)
+}
+
+func (ms *Microservice) RegisterHttp(http IMicroserviceHTTP) {
+	http.RegisterHttp(ms)
 }
