@@ -12,6 +12,7 @@ const saleinvoiceCollectionName = "transactionSaleInvoice"
 type SaleInvoice struct {
 	models.PartitionIdentity `bson:"inline"`
 	transmodels.Transaction  `bson:"inline"`
+	IsPOS                    bool `json:"ispos" bson:"ispos"`
 }
 
 type SaleInvoiceInfo struct {

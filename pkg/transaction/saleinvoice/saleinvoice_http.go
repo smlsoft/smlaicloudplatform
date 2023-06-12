@@ -276,6 +276,7 @@ func (h SaleInvoiceHttp) InfoSaleInvoiceByCode(ctx microservice.IContext) error 
 // @Param		custcode	query	string		false  "customer code"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
+// @Param		ispos	query	boolean		false  "is POS"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
@@ -294,6 +295,11 @@ func (h SaleInvoiceHttp) SearchSaleInvoicePage(ctx microservice.IContext) error 
 		{
 			Param: "custcode",
 			Type:  "string",
+		},
+		{
+			Param: "ispos",
+			Field: "ispos",
+			Type:  "boolean",
 		},
 		{
 			Param: "-",
@@ -323,6 +329,7 @@ func (h SaleInvoiceHttp) SearchSaleInvoicePage(ctx microservice.IContext) error 
 // @Param		q		query	string		false  "Search Value"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
+// @Param		ispos	query	boolean		false  "is POS"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
 // @Param		lang	query	string		false  "lang"
@@ -343,6 +350,11 @@ func (h SaleInvoiceHttp) SearchSaleInvoiceStep(ctx microservice.IContext) error 
 		{
 			Param: "custcode",
 			Type:  "string",
+		},
+		{
+			Param: "ispos",
+			Field: "ispos",
+			Type:  "boolean",
 		},
 		{
 			Param: "-",

@@ -272,8 +272,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -289,14 +289,7 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -869,6 +862,7 @@ definitions:
         type: array
         uniqueItems: true
     required:
+    - code
     - names
     type: object
   models.Detail:
@@ -1286,8 +1280,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1305,8 +1299,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1322,11 +1314,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1435,8 +1422,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1454,8 +1441,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1471,11 +1456,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1634,8 +1614,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1653,8 +1633,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1670,11 +1648,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -3143,16 +3116,9 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
+      keynumber:
+        type: integer
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
     type: object
   models.ProductUnit:
@@ -3620,6 +3586,8 @@ definitions:
         type: boolean
       ismanualamount:
         type: boolean
+      ispos:
+        type: boolean
       membercode:
         type: string
       paymentdetail:
@@ -3696,6 +3664,8 @@ definitions:
       iscancel:
         type: boolean
       ismanualamount:
+        type: boolean
+      ispos:
         type: boolean
       membercode:
         type: string
@@ -18695,6 +18665,10 @@ paths:
         in: query
         name: todate
         type: string
+      - description: is POS
+        in: query
+        name: ispos
+        type: boolean
       - description: Search Value
         in: query
         name: q
@@ -18794,6 +18768,10 @@ paths:
         in: query
         name: todate
         type: string
+      - description: is POS
+        in: query
+        name: ispos
+        type: boolean
       - description: Page
         in: query
         name: page
@@ -18986,6 +18964,10 @@ paths:
         in: query
         name: todate
         type: string
+      - description: is POS
+        in: query
+        name: ispos
+        type: boolean
       - description: offset
         in: query
         name: offset
@@ -19158,6 +19140,10 @@ paths:
         in: query
         name: todate
         type: string
+      - description: is POS
+        in: query
+        name: ispos
+        type: boolean
       - description: offset
         in: query
         name: offset

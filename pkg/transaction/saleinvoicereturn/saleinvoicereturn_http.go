@@ -277,6 +277,7 @@ func (h SaleInvoiceReturnHttp) InfoSaleInvoiceReturnByCode(ctx microservice.ICon
 // @Param		q		query	string		false  "Search Value"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
+// @Param		ispos	query	boolean		false  "is POS"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
 // @Accept 		json
@@ -294,6 +295,11 @@ func (h SaleInvoiceReturnHttp) SearchSaleInvoiceReturnPage(ctx microservice.ICon
 		{
 			Param: "custcode",
 			Type:  "string",
+		},
+		{
+			Param: "ispos",
+			Field: "ispos",
+			Type:  "boolean",
 		},
 		{
 			Param: "-",
@@ -323,6 +329,7 @@ func (h SaleInvoiceReturnHttp) SearchSaleInvoiceReturnPage(ctx microservice.ICon
 // @Param		q		query	string		false  "Search Value"
 // @Param		fromdate	query	string		false  "from date"
 // @Param		todate	query	string		false  "to date"
+// @Param		ispos	query	boolean		false  "is POS"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
 // @Param		lang	query	string		false  "lang"
@@ -343,6 +350,11 @@ func (h SaleInvoiceReturnHttp) SearchSaleInvoiceReturnStep(ctx microservice.ICon
 		{
 			Param: "custcode",
 			Type:  "string",
+		},
+		{
+			Param: "ispos",
+			Field: "ispos",
+			Type:  "boolean",
 		},
 		{
 			Param: "-",
