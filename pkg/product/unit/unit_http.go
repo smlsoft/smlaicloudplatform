@@ -464,7 +464,9 @@ func (h UnitHttp) DeleteUnit(ctx microservice.IContext) error {
 		return nil
 	}
 
-	err := h.svc.DeleteUnit(shopID, id, authUsername)
+	authHeader := ctx.Header("Authorization")
+
+	err := h.svc.DeleteUnit(shopID, id, authHeader, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -493,6 +495,8 @@ func (h UnitHttp) DeleteByGUIDs(ctx microservice.IContext) error {
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
 
+	authHeader := ctx.Header("Authorization")
+
 	input := ctx.ReadInput()
 
 	docReq := []string{}
@@ -503,7 +507,7 @@ func (h UnitHttp) DeleteByGUIDs(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svc.DeleteUnitByGUIDs(shopID, authUsername, docReq)
+	err = h.svc.DeleteUnitByGUIDs(shopID, authHeader, authUsername, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

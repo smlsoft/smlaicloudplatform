@@ -39,6 +39,7 @@ type IProductBarcodeHttpService interface {
 	GetProductBarcodeByBarcodes(shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error)
 
 	GetModuleName() string
+	GetProductBarcodeByUnits(shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 }
 
 type ProductBarcodeHttpService struct {
@@ -679,6 +680,21 @@ func (svc ProductBarcodeHttpService) DeleteProductBarcodeByGUIDs(shopID string, 
 	svc.saveMasterSync(shopID)
 
 	return nil
+}
+
+func (svc ProductBarcodeHttpService) GetProductBarcodeByUnits(shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
+
+	if len(unitCodes) < 1 {
+		return []models.ProductBarcodeInfo{}, mongopagination.PaginationData{}, nil
+	}
+
+	results, pagination, err := svc.repo.FindPageByUnits(shopID, unitCodes, pageable)
+
+	if err != nil {
+		return []models.ProductBarcodeInfo{}, mongopagination.PaginationData{}, err
+	}
+
+	return results, pagination, nil
 }
 
 func (svc ProductBarcodeHttpService) saveMasterSync(shopID string) {

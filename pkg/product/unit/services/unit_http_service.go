@@ -8,9 +8,11 @@ import (
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/unit/models"
 	"smlcloudplatform/pkg/product/unit/repositories"
+	"smlcloudplatform/pkg/requestapi"
 	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
+	"strings"
 	"time"
 
 	"github.com/samber/lo"
@@ -23,8 +25,8 @@ type IUnitHttpService interface {
 	CreateUnit(shopID string, authUsername string, doc models.Unit) (string, error)
 	UpdateUnit(shopID string, guid string, authUsername string, doc models.Unit) error
 	UpdateFieldUnit(shopID string, guid string, authUsername string, doc models.Unit) error
-	DeleteUnit(shopID string, guid string, authUsername string) error
-	DeleteUnitByGUIDs(shopID string, authUsername string, GUIDs []string) error
+	DeleteUnit(shopID string, guid string, authHeader string, authUsername string) error
+	DeleteUnitByGUIDs(shopID string, authHeader string, authUsername string, GUIDs []string) error
 	InfoUnit(shopID string, guid string) (models.UnitInfo, error)
 	InfoUnitWTFArray(shopID string, unitCodes []string) ([]interface{}, error)
 	InfoWTFArrayMaster(codes []string) ([]interface{}, error)
@@ -168,7 +170,21 @@ func (svc UnitHttpService) UpdateFieldUnit(shopID string, guid string, authUsern
 	return nil
 }
 
-func (svc UnitHttpService) DeleteUnit(shopID string, guid string, authUsername string) error {
+func (svc UnitHttpService) existsUnitRefInProduct(authHeader, unitCode string) (bool, error) {
+	products, err := svc.getProductByUnit(authHeader, []string{unitCode})
+
+	if err != nil {
+		return true, fmt.Errorf("error check unit ref product: %s", err.Error())
+	}
+
+	if len(products) > 0 {
+		return true, fmt.Errorf("unit code %s is ref by product", unitCode)
+	}
+
+	return false, nil
+}
+
+func (svc UnitHttpService) deleteByUnitCode(shopID, guid, authHeader, authUsername string) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -180,7 +196,24 @@ func (svc UnitHttpService) DeleteUnit(shopID string, guid string, authUsername s
 		return errors.New("document not found")
 	}
 
+	existsInProduct, _ := svc.existsUnitRefInProduct(authHeader, findDoc.UnitCode)
+
+	if existsInProduct {
+		return fmt.Errorf("unit code \"%s\" is referenced", findDoc.UnitCode)
+	}
+
 	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (svc UnitHttpService) DeleteUnit(shopID, guid, authHeader, authUsername string) error {
+
+	err := svc.deleteByUnitCode(shopID, guid, authHeader, authUsername)
+
 	if err != nil {
 		return err
 	}
@@ -190,13 +223,32 @@ func (svc UnitHttpService) DeleteUnit(shopID string, guid string, authUsername s
 	return nil
 }
 
-func (svc UnitHttpService) DeleteUnitByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+func (svc UnitHttpService) DeleteUnitByGUIDs(shopID, authHeader, authUsername string, GUIDs []string) error {
 
-	deleteFilterQuery := map[string]interface{}{
-		"guidfixed": bson.M{"$in": GUIDs},
-	}
+	// deleteFilterQuery := map[string]interface{}{
+	// 	"guidfixed": bson.M{"$in": GUIDs},
+	// }
 
-	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	// err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	// if err != nil {
+	// 	return err
+	// }
+
+	err := svc.repo.Transaction(func() error {
+		for idx, guid := range GUIDs {
+			if idx == 1 {
+				return errors.New("test rollback")
+			}
+
+			err := svc.DeleteUnit(shopID, guid, authHeader, authUsername)
+
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+
 	if err != nil {
 		return err
 	}
@@ -443,4 +495,39 @@ func (svc UnitHttpService) saveMasterSync(shopID string) {
 
 func (svc UnitHttpService) GetModuleName() string {
 	return "productunit"
+}
+
+func (svc UnitHttpService) getProductByUnit(authHeader string, unitCodes []string) ([]interface{}, error) {
+
+	reqCodes := strings.Join(unitCodes, ",")
+
+	// client := &http.Client{}
+	// req, err := http.NewRequest("GET", "http://localhost:8088/product/barcode/units?codes="+reqCodes, nil)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// req.Header.Set("Authorization", authHeader)
+	// resp, err := client.Do(req)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// defer resp.Body.Close()
+
+	// body, err := ioutil.ReadAll(resp.Body)
+	// if err != nil {
+	// 	fmt.Println("Error:", err)
+
+	// }
+
+	// var result map[string]interface{}
+	// err = json.Unmarshal(body, &result)
+	// if err != nil {
+	// 	return []interface{}{}, err
+	// }
+	// return result["data"].([]interface{}), nil
+
+	url := "http://localhost:8088/product/barcode/units?codes=" + reqCodes
+
+	return requestapi.Get(url, authHeader)
 }

@@ -41,6 +41,7 @@ type IProductBarcodeRepository interface {
 	FindByRefBarcode(shopID string, barcode string) ([]models.ProductBarcodeDoc, error)
 
 	FindByBarcodes(shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error)
+	FindPageByUnits(shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 }
 
 type ProductBarcodeRepository struct {
@@ -67,7 +68,7 @@ func NewProductBarcodeRepository(pst microservice.IPersisterMongo, cache microse
 	return insRepo
 }
 
-func (repo *ProductBarcodeRepository) UpdateParentGuidByGuids(shopID string, parentGUID string, guids []string) error {
+func (repo ProductBarcodeRepository) UpdateParentGuidByGuids(shopID string, parentGUID string, guids []string) error {
 
 	filters := bson.M{
 		"shopid":    shopID,
@@ -78,7 +79,7 @@ func (repo *ProductBarcodeRepository) UpdateParentGuidByGuids(shopID string, par
 	return repo.pst.Update(models.ProductBarcodeDoc{}, filters, bson.M{"$set": bson.M{"parentguid": parentGUID}})
 }
 
-func (repo *ProductBarcodeRepository) FindMasterInCodes(codes []string) ([]models.ProductBarcodeInfo, error) {
+func (repo ProductBarcodeRepository) FindMasterInCodes(codes []string) ([]models.ProductBarcodeInfo, error) {
 
 	masterShopID := os.Getenv("MASTER_SHOP_ID")
 
@@ -104,7 +105,7 @@ func (repo *ProductBarcodeRepository) FindMasterInCodes(codes []string) ([]model
 	return docList, nil
 }
 
-func (repo *ProductBarcodeRepository) FindByRefBarcode(shopID string, barcode string) ([]models.ProductBarcodeDoc, error) {
+func (repo ProductBarcodeRepository) FindByRefBarcode(shopID string, barcode string) ([]models.ProductBarcodeDoc, error) {
 
 	docList := []models.ProductBarcodeDoc{}
 
@@ -124,11 +125,11 @@ func (repo *ProductBarcodeRepository) FindByRefBarcode(shopID string, barcode st
 	return docList, nil
 }
 
-func (repo *ProductBarcodeRepository) Transaction(fnc func() error) error {
+func (repo ProductBarcodeRepository) Transaction(fnc func() error) error {
 	return repo.pst.Transaction(fnc)
 }
 
-func (repo *ProductBarcodeRepository) FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
+func (repo ProductBarcodeRepository) FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
 
 	results, pagination, err := repo.SearchRepository.FindPage(shopID, searchInFields, pageable)
 
@@ -139,7 +140,7 @@ func (repo *ProductBarcodeRepository) FindPage(shopID string, searchInFields []s
 	return results, pagination, nil
 }
 
-func (repo *ProductBarcodeRepository) FindByBarcodes(shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error) {
+func (repo ProductBarcodeRepository) FindByBarcodes(shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error) {
 
 	filters := bson.M{
 		"shopid":    shopID,
@@ -155,4 +156,26 @@ func (repo *ProductBarcodeRepository) FindByBarcodes(shopID string, barcodes []s
 	}
 
 	return results, nil
+}
+
+func (repo ProductBarcodeRepository) FindPageByUnits(shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
+
+	filters := bson.M{
+		"shopid": shopID,
+		"deletedat": bson.M{
+			"$exists": false,
+		},
+		"itemunitcode": bson.M{
+			"$in": unitCodes,
+		},
+	}
+
+	results := []models.ProductBarcodeInfo{}
+	pagination, err := repo.pst.FindPage(models.ProductBarcodeInfo{}, filters, pageable, &results)
+
+	if err != nil {
+		return nil, mongopagination.PaginationData{}, err
+	}
+
+	return results, pagination, nil
 }

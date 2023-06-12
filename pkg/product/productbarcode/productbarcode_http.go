@@ -11,6 +11,7 @@ import (
 	"smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/product/productbarcode/services"
 	"smlcloudplatform/pkg/utils"
+	"strings"
 )
 
 type IProductBarcodeHttp interface{}
@@ -57,6 +58,8 @@ func (h ProductBarcodeHttp) RouteSetup() {
 	h.ms.PUT("/product/barcode/:id", h.UpdateProductBarcode)
 	h.ms.DELETE("/product/barcode/:id", h.DeleteProductBarcode)
 	h.ms.DELETE("/product/barcode", h.DeleteProductBarcodeByGUIDs)
+
+	h.ms.GET("/product/barcode/units", h.GetroductBarcodeByAllUnits)
 }
 
 // Create ProductBarcode godoc
@@ -575,5 +578,51 @@ func (h ProductBarcodeHttp) DeleteProductBarcodeByGUIDs(ctx microservice.IContex
 		Success: true,
 	})
 
+	return nil
+}
+
+// Get ProductBarcode By Reference Barcode godoc
+// @Description get by reference barcode
+// @Tags		ProductBarcode
+// @Accept 		json
+// @Param		codes	query	string		false  "array of units"
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/barcode/units [get]
+func (h ProductBarcodeHttp) GetroductBarcodeByAllUnits(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	pageable := utils.GetPageable(ctx.QueryParam)
+
+	// inputBody := ctx.ReadInput()
+
+	// unitCodes := []string{}
+	// err := json.Unmarshal([]byte(inputBody), &unitCodes)
+
+	// if err != nil {
+	// 	ctx.ResponseError(400, err.Error())
+	// 	return err
+	// }
+
+	reqUnitCodes := ctx.QueryParam("codes")
+	unitCodes := []string{}
+
+	tempUnitCodes := strings.Split(reqUnitCodes, ",")
+	unitCodes = append(unitCodes, tempUnitCodes...)
+
+	docs, pagination, err := h.svc.GetProductBarcodeByUnits(shopID, unitCodes, pageable)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success:    true,
+		Pagination: pagination,
+		Data:       docs,
+	})
 	return nil
 }

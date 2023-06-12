@@ -34,6 +34,8 @@ type IUnitRepository interface {
 	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.UnitDeleteActivity, error)
 	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.UnitActivity, error)
 	FindMasterInCodes(codes []string) ([]models.UnitInfo, error)
+
+	Transaction(callback func() error) error
 }
 
 type UnitRepository struct {
@@ -82,4 +84,8 @@ func (repo UnitRepository) FindMasterInCodes(codes []string) ([]models.UnitInfo,
 	}
 
 	return docList, nil
+}
+
+func (repo UnitRepository) Transaction(callback func() error) error {
+	return repo.pst.Transaction(callback)
 }
