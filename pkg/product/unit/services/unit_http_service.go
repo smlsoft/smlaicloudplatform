@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/unit/models"
@@ -38,17 +39,19 @@ type IUnitHttpService interface {
 }
 
 type UnitHttpService struct {
-	repo          repositories.IUnitRepository
-	syncCacheRepo mastersync.IMasterSyncCacheRepository
+	repo              repositories.IUnitRepository
+	syncCacheRepo     mastersync.IMasterSyncCacheRepository
+	unitServiceConfig config.IUnitServiceConfig
 
 	services.ActivityService[models.UnitActivity, models.UnitDeleteActivity]
 }
 
-func NewUnitHttpService(repo repositories.IUnitRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *UnitHttpService {
+func NewUnitHttpService(repo repositories.IUnitRepository, unitServiceConfig config.IUnitServiceConfig, syncCacheRepo mastersync.IMasterSyncCacheRepository) *UnitHttpService {
 
 	insSvc := &UnitHttpService{
-		repo:          repo,
-		syncCacheRepo: syncCacheRepo,
+		repo:              repo,
+		unitServiceConfig: unitServiceConfig,
+		syncCacheRepo:     syncCacheRepo,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.UnitActivity, models.UnitDeleteActivity](repo)
@@ -501,33 +504,7 @@ func (svc UnitHttpService) getProductByUnit(authHeader string, unitCodes []strin
 
 	reqCodes := strings.Join(unitCodes, ",")
 
-	// client := &http.Client{}
-	// req, err := http.NewRequest("GET", "http://localhost:8088/product/barcode/units?codes="+reqCodes, nil)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// req.Header.Set("Authorization", authHeader)
-	// resp, err := client.Do(req)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// defer resp.Body.Close()
-
-	// body, err := ioutil.ReadAll(resp.Body)
-	// if err != nil {
-	// 	fmt.Println("Error:", err)
-
-	// }
-
-	// var result map[string]interface{}
-	// err = json.Unmarshal(body, &result)
-	// if err != nil {
-	// 	return []interface{}{}, err
-	// }
-	// return result["data"].([]interface{}), nil
-
-	url := "http://localhost:8088/product/barcode/units?codes=" + reqCodes
+	url := fmt.Sprintf("%s/product/barcode/units?codes=%s", svc.unitServiceConfig.ProductHost(), reqCodes)
 
 	return requestapi.Get(url, authHeader)
 }

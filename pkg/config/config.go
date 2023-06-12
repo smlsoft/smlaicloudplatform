@@ -25,6 +25,7 @@ type IConfig interface {
 	ApplicationName() string
 	HttpConfig() IHttpConfig
 	LoggerConfig() ILoggerConfig
+	UnitServiceConfig() IUnitServiceConfig
 }
 
 func GetEnv(key string, fallback string) string {
@@ -128,4 +129,8 @@ func (*Config) HttpConfig() IHttpConfig {
 
 func (*Config) LoggerConfig() ILoggerConfig {
 	return NewLoggerConfig()
+}
+
+func (*Config) UnitServiceConfig() IUnitServiceConfig {
+	return NewUnitServiceConfig()
 }

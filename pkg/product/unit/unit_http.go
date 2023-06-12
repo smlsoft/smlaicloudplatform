@@ -30,7 +30,7 @@ func NewUnitHttp(ms *microservice.Microservice, cfg config.IConfig) UnitHttp {
 	repo := repositories.NewUnitRepository(pst)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewUnitHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewUnitHttpService(repo, cfg.UnitServiceConfig(), masterSyncCacheRepo)
 
 	return UnitHttp{
 		ms:  ms,

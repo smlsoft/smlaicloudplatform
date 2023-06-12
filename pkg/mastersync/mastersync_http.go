@@ -91,7 +91,7 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) Master
 	activityModuleManager.Add(svcProductBarcode)
 
 	// Product Unit
-	svcProductUnit := productunitService.NewUnitHttpService(productunitRepo.NewUnitRepository(pst), masterSyncCacheRepo)
+	svcProductUnit := productunitService.NewUnitHttpService(productunitRepo.NewUnitRepository(pst), cfg.UnitServiceConfig(), masterSyncCacheRepo)
 	activityModuleManager.Add(svcProductUnit)
 
 	// Kitchen
