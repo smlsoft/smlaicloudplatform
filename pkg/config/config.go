@@ -2,12 +2,16 @@ package config
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/joho/godotenv"
 )
 
 type IConfig interface {
+	ConfigMode() string
+	ApplicationName() string
+	IsDebugMode() bool
 	PathPrefix() string
 	PersisterConfig() IPersisterConfig
 	MongoPersisterConfig() IPersisterMongoConfig
@@ -22,7 +26,6 @@ type IConfig interface {
 	// SignKeyPath() string
 	// VerifyKeyPath() string
 	JwtSecretKey() string
-	ApplicationName() string
 	HttpConfig() IHttpConfig
 	LoggerConfig() ILoggerConfig
 }
@@ -50,20 +53,51 @@ func NewConfig() IConfig {
 }
 
 func (cfg *Config) LoadConfig() {
+	cfg.Mode = cfg.ConfigMode()
+
+	if cfg.Mode != "test" {
+		godotenv.Load(".env.local")
+	}
+
+	loadEnvFileName := ".env." + cfg.Mode + ".local"
+	if cfg.Mode == "test" {
+		workspaceDir := os.Getenv("WORKSPACE_DIR")
+		if workspaceDir == "" {
+			cwd, err := filepath.Abs(".")
+			if err == nil {
+				workspaceDir = filepath.Dir(cwd) + "/"
+			}
+		}
+		loadEnvFileName = workspaceDir + ".env." + cfg.Mode + ".local"
+	}
+
+	godotenv.Load(loadEnvFileName)
+	if cfg.Mode != "test" {
+		godotenv.Load(".env.local")
+	}
+
+	godotenv.Load(".env." + cfg.Mode)
+	godotenv.Load()
+}
+
+func (c *Config) ConfigMode() string {
 	env := os.Getenv("MODE")
 	if env == "" {
 		os.Setenv("MODE", "development")
 		env = "development"
 	}
+	return env
+}
 
-	cfg.Mode = env
+func (*Config) ApplicationName() string {
+	return getEnv("SERVICE_NAME", "microservice")
+}
 
-	godotenv.Load(".env." + env + ".local")
-	if env != "test" {
-		godotenv.Load(".env.local")
+func (c *Config) IsDebugMode() bool {
+	if c.ConfigMode() == "development" {
+		return true
 	}
-	godotenv.Load(".env." + env)
-	godotenv.Load() //
+	return false
 }
 
 func (cfg *Config) PathPrefix() string {
@@ -84,10 +118,6 @@ func (cfg *Config) ClickHouseConfig() IPersisterClickHouseConfig {
 
 func (*Config) TopicName() string {
 	return os.Getenv("TOPIC_NAME")
-}
-
-func (*Config) ApplicationName() string {
-	return getEnv("SERVICE_NAME", "microservice")
 }
 
 func (*Config) HttpCORS() []string {

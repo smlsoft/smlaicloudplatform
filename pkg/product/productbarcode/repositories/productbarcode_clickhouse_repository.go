@@ -20,6 +20,10 @@ type ProductBarcodeClickhouseRepository struct {
 
 func NewProductBarcodeClickhouseRepository(pst microservice.IPersisterClickHouse) *ProductBarcodeClickhouseRepository {
 
+	if pst == nil {
+		return nil
+	}
+
 	insRepo := &ProductBarcodeClickhouseRepository{
 		pst: pst,
 	}

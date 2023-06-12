@@ -296,6 +296,7 @@ func main() {
 		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, consumerGroupName)
 
 		task.NewTaskConsumer(ms, cfg).RegisterConsumer()
+		ms.RegisterConsumer(productbarcode.NewProductBarcodeConsumer(ms, cfg))
 
 	}
 
