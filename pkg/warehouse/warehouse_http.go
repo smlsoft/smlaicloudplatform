@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
@@ -16,11 +17,11 @@ type IWarehouseHttp interface{}
 
 type WarehouseHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IWarehouseHttpService
 }
 
-func NewWarehouseHttp(ms *microservice.Microservice, cfg microservice.IConfig) WarehouseHttp {
+func NewWarehouseHttp(ms *microservice.Microservice, cfg config.IConfig) WarehouseHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

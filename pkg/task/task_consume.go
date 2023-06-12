@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/models"
 	repositoriesDocumentImage "smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
 	servicesDocumentImage "smlcloudplatform/pkg/documentwarehouse/documentimage/services"
@@ -34,12 +35,12 @@ func (TaskMessageQueueConfig) TopicTaskRejected() string {
 
 type TaskConsumer struct {
 	ms          *microservice.Microservice
-	cfg         microservice.IConfig
+	cfg         config.IConfig
 	consumerCfg TaskMessageQueueConfig
 	svc         services.ITaskHttpService
 }
 
-func NewTaskConsumer(ms *microservice.Microservice, cfg microservice.IConfig) *TaskConsumer {
+func NewTaskConsumer(ms *microservice.Microservice, cfg config.IConfig) *TaskConsumer {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
 

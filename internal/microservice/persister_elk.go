@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"smlcloudplatform/pkg/config"
 	"sync"
 
 	elk "github.com/elastic/go-elasticsearch/v8"
@@ -18,23 +19,17 @@ type IPersisterElk interface {
 	Delete(docID string, model interface{}) error
 }
 
-type IPersisterElkConfig interface {
-	ElkAddress() []string
-	Username() string
-	Password() string
-}
-
 type ElasticModel interface {
 	IndexName() string
 }
 
 type PersisterElk struct {
-	config  IPersisterElkConfig
+	config  config.IPersisterElkConfig
 	db      *elk.Client
 	dbMutex sync.Mutex
 }
 
-func NewPersisterElk(config IPersisterElkConfig) *PersisterElk {
+func NewPersisterElk(config config.IPersisterElkConfig) *PersisterElk {
 	return &PersisterElk{
 		config: config,
 	}

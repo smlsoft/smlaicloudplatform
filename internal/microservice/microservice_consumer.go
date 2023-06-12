@@ -6,6 +6,10 @@ import (
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
+type IMicroserviceConsumer interface {
+	RegisterConsumer(ms *Microservice)
+}
+
 func (ms *Microservice) consumeSingle(servers string, topic string, groupID string, readTimeout time.Duration, h ServiceHandleFunc) {
 	ms.Logger.Debugf("Consumer Kafka on topic: %s ", topic)
 	c, err := ms.newKafkaConsumer(servers, groupID)
@@ -91,4 +95,8 @@ func (ms *Microservice) consumeWithoutGroupFromBeginig(servers string, topic str
 func (ms *Microservice) ConsumeFromBegining(servers string, topic string, readTimeout time.Duration, h ServiceHandleFunc) error {
 	go ms.consumeWithoutGroupFromBeginig(servers, topic, readTimeout, h)
 	return nil
+}
+
+func (ms *Microservice) RegisterConsumer(consumer IMicroserviceConsumer) {
+	consumer.RegisterConsumer(ms)
 }

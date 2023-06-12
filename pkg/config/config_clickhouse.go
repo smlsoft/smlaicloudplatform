@@ -1,4 +1,4 @@
-package microservice
+package config
 
 type IPersisterClickHouseConfig interface {
 	ServerAddress() []string

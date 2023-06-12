@@ -15,7 +15,8 @@ import (
 	"github.com/apex/log"
 )
 
-// imprement PersisterFile Interface
+// implement PersisterFile Interface
+
 type PersisterAzureBlob struct{}
 
 func NewPersisterAzureBlob() *PersisterAzureBlob {
@@ -43,44 +44,30 @@ func (p *PersisterAzureBlob) Save(fh *multipart.FileHeader, fileName string, fil
 
 	url := fmt.Sprintf("https://%s.blob.core.windows.net/", AZURE_STORAGE_ACCOUNT_NAME)
 
-	credential, err := azblob.NewSharedKeyCredential(AZURE_STORAGE_ACCOUNT_NAME, AZURE_STORAGE_ACCOUNT_KEY)
+	cred, err := azblob.NewSharedKeyCredential(AZURE_STORAGE_ACCOUNT_NAME, AZURE_STORAGE_ACCOUNT_KEY)
 	if err != nil {
 		log.Fatal("Invalid credentials with error: " + err.Error())
 	}
 
-	service, err := azblob.NewServiceClientWithSharedKey(url, credential, nil)
+	client, err := azblob.NewClientWithSharedKeyCredential(url, cred, nil)
 	if err != nil {
 		log.Fatal("Invalid Service Client with error: " + err.Error())
 	}
 
-	container, err := service.NewContainerClient(AZURE_STORAGE_CONTAINER_NAME)
-	if err != nil {
-		log.Fatal("Invalid Create Containnner with error: " + err.Error())
-	}
-
-	blockBlob, err := container.NewBlockBlobClient(imageFileName)
-	if err != nil {
-		log.Fatal("Invalid New BlockBlob with error: " + err.Error())
-	}
-
 	context := context.TODO()
-	//blockOptions := azblob.HighLevelUploadToBlockBlobOption{}
-	//var blockOptions azblob.HighLevelUploadToBlockBlobOption{}
-	uploadOption := azblob.UploadOption{}
-
-	_, err = blockBlob.UploadBuffer(context, fileBytes, uploadOption)
+	_, err = client.UploadBuffer(context, AZURE_STORAGE_CONTAINER_NAME, imageFileName, fileBytes, nil)
 	if err != nil {
 		return "", err
 	}
 
-	blobUri := blockBlob.URL()
+	blobUri := fmt.Sprintf("%s%s/%s", url, AZURE_STORAGE_CONTAINER_NAME, imageFileName) //.URL()
 
 	return blobUri, nil
 }
 
 func (p *PersisterAzureBlob) LoadFile(fileName string) (string, *bytes.Buffer, error) {
-	//imgFileName := strings.Replace(fileName, pst.StoreDataUri, "", -1)
-	//storateFileName := filepath.Join(pst.StoreFilePath, imgFileName)
+	// imgFileName := strings.Replace(fileName, pst.StoreDataUri, "", -1)
+	// storageFileName := filepath.Join(pst.StoreFilePath, imgFileName)
 
 	if strings.HasPrefix(fileName, "http") {
 		resp, err := http.Get(fileName)
@@ -107,33 +94,18 @@ func (p *PersisterAzureBlob) LoadFile(fileName string) (string, *bytes.Buffer, e
 		return "", nil, errors.New("Invalid credentials with error: " + err.Error())
 	}
 
-	service, err := azblob.NewServiceClientWithSharedKey(url, credential, nil)
+	client, err := azblob.NewClientWithSharedKeyCredential(url, credential, nil)
 	if err != nil {
 		return "", nil, errors.New("Invalid Service Client with error: " + err.Error())
 	}
 
-	container, err := service.NewContainerClient(AZURE_STORAGE_CONTAINER_NAME)
-	if err != nil {
-		return "", nil, errors.New("Invalid Create Containnner with error: " + err.Error())
-	}
-
-	blockBlob, err := container.NewBlockBlobClient(fileName)
-	if err != nil {
-		return "", nil, errors.New("Invalid New BlockBlob with error: " + err.Error())
-	}
-
 	context := context.TODO()
-	get, err := blockBlob.Download(context, nil)
+	get, err := client.DownloadStream(context, AZURE_STORAGE_CONTAINER_NAME, fileName, nil)
 	if err != nil {
 		return "", nil, errors.New(err.Error())
 	}
 	downloadedData := &bytes.Buffer{}
-	reader := get.Body(&azblob.RetryReaderOptions{})
-	_, err = downloadedData.ReadFrom(reader)
-	if err != nil {
-		return "", nil, errors.New(err.Error())
-	}
-	err = reader.Close()
+	_, err = downloadedData.ReadFrom(get.Body)
 	if err != nil {
 		return "", nil, errors.New(err.Error())
 	}

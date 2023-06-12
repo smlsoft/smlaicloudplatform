@@ -11,6 +11,7 @@ import (
 	"smlcloudplatform/pkg/authentication"
 	"smlcloudplatform/pkg/channel/salechannel"
 	"smlcloudplatform/pkg/channel/transportchannel"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/debtaccount/creditor"
 	"smlcloudplatform/pkg/debtaccount/creditorgroup"
 	"smlcloudplatform/pkg/debtaccount/customer"
@@ -39,7 +40,8 @@ import (
 	"smlcloudplatform/pkg/productsection/sectionbranch"
 	"smlcloudplatform/pkg/productsection/sectionbusinesstype"
 	"smlcloudplatform/pkg/productsection/sectiondepartment"
-	"smlcloudplatform/pkg/report/reportquery"
+
+	// "smlcloudplatform/pkg/report/reportquery"
 	"smlcloudplatform/pkg/restaurant/device"
 	"smlcloudplatform/pkg/restaurant/kitchen"
 	"smlcloudplatform/pkg/restaurant/printer"
@@ -87,7 +89,7 @@ import (
 
 func main() {
 
-	cfg := microservice.NewConfig()
+	cfg := config.NewConfig()
 	ms, err := microservice.NewMicroservice(cfg)
 	if err != nil {
 		panic(err)
@@ -235,7 +237,7 @@ func main() {
 		paid.NewPaidHttp(ms, cfg),
 		pay.NewPayHttp(ms, cfg),
 
-		reportquery.NewReportQueryHttp(ms, cfg),
+		//reportquery.NewReportQueryHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)

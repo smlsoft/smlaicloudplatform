@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/vfgl/journalbook/models"
 	"smlcloudplatform/pkg/vfgl/journalbook/repositories"
@@ -14,11 +15,11 @@ import (
 
 type JournalBookHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IJournalBookHttpService
 }
 
-func NewJournalBookHttp(ms *microservice.Microservice, cfg microservice.IConfig) JournalBookHttp {
+func NewJournalBookHttp(ms *microservice.Microservice, cfg config.IConfig) JournalBookHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
 

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	repositoriesDocumentImage "smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
 	servicesDocumentImage "smlcloudplatform/pkg/documentwarehouse/documentimage/services"
 	common "smlcloudplatform/pkg/models"
@@ -21,11 +22,11 @@ type ITaskHttp interface{}
 
 type TaskHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.ITaskHttpService
 }
 
-func NewTaskHttp(ms *microservice.Microservice, cfg microservice.IConfig) TaskHttp {
+func NewTaskHttp(ms *microservice.Microservice, cfg config.IConfig) TaskHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
 

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/productgroup/models"
@@ -17,11 +18,11 @@ type IProductGroupHttp interface{}
 
 type ProductGroupHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IProductGroupHttpService
 }
 
-func NewProductGroupHttp(ms *microservice.Microservice, cfg microservice.IConfig) ProductGroupHttp {
+func NewProductGroupHttp(ms *microservice.Microservice, cfg config.IConfig) ProductGroupHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

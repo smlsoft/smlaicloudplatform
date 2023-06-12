@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/unit/models"
@@ -18,11 +19,11 @@ type IUnitHttp interface{}
 
 type UnitHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IUnitHttpService
 }
 
-func NewUnitHttp(ms *microservice.Microservice, cfg microservice.IConfig) UnitHttp {
+func NewUnitHttp(ms *microservice.Microservice, cfg config.IConfig) UnitHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

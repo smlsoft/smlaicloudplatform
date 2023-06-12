@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/staff/models"
@@ -16,11 +17,11 @@ type IStaffHttp interface{}
 
 type StaffHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IStaffHttpService
 }
 
-func NewStaffHttp(ms *microservice.Microservice, cfg microservice.IConfig) StaffHttp {
+func NewStaffHttp(ms *microservice.Microservice, cfg config.IConfig) StaffHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

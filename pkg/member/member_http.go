@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	"smlcloudplatform/pkg/member/models"
 	common "smlcloudplatform/pkg/models"
@@ -21,11 +22,11 @@ type IMemberHttp interface {
 
 type MemberHttp struct {
 	ms      *microservice.Microservice
-	cfg     microservice.IConfig
+	cfg     config.IConfig
 	service IMemberService
 }
 
-func NewMemberHttp(ms *microservice.Microservice, cfg microservice.IConfig) MemberHttp {
+func NewMemberHttp(ms *microservice.Microservice, cfg config.IConfig) MemberHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	pstPg := ms.Persister(cfg.PersisterConfig())

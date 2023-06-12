@@ -2,10 +2,11 @@ package migration
 
 import (
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	vfgl "smlcloudplatform/pkg/vfgl/journal/models"
 )
 
-func StartMigrateModel(ms *microservice.Microservice, cfg microservice.IConfig) error {
+func StartMigrateModel(ms *microservice.Microservice, cfg config.IConfig) error {
 	pst := ms.Persister(cfg.PersisterConfig())
 
 	// pst.DropTable(&models.InventoryData{}, &models.InventoryOption{}, &models.Option{}, &models.InventoryImage{}, &models.InventoryTag{}, &models.Choice{})

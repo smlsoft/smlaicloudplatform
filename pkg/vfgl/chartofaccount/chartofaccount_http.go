@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/vfgl/chartofaccount/models"
@@ -17,11 +18,11 @@ type IChartOfAccountHttp interface{}
 
 type ChartOfAccountHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IChartOfAccountHttpService
 }
 
-func NewChartOfAccountHttp(ms *microservice.Microservice, cfg microservice.IConfig) ChartOfAccountHttp {
+func NewChartOfAccountHttp(ms *microservice.Microservice, cfg config.IConfig) ChartOfAccountHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())

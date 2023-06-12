@@ -3,6 +3,7 @@ package microservice
 import (
 	"context"
 	"fmt"
+	"smlcloudplatform/pkg/config"
 	"sync"
 
 	"github.com/ClickHouse/clickhouse-go/v2"
@@ -18,13 +19,13 @@ type ChModel interface {
 }
 
 type PersisterClickHouse struct {
-	cfg     IPersisterClickHouseConfig
+	cfg     config.IPersisterClickHouseConfig
 	ctx     context.Context
 	dbMutex sync.Mutex
 	db      driver.Conn
 }
 
-func NewPersisterClickHouse(cfg IPersisterClickHouseConfig) *PersisterClickHouse {
+func NewPersisterClickHouse(cfg config.IPersisterClickHouseConfig) *PersisterClickHouse {
 
 	ctx := context.Background()
 

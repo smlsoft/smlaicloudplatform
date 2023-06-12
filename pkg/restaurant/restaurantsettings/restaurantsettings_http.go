@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/restaurantsettings/models"
 	"smlcloudplatform/pkg/utils"
@@ -15,11 +16,11 @@ type IRestaurantSettingsHttp interface{}
 
 type RestaurantSettingsHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc IRestaurantSettingsService
 }
 
-func NewRestaurantSettingsHttp(ms *microservice.Microservice, cfg microservice.IConfig) RestaurantSettingsHttp {
+func NewRestaurantSettingsHttp(ms *microservice.Microservice, cfg config.IConfig) RestaurantSettingsHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

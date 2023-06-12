@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/restaurant/kitchen/models"
@@ -14,11 +15,11 @@ type IKitchenHttp interface{}
 
 type KitchenHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc IKitchenService
 }
 
-func NewKitchenHttp(ms *microservice.Microservice, cfg microservice.IConfig) KitchenHttp {
+func NewKitchenHttp(ms *microservice.Microservice, cfg config.IConfig) KitchenHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

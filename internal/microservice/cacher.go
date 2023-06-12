@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"runtime"
+	"smlcloudplatform/pkg/config"
 	"strings"
 	"sync"
 	"time"
@@ -68,53 +69,6 @@ type ICacher interface {
 	LRange(key string) ([]string, error)
 }
 
-// DefaultCacherConnectionSettings contains default connection settings, this intend to use as embed struct
-type DefaultCacherConnectionSettings struct{}
-
-func NewDefaultCacherConnectionSettings() ICacherConnectionSettings {
-	return &DefaultCacherConnectionSettings{}
-}
-
-func (setting *DefaultCacherConnectionSettings) PoolSize() int {
-	return 50
-}
-
-func (setting *DefaultCacherConnectionSettings) MinIdleConns() int {
-	return 5
-}
-
-func (setting *DefaultCacherConnectionSettings) MaxRetries() int {
-	return 3
-}
-
-func (setting *DefaultCacherConnectionSettings) MinRetryBackoff() time.Duration {
-	return 10 * time.Millisecond
-}
-
-func (setting *DefaultCacherConnectionSettings) MaxRetryBackoff() time.Duration {
-	return 500 * time.Millisecond
-}
-
-func (setting *DefaultCacherConnectionSettings) IdleTimeout() time.Duration {
-	return 30 * time.Minute
-}
-
-func (setting *DefaultCacherConnectionSettings) IdleCheckFrequency() time.Duration {
-	return time.Minute
-}
-
-func (setting *DefaultCacherConnectionSettings) PoolTimeout() time.Duration {
-	return time.Minute
-}
-
-func (setting *DefaultCacherConnectionSettings) ReadTimeout() time.Duration {
-	return time.Minute
-}
-
-func (setting *DefaultCacherConnectionSettings) WriteTimeout() time.Duration {
-	return time.Minute
-}
-
 type pubsubChannels struct {
 	ps       *redis.PubSub
 	channels []string
@@ -122,14 +76,14 @@ type pubsubChannels struct {
 
 // Cacher is the struct for cache service
 type Cacher struct {
-	config      ICacherConfig
+	config      config.ICacherConfig
 	clientMutex sync.Mutex
 	client      *redis.Client
 	subsribers  *sync.Map
 }
 
 // NewCacher return new Cacher
-func NewCacher(config ICacherConfig) *Cacher {
+func NewCacher(config config.ICacherConfig) *Cacher {
 	return &Cacher{
 		config:     config,
 		subsribers: &sync.Map{},

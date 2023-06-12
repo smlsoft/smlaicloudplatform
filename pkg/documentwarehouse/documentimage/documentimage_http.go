@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/models"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
 	"smlcloudplatform/pkg/documentwarehouse/documentimage/services"
@@ -33,12 +34,12 @@ type IDocumentImageHttp interface {
 type DocumentImageHttp struct {
 	Module       string
 	ms           *microservice.Microservice
-	cfg          microservice.IConfig
+	cfg          config.IConfig
 	service      services.IDocumentImageService
 	svcWsJournal journalSvc.IJournalWebsocketService
 }
 
-func NewDocumentImageHttp(ms *microservice.Microservice, cfg microservice.IConfig) *DocumentImageHttp {
+func NewDocumentImageHttp(ms *microservice.Microservice, cfg config.IConfig) *DocumentImageHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())

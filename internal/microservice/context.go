@@ -4,6 +4,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"smlcloudplatform/internal/microservice/models"
+	"smlcloudplatform/pkg/config"
 
 	"github.com/labstack/echo/v4"
 )
@@ -23,10 +24,10 @@ type IContext interface {
 	ResponseWriter() http.ResponseWriter
 	Request() *http.Request
 
-	Persister(cfg IPersisterConfig) IPersister
-	Cacher(cacherConfig ICacherConfig) ICacher
-	Producer(servers IMQConfig) IProducer
-	MQ(servers IMQConfig) IMQ
+	Persister(cfg config.IPersisterConfig) IPersister
+	Cacher(cacherConfig config.ICacherConfig) ICacher
+	Producer(servers config.IMQConfig) IProducer
+	MQ(servers config.IMQConfig) IMQ
 
 	EchoContext() echo.Context
 }

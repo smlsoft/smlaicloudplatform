@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/optionpattern/models"
 	"smlcloudplatform/pkg/product/optionpattern/repositories"
@@ -15,11 +16,11 @@ type IOptionPatternHttp interface{}
 
 type OptionPatternHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IOptionPatternHttpService
 }
 
-func NewOptionPatternHttp(ms *microservice.Microservice, cfg microservice.IConfig) OptionPatternHttp {
+func NewOptionPatternHttp(ms *microservice.Microservice, cfg config.IConfig) OptionPatternHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	repo := repositories.NewOptionPatternRepository(pst)

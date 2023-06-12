@@ -3,6 +3,7 @@ package journal
 import (
 	"encoding/json"
 	"smlcloudplatform/internal/microservice"
+	sysConfig "smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/vfgl/journal/config"
 	"smlcloudplatform/pkg/vfgl/journal/models"
 	"smlcloudplatform/pkg/vfgl/journal/repositories"
@@ -10,7 +11,7 @@ import (
 	"time"
 )
 
-func MigrationJournalTable(ms *microservice.Microservice, cfg microservice.IConfig) error {
+func MigrationJournalTable(ms *microservice.Microservice, cfg sysConfig.IConfig) error {
 	pst := ms.Persister(cfg.PersisterConfig())
 	pst.AutoMigrate(
 		models.JournalPg{},
@@ -19,7 +20,7 @@ func MigrationJournalTable(ms *microservice.Microservice, cfg microservice.IConf
 	return nil
 }
 
-func StartJournalComsumeCreated(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
+func StartJournalComsumeCreated(ms *microservice.Microservice, cfg sysConfig.IConfig, groupID string) {
 
 	topicCreated := config.MQ_TOPIC_CREATED
 	timeout := time.Duration(-1)
@@ -57,7 +58,7 @@ func StartJournalComsumeCreated(ms *microservice.Microservice, cfg microservice.
 
 }
 
-func StartJournalComsumeUpdated(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
+func StartJournalComsumeUpdated(ms *microservice.Microservice, cfg sysConfig.IConfig, groupID string) {
 
 	topicCreated := config.MQ_TOPIC_UPDATED
 	timeout := time.Duration(-1)
@@ -96,7 +97,7 @@ func StartJournalComsumeUpdated(ms *microservice.Microservice, cfg microservice.
 
 }
 
-func StartJournalComsumeDeleted(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
+func StartJournalComsumeDeleted(ms *microservice.Microservice, cfg sysConfig.IConfig, groupID string) {
 
 	topicCreated := config.MQ_TOPIC_DELETED
 	timeout := time.Duration(-1)
@@ -135,7 +136,7 @@ func StartJournalComsumeDeleted(ms *microservice.Microservice, cfg microservice.
 
 }
 
-func StartJournalComsumeBlukCreated(ms *microservice.Microservice, cfg microservice.IConfig, groupID string) {
+func StartJournalComsumeBlukCreated(ms *microservice.Microservice, cfg sysConfig.IConfig, groupID string) {
 
 	topicCreated := config.MQ_TOPIC_BULK_CREATED
 	timeout := time.Duration(-1)

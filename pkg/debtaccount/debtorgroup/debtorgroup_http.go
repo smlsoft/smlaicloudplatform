@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/debtaccount/debtorgroup/models"
 	"smlcloudplatform/pkg/debtaccount/debtorgroup/repositories"
 	"smlcloudplatform/pkg/debtaccount/debtorgroup/services"
@@ -16,11 +17,11 @@ type IDebtorGroupHttp interface{}
 
 type DebtorGroupHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IDebtorGroupHttpService
 }
 
-func NewDebtorGroupHttp(ms *microservice.Microservice, cfg microservice.IConfig) DebtorGroupHttp {
+func NewDebtorGroupHttp(ms *microservice.Microservice, cfg config.IConfig) DebtorGroupHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

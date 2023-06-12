@@ -9,6 +9,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"smlcloudplatform/pkg/config"
 	"strings"
 )
 
@@ -29,7 +30,7 @@ type File struct {
 	Size        int
 }
 
-func NewPersisterFile(cfg *StorageFileConfig) *PersisterFile {
+func NewPersisterFile(cfg *config.StorageFileConfig) *PersisterFile {
 	return &PersisterFile{
 		StoreFilePath: cfg.StorageDataPath(),
 		StoreDataUri:  cfg.StorageUriAtlas(),

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/productcategory/models"
@@ -16,11 +17,11 @@ type IProductCategoryHttp interface{}
 
 type ProductCategoryHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IProductCategoryHttpService
 }
 
-func NewProductCategoryHttp(ms *microservice.Microservice, cfg microservice.IConfig) ProductCategoryHttp {
+func NewProductCategoryHttp(ms *microservice.Microservice, cfg config.IConfig) ProductCategoryHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

@@ -3,15 +3,16 @@ package tools
 import (
 	"os"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"time"
 )
 
 type ToolsService struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 }
 
-func NewToolsService(ms *microservice.Microservice, cfg microservice.IConfig) *ToolsService {
+func NewToolsService(ms *microservice.Microservice, cfg config.IConfig) *ToolsService {
 
 	return &ToolsService{
 		ms:  ms,

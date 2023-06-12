@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	repositorycategory "smlcloudplatform/pkg/product/productcategory/repositories"
@@ -18,12 +19,12 @@ type IEOrderHttp interface{}
 
 type EOrderHttp struct {
 	ms          *microservice.Microservice
-	cfg         microservice.IConfig
+	cfg         config.IConfig
 	svcCategory servicecategory.IProductCategoryHttpService
 	svcProduct  serviceproduct.IProductBarcodeHttpService
 }
 
-func NewEOrderHttp(ms *microservice.Microservice, cfg microservice.IConfig) EOrderHttp {
+func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	pstClickHouse := ms.ClickHousePersister(cfg.ClickHouseConfig())
 	cache := ms.Cacher(cfg.CacherConfig())

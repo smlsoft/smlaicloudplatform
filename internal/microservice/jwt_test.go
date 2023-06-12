@@ -2,6 +2,7 @@ package microservice
 
 import (
 	"smlcloudplatform/internal/microservice/models"
+	"smlcloudplatform/pkg/config"
 	"testing"
 )
 
@@ -23,8 +24,8 @@ func (cfg *TestCacherConfig) DB() int {
 	return 0
 }
 
-func (cfg *TestCacherConfig) ConnectionSettings() ICacherConnectionSettings {
-	return NewDefaultCacherConnectionSettings()
+func (cfg *TestCacherConfig) ConnectionSettings() config.ICacherConnectionSettings {
+	return config.NewDefaultCacherConnectionSettings()
 }
 
 func (cfg *TestCacherConfig) UserName() string {

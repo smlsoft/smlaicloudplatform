@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	msConfig "smlcloudplatform/pkg/config"
 	documentImageModel "smlcloudplatform/pkg/documentwarehouse/documentimage/models"
 	repoDocumentimage "smlcloudplatform/pkg/documentwarehouse/documentimage/repositories"
 	serviceDocumentimage "smlcloudplatform/pkg/documentwarehouse/documentimage/services"
@@ -21,14 +22,14 @@ type IJournalHttp interface{}
 
 type JournalHttp struct {
 	ms          *microservice.Microservice
-	cfg         microservice.IConfig
+	cfg         msConfig.IConfig
 	svc         services.IJournalHttpService
 	svcDocImage serviceDocumentimage.DocumentImageService
 	Module      string
 	// svcWebsocket services.IJournalWebsocketService
 }
 
-func NewJournalHttp(ms *microservice.Microservice, cfg microservice.IConfig) JournalHttp {
+func NewJournalHttp(ms *microservice.Microservice, cfg msConfig.IConfig) JournalHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	prod := ms.Producer(cfg.MQConfig())
 	// cache := ms.Cacher(cfg.CacherConfig())

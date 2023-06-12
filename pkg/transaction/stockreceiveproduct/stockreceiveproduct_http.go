@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	trancache "smlcloudplatform/pkg/transaction/repositories"
@@ -17,11 +18,11 @@ type IStockReceiveProductHttp interface{}
 
 type StockReceiveProductHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IStockReceiveProductHttpService
 }
 
-func NewStockReceiveProductHttp(ms *microservice.Microservice, cfg microservice.IConfig) StockReceiveProductHttp {
+func NewStockReceiveProductHttp(ms *microservice.Microservice, cfg config.IConfig) StockReceiveProductHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

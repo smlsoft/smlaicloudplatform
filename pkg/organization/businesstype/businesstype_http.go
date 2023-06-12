@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/organization/businesstype/models"
@@ -16,11 +17,11 @@ type IBusinessTypeHttp interface{}
 
 type BusinessTypeHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IBusinessTypeHttpService
 }
 
-func NewBusinessTypeHttp(ms *microservice.Microservice, cfg microservice.IConfig) BusinessTypeHttp {
+func NewBusinessTypeHttp(ms *microservice.Microservice, cfg config.IConfig) BusinessTypeHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 

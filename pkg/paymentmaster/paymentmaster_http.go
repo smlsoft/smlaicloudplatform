@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/paymentmaster/models"
 	"smlcloudplatform/pkg/paymentmaster/repositories"
@@ -14,11 +15,11 @@ type IPaymentMasterHttp interface{}
 
 type PaymentMasterHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc services.IPaymentMasterHttpService
 }
 
-func NewPaymentMasterHttp(ms *microservice.Microservice, cfg microservice.IConfig) PaymentMasterHttp {
+func NewPaymentMasterHttp(ms *microservice.Microservice, cfg config.IConfig) PaymentMasterHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
 	repo := repositories.NewPaymentMasterRepository(pst)

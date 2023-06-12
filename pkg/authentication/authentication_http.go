@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/firebase"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/shop"
@@ -20,14 +21,14 @@ type IAuthenticationHttp interface {
 }
 type AuthenticationHttp struct {
 	ms                    *microservice.Microservice
-	cfg                   microservice.IConfig
+	cfg                   config.IConfig
 	authService           *microservice.AuthService
 	authenticationService IAuthenticationService
 	shopService           shop.IShopService
 	shopUserService       shop.IShopUserService
 }
 
-func NewAuthenticationHttp(ms *microservice.Microservice, cfg microservice.IConfig) AuthenticationHttp {
+func NewAuthenticationHttp(ms *microservice.Microservice, cfg config.IConfig) AuthenticationHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())

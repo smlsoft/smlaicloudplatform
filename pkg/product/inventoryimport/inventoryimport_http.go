@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/product/inventoryimport/models"
 	"smlcloudplatform/pkg/utils"
 
@@ -12,7 +13,7 @@ import (
 
 type InventoryImportHttp struct {
 	ms  *microservice.Microservice
-	cfg microservice.IConfig
+	cfg config.IConfig
 	svc IInventoryImportService
 }
 
@@ -20,7 +21,7 @@ type IInventoryImportHttp interface {
 	RouteSetup()
 }
 
-func NewInventoryImportHttp(ms *microservice.Microservice, cfg microservice.IConfig) IInventoryImportHttp {
+func NewInventoryImportHttp(ms *microservice.Microservice, cfg config.IConfig) IInventoryImportHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 

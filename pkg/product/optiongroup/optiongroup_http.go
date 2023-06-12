@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/optiongroup/models"
 	"smlcloudplatform/pkg/utils"
@@ -11,11 +12,11 @@ import (
 
 type OptionGroupHttp struct {
 	ms              *microservice.Microservice
-	cfg             microservice.IConfig
+	cfg             config.IConfig
 	optGroupService IOptionGroupService
 }
 
-func NewOptionGroupHttp(ms *microservice.Microservice, cfg microservice.IConfig) *OptionGroupHttp {
+func NewOptionGroupHttp(ms *microservice.Microservice, cfg config.IConfig) *OptionGroupHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 

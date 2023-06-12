@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"smlcloudplatform/internal/microservice"
+	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/option/models"
 	"smlcloudplatform/pkg/utils"
@@ -12,11 +13,11 @@ import (
 
 type OptionHttp struct {
 	ms         *microservice.Microservice
-	cfg        microservice.IConfig
+	cfg        config.IConfig
 	optService IOptionService
 }
 
-func NewOptionHttp(ms *microservice.Microservice, cfg microservice.IConfig) *OptionHttp {
+func NewOptionHttp(ms *microservice.Microservice, cfg config.IConfig) *OptionHttp {
 
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 
