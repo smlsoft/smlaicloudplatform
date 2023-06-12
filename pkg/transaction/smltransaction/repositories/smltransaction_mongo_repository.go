@@ -2,8 +2,10 @@ package repositories
 
 import (
 	"smlcloudplatform/internal/microservice"
+	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/transaction/smltransaction/models"
 
+	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -16,6 +18,8 @@ type ISMLTransactionRepository interface {
 	Delete(collectionName string, shopID string, username string, filters map[string]interface{}) error
 	Transaction(fnc func() error) error
 	CreateIndex(collectionName string, keyID string) (string, error)
+
+	Filter(collectionName string, filters bson.M, pageable micromodels.Pageable) ([]map[string]interface{}, mongopagination.PaginationData, error)
 }
 
 type SMLTransactionRepository struct {
@@ -29,6 +33,22 @@ func NewSMLTransactionRepository(pst microservice.IPersisterMongo) *SMLTransacti
 	}
 
 	return insRepo
+}
+
+func (repo SMLTransactionRepository) Filter(collectionName string, filters bson.M, pageable micromodels.Pageable) ([]map[string]interface{}, mongopagination.PaginationData, error) {
+
+	docList := []map[string]interface{}{}
+	// err := repo.pst.Find(&models.DynamicCollection{Collection: collectionName}, filters, &docList)
+	pagination, err := repo.pst.FindSelectPage(&models.DynamicCollection{Collection: collectionName}, bson.M{
+		"shopid": 0,
+		"_id":    0,
+	}, filters, pageable, &docList)
+
+	if err != nil {
+		return docList, mongopagination.PaginationData{}, err
+	}
+
+	return docList, pagination, nil
 }
 
 func (repo SMLTransactionRepository) Create(collectionName string, doc map[string]interface{}) (string, error) {

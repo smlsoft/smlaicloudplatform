@@ -8,6 +8,9 @@ import (
 	"smlcloudplatform/pkg/transaction/smltransaction/models"
 	"smlcloudplatform/pkg/transaction/smltransaction/repositories"
 	"smlcloudplatform/pkg/transaction/smltransaction/services"
+	"smlcloudplatform/pkg/utils"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type ISMLTransactionHttp interface{}
@@ -37,6 +40,8 @@ func NewSMLTransactionHttp(ms *microservice.Microservice, cfg microservice.IConf
 
 func (h SMLTransactionHttp) RouteSetup() {
 
+	// h.ms.GET("/sml-transaction", h.Query)
+	// h.ms.GET("/sml-transaction/param", h.Query2)
 	h.ms.POST("/sml-transaction", h.CreateSMLTransaction)
 	h.ms.POST("/sml-transaction/bulk", h.BulkCreateSMLTransaction)
 	h.ms.DELETE("/sml-transaction", h.DeleteSMLTransaction)
@@ -45,6 +50,88 @@ func (h SMLTransactionHttp) RouteSetup() {
 type Data struct {
 	DocNo       string                 `json:"docno"`
 	DynamicData map[string]interface{} `json:",inline"`
+}
+
+func (h SMLTransactionHttp) Query2(ctx microservice.IContext) error {
+
+	pageable := utils.GetPageable(ctx.QueryParam)
+
+	params := map[string]interface{}{}
+
+	itemCode := ctx.QueryParam("itemCode")
+	if len(itemCode) > 0 {
+		params["itemcode"] = itemCode
+	}
+
+	data, pagination, err := h.svc.QueryFilter2(params, pageable)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success:    true,
+		Pagination: pagination,
+		Data:       data,
+	})
+	return nil
+}
+
+// Create SMLTransaction godoc
+// @Description Create SMLTransaction
+// @Tags		SMLTransaction
+// @Param		SMLTransactionRequest  body      models.SMLTransactionRequest  true  "SMLTransactionRequest"
+// @Accept 		json
+// @Success		201	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /sml-transaction [get]
+func (h SMLTransactionHttp) Query(ctx microservice.IContext) error {
+	// authUsername := ctx.UserInfo().Username
+	// shopID := ctx.UserInfo().ShopID
+	input := ctx.ReadInput()
+
+	pageable := utils.GetPageable(ctx.QueryParam)
+
+	var filter bson.M
+	err := bson.UnmarshalExtJSON([]byte(input), true, &filter)
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	data, pagination, err := h.svc.QueryFilter(filter, pageable)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	// tempResult := []interface{}{}
+
+	// for _, v := range data {
+	// 	temp, err := bson.UnmarshalExtJSON()
+	// 	if err != nil {
+	// 		ctx.ResponseError(http.StatusBadRequest, err.Error())
+	// 		return err
+	// 	}
+	// 	tempResult = append(tempResult, temp)
+	// }
+
+	// result, err := bson.Marshal(data)
+
+	// if err != nil {
+	// 	ctx.ResponseError(http.StatusBadRequest, err.Error())
+	// 	return err
+	// }
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success:    true,
+		Pagination: pagination,
+		Data:       data,
+	})
+	return nil
 }
 
 // Create SMLTransaction godoc
