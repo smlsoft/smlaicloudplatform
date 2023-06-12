@@ -1,6 +1,9 @@
 package models
 
 import (
+	"database/sql/driver"
+	"encoding/json"
+	"errors"
 	"smlcloudplatform/pkg/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -164,4 +167,40 @@ type ProductBarcodeSearch struct {
 
 func (ProductBarcodeSearch) TableName() string {
 	return productBarcodeCollectionName
+}
+
+// //
+// Names                    datatypes.JSON `json:"names"  gorm:"column:names;type:jsonb;default:'[]'" `
+// Names                    *JSONB  `json:"names"  gorm:"column:names;type:jsonb" `
+type ProductBarcodePg struct {
+	ShopID                   string `json:"shopid" gorm:"column:shopid;primaryKey"`
+	models.PartitionIdentity `gorm:"embedded;"`
+	Barcode                  string  `json:"barcode" gorm:"column:barcode;primaryKey"`
+	Names                    JSONB   `json:"names"  gorm:"column:names;type:jsonb" `
+	UnitCode                 string  `json:"unitcode" gorm:"column:unitcode"`
+	BalanceQty               float64 `json:"balanceqty" gorm:"column:balanceqty"`
+	MainBarcodeRef           string  `json:"mainbarcoderef" gorm:"column:mainbarcoderef"`
+}
+
+func (ProductBarcodePg) TableName() string {
+	return "productbarcode"
+}
+
+type JSONB []models.NameX
+
+// Value Marshal
+func (a JSONB) Value() (driver.Value, error) {
+
+	j, err := json.Marshal(a)
+	return j, err
+	//return json.Marshal(a)
+}
+
+// Scan Unmarshal
+func (a *JSONB) Scan(value interface{}) error {
+	b, ok := value.([]byte)
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+	return json.Unmarshal(b, &a)
 }
