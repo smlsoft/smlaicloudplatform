@@ -40,6 +40,7 @@ type Transaction struct {
 	IsCancel       bool            `json:"iscancel" bson:"iscancel"`
 	PaymentDetail  PaymentDetail   `json:"paymentdetail" bson:"paymentdetail"`
 	Description    string          `json:"description" bson:"description"`
+	IsManualAmount bool            `json:"ismanualamount" bson:"ismanualamount"`
 }
 
 type Detail struct {
