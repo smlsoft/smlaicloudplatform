@@ -82,18 +82,18 @@ func (m *MigrationService) ImportShopUser(shop shopModel.ShopDoc) error {
 
 	username := shop.GuidFixed
 	findUser := &shopModel.UserDoc{}
-	userPassword, err := utils.HashPassword(username)
 
-	if err != nil {
-		return err
-	}
-	err = m.mongoPersister.FindOne(&models.UserDoc{}, bson.M{"username": username}, findUser)
+	err := m.mongoPersister.FindOne(&models.UserDoc{}, bson.M{"username": username}, findUser)
 
 	if err != nil {
 		return err
 	}
 
 	if findUser.Username == "" {
+		userPassword, err := utils.HashPassword(username)
+		if err != nil {
+			return err
+		}
 		newUser := shopModel.UserDoc{
 			UsernameCode: shopModel.UsernameCode{
 				Username: username,
