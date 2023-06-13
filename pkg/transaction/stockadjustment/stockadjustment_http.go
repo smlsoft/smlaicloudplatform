@@ -25,12 +25,14 @@ type StockAdjustmentHttp struct {
 func NewStockAdjustmentHttp(ms *microservice.Microservice, cfg config.IConfig) StockAdjustmentHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	producer := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewStockAdjustmentRepository(pst)
+	repoMq := repositories.NewStockAdjustmentMessageQueueRepository(producer)
 
 	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockAdjustmentHttpService(repo, transRepo, masterSyncCacheRepo)
+	svc := services.NewStockAdjustmentHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
 
 	return StockAdjustmentHttp{
 		ms:  ms,

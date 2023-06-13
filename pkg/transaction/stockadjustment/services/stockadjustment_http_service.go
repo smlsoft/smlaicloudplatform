@@ -39,6 +39,7 @@ const (
 )
 
 type StockAdjustmentHttpService struct {
+	repoMq           repositories.IStockAdjustmentMessageQueueRepository
 	repo             repositories.IStockAdjustmentRepository
 	repoCache        trancache.ICacheRepository
 	cacheExpireDocNo time.Duration
@@ -46,10 +47,16 @@ type StockAdjustmentHttpService struct {
 	services.ActivityService[models.StockAdjustmentActivity, models.StockAdjustmentDeleteActivity]
 }
 
-func NewStockAdjustmentHttpService(repo repositories.IStockAdjustmentRepository, repoCache trancache.ICacheRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *StockAdjustmentHttpService {
+func NewStockAdjustmentHttpService(
+	repo repositories.IStockAdjustmentRepository,
+	repoCache trancache.ICacheRepository,
+	repoMq repositories.IStockAdjustmentMessageQueueRepository,
+	syncCacheRepo mastersync.IMasterSyncCacheRepository,
+) *StockAdjustmentHttpService {
 
 	insSvc := &StockAdjustmentHttpService{
 		repo:             repo,
+		repoMq:           repoMq,
 		repoCache:        repoCache,
 		syncCacheRepo:    syncCacheRepo,
 		cacheExpireDocNo: time.Hour * 24,
@@ -131,7 +138,11 @@ func (svc StockAdjustmentHttpService) CreateStockAdjustment(shopID string, authU
 
 	go svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.repoMq.Create(docData)
+		svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return newGuidFixed, newDocNo, nil
 }
@@ -148,18 +159,22 @@ func (svc StockAdjustmentHttpService) UpdateStockAdjustment(shopID string, guid 
 		return errors.New("document not found")
 	}
 
-	findDoc.StockAdjustment = doc
+	docData := findDoc
+	docData.StockAdjustment = doc
 
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	docData.UpdatedBy = authUsername
+	docData.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(shopID, guid, docData)
 
 	if err != nil {
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	func() {
+		svc.repoMq.Update(docData)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -181,7 +196,10 @@ func (svc StockAdjustmentHttpService) DeleteStockAdjustment(shopID string, guid 
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	func() {
+		svc.repoMq.Delete(findDoc)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -196,6 +214,12 @@ func (svc StockAdjustmentHttpService) DeleteStockAdjustmentByGUIDs(shopID string
 	if err != nil {
 		return err
 	}
+
+	func() {
+		docs, _ := svc.repo.FindByGuids(shopID, GUIDs)
+		svc.repoMq.DeleteInBatch(docs)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
