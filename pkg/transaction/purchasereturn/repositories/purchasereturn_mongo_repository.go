@@ -21,6 +21,7 @@ type IPurchaseReturnRepository interface {
 	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.PurchaseReturnInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.PurchaseReturnDoc, error)
+	FindByGuids(shopID string, guids []string) ([]models.PurchaseReturnDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.PurchaseReturnItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.PurchaseReturnDoc, error)
