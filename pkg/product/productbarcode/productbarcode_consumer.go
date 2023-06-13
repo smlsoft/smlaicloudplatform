@@ -65,6 +65,19 @@ func NewProductBarcodeConsumer(ms *microservice.Microservice, cfg msConfig.IConf
 	}
 }
 
+func (pbc *ProductBarcodeConsumer) RegisterConsumer(ms *microservice.Microservice) {
+
+	// create topic
+	mq := microservice.NewMQ(pbc.cfg.MQConfig(), ms.Logger)
+	mq.CreateTopicR(pbc.productMessageQueueConfig.TopicCreated(), 5, 1, time.Hour*24*7)
+	mq.CreateTopicR(pbc.productMessageQueueConfig.TopicUpdated(), 5, 1, time.Hour*24*7)
+	mq.CreateTopicR(pbc.productMessageQueueConfig.TopicDeleted(), 5, 1, time.Hour*24*7)
+
+	ms.Consume(pbc.cfg.MQConfig().URI(), pbc.productMessageQueueConfig.TopicCreated(), pbc.groupId, time.Duration(-1), pbc.ConsumerOnProductBarcodeCreate)
+	ms.Consume(pbc.cfg.MQConfig().URI(), pbc.productMessageQueueConfig.TopicUpdated(), pbc.groupId, time.Duration(-1), pbc.ConsumerOnProductBarcodeUpdate)
+	ms.Consume(pbc.cfg.MQConfig().URI(), pbc.productMessageQueueConfig.TopicDeleted(), pbc.groupId, time.Duration(-1), pbc.ConsumerOnProductBarcodeDelete)
+}
+
 func (pbc *ProductBarcodeConsumer) ConsumerOnProductBarcodeCreate(ctx microservice.IContext) error {
 	msg := ctx.ReadInput()
 	moduleName := "Consumer On Product barcode Created"
@@ -126,17 +139,4 @@ func (pbc *ProductBarcodeConsumer) ConsumerOnProductBarcodeDelete(ctx microservi
 		pbc.ms.Logger.Errorf(moduleName, err.Error())
 	}
 	return nil
-}
-
-func (pbc *ProductBarcodeConsumer) RegisterConsumer(ms *microservice.Microservice) {
-
-	// create topic
-	mq := microservice.NewMQ(pbc.cfg.MQConfig(), ms.Logger)
-	mq.CreateTopicR(pbc.productMessageQueueConfig.TopicCreated(), 5, 1, time.Hour*24*7)
-	mq.CreateTopicR(pbc.productMessageQueueConfig.TopicUpdated(), 5, 1, time.Hour*24*7)
-	mq.CreateTopicR(pbc.productMessageQueueConfig.TopicDeleted(), 5, 1, time.Hour*24*7)
-
-	ms.Consume(pbc.cfg.MQConfig().URI(), pbc.productMessageQueueConfig.TopicCreated(), pbc.groupId, time.Duration(-1), pbc.ConsumerOnProductBarcodeCreate)
-	ms.Consume(pbc.cfg.MQConfig().URI(), pbc.productMessageQueueConfig.TopicUpdated(), pbc.groupId, time.Duration(-1), pbc.ConsumerOnProductBarcodeUpdate)
-	ms.Consume(pbc.cfg.MQConfig().URI(), pbc.productMessageQueueConfig.TopicDeleted(), pbc.groupId, time.Duration(-1), pbc.ConsumerOnProductBarcodeDelete)
 }

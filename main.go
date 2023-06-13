@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	migrationAPI "smlcloudplatform/cmd/migrationapi/api"
 	"smlcloudplatform/docs"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/apikeyservice"
@@ -67,6 +68,7 @@ import (
 	"smlcloudplatform/pkg/transaction/stockreceiveproduct"
 	"smlcloudplatform/pkg/transaction/stockreturnproduct"
 	"smlcloudplatform/pkg/transaction/stocktransfer"
+	transactionconsumer "smlcloudplatform/pkg/transaction/transaction_consumer"
 	"smlcloudplatform/pkg/vfgl/accountgroup"
 	"smlcloudplatform/pkg/vfgl/accountperiodmaster"
 	"smlcloudplatform/pkg/vfgl/chartofaccount"
@@ -131,6 +133,7 @@ func main() {
 		cacher := ms.Cacher(cfg.CacherConfig())
 		authService := microservice.NewAuthService(cacher, 24*3)
 		publicPath := []string{
+			"/migrationtools/",
 			"/swagger",
 			"/login",
 			"/tokenlogin",
@@ -295,10 +298,12 @@ func main() {
 		chartofaccount.StartChartOfAccountConsumerDeleted(ms, cfg, consumerGroupName)
 		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, consumerGroupName)
 
+		transactionconsumer.MigrationDatabase(ms, cfg)
 		task.NewTaskConsumer(ms, cfg).RegisterConsumer()
 		ms.RegisterConsumer(productbarcode.NewProductBarcodeConsumer(ms, cfg))
 
 	}
+	ms.RegisterHttp(migrationAPI.NewMigrationAPI(ms, cfg))
 
 	ms.Start()
 }
