@@ -26,11 +26,14 @@ func NewPurchaseHttp(ms *microservice.Microservice, cfg config.IConfig) Purchase
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
+	producer := ms.Producer(cfg.MQConfig())
+
 	repo := repositories.NewPurchaseRepository(pst)
+	repoMq := repositories.NewPurchaseMessageQueueRepository(producer)
 
 	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewPurchaseHttpService(repo, transRepo, masterSyncCacheRepo)
+	svc := services.NewPurchaseHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
 
 	return PurchaseHttp{
 		ms:  ms,
