@@ -21,6 +21,7 @@ type IStockPickupProductRepository interface {
 	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.StockPickupProductInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.StockPickupProductDoc, error)
+	FindByGuids(shopID string, guids []string) ([]models.StockPickupProductDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.StockPickupProductItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.StockPickupProductDoc, error)
