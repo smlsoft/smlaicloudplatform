@@ -9,28 +9,28 @@ const (
 	MQ_TOPIC_BULK_DELETED string = "when-purchase-bulk-deleted"
 )
 
-type PurchaseQueueConfig struct{}
+type PurchaseMessageQueueConfig struct{}
 
-func (PurchaseQueueConfig) TopicCreated() string {
+func (PurchaseMessageQueueConfig) TopicCreated() string {
 	return MQ_TOPIC_CREATED
 }
 
-func (PurchaseQueueConfig) TopicUpdated() string {
+func (PurchaseMessageQueueConfig) TopicUpdated() string {
 	return MQ_TOPIC_UPDATED
 }
 
-func (PurchaseQueueConfig) TopicDeleted() string {
+func (PurchaseMessageQueueConfig) TopicDeleted() string {
 	return MQ_TOPIC_DELETED
 }
 
-func (PurchaseQueueConfig) TopicBulkCreated() string {
+func (PurchaseMessageQueueConfig) TopicBulkCreated() string {
 	return MQ_TOPIC_BULK_CREATED
 }
 
-func (PurchaseQueueConfig) TopicBulkUpdated() string {
+func (PurchaseMessageQueueConfig) TopicBulkUpdated() string {
 	return MQ_TOPIC_BULK_UPDATED
 }
 
-func (PurchaseQueueConfig) TopicBulkDeleted() string {
+func (PurchaseMessageQueueConfig) TopicBulkDeleted() string {
 	return MQ_TOPIC_BULK_DELETED
 }
