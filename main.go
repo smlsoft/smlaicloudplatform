@@ -68,7 +68,6 @@ import (
 	"smlcloudplatform/pkg/transaction/stockreceiveproduct"
 	"smlcloudplatform/pkg/transaction/stockreturnproduct"
 	"smlcloudplatform/pkg/transaction/stocktransfer"
-	transactionconsumer "smlcloudplatform/pkg/transaction/transaction_consumer"
 	"smlcloudplatform/pkg/vfgl/accountgroup"
 	"smlcloudplatform/pkg/vfgl/accountperiodmaster"
 	"smlcloudplatform/pkg/vfgl/chartofaccount"
@@ -298,7 +297,7 @@ func main() {
 		chartofaccount.StartChartOfAccountConsumerDeleted(ms, cfg, consumerGroupName)
 		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, consumerGroupName)
 
-		transactionconsumer.MigrationDatabase(ms, cfg)
+		// transactionconsumer.MigrationDatabase(ms, cfg)
 		task.NewTaskConsumer(ms, cfg).RegisterConsumer()
 		ms.RegisterConsumer(productbarcode.NewProductBarcodeConsumer(ms, cfg))
 
