@@ -32,4 +32,5 @@ type Shop struct {
 	Name1          string `json:"name1" bson:"name1"`
 	Telephone      string `json:"telephone" bson:"telephone"`
 	BranchCode     string `json:"branchcode" bson:"branchcode"`
+	Address        string `json:"address" bson:"address"`
 }
