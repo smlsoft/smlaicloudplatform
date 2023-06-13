@@ -4,27 +4,36 @@ import (
 	"smlcloudplatform/internal/microservice"
 	pkgConfig "smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/transaction/models"
+	"smlcloudplatform/pkg/transaction/transaction_consumer/services"
+	"smlcloudplatform/pkg/transaction/transaction_consumer/usecases"
 )
 
 type ITransactionConsumer interface {
-	ConsumeOnPurchaseDocCreated(doc interface{}) error
-	ConsumeOnPurchaseDocUpdated(doc interface{}) error
-	ConsumeOnPurchaseDocDeleted(doc interface{}) error
+	ConsumeOnPurchaseDocCreated(ctx microservice.IContext) error
+	ConsumeOnPurchaseDocUpdated(ctx microservice.IContext) error
+	ConsumeOnPurchaseDocDeleted(ctx microservice.IContext) error
 
-	// ConsumeOnSaleInvoiceDocCreated(doc interface{}) error
-	// ConsumeOnSaleInvoiceDocUpdated(doc interface{}) error
-	// ConsumeOnSaleInvoiceDocDeleted(doc interface{}) error
+	ConsumeOnSaleInvoiceDocCreated(ctx microservice.IContext) error
+	ConsumeOnSaleInvoiceDocUpdated(ctx microservice.IContext) error
+	ConsumeOnSaleInvoiceDocDeleted(ctx microservice.IContext) error
 }
 
 type TransactionConsumer struct {
-	cfg pkgConfig.IConfig
-	ms  *microservice.Microservice
+	cfg    pkgConfig.IConfig
+	ms     *microservice.Microservice
+	svc    services.ITransactionConsumerService
+	phaser usecases.ITransactionPhaser
 }
 
 func NewTransactionConsumer(ms *microservice.Microservice, cfg pkgConfig.IConfig) ITransactionConsumer {
+
+	svc := services.NewTransactionConsumerService(ms.Persister(cfg.PersisterConfig()))
+	phaser := &usecases.TransactionPhaser{}
 	return &TransactionConsumer{
-		cfg: cfg,
-		ms:  ms,
+		cfg:    cfg,
+		ms:     ms,
+		svc:    svc,
+		phaser: phaser,
 	}
 
 }
@@ -48,16 +57,4 @@ func (pbc *TransactionConsumer) RegisterConsumer(ms *microservice.Microservice) 
 	// ms.Consume(pbc.cfg.MQConfig().URI(), pbc.productMessageQueueConfig.TopicUpdated(), pbc.groupId, time.Duration(-1), pbc.ConsumerOnProductBarcodeUpdate)
 	// ms.Consume(pbc.cfg.MQConfig().URI(), pbc.productMessageQueueConfig.TopicDeleted(), pbc.groupId, time.Duration(-1), pbc.ConsumerOnProductBarcodeDelete)
 
-}
-
-func (t *TransactionConsumer) ConsumeOnPurchaseDocCreated(doc interface{}) error {
-	return nil
-}
-
-func (t *TransactionConsumer) ConsumeOnPurchaseDocUpdated(doc interface{}) error {
-	return nil
-}
-
-func (t *TransactionConsumer) ConsumeOnPurchaseDocDeleted(doc interface{}) error {
-	return nil
 }

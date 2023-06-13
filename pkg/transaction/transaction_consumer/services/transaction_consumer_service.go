@@ -10,10 +10,11 @@ import (
 
 type ITransactionConsumerService interface {
 	UpSert(shopID string, docNo string, doc models.StockTransaction) error
-	UpSertPurchaseTrx(shopID string, docNo string, doc purchaseModels.PurchaseDoc) error
+	Delete(shopID string, docNo string) error
+	// UpSertPurchaseTrx(shopID string, docNo string, doc purchaseModels.PurchaseDoc) error
 }
 
-func NewPurchaseConsumerService(pst microservice.IPersister) ITransactionConsumerService {
+func NewTransactionConsumerService(pst microservice.IPersister) ITransactionConsumerService {
 
 	pgRepo := repositories.NewTransactionPGRepository(pst)
 	return &TransactionConsumerService{
@@ -43,6 +44,15 @@ func (svc *TransactionConsumerService) UpSert(shopID string, docNo string, doc m
 		if err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (svc *TransactionConsumerService) Delete(shopID string, docNo string) error {
+	err := svc.transactionPGRepo.Delete(shopID, docNo)
+	if err != nil {
+		return err
 	}
 
 	return nil
