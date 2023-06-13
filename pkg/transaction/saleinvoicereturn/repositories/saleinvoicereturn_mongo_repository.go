@@ -21,6 +21,7 @@ type ISaleInvoiceReturnRepository interface {
 	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SaleInvoiceReturnInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.SaleInvoiceReturnDoc, error)
+	FindByGuids(shopID string, guids []string) ([]models.SaleInvoiceReturnDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.SaleInvoiceReturnItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.SaleInvoiceReturnDoc, error)
