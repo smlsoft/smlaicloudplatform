@@ -25,12 +25,14 @@ type SaleInvoiceHttp struct {
 func NewSaleInvoiceHttp(ms *microservice.Microservice, cfg config.IConfig) SaleInvoiceHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	producer := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewSaleInvoiceRepository(pst)
+	repoMq := repositories.NewSaleInvoiceMessageQueueRepository(producer)
 
 	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewSaleInvoiceHttpService(repo, transRepo, masterSyncCacheRepo)
+	svc := services.NewSaleInvoiceHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
 
 	return SaleInvoiceHttp{
 		ms:  ms,

@@ -39,6 +39,7 @@ const (
 )
 
 type SaleInvoiceHttpService struct {
+	repoMq           repositories.ISaleInvoiceMessageQueueRepository
 	repo             repositories.ISaleInvoiceRepository
 	repoCache        trancache.ICacheRepository
 	cacheExpireDocNo time.Duration
@@ -46,10 +47,11 @@ type SaleInvoiceHttpService struct {
 	services.ActivityService[models.SaleInvoiceActivity, models.SaleInvoiceDeleteActivity]
 }
 
-func NewSaleInvoiceHttpService(repo repositories.ISaleInvoiceRepository, repoCache trancache.ICacheRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *SaleInvoiceHttpService {
+func NewSaleInvoiceHttpService(repo repositories.ISaleInvoiceRepository, repoCache trancache.ICacheRepository, repoMq repositories.ISaleInvoiceMessageQueueRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *SaleInvoiceHttpService {
 
 	insSvc := &SaleInvoiceHttpService{
 		repo:             repo,
+		repoMq:           repoMq,
 		repoCache:        repoCache,
 		syncCacheRepo:    syncCacheRepo,
 		cacheExpireDocNo: time.Hour * 24,
@@ -134,9 +136,11 @@ func (svc SaleInvoiceHttpService) CreateSaleInvoice(shopID string, authUsername 
 		return "", "", err
 	}
 
-	go svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
-
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.repoMq.Create(docData)
+		svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return newGuidFixed, newDocNo, nil
 }
@@ -153,18 +157,22 @@ func (svc SaleInvoiceHttpService) UpdateSaleInvoice(shopID string, guid string, 
 		return errors.New("document not found")
 	}
 
-	findDoc.SaleInvoice = doc
+	docData := findDoc
+	docData.SaleInvoice = doc
 
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	docData.UpdatedBy = authUsername
+	docData.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(shopID, guid, docData)
 
 	if err != nil {
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.repoMq.Update(docData)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -186,7 +194,10 @@ func (svc SaleInvoiceHttpService) DeleteSaleInvoice(shopID string, guid string, 
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.repoMq.Delete(findDoc)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -201,6 +212,12 @@ func (svc SaleInvoiceHttpService) DeleteSaleInvoiceByGUIDs(shopID string, authUs
 	if err != nil {
 		return err
 	}
+
+	func() {
+		docs, _ := svc.repo.FindByGuids(shopID, GUIDs)
+		svc.repoMq.DeleteInBatch(docs)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
