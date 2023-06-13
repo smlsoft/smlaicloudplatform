@@ -39,6 +39,7 @@ const (
 )
 
 type StockTransferHttpService struct {
+	repoMq           repositories.IStockTransferMessageQueueRepository
 	repo             repositories.IStockTransferRepository
 	repoCache        trancache.ICacheRepository
 	cacheExpireDocNo time.Duration
@@ -46,9 +47,15 @@ type StockTransferHttpService struct {
 	services.ActivityService[models.StockTransferActivity, models.StockTransferDeleteActivity]
 }
 
-func NewStockTransferHttpService(repo repositories.IStockTransferRepository, repoCache trancache.ICacheRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *StockTransferHttpService {
+func NewStockTransferHttpService(
+	repo repositories.IStockTransferRepository,
+	repoCache trancache.ICacheRepository,
+	repoMq repositories.IStockTransferMessageQueueRepository,
+	syncCacheRepo mastersync.IMasterSyncCacheRepository,
+) *StockTransferHttpService {
 
 	insSvc := &StockTransferHttpService{
+		repoMq:           repoMq,
 		repo:             repo,
 		repoCache:        repoCache,
 		syncCacheRepo:    syncCacheRepo,
@@ -130,9 +137,11 @@ func (svc StockTransferHttpService) CreateStockTransfer(shopID string, authUsern
 		return "", "", err
 	}
 
-	go svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
-
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.repoMq.Create(docData)
+		svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return newGuidFixed, newDocNo, nil
 }
@@ -159,18 +168,22 @@ func (svc StockTransferHttpService) UpdateStockTransfer(shopID string, guid stri
 		return errors.New("docno and trans flag is exists")
 	}
 
-	findDoc.StockTransfer = doc
+	docData := findDoc
+	docData.StockTransfer = doc
 
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	docData.UpdatedBy = authUsername
+	docData.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(shopID, guid, docData)
 
 	if err != nil {
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	func() {
+		svc.repoMq.Update(docData)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -192,7 +205,10 @@ func (svc StockTransferHttpService) DeleteStockTransfer(shopID string, guid stri
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	func() {
+		svc.repoMq.Delete(findDoc)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -207,6 +223,12 @@ func (svc StockTransferHttpService) DeleteStockTransferByGUIDs(shopID string, au
 	if err != nil {
 		return err
 	}
+
+	func() {
+		docs, _ := svc.repo.FindByGuids(shopID, GUIDs)
+		svc.repoMq.DeleteInBatch(docs)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }

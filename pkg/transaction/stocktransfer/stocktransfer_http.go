@@ -25,12 +25,14 @@ type StockTransferHttp struct {
 func NewStockTransferHttp(ms *microservice.Microservice, cfg config.IConfig) StockTransferHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	producer := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewStockTransferRepository(pst)
+	repoMq := repositories.NewStockTransferMessageQueueRepository(producer)
 
 	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockTransferHttpService(repo, transRepo, masterSyncCacheRepo)
+	svc := services.NewStockTransferHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
 
 	return StockTransferHttp{
 		ms:  ms,

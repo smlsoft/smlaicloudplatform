@@ -22,6 +22,7 @@ type IStockTransferRepository interface {
 	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.StockTransferInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.StockTransferDoc, error)
+	FindByGuids(shopID string, guids []string) ([]models.StockTransferDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.StockTransferItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.StockTransferDoc, error)
