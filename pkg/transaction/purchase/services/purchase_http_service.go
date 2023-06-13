@@ -39,6 +39,7 @@ const (
 )
 
 type PurchaseHttpService struct {
+	repoMq           repositories.IPurchaseMessageQueueRepository
 	repo             repositories.IPurchaseRepository
 	repoCache        trancache.ICacheRepository
 	cacheExpireDocNo time.Duration
@@ -46,10 +47,11 @@ type PurchaseHttpService struct {
 	services.ActivityService[models.PurchaseActivity, models.PurchaseDeleteActivity]
 }
 
-func NewPurchaseHttpService(repo repositories.IPurchaseRepository, repoCache trancache.ICacheRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *PurchaseHttpService {
+func NewPurchaseHttpService(repo repositories.IPurchaseRepository, repoCache trancache.ICacheRepository, repoMq repositories.IPurchaseMessageQueueRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *PurchaseHttpService {
 
 	insSvc := &PurchaseHttpService{
 		repo:             repo,
+		repoMq:           repoMq,
 		repoCache:        repoCache,
 		syncCacheRepo:    syncCacheRepo,
 		cacheExpireDocNo: time.Hour * 24,
@@ -130,9 +132,11 @@ func (svc PurchaseHttpService) CreatePurchase(shopID string, authUsername string
 		return "", "", err
 	}
 
-	go svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
-
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.repoMq.Create(docData)
+		svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return newGuidFixed, newDocNo, nil
 }
@@ -149,18 +153,22 @@ func (svc PurchaseHttpService) UpdatePurchase(shopID string, guid string, authUs
 		return errors.New("document not found")
 	}
 
-	findDoc.Purchase = doc
+	docData := findDoc
+	docData.Purchase = doc
 
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	docData.UpdatedBy = authUsername
+	docData.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(shopID, guid, docData)
 
 	if err != nil {
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	func() {
+		svc.repoMq.Update(docData)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -182,7 +190,10 @@ func (svc PurchaseHttpService) DeletePurchase(shopID string, guid string, authUs
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	func() {
+		svc.repoMq.Delete(findDoc)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -197,6 +208,12 @@ func (svc PurchaseHttpService) DeletePurchaseByGUIDs(shopID string, authUsername
 	if err != nil {
 		return err
 	}
+
+	func() {
+		docs, _ := svc.repo.FindByGuids(shopID, GUIDs)
+		svc.repoMq.DeleteInBatch(docs)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }

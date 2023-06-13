@@ -21,6 +21,7 @@ type IPurchaseRepository interface {
 	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.PurchaseInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.PurchaseDoc, error)
+	FindByGuids(shopID string, guids []string) ([]models.PurchaseDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.PurchaseItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.PurchaseDoc, error)
