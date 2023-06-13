@@ -21,6 +21,7 @@ type IStockAdjustmentRepository interface {
 	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.StockAdjustmentInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.StockAdjustmentDoc, error)
+	FindByGuids(shopID string, guids []string) ([]models.StockAdjustmentDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.StockAdjustmentItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.StockAdjustmentDoc, error)
