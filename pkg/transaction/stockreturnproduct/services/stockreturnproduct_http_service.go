@@ -39,6 +39,7 @@ const (
 )
 
 type StockReturnProductHttpService struct {
+	repoMq           repositories.IStockReturnProductMessageQueueRepository
 	repo             repositories.IStockReturnProductRepository
 	repoCache        trancache.ICacheRepository
 	cacheExpireDocNo time.Duration
@@ -46,9 +47,15 @@ type StockReturnProductHttpService struct {
 	services.ActivityService[models.StockReturnProductActivity, models.StockReturnProductDeleteActivity]
 }
 
-func NewStockReturnProductHttpService(repo repositories.IStockReturnProductRepository, repoCache trancache.ICacheRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *StockReturnProductHttpService {
+func NewStockReturnProductHttpService(
+	repo repositories.IStockReturnProductRepository,
+	repoCache trancache.ICacheRepository,
+	repoMq repositories.IStockReturnProductMessageQueueRepository,
+	syncCacheRepo mastersync.IMasterSyncCacheRepository,
+) *StockReturnProductHttpService {
 
 	insSvc := &StockReturnProductHttpService{
+		repoMq:           repoMq,
 		repo:             repo,
 		repoCache:        repoCache,
 		syncCacheRepo:    syncCacheRepo,
@@ -132,7 +139,11 @@ func (svc StockReturnProductHttpService) CreateStockReturnProduct(shopID string,
 
 	go svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
 
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.repoMq.Create(docData)
+		svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return newGuidFixed, newDocNo, nil
 }
@@ -149,18 +160,22 @@ func (svc StockReturnProductHttpService) UpdateStockReturnProduct(shopID string,
 		return errors.New("document not found")
 	}
 
-	findDoc.StockReturnProduct = doc
+	docData := findDoc
+	docData.StockReturnProduct = doc
 
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	docData.UpdatedBy = authUsername
+	docData.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(shopID, guid, docData)
 
 	if err != nil {
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	func() {
+		svc.repoMq.Update(docData)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -182,7 +197,10 @@ func (svc StockReturnProductHttpService) DeleteStockReturnProduct(shopID string,
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	func() {
+		svc.repoMq.Delete(findDoc)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -197,6 +215,12 @@ func (svc StockReturnProductHttpService) DeleteStockReturnProductByGUIDs(shopID 
 	if err != nil {
 		return err
 	}
+
+	func() {
+		docs, _ := svc.repo.FindByGuids(shopID, GUIDs)
+		svc.repoMq.DeleteInBatch(docs)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }

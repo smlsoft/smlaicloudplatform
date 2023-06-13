@@ -25,12 +25,14 @@ type StockPickupProductHttp struct {
 func NewStockPickupProductHttp(ms *microservice.Microservice, cfg config.IConfig) StockPickupProductHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	producer := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewStockPickupProductRepository(pst)
+	repoMq := repositories.NewStockPickupProductMessageQueueRepository(producer)
 
 	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockPickupProductHttpService(repo, transRepo, masterSyncCacheRepo)
+	svc := services.NewStockPickupProductHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
 
 	return StockPickupProductHttp{
 		ms:  ms,

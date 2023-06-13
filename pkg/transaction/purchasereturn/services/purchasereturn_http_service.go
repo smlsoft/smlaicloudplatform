@@ -39,6 +39,7 @@ const (
 )
 
 type PurchaseReturnHttpService struct {
+	repoMq           repositories.IPurchaseReturnMessageQueueRepository
 	repo             repositories.IPurchaseReturnRepository
 	repoCache        trancache.ICacheRepository
 	cacheExpireDocNo time.Duration
@@ -46,10 +47,11 @@ type PurchaseReturnHttpService struct {
 	services.ActivityService[models.PurchaseReturnActivity, models.PurchaseReturnDeleteActivity]
 }
 
-func NewPurchaseReturnHttpService(repo repositories.IPurchaseReturnRepository, repoCache trancache.ICacheRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *PurchaseReturnHttpService {
+func NewPurchaseReturnHttpService(repo repositories.IPurchaseReturnRepository, repoCache trancache.ICacheRepository, repoMq repositories.IPurchaseReturnMessageQueueRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *PurchaseReturnHttpService {
 
 	insSvc := &PurchaseReturnHttpService{
 		repo:             repo,
+		repoMq:           repoMq,
 		repoCache:        repoCache,
 		syncCacheRepo:    syncCacheRepo,
 		cacheExpireDocNo: time.Hour * 24,
@@ -130,9 +132,11 @@ func (svc PurchaseReturnHttpService) CreatePurchaseReturn(shopID string, authUse
 		return "", "", err
 	}
 
-	go svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
-
-	svc.saveMasterSync(shopID)
+	go func() {
+		svc.repoMq.Create(docData)
+		svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return newGuidFixed, newDocNo, nil
 }
@@ -149,18 +153,22 @@ func (svc PurchaseReturnHttpService) UpdatePurchaseReturn(shopID string, guid st
 		return errors.New("document not found")
 	}
 
-	findDoc.PurchaseReturn = doc
+	docData := findDoc
+	docData.PurchaseReturn = doc
 
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	docData.UpdatedBy = authUsername
+	docData.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(shopID, guid, docData)
 
 	if err != nil {
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	func() {
+		svc.repoMq.Update(docData)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -182,7 +190,10 @@ func (svc PurchaseReturnHttpService) DeletePurchaseReturn(shopID string, guid st
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	func() {
+		svc.repoMq.Delete(findDoc)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -197,6 +208,12 @@ func (svc PurchaseReturnHttpService) DeletePurchaseReturnByGUIDs(shopID string, 
 	if err != nil {
 		return err
 	}
+
+	func() {
+		docs, _ := svc.repo.FindByGuids(shopID, GUIDs)
+		svc.repoMq.DeleteInBatch(docs)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }

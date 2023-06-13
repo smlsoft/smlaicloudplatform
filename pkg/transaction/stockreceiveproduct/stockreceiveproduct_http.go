@@ -25,12 +25,14 @@ type StockReceiveProductHttp struct {
 func NewStockReceiveProductHttp(ms *microservice.Microservice, cfg config.IConfig) StockReceiveProductHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	producer := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewStockReceiveProductRepository(pst)
+	repoMq := repositories.NewStockReceiveProductMessageQueueRepository(producer)
 
 	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockReceiveProductHttpService(repo, transRepo, masterSyncCacheRepo)
+	svc := services.NewStockReceiveProductHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
 
 	return StockReceiveProductHttp{
 		ms:  ms,

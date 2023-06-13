@@ -39,6 +39,7 @@ const (
 )
 
 type StockPickupProductHttpService struct {
+	repoMq           repositories.IStockPickupProductMessageQueueRepository
 	repo             repositories.IStockPickupProductRepository
 	repoCache        trancache.ICacheRepository
 	cacheExpireDocNo time.Duration
@@ -46,9 +47,15 @@ type StockPickupProductHttpService struct {
 	services.ActivityService[models.StockPickupProductActivity, models.StockPickupProductDeleteActivity]
 }
 
-func NewStockPickupProductHttpService(repo repositories.IStockPickupProductRepository, repoCache trancache.ICacheRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *StockPickupProductHttpService {
+func NewStockPickupProductHttpService(
+	repo repositories.IStockPickupProductRepository,
+	repoCache trancache.ICacheRepository,
+	repoMq repositories.IStockPickupProductMessageQueueRepository,
+	syncCacheRepo mastersync.IMasterSyncCacheRepository,
+) *StockPickupProductHttpService {
 
 	insSvc := &StockPickupProductHttpService{
+		repoMq:           repoMq,
 		repo:             repo,
 		repoCache:        repoCache,
 		syncCacheRepo:    syncCacheRepo,
@@ -129,10 +136,11 @@ func (svc StockPickupProductHttpService) CreateStockPickupProduct(shopID string,
 		return "", "", err
 	}
 
-	go svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
-
-	svc.saveMasterSync(shopID)
-
+	go func() {
+		svc.repoMq.Create(docData)
+		svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
+		svc.saveMasterSync(shopID)
+	}()
 	return newGuidFixed, newDocNo, nil
 }
 
@@ -148,18 +156,22 @@ func (svc StockPickupProductHttpService) UpdateStockPickupProduct(shopID string,
 		return errors.New("document not found")
 	}
 
-	findDoc.StockPickupProduct = doc
+	docData := findDoc
+	docData.StockPickupProduct = doc
 
-	findDoc.UpdatedBy = authUsername
-	findDoc.UpdatedAt = time.Now()
+	docData.UpdatedBy = authUsername
+	docData.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(shopID, guid, docData)
 
 	if err != nil {
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	func() {
+		svc.repoMq.Update(docData)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -181,7 +193,10 @@ func (svc StockPickupProductHttpService) DeleteStockPickupProduct(shopID string,
 		return err
 	}
 
-	svc.saveMasterSync(shopID)
+	func() {
+		svc.repoMq.Delete(findDoc)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }
@@ -196,6 +211,12 @@ func (svc StockPickupProductHttpService) DeleteStockPickupProductByGUIDs(shopID 
 	if err != nil {
 		return err
 	}
+
+	func() {
+		docs, _ := svc.repo.FindByGuids(shopID, GUIDs)
+		svc.repoMq.DeleteInBatch(docs)
+		svc.saveMasterSync(shopID)
+	}()
 
 	return nil
 }

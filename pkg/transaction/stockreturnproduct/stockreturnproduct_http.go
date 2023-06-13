@@ -25,12 +25,14 @@ type StockReturnProductHttp struct {
 func NewStockReturnProductHttp(ms *microservice.Microservice, cfg config.IConfig) StockReturnProductHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	producer := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewStockReturnProductRepository(pst)
+	repoMq := repositories.NewStockReturnProductMessageQueueRepository(producer)
 
 	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewStockReturnProductHttpService(repo, transRepo, masterSyncCacheRepo)
+	svc := services.NewStockReturnProductHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
 
 	return StockReturnProductHttp{
 		ms:  ms,

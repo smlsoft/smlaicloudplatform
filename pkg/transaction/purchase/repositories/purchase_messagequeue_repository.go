@@ -29,6 +29,6 @@ func NewPurchaseMessageQueueRepository(prod microservice.IProducer) PurchaseMess
 		prod:  prod,
 		mqKey: mqKey,
 	}
-	insRepo.KafkaRepository = repositories.NewKafkaRepository[models.PurchaseDoc](prod, config.PurchaseQueueConfig{}, "")
+	insRepo.KafkaRepository = repositories.NewKafkaRepository[models.PurchaseDoc](prod, config.PurchaseMessageQueueConfig{}, "")
 	return insRepo
 }

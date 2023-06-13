@@ -25,12 +25,14 @@ type PurchaseReturnHttp struct {
 func NewPurchaseReturnHttp(ms *microservice.Microservice, cfg config.IConfig) PurchaseReturnHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
+	producer := ms.Producer(cfg.MQConfig())
 
 	repo := repositories.NewPurchaseReturnRepository(pst)
+	repoMq := repositories.NewPurchaseReturnMessageQueueRepository(producer)
 
 	transRepo := trancache.NewCacheRepository(cache)
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewPurchaseReturnHttpService(repo, transRepo, masterSyncCacheRepo)
+	svc := services.NewPurchaseReturnHttpService(repo, transRepo, repoMq, masterSyncCacheRepo)
 
 	return PurchaseReturnHttp{
 		ms:  ms,

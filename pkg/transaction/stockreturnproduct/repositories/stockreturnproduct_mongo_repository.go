@@ -21,6 +21,7 @@ type IStockReturnProductRepository interface {
 	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.StockReturnProductInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.StockReturnProductDoc, error)
+	FindByGuids(shopID string, guids []string) ([]models.StockReturnProductDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.StockReturnProductItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.StockReturnProductDoc, error)
