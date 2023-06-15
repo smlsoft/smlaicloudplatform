@@ -12284,6 +12284,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/product/barcode/groups": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get by group codes",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "array of group",
+                        "name": "codes",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/product/barcode/list": {
             "get": {
                 "security": [
@@ -27140,6 +27178,12 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
+                "accountcode": {
+                    "type": "string"
+                },
+                "accountname": {
+                    "type": "string"
+                },
                 "bankcode": {
                     "type": "string"
                 },
@@ -27911,7 +27955,6 @@ const docTemplate = `{
         "models.Department": {
             "type": "object",
             "required": [
-                "code",
                 "names"
             ],
             "properties": {
@@ -32192,6 +32235,9 @@ const docTemplate = `{
         "models.Shop": {
             "type": "object",
             "properties": {
+                "address": {
+                    "type": "string"
+                },
                 "branchcode": {
                     "type": "string"
                 },
@@ -32209,6 +32255,9 @@ const docTemplate = `{
         "models.ShopInfo": {
             "type": "object",
             "properties": {
+                "address": {
+                    "type": "string"
+                },
                 "branchcode": {
                     "type": "string"
                 },

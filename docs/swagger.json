@@ -12278,6 +12278,44 @@
                 }
             }
         },
+        "/product/barcode/groups": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get by group codes",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBarcode"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "array of group",
+                        "name": "codes",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
         "/product/barcode/list": {
             "get": {
                 "security": [
@@ -27134,6 +27172,12 @@
                 "names"
             ],
             "properties": {
+                "accountcode": {
+                    "type": "string"
+                },
+                "accountname": {
+                    "type": "string"
+                },
                 "bankcode": {
                     "type": "string"
                 },
@@ -27905,7 +27949,6 @@
         "models.Department": {
             "type": "object",
             "required": [
-                "code",
                 "names"
             ],
             "properties": {
@@ -32186,6 +32229,9 @@
         "models.Shop": {
             "type": "object",
             "properties": {
+                "address": {
+                    "type": "string"
+                },
                 "branchcode": {
                     "type": "string"
                 },
@@ -32203,6 +32249,9 @@
         "models.ShopInfo": {
             "type": "object",
             "properties": {
+                "address": {
+                    "type": "string"
+                },
                 "branchcode": {
                     "type": "string"
                 },

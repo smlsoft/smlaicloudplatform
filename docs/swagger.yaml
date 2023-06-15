@@ -326,6 +326,10 @@ definitions:
     type: object
   models.BookBank:
     properties:
+      accountcode:
+        type: string
+      accountname:
+        type: string
       bankcode:
         type: string
       banknames:
@@ -862,7 +866,6 @@ definitions:
         type: array
         uniqueItems: true
     required:
-    - code
     - names
     type: object
   models.Detail:
@@ -3762,6 +3765,8 @@ definitions:
     type: object
   models.Shop:
     properties:
+      address:
+        type: string
       branchcode:
         type: string
       name1:
@@ -3773,6 +3778,8 @@ definitions:
     type: object
   models.ShopInfo:
     properties:
+      address:
+        type: string
       branchcode:
         type: string
       guidfixed:
@@ -12909,6 +12916,29 @@ paths:
       description: get ProductBarcode by code array
       parameters:
       - description: 'Code filter, json array encode '
+        in: query
+        name: codes
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - ProductBarcode
+  /product/barcode/groups:
+    get:
+      consumes:
+      - application/json
+      description: get by group codes
+      parameters:
+      - description: array of group
         in: query
         name: codes
         type: string
