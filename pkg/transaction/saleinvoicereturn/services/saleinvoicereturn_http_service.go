@@ -109,13 +109,27 @@ func (svc SaleInvoiceReturnHttpService) generateNewDocNo(shopID, prefixDocNo str
 	return newDocNo, newDocNumber, nil
 }
 func (svc SaleInvoiceReturnHttpService) CreateSaleInvoiceReturn(shopID string, authUsername string, doc models.SaleInvoiceReturn) (string, string, error) {
-	docDate := doc.DocDatetime
-	prefixDocNo := svc.getDocNoPrefix(docDate)
+	isGenerateDocNo := !doc.IsPOS
 
-	newDocNo, newDocNumber, err := svc.generateNewDocNo(shopID, prefixDocNo, 1)
+	prefixDocNo, newDocNo, newDocNumber := "", "", 0
 
-	if err != nil {
-		return "", "", err
+	if isGenerateDocNo {
+		docDate := doc.DocDatetime
+		tempPrefixDocNo := svc.getDocNoPrefix(docDate)
+
+		tempNewDocNo, tempNewDocNumber, err := svc.generateNewDocNo(shopID, prefixDocNo, 1)
+
+		if err != nil {
+			return "", "", err
+		}
+
+		prefixDocNo = tempPrefixDocNo
+		newDocNo = tempNewDocNo
+		newDocNumber = tempNewDocNumber
+	} else {
+		if doc.DocNo == "" {
+			return "", "", errors.New("docno is required")
+		}
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -126,14 +140,14 @@ func (svc SaleInvoiceReturnHttpService) CreateSaleInvoiceReturn(shopID string, a
 	docData.SaleInvoiceReturn = doc
 
 	docData.DocNo = newDocNo
-	if doc.TaxDocNo == "" {
+	if isGenerateDocNo && doc.TaxDocNo == "" {
 		docData.TaxDocNo = newDocNo
 	}
 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err := svc.repo.Create(docData)
 
 	if err != nil {
 		return "", "", err
@@ -141,8 +155,10 @@ func (svc SaleInvoiceReturnHttpService) CreateSaleInvoiceReturn(shopID string, a
 
 	go func() {
 		svc.repoMq.Create(docData)
-		svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
 		svc.saveMasterSync(shopID)
+		if isGenerateDocNo {
+			svc.repoCache.Save(shopID, prefixDocNo, newDocNumber, svc.cacheExpireDocNo)
+		}
 	}()
 
 	return newGuidFixed, newDocNo, nil
