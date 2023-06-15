@@ -115,7 +115,7 @@ func (svc SaleInvoiceReturnHttpService) CreateSaleInvoiceReturn(shopID string, a
 
 	if isGenerateDocNo {
 		docDate := doc.DocDatetime
-		tempPrefixDocNo := svc.getDocNoPrefix(docDate)
+		prefixDocNo := svc.getDocNoPrefix(docDate)
 
 		tempNewDocNo, tempNewDocNumber, err := svc.generateNewDocNo(shopID, prefixDocNo, 1)
 
@@ -123,7 +123,6 @@ func (svc SaleInvoiceReturnHttpService) CreateSaleInvoiceReturn(shopID string, a
 			return "", "", err
 		}
 
-		prefixDocNo = tempPrefixDocNo
 		newDocNo = tempNewDocNo
 		newDocNumber = tempNewDocNumber
 	} else {
