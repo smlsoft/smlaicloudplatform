@@ -45,7 +45,7 @@ func GetFilters(getParamFunc func(string) string, filterFields []FilterRequest) 
 			if val, err := strconv.ParseFloat(filterValue, 64); err == nil {
 				filters[field.Field] = val
 			}
-		case "bool":
+		case "boolean":
 			if val, err := strconv.ParseBool(filterValue); err == nil {
 				filters[field.Field] = val
 			}
