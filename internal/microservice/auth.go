@@ -40,6 +40,7 @@ type TokenContext struct {
 }
 
 type AuthService struct {
+	cacheMemoryExpire     time.Duration
 	cacheMemory           memorycache.IMemoryCache
 	cacher                ICacher
 	expireBearer          time.Duration
@@ -60,6 +61,7 @@ func NewAuthService(cacher ICacher, expireHour int) *AuthService {
 		prefixXApiKeyCacheKey: "xapikey-",
 		encrypt:               *encrypt.NewEncrypt(),
 		cacheMemory:           memorycache.NewMemoryCache(),
+		cacheMemoryExpire:     time.Duration(5) * time.Second,
 	}
 }
 
@@ -75,7 +77,6 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 				} else if currentPath == publicPath {
 					return next(c)
 				}
-
 			}
 
 			tokenCtx, err := authService.GetTokenFromContext(c)
@@ -160,7 +161,7 @@ func (authService *AuthService) MWFuncWithRedisMixShop(cacher ICacher, shopPath 
 				authService.ReTokenExpire(tokenCtx.tokenType, cacheKey)
 
 				if userInfo.ShopID != "" {
-					authService.cacheMemory.Set(cacheKey, userInfo, time.Second*10)
+					authService.cacheMemory.Set(cacheKey, userInfo, authService.cacheMemoryExpire)
 				}
 			}()
 
@@ -400,6 +401,14 @@ func (authService *AuthService) SelectShop(tokenType TokenType, tokenStr string,
 	cacheKey := authService.GetPrefixCacheKey(tokenType) + tokenStr
 
 	authService.cacheMemory.Delete(cacheKey)
+
+	tempUser, tempExists := authService.cacheMemory.Get(cacheKey)
+	if tempExists {
+		userInfo := tempUser.(models.UserInfo)
+		userInfo.ShopID = shopID
+		userInfo.Role = role
+		authService.cacheMemory.Set(cacheKey, userInfo, authService.cacheMemoryExpire)
+	}
 
 	err := authService.cacher.HMSet(cacheKey, map[string]interface{}{
 		"shopid": shopID,
