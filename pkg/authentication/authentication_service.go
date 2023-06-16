@@ -85,7 +85,7 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, au
 	passwordInvalid := !svc.checkHashPassword(userLoginReq.Password, findUser.Password)
 
 	if passwordInvalid {
-		return "", errors.New("password is not invalid")
+		return "", errors.New("password is invalid")
 	}
 
 	tokenString, err := svc.authService.GenerateTokenWithRedis(microservice.AUTHTYPE_BEARER, micromodel.UserInfo{Username: findUser.Username, Name: findUser.Name})
