@@ -61,6 +61,7 @@ func (h ProductBarcodeHttp) RouteSetup() {
 	h.ms.DELETE("/product/barcode", h.DeleteProductBarcodeByGUIDs)
 
 	h.ms.GET("/product/barcode/units", h.GetroductBarcodeByAllUnits)
+	h.ms.GET("/product/barcode/groups", h.GetroductBarcodeByGroups)
 }
 
 // Create ProductBarcode godoc
@@ -614,6 +615,42 @@ func (h ProductBarcodeHttp) GetroductBarcodeByAllUnits(ctx microservice.IContext
 	unitCodes = append(unitCodes, tempUnitCodes...)
 
 	docs, pagination, err := h.svc.GetProductBarcodeByUnits(shopID, unitCodes, pageable)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success:    true,
+		Pagination: pagination,
+		Data:       docs,
+	})
+	return nil
+}
+
+// Get ProductBarcode By Groups
+// @Description get by group codes
+// @Tags		ProductBarcode
+// @Accept 		json
+// @Param		codes	query	string		false  "array of group"
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /product/barcode/groups [get]
+func (h ProductBarcodeHttp) GetroductBarcodeByGroups(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	pageable := utils.GetPageable(ctx.QueryParam)
+
+	reqUnitCodes := ctx.QueryParam("codes")
+	groupCodes := []string{}
+
+	tempUnitCodes := strings.Split(reqUnitCodes, ",")
+	groupCodes = append(groupCodes, tempUnitCodes...)
+
+	docs, pagination, err := h.svc.GetProductBarcodeByGroups(shopID, groupCodes, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

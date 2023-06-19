@@ -40,6 +40,7 @@ type IProductBarcodeHttpService interface {
 
 	GetModuleName() string
 	GetProductBarcodeByUnits(shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
+	GetProductBarcodeByGroups(shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 }
 
 type ProductBarcodeHttpService struct {
@@ -689,6 +690,21 @@ func (svc ProductBarcodeHttpService) GetProductBarcodeByUnits(shopID string, uni
 	}
 
 	results, pagination, err := svc.repo.FindPageByUnits(shopID, unitCodes, pageable)
+
+	if err != nil {
+		return []models.ProductBarcodeInfo{}, mongopagination.PaginationData{}, err
+	}
+
+	return results, pagination, nil
+}
+
+func (svc ProductBarcodeHttpService) GetProductBarcodeByGroups(shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
+
+	if len(groupCodes) < 1 {
+		return []models.ProductBarcodeInfo{}, mongopagination.PaginationData{}, nil
+	}
+
+	results, pagination, err := svc.repo.FindPageByGroups(shopID, groupCodes, pageable)
 
 	if err != nil {
 		return []models.ProductBarcodeInfo{}, mongopagination.PaginationData{}, err

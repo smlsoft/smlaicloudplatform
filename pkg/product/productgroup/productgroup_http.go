@@ -29,7 +29,7 @@ func NewProductGroupHttp(ms *microservice.Microservice, cfg config.IConfig) Prod
 	repo := repositories.NewProductGroupRepository(pst)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewProductGroupHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewProductGroupHttpService(repo, cfg.ProductGroupServiceConfig(), masterSyncCacheRepo)
 
 	return ProductGroupHttp{
 		ms:  ms,
@@ -197,7 +197,9 @@ func (h ProductGroupHttp) DeleteProductGroup(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	err := h.svc.DeleteProductGroup(shopID, id, authUsername)
+	authHeader := ctx.Header("Authorization")
+
+	err := h.svc.DeleteProductGroup(shopID, id, authHeader, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -235,8 +237,9 @@ func (h ProductGroupHttp) DeleteProductGroupByGUIDs(ctx microservice.IContext) e
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
+	authHeader := ctx.Header("Authorization")
 
-	err = h.svc.DeleteProductGroupByGUIDs(shopID, authUsername, docReq)
+	err = h.svc.DeleteProductGroupByGUIDs(shopID, authUsername, authHeader, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

@@ -237,23 +237,16 @@ func (svc UnitHttpService) DeleteUnitByGUIDs(shopID, authHeader, authUsername st
 	// 	return err
 	// }
 
-	err := svc.repo.Transaction(func() error {
-		for idx, guid := range GUIDs {
-			if idx == 1 {
-				return errors.New("test rollback")
-			}
-
-			err := svc.DeleteUnit(shopID, guid, authHeader, authUsername)
-
-			if err != nil {
-				return err
-			}
+	for idx, guid := range GUIDs {
+		if idx == 1 {
+			return errors.New("test rollback")
 		}
-		return nil
-	})
 
-	if err != nil {
-		return err
+		err := svc.DeleteUnit(shopID, guid, authHeader, authUsername)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	svc.saveMasterSync(shopID)

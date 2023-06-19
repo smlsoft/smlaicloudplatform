@@ -42,6 +42,7 @@ type IProductBarcodeRepository interface {
 
 	FindByBarcodes(shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error)
 	FindPageByUnits(shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
+	FindPageByGroups(shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 }
 
 type ProductBarcodeRepository struct {
@@ -167,6 +168,28 @@ func (repo ProductBarcodeRepository) FindPageByUnits(shopID string, unitCodes []
 		},
 		"itemunitcode": bson.M{
 			"$in": unitCodes,
+		},
+	}
+
+	results := []models.ProductBarcodeInfo{}
+	pagination, err := repo.pst.FindPage(models.ProductBarcodeInfo{}, filters, pageable, &results)
+
+	if err != nil {
+		return nil, mongopagination.PaginationData{}, err
+	}
+
+	return results, pagination, nil
+}
+
+func (repo ProductBarcodeRepository) FindPageByGroups(shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
+
+	filters := bson.M{
+		"shopid": shopID,
+		"deletedat": bson.M{
+			"$exists": false,
+		},
+		"groupcode": bson.M{
+			"$in": groupCodes,
 		},
 	}
 
