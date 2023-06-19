@@ -79,19 +79,19 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, au
 	}
 
 	if len(findUser.Username) < 1 {
-		return "", errors.New("username is not exists")
+		return "", errors.New("username or password is invalid")
 	}
 
 	passwordInvalid := !svc.checkHashPassword(userLoginReq.Password, findUser.Password)
 
 	if passwordInvalid {
-		return "", errors.New("password is not invalid")
+		return "", errors.New("username or password is invalid")
 	}
 
 	tokenString, err := svc.authService.GenerateTokenWithRedis(microservice.AUTHTYPE_BEARER, micromodel.UserInfo{Username: findUser.Username, Name: findUser.Name})
 
 	if err != nil {
-		return "", errors.New("generate token error")
+		return "", errors.New("login failed")
 	}
 
 	if len(userLoginReq.ShopID) > 0 {
