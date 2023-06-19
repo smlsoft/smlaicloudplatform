@@ -708,12 +708,13 @@ func (pst *PersisterMongo) Transaction(queryFunc func() error) error {
 	if err != nil {
 		return err
 	}
+	defer session.EndSession(pst.ctx)
 
 	if err := session.StartTransaction(); err != nil {
 		return err
 	}
 
-	if err := mongo.WithSession(pst.ctx, session, func(sc mongo.SessionContext) error {
+	err = mongo.WithSession(pst.ctx, session, func(sc mongo.SessionContext) error {
 		err := queryFunc()
 
 		if err != nil {
@@ -723,11 +724,16 @@ func (pst *PersisterMongo) Transaction(queryFunc func() error) error {
 		if err = session.CommitTransaction(sc); err != nil {
 			return err
 		}
+
 		return nil
-	}); err != nil {
+	})
+
+	if err != nil {
+		if rbErr := session.AbortTransaction(pst.ctx); rbErr != nil {
+			return rbErr
+		}
 		return err
 	}
-	session.EndSession(pst.ctx)
 
 	return nil
 }
