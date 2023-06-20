@@ -39,6 +39,7 @@ import (
 	"smlcloudplatform/pkg/product/productbarcode"
 	"smlcloudplatform/pkg/product/productcategory"
 	"smlcloudplatform/pkg/product/productgroup"
+	"smlcloudplatform/pkg/product/promotion"
 	"smlcloudplatform/pkg/product/unit"
 	"smlcloudplatform/pkg/productsection/sectionbranch"
 	"smlcloudplatform/pkg/productsection/sectionbusinesstype"
@@ -267,6 +268,9 @@ func main() {
 
 			// e-order
 			eorder.NewEOrderHttp(ms, cfg),
+
+			// promiotions
+			promotion.NewPromotionHttp(ms, cfg),
 		}
 
 		startHttpServices(httpServices...)

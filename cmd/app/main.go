@@ -36,6 +36,7 @@ import (
 	"smlcloudplatform/pkg/product/productbarcode"
 	"smlcloudplatform/pkg/product/productcategory"
 	"smlcloudplatform/pkg/product/productgroup"
+	"smlcloudplatform/pkg/product/promotion"
 	"smlcloudplatform/pkg/product/unit"
 	"smlcloudplatform/pkg/productsection/sectionbranch"
 	"smlcloudplatform/pkg/productsection/sectionbusinesstype"
@@ -236,6 +237,8 @@ func main() {
 
 		paid.NewPaidHttp(ms, cfg),
 		pay.NewPayHttp(ms, cfg),
+
+		promotion.NewPromotionHttp(ms, cfg),
 
 		//reportquery.NewReportQueryHttp(ms, cfg),
 	}
