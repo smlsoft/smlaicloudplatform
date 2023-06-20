@@ -858,12 +858,16 @@ definitions:
   models.Department:
     properties:
       code:
-        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+    required:
+    - code
+    - names
     type: object
   models.Detail:
     properties:
@@ -1156,6 +1160,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -13916,6 +13922,10 @@ paths:
         in: query
         name: q
         type: string
+      - description: promotiontype
+        in: query
+        name: promotiontype
+        type: integer
       - description: Page
         in: query
         name: page
@@ -14100,6 +14110,10 @@ paths:
         in: query
         name: q
         type: string
+      - description: promotiontype
+        in: query
+        name: promotiontype
+        type: integer
       - description: offset
         in: query
         name: offset
