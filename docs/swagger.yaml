@@ -858,15 +858,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.Detail:
     properties:
@@ -1159,8 +1156,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -3202,6 +3197,59 @@ definitions:
         type: number
       totalincomeamount:
         description: รวมรายได้
+        type: number
+    type: object
+  models.Promotion:
+    properties:
+      barcode:
+        type: string
+      code:
+        type: string
+      details:
+        items:
+          $ref: '#/definitions/models.PromotionDetail'
+        type: array
+      fromdate:
+        type: string
+      fromtime:
+        type: string
+      ismemberonly:
+        type: boolean
+      isuseinfriday:
+        type: boolean
+      isuseinmonday:
+        type: boolean
+      isuseinsaturday:
+        type: boolean
+      isuseinsunday:
+        type: boolean
+      isuseinthursday:
+        type: boolean
+      isuseintuesday:
+        type: boolean
+      isuseinwednesday:
+        type: boolean
+      name:
+        type: string
+      promotiontype:
+        type: integer
+      remark:
+        type: string
+      todate:
+        type: string
+      totime:
+        type: string
+    type: object
+  models.PromotionDetail:
+    properties:
+      barcode:
+        type: string
+      detailtype:
+        description: '0: discount, 1: buy x get y, 2: buy x get y with discount'
+        type: integer
+      discount:
+        type: number
+      minimum:
         type: number
     type: object
   models.Purchase:
@@ -13832,6 +13880,253 @@ paths:
       - AccessToken: []
       tags:
       - Product
+  /product/promotion:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Promotion
+      parameters:
+      - description: Promotion GUIDs
+        in: body
+        name: Promotion
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Promotion
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Promotion
+    post:
+      consumes:
+      - application/json
+      description: Create Promotion
+      parameters:
+      - description: Promotion
+        in: body
+        name: Promotion
+        required: true
+        schema:
+          $ref: '#/definitions/models.Promotion'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Promotion
+  /product/promotion/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Promotion
+      parameters:
+      - description: Promotion ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Promotion
+    get:
+      consumes:
+      - application/json
+      description: get Promotion info by guidfixed
+      parameters:
+      - description: Promotion guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Promotion
+    put:
+      consumes:
+      - application/json
+      description: Update Promotion
+      parameters:
+      - description: Promotion ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Promotion
+        in: body
+        name: Promotion
+        required: true
+        schema:
+          $ref: '#/definitions/models.Promotion'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Promotion
+  /product/promotion/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create Promotion
+      parameters:
+      - description: Promotion
+        in: body
+        name: Promotion
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Promotion'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Promotion
+  /product/promotion/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get Promotion info by Code
+      parameters:
+      - description: Promotion Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Promotion
+  /product/promotion/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Promotion
   /product/save:
     post:
       consumes:
