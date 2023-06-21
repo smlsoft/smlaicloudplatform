@@ -4,6 +4,8 @@ import (
 	"smlcloudplatform/pkg/models"
 	"time"
 
+	productbarcodemodels "smlcloudplatform/pkg/product/productbarcode/models"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -18,7 +20,6 @@ type Promotion struct {
 	ToDate                   time.Time          `json:"todate" bson:"todate"`
 	FromTime                 string             `json:"fromtime" bson:"fromtime"`
 	ToTime                   string             `json:"totime" bson:"totime"`
-	Barcode                  string             `json:"barcode" bson:"barcode"`
 	IsMemberOnly             bool               `json:"ismemberonly" bson:"ismemberonly"`
 	Remark                   string             `json:"remark" bson:"remark"`
 	IsUseInMonday            bool               `json:"isuseinmonday" bson:"isuseinmonday"`
@@ -29,13 +30,24 @@ type Promotion struct {
 	IsUseInSaturday          bool               `json:"isuseinsaturday" bson:"isuseinsaturday"`
 	IsUseInSunday            bool               `json:"isuseinsunday" bson:"isuseinsunday"`
 	Details                  *[]PromotionDetail `json:"details" bson:"details"`
+	ProductBarcode           ProductBarcode     `json:"productbarcode" bson:"productbarcode"`
+}
+
+type ProductBarcode struct {
+	GuidFixed     string                               `json:"guidfixed" bson:"guidfixed"`
+	Barcode       string                               `json:"barcode" bson:"barcode"`
+	ItemCode      string                               `json:"itemcode" bson:"itemcode"`
+	Names         *[]models.NameX                      `json:"names" bson:"names"`
+	ItemUnitCode  string                               `json:"itemunitcode" bson:"itemunitcode"`
+	ItemUnitNames *[]models.NameX                      `json:"itemunitnames" bson:"itemunitnames"`
+	Prices        *[]productbarcodemodels.ProductPrice `json:"prices" bson:"prices"`
 }
 
 type PromotionDetail struct {
-	DetailType int8    `json:"detailtype" bson:"detailtype"` // 0: discount, 1: buy x get y, 2: buy x get y with discount
-	Minimum    float64 `json:"minimum" bson:"minimum"`
-	Discount   float64 `json:"discount" bson:"discount"`
-	Barcode    string  `json:"barcode" bson:"barcode"`
+	DetailType     int8           `json:"detailtype" bson:"detailtype"` // 0: discount, 1: buy x get y, 2: buy x get y with discount
+	Minimum        float64        `json:"minimum" bson:"minimum"`
+	Discount       float64        `json:"discount" bson:"discount"`
+	ProductBarcode ProductBarcode `json:"productbarcode" bson:"productbarcode"`
 }
 
 type PromotionInfo struct {

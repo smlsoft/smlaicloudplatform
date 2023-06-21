@@ -76,6 +76,26 @@ func (svc PromotionHttpService) CreatePromotion(shopID string, authUsername stri
 		docData.Details = &[]models.PromotionDetail{}
 	}
 
+	if docData.ProductBarcode.Names == nil {
+		docData.ProductBarcode.Names = &[]common.NameX{}
+	}
+
+	if docData.ProductBarcode.ItemUnitNames == nil {
+		docData.ProductBarcode.Names = &[]common.NameX{}
+	}
+
+	for idx, detail := range *docData.Details {
+		tempDoc := (*docData.Details)[idx]
+
+		if detail.ProductBarcode.Names == nil {
+			tempDoc.ProductBarcode.Names = &[]common.NameX{}
+		}
+
+		if detail.ProductBarcode.ItemUnitNames == nil {
+			tempDoc.ProductBarcode.ItemUnitNames = &[]common.NameX{}
+		}
+	}
+
 	_, err = svc.repo.Create(docData)
 
 	if err != nil {
@@ -110,6 +130,25 @@ func (svc PromotionHttpService) UpdatePromotion(shopID string, guid string, auth
 		docData.Details = &[]models.PromotionDetail{}
 	}
 
+	if docData.ProductBarcode.Names == nil {
+		docData.ProductBarcode.Names = &[]common.NameX{}
+	}
+
+	if docData.ProductBarcode.ItemUnitNames == nil {
+		docData.ProductBarcode.Names = &[]common.NameX{}
+	}
+
+	for idx, detail := range *docData.Details {
+		tempDoc := (*docData.Details)[idx]
+
+		if detail.ProductBarcode.Names == nil {
+			tempDoc.ProductBarcode.Names = &[]common.NameX{}
+		}
+
+		if detail.ProductBarcode.ItemUnitNames == nil {
+			tempDoc.ProductBarcode.ItemUnitNames = &[]common.NameX{}
+		}
+	}
 	err = svc.repo.Update(shopID, guid, docData)
 
 	if err != nil {
