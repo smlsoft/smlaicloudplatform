@@ -119,10 +119,8 @@ func (svc PromotionHttpService) UpdatePromotion(shopID string, guid string, auth
 		return errors.New("document not found")
 	}
 
-	docData := models.PromotionDoc{}
-
+	docData := findDoc
 	docData.Promotion = doc
-
 	docData.UpdatedBy = authUsername
 	docData.UpdatedAt = time.Now()
 
