@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const ordertypeCollectionName = "orderType"
+const ordertypeCollectionName = "productOrderTypes"
 
 type OrderType struct {
 	models.PartitionIdentity `bson:"inline"`
