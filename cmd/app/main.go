@@ -33,6 +33,7 @@ import (
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
 	"smlcloudplatform/pkg/product/optionpattern"
+	"smlcloudplatform/pkg/product/ordertype"
 	"smlcloudplatform/pkg/product/product"
 	"smlcloudplatform/pkg/product/productbarcode"
 	"smlcloudplatform/pkg/product/productcategory"
@@ -246,6 +247,8 @@ func main() {
 		promotion.NewPromotionHttp(ms, cfg),
 
 		eorder.NewEOrderHttp(ms, cfg),
+
+		ordertype.NewOrderTypeHttp(ms, cfg),
 
 		//reportquery.NewReportQueryHttp(ms, cfg),
 	}

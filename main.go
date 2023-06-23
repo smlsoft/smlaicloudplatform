@@ -35,6 +35,7 @@ import (
 	"smlcloudplatform/pkg/product/inventorysearchconsumer"
 	"smlcloudplatform/pkg/product/option"
 	"smlcloudplatform/pkg/product/optionpattern"
+	"smlcloudplatform/pkg/product/ordertype"
 	"smlcloudplatform/pkg/product/product"
 	"smlcloudplatform/pkg/product/productbarcode"
 	"smlcloudplatform/pkg/product/productcategory"
@@ -271,6 +272,8 @@ func main() {
 
 			// promiotions
 			promotion.NewPromotionHttp(ms, cfg),
+
+			ordertype.NewOrderTypeHttp(ms, cfg),
 		}
 
 		startHttpServices(httpServices...)
