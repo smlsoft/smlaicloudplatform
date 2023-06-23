@@ -408,7 +408,7 @@ func (h ProductBarcodeHttp) InfoArrayMaster(ctx microservice.IContext) error {
 // List ProductBarcode godoc
 // @Description get struct array by ID
 // @Tags		ProductBarcode
-// @Param		isalacarte		query	string		false  "is A La Carte
+// @Param		isalacarte		query	string		false  "is A La Carte"
 // @Param		ordertypes		query	string		false  "order types ex. a01,a02"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
@@ -486,7 +486,7 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage2(ctx microservice.IContext)
 // List ProductBarcode godoc
 // @Description search limit offset
 // @Tags		ProductBarcode
-// @Param		isalacarte		query	string		false  "is A La Carte
+// @Param		isalacarte		query	string		false  "is A La Carte"
 // @Param		ordertypes		query	string		false  "order types ex. a01,a02"
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"

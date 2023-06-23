@@ -858,12 +858,15 @@ definitions:
   models.Department:
     properties:
       code:
-        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
   models.Detail:
     properties:
@@ -2447,6 +2450,33 @@ definitions:
     - name1
     - names
     type: object
+  models.OrderType:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      prices:
+        items:
+          $ref: '#/definitions/models.OrderTypePrice'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - names
+    - prices
+    type: object
+  models.OrderTypePrice:
+    properties:
+      price:
+        type: number
+      type:
+        type: integer
+    type: object
   models.PaginationDataResponse:
     properties:
       next:
@@ -2846,6 +2876,8 @@ definitions:
         type: array
       imageuri:
         type: string
+      isalacarte:
+        type: boolean
       isdividend:
         type: boolean
       issumpoint:
@@ -2875,6 +2907,10 @@ definitions:
       options:
         items:
           $ref: '#/definitions/models.ProductOption'
+        type: array
+      ordertypes:
+        items:
+          $ref: '#/definitions/models.OrderType'
         type: array
       prices:
         items:
@@ -4925,6 +4961,8 @@ definitions:
         type: array
       imageuri:
         type: string
+      isalacarte:
+        type: boolean
       isdividend:
         type: boolean
       issumpoint:
@@ -4954,6 +4992,10 @@ definitions:
       options:
         items:
           $ref: '#/definitions/models.ProductOption'
+        type: array
+      ordertypes:
+        items:
+          $ref: '#/definitions/models.OrderType'
         type: array
       prices:
         items:
@@ -7687,6 +7729,14 @@ paths:
       - description: Shop ID
         in: query
         name: shopid
+        type: string
+      - description: is A La Carte
+        in: query
+        name: isalacarte
+        type: string
+      - description: order types ex. a01,a02
+        in: query
+        name: ordertypes
         type: string
       - description: Search Value
         in: query
@@ -12828,6 +12878,14 @@ paths:
       - application/json
       description: get struct array by ID
       parameters:
+      - description: is A La Carte
+        in: query
+        name: isalacarte
+        type: string
+      - description: order types ex. a01,a02
+        in: query
+        name: ordertypes
+        type: string
       - description: Search Value
         in: query
         name: q
@@ -13034,6 +13092,14 @@ paths:
       - application/json
       description: search limit offset
       parameters:
+      - description: is A La Carte
+        in: query
+        name: isalacarte
+        type: string
+      - description: order types ex. a01,a02
+        in: query
+        name: ordertypes
+        type: string
       - description: Search Value
         in: query
         name: q
@@ -13905,6 +13971,253 @@ paths:
       - AccessToken: []
       tags:
       - Product
+  /product/order-type:
+    delete:
+      consumes:
+      - application/json
+      description: Delete OrderType
+      parameters:
+      - description: OrderType GUIDs
+        in: body
+        name: OrderType
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - OrderType
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - OrderType
+    post:
+      consumes:
+      - application/json
+      description: Create OrderType
+      parameters:
+      - description: OrderType
+        in: body
+        name: OrderType
+        required: true
+        schema:
+          $ref: '#/definitions/models.OrderType'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - OrderType
+  /product/order-type/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete OrderType
+      parameters:
+      - description: OrderType ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - OrderType
+    get:
+      consumes:
+      - application/json
+      description: get OrderType info by guidfixed
+      parameters:
+      - description: OrderType guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - OrderType
+    put:
+      consumes:
+      - application/json
+      description: Update OrderType
+      parameters:
+      - description: OrderType ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: OrderType
+        in: body
+        name: OrderType
+        required: true
+        schema:
+          $ref: '#/definitions/models.OrderType'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - OrderType
+  /product/order-type/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create OrderType
+      parameters:
+      - description: OrderType
+        in: body
+        name: OrderType
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.OrderType'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - OrderType
+  /product/order-type/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get OrderType info by Code
+      parameters:
+      - description: OrderType Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - OrderType
+  /product/order-type/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - OrderType
   /product/promotion:
     delete:
       consumes:

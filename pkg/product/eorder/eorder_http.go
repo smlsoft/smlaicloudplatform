@@ -53,7 +53,6 @@ func (h EOrderHttp) RouteSetup() {
 
 	h.ms.GET("/e-order/category", h.SearchProductCategoryPage)
 	h.ms.GET("/e-order/product", h.SearchProductBarcodePage)
-	h.ms.GET("/e-order/product-barcode", h.GetProductBarcodeByBarcodes)
 
 }
 
@@ -97,7 +96,7 @@ func (h EOrderHttp) SearchProductCategoryPage(ctx microservice.IContext) error {
 // @Description List Product
 // @Tags		E-Order
 // @Param		shopid		query	string		false  "Shop ID"
-// @Param		isalacarte		query	string		false  "is A La Carte
+// @Param		isalacarte		query	string		false  "is A La Carte"
 // @Param		ordertypes		query	string		false  "order types ex. a01,a02"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"

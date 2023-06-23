@@ -4000,6 +4000,18 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "is A La Carte",
+                        "name": "isalacarte",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "order types ex. a01,a02",
+                        "name": "ordertypes",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Search Value",
                         "name": "q",
                         "in": "query"
@@ -12085,6 +12097,18 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "is A La Carte",
+                        "name": "isalacarte",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "order types ex. a01,a02",
+                        "name": "ordertypes",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Search Value",
                         "name": "q",
                         "in": "query"
@@ -12337,6 +12361,18 @@ const docTemplate = `{
                     "ProductBarcode"
                 ],
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "is A La Carte",
+                        "name": "isalacarte",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "order types ex. a01,a02",
+                        "name": "ordertypes",
+                        "in": "query"
+                    },
                     {
                         "type": "string",
                         "description": "Search Value",
@@ -13852,6 +13888,404 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/order-type": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get list step",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OrderType"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create OrderType",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OrderType"
+                ],
+                "parameters": [
+                    {
+                        "description": "OrderType",
+                        "name": "OrderType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.OrderType"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete OrderType",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OrderType"
+                ],
+                "parameters": [
+                    {
+                        "description": "OrderType GUIDs",
+                        "name": "OrderType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/order-type/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Create OrderType",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OrderType"
+                ],
+                "parameters": [
+                    {
+                        "description": "OrderType",
+                        "name": "OrderType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.OrderType"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkReponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/order-type/code/{code}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get OrderType info by Code",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OrderType"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "OrderType Code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/order-type/list": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "search limit offset",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OrderType"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Value",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "lang",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ApiResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/order-type/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "get OrderType info by guidfixed",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OrderType"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "OrderType guidfixed",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Update OrderType",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OrderType"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "OrderType ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "OrderType",
+                        "name": "OrderType",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.OrderType"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "Delete OrderType",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OrderType"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "OrderType ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseSuccessWithID"
                         }
                     },
                     "401": {
@@ -28364,13 +28798,17 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
                 "code": {
-                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -30688,6 +31126,45 @@ const docTemplate = `{
                 }
             }
         },
+        "models.OrderType": {
+            "type": "object",
+            "required": [
+                "names",
+                "prices"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "prices": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.OrderTypePrice"
+                    }
+                }
+            }
+        },
+        "models.OrderTypePrice": {
+            "type": "object",
+            "properties": {
+                "price": {
+                    "type": "number"
+                },
+                "type": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.PaginationDataResponse": {
             "type": "object",
             "properties": {
@@ -31290,6 +31767,9 @@ const docTemplate = `{
                 "imageuri": {
                     "type": "string"
                 },
+                "isalacarte": {
+                    "type": "boolean"
+                },
                 "isdividend": {
                     "type": "boolean"
                 },
@@ -31332,6 +31812,12 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.ProductOption"
+                    }
+                },
+                "ordertypes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OrderType"
                     }
                 },
                 "prices": {
@@ -34378,6 +34864,9 @@ const docTemplate = `{
                 "imageuri": {
                     "type": "string"
                 },
+                "isalacarte": {
+                    "type": "boolean"
+                },
                 "isdividend": {
                     "type": "boolean"
                 },
@@ -34420,6 +34909,12 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.ProductOption"
+                    }
+                },
+                "ordertypes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.OrderType"
                     }
                 },
                 "prices": {
