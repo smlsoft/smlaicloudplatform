@@ -53,6 +53,7 @@ func (h EOrderHttp) RouteSetup() {
 
 	h.ms.GET("/e-order/category", h.SearchProductCategoryPage)
 	h.ms.GET("/e-order/product", h.SearchProductBarcodePage)
+	h.ms.GET("/e-order/product-barcode", h.SearchProductBarcodePage)
 
 }
 
