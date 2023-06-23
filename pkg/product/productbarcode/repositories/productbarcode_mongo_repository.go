@@ -21,6 +21,7 @@ type IProductBarcodeRepository interface {
 	DeleteByGuidfixed(shopID string, guid string, username string) error
 	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
+	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.ProductBarcodeDoc, error)
 	FindByGuids(shopID string, guids []string) ([]models.ProductBarcodeDoc, error)
 

@@ -29,6 +29,7 @@ import (
 	"smlcloudplatform/pkg/payment/qrpayment"
 	"smlcloudplatform/pkg/paymentmaster"
 	"smlcloudplatform/pkg/product/color"
+	"smlcloudplatform/pkg/product/eorder"
 	"smlcloudplatform/pkg/product/inventory"
 	"smlcloudplatform/pkg/product/inventoryimport"
 	"smlcloudplatform/pkg/product/optionpattern"
@@ -117,6 +118,10 @@ func main() {
 		"/healthz",
 		"/ws",
 		"/metrics",
+
+		"/e-order/product",
+		"/e-order/category",
+		"/e-order/product-barcode",
 	}
 
 	exceptShopPath := []string{
@@ -239,6 +244,8 @@ func main() {
 		pay.NewPayHttp(ms, cfg),
 
 		promotion.NewPromotionHttp(ms, cfg),
+
+		eorder.NewEOrderHttp(ms, cfg),
 
 		//reportquery.NewReportQueryHttp(ms, cfg),
 	}

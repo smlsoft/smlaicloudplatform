@@ -97,6 +97,8 @@ func (h EOrderHttp) SearchProductCategoryPage(ctx microservice.IContext) error {
 // @Description List Product
 // @Tags		E-Order
 // @Param		shopid		query	string		false  "Shop ID"
+// @Param		isalacarte		query	string		false  "is A La Carte
+// @Param		ordertypes		query	string		false  "order types ex. a01,a02"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
@@ -113,8 +115,21 @@ func (h EOrderHttp) SearchProductBarcodePage(ctx microservice.IContext) error {
 		return nil
 	}
 
+	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+		{
+			Param: "isalacarte",
+			Field: "isalacarte",
+			Type:  "boolean",
+		},
+		{
+			Param: "ordertypes",
+			Field: "ordertypes.code",
+			Type:  "array",
+		},
+	})
+
 	pageable := utils.GetPageable(ctx.QueryParam)
-	docList, pagination, err := h.svcProduct.SearchProductBarcode(shopID, pageable)
+	docList, pagination, err := h.svcProduct.SearchProductBarcode(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

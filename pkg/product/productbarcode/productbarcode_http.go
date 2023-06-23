@@ -408,6 +408,8 @@ func (h ProductBarcodeHttp) InfoArrayMaster(ctx microservice.IContext) error {
 // List ProductBarcode godoc
 // @Description get struct array by ID
 // @Tags		ProductBarcode
+// @Param		isalacarte		query	string		false  "is A La Carte
+// @Param		ordertypes		query	string		false  "order types ex. a01,a02"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
@@ -421,7 +423,21 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage(ctx microservice.IContext) 
 	shopID := userInfo.ShopID
 
 	pageable := utils.GetPageable(ctx.QueryParam)
-	docList, pagination, err := h.svc.SearchProductBarcode(shopID, pageable)
+
+	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+		{
+			Param: "isalacarte",
+			Field: "isalacarte",
+			Type:  "boolean",
+		},
+		{
+			Param: "ordertypes",
+			Field: "ordertypes.code",
+			Type:  "array",
+		},
+	})
+
+	docList, pagination, err := h.svc.SearchProductBarcode(shopID, filters, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -470,6 +486,8 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage2(ctx microservice.IContext)
 // List ProductBarcode godoc
 // @Description search limit offset
 // @Tags		ProductBarcode
+// @Param		isalacarte		query	string		false  "is A La Carte
+// @Param		ordertypes		query	string		false  "order types ex. a01,a02"
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
@@ -487,7 +505,20 @@ func (h ProductBarcodeHttp) SearchProductBarcodeLimit(ctx microservice.IContext)
 
 	lang := ctx.QueryParam("lang")
 
-	docList, total, err := h.svc.SearchProductBarcodeStep(shopID, lang, pageableStep)
+	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+		{
+			Param: "isalacarte",
+			Field: "isalacarte",
+			Type:  "boolean",
+		},
+		{
+			Param: "ordertypes",
+			Field: "ordertypes.code",
+			Type:  "array",
+		},
+	})
+
+	docList, total, err := h.svc.SearchProductBarcodeStep(shopID, lang, filters, pageableStep)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

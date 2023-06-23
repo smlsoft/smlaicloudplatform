@@ -29,10 +29,10 @@ type IProductBarcodeHttpService interface {
 	InfoWTFArray(shopID string, codes []string) ([]interface{}, error)
 	InfoWTFArrayMaster(codes []string) ([]interface{}, error)
 	GetProductBarcodeByBarcodeRef(shopID string, barcodeRef string) ([]models.ProductBarcodeInfo, error)
-	SearchProductBarcode(shopID string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
+	SearchProductBarcode(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 	SearchProductBarcode2(shopID string, pageable micromodels.Pageable) ([]models.ProductBarcodeSearch, common.Pagination, error)
 
-	SearchProductBarcodeStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeInfo, int, error)
+	SearchProductBarcodeStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.ProductBarcode) (common.BulkImport, error)
 
 	XSortsSave(shopID string, authUsername string, xsorts []common.XSortModifyReqesut) error
@@ -396,7 +396,7 @@ func (svc ProductBarcodeHttpService) GetProductBarcodeByBarcodes(shopID string, 
 
 }
 
-func (svc ProductBarcodeHttpService) SearchProductBarcode(shopID string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
+func (svc ProductBarcodeHttpService) SearchProductBarcode(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"barcode",
 		"names.name",
@@ -406,7 +406,19 @@ func (svc ProductBarcodeHttpService) SearchProductBarcode(shopID string, pageabl
 		"itemunitnames.name",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
+	isalacarte, ok := filters["isalacarte"]
+	if ok {
+		if !isalacarte.(bool) {
+			delete(filters, "isalacarte")
+			filters["$or"] = []bson.M{
+				{"isalacarte": false},
+				{"isalacarte": bson.M{"$exists": false}},
+			}
+		}
+
+	}
+
+	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ProductBarcodeInfo{}, pagination, err
@@ -428,7 +440,7 @@ func (svc ProductBarcodeHttpService) SearchProductBarcode2(shopID string, pageab
 	return docList, pagination, nil
 }
 
-func (svc ProductBarcodeHttpService) SearchProductBarcodeStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeInfo, int, error) {
+func (svc ProductBarcodeHttpService) SearchProductBarcodeStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeInfo, int, error) {
 	searchInFields := []string{
 		"barcode",
 		"names.name",
@@ -440,7 +452,7 @@ func (svc ProductBarcodeHttpService) SearchProductBarcodeStep(shopID string, lan
 
 	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.ProductBarcodeInfo{}, 0, err
