@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"smlcloudplatform/pkg/models"
-	ordertypemodels "smlcloudplatform/pkg/product/ordertype/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -43,14 +42,20 @@ type ProductBarcodeBase struct {
 	MaxDiscount string `json:"maxdiscount" bson:"maxdiscount"`
 	IsDividend  bool   `json:"isdividend" bson:"isdividend"`
 
-	RefUnitNames   *[]models.NameX              `json:"refunitnames" bson:"refunitnames"`
-	StockBarcode   string                       `json:"stockbarcode" bson:"stockbarcode"`
-	Qty            float64                      `json:"qty" bson:"qty"`
-	RefDivideValue float64                      `json:"refdividevalue" bson:"refdividevalue"`
-	RefStandValue  float64                      `json:"refstandvalue" bson:"refstandvalue"`
-	VatCal         int                          `json:"vatcal" bson:"vatcal"`
-	IsALaCarte     bool                         `json:"isalacarte" bson:"isalacarte"`
-	OrderTypes     *[]ordertypemodels.OrderType `json:"ordertypes" bson:"ordertypes"`
+	RefUnitNames   *[]models.NameX     `json:"refunitnames" bson:"refunitnames"`
+	StockBarcode   string              `json:"stockbarcode" bson:"stockbarcode"`
+	Qty            float64             `json:"qty" bson:"qty"`
+	RefDivideValue float64             `json:"refdividevalue" bson:"refdividevalue"`
+	RefStandValue  float64             `json:"refstandvalue" bson:"refstandvalue"`
+	VatCal         int                 `json:"vatcal" bson:"vatcal"`
+	IsALaCarte     bool                `json:"isalacarte" bson:"isalacarte"`
+	OrderTypes     *[]ProductOrderType `json:"ordertypes" bson:"ordertypes"`
+}
+
+type ProductOrderType struct {
+	Code  string          `json:"code" bson:"code"`
+	Names *[]models.NameX `json:"names" bson:"names"`
+	Price float64         `json:"price" bson:"price"`
 }
 
 type RefProductBarcode struct {
