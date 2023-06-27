@@ -72,7 +72,7 @@ func NewShopHttp(ms *microservice.Microservice, cfg config.IConfig) ShopHttp {
 
 func (h ShopHttp) RouteSetup() {
 	h.ms.GET("/shop/:id", h.InfoShop)
-	h.ms.GET("/shop", h.SearchShop)
+	// h.ms.GET("/shop", h.SearchShop)
 
 	h.ms.POST("/shop", h.CreateShop, h.authService.MWFuncWithShop(h.ms.Cacher(h.cfg.CacherConfig())))
 	h.ms.PUT("/shop/:id", h.UpdateShop)

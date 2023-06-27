@@ -2,6 +2,7 @@ package shop
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/config"
@@ -52,6 +53,15 @@ func (h ShopMemberHttp) ListUserInShop(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
+	if userInfo.Role != models.ROLE_OWNER {
+		ctx.Response(http.StatusOK, &common.ApiResponse{
+			Success: false,
+			Message: "permission denied",
+		})
+
+		return errors.New("permission denied")
+	}
+
 	pageable := utils.GetPageable(ctx.QueryParam)
 
 	docList, pagination, err := h.svc.ListUserInShop(shopID, pageable)
@@ -82,6 +92,15 @@ func (h ShopMemberHttp) ListUserInShop(ctx microservice.IContext) error {
 func (h ShopMemberHttp) InfoShopUser(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
+
+	if userInfo.Role != models.ROLE_OWNER {
+		ctx.Response(http.StatusOK, &common.ApiResponse{
+			Success: false,
+			Message: "permission denied",
+		})
+
+		return errors.New("permission denied")
+	}
 
 	username := ctx.Param("username")
 
@@ -120,6 +139,15 @@ func (h ShopMemberHttp) ListShopUser(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 
+	if userInfo.Role != models.ROLE_OWNER {
+		ctx.Response(http.StatusOK, &common.ApiResponse{
+			Success: false,
+			Message: "permission denied",
+		})
+
+		return errors.New("permission denied")
+	}
+
 	pageable := utils.GetPageable(ctx.QueryParam)
 
 	docList, pagination, err := h.svc.ListShopByUser(authUsername, pageable)
@@ -151,6 +179,15 @@ func (h ShopMemberHttp) ListShopUser(ctx microservice.IContext) error {
 func (h ShopMemberHttp) SaveUserPermissionShop(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
+
+	if userInfo.Role != models.ROLE_OWNER {
+		ctx.Response(http.StatusOK, &common.ApiResponse{
+			Success: false,
+			Message: "permission denied",
+		})
+
+		return errors.New("permission denied")
+	}
 
 	input := ctx.ReadInput()
 
@@ -188,6 +225,15 @@ func (h ShopMemberHttp) DeleteUserPermissionShop(ctx microservice.IContext) erro
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
+
+	if userInfo.Role != models.ROLE_OWNER {
+		ctx.Response(http.StatusOK, &common.ApiResponse{
+			Success: false,
+			Message: "permission denied",
+		})
+
+		return errors.New("permission denied")
+	}
 
 	username := ctx.Param("username")
 

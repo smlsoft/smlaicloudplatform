@@ -168,3 +168,8 @@ func (m *ShopUserRepositoryMock) FindByUserInShopPage(shopID string, pageable mi
 	args := m.Called(shopID, pageable)
 	return args.Get(0).([]models.ShopUser), args.Get(1).(mongopagination.PaginationData), args.Error(2)
 }
+
+func (m *ShopUserRepositoryMock) FindUserProfileByUsernames(usernames []string) ([]models.UserProfile, error) {
+	args := m.Called(usernames)
+	return args.Get(0).([]models.UserProfile), args.Error(1)
+}

@@ -55,6 +55,10 @@ type UserProfile struct {
 	CreatedAt    time.Time `json:"-" bson:"created_at,omitempty"`
 }
 
+func (UserProfile) CollectionName() string {
+	return userCollectionName
+}
+
 type UserProfileRequest struct {
 	UserDetail `bson:"inline"`
 }
@@ -83,13 +87,17 @@ const (
 	ROLE_SYSTEM = 255 // APP MANAGER
 )
 
+type ShopUserBase struct {
+	Username string   `json:"username" bson:"username"`
+	ShopID   string   `json:"shopid" bson:"shopid"`
+	Role     UserRole `json:"role" bson:"role"`
+}
+
 type ShopUser struct {
 	ID             primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Username       string             `json:"username" bson:"username"`
-	ShopID         string             `json:"shopid" bson:"shopid"`
-	Role           UserRole           `json:"role" bson:"role"`
-	IsFavorite     bool               `json:"isfavorite" bson:"isfavorite"`
-	LastAccessedAt time.Time          `json:"lastaccessedat" bson:"lastaccessedat"`
+	ShopUserBase   `bson:"inline"`
+	IsFavorite     bool      `json:"isfavorite" bson:"isfavorite"`
+	LastAccessedAt time.Time `json:"lastaccessedat" bson:"lastaccessedat"`
 }
 
 func (*ShopUser) CollectionName() string {
@@ -98,7 +106,7 @@ func (*ShopUser) CollectionName() string {
 
 type ShopUserInfo struct {
 	ShopID         string    `json:"shopid" bson:"shopid"`
-	Name           string    `json:"name" bson:"name"`
+	ShopName       string    `json:"shopname" bson:"shopname"`
 	BranchCode     string    `json:"branchcode" bson:"branchcode"`
 	Role           UserRole  `json:"role" bson:"role"`
 	IsFavorite     bool      `json:"isfavorite" bson:"isfavorite"`
@@ -125,6 +133,11 @@ type ShopUserAccessLog struct {
 
 func (*ShopUserAccessLog) CollectionName() string {
 	return "shopUserAccessLogs"
+}
+
+type ShopUserProfile struct {
+	ShopUserBase    `bson:"inline"`
+	UserProfileName string `json:"userprofilename" bson:"userprofilename"`
 }
 
 // func (u UserRole) EqualString(userRoleStr string)  bool {

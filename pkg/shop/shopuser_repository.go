@@ -24,6 +24,7 @@ type IShopUserRepository interface {
 	FindByUsername(username string) (*[]models.ShopUser, error)
 	FindByUsernamePage(username string, pageable micromodels.Pageable) ([]models.ShopUserInfo, mongopagination.PaginationData, error)
 	FindByUserInShopPage(shopID string, pageable micromodels.Pageable) ([]models.ShopUser, mongopagination.PaginationData, error)
+	FindUserProfileByUsernames(usernames []string) ([]models.UserProfile, error)
 }
 
 type ShopUserRepository struct {
@@ -152,7 +153,7 @@ func (repo ShopUserRepository) FindByUsernamePage(username string, pageable micr
 
 	searchInFields := []string{
 		"shopid",
-		"name",
+		"shopname",
 	}
 
 	for _, colName := range searchInFields {
@@ -182,7 +183,7 @@ func (repo ShopUserRepository) FindByUsernamePage(username string, pageable micr
 				"shopid":         1,
 				"isfavorite":     1,
 				"lastaccessedat": 1,
-				"name":           bson.M{"$first": "$shopInfo.name1"},
+				"shopname":       bson.M{"$first": "$shopInfo.name1"},
 				"branchcode":     bson.M{"$first": "$shopInfo.branchcode"},
 			},
 		},
@@ -243,4 +244,23 @@ func (repo ShopUserRepository) FindByUserInShopPage(shopID string, pageable micr
 	}
 
 	return docList, paginattion, nil
+}
+
+func (repo ShopUserRepository) FindUserProfileByUsernames(usernames []string) ([]models.UserProfile, error) {
+
+	docList := []models.UserProfile{}
+
+	filters := bson.M{
+		"username": bson.M{
+			"$in": usernames,
+		},
+	}
+
+	err := repo.pst.Find(&models.UserProfile{}, filters, &docList)
+
+	if err != nil {
+		return []models.UserProfile{}, err
+	}
+
+	return docList, nil
 }
