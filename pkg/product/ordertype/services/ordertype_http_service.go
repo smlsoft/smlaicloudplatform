@@ -332,5 +332,5 @@ func (svc OrderTypeHttpService) saveMasterSync(shopID string) {
 }
 
 func (svc OrderTypeHttpService) GetModuleName() string {
-	return "orderType"
+	return "ordertype"
 }

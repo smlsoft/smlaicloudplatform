@@ -48,6 +48,9 @@ import (
 	restaurantStaffRepo "smlcloudplatform/pkg/restaurant/staff/repositories"
 	restaurantStaffService "smlcloudplatform/pkg/restaurant/staff/services"
 
+	ordertype_repo "smlcloudplatform/pkg/product/ordertype/repositories"
+	ordertype_service "smlcloudplatform/pkg/product/ordertype/services"
+
 	"smlcloudplatform/pkg/mastersync/repositories"
 )
 
@@ -91,7 +94,7 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) Master
 	activityModuleManager.Add(svcProductBarcode)
 
 	// Product Unit
-	svcProductUnit := productunitService.NewUnitHttpService(productunitRepo.NewUnitRepository(pst), cfg.UnitServiceConfig(), masterSyncCacheRepo)
+	svcProductUnit := productunitService.NewUnitHttpService(productunitRepo.NewUnitRepository(pst), productbarcodeRepo.NewProductBarcodeRepository(pst, cache), cfg.UnitServiceConfig(), masterSyncCacheRepo)
 	activityModuleManager.Add(svcProductUnit)
 
 	// Kitchen
@@ -149,6 +152,11 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) Master
 	qrpaymentRepo := qrpaymentRepo.NewQrPaymentRepository(pst)
 	svcQrPayment := qrpaymentService.NewQrPaymentHttpService(qrpaymentRepo, masterSyncCacheRepo)
 	activityModuleManager.Add(svcQrPayment)
+
+	// Order type
+	repoOrdertype := ordertype_repo.NewOrderTypeRepository(pst)
+	svcOrdertype := ordertype_service.NewOrderTypeHttpService(repoOrdertype, masterSyncCacheRepo)
+	activityModuleManager.Add(svcOrdertype)
 
 	masterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache)
 	svcMasterSync := services.NewMasterSyncService(masterCacheSyncRepo)
