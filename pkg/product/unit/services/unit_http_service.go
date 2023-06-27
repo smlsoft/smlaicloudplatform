@@ -7,6 +7,7 @@ import (
 	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	productbarcode_repositories "smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/product/unit/models"
 	"smlcloudplatform/pkg/product/unit/repositories"
 	"smlcloudplatform/pkg/requestapi"
@@ -39,19 +40,26 @@ type IUnitHttpService interface {
 }
 
 type UnitHttpService struct {
-	repo              repositories.IUnitRepository
-	syncCacheRepo     mastersync.IMasterSyncCacheRepository
-	unitServiceConfig config.IUnitServiceConfig
+	repo               repositories.IUnitRepository
+	repoProductBarcode productbarcode_repositories.IProductBarcodeRepository
+	syncCacheRepo      mastersync.IMasterSyncCacheRepository
+	unitServiceConfig  config.IUnitServiceConfig
 
 	services.ActivityService[models.UnitActivity, models.UnitDeleteActivity]
 }
 
-func NewUnitHttpService(repo repositories.IUnitRepository, unitServiceConfig config.IUnitServiceConfig, syncCacheRepo mastersync.IMasterSyncCacheRepository) *UnitHttpService {
+func NewUnitHttpService(
+	repo repositories.IUnitRepository,
+	repoProductBarcode productbarcode_repositories.IProductBarcodeRepository,
+	unitServiceConfig config.IUnitServiceConfig,
+	syncCacheRepo mastersync.IMasterSyncCacheRepository,
+) *UnitHttpService {
 
 	insSvc := &UnitHttpService{
-		repo:              repo,
-		unitServiceConfig: unitServiceConfig,
-		syncCacheRepo:     syncCacheRepo,
+		repo:               repo,
+		repoProductBarcode: repoProductBarcode,
+		unitServiceConfig:  unitServiceConfig,
+		syncCacheRepo:      syncCacheRepo,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.UnitActivity, models.UnitDeleteActivity](repo)
@@ -173,14 +181,28 @@ func (svc UnitHttpService) UpdateFieldUnit(shopID string, guid string, authUsern
 	return nil
 }
 
-func (svc UnitHttpService) existsUnitRefInProduct(authHeader, unitCode string) (bool, error) {
-	products, err := svc.getProductByUnit(authHeader, []string{unitCode})
+// func (svc UnitHttpService) existsUnitRefInProduct(authHeader, unitCode string) (bool, error) {
+// 	products, err := svc.getProductByUnit(authHeader, []string{unitCode})
+
+// 	if err != nil {
+// 		return true, fmt.Errorf("error check unit ref product: %s", err.Error())
+// 	}
+
+// 	if len(products) > 0 {
+// 		return true, fmt.Errorf("unit code %s is ref by product", unitCode)
+// 	}
+
+// 	return false, nil
+// }
+
+func (svc UnitHttpService) existsUnitRefInProduct(shopID, unitCode string) (bool, error) {
+	_, pagination, err := svc.repoProductBarcode.FindPageByUnits(shopID, []string{unitCode}, micromodels.Pageable{Page: 1, Limit: 1})
 
 	if err != nil {
 		return true, fmt.Errorf("error check unit ref product: %s", err.Error())
 	}
 
-	if len(products) > 0 {
+	if pagination.Total > 0 {
 		return true, fmt.Errorf("unit code %s is ref by product", unitCode)
 	}
 
@@ -196,7 +218,7 @@ func (svc UnitHttpService) deleteByUnitCode(shopID, guid, authHeader, authUserna
 	}
 
 	if findDoc.ID == primitive.NilObjectID {
-		return errors.New("document not found")
+		return nil
 	}
 
 	existsInProduct, _ := svc.existsUnitRefInProduct(authHeader, findDoc.UnitCode)

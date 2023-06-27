@@ -8,6 +8,7 @@ import (
 	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	productbarcode_repositories "smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/product/unit/models"
 	"smlcloudplatform/pkg/product/unit/repositories"
 	"smlcloudplatform/pkg/product/unit/services"
@@ -28,9 +29,10 @@ func NewUnitHttp(ms *microservice.Microservice, cfg config.IConfig) UnitHttp {
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := repositories.NewUnitRepository(pst)
+	repoProductBarcode := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewUnitHttpService(repo, cfg.UnitServiceConfig(), masterSyncCacheRepo)
+	svc := services.NewUnitHttpService(repo, repoProductBarcode, cfg.UnitServiceConfig(), masterSyncCacheRepo)
 
 	return UnitHttp{
 		ms:  ms,
