@@ -122,8 +122,6 @@ func (svc ShopUserService) SaveUserPermissionShop(shopID string, authUsername st
 		return errors.New("permission denied")
 	}
 
-	// check username is exists
-
 	err = svc.repo.Save(shopID, username, role)
 
 	if err != nil {

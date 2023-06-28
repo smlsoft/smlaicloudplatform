@@ -106,7 +106,7 @@ func (*ShopUser) CollectionName() string {
 
 type ShopUserInfo struct {
 	ShopID         string    `json:"shopid" bson:"shopid"`
-	ShopName       string    `json:"shopname" bson:"shopname"`
+	Name           string    `json:"name" bson:"name"`
 	BranchCode     string    `json:"branchcode" bson:"branchcode"`
 	Role           UserRole  `json:"role" bson:"role"`
 	IsFavorite     bool      `json:"isfavorite" bson:"isfavorite"`

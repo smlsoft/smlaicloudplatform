@@ -153,7 +153,7 @@ func (repo ShopUserRepository) FindByUsernamePage(username string, pageable micr
 
 	searchInFields := []string{
 		"shopid",
-		"shopname",
+		"name",
 	}
 
 	for _, colName := range searchInFields {
@@ -183,7 +183,7 @@ func (repo ShopUserRepository) FindByUsernamePage(username string, pageable micr
 				"shopid":         1,
 				"isfavorite":     1,
 				"lastaccessedat": 1,
-				"shopname":       bson.M{"$first": "$shopInfo.name1"},
+				"name":           bson.M{"$first": "$shopInfo.name1"},
 				"branchcode":     bson.M{"$first": "$shopInfo.branchcode"},
 			},
 		},
