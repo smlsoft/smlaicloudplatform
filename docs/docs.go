@@ -29258,9 +29258,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -31812,6 +31809,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "isdividend": {
+                    "type": "boolean"
+                },
+                "issplitunitprint": {
                     "type": "boolean"
                 },
                 "issumpoint": {
@@ -34936,6 +34936,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "isdividend": {
+                    "type": "boolean"
+                },
+                "issplitunitprint": {
                     "type": "boolean"
                 },
                 "issumpoint": {
