@@ -1159,8 +1159,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -2879,6 +2877,8 @@ definitions:
       isalacarte:
         type: boolean
       isdividend:
+        type: boolean
+      issplitunitprint:
         type: boolean
       issumpoint:
         type: boolean
@@ -4975,6 +4975,8 @@ definitions:
       isalacarte:
         type: boolean
       isdividend:
+        type: boolean
+      issplitunitprint:
         type: boolean
       issumpoint:
         type: boolean

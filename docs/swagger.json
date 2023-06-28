@@ -29241,9 +29241,6 @@
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -31765,6 +31762,9 @@
                     "type": "boolean"
                 },
                 "isdividend": {
+                    "type": "boolean"
+                },
+                "issplitunitprint": {
                     "type": "boolean"
                 },
                 "issumpoint": {
@@ -34879,6 +34879,9 @@
                     "type": "boolean"
                 },
                 "isdividend": {
+                    "type": "boolean"
+                },
+                "issplitunitprint": {
                     "type": "boolean"
                 },
                 "issumpoint": {
