@@ -44,6 +44,7 @@ func (h ZoneHttp) RouteSetup() {
 	h.ms.GET("/restaurant/zone/:id", h.InfoZone)
 	h.ms.PUT("/restaurant/zone/:id", h.UpdateZone)
 	h.ms.DELETE("/restaurant/zone/:id", h.DeleteZone)
+	h.ms.DELETE("/restaurant/zone", h.DeleteByGUIDs)
 
 }
 
@@ -150,6 +151,44 @@ func (h ZoneHttp) DeleteZone(ctx microservice.IContext) error {
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		ID:      id,
+	})
+
+	return nil
+}
+
+// Delete Zone godoc
+// @Description Delete Zone
+// @Tags		Zone
+// @Param		Zone  body      []string  true  "Zone GUIDs"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/zone [delete]
+func (h ZoneHttp) DeleteByGUIDs(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	docReq := []string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.DeleteByGUIDs(shopID, authUsername, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
 	})
 
 	return nil

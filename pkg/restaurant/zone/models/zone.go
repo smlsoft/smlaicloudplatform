@@ -71,7 +71,7 @@ type ZoneInfoResponse struct {
 	Data    ZoneInfo `json:"data,omitempty"`
 }
 
-type ShopZonePageResponse struct {
+type ZonePageResponse struct {
 	Success    bool                          `json:"success"`
 	Data       []ZoneInfo                    `json:"data,omitempty"`
 	Pagination models.PaginationDataResponse `json:"pagination,omitempty"`

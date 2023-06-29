@@ -272,8 +272,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       name1:
         maxLength: 255
         type: string
@@ -289,7 +289,14 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -858,15 +865,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.Detail:
     properties:
@@ -1159,6 +1163,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -1281,8 +1287,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1300,6 +1306,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1315,6 +1323,11 @@ definitions:
         maxLength: 50
         type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1423,8 +1436,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1442,6 +1455,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1457,6 +1472,11 @@ definitions:
         maxLength: 50
         type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1615,8 +1635,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1634,6 +1654,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1649,6 +1671,11 @@ definitions:
         maxLength: 50
         type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -2104,16 +2131,12 @@ definitions:
     properties:
       code:
         type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       printers:
         items:
           type: string
@@ -2126,6 +2149,8 @@ definitions:
         items:
           type: string
         type: array
+    required:
+    - names
     type: object
   models.KitchenInfo:
     properties:
@@ -2133,16 +2158,12 @@ definitions:
         type: string
       guidfixed:
         type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       printers:
         items:
           type: string
@@ -2155,6 +2176,8 @@ definitions:
         items:
           type: string
         type: array
+    required:
+    - names
     type: object
   models.KitchenInfoResponse:
     properties:
@@ -2729,18 +2752,16 @@ definitions:
         type: string
       code:
         type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       type:
         type: integer
+    required:
+    - names
     type: object
   models.PrinterInfo:
     properties:
@@ -2750,18 +2771,16 @@ definitions:
         type: string
       guidfixed:
         type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       type:
         type: integer
+    required:
+    - names
     type: object
   models.PrinterInfoResponse:
     properties:
@@ -2817,7 +2836,7 @@ definitions:
         uniqueItems: true
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice'
         type: array
       taxtype:
         description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
@@ -2914,7 +2933,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice'
         type: array
       qty:
         type: number
@@ -3794,80 +3813,6 @@ definitions:
     required:
     - shopid
     type: object
-  models.ShopTable:
-    properties:
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      number:
-        type: string
-      seat:
-        type: integer
-      zone:
-        type: string
-    required:
-    - names
-    type: object
-  models.ShopTableInfo:
-    properties:
-      guidfixed:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      number:
-        type: string
-      seat:
-        type: integer
-      zone:
-        type: string
-    required:
-    - names
-    type: object
-  models.ShopTableInfoResponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.ShopTableInfo'
-      success:
-        type: boolean
-    type: object
-  models.ShopTablePageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/models.ShopTableInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
-    type: object
   models.ShopUserInfo:
     properties:
       branchcode:
@@ -3876,66 +3821,12 @@ definitions:
         type: boolean
       lastaccessedat:
         type: string
+      name:
+        type: string
       role:
         type: integer
       shopid:
         type: string
-      shopname:
-        type: string
-    type: object
-  models.ShopZone:
-    properties:
-      code:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      printer:
-        $ref: '#/definitions/models.Printer'
-    type: object
-  models.ShopZoneInfo:
-    properties:
-      code:
-        type: string
-      guidfixed:
-        type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
-      printer:
-        $ref: '#/definitions/models.Printer'
-    type: object
-  models.ShopZoneInfoResponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.ShopZoneInfo'
-      success:
-        type: boolean
-    type: object
-  models.ShopZonePageResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/models.ShopZoneInfo'
-        type: array
-      pagination:
-        $ref: '#/definitions/models.PaginationDataResponse'
-      success:
-        type: boolean
     type: object
   models.SmsPaymentSettings:
     properties:
@@ -4465,6 +4356,60 @@ definitions:
       tablecode:
         type: string
     type: object
+  models.Table:
+    properties:
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      number:
+        type: string
+      seat:
+        type: integer
+      zone:
+        type: string
+    required:
+    - names
+    type: object
+  models.TableInfo:
+    properties:
+      guidfixed:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      number:
+        type: string
+      seat:
+        type: integer
+      zone:
+        type: string
+    required:
+    - names
+    type: object
+  models.TableInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.TableInfo'
+      success:
+        type: boolean
+    type: object
+  models.TablePageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.TableInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
   models.Task:
     properties:
       code:
@@ -4870,6 +4815,56 @@ definitions:
         minimum: 0
         type: integer
     type: object
+  models.Zone:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      printer:
+        $ref: '#/definitions/models.Printer'
+    required:
+    - names
+    type: object
+  models.ZoneInfo:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      printer:
+        $ref: '#/definitions/models.Printer'
+    required:
+    - names
+    type: object
+  models.ZoneInfoResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.ZoneInfo'
+      success:
+        type: boolean
+    type: object
+  models.ZonePageResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.ZoneInfo'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationDataResponse'
+      success:
+        type: boolean
+    type: object
   smlcloudplatform_pkg_organization_branch_models.Branch:
     properties:
       businesstypes:
@@ -4918,6 +4913,20 @@ definitions:
       zipcode:
         type: string
     type: object
+  smlcloudplatform_pkg_product_inventory_models.ProductPrice:
+    properties:
+      memberprice:
+        type: number
+      normalprice:
+        type: number
+      price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
+        type: number
+    type: object
   smlcloudplatform_pkg_product_inventory_models.Unit:
     properties:
       unitcode:
@@ -4939,13 +4948,6 @@ definitions:
         type: string
       xorder:
         type: integer
-    type: object
-  smlcloudplatform_pkg_product_product_models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
     type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode:
     properties:
@@ -5012,7 +5014,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice'
         type: array
       qty:
         type: number
@@ -5173,20 +5175,17 @@ definitions:
     properties:
       code:
         type: string
-      name1:
-        type: string
-      name2:
-        type: string
-      name3:
-        type: string
-      name4:
-        type: string
-      name5:
-        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       type:
         type: integer
     required:
     - code
+    - names
     type: object
   smlcloudplatform_pkg_shop_branch_models.Branch:
     properties:
@@ -16162,7 +16161,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: List Restaurant Shop Table Category
+      description: List Restaurant  Table Category
       parameters:
       - description: Search Value
         in: query
@@ -16180,7 +16179,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ShopTablePageResponse'
+            $ref: '#/definitions/models.TablePageResponse'
         "401":
           description: Unauthorized
           schema:
@@ -16192,14 +16191,14 @@ paths:
     post:
       consumes:
       - application/json
-      description: Restaurant Shop Table
+      description: Restaurant  Table
       parameters:
       - description: Table
         in: body
         name: Table
         required: true
         schema:
-          $ref: '#/definitions/models.ShopTable'
+          $ref: '#/definitions/models.Table'
       responses:
         "200":
           description: OK
@@ -16217,9 +16216,9 @@ paths:
     delete:
       consumes:
       - application/json
-      description: Restaurant Shop Table
+      description: Restaurant  Table
       parameters:
-      - description: ShopTable ID
+      - description: Table ID
         in: path
         name: id
         required: true
@@ -16240,9 +16239,9 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get Restaurant Shop Table
+      description: Get Restaurant  Table
       parameters:
-      - description: ShopTable Id
+      - description: Table Id
         in: path
         name: id
         required: true
@@ -16251,7 +16250,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ShopTableInfoResponse'
+            $ref: '#/definitions/models.TableInfoResponse'
         "401":
           description: Unauthorized
           schema:
@@ -16263,7 +16262,7 @@ paths:
     put:
       consumes:
       - application/json
-      description: Restaurant Shop Table
+      description: Restaurant  Table
       parameters:
       - description: Table ID
         in: path
@@ -16275,7 +16274,7 @@ paths:
         name: Table
         required: true
         schema:
-          $ref: '#/definitions/models.ShopTable'
+          $ref: '#/definitions/models.Table'
       responses:
         "200":
           description: OK
@@ -16293,15 +16292,15 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create ShopTable
+      description: Create Table
       parameters:
-      - description: ShopTable
+      - description: Table
         in: body
-        name: ShopTable
+        name: Table
         required: true
         schema:
           items:
-            $ref: '#/definitions/models.ShopTable'
+            $ref: '#/definitions/models.Table'
           type: array
       responses:
         "201":
@@ -16317,10 +16316,36 @@ paths:
       tags:
       - Restaurant
   /restaurant/zone:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Zone
+      parameters:
+      - description: Zone GUIDs
+        in: body
+        name: Zone
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Zone
     get:
       consumes:
       - application/json
-      description: List Restaurant Shop Zone Category
+      description: List Restaurant  Zone Category
       parameters:
       - description: Search Value
         in: query
@@ -16338,7 +16363,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ShopZonePageResponse'
+            $ref: '#/definitions/models.ZonePageResponse'
         "401":
           description: Unauthorized
           schema:
@@ -16350,14 +16375,14 @@ paths:
     post:
       consumes:
       - application/json
-      description: Restaurant Shop Zone
+      description: Restaurant  Zone
       parameters:
       - description: Zone
         in: body
         name: Zone
         required: true
         schema:
-          $ref: '#/definitions/models.ShopZone'
+          $ref: '#/definitions/models.Zone'
       responses:
         "200":
           description: OK
@@ -16375,9 +16400,9 @@ paths:
     delete:
       consumes:
       - application/json
-      description: Restaurant Shop Zone
+      description: Restaurant  Zone
       parameters:
-      - description: ShopZone ID
+      - description: Zone ID
         in: path
         name: id
         required: true
@@ -16398,9 +16423,9 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get Restaurant Shop Zone
+      description: Get Restaurant  Zone
       parameters:
-      - description: ShopZone Id
+      - description: Zone Id
         in: path
         name: id
         required: true
@@ -16409,7 +16434,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.ShopZoneInfoResponse'
+            $ref: '#/definitions/models.ZoneInfoResponse'
         "401":
           description: Unauthorized
           schema:
@@ -16421,7 +16446,7 @@ paths:
     put:
       consumes:
       - application/json
-      description: Restaurant Shop Zone
+      description: Restaurant  Zone
       parameters:
       - description: Zone ID
         in: path
@@ -16433,7 +16458,7 @@ paths:
         name: Zone
         required: true
         schema:
-          $ref: '#/definitions/models.ShopZone'
+          $ref: '#/definitions/models.Zone'
       responses:
         "200":
           description: OK
@@ -16451,15 +16476,15 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create ShopZone
+      description: Create Zone
       parameters:
-      - description: ShopZone
+      - description: Zone
         in: body
-        name: ShopZone
+        name: Zone
         required: true
         schema:
           items:
-            $ref: '#/definitions/models.ShopZone'
+            $ref: '#/definitions/models.Zone'
           type: array
       responses:
         "201":
