@@ -59,7 +59,7 @@ func (svc DeviceHttpService) CreateDevice(shopID string, authUsername string, do
 	}
 
 	if findDoc.Code != "" {
-		return "", errors.New("code is exists")
+		return "", errors.New("code is already exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
@@ -166,11 +166,7 @@ func (svc DeviceHttpService) InfoDevice(shopID string, guid string) (models.Devi
 func (svc DeviceHttpService) SearchDevice(shopID string, pageable micromodels.Pageable) ([]models.DeviceInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"code",
-		"name1",
-		"name2",
-		"name3",
-		"name4",
-		"name5",
+		"names.name",
 	}
 
 	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
@@ -185,11 +181,7 @@ func (svc DeviceHttpService) SearchDevice(shopID string, pageable micromodels.Pa
 func (svc DeviceHttpService) SearchDeviceStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.DeviceInfo, int, error) {
 	searchInFields := []string{
 		"code",
-		"name1",
-		"name2",
-		"name3",
-		"name4",
-		"name5",
+		"names.name",
 	}
 
 	selectFields := map[string]interface{}{}

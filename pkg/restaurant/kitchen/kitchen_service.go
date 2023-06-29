@@ -32,7 +32,7 @@ type IKitchenService interface {
 }
 
 type KitchenService struct {
-	repo          KitchenRepository
+	repo          IKitchenRepository
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.KitchenActivity, models.KitchenDeleteActivity]
 }
@@ -50,6 +50,16 @@ func NewKitchenService(repo KitchenRepository, syncCacheRepo mastersync.IMasterS
 
 func (svc KitchenService) CreateKitchen(shopID string, authUsername string, doc models.Kitchen) (string, error) {
 
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", doc.Code)
+
+	if err != nil {
+		return "", err
+	}
+
+	if len(findDoc.Code) > 0 {
+		return "", errors.New("code already exists")
+	}
+
 	newGuidFixed := utils.NewGUID()
 
 	docData := models.KitchenDoc{}
@@ -60,7 +70,7 @@ func (svc KitchenService) CreateKitchen(shopID string, authUsername string, doc 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err := svc.repo.Create(docData)
+	_, err = svc.repo.Create(docData)
 
 	if err != nil {
 		return "", err
@@ -131,11 +141,7 @@ func (svc KitchenService) InfoKitchen(shopID string, guid string) (models.Kitche
 func (svc KitchenService) SearchKitchen(shopID string, pageable micromodels.Pageable) ([]models.KitchenInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"code",
-		"name1",
-		"name2",
-		"name3",
-		"name4",
-		"name5",
+		"names.name",
 	}
 
 	for i := range [5]bool{} {
@@ -154,11 +160,7 @@ func (svc KitchenService) SearchKitchen(shopID string, pageable micromodels.Page
 func (svc KitchenService) SearchKitchenStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.KitchenInfo, int, error) {
 	searchInFields := []string{
 		"code",
-		"name1",
-		"name2",
-		"name3",
-		"name4",
-		"name5",
+		"names.name",
 	}
 
 	selectFields := map[string]interface{}{}

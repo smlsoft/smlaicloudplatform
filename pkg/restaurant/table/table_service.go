@@ -48,6 +48,16 @@ func NewTableService(repo ITableRepository, syncCacheRepo mastersync.IMasterSync
 
 func (svc TableService) CreateTable(shopID string, authUsername string, doc models.Table) (string, error) {
 
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "number", doc.Number)
+
+	if err != nil {
+		return "", err
+	}
+
+	if len(findDoc.Number) > 0 {
+		return "", errors.New("code already exists")
+	}
+
 	newGuidFixed := utils.NewGUID()
 
 	docData := models.TableDoc{}
@@ -58,7 +68,7 @@ func (svc TableService) CreateTable(shopID string, authUsername string, doc mode
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err := svc.repo.Create(docData)
+	_, err = svc.repo.Create(docData)
 
 	if err != nil {
 		return "", err

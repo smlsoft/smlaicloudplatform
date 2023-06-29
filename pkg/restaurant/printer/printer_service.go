@@ -49,6 +49,16 @@ func NewPrinterService(repo PrinterRepository, syncCacheRepo mastersync.IMasterS
 
 func (svc PrinterService) CreatePrinter(shopID string, authUsername string, doc models.Printer) (string, error) {
 
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", doc.Code)
+
+	if err != nil {
+		return "", err
+	}
+
+	if len(findDoc.Code) > 0 {
+		return "", errors.New("code already exists")
+	}
+
 	newGuidFixed := utils.NewGUID()
 
 	docData := models.PrinterDoc{}
@@ -59,7 +69,7 @@ func (svc PrinterService) CreatePrinter(shopID string, authUsername string, doc 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err := svc.repo.Create(docData)
+	_, err = svc.repo.Create(docData)
 
 	if err != nil {
 		return "", err
@@ -129,11 +139,7 @@ func (svc PrinterService) InfoPrinter(shopID string, guid string) (models.Printe
 func (svc PrinterService) SearchPrinter(shopID string, pageable micromodels.Pageable) ([]models.PrinterInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"code",
-		"name1",
-		"name2",
-		"name3",
-		"name4",
-		"name5",
+		"names.name",
 	}
 
 	for i := range [5]bool{} {
@@ -152,11 +158,7 @@ func (svc PrinterService) SearchPrinter(shopID string, pageable micromodels.Page
 func (svc PrinterService) SearchPrinterStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.PrinterInfo, int, error) {
 	searchInFields := []string{
 		"code",
-		"name1",
-		"name2",
-		"name3",
-		"name4",
-		"name5",
+		"names.name",
 	}
 
 	selectFields := map[string]interface{}{}
