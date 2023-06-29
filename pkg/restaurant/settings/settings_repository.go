@@ -1,10 +1,10 @@
-package restaurantsettings
+package settings
 
 import (
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
-	"smlcloudplatform/pkg/restaurant/restaurantsettings/models"
+	"smlcloudplatform/pkg/restaurant/settings/models"
 	"time"
 
 	"github.com/userplant/mongopagination"

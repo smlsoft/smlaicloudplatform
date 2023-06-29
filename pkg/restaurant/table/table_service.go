@@ -1,4 +1,4 @@
-package shoptable
+package table
 
 import (
 	"errors"
@@ -6,7 +6,7 @@ import (
 	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/restaurant/shoptable/models"
+	"smlcloudplatform/pkg/restaurant/table/models"
 	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
@@ -16,42 +16,42 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type IShopTableService interface {
-	CreateShopTable(shopID string, authUsername string, doc models.ShopTable) (string, error)
-	UpdateShopTable(shopID string, guid string, authUsername string, doc models.ShopTable) error
-	DeleteShopTable(shopID string, guid string, authUsername string) error
-	InfoShopTable(shopID string, guid string) (models.ShopTableInfo, error)
-	SearchShopTable(shopID string, pageable micromodels.Pageable) ([]models.ShopTableInfo, mongopagination.PaginationData, error)
-	SaveInBatch(shopID string, authUsername string, dataList []models.ShopTable) (common.BulkImport, error)
+type ITableService interface {
+	CreateTable(shopID string, authUsername string, doc models.Table) (string, error)
+	UpdateTable(shopID string, guid string, authUsername string, doc models.Table) error
+	DeleteTable(shopID string, guid string, authUsername string) error
+	InfoTable(shopID string, guid string) (models.TableInfo, error)
+	SearchTable(shopID string, pageable micromodels.Pageable) ([]models.TableInfo, mongopagination.PaginationData, error)
+	SaveInBatch(shopID string, authUsername string, dataList []models.Table) (common.BulkImport, error)
 
 	GetModuleName() string
 }
 
-type ShopTableService struct {
-	repo          ShopTableRepository
+type TableService struct {
+	repo          ITableRepository
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 
-	services.ActivityService[models.ShopTableActivity, models.ShopTableDeleteActivity]
+	services.ActivityService[models.TableActivity, models.TableDeleteActivity]
 }
 
-func NewShopTableService(repo ShopTableRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) ShopTableService {
-	insSvc := ShopTableService{
+func NewTableService(repo TableRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *TableService {
+	insSvc := TableService{
 		repo:          repo,
 		syncCacheRepo: syncCacheRepo,
 	}
 
-	insSvc.ActivityService = services.NewActivityService[models.ShopTableActivity, models.ShopTableDeleteActivity](repo)
-	return insSvc
+	insSvc.ActivityService = services.NewActivityService[models.TableActivity, models.TableDeleteActivity](repo)
+	return &insSvc
 }
 
-func (svc ShopTableService) CreateShopTable(shopID string, authUsername string, doc models.ShopTable) (string, error) {
+func (svc TableService) CreateTable(shopID string, authUsername string, doc models.Table) (string, error) {
 
 	newGuidFixed := utils.NewGUID()
 
-	docData := models.ShopTableDoc{}
+	docData := models.TableDoc{}
 	docData.ShopID = shopID
 	docData.GuidFixed = newGuidFixed
-	docData.ShopTable = doc
+	docData.Table = doc
 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
@@ -67,7 +67,7 @@ func (svc ShopTableService) CreateShopTable(shopID string, authUsername string, 
 	return newGuidFixed, nil
 }
 
-func (svc ShopTableService) UpdateShopTable(shopID string, guid string, authUsername string, doc models.ShopTable) error {
+func (svc TableService) UpdateTable(shopID string, guid string, authUsername string, doc models.Table) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -79,7 +79,7 @@ func (svc ShopTableService) UpdateShopTable(shopID string, guid string, authUser
 		return errors.New("document not found")
 	}
 
-	findDoc.ShopTable = doc
+	findDoc.Table = doc
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
@@ -95,7 +95,7 @@ func (svc ShopTableService) UpdateShopTable(shopID string, guid string, authUser
 	return nil
 }
 
-func (svc ShopTableService) DeleteShopTable(shopID string, guid string, authUsername string) error {
+func (svc TableService) DeleteTable(shopID string, guid string, authUsername string) error {
 	err := svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
 
 	if err != nil {
@@ -107,23 +107,23 @@ func (svc ShopTableService) DeleteShopTable(shopID string, guid string, authUser
 	return nil
 }
 
-func (svc ShopTableService) InfoShopTable(shopID string, guid string) (models.ShopTableInfo, error) {
+func (svc TableService) InfoTable(shopID string, guid string) (models.TableInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
-		return models.ShopTableInfo{}, err
+		return models.TableInfo{}, err
 	}
 
 	if findDoc.ID == primitive.NilObjectID {
-		return models.ShopTableInfo{}, errors.New("document not found")
+		return models.TableInfo{}, errors.New("document not found")
 	}
 
-	return findDoc.ShopTableInfo, nil
+	return findDoc.TableInfo, nil
 
 }
 
-func (svc ShopTableService) SearchShopTable(shopID string, pageable micromodels.Pageable) ([]models.ShopTableInfo, mongopagination.PaginationData, error) {
+func (svc TableService) SearchTable(shopID string, pageable micromodels.Pageable) ([]models.TableInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"code",
 		"names.name",
@@ -136,18 +136,18 @@ func (svc ShopTableService) SearchShopTable(shopID string, pageable micromodels.
 	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
-		return []models.ShopTableInfo{}, pagination, err
+		return []models.TableInfo{}, pagination, err
 	}
 
 	return docList, pagination, nil
 }
 
-func (svc ShopTableService) SaveInBatch(shopID string, authUsername string, dataList []models.ShopTable) (common.BulkImport, error) {
+func (svc TableService) SaveInBatch(shopID string, authUsername string, dataList []models.Table) (common.BulkImport, error) {
 
-	// createDataList := []models.ShopTableDoc{}
-	// duplicateDataList := []models.ShopTable{}
+	// createDataList := []models.TableDoc{}
+	// duplicateDataList := []models.Table{}
 
-	payloadCategoryList, payloadDuplicateCategoryList := importdata.FilterDuplicate[models.ShopTable](dataList, svc.getDocIDKey)
+	payloadCategoryList, payloadDuplicateCategoryList := importdata.FilterDuplicate[models.Table](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
 	for _, doc := range payloadCategoryList {
@@ -165,20 +165,20 @@ func (svc ShopTableService) SaveInBatch(shopID string, authUsername string, data
 		foundItemGuidList = append(foundItemGuidList, doc.Code)
 	}
 
-	duplicateDataList, createDataList := importdata.PreparePayloadData[models.ShopTable, models.ShopTableDoc](
+	duplicateDataList, createDataList := importdata.PreparePayloadData[models.Table, models.TableDoc](
 		shopID,
 		authUsername,
 		foundItemGuidList,
 		payloadCategoryList,
 		svc.getDocIDKey,
-		func(shopID string, authUsername string, doc models.ShopTable) models.ShopTableDoc {
+		func(shopID string, authUsername string, doc models.Table) models.TableDoc {
 			newGuid := utils.NewGUID()
 
-			dataDoc := models.ShopTableDoc{}
+			dataDoc := models.TableDoc{}
 
 			dataDoc.GuidFixed = newGuid
 			dataDoc.ShopID = shopID
-			dataDoc.ShopTable = doc
+			dataDoc.Table = doc
 
 			currentTime := time.Now()
 			dataDoc.CreatedBy = authUsername
@@ -188,18 +188,18 @@ func (svc ShopTableService) SaveInBatch(shopID string, authUsername string, data
 		},
 	)
 
-	updateSuccessDataList, updateFailDataList := importdata.UpdateOnDuplicate[models.ShopTable, models.ShopTableDoc](
+	updateSuccessDataList, updateFailDataList := importdata.UpdateOnDuplicate[models.Table, models.TableDoc](
 		shopID,
 		authUsername,
 		duplicateDataList,
 		svc.getDocIDKey,
-		func(shopID string, guid string) (models.ShopTableDoc, error) {
+		func(shopID string, guid string) (models.TableDoc, error) {
 			return svc.repo.FindByGuid(shopID, guid)
 		},
-		func(doc models.ShopTableDoc) bool {
+		func(doc models.TableDoc) bool {
 			return false
 		},
-		func(shopID string, authUsername string, data models.ShopTable, doc models.ShopTableDoc) error {
+		func(shopID string, authUsername string, data models.Table, doc models.TableDoc) error {
 
 			return nil
 		},
@@ -243,11 +243,11 @@ func (svc ShopTableService) SaveInBatch(shopID string, authUsername string, data
 	}, nil
 }
 
-func (svc ShopTableService) getDocIDKey(doc models.ShopTable) string {
+func (svc TableService) getDocIDKey(doc models.Table) string {
 	return doc.Number
 }
 
-func (svc ShopTableService) saveMasterSync(shopID string) {
+func (svc TableService) saveMasterSync(shopID string) {
 	if svc.syncCacheRepo != nil {
 		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
 
@@ -257,6 +257,6 @@ func (svc ShopTableService) saveMasterSync(shopID string) {
 	}
 }
 
-func (svc ShopTableService) GetModuleName() string {
-	return "shoptable"
+func (svc TableService) GetModuleName() string {
+	return "restauranttable"
 }

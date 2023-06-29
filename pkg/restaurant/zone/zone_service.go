@@ -1,4 +1,4 @@
-package shopzone
+package zone
 
 import (
 	"errors"
@@ -6,7 +6,7 @@ import (
 	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/restaurant/shopzone/models"
+	"smlcloudplatform/pkg/restaurant/zone/models"
 	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
@@ -17,42 +17,42 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type IShopZoneService interface {
-	CreateShopZone(shopID string, authUsername string, doc models.ShopZone) (string, error)
-	UpdateShopZone(shopID string, guid string, authUsername string, doc models.ShopZone) error
-	DeleteShopZone(shopID string, guid string, authUsername string) error
-	InfoShopZone(shopID string, guid string) (models.ShopZoneInfo, error)
-	SearchShopZone(shopID string, pageable micromodels.Pageable) ([]models.ShopZoneInfo, mongopagination.PaginationData, error)
-	SaveInBatch(shopID string, authUsername string, dataList []models.ShopZone) (common.BulkImport, error)
+type IZoneService interface {
+	CreateZone(shopID string, authUsername string, doc models.Zone) (string, error)
+	UpdateZone(shopID string, guid string, authUsername string, doc models.Zone) error
+	DeleteZone(shopID string, guid string, authUsername string) error
+	InfoZone(shopID string, guid string) (models.ZoneInfo, error)
+	SearchZone(shopID string, pageable micromodels.Pageable) ([]models.ZoneInfo, mongopagination.PaginationData, error)
+	SaveInBatch(shopID string, authUsername string, dataList []models.Zone) (common.BulkImport, error)
 
 	GetModuleName() string
 }
 
-type ShopZoneService struct {
-	repo          IShopZoneRepository
+type ZoneService struct {
+	repo          IZoneRepository
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 
-	services.ActivityService[models.ShopZoneActivity, models.ShopZoneDeleteActivity]
+	services.ActivityService[models.ZoneActivity, models.ZoneDeleteActivity]
 }
 
-func NewShopZoneService(repo IShopZoneRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) ShopZoneService {
-	insSvc := ShopZoneService{
+func NewZoneService(repo IZoneRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) ZoneService {
+	insSvc := ZoneService{
 		repo:          repo,
 		syncCacheRepo: syncCacheRepo,
 	}
 
-	insSvc.ActivityService = services.NewActivityService[models.ShopZoneActivity, models.ShopZoneDeleteActivity](repo)
+	insSvc.ActivityService = services.NewActivityService[models.ZoneActivity, models.ZoneDeleteActivity](repo)
 	return insSvc
 }
 
-func (svc ShopZoneService) CreateShopZone(shopID string, authUsername string, doc models.ShopZone) (string, error) {
+func (svc ZoneService) CreateZone(shopID string, authUsername string, doc models.Zone) (string, error) {
 
 	newGuidFixed := utils.NewGUID()
 
-	docData := models.ShopZoneDoc{}
+	docData := models.ZoneDoc{}
 	docData.ShopID = shopID
 	docData.GuidFixed = newGuidFixed
-	docData.ShopZone = doc
+	docData.Zone = doc
 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
@@ -70,7 +70,7 @@ func (svc ShopZoneService) CreateShopZone(shopID string, authUsername string, do
 	return newGuidFixed, nil
 }
 
-func (svc ShopZoneService) UpdateShopZone(shopID string, guid string, authUsername string, doc models.ShopZone) error {
+func (svc ZoneService) UpdateZone(shopID string, guid string, authUsername string, doc models.Zone) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -82,7 +82,7 @@ func (svc ShopZoneService) UpdateShopZone(shopID string, guid string, authUserna
 		return errors.New("document not found")
 	}
 
-	findDoc.ShopZone = doc
+	findDoc.Zone = doc
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
@@ -100,7 +100,7 @@ func (svc ShopZoneService) UpdateShopZone(shopID string, guid string, authUserna
 	return nil
 }
 
-func (svc ShopZoneService) DeleteShopZone(shopID string, guid string, authUsername string) error {
+func (svc ZoneService) DeleteZone(shopID string, guid string, authUsername string) error {
 	err := svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
 
 	if err != nil {
@@ -112,51 +112,40 @@ func (svc ShopZoneService) DeleteShopZone(shopID string, guid string, authUserna
 	return nil
 }
 
-func (svc ShopZoneService) InfoShopZone(shopID string, guid string) (models.ShopZoneInfo, error) {
+func (svc ZoneService) InfoZone(shopID string, guid string) (models.ZoneInfo, error) {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
 	if err != nil {
-		return models.ShopZoneInfo{}, err
+		return models.ZoneInfo{}, err
 	}
 
 	if findDoc.ID == primitive.NilObjectID {
-		return models.ShopZoneInfo{}, errors.New("document not found")
+		return models.ZoneInfo{}, errors.New("document not found")
 	}
 
-	return findDoc.ShopZoneInfo, nil
+	return findDoc.ZoneInfo, nil
 
 }
 
-func (svc ShopZoneService) SearchShopZone(shopID string, pageable micromodels.Pageable) ([]models.ShopZoneInfo, mongopagination.PaginationData, error) {
+func (svc ZoneService) SearchZone(shopID string, pageable micromodels.Pageable) ([]models.ZoneInfo, mongopagination.PaginationData, error) {
 	searchInFields := []string{
 		"code",
-		"name1",
-		"name2",
-		"name3",
-		"name4",
-		"name5",
-	}
-
-	for i := range [5]bool{} {
-		searchInFields = append(searchInFields, fmt.Sprintf("name%d", (i+1)))
+		"names.name",
 	}
 
 	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
 
 	if err != nil {
-		return []models.ShopZoneInfo{}, pagination, err
+		return []models.ZoneInfo{}, pagination, err
 	}
 
 	return docList, pagination, nil
 }
 
-func (svc ShopZoneService) SaveInBatch(shopID string, authUsername string, dataList []models.ShopZone) (common.BulkImport, error) {
+func (svc ZoneService) SaveInBatch(shopID string, authUsername string, dataList []models.Zone) (common.BulkImport, error) {
 
-	// createDataList := []models.ShopZoneDoc{}
-	// duplicateDataList := []models.ShopZone{}
-
-	payloadCategoryList, payloadDuplicateCategoryList := importdata.FilterDuplicate[models.ShopZone](dataList, svc.getDocIDKey)
+	payloadCategoryList, payloadDuplicateCategoryList := importdata.FilterDuplicate[models.Zone](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
 	for _, doc := range payloadCategoryList {
@@ -174,20 +163,20 @@ func (svc ShopZoneService) SaveInBatch(shopID string, authUsername string, dataL
 		foundItemGuidList = append(foundItemGuidList, doc.Code)
 	}
 
-	duplicateDataList, createDataList := importdata.PreparePayloadData[models.ShopZone, models.ShopZoneDoc](
+	duplicateDataList, createDataList := importdata.PreparePayloadData[models.Zone, models.ZoneDoc](
 		shopID,
 		authUsername,
 		foundItemGuidList,
 		payloadCategoryList,
 		svc.getDocIDKey,
-		func(shopID string, authUsername string, doc models.ShopZone) models.ShopZoneDoc {
+		func(shopID string, authUsername string, doc models.Zone) models.ZoneDoc {
 			newGuid := utils.NewGUID()
 
-			dataDoc := models.ShopZoneDoc{}
+			dataDoc := models.ZoneDoc{}
 
 			dataDoc.GuidFixed = newGuid
 			dataDoc.ShopID = shopID
-			dataDoc.ShopZone = doc
+			dataDoc.Zone = doc
 
 			currentTime := time.Now()
 			dataDoc.CreatedBy = authUsername
@@ -197,18 +186,18 @@ func (svc ShopZoneService) SaveInBatch(shopID string, authUsername string, dataL
 		},
 	)
 
-	updateSuccessDataList, updateFailDataList := importdata.UpdateOnDuplicate[models.ShopZone, models.ShopZoneDoc](
+	updateSuccessDataList, updateFailDataList := importdata.UpdateOnDuplicate[models.Zone, models.ZoneDoc](
 		shopID,
 		authUsername,
 		duplicateDataList,
 		svc.getDocIDKey,
-		func(shopID string, guid string) (models.ShopZoneDoc, error) {
+		func(shopID string, guid string) (models.ZoneDoc, error) {
 			return svc.repo.FindByGuid(shopID, guid)
 		},
-		func(doc models.ShopZoneDoc) bool {
+		func(doc models.ZoneDoc) bool {
 			return false
 		},
-		func(shopID string, authUsername string, data models.ShopZone, doc models.ShopZoneDoc) error {
+		func(shopID string, authUsername string, data models.Zone, doc models.ZoneDoc) error {
 
 			return nil
 		},
@@ -252,11 +241,11 @@ func (svc ShopZoneService) SaveInBatch(shopID string, authUsername string, dataL
 	}, nil
 }
 
-func (svc ShopZoneService) getDocIDKey(doc models.ShopZone) string {
+func (svc ZoneService) getDocIDKey(doc models.Zone) string {
 	return doc.Code
 }
 
-func (svc ShopZoneService) saveMasterSync(shopID string) {
+func (svc ZoneService) saveMasterSync(shopID string) {
 	if svc.syncCacheRepo != nil {
 		err := svc.syncCacheRepo.Save(shopID, svc.GetModuleName())
 
@@ -266,6 +255,6 @@ func (svc ShopZoneService) saveMasterSync(shopID string) {
 	}
 }
 
-func (svc ShopZoneService) GetModuleName() string {
-	return "shopzone"
+func (svc ZoneService) GetModuleName() string {
+	return "restaurantzone"
 }

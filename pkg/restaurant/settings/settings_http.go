@@ -1,4 +1,4 @@
-package restaurantsettings
+package settings
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/restaurant/restaurantsettings/models"
+	"smlcloudplatform/pkg/restaurant/settings/models"
 	"smlcloudplatform/pkg/utils"
 
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"

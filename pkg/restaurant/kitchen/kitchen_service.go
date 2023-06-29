@@ -288,5 +288,5 @@ func (svc KitchenService) saveMasterSync(shopID string) {
 }
 
 func (svc KitchenService) GetModuleName() string {
-	return "kitchen"
+	return "restaurant-kitchen"
 }

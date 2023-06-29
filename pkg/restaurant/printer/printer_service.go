@@ -286,5 +286,5 @@ func (svc PrinterService) saveMasterSync(shopID string) {
 }
 
 func (svc PrinterService) GetModuleName() string {
-	return "printer"
+	return "restaurant-printer"
 }

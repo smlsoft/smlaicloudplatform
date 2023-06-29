@@ -1,4 +1,4 @@
-package restaurantsettings
+package settings
 
 import (
 	"errors"
@@ -6,7 +6,7 @@ import (
 	micromodels "smlcloudplatform/internal/microservice/models"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/restaurant/restaurantsettings/models"
+	"smlcloudplatform/pkg/restaurant/settings/models"
 	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"

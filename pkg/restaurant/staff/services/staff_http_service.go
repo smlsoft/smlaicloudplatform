@@ -318,5 +318,5 @@ func (svc StaffHttpService) saveMasterSync(shopID string) {
 }
 
 func (svc StaffHttpService) GetModuleName() string {
-	return "staff"
+	return "restaurant-staff"
 }

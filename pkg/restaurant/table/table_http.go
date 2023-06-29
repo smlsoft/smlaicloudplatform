@@ -1,67 +1,67 @@
-package shopzone
+package table
 
 import (
 	"encoding/json"
 	"net/http"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/config"
-	common "smlcloudplatform/pkg/models"
-	"smlcloudplatform/pkg/restaurant/shopzone/models"
-	"smlcloudplatform/pkg/utils"
-
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
+	common "smlcloudplatform/pkg/models"
+	"smlcloudplatform/pkg/restaurant/table/models"
+	"smlcloudplatform/pkg/utils"
 )
 
-type IShopZoneHttp interface{}
+type ITableHttp interface{}
 
-type ShopZoneHttp struct {
+type TableHttp struct {
 	ms  *microservice.Microservice
 	cfg config.IConfig
-	svc IShopZoneService
+	svc ITableService
 }
 
-func NewShopZoneHttp(ms *microservice.Microservice, cfg config.IConfig) ShopZoneHttp {
+func NewTableHttp(ms *microservice.Microservice, cfg config.IConfig) TableHttp {
 	pst := ms.MongoPersister(cfg.MongoPersisterConfig())
 	cache := ms.Cacher(cfg.CacherConfig())
 
-	repo := NewShopZoneRepository(pst)
-	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := NewShopZoneService(repo, masterSyncCacheRepo)
+	repo := NewTableRepository(pst)
 
-	return ShopZoneHttp{
+	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
+	svc := NewTableService(*repo, masterSyncCacheRepo)
+
+	return TableHttp{
 		ms:  ms,
 		cfg: cfg,
 		svc: svc,
 	}
 }
 
-func (h ShopZoneHttp) RouteSetup() {
+func (h TableHttp) RouteSetup() {
 
-	h.ms.POST("/restaurant/zone/bulk", h.SaveBulk)
+	h.ms.POST("/restaurant/table/bulk", h.SaveBulk)
 
-	h.ms.GET("/restaurant/zone", h.SearchShopZone)
-	h.ms.POST("/restaurant/zone", h.CreateShopZone)
-	h.ms.GET("/restaurant/zone/:id", h.InfoShopZone)
-	h.ms.PUT("/restaurant/zone/:id", h.UpdateShopZone)
-	h.ms.DELETE("/restaurant/zone/:id", h.DeleteShopZone)
+	h.ms.GET("/restaurant/table", h.SearchTable)
+	h.ms.POST("/restaurant/table", h.CreateTable)
+	h.ms.GET("/restaurant/table/:id", h.InfoTable)
+	h.ms.PUT("/restaurant/table/:id", h.UpdateTable)
+	h.ms.DELETE("/restaurant/table/:id", h.DeleteTable)
 
 }
 
-// Create Restaurant Shop Zone godoc
-// @Description Restaurant Shop Zone
+// Create Restaurant  Table godoc
+// @Description Restaurant  Table
 // @Tags		Restaurant
-// @Param		Zone  body      models.ShopZone  true  "Zone"
+// @Param		Table  body      models.Table  true  "Table"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /restaurant/zone [post]
-func (h ShopZoneHttp) CreateShopZone(ctx microservice.IContext) error {
+// @Router /restaurant/table [post]
+func (h TableHttp) CreateTable(ctx microservice.IContext) error {
 	authUsername := ctx.UserInfo().Username
 	shopID := ctx.UserInfo().ShopID
 	input := ctx.ReadInput()
 
-	docReq := &models.ShopZone{}
+	docReq := &models.Table{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -69,7 +69,7 @@ func (h ShopZoneHttp) CreateShopZone(ctx microservice.IContext) error {
 		return err
 	}
 
-	idx, err := h.svc.CreateShopZone(shopID, authUsername, *docReq)
+	idx, err := h.svc.CreateTable(shopID, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -83,17 +83,17 @@ func (h ShopZoneHttp) CreateShopZone(ctx microservice.IContext) error {
 	return nil
 }
 
-// Update Restaurant Shop Zone godoc
-// @Description Restaurant Shop Zone
+// Update Restaurant  Table godoc
+// @Description Restaurant  Table
 // @Tags		Restaurant
-// @Param		id  path      string  true  "Zone ID"
-// @Param		Zone  body      models.ShopZone  true  "Zone"
+// @Param		id  path      string  true  "Table ID"
+// @Param		Table  body      models.Table  true  "Table"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /restaurant/zone/{id} [put]
-func (h ShopZoneHttp) UpdateShopZone(ctx microservice.IContext) error {
+// @Router /restaurant/table/{id} [put]
+func (h TableHttp) UpdateTable(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
 	shopID := userInfo.ShopID
@@ -101,7 +101,7 @@ func (h ShopZoneHttp) UpdateShopZone(ctx microservice.IContext) error {
 	id := ctx.Param("id")
 	input := ctx.ReadInput()
 
-	docReq := &models.ShopZone{}
+	docReq := &models.Table{}
 	err := json.Unmarshal([]byte(input), &docReq)
 
 	if err != nil {
@@ -109,7 +109,7 @@ func (h ShopZoneHttp) UpdateShopZone(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.svc.UpdateShopZone(shopID, id, authUsername, *docReq)
+	err = h.svc.UpdateTable(shopID, id, authUsername, *docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -124,23 +124,23 @@ func (h ShopZoneHttp) UpdateShopZone(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete Restaurant Shop Zone godoc
-// @Description Restaurant Shop Zone
+// Delete Restaurant  Table godoc
+// @Description Restaurant  Table
 // @Tags		Restaurant
-// @Param		id  path      string  true  "ShopZone ID"
+// @Param		id  path      string  true  "Table ID"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /restaurant/zone/{id} [delete]
-func (h ShopZoneHttp) DeleteShopZone(ctx microservice.IContext) error {
+// @Router /restaurant/table/{id} [delete]
+func (h TableHttp) DeleteTable(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 	authUsername := userInfo.Username
 
 	id := ctx.Param("id")
 
-	err := h.svc.DeleteShopZone(shopID, id, authUsername)
+	err := h.svc.DeleteTable(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -155,23 +155,23 @@ func (h ShopZoneHttp) DeleteShopZone(ctx microservice.IContext) error {
 	return nil
 }
 
-// Get Restaurant Shop Zone Infomation godoc
-// @Description Get Restaurant Shop Zone
+// Get Restaurant  Table Infomation godoc
+// @Description Get Restaurant  Table
 // @Tags		Restaurant
-// @Param		id  path      string  true  "ShopZone Id"
+// @Param		id  path      string  true  "Table Id"
 // @Accept 		json
-// @Success		200	{object}	models.ShopZoneInfoResponse
+// @Success		200	{object}	models.TableInfoResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /restaurant/zone/{id} [get]
-func (h ShopZoneHttp) InfoShopZone(ctx microservice.IContext) error {
+// @Router /restaurant/table/{id} [get]
+func (h TableHttp) InfoTable(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	id := ctx.Param("id")
 
-	h.ms.Logger.Debugf("Get ShopZone %v", id)
-	doc, err := h.svc.InfoShopZone(shopID, id)
+	h.ms.Logger.Debugf("Get Table %v", id)
+	doc, err := h.svc.InfoTable(shopID, id)
 
 	if err != nil {
 		h.ms.Logger.Errorf("Error getting document %v: %v", id, err)
@@ -186,24 +186,24 @@ func (h ShopZoneHttp) InfoShopZone(ctx microservice.IContext) error {
 	return nil
 }
 
-// List Restaurant Shop Zone godoc
-// @Description List Restaurant Shop Zone Category
+// List Restaurant  Table godoc
+// @Description List Restaurant  Table Category
 // @Tags		Restaurant
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Size"
 // @Accept 		json
-// @Success		200	{object}	models.ShopZonePageResponse
+// @Success		200	{object}	models.TablePageResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /restaurant/zone [get]
-func (h ShopZoneHttp) SearchShopZone(ctx microservice.IContext) error {
+// @Router /restaurant/table [get]
+func (h TableHttp) SearchTable(ctx microservice.IContext) error {
 	userInfo := ctx.UserInfo()
 	shopID := userInfo.ShopID
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	docList, pagination, err := h.svc.SearchShopZone(shopID, pageable)
+	docList, pagination, err := h.svc.SearchTable(shopID, pageable)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -218,16 +218,16 @@ func (h ShopZoneHttp) SearchShopZone(ctx microservice.IContext) error {
 	return nil
 }
 
-// Create ShopZone Bulk godoc
-// @Description Create ShopZone
+// Create Table Bulk godoc
+// @Description Create Table
 // @Tags		Restaurant
-// @Param		ShopZone  body      []models.ShopZone  true  "ShopZone"
+// @Param		Table  body      []models.Table  true  "Table"
 // @Accept 		json
 // @Success		201	{object}	common.BulkInsertResponse
 // @Failure		401 {object}	common.AuthResponseFailed
 // @Security     AccessToken
-// @Router /restaurant/zone/bulk [post]
-func (h ShopZoneHttp) SaveBulk(ctx microservice.IContext) error {
+// @Router /restaurant/table/bulk [post]
+func (h TableHttp) SaveBulk(ctx microservice.IContext) error {
 
 	userInfo := ctx.UserInfo()
 	authUsername := userInfo.Username
@@ -235,7 +235,7 @@ func (h ShopZoneHttp) SaveBulk(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()
 
-	dataReq := []models.ShopZone{}
+	dataReq := []models.Table{}
 	err := json.Unmarshal([]byte(input), &dataReq)
 
 	if err != nil {
