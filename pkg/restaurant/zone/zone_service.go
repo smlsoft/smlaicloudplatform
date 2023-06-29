@@ -14,6 +14,7 @@ import (
 
 	"github.com/userplant/mongopagination"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -24,6 +25,7 @@ type IZoneService interface {
 	InfoZone(shopID string, guid string) (models.ZoneInfo, error)
 	SearchZone(shopID string, pageable micromodels.Pageable) ([]models.ZoneInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Zone) (common.BulkImport, error)
+	DeleteByGUIDs(shopID string, authUsername string, GUIDs []string) error
 
 	GetModuleName() string
 }
@@ -108,6 +110,20 @@ func (svc ZoneService) DeleteZone(shopID string, guid string, authUsername strin
 	}
 
 	svc.saveMasterSync(shopID)
+
+	return nil
+}
+
+func (svc ZoneService) DeleteByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+
+	deleteFilterQuery := map[string]interface{}{
+		"guidfixed": bson.M{"$in": GUIDs},
+	}
+
+	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

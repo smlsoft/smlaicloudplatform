@@ -865,16 +865,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - code
-    - names
     type: object
   models.Detail:
     properties:
@@ -16320,6 +16316,32 @@ paths:
       tags:
       - Restaurant
   /restaurant/zone:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Zone
+      parameters:
+      - description: Zone GUIDs
+        in: body
+        name: Zone
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Zone
     get:
       consumes:
       - application/json

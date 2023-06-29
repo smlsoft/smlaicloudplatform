@@ -16,6 +16,7 @@ type IZoneRepository interface {
 	CreateInBatch(docList []models.ZoneDoc) error
 	Update(shopID string, guid string, category models.ZoneDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
+	Delete(shopID string, authUsername string, filters map[string]interface{}) error
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ZoneInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.ZoneDoc, error)
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.ZoneItemGuid, error)
