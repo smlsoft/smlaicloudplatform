@@ -286,5 +286,5 @@ func (svc RestaurantSettingsService) saveMasterSync(shopID string) {
 }
 
 func (svc RestaurantSettingsService) GetModuleName() string {
-	return "restaurantsettings"
+	return "restaurant-settings"
 }
