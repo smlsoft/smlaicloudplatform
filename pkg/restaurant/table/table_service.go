@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/userplant/mongopagination"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -20,6 +21,7 @@ type ITableService interface {
 	CreateTable(shopID string, authUsername string, doc models.Table) (string, error)
 	UpdateTable(shopID string, guid string, authUsername string, doc models.Table) error
 	DeleteTable(shopID string, guid string, authUsername string) error
+	DeleteByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoTable(shopID string, guid string) (models.TableInfo, error)
 	SearchTable(shopID string, pageable micromodels.Pageable) ([]models.TableInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Table) (common.BulkImport, error)
@@ -103,6 +105,20 @@ func (svc TableService) DeleteTable(shopID string, guid string, authUsername str
 	}
 
 	svc.saveMasterSync(shopID)
+
+	return nil
+}
+
+func (svc TableService) DeleteByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+
+	deleteFilterQuery := map[string]interface{}{
+		"guidfixed": bson.M{"$in": GUIDs},
+	}
+
+	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
