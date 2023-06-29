@@ -49,6 +49,16 @@ func NewZoneService(repo IZoneRepository, syncCacheRepo mastersync.IMasterSyncCa
 
 func (svc ZoneService) CreateZone(shopID string, authUsername string, doc models.Zone) (string, error) {
 
+	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", doc.Code)
+
+	if err != nil {
+		return "", err
+	}
+
+	if len(findDoc.Code) > 0 {
+		return "", errors.New("code already exists")
+	}
+
 	newGuidFixed := utils.NewGUID()
 
 	docData := models.ZoneDoc{}
@@ -61,7 +71,7 @@ func (svc ZoneService) CreateZone(shopID string, authUsername string, doc models
 
 	docData.LastUpdatedAt = time.Now()
 
-	_, err := svc.repo.Create(docData)
+	_, err = svc.repo.Create(docData)
 
 	if err != nil {
 		return "", err

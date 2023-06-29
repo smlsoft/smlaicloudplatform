@@ -5,6 +5,7 @@ import (
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
 	"smlcloudplatform/pkg/restaurant/kitchen/models"
+	"time"
 
 	"github.com/userplant/mongopagination"
 )
@@ -15,15 +16,17 @@ type IKitchenRepository interface {
 	CreateInBatch(docList []models.KitchenDoc) error
 	Update(shopID string, guid string, category models.KitchenDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
+	Delete(shopID string, authUsername string, filters map[string]interface{}) error
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.KitchenInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.KitchenDoc, error)
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.KitchenItemGuid, error)
+	FindByDocIndentityGuid(shopID string, columnName string, filters interface{}) (models.KitchenDoc, error)
+	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.KitchenInfo, int, error)
 
-	// FindDeletedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.KitchenDeleteActivity, mongopagination.PaginationData, error)
-	// FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) ([]models.KitchenActivity, mongopagination.PaginationData, error)
-	// FindDeletedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.KitchenDeleteActivity, error)
-	// FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) ([]models.KitchenActivity, error)
-	// FindStep(shopID string, searchInFields []string, q string, skip int, limit int, sorts map[string]int, projects map[string]interface{}) ([]models.KitchenInfo, int, error)
+	FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.KitchenDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.KitchenActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.KitchenDeleteActivity, error)
+	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.KitchenActivity, error)
 }
 
 type KitchenRepository struct {

@@ -20,6 +20,8 @@ type IZoneRepository interface {
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ZoneInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.ZoneDoc, error)
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.ZoneItemGuid, error)
+	FindByDocIndentityGuid(shopID string, columnName string, filters interface{}) (models.ZoneDoc, error)
+	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.ZoneInfo, int, error)
 
 	FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ZoneDeleteActivity, mongopagination.PaginationData, error)
 	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ZoneActivity, mongopagination.PaginationData, error)

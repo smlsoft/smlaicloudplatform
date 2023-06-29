@@ -59,7 +59,7 @@ func (svc StaffHttpService) CreateStaff(shopID string, authUsername string, doc 
 	}
 
 	if findDoc.Code != "" {
-		return "", errors.New("code is exists")
+		return "", errors.New("code is already exists")
 	}
 
 	newGuidFixed := utils.NewGUID()
