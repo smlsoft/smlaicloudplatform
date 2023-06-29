@@ -17522,7 +17522,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "List Restaurant Shop Table Category",
+                "description": "List Restaurant  Table Category",
                 "consumes": [
                     "application/json"
                 ],
@@ -17553,7 +17553,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ShopTablePageResponse"
+                            "$ref": "#/definitions/models.TablePageResponse"
                         }
                     },
                     "401": {
@@ -17570,7 +17570,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Restaurant Shop Table",
+                "description": "Restaurant  Table",
                 "consumes": [
                     "application/json"
                 ],
@@ -17584,7 +17584,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ShopTable"
+                            "$ref": "#/definitions/models.Table"
                         }
                     }
                 ],
@@ -17611,7 +17611,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Create ShopTable",
+                "description": "Create Table",
                 "consumes": [
                     "application/json"
                 ],
@@ -17620,14 +17620,14 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "ShopTable",
-                        "name": "ShopTable",
+                        "description": "Table",
+                        "name": "Table",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.ShopTable"
+                                "$ref": "#/definitions/models.Table"
                             }
                         }
                     }
@@ -17655,7 +17655,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Get Restaurant Shop Table",
+                "description": "Get Restaurant  Table",
                 "consumes": [
                     "application/json"
                 ],
@@ -17665,7 +17665,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ShopTable Id",
+                        "description": "Table Id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -17675,7 +17675,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ShopTableInfoResponse"
+                            "$ref": "#/definitions/models.TableInfoResponse"
                         }
                     },
                     "401": {
@@ -17692,7 +17692,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Restaurant Shop Table",
+                "description": "Restaurant  Table",
                 "consumes": [
                     "application/json"
                 ],
@@ -17713,7 +17713,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ShopTable"
+                            "$ref": "#/definitions/models.Table"
                         }
                     }
                 ],
@@ -17738,7 +17738,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Restaurant Shop Table",
+                "description": "Restaurant  Table",
                 "consumes": [
                     "application/json"
                 ],
@@ -17748,7 +17748,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ShopTable ID",
+                        "description": "Table ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -17777,7 +17777,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "List Restaurant Shop Zone Category",
+                "description": "List Restaurant  Zone Category",
                 "consumes": [
                     "application/json"
                 ],
@@ -17808,7 +17808,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ShopZonePageResponse"
+                            "$ref": "#/definitions/models.ZonePageResponse"
                         }
                     },
                     "401": {
@@ -17825,7 +17825,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Restaurant Shop Zone",
+                "description": "Restaurant  Zone",
                 "consumes": [
                     "application/json"
                 ],
@@ -17839,7 +17839,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ShopZone"
+                            "$ref": "#/definitions/models.Zone"
                         }
                     }
                 ],
@@ -17866,7 +17866,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Create ShopZone",
+                "description": "Create Zone",
                 "consumes": [
                     "application/json"
                 ],
@@ -17875,14 +17875,14 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "ShopZone",
-                        "name": "ShopZone",
+                        "description": "Zone",
+                        "name": "Zone",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.ShopZone"
+                                "$ref": "#/definitions/models.Zone"
                             }
                         }
                     }
@@ -17910,7 +17910,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Get Restaurant Shop Zone",
+                "description": "Get Restaurant  Zone",
                 "consumes": [
                     "application/json"
                 ],
@@ -17920,7 +17920,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ShopZone Id",
+                        "description": "Zone Id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -17930,7 +17930,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.ShopZoneInfoResponse"
+                            "$ref": "#/definitions/models.ZoneInfoResponse"
                         }
                     },
                     "401": {
@@ -17947,7 +17947,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Restaurant Shop Zone",
+                "description": "Restaurant  Zone",
                 "consumes": [
                     "application/json"
                 ],
@@ -17968,7 +17968,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ShopZone"
+                            "$ref": "#/definitions/models.Zone"
                         }
                     }
                 ],
@@ -17993,7 +17993,7 @@ const docTemplate = `{
                         "AccessToken": []
                     }
                 ],
-                "description": "Restaurant Shop Zone",
+                "description": "Restaurant  Zone",
                 "consumes": [
                     "application/json"
                 ],
@@ -18003,7 +18003,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ShopZone ID",
+                        "description": "Zone ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -27942,8 +27942,8 @@ const docTemplate = `{
                 "isprimary": {
                     "type": "boolean"
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "name1": {
                     "type": "string",
@@ -27965,7 +27965,17 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "unitcode": {
@@ -28799,6 +28809,7 @@ const docTemplate = `{
         "models.Department": {
             "type": "object",
             "required": [
+                "code",
                 "names"
             ],
             "properties": {
@@ -29247,6 +29258,9 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -29428,8 +29442,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -29454,6 +29468,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -29475,6 +29492,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -29627,8 +29651,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -29653,6 +29677,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -29674,6 +29701,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -29903,8 +29937,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -29929,6 +29963,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -29950,6 +29987,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -30614,24 +30658,20 @@ const docTemplate = `{
         },
         "models.Kitchen": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
                 "code": {
                     "type": "string"
                 },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "printers": {
                     "type": "array",
@@ -30655,6 +30695,9 @@ const docTemplate = `{
         },
         "models.KitchenInfo": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
                 "code": {
                     "type": "string"
@@ -30662,20 +30705,13 @@ const docTemplate = `{
                 "guidfixed": {
                     "type": "string"
                 },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "printers": {
                     "type": "array",
@@ -31537,6 +31573,9 @@ const docTemplate = `{
         },
         "models.Printer": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
                 "address": {
                     "type": "string"
@@ -31544,20 +31583,13 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "type": {
                     "type": "integer"
@@ -31566,6 +31598,9 @@ const docTemplate = `{
         },
         "models.PrinterInfo": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
                 "address": {
                     "type": "string"
@@ -31576,20 +31611,13 @@ const docTemplate = `{
                 "guidfixed": {
                     "type": "string"
                 },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "type": {
                     "type": "integer"
@@ -31681,7 +31709,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice"
                     }
                 },
                 "taxtype": {
@@ -31823,7 +31851,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice"
                     }
                 },
                 "qty": {
@@ -33125,117 +33153,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.ShopTable": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "number": {
-                    "type": "string"
-                },
-                "seat": {
-                    "type": "integer"
-                },
-                "zone": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.ShopTableInfo": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "number": {
-                    "type": "string"
-                },
-                "seat": {
-                    "type": "integer"
-                },
-                "zone": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.ShopTableInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.ShopTableInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.ShopTablePageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ShopTableInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
         "models.ShopUserInfo": {
             "type": "object",
             "properties": {
@@ -33248,97 +33165,14 @@ const docTemplate = `{
                 "lastaccessedat": {
                     "type": "string"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "role": {
                     "type": "integer"
                 },
                 "shopid": {
                     "type": "string"
-                },
-                "shopname": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.ShopZone": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "printer": {
-                    "$ref": "#/definitions/models.Printer"
-                }
-            }
-        },
-        "models.ShopZoneInfo": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
-                },
-                "printer": {
-                    "$ref": "#/definitions/models.Printer"
-                }
-            }
-        },
-        "models.ShopZoneInfoResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.ShopZoneInfo"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.ShopZonePageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ShopZoneInfo"
-                    }
-                },
-                "pagination": {
-                    "$ref": "#/definitions/models.PaginationDataResponse"
-                },
-                "success": {
-                    "type": "boolean"
                 }
             }
         },
@@ -34136,6 +33970,87 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Table": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "number": {
+                    "type": "string"
+                },
+                "seat": {
+                    "type": "integer"
+                },
+                "zone": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.TableInfo": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "guidfixed": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "number": {
+                    "type": "string"
+                },
+                "seat": {
+                    "type": "integer"
+                },
+                "zone": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.TableInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.TableInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.TablePageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TableInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "models.Task": {
             "type": "object",
             "properties": {
@@ -34723,6 +34638,81 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Zone": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "printer": {
+                    "$ref": "#/definitions/models.Printer"
+                }
+            }
+        },
+        "models.ZoneInfo": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "printer": {
+                    "$ref": "#/definitions/models.Printer"
+                }
+            }
+        },
+        "models.ZoneInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.ZoneInfo"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.ZonePageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ZoneInfo"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/models.PaginationDataResponse"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "smlcloudplatform_pkg_organization_branch_models.Branch": {
             "type": "object",
             "required": [
@@ -34795,6 +34785,27 @@ const docTemplate = `{
                 }
             }
         },
+        "smlcloudplatform_pkg_product_inventory_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "memberprice": {
+                    "type": "number"
+                },
+                "normalprice": {
+                    "type": "number"
+                },
+                "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
+                    "type": "number"
+                }
+            }
+        },
         "smlcloudplatform_pkg_product_inventory_models.Unit": {
             "type": "object",
             "properties": {
@@ -34826,17 +34837,6 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_product_product_models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
-                },
-                "price": {
-                    "type": "number"
                 }
             }
         },
@@ -34940,7 +34940,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_inventory_models.ProductPrice"
                     }
                 },
                 "qty": {
@@ -35174,26 +35174,20 @@ const docTemplate = `{
         "smlcloudplatform_pkg_restaurant_device_models.Device": {
             "type": "object",
             "required": [
-                "code"
+                "code",
+                "names"
             ],
             "properties": {
                 "code": {
                     "type": "string"
                 },
-                "name1": {
-                    "type": "string"
-                },
-                "name2": {
-                    "type": "string"
-                },
-                "name3": {
-                    "type": "string"
-                },
-                "name4": {
-                    "type": "string"
-                },
-                "name5": {
-                    "type": "string"
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
                 },
                 "type": {
                     "type": "integer"
