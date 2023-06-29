@@ -48,10 +48,10 @@ import (
 	"smlcloudplatform/pkg/restaurant/device"
 	"smlcloudplatform/pkg/restaurant/kitchen"
 	"smlcloudplatform/pkg/restaurant/printer"
-	"smlcloudplatform/pkg/restaurant/restaurantsettings"
-	"smlcloudplatform/pkg/restaurant/shoptable"
-	"smlcloudplatform/pkg/restaurant/shopzone"
+	"smlcloudplatform/pkg/restaurant/settings"
 	"smlcloudplatform/pkg/restaurant/staff"
+	"smlcloudplatform/pkg/restaurant/table"
+	"smlcloudplatform/pkg/restaurant/zone"
 	"smlcloudplatform/pkg/shop"
 
 	// "smlcloudplatform/pkg/shop/branch"
@@ -155,11 +155,11 @@ func main() {
 		inventoryimport.NewCategoryImportHttp(ms, cfg),
 
 		//restaurants
-		shopzone.NewShopZoneHttp(ms, cfg),
-		shoptable.NewShopTableHttp(ms, cfg),
+		zone.NewZoneHttp(ms, cfg),
+		table.NewTableHttp(ms, cfg),
 		printer.NewPrinterHttp(ms, cfg),
 		kitchen.NewKitchenHttp(ms, cfg),
-		restaurantsettings.NewRestaurantSettingsHttp(ms, cfg),
+		settings.NewRestaurantSettingsHttp(ms, cfg),
 		device.NewDeviceHttp(ms, cfg),
 		staff.NewStaffHttp(ms, cfg),
 
