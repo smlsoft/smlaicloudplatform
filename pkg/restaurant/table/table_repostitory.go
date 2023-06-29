@@ -15,6 +15,7 @@ type ITableRepository interface {
 	CreateInBatch(docList []models.TableDoc) error
 	Update(shopID string, guid string, category models.TableDoc) error
 	DeleteByGuidfixed(shopID string, guid string, username string) error
+	Delete(shopID string, authUsername string, filters map[string]interface{}) error
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.TableInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.TableDoc, error)
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.TableItemGuid, error)

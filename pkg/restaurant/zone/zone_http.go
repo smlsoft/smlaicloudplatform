@@ -156,9 +156,9 @@ func (h ZoneHttp) DeleteZone(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete Zone godoc
-// @Description Delete Zone
-// @Tags		Zone
+// Delete Restaurant Zone godoc
+// @Description Delete Restaurant Zone
+// @Tags		Restaurant
 // @Param		Zone  body      []string  true  "Zone GUIDs"
 // @Accept 		json
 // @Success		200	{object}	common.ResponseSuccessWithID

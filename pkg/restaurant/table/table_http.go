@@ -124,7 +124,7 @@ func (h TableHttp) UpdateTable(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete Restaurant  Table godoc
+// Delete Restaurant Table godoc
 // @Description Restaurant  Table
 // @Tags		Restaurant
 // @Param		id  path      string  true  "Table ID"
@@ -150,6 +150,44 @@ func (h TableHttp) DeleteTable(ctx microservice.IContext) error {
 	ctx.Response(http.StatusOK, common.ApiResponse{
 		Success: true,
 		ID:      id,
+	})
+
+	return nil
+}
+
+// Delete Restaurant Table godoc
+// @Description Delete Restaurant Table
+// @Tags		Restaurant
+// @Param		Restaurant Table  body      []string  true  "Restaurant Table GUIDs"
+// @Accept 		json
+// @Success		200	{object}	common.ResponseSuccessWithID
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/table [delete]
+func (h TableHttp) DeleteByGUIDs(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+	authUsername := userInfo.Username
+
+	input := ctx.ReadInput()
+
+	docReq := []string{}
+	err := json.Unmarshal([]byte(input), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	err = h.svc.DeleteByGUIDs(shopID, authUsername, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
 	})
 
 	return nil
