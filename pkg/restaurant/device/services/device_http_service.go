@@ -326,5 +326,5 @@ func (svc DeviceHttpService) saveMasterSync(shopID string) {
 }
 
 func (svc DeviceHttpService) GetModuleName() string {
-	return "device"
+	return "restaurant-device"
 }

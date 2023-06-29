@@ -34,7 +34,7 @@ type TableService struct {
 	services.ActivityService[models.TableActivity, models.TableDeleteActivity]
 }
 
-func NewTableService(repo TableRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *TableService {
+func NewTableService(repo ITableRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *TableService {
 	insSvc := TableService{
 		repo:          repo,
 		syncCacheRepo: syncCacheRepo,
