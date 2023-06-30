@@ -3,6 +3,7 @@ package zone
 import (
 	"encoding/json"
 	"net/http"
+	"net/url"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/config"
 	common "smlcloudplatform/pkg/models"
@@ -42,14 +43,15 @@ func (h ZoneHttp) RouteSetup() {
 	h.ms.GET("/restaurant/zone", h.SearchZone)
 	h.ms.POST("/restaurant/zone", h.CreateZone)
 	h.ms.GET("/restaurant/zone/:id", h.InfoZone)
+	h.ms.GET("/restaurant/zone/by-code", h.InfoArray)
 	h.ms.PUT("/restaurant/zone/:id", h.UpdateZone)
 	h.ms.DELETE("/restaurant/zone/:id", h.DeleteZone)
 	h.ms.DELETE("/restaurant/zone", h.DeleteByGUIDs)
 
 }
 
-// Create Restaurant  Zone godoc
-// @Description Restaurant  Zone
+// Create Restaurant Zone godoc
+// @Description Restaurant Zone
 // @Tags		Restaurant
 // @Param		Zone  body      models.Zone  true  "Zone"
 // @Accept 		json
@@ -84,8 +86,8 @@ func (h ZoneHttp) CreateZone(ctx microservice.IContext) error {
 	return nil
 }
 
-// Update Restaurant  Zone godoc
-// @Description Restaurant  Zone
+// Update Restaurant Zone godoc
+// @Description Restaurant Zone
 // @Tags		Restaurant
 // @Param		id  path      string  true  "Zone ID"
 // @Param		Zone  body      models.Zone  true  "Zone"
@@ -125,8 +127,8 @@ func (h ZoneHttp) UpdateZone(ctx microservice.IContext) error {
 	return nil
 }
 
-// Delete Restaurant  Zone godoc
-// @Description Restaurant  Zone
+// Delete Restaurant Zone godoc
+// @Description Restaurant Zone
 // @Tags		Restaurant
 // @Param		id  path      string  true  "Zone ID"
 // @Accept 		json
@@ -194,8 +196,8 @@ func (h ZoneHttp) DeleteByGUIDs(ctx microservice.IContext) error {
 	return nil
 }
 
-// Get Restaurant  Zone Infomation godoc
-// @Description Get Restaurant  Zone
+// Get Restaurant Zone Infomation godoc
+// @Description Get Restaurant Zone
 // @Tags		Restaurant
 // @Param		id  path      string  true  "Zone Id"
 // @Accept 		json
@@ -225,8 +227,51 @@ func (h ZoneHttp) InfoZone(ctx microservice.IContext) error {
 	return nil
 }
 
-// List Restaurant  Zone godoc
-// @Description List Restaurant  Zone Category
+// Get Restaurant Zone By code array godoc
+// @Description get Restaurant Zone by code array
+// @Tags		Restaurant
+// @Param		codes	query	string		false  "Code filter, json array encode "
+// @Accept 		json
+// @Success		200	{object}	common.ApiResponse
+// @Failure		401 {object}	common.AuthResponseFailed
+// @Security     AccessToken
+// @Router /restaurant/zone/by-code [get]
+func (h ZoneHttp) InfoArray(ctx microservice.IContext) error {
+	userInfo := ctx.UserInfo()
+	shopID := userInfo.ShopID
+
+	codesReq, err := url.QueryUnescape(ctx.QueryParam("codes"))
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	docReq := []string{}
+	err = json.Unmarshal([]byte(codesReq), &docReq)
+
+	if err != nil {
+		ctx.ResponseError(400, err.Error())
+		return err
+	}
+
+	// where to filter array
+	doc, err := h.svc.InfoWTFArray(shopID, docReq)
+
+	if err != nil {
+		ctx.ResponseError(http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	ctx.Response(http.StatusOK, common.ApiResponse{
+		Success: true,
+		Data:    doc,
+	})
+	return nil
+}
+
+// List Restaurant Zone godoc
+// @Description List Restaurant Zone Category
 // @Tags		Restaurant
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"

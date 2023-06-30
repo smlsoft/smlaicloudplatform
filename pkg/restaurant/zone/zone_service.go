@@ -23,6 +23,7 @@ type IZoneService interface {
 	UpdateZone(shopID string, guid string, authUsername string, doc models.Zone) error
 	DeleteZone(shopID string, guid string, authUsername string) error
 	InfoZone(shopID string, guid string) (models.ZoneInfo, error)
+	InfoWTFArray(shopID string, codes []string) ([]interface{}, error)
 	SearchZone(shopID string, pageable micromodels.Pageable) ([]models.ZoneInfo, mongopagination.PaginationData, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Zone) (common.BulkImport, error)
 	DeleteByGUIDs(shopID string, authUsername string, GUIDs []string) error
@@ -152,6 +153,22 @@ func (svc ZoneService) InfoZone(shopID string, guid string) (models.ZoneInfo, er
 
 	return findDoc.ZoneInfo, nil
 
+}
+
+func (svc ZoneService) InfoWTFArray(shopID string, codes []string) ([]interface{}, error) {
+	docList := []interface{}{}
+
+	for _, code := range codes {
+		findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", code)
+		if err != nil || findDoc.ID == primitive.NilObjectID {
+			// add item empty
+			docList = append(docList, nil)
+		} else {
+			docList = append(docList, findDoc.ZoneInfo)
+		}
+	}
+
+	return docList, nil
 }
 
 func (svc ZoneService) SearchZone(shopID string, pageable micromodels.Pageable) ([]models.ZoneInfo, mongopagination.PaginationData, error) {
