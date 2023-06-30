@@ -55,6 +55,7 @@ import (
 	"smlcloudplatform/pkg/shop"
 
 	// "smlcloudplatform/pkg/shop/branch"
+	pos_setting "smlcloudplatform/pkg/pos/setting"
 	"smlcloudplatform/pkg/shop/employee"
 	"smlcloudplatform/pkg/shopdesign/zonedesign"
 	"smlcloudplatform/pkg/smsreceive/smspatterns"
@@ -249,6 +250,7 @@ func main() {
 		eorder.NewEOrderHttp(ms, cfg),
 
 		ordertype.NewOrderTypeHttp(ms, cfg),
+		pos_setting.NewSettingHttp(ms, cfg),
 
 		//reportquery.NewReportQueryHttp(ms, cfg),
 	}

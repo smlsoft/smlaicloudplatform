@@ -28,6 +28,7 @@ import (
 	"smlcloudplatform/pkg/payment/bookbank"
 	"smlcloudplatform/pkg/payment/qrpayment"
 	"smlcloudplatform/pkg/paymentmaster"
+	pos_setting "smlcloudplatform/pkg/pos/setting"
 	"smlcloudplatform/pkg/product/color"
 	"smlcloudplatform/pkg/product/eorder"
 	"smlcloudplatform/pkg/product/inventory"
@@ -274,6 +275,8 @@ func main() {
 			promotion.NewPromotionHttp(ms, cfg),
 
 			ordertype.NewOrderTypeHttp(ms, cfg),
+
+			pos_setting.NewSettingHttp(ms, cfg),
 		}
 
 		startHttpServices(httpServices...)
