@@ -12249,7 +12249,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode"
+                                "$ref": "#/definitions/models.ProductBarcode"
                             }
                         }
                     }
@@ -16379,6 +16379,36 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/models.ApiResponse"
                             }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurant/kitchen/products": {
+            "get": {
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ],
+                "description": "List Restaurant Kitchen product barcode",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Restaurant"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiResponse"
                         }
                     },
                     "401": {
@@ -28882,13 +28912,17 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
                 "code": {
-                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -31748,7 +31782,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "taxtype": {
@@ -31787,6 +31821,41 @@ const docTemplate = `{
                 },
                 "vattype": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.ProductBarcode": {
+            "type": "object",
+            "properties": {
+                "barcode": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "prices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice"
+                    }
                 }
             }
         },
@@ -31890,7 +31959,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "qty": {
@@ -32110,17 +32179,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
-                },
-                "price": {
-                    "type": "number"
-                }
-            }
-        },
         "models.ProductUnit": {
             "type": "object",
             "properties": {
@@ -32280,7 +32338,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "productbarcode": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_product_promotion_models.ProductBarcode"
+                    "$ref": "#/definitions/models.ProductBarcode"
                 },
                 "promotiontype": {
                     "type": "integer"
@@ -32310,7 +32368,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "productbarcode": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_product_promotion_models.ProductBarcode"
+                    "$ref": "#/definitions/models.ProductBarcode"
                 }
             }
         },
@@ -32583,48 +32641,6 @@ const docTemplate = `{
                 },
                 "wallettype": {
                     "type": "integer"
-                }
-            }
-        },
-        "models.RefProductBarcode": {
-            "type": "object",
-            "required": [
-                "barcode"
-            ],
-            "properties": {
-                "barcode": {
-                    "type": "string",
-                    "minLength": 1
-                },
-                "condition": {
-                    "type": "boolean"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "standvalue": {
-                    "type": "number"
                 }
             }
         },
@@ -34869,154 +34885,14 @@ const docTemplate = `{
                 }
             }
         },
-        "smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode": {
+        "smlcloudplatform_pkg_product_product_models.ProductPrice": {
             "type": "object",
-            "required": [
-                "barcode",
-                "names"
-            ],
             "properties": {
-                "barcode": {
-                    "type": "string",
-                    "minLength": 1
-                },
-                "colorselect": {
-                    "type": "string"
-                },
-                "colorselecthex": {
-                    "type": "string"
-                },
-                "condition": {
-                    "type": "boolean"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "groupcode": {
-                    "type": "string"
-                },
-                "groupnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage"
-                    }
-                },
-                "imageuri": {
-                    "type": "string"
-                },
-                "isalacarte": {
-                    "type": "boolean"
-                },
-                "isdividend": {
-                    "type": "boolean"
-                },
-                "issplitunitprint": {
-                    "type": "boolean"
-                },
-                "issumpoint": {
-                    "type": "boolean"
-                },
-                "isusesubbarcodes": {
-                    "type": "boolean"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemtype": {
+                "keynumber": {
                     "type": "integer"
                 },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "itemunitsize": {
+                "price": {
                     "type": "number"
-                },
-                "maxdiscount": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "options": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductOption"
-                    }
-                },
-                "ordertypes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductOrderType"
-                    }
-                },
-                "prices": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
-                    }
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "refbarcodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.RefProductBarcode"
-                    }
-                },
-                "refdividevalue": {
-                    "type": "number"
-                },
-                "refstandvalue": {
-                    "type": "number"
-                },
-                "refunitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "standvalue": {
-                    "type": "number"
-                },
-                "stockbarcode": {
-                    "type": "string"
-                },
-                "taxtype": {
-                    "type": "integer"
-                },
-                "useimageorcolor": {
-                    "type": "boolean"
-                },
-                "vatcal": {
-                    "type": "integer"
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "xsorts": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.XSort"
-                    }
                 }
             }
         },
@@ -35031,38 +34907,14 @@ const docTemplate = `{
                 }
             }
         },
-        "smlcloudplatform_pkg_product_promotion_models.ProductBarcode": {
+        "smlcloudplatform_pkg_product_productbarcode_models.ProductPrice": {
             "type": "object",
             "properties": {
-                "barcode": {
-                    "type": "string"
+                "keynumber": {
+                    "type": "integer"
                 },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "prices": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
-                    }
+                "price": {
+                    "type": "number"
                 }
             }
         },

@@ -25,6 +25,7 @@ type IKitchenService interface {
 	SearchKitchen(shopID string, pageable micromodels.Pageable) ([]models.KitchenInfo, mongopagination.PaginationData, error)
 	SearchKitchenStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.KitchenInfo, int, error)
 	SaveInBatch(shopID string, authUsername string, dataList []models.Kitchen) (common.BulkImport, error)
+	GetProductBarcodeKitchen(shopID string) ([]models.ProductBarcode, error)
 
 	// LastActivity(shopID string, action string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error)
 
@@ -291,4 +292,62 @@ func (svc KitchenService) saveMasterSync(shopID string) {
 
 func (svc KitchenService) GetModuleName() string {
 	return "restaurant-kitchen"
+}
+
+func (svc KitchenService) GetProductBarcodeKitchen(shopID string) ([]models.ProductBarcode, error) {
+
+	isNotFinished := true
+
+	currentPage := 1
+	limit := 20
+
+	tempDocs := map[string][]models.KitchenInfo{}
+
+	for isNotFinished {
+		findDocs, pagination, err := svc.repo.FindPage(shopID, []string{}, micromodels.Pageable{
+			Page:  currentPage,
+			Limit: limit,
+		})
+
+		if err != nil {
+			return []models.ProductBarcode{}, err
+		}
+
+		for _, doc := range findDocs {
+			for _, barcode := range *doc.Products {
+				if barcode != "" {
+					if _, ok := tempDocs[barcode]; !ok {
+						tempDocs[barcode] = []models.KitchenInfo{}
+					}
+					tempDocs[barcode] = append(tempDocs[barcode], doc)
+				}
+			}
+		}
+
+		if int64(currentPage) >= pagination.TotalPage {
+			isNotFinished = false
+		} else {
+			currentPage++
+		}
+
+	}
+
+	docs := []models.ProductBarcode{}
+	for barcode, doc := range tempDocs {
+
+		kitchens := []models.KitchenBarcode{}
+		for _, item := range doc {
+			kitchens = append(kitchens, models.KitchenBarcode{
+				Code:  item.Code,
+				Names: item.Names,
+			})
+		}
+
+		docs = append(docs, models.ProductBarcode{
+			Barcode:  barcode,
+			Kitchens: kitchens,
+		})
+	}
+
+	return docs, nil
 }
