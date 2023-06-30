@@ -2217,15 +2217,12 @@ definitions:
     properties:
       code:
         type: string
+      guidfixed:
+        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
-        type: array
-        uniqueItems: true
-      shelf:
-        items:
-          $ref: '#/definitions/models.Shelf'
         type: array
         uniqueItems: true
     required:
@@ -2870,7 +2867,7 @@ definitions:
         uniqueItems: true
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       taxtype:
         description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
@@ -2901,6 +2898,108 @@ definitions:
     - itemcode
     - names
     - unit
+    type: object
+  models.ProductBarcode:
+    properties:
+      barcode:
+        minLength: 1
+        type: string
+      colorselect:
+        type: string
+      colorselecthex:
+        type: string
+      condition:
+        type: boolean
+      dividevalue:
+        type: number
+      groupcode:
+        type: string
+      groupnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      images:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'
+        type: array
+      imageuri:
+        type: string
+      isalacarte:
+        type: boolean
+      isdividend:
+        type: boolean
+      issplitunitprint:
+        type: boolean
+      issumpoint:
+        type: boolean
+      isusesubbarcodes:
+        type: boolean
+      itemcode:
+        type: string
+      itemtype:
+        type: integer
+      itemunitcode:
+        type: string
+      itemunitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      itemunitsize:
+        type: number
+      maxdiscount:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      options:
+        items:
+          $ref: '#/definitions/models.ProductOption'
+        type: array
+      ordertypes:
+        items:
+          $ref: '#/definitions/models.ProductOrderType'
+        type: array
+      prices:
+        items:
+          $ref: '#/definitions/models.ProductPrice'
+        type: array
+      qty:
+        type: number
+      refbarcodes:
+        items:
+          $ref: '#/definitions/models.RefProductBarcode'
+        type: array
+      refdividevalue:
+        type: number
+      refstandvalue:
+        type: number
+      refunitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      standvalue:
+        type: number
+      stockbarcode:
+        type: string
+      taxtype:
+        type: integer
+      useimageorcolor:
+        type: boolean
+      vatcal:
+        type: integer
+      vattype:
+        type: integer
+      xsorts:
+        items:
+          $ref: '#/definitions/models.XSort'
+        type: array
+        uniqueItems: true
+    required:
+    - barcode
+    - names
     type: object
   models.ProductBarcodeRequest:
     properties:
@@ -2967,7 +3066,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
+          $ref: '#/definitions/models.ProductPrice'
         type: array
       qty:
         type: number
@@ -3127,6 +3226,13 @@ definitions:
       price:
         type: number
     type: object
+  models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
+    type: object
   models.ProductUnit:
     properties:
       divider:
@@ -3238,7 +3344,7 @@ definitions:
       name:
         type: string
       productbarcode:
-        $ref: '#/definitions/smlcloudplatform_pkg_product_promotion_models.ProductBarcode'
+        $ref: '#/definitions/models.ProductBarcode'
       promotiontype:
         type: integer
       remark:
@@ -3258,7 +3364,7 @@ definitions:
       minimum:
         type: number
       productbarcode:
-        $ref: '#/definitions/smlcloudplatform_pkg_product_promotion_models.ProductBarcode'
+        $ref: '#/definitions/models.ProductBarcode'
     type: object
   models.Purchase:
     properties:
@@ -4946,151 +5052,12 @@ definitions:
       xorder:
         type: integer
     type: object
-  smlcloudplatform_pkg_product_product_models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
-    type: object
-  smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode:
-    properties:
-      barcode:
-        minLength: 1
-        type: string
-      colorselect:
-        type: string
-      colorselecthex:
-        type: string
-      condition:
-        type: boolean
-      dividevalue:
-        type: number
-      groupcode:
-        type: string
-      groupnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      images:
-        items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'
-        type: array
-      imageuri:
-        type: string
-      isalacarte:
-        type: boolean
-      isdividend:
-        type: boolean
-      issplitunitprint:
-        type: boolean
-      issumpoint:
-        type: boolean
-      isusesubbarcodes:
-        type: boolean
-      itemcode:
-        type: string
-      itemtype:
-        type: integer
-      itemunitcode:
-        type: string
-      itemunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      itemunitsize:
-        type: number
-      maxdiscount:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      options:
-        items:
-          $ref: '#/definitions/models.ProductOption'
-        type: array
-      ordertypes:
-        items:
-          $ref: '#/definitions/models.ProductOrderType'
-        type: array
-      prices:
-        items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
-        type: array
-      qty:
-        type: number
-      refbarcodes:
-        items:
-          $ref: '#/definitions/models.RefProductBarcode'
-        type: array
-      refdividevalue:
-        type: number
-      refstandvalue:
-        type: number
-      refunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      standvalue:
-        type: number
-      stockbarcode:
-        type: string
-      taxtype:
-        type: integer
-      useimageorcolor:
-        type: boolean
-      vatcal:
-        type: integer
-      vattype:
-        type: integer
-      xsorts:
-        items:
-          $ref: '#/definitions/models.XSort'
-        type: array
-        uniqueItems: true
-    required:
-    - barcode
-    - names
-    type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductImage:
     properties:
       uri:
         type: string
       xorder:
         type: integer
-    type: object
-  smlcloudplatform_pkg_product_productbarcode_models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
-    type: object
-  smlcloudplatform_pkg_product_promotion_models.ProductBarcode:
-    properties:
-      barcode:
-        type: string
-      guidfixed:
-        type: string
-      itemcode:
-        type: string
-      itemunitcode:
-        type: string
-      itemunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      prices:
-        items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice'
-        type: array
     type: object
   smlcloudplatform_pkg_product_unit_models.Unit:
     properties:
@@ -13244,7 +13211,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductBarcode'
+            $ref: '#/definitions/models.ProductBarcode'
           type: array
       responses:
         "201":
@@ -15727,6 +15694,24 @@ paths:
             items:
               $ref: '#/definitions/models.ApiResponse'
             type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - Restaurant
+  /restaurant/kitchen/products:
+    get:
+      consumes:
+      - application/json
+      description: List Restaurant Kitchen product barcode
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
         "401":
           description: Unauthorized
           schema:
