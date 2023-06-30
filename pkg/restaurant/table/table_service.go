@@ -284,5 +284,5 @@ func (svc TableService) saveMasterSync(shopID string) {
 }
 
 func (svc TableService) GetModuleName() string {
-	return "restauranttable"
+	return "restaurant-table"
 }

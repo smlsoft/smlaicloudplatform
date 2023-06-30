@@ -299,5 +299,5 @@ func (svc ZoneService) saveMasterSync(shopID string) {
 }
 
 func (svc ZoneService) GetModuleName() string {
-	return "restaurantzone"
+	return "restaurant-zone"
 }
