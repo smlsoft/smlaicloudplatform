@@ -51,6 +51,7 @@ type ProductBarcodeBase struct {
 	IsALaCarte       bool                `json:"isalacarte" bson:"isalacarte"`
 	OrderTypes       *[]ProductOrderType `json:"ordertypes" bson:"ordertypes"`
 	IsSplitUnitPrint bool                `json:"issplitunitprint" bson:"issplitunitprint"`
+	IsOnlyEmployee   bool                `json:"isonlyemployee" bson:"isonlyemployee"`
 }
 
 type ProductOrderType struct {
