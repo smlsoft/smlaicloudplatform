@@ -272,8 +272,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -289,14 +289,7 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -1211,6 +1204,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -1333,8 +1328,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1352,8 +1347,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1369,11 +1362,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1482,8 +1470,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1501,8 +1489,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1518,11 +1504,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1681,8 +1662,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1700,8 +1681,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1717,11 +1696,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -2553,6 +2527,12 @@ definitions:
         minItems: 1
         type: array
         uniqueItems: true
+      remarks:
+        items:
+          items:
+            $ref: '#/definitions/models.NameX'
+          type: array
+        type: array
     required:
     - names
     - prices
@@ -3170,16 +3150,9 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
+      keynumber:
+        type: integer
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
     type: object
   models.ProductUnit:

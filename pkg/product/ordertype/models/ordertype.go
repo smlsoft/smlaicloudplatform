@@ -13,6 +13,7 @@ type OrderType struct {
 	Code                     string            `json:"code" bson:"code"`
 	Names                    *[]models.NameX   `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 	Prices                   *[]OrderTypePrice `json:"prices" bson:"prices" validate:"required,min=1,unique=Type,dive"`
+	Remarks                  []*[]models.NameX `json:"remarks" bson:"remarks"`
 }
 
 type OrderTypePrice struct {
