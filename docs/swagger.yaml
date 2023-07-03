@@ -906,15 +906,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.Detail:
     properties:
@@ -1207,8 +1204,6 @@ definitions:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -2245,15 +2240,12 @@ definitions:
     properties:
       code:
         type: string
+      guidfixed:
+        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
-        type: array
-        uniqueItems: true
-      shelf:
-        items:
-          $ref: '#/definitions/models.Shelf'
         type: array
         uniqueItems: true
     required:
@@ -2965,7 +2957,7 @@ definitions:
         type: boolean
       isdividend:
         type: boolean
-      isonlyemployee:
+      isonlystaff:
         type: boolean
       issplitunitprint:
         type: boolean
@@ -3069,7 +3061,7 @@ definitions:
         type: boolean
       isdividend:
         type: boolean
-      isonlyemployee:
+      isonlystaff:
         type: boolean
       issplitunitprint:
         type: boolean

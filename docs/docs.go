@@ -29419,17 +29419,13 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
                 "code": {
+                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -29868,9 +29864,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -31380,19 +31373,15 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "guidfixed": {
+                    "type": "string"
+                },
                 "names": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "shelf": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.Shelf"
                     }
                 }
             }
@@ -32443,7 +32432,7 @@ const docTemplate = `{
                 "isdividend": {
                     "type": "boolean"
                 },
-                "isonlyemployee": {
+                "isonlystaff": {
                     "type": "boolean"
                 },
                 "issplitunitprint": {
@@ -32597,7 +32586,7 @@ const docTemplate = `{
                 "isdividend": {
                     "type": "boolean"
                 },
-                "isonlyemployee": {
+                "isonlystaff": {
                     "type": "boolean"
                 },
                 "issplitunitprint": {
