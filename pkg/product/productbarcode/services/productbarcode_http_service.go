@@ -273,6 +273,16 @@ func (svc ProductBarcodeHttpService) DeleteProductBarcode(shopID string, guid st
 		return errors.New("document not found")
 	}
 
+	docCount, err := svc.repo.CountByRefBarcode(shopID, findDoc.Barcode)
+
+	if err != nil {
+		return err
+	}
+
+	if docCount > 1 {
+		return errors.New("document has refenced")
+	}
+
 	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
 	if err != nil {
 		return err
@@ -681,11 +691,39 @@ func (svc ProductBarcodeHttpService) XSortsSave(shopID string, authUsername stri
 
 func (svc ProductBarcodeHttpService) DeleteProductBarcodeByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
+	findDocs, err := svc.repo.FindByGuids(shopID, GUIDs)
+
+	if err != nil {
+		return err
+	}
+
+	if len(findDocs) < 1 {
+		return nil
+	}
+
+	for _, findDoc := range findDocs {
+
+		if len(findDoc.GuidFixed) < 1 {
+			continue
+		}
+
+		docCount, err := svc.repo.CountByRefBarcode(shopID, findDoc.Barcode)
+
+		if err != nil {
+			return err
+		}
+
+		if docCount > 1 {
+			return errors.New("document has refenced")
+		}
+
+	}
+
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
 	}
 
-	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	err = svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
