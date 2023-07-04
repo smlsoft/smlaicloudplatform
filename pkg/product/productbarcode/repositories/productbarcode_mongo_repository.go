@@ -17,6 +17,7 @@ type IProductBarcodeRepository interface {
 	Count(shopID string) (int, error)
 	CountByRefBarcode(shopID string, refBarcode string) (int, error)
 	CountByRefGuids(shopID string, GUIDs []string) (int, error)
+	CountByUnitCodes(shopID string, unitCodes []string) (int, error)
 	Create(doc models.ProductBarcodeDoc) (string, error)
 	CreateInBatch(docList []models.ProductBarcodeDoc) error
 	Update(shopID string, guid string, doc models.ProductBarcodeDoc) error
@@ -92,6 +93,11 @@ func (repo ProductBarcodeRepository) CountByRefGuids(shopID string, GUIDs []stri
 	}
 
 	return repo.pst.Count(models.ProductBarcodeInfo{}, filters)
+}
+
+func (repo ProductBarcodeRepository) CountByUnitCodes(shopID string, unitCodes []string) (int, error) {
+
+	return repo.CountByInKeys(shopID, "itemunitcode", unitCodes)
 }
 
 func (repo ProductBarcodeRepository) UpdateParentGuidByGuids(shopID string, parentGUID string, guids []string) error {

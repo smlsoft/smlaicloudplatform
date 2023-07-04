@@ -10,11 +10,9 @@ import (
 	productbarcode_repositories "smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/product/unit/models"
 	"smlcloudplatform/pkg/product/unit/repositories"
-	"smlcloudplatform/pkg/requestapi"
 	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
-	"strings"
 	"time"
 
 	"github.com/samber/lo"
@@ -27,8 +25,8 @@ type IUnitHttpService interface {
 	CreateUnit(shopID string, authUsername string, doc models.Unit) (string, error)
 	UpdateUnit(shopID string, guid string, authUsername string, doc models.Unit) error
 	UpdateFieldUnit(shopID string, guid string, authUsername string, doc models.Unit) error
-	DeleteUnit(shopID string, guid string, authHeader string, authUsername string) error
-	DeleteUnitByGUIDs(shopID string, authHeader string, authUsername string, GUIDs []string) error
+	DeleteUnit(shopID string, guid string, authUsername string) error
+	DeleteUnitByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoUnit(shopID string, guid string) (models.UnitInfo, error)
 	InfoUnitWTFArray(shopID string, unitCodes []string) ([]interface{}, error)
 	InfoWTFArrayMaster(codes []string) ([]interface{}, error)
@@ -181,35 +179,21 @@ func (svc UnitHttpService) UpdateFieldUnit(shopID string, guid string, authUsern
 	return nil
 }
 
-// func (svc UnitHttpService) existsUnitRefInProduct(authHeader, unitCode string) (bool, error) {
-// 	products, err := svc.getProductByUnit(authHeader, []string{unitCode})
-
-// 	if err != nil {
-// 		return true, fmt.Errorf("error check unit ref product: %s", err.Error())
-// 	}
-
-// 	if len(products) > 0 {
-// 		return true, fmt.Errorf("unit code %s is ref by product", unitCode)
-// 	}
-
-// 	return false, nil
-// }
-
 func (svc UnitHttpService) existsUnitRefInProduct(shopID, unitCode string) (bool, error) {
-	_, pagination, err := svc.repoProductBarcode.FindPageByUnits(shopID, []string{unitCode}, micromodels.Pageable{Page: 1, Limit: 1})
+	docCount, err := svc.repoProductBarcode.CountByUnitCodes(shopID, []string{unitCode})
 
 	if err != nil {
-		return true, fmt.Errorf("error check unit ref product: %s", err.Error())
+		return true, err
 	}
 
-	if pagination.Total > 0 {
-		return true, fmt.Errorf("unit code %s is ref by product", unitCode)
+	if docCount > 0 {
+		return true, fmt.Errorf("unit code %s is referenced by product", unitCode)
 	}
 
 	return false, nil
 }
 
-func (svc UnitHttpService) deleteByUnitCode(shopID, guid, authHeader, authUsername string) error {
+func (svc UnitHttpService) deleteByUnitCode(shopID, guid, authUsername string) error {
 
 	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
@@ -221,10 +205,10 @@ func (svc UnitHttpService) deleteByUnitCode(shopID, guid, authHeader, authUserna
 		return nil
 	}
 
-	existsInProduct, _ := svc.existsUnitRefInProduct(authHeader, findDoc.UnitCode)
+	existsInProduct, err := svc.existsUnitRefInProduct(shopID, findDoc.UnitCode)
 
 	if existsInProduct {
-		return fmt.Errorf("unit code \"%s\" is referenced", findDoc.UnitCode)
+		return err
 	}
 
 	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
@@ -235,9 +219,9 @@ func (svc UnitHttpService) deleteByUnitCode(shopID, guid, authHeader, authUserna
 	return nil
 }
 
-func (svc UnitHttpService) DeleteUnit(shopID, guid, authHeader, authUsername string) error {
+func (svc UnitHttpService) DeleteUnit(shopID, guid, authUsername string) error {
 
-	err := svc.deleteByUnitCode(shopID, guid, authHeader, authUsername)
+	err := svc.deleteByUnitCode(shopID, guid, authUsername)
 
 	if err != nil {
 		return err
@@ -248,27 +232,40 @@ func (svc UnitHttpService) DeleteUnit(shopID, guid, authHeader, authUsername str
 	return nil
 }
 
-func (svc UnitHttpService) DeleteUnitByGUIDs(shopID, authHeader, authUsername string, GUIDs []string) error {
+func (svc UnitHttpService) DeleteUnitByGUIDs(shopID, authUsername string, GUIDs []string) error {
 
-	// deleteFilterQuery := map[string]interface{}{
-	// 	"guidfixed": bson.M{"$in": GUIDs},
-	// }
+	findDocs, err := svc.repo.FindByGuids(shopID, GUIDs)
 
-	// err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
-	// if err != nil {
-	// 	return err
-	// }
+	if err != nil {
+		return err
+	}
 
-	for idx, guid := range GUIDs {
-		if idx == 1 {
-			return errors.New("test rollback")
-		}
+	if len(findDocs) == 0 {
+		return nil
+	}
 
-		err := svc.DeleteUnit(shopID, guid, authHeader, authUsername)
+	unitCodes := []string{}
+	for _, v := range findDocs {
+		unitCodes = append(unitCodes, v.UnitCode)
+	}
 
-		if err != nil {
-			return err
-		}
+	docCount, err := svc.repoProductBarcode.CountByUnitCodes(shopID, unitCodes)
+
+	if err != nil {
+		return err
+	}
+
+	if docCount > 0 {
+		return fmt.Errorf("unit code is referenced by product")
+	}
+
+	deleteFilterQuery := map[string]interface{}{
+		"guidfixed": bson.M{"$in": GUIDs},
+	}
+
+	err = svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	if err != nil {
+		return err
 	}
 
 	svc.saveMasterSync(shopID)
@@ -513,13 +510,4 @@ func (svc UnitHttpService) saveMasterSync(shopID string) {
 
 func (svc UnitHttpService) GetModuleName() string {
 	return "productunit"
-}
-
-func (svc UnitHttpService) getProductByUnit(authHeader string, unitCodes []string) ([]interface{}, error) {
-
-	reqCodes := strings.Join(unitCodes, ",")
-
-	url := fmt.Sprintf("%s/product/barcode/units?codes=%s", svc.unitServiceConfig.ProductHost(), reqCodes)
-
-	return requestapi.Get(url, authHeader)
 }

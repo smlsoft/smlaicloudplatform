@@ -22,6 +22,7 @@ type IUnitRepository interface {
 	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.UnitInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.UnitDoc, error)
+	FindByGuids(shopID string, guids []string) ([]models.UnitDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.UnitItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.UnitDoc, error)

@@ -10,6 +10,8 @@ import (
 
 type ICRUDRepository[T any] interface {
 	Count(shopID string) (int, error)
+	CountByKey(shopID string, keyName string, keyValue []string) (int, error)
+	CountByInKeys(shopID string, keyName string, keyValues []string) (int, error)
 	Create(doc T) (string, error)
 	CreateInBatch(docList []T) error
 	Update(shopID string, guid string, doc T) error
@@ -41,6 +43,28 @@ func (repo CrudRepository[T]) Count(shopID string) (int, error) {
 		return 0, err
 	}
 	return count, nil
+}
+
+func (repo CrudRepository[T]) CountByKey(shopID string, keyName string, keyValue []string) (int, error) {
+
+	filters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+		keyName:     bson.M{"$in": keyValue},
+	}
+
+	return repo.pst.Count(new(T), filters)
+}
+
+func (repo CrudRepository[T]) CountByInKeys(shopID string, keyName string, keyValues []string) (int, error) {
+
+	filters := bson.M{
+		"shopid":    shopID,
+		"deletedat": bson.M{"$exists": false},
+		keyName:     bson.M{"$in": keyValues},
+	}
+
+	return repo.pst.Count(new(T), filters)
 }
 
 func (repo CrudRepository[T]) Create(doc T) (string, error) {
