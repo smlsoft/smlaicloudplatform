@@ -16,6 +16,7 @@ import (
 type IProductBarcodeRepository interface {
 	Count(shopID string) (int, error)
 	CountByRefBarcode(shopID string, refBarcode string) (int, error)
+	CountByRefGuids(shopID string, GUIDs []string) (int, error)
 	Create(doc models.ProductBarcodeDoc) (string, error)
 	CreateInBatch(docList []models.ProductBarcodeDoc) error
 	Update(shopID string, guid string, doc models.ProductBarcodeDoc) error
@@ -77,6 +78,17 @@ func (repo ProductBarcodeRepository) CountByRefBarcode(shopID string, refBarcode
 		"shopid":              shopID,
 		"deletedat":           bson.M{"$exists": false},
 		"refbarcodes.barcode": refBarcode,
+	}
+
+	return repo.pst.Count(models.ProductBarcodeInfo{}, filters)
+}
+
+func (repo ProductBarcodeRepository) CountByRefGuids(shopID string, GUIDs []string) (int, error) {
+
+	filters := bson.M{
+		"shopid":                shopID,
+		"deletedat":             bson.M{"$exists": false},
+		"refbarcodes.guidfixed": bson.M{"$in": GUIDs},
 	}
 
 	return repo.pst.Count(models.ProductBarcodeInfo{}, filters)

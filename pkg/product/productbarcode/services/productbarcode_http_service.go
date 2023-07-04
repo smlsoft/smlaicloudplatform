@@ -691,32 +691,14 @@ func (svc ProductBarcodeHttpService) XSortsSave(shopID string, authUsername stri
 
 func (svc ProductBarcodeHttpService) DeleteProductBarcodeByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
-	findDocs, err := svc.repo.FindByGuids(shopID, GUIDs)
+	docCount, err := svc.repo.CountByRefGuids(shopID, GUIDs)
 
 	if err != nil {
 		return err
 	}
 
-	if len(findDocs) < 1 {
-		return nil
-	}
-
-	for _, findDoc := range findDocs {
-
-		if len(findDoc.GuidFixed) < 1 {
-			continue
-		}
-
-		docCount, err := svc.repo.CountByRefBarcode(shopID, findDoc.Barcode)
-
-		if err != nil {
-			return err
-		}
-
-		if docCount > 1 {
-			return errors.New("document has refenced")
-		}
-
+	if docCount > 0 {
+		return errors.New("document has refenced")
 	}
 
 	deleteFilterQuery := map[string]interface{}{
