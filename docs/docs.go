@@ -28630,8 +28630,12 @@ const docTemplate = `{
                 "code": {
                     "type": "integer"
                 },
-                "guidfixed": {
-                    "type": "string"
+                "departments": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Department"
+                    }
                 },
                 "location": {
                     "$ref": "#/definitions/models.Location"
@@ -29419,13 +29423,17 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
+            "required": [
+                "names"
+            ],
             "properties": {
                 "code": {
-                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -31373,15 +31381,19 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
-                "guidfixed": {
-                    "type": "string"
-                },
                 "names": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "shelf": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Shelf"
                     }
                 }
             }

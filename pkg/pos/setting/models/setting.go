@@ -23,8 +23,6 @@ type Setting struct {
 type Branch struct {
 	models.DocIdentity `bson:"inline"`
 	Code               uint16          `json:"code" bson:"code"`
-	Telephone          string          `json:"telephone" bson:"telephone" validate:"max=100"`
-	Location           Location        `json:"location" bson:"location"`
 	Names              *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 }
 
@@ -35,9 +33,8 @@ type Warehouse struct {
 }
 
 type Location struct {
-	models.DocIdentity `bson:"inline"`
-	Code               string          `json:"code" bson:"code"`
-	Names              *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	Code  string          `json:"code" bson:"code"`
+	Names *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 }
 
 type SettingInfo struct {

@@ -367,8 +367,11 @@ definitions:
     properties:
       code:
         type: integer
-      guidfixed:
-        type: string
+      departments:
+        items:
+          $ref: '#/definitions/models.Department'
+        type: array
+        uniqueItems: true
       location:
         $ref: '#/definitions/models.Location'
       names:
@@ -906,12 +909,15 @@ definitions:
   models.Department:
     properties:
       code:
-        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
   models.Detail:
     properties:
@@ -2240,12 +2246,15 @@ definitions:
     properties:
       code:
         type: string
-      guidfixed:
-        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
+        type: array
+        uniqueItems: true
+      shelf:
+        items:
+          $ref: '#/definitions/models.Shelf'
         type: array
         uniqueItems: true
     required:
