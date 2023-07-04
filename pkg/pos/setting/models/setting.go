@@ -22,7 +22,7 @@ type Setting struct {
 
 type Branch struct {
 	models.DocIdentity `bson:"inline"`
-	Code               uint16          `json:"code" bson:"code"`
+	Code               string          `json:"code" bson:"code"`
 	Names              *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
 }
 
