@@ -45,12 +45,12 @@ func (repo CrudRepository[T]) Count(shopID string) (int, error) {
 	return count, nil
 }
 
-func (repo CrudRepository[T]) CountByKey(shopID string, keyName string, keyValue []string) (int, error) {
+func (repo CrudRepository[T]) CountByKey(shopID string, keyName string, keyValue string) (int, error) {
 
 	filters := bson.M{
 		"shopid":    shopID,
 		"deletedat": bson.M{"$exists": false},
-		keyName:     bson.M{"$in": keyValue},
+		keyName:     keyValue,
 	}
 
 	return repo.pst.Count(new(T), filters)

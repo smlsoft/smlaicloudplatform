@@ -8,6 +8,7 @@ import (
 	"smlcloudplatform/pkg/config"
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
+	productbarcode_repositories "smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/product/productgroup/models"
 	"smlcloudplatform/pkg/product/productgroup/repositories"
 	"smlcloudplatform/pkg/product/productgroup/services"
@@ -27,9 +28,10 @@ func NewProductGroupHttp(ms *microservice.Microservice, cfg config.IConfig) Prod
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := repositories.NewProductGroupRepository(pst)
+	repoProductBarcode := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewProductGroupHttpService(repo, cfg.ProductGroupServiceConfig(), masterSyncCacheRepo)
+	svc := services.NewProductGroupHttpService(repo, repoProductBarcode, cfg.ProductGroupServiceConfig(), masterSyncCacheRepo)
 
 	return ProductGroupHttp{
 		ms:  ms,
@@ -197,9 +199,7 @@ func (h ProductGroupHttp) DeleteProductGroup(ctx microservice.IContext) error {
 
 	id := ctx.Param("id")
 
-	authHeader := ctx.Header("Authorization")
-
-	err := h.svc.DeleteProductGroup(shopID, id, authHeader, authUsername)
+	err := h.svc.DeleteProductGroup(shopID, id, authUsername)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
@@ -237,9 +237,8 @@ func (h ProductGroupHttp) DeleteProductGroupByGUIDs(ctx microservice.IContext) e
 		ctx.ResponseError(400, err.Error())
 		return err
 	}
-	authHeader := ctx.Header("Authorization")
 
-	err = h.svc.DeleteProductGroupByGUIDs(shopID, authUsername, authHeader, docReq)
+	err = h.svc.DeleteProductGroupByGUIDs(shopID, authUsername, docReq)
 
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())

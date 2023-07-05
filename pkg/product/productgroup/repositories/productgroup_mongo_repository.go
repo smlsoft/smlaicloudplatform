@@ -19,6 +19,7 @@ type IProductGroupRepository interface {
 	Delete(shopID string, username string, filters map[string]interface{}) error
 	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductGroupInfo, mongopagination.PaginationData, error)
 	FindByGuid(shopID string, guid string) (models.ProductGroupDoc, error)
+	FindByGuids(shopID string, guids []string) ([]models.ProductGroupDoc, error)
 
 	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.ProductGroupItemGuid, error)
 	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.ProductGroupDoc, error)

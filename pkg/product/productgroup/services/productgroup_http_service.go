@@ -9,12 +9,12 @@ import (
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/productgroup/models"
 	"smlcloudplatform/pkg/product/productgroup/repositories"
-	"smlcloudplatform/pkg/requestapi"
 	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
-	"strings"
 	"time"
+
+	productbarcode_repositories "smlcloudplatform/pkg/product/productbarcode/repositories"
 
 	"github.com/userplant/mongopagination"
 	"go.mongodb.org/mongo-driver/bson"
@@ -25,8 +25,8 @@ type IProductGroupHttpService interface {
 	SaveProductGroup(shopID string, authUsername string, doc models.ProductGroup) (string, error)
 	CreateProductGroup(shopID string, authUsername string, doc models.ProductGroup) (string, error)
 	UpdateProductGroup(shopID string, guid string, authUsername string, doc models.ProductGroup) error
-	DeleteProductGroup(shopID string, guid string, authHeader string, authUsername string) error
-	DeleteProductGroupByGUIDs(shopID string, authHeader string, authUsername string, GUIDs []string) error
+	DeleteProductGroup(shopID string, guid string, authUsername string) error
+	DeleteProductGroupByGUIDs(shopID string, authUsername string, GUIDs []string) error
 	InfoProductGroup(shopID string, guid string) (models.ProductGroupInfo, error)
 	InfoWTFArray(shopID string, unitCodes []string) ([]interface{}, error)
 	SearchProductGroup(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductGroupInfo, mongopagination.PaginationData, error)
@@ -37,18 +37,24 @@ type IProductGroupHttpService interface {
 }
 
 type ProductGroupHttpService struct {
-	repo repositories.IProductGroupRepository
-
-	syncCacheRepo mastersync.IMasterSyncCacheRepository
+	repo               repositories.IProductGroupRepository
+	repoProductBarcode productbarcode_repositories.IProductBarcodeRepository
+	syncCacheRepo      mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.ProductGroupActivity, models.ProductGroupDeleteActivity]
 
 	productGroupServiceConfig config.IProductGroupServiceConfig
 }
 
-func NewProductGroupHttpService(repo repositories.IProductGroupRepository, productGroupServiceConfig config.IProductGroupServiceConfig, syncCacheRepo mastersync.IMasterSyncCacheRepository) *ProductGroupHttpService {
+func NewProductGroupHttpService(
+	repo repositories.IProductGroupRepository,
+	repoProductBarcode productbarcode_repositories.IProductBarcodeRepository,
+	productGroupServiceConfig config.IProductGroupServiceConfig,
+	syncCacheRepo mastersync.IMasterSyncCacheRepository,
+) *ProductGroupHttpService {
 
 	insSvc := &ProductGroupHttpService{
 		repo:                      repo,
+		repoProductBarcode:        repoProductBarcode,
 		syncCacheRepo:             syncCacheRepo,
 		productGroupServiceConfig: productGroupServiceConfig,
 	}
@@ -161,10 +167,25 @@ func (svc ProductGroupHttpService) update(shopID string, authUsername string, gu
 	return nil
 }
 
-func (svc ProductGroupHttpService) DeleteProductGroup(shopID, guid, authHeader, authUsername string) error {
+func (svc ProductGroupHttpService) DeleteProductGroup(shopID, guid, authUsername string) error {
 
-	err := svc.deleteByCode(shopID, guid, authHeader, authUsername)
+	findDoc, err := svc.repo.FindByGuid(shopID, guid)
 
+	if err != nil {
+		return err
+	}
+
+	if findDoc.ID == primitive.NilObjectID {
+		return nil
+	}
+
+	existsInProduct, _ := svc.existsGroupRefInProduct(shopID, []string{findDoc.Code})
+
+	if existsInProduct {
+		return fmt.Errorf("group code \"%s\" is referenced in product barcode", findDoc.Code)
+	}
+
+	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
 	if err != nil {
 		return err
 	}
@@ -174,19 +195,39 @@ func (svc ProductGroupHttpService) DeleteProductGroup(shopID, guid, authHeader, 
 	return nil
 }
 
-func (svc ProductGroupHttpService) DeleteProductGroupByGUIDs(shopID, authHeader, authUsername string, GUIDs []string) error {
+func (svc ProductGroupHttpService) DeleteProductGroupByGUIDs(shopID, authUsername string, GUIDs []string) error {
 
-	for idx, guid := range GUIDs {
-		if idx == 1 {
-			return errors.New("test rollback")
-		}
+	findDocs, err := svc.repo.FindByGuids(shopID, GUIDs)
 
-		err := svc.DeleteProductGroup(shopID, guid, authHeader, authUsername)
-
-		if err != nil {
-			return err
-		}
+	if err != nil {
+		return err
 	}
+
+	if len(findDocs) == 0 {
+		return nil
+	}
+
+	groupCodes := []string{}
+	for _, v := range findDocs {
+		groupCodes = append(groupCodes, v.Code)
+	}
+
+	existsInProduct, _ := svc.existsGroupRefInProduct(shopID, groupCodes)
+
+	if existsInProduct {
+		return fmt.Errorf("referenced in product")
+	}
+
+	deleteFilterQuery := map[string]interface{}{
+		"guidfixed": bson.M{"$in": GUIDs},
+	}
+
+	err = svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	if err != nil {
+		return err
+	}
+
+	svc.saveMasterSync(shopID)
 
 	return nil
 }
@@ -244,16 +285,7 @@ func (svc ProductGroupHttpService) SearchProductGroupStep(shopID string, langCod
 		"names.name",
 	}
 
-	selectFields := map[string]interface{}{
-		"guidfixed": 1,
-		"code":      1,
-	}
-
-	if langCode != "" {
-		selectFields["names"] = bson.M{"$elemMatch": bson.M{"code": langCode}}
-	} else {
-		selectFields["names"] = 1
-	}
+	selectFields := map[string]interface{}{}
 
 	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
@@ -390,51 +422,16 @@ func (svc ProductGroupHttpService) GetModuleName() string {
 	return "productGroup"
 }
 
-func (svc ProductGroupHttpService) existsUnitRefInProduct(authHeader, groupCode string) (bool, error) {
-	products, err := svc.getProductByGroup(authHeader, []string{groupCode})
+func (svc ProductGroupHttpService) existsGroupRefInProduct(shopID string, groupCodes []string) (bool, error) {
+	docCount, err := svc.repoProductBarcode.CountByGroupCode(shopID, groupCodes)
 
 	if err != nil {
-		return true, fmt.Errorf("error check group ref product: %s", err.Error())
+		return true, err
 	}
 
-	if len(products) > 0 {
-		return true, fmt.Errorf("group code %s is ref by product", groupCode)
+	if docCount > 0 {
+		return true, fmt.Errorf("referenced in product barcode")
 	}
 
 	return false, nil
-}
-
-func (svc ProductGroupHttpService) deleteByCode(shopID, guid, authHeader, authUsername string) error {
-
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
-
-	if err != nil {
-		return err
-	}
-
-	if findDoc.ID == primitive.NilObjectID {
-		return errors.New("document not found")
-	}
-
-	existsInProduct, _ := svc.existsUnitRefInProduct(authHeader, findDoc.Code)
-
-	if existsInProduct {
-		return fmt.Errorf("group code \"%s\" is referenced", findDoc.Code)
-	}
-
-	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (svc ProductGroupHttpService) getProductByGroup(authHeader string, groupCodes []string) ([]interface{}, error) {
-
-	reqCodes := strings.Join(groupCodes, ",")
-
-	url := fmt.Sprintf("%s/product/barcode/groups?codes=%s", svc.productGroupServiceConfig.ProductHost(), reqCodes)
-
-	return requestapi.Get(url, authHeader)
 }

@@ -18,6 +18,7 @@ type IProductBarcodeRepository interface {
 	CountByRefBarcode(shopID string, refBarcode string) (int, error)
 	CountByRefGuids(shopID string, GUIDs []string) (int, error)
 	CountByUnitCodes(shopID string, unitCodes []string) (int, error)
+	CountByGroupCode(shopID string, unitCodes []string) (int, error)
 	Create(doc models.ProductBarcodeDoc) (string, error)
 	CreateInBatch(docList []models.ProductBarcodeDoc) error
 	Update(shopID string, guid string, doc models.ProductBarcodeDoc) error
@@ -75,29 +76,22 @@ func NewProductBarcodeRepository(pst microservice.IPersisterMongo, cache microse
 
 func (repo ProductBarcodeRepository) CountByRefBarcode(shopID string, refBarcode string) (int, error) {
 
-	filters := bson.M{
-		"shopid":              shopID,
-		"deletedat":           bson.M{"$exists": false},
-		"refbarcodes.barcode": refBarcode,
-	}
-
-	return repo.pst.Count(models.ProductBarcodeInfo{}, filters)
+	return repo.CountByKey(shopID, "refbarcodes.barcode", refBarcode)
 }
 
 func (repo ProductBarcodeRepository) CountByRefGuids(shopID string, GUIDs []string) (int, error) {
 
-	filters := bson.M{
-		"shopid":                shopID,
-		"deletedat":             bson.M{"$exists": false},
-		"refbarcodes.guidfixed": bson.M{"$in": GUIDs},
-	}
-
-	return repo.pst.Count(models.ProductBarcodeInfo{}, filters)
+	return repo.CountByInKeys(shopID, "refbarcodes.guidfixed", GUIDs)
 }
 
 func (repo ProductBarcodeRepository) CountByUnitCodes(shopID string, unitCodes []string) (int, error) {
 
 	return repo.CountByInKeys(shopID, "itemunitcode", unitCodes)
+}
+
+func (repo ProductBarcodeRepository) CountByGroupCode(shopID string, unitCodes []string) (int, error) {
+
+	return repo.CountByInKeys(shopID, "groupcode", unitCodes)
 }
 
 func (repo ProductBarcodeRepository) UpdateParentGuidByGuids(shopID string, parentGUID string, guids []string) error {
