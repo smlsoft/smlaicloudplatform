@@ -12500,6 +12500,12 @@
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "description": "item type",
+                        "name": "itemtype",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "Search Value",
                         "name": "q",
@@ -12763,6 +12769,12 @@
                         "type": "string",
                         "description": "order types ex. a01,a02",
                         "name": "ordertypes",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "item type",
+                        "name": "itemtype",
                         "in": "query"
                     },
                     {
@@ -28141,6 +28153,7 @@
             "type": "object",
             "required": [
                 "code",
+                "guidfixed",
                 "name1"
             ],
             "properties": {
@@ -28486,8 +28499,8 @@
                 "isprimary": {
                     "type": "boolean"
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "name1": {
                     "type": "string",
@@ -28509,17 +28522,7 @@
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "unitcode": {
@@ -28622,10 +28625,17 @@
             ],
             "properties": {
                 "code": {
-                    "type": "string"
+                    "type": "integer"
                 },
-                "guidfixed": {
-                    "type": "string"
+                "departments": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Department"
+                    }
+                },
+                "location": {
+                    "$ref": "#/definitions/models.Location"
                 },
                 "names": {
                     "type": "array",
@@ -28634,6 +28644,10 @@
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "telephone": {
+                    "type": "string",
+                    "maxLength": 100
                 }
             }
         },
@@ -28723,6 +28737,7 @@
         "models.CategoryImport": {
             "type": "object",
             "required": [
+                "guidfixed",
                 "names"
             ],
             "properties": {
@@ -28786,6 +28801,8 @@
         "models.CategoryImportInfo": {
             "type": "object",
             "required": [
+                "guidfixed",
+                "guidfixed",
                 "names"
             ],
             "properties": {
@@ -28898,6 +28915,9 @@
         },
         "models.ChartOfAccountInfo": {
             "type": "object",
+            "required": [
+                "guidfixed"
+            ],
             "properties": {
                 "accountbalancetype": {
                     "description": "ด้านบัญชี 1=เดบิต,2=เครดิต",
@@ -29407,6 +29427,7 @@
         "models.Department": {
             "type": "object",
             "required": [
+                "code",
                 "names"
             ],
             "properties": {
@@ -29695,6 +29716,9 @@
         },
         "models.DocumentImageInfo": {
             "type": "object",
+            "required": [
+                "guidfixed"
+            ],
             "properties": {
                 "cloneimagefrom": {
                     "type": "string"
@@ -30039,8 +30063,8 @@
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -30065,9 +30089,6 @@
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -30089,13 +30110,6 @@
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -30145,6 +30159,7 @@
         "models.InventoryActivity": {
             "type": "object",
             "required": [
+                "guidfixed",
                 "name1"
             ],
             "properties": {
@@ -30248,8 +30263,8 @@
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -30274,9 +30289,6 @@
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -30298,13 +30310,6 @@
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -30437,6 +30442,7 @@
         "models.InventoryInfo": {
             "type": "object",
             "required": [
+                "guidfixed",
                 "name1"
             ],
             "properties": {
@@ -30534,8 +30540,8 @@
                     "maximum": 125,
                     "minimum": -125
                 },
-                "memberprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -30560,9 +30566,6 @@
                     "type": "string",
                     "maxLength": 255
                 },
-                "normalprice": {
-                    "type": "number"
-                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -30584,13 +30587,6 @@
                     "maxLength": 50
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -30854,6 +30850,7 @@
         "models.InventoryOptionMainInfo": {
             "type": "object",
             "required": [
+                "guidfixed",
                 "name1",
                 "names"
             ],
@@ -31064,6 +31061,7 @@
         "models.JournalBookInfo": {
             "type": "object",
             "required": [
+                "guidfixed",
                 "name1"
             ],
             "properties": {
@@ -31143,6 +31141,9 @@
         },
         "models.JournalInfo": {
             "type": "object",
+            "required": [
+                "guidfixed"
+            ],
             "properties": {
                 "accountdescription": {
                     "type": "string"
@@ -31290,28 +31291,10 @@
                 }
             }
         },
-        "models.KitchenBarcode": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                }
-            }
-        },
         "models.KitchenInfo": {
             "type": "object",
             "required": [
+                "guidfixed",
                 "names"
             ],
             "properties": {
@@ -31379,20 +31362,12 @@
         },
         "models.Location": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
-                "code": {
+                "lat": {
                     "type": "string"
                 },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
+                "lng": {
+                    "type": "string"
                 }
             }
         },
@@ -31471,6 +31446,9 @@
         },
         "models.MemberInfo": {
             "type": "object",
+            "required": [
+                "guidfixed"
+            ],
             "properties": {
                 "address": {
                     "type": "string"
@@ -32118,6 +32096,7 @@
         "models.PaymentMasterInfo": {
             "type": "object",
             "required": [
+                "guidfixed",
                 "name1"
             ],
             "properties": {
@@ -32243,6 +32222,7 @@
         "models.PrinterInfo": {
             "type": "object",
             "required": [
+                "guidfixed",
                 "names"
             ],
             "properties": {
@@ -32397,14 +32377,154 @@
         },
         "models.ProductBarcode": {
             "type": "object",
+            "required": [
+                "barcode",
+                "names"
+            ],
             "properties": {
                 "barcode": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "colorselect": {
                     "type": "string"
                 },
-                "kitchens": {
+                "colorselecthex": {
+                    "type": "string"
+                },
+                "condition": {
+                    "type": "boolean"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
+                "groupcode": {
+                    "type": "string"
+                },
+                "groupnames": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.KitchenBarcode"
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage"
+                    }
+                },
+                "imageuri": {
+                    "type": "string"
+                },
+                "isalacarte": {
+                    "type": "boolean"
+                },
+                "isdividend": {
+                    "type": "boolean"
+                },
+                "isonlystaff": {
+                    "type": "boolean"
+                },
+                "issplitunitprint": {
+                    "type": "boolean"
+                },
+                "issumpoint": {
+                    "type": "boolean"
+                },
+                "isusesubbarcodes": {
+                    "type": "boolean"
+                },
+                "itemcode": {
+                    "type": "string"
+                },
+                "itemtype": {
+                    "type": "integer"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "itemunitsize": {
+                    "type": "number"
+                },
+                "maxdiscount": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductOption"
+                    }
+                },
+                "ordertypes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductOrderType"
+                    }
+                },
+                "prices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductPrice"
+                    }
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "refbarcodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.RefProductBarcode"
+                    }
+                },
+                "refdividevalue": {
+                    "type": "number"
+                },
+                "refstandvalue": {
+                    "type": "number"
+                },
+                "refunitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "standvalue": {
+                    "type": "number"
+                },
+                "stockbarcode": {
+                    "type": "string"
+                },
+                "taxtype": {
+                    "type": "integer"
+                },
+                "useimageorcolor": {
+                    "type": "boolean"
+                },
+                "vatcal": {
+                    "type": "integer"
+                },
+                "vattype": {
+                    "type": "integer"
+                },
+                "xsorts": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.XSort"
                     }
                 }
             }
@@ -32726,8 +32846,14 @@
         },
         "models.ProductOrderType": {
             "type": "object",
+            "required": [
+                "guidfixed"
+            ],
             "properties": {
                 "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
                     "type": "string"
                 },
                 "names": {
@@ -32744,20 +32870,10 @@
         "models.ProductPrice": {
             "type": "object",
             "properties": {
-                "memberprice": {
-                    "type": "number"
-                },
-                "normalprice": {
-                    "type": "number"
+                "keynumber": {
+                    "type": "integer"
                 },
                 "price": {
-                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
-                    "type": "number"
-                },
-                "pricerangemaxmax": {
-                    "type": "number"
-                },
-                "pricerangemin": {
                     "type": "number"
                 }
             }
@@ -33227,6 +33343,48 @@
                 }
             }
         },
+        "models.RefProductBarcode": {
+            "type": "object",
+            "required": [
+                "barcode"
+            ],
+            "properties": {
+                "barcode": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "condition": {
+                    "type": "boolean"
+                },
+                "dividevalue": {
+                    "type": "number"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "itemunitcode": {
+                    "type": "string"
+                },
+                "itemunitnames": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "standvalue": {
+                    "type": "number"
+                }
+            }
+        },
         "models.Reference": {
             "type": "object",
             "properties": {
@@ -33285,6 +33443,9 @@
         },
         "models.RestaurantSettingsInfo": {
             "type": "object",
+            "required": [
+                "guidfixed"
+            ],
             "properties": {
                 "body": {
                     "type": "string"
@@ -33802,6 +33963,9 @@
         },
         "models.ShopInfo": {
             "type": "object",
+            "required": [
+                "guidfixed"
+            ],
             "properties": {
                 "address": {
                     "type": "string"
@@ -33912,6 +34076,7 @@
         "models.SmsTransactionInfo": {
             "type": "object",
             "required": [
+                "guidfixed",
                 "storefrontguid"
             ],
             "properties": {
@@ -34679,6 +34844,7 @@
         "models.TableInfo": {
             "type": "object",
             "required": [
+                "guidfixed",
                 "names"
             ],
             "properties": {
@@ -35318,6 +35484,7 @@
         "models.ZoneInfo": {
             "type": "object",
             "required": [
+                "guidfixed",
                 "names"
             ],
             "properties": {
@@ -35371,6 +35538,7 @@
         "smlcloudplatform_pkg_pos_setting_models.Warehouse": {
             "type": "object",
             "required": [
+                "guidfixed",
                 "names"
             ],
             "properties": {

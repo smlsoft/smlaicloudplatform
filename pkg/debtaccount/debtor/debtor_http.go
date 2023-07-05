@@ -12,6 +12,7 @@ import (
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 )
 
 type IDebtorHttp interface{}
@@ -286,14 +287,13 @@ func (h DebtorHttp) SearchDebtorPage(ctx microservice.IContext) error {
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "groups",
 			Field: "groups",
-			Type:  "array",
+			Type:  requestfilter.FieldTypeString,
 		},
 	})
-
 	docList, pagination, err := h.svc.SearchDebtor(shopID, filters, pageable)
 
 	if err != nil {
@@ -330,11 +330,11 @@ func (h DebtorHttp) SearchDebtorStep(ctx microservice.IContext) error {
 
 	lang := ctx.QueryParam("lang")
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "groups",
 			Field: "groups",
-			Type:  "array",
+			Type:  requestfilter.FieldTypeString,
 		},
 	})
 

@@ -9,6 +9,7 @@ import (
 	common "smlcloudplatform/pkg/models"
 	repositorycategory "smlcloudplatform/pkg/product/productcategory/repositories"
 	servicecategory "smlcloudplatform/pkg/product/productcategory/services"
+	"smlcloudplatform/pkg/utils/requestfilter"
 
 	repositoryproduct "smlcloudplatform/pkg/product/productbarcode/repositories"
 	serviceproduct "smlcloudplatform/pkg/product/productbarcode/services"
@@ -115,16 +116,16 @@ func (h EOrderHttp) SearchProductBarcodePage(ctx microservice.IContext) error {
 		return nil
 	}
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "isalacarte",
 			Field: "isalacarte",
-			Type:  "boolean",
+			Type:  requestfilter.FieldTypeBoolean,
 		},
 		{
 			Param: "ordertypes",
 			Field: "ordertypes.code",
-			Type:  "array",
+			Type:  requestfilter.FieldTypeString,
 		},
 	})
 

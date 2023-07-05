@@ -90,11 +90,12 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) Master
 	activityModuleManager.Add(svcProductCategory)
 
 	// Product Barcode
-	svcProductBarcode := productbarcodeService.NewProductBarcodeHttpService(productbarcodeRepo.NewProductBarcodeRepository(pst, cache), nil, nil, masterSyncCacheRepo)
+	repoProductBarcode := productbarcodeRepo.NewProductBarcodeRepository(pst, cache)
+	svcProductBarcode := productbarcodeService.NewProductBarcodeHttpService(repoProductBarcode, nil, nil, masterSyncCacheRepo)
 	activityModuleManager.Add(svcProductBarcode)
 
 	// Product Unit
-	svcProductUnit := productunitService.NewUnitHttpService(productunitRepo.NewUnitRepository(pst), productbarcodeRepo.NewProductBarcodeRepository(pst, cache), cfg.UnitServiceConfig(), masterSyncCacheRepo)
+	svcProductUnit := productunitService.NewUnitHttpService(productunitRepo.NewUnitRepository(pst), repoProductBarcode, cfg.UnitServiceConfig(), masterSyncCacheRepo)
 	activityModuleManager.Add(svcProductUnit)
 
 	// Kitchen
@@ -155,7 +156,7 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) Master
 
 	// Order type
 	repoOrdertype := ordertype_repo.NewOrderTypeRepository(pst)
-	svcOrdertype := ordertype_service.NewOrderTypeHttpService(repoOrdertype, masterSyncCacheRepo)
+	svcOrdertype := ordertype_service.NewOrderTypeHttpService(repoOrdertype, repoProductBarcode, masterSyncCacheRepo)
 	activityModuleManager.Add(svcOrdertype)
 
 	masterCacheSyncRepo := repositories.NewMasterSyncCacheRepository(cache)

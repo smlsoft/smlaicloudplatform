@@ -12,6 +12,7 @@ import (
 	mastersync "smlcloudplatform/pkg/mastersync/repositories"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 )
 
 type ICreditorHttp interface{}
@@ -287,11 +288,11 @@ func (h CreditorHttp) SearchCreditorPage(ctx microservice.IContext) error {
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "groups",
 			Field: "groups",
-			Type:  "array",
+			Type:  requestfilter.FieldTypeString,
 		},
 	})
 
@@ -331,11 +332,11 @@ func (h CreditorHttp) SearchCreditorStep(ctx microservice.IContext) error {
 
 	lang := ctx.QueryParam("lang")
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "groups",
 			Field: "groups",
-			Type:  "array",
+			Type:  requestfilter.FieldTypeString,
 		},
 	})
 

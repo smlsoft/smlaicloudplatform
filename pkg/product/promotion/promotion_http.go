@@ -11,6 +11,7 @@ import (
 	"smlcloudplatform/pkg/product/promotion/repositories"
 	"smlcloudplatform/pkg/product/promotion/services"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 )
 
 type IPromotionHttp interface{}
@@ -285,11 +286,11 @@ func (h PromotionHttp) SearchPromotionPage(ctx microservice.IContext) error {
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "promotiontype",
 			Field: "promotiontype",
-			Type:  "int",
+			Type:  requestfilter.FieldTypeInt,
 		},
 	})
 
@@ -329,11 +330,11 @@ func (h PromotionHttp) SearchPromotionStep(ctx microservice.IContext) error {
 
 	lang := ctx.QueryParam("lang")
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "promotiontype",
 			Field: "promotiontype",
-			Type:  "int",
+			Type:  requestfilter.FieldTypeInt,
 		},
 	})
 

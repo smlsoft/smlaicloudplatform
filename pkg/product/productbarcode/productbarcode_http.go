@@ -12,6 +12,7 @@ import (
 	"smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/product/productbarcode/services"
 	"smlcloudplatform/pkg/utils"
+	"smlcloudplatform/pkg/utils/requestfilter"
 	"strings"
 )
 
@@ -410,6 +411,7 @@ func (h ProductBarcodeHttp) InfoArrayMaster(ctx microservice.IContext) error {
 // @Tags		ProductBarcode
 // @Param		isalacarte		query	string		false  "is A La Carte"
 // @Param		ordertypes		query	string		false  "order types ex. a01,a02"
+// @Param		itemtype		query	int8		false  "item type"
 // @Param		q		query	string		false  "Search Value"
 // @Param		page	query	integer		false  "Page"
 // @Param		limit	query	integer		false  "Limit"
@@ -424,16 +426,21 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage(ctx microservice.IContext) 
 
 	pageable := utils.GetPageable(ctx.QueryParam)
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "isalacarte",
 			Field: "isalacarte",
-			Type:  "boolean",
+			Type:  requestfilter.FieldTypeBoolean,
 		},
 		{
 			Param: "ordertypes",
 			Field: "ordertypes.code",
-			Type:  "array",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "itemtype",
+			Field: "itemtype",
+			Type:  requestfilter.FieldTypeInt,
 		},
 	})
 
@@ -488,6 +495,7 @@ func (h ProductBarcodeHttp) SearchProductBarcodePage2(ctx microservice.IContext)
 // @Tags		ProductBarcode
 // @Param		isalacarte		query	string		false  "is A La Carte"
 // @Param		ordertypes		query	string		false  "order types ex. a01,a02"
+// @Param		itemtype		query	int8		false  "item type"
 // @Param		q		query	string		false  "Search Value"
 // @Param		offset	query	integer		false  "offset"
 // @Param		limit	query	integer		false  "limit"
@@ -505,16 +513,21 @@ func (h ProductBarcodeHttp) SearchProductBarcodeLimit(ctx microservice.IContext)
 
 	lang := ctx.QueryParam("lang")
 
-	filters := utils.GetFilters(ctx.QueryParam, []utils.FilterRequest{
+	filters := requestfilter.GenerateFilters(ctx.QueryParam, []requestfilter.FilterRequest{
 		{
 			Param: "isalacarte",
 			Field: "isalacarte",
-			Type:  "boolean",
+			Type:  requestfilter.FieldTypeBoolean,
 		},
 		{
 			Param: "ordertypes",
 			Field: "ordertypes.code",
-			Type:  "array",
+			Type:  requestfilter.FieldTypeString,
+		},
+		{
+			Param: "itemtype",
+			Field: "itemtype",
+			Type:  requestfilter.FieldTypeInt,
 		},
 	})
 
