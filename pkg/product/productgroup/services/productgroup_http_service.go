@@ -423,7 +423,7 @@ func (svc ProductGroupHttpService) GetModuleName() string {
 }
 
 func (svc ProductGroupHttpService) existsGroupRefInProduct(shopID string, groupCodes []string) (bool, error) {
-	docCount, err := svc.repoProductBarcode.CountByGroupCode(shopID, groupCodes)
+	docCount, err := svc.repoProductBarcode.CountByGroupCodes(shopID, groupCodes)
 
 	if err != nil {
 		return true, err
