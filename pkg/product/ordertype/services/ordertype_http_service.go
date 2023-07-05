@@ -8,6 +8,7 @@ import (
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/ordertype/models"
 	"smlcloudplatform/pkg/product/ordertype/repositories"
+	productbarcode_repositories "smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/services"
 	"smlcloudplatform/pkg/utils"
 	"smlcloudplatform/pkg/utils/importdata"
@@ -32,13 +33,17 @@ type IOrderTypeHttpService interface {
 }
 
 type OrderTypeHttpService struct {
-	repo repositories.IOrderTypeRepository
-
-	syncCacheRepo mastersync.IMasterSyncCacheRepository
+	repo               repositories.IOrderTypeRepository
+	repoProductBarcode productbarcode_repositories.IProductBarcodeRepository
+	syncCacheRepo      mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.OrderTypeActivity, models.OrderTypeDeleteActivity]
 }
 
-func NewOrderTypeHttpService(repo repositories.IOrderTypeRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *OrderTypeHttpService {
+func NewOrderTypeHttpService(
+	repo repositories.IOrderTypeRepository,
+	repoProductBarcode productbarcode_repositories.IProductBarcodeRepository,
+	syncCacheRepo mastersync.IMasterSyncCacheRepository,
+) *OrderTypeHttpService {
 
 	insSvc := &OrderTypeHttpService{
 		repo:          repo,
@@ -120,7 +125,13 @@ func (svc OrderTypeHttpService) DeleteOrderType(shopID string, guid string, auth
 	}
 
 	if len(findDoc.GuidFixed) < 1 {
-		return errors.New("document not found")
+		return nil
+	}
+
+	existsInProduct, _ := svc.existsOrderTypeRefInProduct(shopID, []string{guid})
+
+	if existsInProduct {
+		return fmt.Errorf("\"%s\" is referenced in product barcode", findDoc.Code)
 	}
 
 	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
@@ -134,6 +145,12 @@ func (svc OrderTypeHttpService) DeleteOrderType(shopID string, guid string, auth
 }
 
 func (svc OrderTypeHttpService) DeleteOrderTypeByGUIDs(shopID string, authUsername string, GUIDs []string) error {
+
+	existsInProduct, _ := svc.existsOrderTypeRefInProduct(shopID, GUIDs)
+
+	if existsInProduct {
+		return fmt.Errorf("referenced in product")
+	}
 
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
@@ -333,4 +350,17 @@ func (svc OrderTypeHttpService) saveMasterSync(shopID string) {
 
 func (svc OrderTypeHttpService) GetModuleName() string {
 	return "ordertype"
+}
+
+func (svc OrderTypeHttpService) existsOrderTypeRefInProduct(shopID string, GUIDs []string) (bool, error) {
+	docCount, err := svc.repoProductBarcode.CountByOrderTypes(shopID, GUIDs)
+	if err != nil {
+		return true, err
+	}
+
+	if docCount > 0 {
+		return true, fmt.Errorf("referenced in product barcode")
+	}
+
+	return false, nil
 }

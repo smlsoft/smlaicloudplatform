@@ -10,7 +10,7 @@ type ShopIdentity struct {
 }
 
 type DocIdentity struct {
-	GuidFixed string `json:"guidfixed" bson:"guidfixed" gorm:"column:guidfixed;primaryKey"`
+	GuidFixed string `json:"guidfixed" bson:"guidfixed" gorm:"column:guidfixed;primaryKey" validate:"required"`
 }
 
 type PartitionIdentity struct {

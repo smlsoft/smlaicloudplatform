@@ -10,6 +10,7 @@ import (
 	"smlcloudplatform/pkg/product/ordertype/models"
 	"smlcloudplatform/pkg/product/ordertype/repositories"
 	"smlcloudplatform/pkg/product/ordertype/services"
+	productbarcode_repositories "smlcloudplatform/pkg/product/productbarcode/repositories"
 	"smlcloudplatform/pkg/utils"
 )
 
@@ -26,9 +27,10 @@ func NewOrderTypeHttp(ms *microservice.Microservice, cfg config.IConfig) OrderTy
 	cache := ms.Cacher(cfg.CacherConfig())
 
 	repo := repositories.NewOrderTypeRepository(pst)
+	repoProductBarcode := productbarcode_repositories.NewProductBarcodeRepository(pst, cache)
 
 	masterSyncCacheRepo := mastersync.NewMasterSyncCacheRepository(cache)
-	svc := services.NewOrderTypeHttpService(repo, masterSyncCacheRepo)
+	svc := services.NewOrderTypeHttpService(repo, repoProductBarcode, masterSyncCacheRepo)
 
 	return OrderTypeHttp{
 		ms:  ms,
