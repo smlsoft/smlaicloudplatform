@@ -359,10 +359,22 @@ definitions:
     type: object
   models.Branch:
     properties:
+      businesstypes:
+        items:
+          type: string
+        type: array
       code:
         type: string
-      guidfixed:
-        type: string
+      contact:
+        $ref: '#/definitions/models.Contact'
+      departments:
+        items:
+          $ref: '#/definitions/models.Department'
+        type: array
+      languages:
+        items:
+          type: string
+        type: array
       names:
         items:
           $ref: '#/definitions/models.NameX'
@@ -370,7 +382,6 @@ definitions:
         type: array
         uniqueItems: true
     required:
-    - guidfixed
     - names
     type: object
   models.BulkInsertResponse:
@@ -1146,6 +1157,24 @@ definitions:
       success:
         type: boolean
     type: object
+  models.Employee:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+      isenabled:
+        type: boolean
+      name:
+        description: Username       string    `json:"username" bson:"username"`
+        type: string
+      profilepicture:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+    type: object
   models.EmployeeRequestPassword:
     properties:
       code:
@@ -1157,17 +1186,14 @@ definitions:
     properties:
       code:
         type: string
-      contact:
-        $ref: '#/definitions/models.Contact'
       email:
         type: string
       isenabled:
         type: boolean
       name:
+        description: Username       string    `json:"username" bson:"username"`
         type: string
       password:
-        type: string
-      pincode:
         type: string
       profilepicture:
         type: string
@@ -1180,15 +1206,12 @@ definitions:
     properties:
       code:
         type: string
-      contact:
-        $ref: '#/definitions/models.Contact'
       email:
         type: string
       isenabled:
         type: boolean
       name:
-        type: string
-      pincode:
+        description: Username       string    `json:"username" bson:"username"`
         type: string
       profilepicture:
         type: string
@@ -1201,6 +1224,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -2881,7 +2906,7 @@ definitions:
         uniqueItems: true
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       taxtype:
         description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
@@ -2933,7 +2958,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice'
         type: array
     type: object
   models.ProductBarcodeRequest:
@@ -3003,7 +3028,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       qty:
         type: number
@@ -3166,13 +3191,6 @@ definitions:
         type: number
     required:
     - guidfixed
-    type: object
-  models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
     type: object
   models.ProductUnit:
     properties:
@@ -3829,14 +3847,14 @@ definitions:
         type: string
       docformattaxinv:
         type: string
+      employees:
+        items:
+          $ref: '#/definitions/models.Employee'
+        type: array
       location:
         $ref: '#/definitions/models.Location'
       receiptform:
         type: string
-      staffs:
-        items:
-          $ref: '#/definitions/smlcloudplatform_pkg_pos_setting_models.Staff'
-        type: array
       warehouse:
         $ref: '#/definitions/smlcloudplatform_pkg_pos_setting_models.Warehouse'
     required:
@@ -3994,6 +4012,25 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
+    type: object
+  models.Staff:
+    properties:
+      cashier:
+        type: boolean
+      code:
+        type: string
+      email:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      order:
+        type: boolean
+    required:
+    - names
     type: object
   models.Status:
     properties:
@@ -4922,26 +4959,6 @@ definitions:
       success:
         type: boolean
     type: object
-  smlcloudplatform_pkg_pos_setting_models.Staff:
-    properties:
-      code:
-        type: string
-      guidfixed:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      permissions:
-        items:
-          type: string
-        type: array
-    required:
-    - guidfixed
-    - names
-    type: object
   smlcloudplatform_pkg_pos_setting_models.Warehouse:
     properties:
       code:
@@ -4980,12 +4997,26 @@ definitions:
       xorder:
         type: integer
     type: object
+  smlcloudplatform_pkg_product_product_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
+    type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductImage:
     properties:
       uri:
         type: string
       xorder:
         type: integer
+    type: object
+  smlcloudplatform_pkg_product_productbarcode_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
     type: object
   smlcloudplatform_pkg_product_unit_models.Unit:
     properties:
@@ -5084,25 +5115,6 @@ definitions:
         type: integer
     required:
     - code
-    - names
-    type: object
-  smlcloudplatform_pkg_restaurant_staff_models.Staff:
-    properties:
-      cashier:
-        type: boolean
-      code:
-        type: string
-      email:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      order:
-        type: boolean
-    required:
     - names
     type: object
   smlcloudplatform_pkg_storefront_models.Device:
@@ -16143,7 +16155,7 @@ paths:
         name: Staff
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_restaurant_staff_models.Staff'
+          $ref: '#/definitions/models.Staff'
       responses:
         "201":
           description: Created
@@ -16219,7 +16231,7 @@ paths:
         name: Staff
         required: true
         schema:
-          $ref: '#/definitions/smlcloudplatform_pkg_restaurant_staff_models.Staff'
+          $ref: '#/definitions/models.Staff'
       responses:
         "201":
           description: Created
@@ -16245,7 +16257,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/smlcloudplatform_pkg_restaurant_staff_models.Staff'
+            $ref: '#/definitions/models.Staff'
           type: array
       responses:
         "201":

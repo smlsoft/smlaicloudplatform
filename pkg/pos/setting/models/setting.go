@@ -10,19 +10,19 @@ const settingCollectionName = "posSettings"
 
 type Setting struct {
 	models.PartitionIdentity `bson:"inline"`
-	Code                     string    `json:"code" bson:"code" validate:"required"`
-	DeviceNumber             string    `json:"devicenumber" bson:"devicenumber"`
-	DocFormatTaxInv          string    `json:"docformattaxinv" bson:"docformattaxinv"`
-	DocFormatInv             string    `json:"docformatinv" bson:"docformatinv"`
-	ReceiptForm              string    `json:"receiptform" bson:"receiptform"`
-	Warehouse                Warehouse `json:"warehouse" bson:"warehouse"`
-	Location                 Location  `json:"location" bson:"location"`
-	Branch                   Branch    `json:"branch" bson:"branch"`
-	ActivePin                string    `json:"activepin" bson:"activepin"`
-	Staffs                   []Staff   `json:"staffs" bson:"staffs"`
+	Code                     string     `json:"code" bson:"code" validate:"required"`
+	DeviceNumber             string     `json:"devicenumber" bson:"devicenumber"`
+	DocFormatTaxInv          string     `json:"docformattaxinv" bson:"docformattaxinv"`
+	DocFormatInv             string     `json:"docformatinv" bson:"docformatinv"`
+	ReceiptForm              string     `json:"receiptform" bson:"receiptform"`
+	Warehouse                Warehouse  `json:"warehouse" bson:"warehouse"`
+	Location                 Location   `json:"location" bson:"location"`
+	Branch                   Branch     `json:"branch" bson:"branch"`
+	ActivePin                string     `json:"activepin" bson:"activepin"`
+	Employees                []Employee `json:"employees" bson:"employees"`
 }
 
-type Staff struct {
+type Employee struct {
 	models.DocIdentity `bson:"inline"`
 	Code               string          `json:"code" bson:"code"`
 	Names              *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`

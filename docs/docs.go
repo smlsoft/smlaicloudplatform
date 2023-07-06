@@ -17668,7 +17668,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_restaurant_staff_models.Staff"
+                            "$ref": "#/definitions/models.Staff"
                         }
                     }
                 ],
@@ -17753,7 +17753,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/smlcloudplatform_pkg_restaurant_staff_models.Staff"
+                                "$ref": "#/definitions/models.Staff"
                             }
                         }
                     }
@@ -17898,7 +17898,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smlcloudplatform_pkg_restaurant_staff_models.Staff"
+                            "$ref": "#/definitions/models.Staff"
                         }
                     }
                 ],
@@ -28627,15 +28627,32 @@ const docTemplate = `{
         "models.Branch": {
             "type": "object",
             "required": [
-                "guidfixed",
                 "names"
             ],
             "properties": {
+                "businesstypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "code": {
                     "type": "string"
                 },
-                "guidfixed": {
-                    "type": "string"
+                "contact": {
+                    "$ref": "#/definitions/models.Contact"
+                },
+                "departments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Department"
+                    }
+                },
+                "languages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "names": {
                     "type": "array",
@@ -29787,6 +29804,33 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Employee": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "isenabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Username       string    ` + "`" + `json:\"username\" bson:\"username\"` + "`" + `",
+                    "type": "string"
+                },
+                "profilepicture": {
+                    "type": "string"
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "models.EmployeeRequestPassword": {
             "type": "object",
             "properties": {
@@ -29804,9 +29848,6 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
-                "contact": {
-                    "$ref": "#/definitions/models.Contact"
-                },
                 "email": {
                     "type": "string"
                 },
@@ -29814,12 +29855,10 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "name": {
+                    "description": "Username       string    ` + "`" + `json:\"username\" bson:\"username\"` + "`" + `",
                     "type": "string"
                 },
                 "password": {
-                    "type": "string"
-                },
-                "pincode": {
                     "type": "string"
                 },
                 "profilepicture": {
@@ -29839,9 +29878,6 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
-                "contact": {
-                    "$ref": "#/definitions/models.Contact"
-                },
                 "email": {
                     "type": "string"
                 },
@@ -29849,9 +29885,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "name": {
-                    "type": "string"
-                },
-                "pincode": {
+                    "description": "Username       string    ` + "`" + `json:\"username\" bson:\"username\"` + "`" + `",
                     "type": "string"
                 },
                 "profilepicture": {
@@ -29870,6 +29904,9 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
+                },
+                "xorder": {
+                    "type": "integer"
                 }
             }
         },
@@ -32329,7 +32366,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "taxtype": {
@@ -32401,7 +32438,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice"
                     }
                 }
             }
@@ -32509,7 +32546,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "qty": {
@@ -32738,17 +32775,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
-                },
-                "price": {
-                    "type": "number"
-                }
-            }
-        },
-        "models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
                 },
                 "price": {
                     "type": "number"
@@ -33731,17 +33757,17 @@ const docTemplate = `{
                 "docformattaxinv": {
                     "type": "string"
                 },
+                "employees": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Employee"
+                    }
+                },
                 "location": {
                     "$ref": "#/definitions/models.Location"
                 },
                 "receiptform": {
                     "type": "string"
-                },
-                "staffs": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_pos_setting_models.Staff"
-                    }
                 },
                 "warehouse": {
                     "$ref": "#/definitions/smlcloudplatform_pkg_pos_setting_models.Warehouse"
@@ -33975,6 +34001,34 @@ const docTemplate = `{
                     "$ref": "#/definitions/models.PaginationDataResponse"
                 },
                 "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.Staff": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "cashier": {
+                    "type": "boolean"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "order": {
                     "type": "boolean"
                 }
             }
@@ -35351,35 +35405,6 @@ const docTemplate = `{
                 }
             }
         },
-        "smlcloudplatform_pkg_pos_setting_models.Staff": {
-            "type": "object",
-            "required": [
-                "guidfixed",
-                "names"
-            ],
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "permissions": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
         "smlcloudplatform_pkg_pos_setting_models.Warehouse": {
             "type": "object",
             "required": [
@@ -35437,6 +35462,17 @@ const docTemplate = `{
                 }
             }
         },
+        "smlcloudplatform_pkg_product_product_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
         "smlcloudplatform_pkg_product_productbarcode_models.ProductImage": {
             "type": "object",
             "properties": {
@@ -35445,6 +35481,17 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_productbarcode_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
                 }
             }
         },
@@ -35591,34 +35638,6 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "integer"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_restaurant_staff_models.Staff": {
-            "type": "object",
-            "required": [
-                "names"
-            ],
-            "properties": {
-                "cashier": {
-                    "type": "boolean"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "order": {
-                    "type": "boolean"
                 }
             }
         },
