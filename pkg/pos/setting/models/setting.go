@@ -19,9 +19,10 @@ type Setting struct {
 	Location                 Location  `json:"location" bson:"location"`
 	Branch                   Branch    `json:"branch" bson:"branch"`
 	ActivePin                string    `json:"activepin" bson:"activepin"`
+	Staffs                   []Staff   `json:"staffs" bson:"staffs"`
 }
 
-type Employee struct {
+type Staff struct {
 	models.DocIdentity `bson:"inline"`
 	Code               string          `json:"code" bson:"code"`
 	Names              *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`

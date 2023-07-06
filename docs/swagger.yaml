@@ -273,8 +273,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       name1:
         maxLength: 255
         type: string
@@ -290,14 +290,7 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -714,6 +707,27 @@ definitions:
       comment:
         type: string
     type: object
+  models.Contact:
+    properties:
+      address:
+        type: string
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phonenumber:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
+    type: object
   models.CreditorGroup:
     properties:
       groupcode:
@@ -887,15 +901,12 @@ definitions:
   models.Department:
     properties:
       code:
+        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
         type: array
-        uniqueItems: true
-    required:
-    - names
     type: object
   models.Detail:
     properties:
@@ -1146,50 +1157,50 @@ definitions:
     properties:
       code:
         type: string
-      guidfixed:
+      contact:
+        $ref: '#/definitions/models.Contact'
+      email:
         type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
+      isenabled:
+        type: boolean
+      name:
+        type: string
       password:
         type: string
-      permissions:
+      pincode:
+        type: string
+      profilepicture:
+        type: string
+      roles:
         items:
           type: string
         type: array
-    required:
-    - guidfixed
-    - names
     type: object
   models.EmployeeRequestUpdate:
     properties:
       code:
         type: string
-      guidfixed:
+      contact:
+        $ref: '#/definitions/models.Contact'
+      email:
         type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      permissions:
+      isenabled:
+        type: boolean
+      name:
+        type: string
+      pincode:
+        type: string
+      profilepicture:
+        type: string
+      roles:
         items:
           type: string
         type: array
-    required:
-    - guidfixed
-    - names
     type: object
   models.Image:
     properties:
       uri:
         type: string
-      xorder:
-        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -1312,8 +1323,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1331,8 +1342,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1348,11 +1357,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1461,8 +1465,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1480,8 +1484,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1497,11 +1499,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1661,8 +1658,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      memberprice:
-        type: number
+      keynumber:
+        type: integer
       multiunit:
         type: boolean
       name1:
@@ -1680,8 +1677,6 @@ definitions:
       name5:
         maxLength: 255
         type: string
-      normalprice:
-        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1697,11 +1692,6 @@ definitions:
         maxLength: 50
         type: string
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -2180,19 +2170,6 @@ definitions:
         items:
           type: string
         type: array
-    required:
-    - names
-    type: object
-  models.KitchenBarcode:
-    properties:
-      code:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
     required:
     - names
     type: object
@@ -2940,9 +2917,23 @@ definitions:
     properties:
       barcode:
         type: string
-      kitchens:
+      guidfixed:
+        type: string
+      itemcode:
+        type: string
+      itemunitcode:
+        type: string
+      itemunitnames:
         items:
-          $ref: '#/definitions/models.KitchenBarcode'
+          $ref: '#/definitions/models.NameX'
+        type: array
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      prices:
+        items:
+          $ref: '#/definitions/models.ProductPrice'
         type: array
     type: object
   models.ProductBarcodeRequest:
@@ -3178,16 +3169,9 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      memberprice:
-        type: number
-      normalprice:
-        type: number
+      keynumber:
+        type: integer
       price:
-        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
-        type: number
-      pricerangemaxmax:
-        type: number
-      pricerangemin:
         type: number
     type: object
   models.ProductUnit:
@@ -3849,6 +3833,10 @@ definitions:
         $ref: '#/definitions/models.Location'
       receiptform:
         type: string
+      staffs:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_pos_setting_models.Staff'
+        type: array
       warehouse:
         $ref: '#/definitions/smlcloudplatform_pkg_pos_setting_models.Warehouse'
     required:
@@ -4006,25 +3994,6 @@ definitions:
         $ref: '#/definitions/models.PaginationDataResponse'
       success:
         type: boolean
-    type: object
-  models.Staff:
-    properties:
-      cashier:
-        type: boolean
-      code:
-        type: string
-      email:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      order:
-        type: boolean
-    required:
-    - names
     type: object
   models.Status:
     properties:
@@ -4953,6 +4922,26 @@ definitions:
       success:
         type: boolean
     type: object
+  smlcloudplatform_pkg_pos_setting_models.Staff:
+    properties:
+      code:
+        type: string
+      guidfixed:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      permissions:
+        items:
+          type: string
+        type: array
+    required:
+    - guidfixed
+    - names
+    type: object
   smlcloudplatform_pkg_pos_setting_models.Warehouse:
     properties:
       code:
@@ -5095,6 +5084,25 @@ definitions:
         type: integer
     required:
     - code
+    - names
+    type: object
+  smlcloudplatform_pkg_restaurant_staff_models.Staff:
+    properties:
+      cashier:
+        type: boolean
+      code:
+        type: string
+      email:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      order:
+        type: boolean
+    required:
     - names
     type: object
   smlcloudplatform_pkg_storefront_models.Device:
@@ -16135,7 +16143,7 @@ paths:
         name: Staff
         required: true
         schema:
-          $ref: '#/definitions/models.Staff'
+          $ref: '#/definitions/smlcloudplatform_pkg_restaurant_staff_models.Staff'
       responses:
         "201":
           description: Created
@@ -16211,7 +16219,7 @@ paths:
         name: Staff
         required: true
         schema:
-          $ref: '#/definitions/models.Staff'
+          $ref: '#/definitions/smlcloudplatform_pkg_restaurant_staff_models.Staff'
       responses:
         "201":
           description: Created
@@ -16237,7 +16245,7 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/models.Staff'
+            $ref: '#/definitions/smlcloudplatform_pkg_restaurant_staff_models.Staff'
           type: array
       responses:
         "201":
