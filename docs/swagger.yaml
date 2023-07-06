@@ -273,8 +273,8 @@ definitions:
         type: string
       isprimary:
         type: boolean
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       name1:
         maxLength: 255
         type: string
@@ -290,7 +290,14 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       unitcode:
         type: string
@@ -360,24 +367,17 @@ definitions:
   models.Branch:
     properties:
       code:
-        type: integer
-      departments:
-        items:
-          $ref: '#/definitions/models.Department'
-        type: array
-        uniqueItems: true
-      location:
-        $ref: '#/definitions/models.Location'
+        type: string
+      guidfixed:
+        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
         type: array
         uniqueItems: true
-      telephone:
-        maxLength: 100
-        type: string
     required:
+    - guidfixed
     - names
     type: object
   models.BulkInsertResponse:
@@ -714,27 +714,6 @@ definitions:
       comment:
         type: string
     type: object
-  models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
-    type: object
   models.CreditorGroup:
     properties:
       groupcode:
@@ -916,7 +895,6 @@ definitions:
         type: array
         uniqueItems: true
     required:
-    - code
     - names
     type: object
   models.Detail:
@@ -1168,45 +1146,43 @@ definitions:
     properties:
       code:
         type: string
-      contact:
-        $ref: '#/definitions/models.Contact'
-      email:
+      guidfixed:
         type: string
-      isenabled:
-        type: boolean
-      name:
-        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
       password:
         type: string
-      pincode:
-        type: string
-      profilepicture:
-        type: string
-      roles:
+      permissions:
         items:
           type: string
         type: array
+    required:
+    - guidfixed
+    - names
     type: object
   models.EmployeeRequestUpdate:
     properties:
       code:
         type: string
-      contact:
-        $ref: '#/definitions/models.Contact'
-      email:
+      guidfixed:
         type: string
-      isenabled:
-        type: boolean
-      name:
-        type: string
-      pincode:
-        type: string
-      profilepicture:
-        type: string
-      roles:
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      permissions:
         items:
           type: string
         type: array
+    required:
+    - guidfixed
+    - names
     type: object
   models.Image:
     properties:
@@ -1336,8 +1312,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1355,6 +1331,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1370,6 +1348,11 @@ definitions:
         maxLength: 50
         type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1478,8 +1461,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1497,6 +1480,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1512,6 +1497,11 @@ definitions:
         maxLength: 50
         type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -1671,8 +1661,8 @@ definitions:
         maximum: 125
         minimum: -125
         type: integer
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
       multiunit:
         type: boolean
       name1:
@@ -1690,6 +1680,8 @@ definitions:
       name5:
         maxLength: 255
         type: string
+      normalprice:
+        type: number
       optionpatternmaster:
         type: string
       options:
@@ -1705,6 +1697,11 @@ definitions:
         maxLength: 50
         type: string
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
       recommended:
         description: สินค้าแนะนำ
@@ -2186,6 +2183,19 @@ definitions:
     required:
     - names
     type: object
+  models.KitchenBarcode:
+    properties:
+      code:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - names
+    type: object
   models.KitchenInfo:
     properties:
       code:
@@ -2234,10 +2244,16 @@ definitions:
     type: object
   models.Location:
     properties:
-      lat:
+      code:
         type: string
-      lng:
-        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+    required:
+    - names
     type: object
   models.LocationRequest:
     properties:
@@ -2923,106 +2939,11 @@ definitions:
   models.ProductBarcode:
     properties:
       barcode:
-        minLength: 1
         type: string
-      colorselect:
-        type: string
-      colorselecthex:
-        type: string
-      condition:
-        type: boolean
-      dividevalue:
-        type: number
-      groupcode:
-        type: string
-      groupnames:
+      kitchens:
         items:
-          $ref: '#/definitions/models.NameX'
+          $ref: '#/definitions/models.KitchenBarcode'
         type: array
-      images:
-        items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'
-        type: array
-      imageuri:
-        type: string
-      isalacarte:
-        type: boolean
-      isdividend:
-        type: boolean
-      isonlystaff:
-        type: boolean
-      issplitunitprint:
-        type: boolean
-      issumpoint:
-        type: boolean
-      isusesubbarcodes:
-        type: boolean
-      itemcode:
-        type: string
-      itemtype:
-        type: integer
-      itemunitcode:
-        type: string
-      itemunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      itemunitsize:
-        type: number
-      maxdiscount:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      options:
-        items:
-          $ref: '#/definitions/models.ProductOption'
-        type: array
-      ordertypes:
-        items:
-          $ref: '#/definitions/models.ProductOrderType'
-        type: array
-      prices:
-        items:
-          $ref: '#/definitions/models.ProductPrice'
-        type: array
-      qty:
-        type: number
-      refbarcodes:
-        items:
-          $ref: '#/definitions/models.RefProductBarcode'
-        type: array
-      refdividevalue:
-        type: number
-      refstandvalue:
-        type: number
-      refunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      standvalue:
-        type: number
-      stockbarcode:
-        type: string
-      taxtype:
-        type: integer
-      useimageorcolor:
-        type: boolean
-      vatcal:
-        type: integer
-      vattype:
-        type: integer
-      xsorts:
-        items:
-          $ref: '#/definitions/models.XSort'
-        type: array
-        uniqueItems: true
-    required:
-    - barcode
-    - names
     type: object
   models.ProductBarcodeRequest:
     properties:
@@ -3257,9 +3178,16 @@ definitions:
     type: object
   models.ProductPrice:
     properties:
-      keynumber:
-        type: integer
+      memberprice:
+        type: number
+      normalprice:
+        type: number
       price:
+        description: ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)
+        type: number
+      pricerangemaxmax:
+        type: number
+      pricerangemin:
         type: number
     type: object
   models.ProductUnit:
@@ -3575,34 +3503,6 @@ definitions:
         type: integer
     required:
     - names
-    type: object
-  models.RefProductBarcode:
-    properties:
-      barcode:
-        minLength: 1
-        type: string
-      condition:
-        type: boolean
-      dividevalue:
-        type: number
-      guidfixed:
-        type: string
-      itemunitcode:
-        type: string
-      itemunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      qty:
-        type: number
-      standvalue:
-        type: number
-    required:
-    - barcode
     type: object
   models.Reference:
     properties:
@@ -3933,6 +3833,8 @@ definitions:
     type: object
   models.Setting:
     properties:
+      activepin:
+        type: string
       branch:
         $ref: '#/definitions/models.Branch'
       code:

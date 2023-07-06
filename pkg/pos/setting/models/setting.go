@@ -18,6 +18,14 @@ type Setting struct {
 	Warehouse                Warehouse `json:"warehouse" bson:"warehouse"`
 	Location                 Location  `json:"location" bson:"location"`
 	Branch                   Branch    `json:"branch" bson:"branch"`
+	ActivePin                string    `json:"activepin" bson:"activepin"`
+}
+
+type Employee struct {
+	models.DocIdentity `bson:"inline"`
+	Code               string          `json:"code" bson:"code"`
+	Names              *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	Permissions        *[]string       `json:"permissions" bson:"permissions"`
 }
 
 type Branch struct {
