@@ -66,6 +66,7 @@ import (
 	"smlcloudplatform/pkg/sysinfo"
 	"smlcloudplatform/pkg/task"
 	"smlcloudplatform/pkg/tools"
+	"smlcloudplatform/pkg/transaction/documentformate"
 	"smlcloudplatform/pkg/transaction/paid"
 	"smlcloudplatform/pkg/transaction/pay"
 	"smlcloudplatform/pkg/transaction/purchase"
@@ -251,6 +252,8 @@ func main() {
 
 		ordertype.NewOrderTypeHttp(ms, cfg),
 		pos_setting.NewSettingHttp(ms, cfg),
+
+		documentformate.NewDocumentFormateHttp(ms, cfg),
 
 		//reportquery.NewReportQueryHttp(ms, cfg),
 	}

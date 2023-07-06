@@ -1004,6 +1004,45 @@ definitions:
           $ref: '#/definitions/models.NameX'
         type: array
     type: object
+  models.DocumentFormate:
+    properties:
+      dateformate:
+        minLength: 1
+        type: string
+      details:
+        items:
+          $ref: '#/definitions/models.DocumentFormateDetail'
+        type: array
+      doccode:
+        minLength: 1
+        type: string
+      docnumber:
+        type: integer
+      module:
+        minLength: 1
+        type: string
+    required:
+    - dateformate
+    - doccode
+    - docnumber
+    - module
+    type: object
+  models.DocumentFormateDetail:
+    properties:
+      actioncode:
+        minLength: 1
+        type: string
+      credit:
+        type: string
+      debit:
+        type: string
+      detail:
+        type: string
+      isentryselfaccount:
+        type: boolean
+    required:
+    - actioncode
+    type: object
   models.DocumentImage:
     properties:
       cloneimagefrom:
@@ -1198,6 +1237,8 @@ definitions:
     properties:
       uri:
         type: string
+      xorder:
+        type: integer
     type: object
   models.ImageEdit:
     properties:
@@ -2191,19 +2232,6 @@ definitions:
     required:
     - names
     type: object
-  models.KitchenBarcode:
-    properties:
-      code:
-        type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-    required:
-    - names
-    type: object
   models.KitchenInfo:
     properties:
       code:
@@ -2258,11 +2286,6 @@ definitions:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
-        type: array
-        uniqueItems: true
-      shelf:
-        items:
-          $ref: '#/definitions/models.Shelf'
         type: array
         uniqueItems: true
     required:
@@ -2967,11 +2990,106 @@ definitions:
   models.ProductBarcode:
     properties:
       barcode:
+        minLength: 1
         type: string
-      kitchens:
+      colorselect:
+        type: string
+      colorselecthex:
+        type: string
+      condition:
+        type: boolean
+      dividevalue:
+        type: number
+      groupcode:
+        type: string
+      groupnames:
         items:
-          $ref: '#/definitions/models.KitchenBarcode'
+          $ref: '#/definitions/models.NameX'
         type: array
+      images:
+        items:
+          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'
+        type: array
+      imageuri:
+        type: string
+      isalacarte:
+        type: boolean
+      isdividend:
+        type: boolean
+      isonlystaff:
+        type: boolean
+      issplitunitprint:
+        type: boolean
+      issumpoint:
+        type: boolean
+      isusesubbarcodes:
+        type: boolean
+      itemcode:
+        type: string
+      itemtype:
+        type: integer
+      itemunitcode:
+        type: string
+      itemunitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      itemunitsize:
+        type: number
+      maxdiscount:
+        type: string
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        minItems: 1
+        type: array
+        uniqueItems: true
+      options:
+        items:
+          $ref: '#/definitions/models.ProductOption'
+        type: array
+      ordertypes:
+        items:
+          $ref: '#/definitions/models.ProductOrderType'
+        type: array
+      prices:
+        items:
+          $ref: '#/definitions/models.ProductPrice'
+        type: array
+      qty:
+        type: number
+      refbarcodes:
+        items:
+          $ref: '#/definitions/models.RefProductBarcode'
+        type: array
+      refdividevalue:
+        type: number
+      refstandvalue:
+        type: number
+      refunitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      standvalue:
+        type: number
+      stockbarcode:
+        type: string
+      taxtype:
+        type: integer
+      useimageorcolor:
+        type: boolean
+      vatcal:
+        type: integer
+      vattype:
+        type: integer
+      xsorts:
+        items:
+          $ref: '#/definitions/models.XSort'
+        type: array
+        uniqueItems: true
+    required:
+    - barcode
+    - names
     type: object
   models.ProductBarcodeRequest:
     properties:
@@ -3531,6 +3649,34 @@ definitions:
         type: integer
     required:
     - names
+    type: object
+  models.RefProductBarcode:
+    properties:
+      barcode:
+        minLength: 1
+        type: string
+      condition:
+        type: boolean
+      dividevalue:
+        type: number
+      guidfixed:
+        type: string
+      itemunitcode:
+        type: string
+      itemunitnames:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      names:
+        items:
+          $ref: '#/definitions/models.NameX'
+        type: array
+      qty:
+        type: number
+      standvalue:
+        type: number
+    required:
+    - barcode
     type: object
   models.Reference:
     properties:
@@ -18532,6 +18678,277 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       tags:
       - Authentication
+  /transaction/document-formate:
+    delete:
+      consumes:
+      - application/json
+      description: Delete DocumentFormate
+      parameters:
+      - description: DocumentFormate GUIDs
+        in: body
+        name: DocumentFormate
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentFormate
+    get:
+      consumes:
+      - application/json
+      description: get list step
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentFormate
+    post:
+      consumes:
+      - application/json
+      description: Create DocumentFormate
+      parameters:
+      - description: DocumentFormate
+        in: body
+        name: DocumentFormate
+        required: true
+        schema:
+          $ref: '#/definitions/models.DocumentFormate'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentFormate
+  /transaction/document-formate/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete DocumentFormate
+      parameters:
+      - description: DocumentFormate ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentFormate
+    get:
+      consumes:
+      - application/json
+      description: get DocumentFormate info by guidfixed
+      parameters:
+      - description: DocumentFormate guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentFormate
+    put:
+      consumes:
+      - application/json
+      description: Update DocumentFormate
+      parameters:
+      - description: DocumentFormate ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: DocumentFormate
+        in: body
+        name: DocumentFormate
+        required: true
+        schema:
+          $ref: '#/definitions/models.DocumentFormate'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseSuccessWithID'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentFormate
+  /transaction/document-formate/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create DocumentFormate
+      parameters:
+      - description: DocumentFormate
+        in: body
+        name: DocumentFormate
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.DocumentFormate'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BulkReponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentFormate
+  /transaction/document-formate/code/{code}:
+    get:
+      consumes:
+      - application/json
+      description: get DocumentFormate info by Code
+      parameters:
+      - description: DocumentFormate Code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentFormate
+  /transaction/document-formate/default:
+    get:
+      consumes:
+      - application/json
+      description: get DocumentFormate Default Module info by guidfixed
+      parameters:
+      - description: DocumentFormate guidfixed
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ApiResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentFormate
+  /transaction/document-formate/list:
+    get:
+      consumes:
+      - application/json
+      description: search limit offset
+      parameters:
+      - description: Search Value
+        in: query
+        name: q
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: lang
+        in: query
+        name: lang
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ApiResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
+      security:
+      - AccessToken: []
+      tags:
+      - DocumentFormate
   /transaction/paid:
     delete:
       consumes:
