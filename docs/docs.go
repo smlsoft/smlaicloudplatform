@@ -28505,8 +28505,8 @@ const docTemplate = `{
                 "isprimary": {
                     "type": "boolean"
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "name1": {
                     "type": "string",
@@ -28528,7 +28528,17 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "unitcode": {
@@ -28640,7 +28650,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/models.Contact"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact"
                 },
                 "departments": {
                     "type": "array",
@@ -29149,38 +29159,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "comment": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Contact": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "districtcode": {
-                    "type": "string"
-                },
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                },
-                "phonenumber": {
-                    "type": "string"
-                },
-                "provincecode": {
-                    "type": "string"
-                },
-                "subdistrictcode": {
-                    "type": "string"
-                },
-                "zipcode": {
                     "type": "string"
                 }
             }
@@ -29804,33 +29782,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Employee": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "isenabled": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "description": "Username       string    ` + "`" + `json:\"username\" bson:\"username\"` + "`" + `",
-                    "type": "string"
-                },
-                "profilepicture": {
-                    "type": "string"
-                },
-                "roles": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
         "models.EmployeeRequestPassword": {
             "type": "object",
             "properties": {
@@ -29848,6 +29799,9 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "contact": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -29855,10 +29809,12 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "name": {
-                    "description": "Username       string    ` + "`" + `json:\"username\" bson:\"username\"` + "`" + `",
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                },
+                "pincode": {
                     "type": "string"
                 },
                 "profilepicture": {
@@ -29878,6 +29834,9 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "contact": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -29885,7 +29844,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "name": {
-                    "description": "Username       string    ` + "`" + `json:\"username\" bson:\"username\"` + "`" + `",
+                    "type": "string"
+                },
+                "pincode": {
                     "type": "string"
                 },
                 "profilepicture": {
@@ -29904,9 +29865,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -30088,8 +30046,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -30114,6 +30072,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -30135,6 +30096,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -30288,8 +30256,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -30314,6 +30282,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -30335,6 +30306,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -30565,8 +30543,8 @@ const docTemplate = `{
                     "maximum": 125,
                     "minimum": -125
                 },
-                "keynumber": {
-                    "type": "integer"
+                "memberprice": {
+                    "type": "number"
                 },
                 "multiunit": {
                     "type": "boolean"
@@ -30591,6 +30569,9 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
+                "normalprice": {
+                    "type": "number"
+                },
                 "optionpatternmaster": {
                     "type": "string"
                 },
@@ -30612,6 +30593,13 @@ const docTemplate = `{
                     "maxLength": 50
                 },
                 "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 },
                 "recommended": {
@@ -31316,6 +31304,25 @@ const docTemplate = `{
                 }
             }
         },
+        "models.KitchenBarcode": {
+            "type": "object",
+            "required": [
+                "names"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "names": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.NameX"
+                    }
+                }
+            }
+        },
         "models.KitchenInfo": {
             "type": "object",
             "required": [
@@ -31400,6 +31407,13 @@ const docTemplate = `{
                     "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
+                    }
+                },
+                "shelf": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Shelf"
                     }
                 }
             }
@@ -31850,6 +31864,29 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.POSEmployee": {
+            "type": "object",
+            "required": [
+                "guidfixed"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "guidfixed": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -32366,7 +32403,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
                 },
                 "taxtype": {
@@ -32414,31 +32451,10 @@ const docTemplate = `{
                 "barcode": {
                     "type": "string"
                 },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "itemcode": {
-                    "type": "string"
-                },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitnames": {
+                "kitchens": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "prices": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice"
+                        "$ref": "#/definitions/models.KitchenBarcode"
                     }
                 }
             }
@@ -32546,7 +32562,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
+                        "$ref": "#/definitions/models.ProductPrice"
                     }
                 },
                 "qty": {
@@ -32777,6 +32793,27 @@ const docTemplate = `{
                     }
                 },
                 "price": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "memberprice": {
+                    "type": "number"
+                },
+                "normalprice": {
+                    "type": "number"
+                },
+                "price": {
+                    "description": "ราคาพื้นฐาน (กรณีไม่มีตารางราคา และโปรโมชั่น)",
+                    "type": "number"
+                },
+                "pricerangemaxmax": {
+                    "type": "number"
+                },
+                "pricerangemin": {
                     "type": "number"
                 }
             }
@@ -33760,7 +33797,7 @@ const docTemplate = `{
                 "employees": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Employee"
+                        "$ref": "#/definitions/models.POSEmployee"
                     }
                 },
                 "location": {
@@ -35405,6 +35442,38 @@ const docTemplate = `{
                 }
             }
         },
+        "smlcloudplatform_pkg_organization_branch_models.Contact": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
         "smlcloudplatform_pkg_pos_setting_models.Warehouse": {
             "type": "object",
             "required": [
@@ -35462,17 +35531,6 @@ const docTemplate = `{
                 }
             }
         },
-        "smlcloudplatform_pkg_product_product_models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
-                },
-                "price": {
-                    "type": "number"
-                }
-            }
-        },
         "smlcloudplatform_pkg_product_productbarcode_models.ProductImage": {
             "type": "object",
             "properties": {
@@ -35481,17 +35539,6 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_product_productbarcode_models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
-                },
-                "price": {
-                    "type": "number"
                 }
             }
         },
@@ -35638,6 +35685,38 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_employee_models.Contact": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
                 }
             }
         },

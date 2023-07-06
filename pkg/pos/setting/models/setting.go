@@ -10,23 +10,23 @@ const settingCollectionName = "posSettings"
 
 type Setting struct {
 	models.PartitionIdentity `bson:"inline"`
-	Code                     string     `json:"code" bson:"code" validate:"required"`
-	DeviceNumber             string     `json:"devicenumber" bson:"devicenumber"`
-	DocFormatTaxInv          string     `json:"docformattaxinv" bson:"docformattaxinv"`
-	DocFormatInv             string     `json:"docformatinv" bson:"docformatinv"`
-	ReceiptForm              string     `json:"receiptform" bson:"receiptform"`
-	Warehouse                Warehouse  `json:"warehouse" bson:"warehouse"`
-	Location                 Location   `json:"location" bson:"location"`
-	Branch                   Branch     `json:"branch" bson:"branch"`
-	ActivePin                string     `json:"activepin" bson:"activepin"`
-	Employees                []Employee `json:"employees" bson:"employees"`
+	Code                     string        `json:"code" bson:"code" validate:"required"`
+	DeviceNumber             string        `json:"devicenumber" bson:"devicenumber"`
+	DocFormatTaxInv          string        `json:"docformattaxinv" bson:"docformattaxinv"`
+	DocFormatInv             string        `json:"docformatinv" bson:"docformatinv"`
+	ReceiptForm              string        `json:"receiptform" bson:"receiptform"`
+	Warehouse                Warehouse     `json:"warehouse" bson:"warehouse"`
+	Location                 Location      `json:"location" bson:"location"`
+	Branch                   Branch        `json:"branch" bson:"branch"`
+	ActivePin                string        `json:"activepin" bson:"activepin"`
+	Employees                []POSEmployee `json:"employees" bson:"employees"`
 }
 
-type Employee struct {
+type POSEmployee struct {
 	models.DocIdentity `bson:"inline"`
-	Code               string          `json:"code" bson:"code"`
-	Names              *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
-	Permissions        *[]string       `json:"permissions" bson:"permissions"`
+	Code               string    `json:"code" bson:"code"`
+	Name               string    `json:"name" bson:"name"`
+	Permissions        *[]string `json:"permissions" bson:"permissions"`
 }
 
 type Branch struct {
