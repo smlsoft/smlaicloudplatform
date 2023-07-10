@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/paymentmaster/models"
@@ -10,14 +11,14 @@ import (
 )
 
 type IPaymentMasterRepository interface {
-	Count(shopID string) (int, error)
+	Count(ctx context.Context, shopID string) (int, error)
 	Create(category models.PaymentMasterDoc) (string, error)
-	CreateInBatch(docList []models.PaymentMasterDoc) error
-	Update(shopID string, guid string, category models.PaymentMasterDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
+	CreateInBatch(ctx context.Context, docList []models.PaymentMasterDoc) error
+	Update(ctx context.Context, shopID string, guid string, category models.PaymentMasterDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
 	Find(shopID string, searchInFields []string, q string) ([]models.PaymentMasterInfo, error)
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.PaymentMasterInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.PaymentMasterDoc, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.PaymentMasterInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.PaymentMasterDoc, error)
 }
 
 type PaymentMasterRepository struct {

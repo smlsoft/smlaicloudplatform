@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
@@ -44,15 +45,19 @@ type PayHttpService struct {
 	cacheExpireDocNo time.Duration
 	syncCacheRepo    mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.PayActivity, models.PayDeleteActivity]
+	contextTimeout time.Duration
 }
 
 func NewPayHttpService(repo repositories.IPayRepository, repoCache trancache.ICacheRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *PayHttpService {
+
+	contextTimeout := time.Duration(15) * time.Second
 
 	insSvc := &PayHttpService{
 		repo:             repo,
 		repoCache:        repoCache,
 		syncCacheRepo:    syncCacheRepo,
 		cacheExpireDocNo: time.Hour * 24,
+		contextTimeout:   contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.PayActivity, models.PayDeleteActivity](repo)
@@ -60,16 +65,20 @@ func NewPayHttpService(repo repositories.IPayRepository, repoCache trancache.ICa
 	return insSvc
 }
 
+func (svc PayHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc PayHttpService) getDocNoPrefix(docDate time.Time) string {
 	docDateStr := docDate.Format("20060102")
 	return fmt.Sprintf("%s%s", MODULE_NAME, docDateStr)
 }
 
-func (svc PayHttpService) generateNewDocNo(shopID, prefixDocNo string, docNumber int) (string, int, error) {
+func (svc PayHttpService) generateNewDocNo(ctx context.Context, shopID, prefixDocNo string, docNumber int) (string, int, error) {
 	prevoiusDocNumber, err := svc.repoCache.Get(shopID, prefixDocNo)
 
 	if prevoiusDocNumber == 0 || err != nil {
-		lastDoc, err := svc.repo.FindLastDocNo(shopID, prefixDocNo)
+		lastDoc, err := svc.repo.FindLastDocNo(ctx, shopID, prefixDocNo)
 
 		if err != nil {
 			return "", 0, err
@@ -89,7 +98,7 @@ func (svc PayHttpService) generateNewDocNo(shopID, prefixDocNo string, docNumber
 	newDocNumber := prevoiusDocNumber + 1
 	newDocNo := fmt.Sprintf("%s%05d", prefixDocNo, newDocNumber)
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", newDocNo)
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "docno", newDocNo)
 
 	if err != nil {
 		return "", 0, err
@@ -104,10 +113,13 @@ func (svc PayHttpService) generateNewDocNo(shopID, prefixDocNo string, docNumber
 
 func (svc PayHttpService) CreatePay(shopID string, authUsername string, doc models.Pay) (string, string, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	docDate := doc.DocDatetime
 	prefixDocNo := svc.getDocNoPrefix(docDate)
 
-	newDocNo, newDocNumber, err := svc.generateNewDocNo(shopID, prefixDocNo, 1)
+	newDocNo, newDocNumber, err := svc.generateNewDocNo(ctx, shopID, prefixDocNo, 1)
 
 	if err != nil {
 		return "", "", err
@@ -124,7 +136,7 @@ func (svc PayHttpService) CreatePay(shopID string, authUsername string, doc mode
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", "", err
@@ -139,7 +151,10 @@ func (svc PayHttpService) CreatePay(shopID string, authUsername string, doc mode
 
 func (svc PayHttpService) UpdatePay(shopID string, guid string, authUsername string, doc models.Pay) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -154,7 +169,7 @@ func (svc PayHttpService) UpdatePay(shopID string, guid string, authUsername str
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -167,7 +182,10 @@ func (svc PayHttpService) UpdatePay(shopID string, guid string, authUsername str
 
 func (svc PayHttpService) DeletePay(shopID string, guid string, authUsername string) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -177,7 +195,7 @@ func (svc PayHttpService) DeletePay(shopID string, guid string, authUsername str
 		return errors.New("document not found")
 	}
 
-	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 	if err != nil {
 		return err
 	}
@@ -189,11 +207,14 @@ func (svc PayHttpService) DeletePay(shopID string, guid string, authUsername str
 
 func (svc PayHttpService) DeletePayByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
 	}
 
-	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	err := svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
@@ -203,7 +224,10 @@ func (svc PayHttpService) DeletePayByGUIDs(shopID string, authUsername string, G
 
 func (svc PayHttpService) InfoPay(shopID string, guid string) (models.PayInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.PayInfo{}, err
@@ -218,7 +242,10 @@ func (svc PayHttpService) InfoPay(shopID string, guid string) (models.PayInfo, e
 
 func (svc PayHttpService) InfoPayByCode(shopID string, code string) (models.PayInfo, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", code)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "docno", code)
 
 	if err != nil {
 		return models.PayInfo{}, err
@@ -232,11 +259,15 @@ func (svc PayHttpService) InfoPayByCode(shopID string, code string) (models.PayI
 }
 
 func (svc PayHttpService) SearchPay(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.PayInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"docno",
 	}
 
-	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.PayInfo{}, pagination, err
@@ -246,13 +277,17 @@ func (svc PayHttpService) SearchPay(shopID string, filters map[string]interface{
 }
 
 func (svc PayHttpService) SearchPayStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.PayInfo, int, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"docno",
 	}
 
 	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(ctx, shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.PayInfo{}, 0, err
@@ -263,6 +298,9 @@ func (svc PayHttpService) SearchPayStep(shopID string, langCode string, filters 
 
 func (svc PayHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.Pay) (common.BulkImport, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.Pay](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
@@ -270,7 +308,7 @@ func (svc PayHttpService) SaveInBatch(shopID string, authUsername string, dataLi
 		itemCodeGuidList = append(itemCodeGuidList, doc.DocNo)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "docno", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "docno", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -309,7 +347,7 @@ func (svc PayHttpService) SaveInBatch(shopID string, authUsername string, dataLi
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.PayDoc, error) {
-			return svc.repo.FindByDocIndentityGuid(shopID, "docno", guid)
+			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "docno", guid)
 		},
 		func(doc models.PayDoc) bool {
 			return doc.DocNo != ""
@@ -320,7 +358,7 @@ func (svc PayHttpService) SaveInBatch(shopID string, authUsername string, dataLi
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
-			err = svc.repo.Update(shopID, doc.GuidFixed, doc)
+			err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
 			if err != nil {
 				return nil
 			}
@@ -329,7 +367,7 @@ func (svc PayHttpService) SaveInBatch(shopID string, authUsername string, dataLi
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return common.BulkImport{}, err

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"mime/multipart"
@@ -38,7 +39,7 @@ type IDocumentImageService interface {
 	DeleteReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error
 	DeleteDocumentImageGroupByGuid(shopID string, authUsername string, DocumentImageGroupGuidFixed string) error
 	DeleteDocumentImageGroupByGuids(shopID string, authUsername string, documentImageGroupGuidFixeds []string) error
-	XSortsUpdate(shopID string, authUsername string, taskGUID string, xsorts []models.XSortDocumentImageGroupRequest) error
+	XSortsUpdate(ctx context.Context, shopID string, authUsername string, taskGUID string, xsorts []models.XSortDocumentImageGroupRequest) error
 
 	UpdateDocumentImageReferenceGroup() error
 	UpdateStatusDocumentImageGroupByTask(shopID string, authUsername string, taskGUID string, status int8) error
@@ -51,18 +52,23 @@ type DocumentImageService struct {
 	repoMessagequeue             repositories.DocumentImageMessageQueueRepository
 	FilePersister                microservice.IPersisterFile
 	maxImageReferences           int
+	contextTimeout               time.Duration
 	timeNowFnc                   func() time.Time
 	newDocumentImageGUIDFnc      func() string
 	newDocumentImageGroupGUIDFnc func() string
 }
 
 func NewDocumentImageService(repo repositories.IDocumentImageRepository, repoImageGroup repositories.DocumentImageGroupRepository, repoMessagequeue repositories.DocumentImageMessageQueueRepository, filePersister microservice.IPersisterFile) DocumentImageService {
+
+	contextTimeout := time.Duration(15) * time.Second
+
 	return DocumentImageService{
 		maxImageReferences: 100,
 		repoImageGroup:     repoImageGroup,
 		repoImage:          repo,
 		repoMessagequeue:   repoMessagequeue,
 		FilePersister:      filePersister,
+		contextTimeout:     contextTimeout,
 		timeNowFnc: func() time.Time {
 			return time.Now()
 		},
@@ -71,19 +77,22 @@ func NewDocumentImageService(repo repositories.IDocumentImageRepository, repoIma
 	}
 }
 
+func (svc DocumentImageService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc DocumentImageService) CreateDocumentImage(shopID string, authUsername string, docRequest models.DocumentImageRequest) (string, string, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
 	findDocImgGroup := models.DocumentImageGroupDoc{}
 	if len(docRequest.DocumentImageGroupGUID) > 0 {
-		_, err := svc.repoImageGroup.FindByGuid(shopID, docRequest.DocumentImageGroupGUID)
+		_, err := svc.repoImageGroup.FindByGuid(ctx, shopID, docRequest.DocumentImageGroupGUID)
 
 		if err != nil {
 			return "", "", err
 		}
-
-		// if len(findDocImgGroup.GuidFixed) == 0 {
-		// 	return "", "", errors.New("document image group not found")
-		// }
 	}
 
 	// do upload first
@@ -122,18 +131,18 @@ func (svc DocumentImageService) CreateDocumentImage(shopID string, authUsername 
 	docImageRef := svc.documentImageToImageReference(documentImageGUID, docRequest.DocumentImage, authUsername, createdAt)
 	docDataImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, imageGroupGUID, docImageRef, docRequest.ImageURI, tags, docRequest.TaskGUID, docRequest.PathTask, createdAt)
 
-	newXOrderDocImgGroup, _ := svc.newXOrderDocumentImageGroup(shopID, docRequest.TaskGUID)
+	newXOrderDocImgGroup, _ := svc.newXOrderDocumentImageGroup(ctx, shopID, docRequest.TaskGUID)
 	docDataImageGroup.XOrder = newXOrderDocImgGroup
 
-	err := svc.repoImageGroup.Transaction(func() error {
+	err := svc.repoImageGroup.Transaction(ctx, func(ctx context.Context) error {
 
-		_, err := svc.repoImage.Create(docData)
+		_, err := svc.repoImage.Create(ctx, docData)
 
 		if err != nil {
 			return err
 		}
 
-		_, err = svc.repoImageGroup.Create(docDataImageGroup)
+		_, err = svc.repoImageGroup.Create(ctx, docDataImageGroup)
 
 		if err != nil {
 			return err
@@ -146,7 +155,7 @@ func (svc DocumentImageService) CreateDocumentImage(shopID string, authUsername 
 		return "", "", err
 	}
 
-	_, err = svc.messageQueueReCountDocumentImageGroup(shopID, docRequest.TaskGUID)
+	_, err = svc.messageQueueReCountDocumentImageGroup(ctx, shopID, docRequest.TaskGUID)
 	if err != nil {
 		return "", "", err
 	}
@@ -155,6 +164,8 @@ func (svc DocumentImageService) CreateDocumentImage(shopID string, authUsername 
 }
 
 func (svc DocumentImageService) CreateDocumentImageWithTask(shopID string, authUsername string, docRequest models.DocumentImageRequest) (string, string, error) {
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
 	// do upload first
 
@@ -187,19 +198,19 @@ func (svc DocumentImageService) CreateDocumentImageWithTask(shopID string, authU
 	docImageRef := svc.documentImageToImageReference(documentImageGUID, docRequest.DocumentImage, authUsername, createdAt)
 	docDataImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, imageGroupGUID, docImageRef, docRequest.ImageURI, tags, docRequest.TaskGUID, docRequest.PathTask, createdAt)
 
-	newXOrderDocImgGroup, _ := svc.newXOrderDocumentImageGroup(shopID, docRequest.TaskGUID)
+	newXOrderDocImgGroup, _ := svc.newXOrderDocumentImageGroup(ctx, shopID, docRequest.TaskGUID)
 
 	docDataImageGroup.XOrder = newXOrderDocImgGroup
 
-	err := svc.repoImageGroup.Transaction(func() error {
+	err := svc.repoImageGroup.Transaction(ctx, func(ctx context.Context) error {
 
-		_, err := svc.repoImage.Create(docData)
+		_, err := svc.repoImage.Create(ctx, docData)
 
 		if err != nil {
 			return err
 		}
 
-		_, err = svc.repoImageGroup.Create(docDataImageGroup)
+		_, err = svc.repoImageGroup.Create(ctx, docDataImageGroup)
 
 		if err != nil {
 			return err
@@ -212,7 +223,7 @@ func (svc DocumentImageService) CreateDocumentImageWithTask(shopID string, authU
 		return "", "", err
 	}
 
-	_, err = svc.messageQueueReCountDocumentImageGroup(shopID, docRequest.TaskGUID)
+	_, err = svc.messageQueueReCountDocumentImageGroup(ctx, shopID, docRequest.TaskGUID)
 	if err != nil {
 		return "", "", err
 	}
@@ -222,7 +233,10 @@ func (svc DocumentImageService) CreateDocumentImageWithTask(shopID string, authU
 
 func (svc DocumentImageService) CreateImageEdit(shopID string, authUsername string, docImageGUID string, docRequest models.ImageEditRequest) error {
 
-	findDoc, err := svc.repoImage.FindByGuid(shopID, docImageGUID)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repoImage.FindByGuid(ctx, shopID, docImageGUID)
 
 	if err != nil {
 		return err
@@ -246,7 +260,7 @@ func (svc DocumentImageService) CreateImageEdit(shopID string, authUsername stri
 
 	tempDoc.Edits = append(tempDoc.Edits, imageEdit)
 
-	err = svc.repoImage.Update(shopID, docImageGUID, tempDoc)
+	err = svc.repoImage.Update(ctx, shopID, docImageGUID, tempDoc)
 	if err != nil {
 		return err
 	}
@@ -256,7 +270,10 @@ func (svc DocumentImageService) CreateImageEdit(shopID string, authUsername stri
 
 func (svc DocumentImageService) CreateImageComment(shopID string, authUsername string, docImageGUID string, docRequest models.CommentRequest) error {
 
-	findDoc, err := svc.repoImage.FindByGuid(shopID, docImageGUID)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repoImage.FindByGuid(ctx, shopID, docImageGUID)
 
 	if err != nil {
 		return err
@@ -280,7 +297,7 @@ func (svc DocumentImageService) CreateImageComment(shopID string, authUsername s
 
 	tempDoc.Comments = append(tempDoc.Comments, comment)
 
-	err = svc.repoImage.Update(shopID, docImageGUID, tempDoc)
+	err = svc.repoImage.Update(ctx, shopID, docImageGUID, tempDoc)
 	if err != nil {
 		return err
 	}
@@ -289,6 +306,9 @@ func (svc DocumentImageService) CreateImageComment(shopID string, authUsername s
 }
 
 func (svc DocumentImageService) BulkCreateDocumentImage(shopID string, authUsername string, docs []models.DocumentImageRequest) error {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
 	// do upload first
 
@@ -305,7 +325,7 @@ func (svc DocumentImageService) BulkCreateDocumentImage(shopID string, authUsern
 
 		_, ok := taskLastXOrder[doc.TaskGUID]
 		if !ok {
-			newXOrderDocImgGroup, _ := svc.newXOrderDocumentImageGroup(shopID, doc.TaskGUID)
+			newXOrderDocImgGroup, _ := svc.newXOrderDocumentImageGroup(ctx, shopID, doc.TaskGUID)
 			taskLastXOrder[doc.TaskGUID] = newXOrderDocImgGroup
 		} else {
 			taskLastXOrder[doc.TaskGUID]++
@@ -348,15 +368,15 @@ func (svc DocumentImageService) BulkCreateDocumentImage(shopID string, authUsern
 		docDataImageGroupList = append(docDataImageGroupList, docDataImageGroup)
 	}
 
-	err := svc.repoImageGroup.Transaction(func() error {
+	err := svc.repoImageGroup.Transaction(ctx, func(ctx context.Context) error {
 
-		err := svc.repoImage.CreateInBatch(docDataList)
+		err := svc.repoImage.CreateInBatch(ctx, docDataList)
 
 		if err != nil {
 			return err
 		}
 
-		err = svc.repoImageGroup.CreateInBatch(docDataImageGroupList)
+		err = svc.repoImageGroup.CreateInBatch(ctx, docDataImageGroupList)
 
 		if err != nil {
 			return err
@@ -375,7 +395,7 @@ func (svc DocumentImageService) BulkCreateDocumentImage(shopID string, authUsern
 	}
 
 	for taskGUID := range taskGUIDsChanged {
-		_, err = svc.messageQueueReCountDocumentImageGroup(shopID, taskGUID)
+		_, err = svc.messageQueueReCountDocumentImageGroup(ctx, shopID, taskGUID)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -386,7 +406,10 @@ func (svc DocumentImageService) BulkCreateDocumentImage(shopID string, authUsern
 
 func (svc DocumentImageService) InfoDocumentImage(shopID string, guid string) (models.DocumentImageInfo, error) {
 
-	findDoc, err := svc.repoImage.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repoImage.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.DocumentImageInfo{}, err
@@ -400,8 +423,12 @@ func (svc DocumentImageService) InfoDocumentImage(shopID string, guid string) (m
 }
 
 func (svc DocumentImageService) SearchDocumentImage(shopID string, matchFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentImageInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{"guidfixed", "documentref", "module"}
-	docList, pagination, err := svc.repoImage.FindPageFilter(shopID, matchFilters, searchInFields, pageable)
+	docList, pagination, err := svc.repoImage.FindPageFilter(ctx, shopID, matchFilters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.DocumentImageInfo{}, pagination, err
@@ -453,14 +480,18 @@ func (svc DocumentImageService) UploadDocumentImage(shopID string, authUsername 
 }
 
 func (svc DocumentImageService) UpdateDocumentImageReferenceGroup() error {
-	findDocList, err := svc.repoImage.FindAll()
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDocList, err := svc.repoImage.FindAll(ctx)
 
 	if err != nil {
 		return err
 	}
 
 	for _, findDoc := range findDocList {
-		findGroupDoc, err := svc.repoImageGroup.FindOneByDocumentImageGUIDAll(findDoc.GuidFixed)
+		findGroupDoc, err := svc.repoImageGroup.FindOneByDocumentImageGUIDAll(ctx, findDoc.GuidFixed)
 
 		if err != nil {
 			return err
@@ -480,7 +511,7 @@ func (svc DocumentImageService) UpdateDocumentImageReferenceGroup() error {
 
 		findDoc.ReferenceGroups = refGroups
 
-		err = svc.repoImage.UpdateAll(findDoc)
+		err = svc.repoImage.UpdateAll(ctx, findDoc)
 
 		if err != nil {
 			return err

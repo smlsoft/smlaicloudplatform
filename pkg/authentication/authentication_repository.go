@@ -1,6 +1,7 @@
 package authentication
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/shop/models"
 
@@ -9,9 +10,9 @@ import (
 )
 
 type IAuthenticationRepository interface {
-	FindUser(id string) (*models.UserDoc, error)
-	CreateUser(models.UserDoc) (primitive.ObjectID, error)
-	UpdateUser(username string, user models.UserDoc) error
+	FindUser(ctx context.Context, id string) (*models.UserDoc, error)
+	CreateUser(ctx context.Context, doc models.UserDoc) (primitive.ObjectID, error)
+	UpdateUser(ctx context.Context, username string, user models.UserDoc) error
 }
 
 type AuthenticationRepository struct {
@@ -24,10 +25,10 @@ func NewAuthenticationRepository(pst microservice.IPersisterMongo) Authenticatio
 	}
 }
 
-func (r AuthenticationRepository) FindUser(username string) (*models.UserDoc, error) {
+func (r AuthenticationRepository) FindUser(ctx context.Context, username string) (*models.UserDoc, error) {
 
 	findUser := &models.UserDoc{}
-	err := r.pst.FindOne(&models.UserDoc{}, bson.M{"username": username}, findUser)
+	err := r.pst.FindOne(ctx, &models.UserDoc{}, bson.M{"username": username}, findUser)
 
 	if err != nil {
 		return nil, err
@@ -36,9 +37,9 @@ func (r AuthenticationRepository) FindUser(username string) (*models.UserDoc, er
 	return findUser, nil
 }
 
-func (r AuthenticationRepository) CreateUser(user models.UserDoc) (primitive.ObjectID, error) {
+func (r AuthenticationRepository) CreateUser(ctx context.Context, user models.UserDoc) (primitive.ObjectID, error) {
 
-	idx, err := r.pst.Create(&models.UserDoc{}, user)
+	idx, err := r.pst.Create(ctx, &models.UserDoc{}, user)
 
 	if err != nil {
 		return primitive.NilObjectID, err
@@ -46,13 +47,13 @@ func (r AuthenticationRepository) CreateUser(user models.UserDoc) (primitive.Obj
 	return idx, nil
 }
 
-func (r AuthenticationRepository) UpdateUser(username string, user models.UserDoc) error {
+func (r AuthenticationRepository) UpdateUser(ctx context.Context, username string, user models.UserDoc) error {
 
 	filterDoc := map[string]interface{}{
 		"username": username,
 	}
 
-	err := r.pst.UpdateOne(&models.UserDoc{}, filterDoc, user)
+	err := r.pst.UpdateOne(ctx, &models.UserDoc{}, filterDoc, user)
 
 	if err != nil {
 		return err

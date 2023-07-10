@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
@@ -37,6 +38,7 @@ type OrderTypeHttpService struct {
 	repoProductBarcode productbarcode_repositories.IProductBarcodeRepository
 	syncCacheRepo      mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.OrderTypeActivity, models.OrderTypeDeleteActivity]
+	contextTimeout time.Duration
 }
 
 func NewOrderTypeHttpService(
@@ -45,9 +47,13 @@ func NewOrderTypeHttpService(
 	syncCacheRepo mastersync.IMasterSyncCacheRepository,
 ) *OrderTypeHttpService {
 
+	contextTimeout := time.Duration(15) * time.Second
+
 	insSvc := &OrderTypeHttpService{
-		repo:          repo,
-		syncCacheRepo: syncCacheRepo,
+		repo:               repo,
+		syncCacheRepo:      syncCacheRepo,
+		repoProductBarcode: repoProductBarcode,
+		contextTimeout:     contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.OrderTypeActivity, models.OrderTypeDeleteActivity](repo)
@@ -55,9 +61,16 @@ func NewOrderTypeHttpService(
 	return insSvc
 }
 
+func (svc OrderTypeHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc OrderTypeHttpService) CreateOrderType(shopID string, authUsername string, doc models.OrderType) (string, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", doc.Code)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", doc.Code)
 
 	if err != nil {
 		return "", err
@@ -77,7 +90,7 @@ func (svc OrderTypeHttpService) CreateOrderType(shopID string, authUsername stri
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -90,7 +103,10 @@ func (svc OrderTypeHttpService) CreateOrderType(shopID string, authUsername stri
 
 func (svc OrderTypeHttpService) UpdateOrderType(shopID string, guid string, authUsername string, doc models.OrderType) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -105,7 +121,7 @@ func (svc OrderTypeHttpService) UpdateOrderType(shopID string, guid string, auth
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -118,7 +134,10 @@ func (svc OrderTypeHttpService) UpdateOrderType(shopID string, guid string, auth
 
 func (svc OrderTypeHttpService) DeleteOrderType(shopID string, guid string, authUsername string) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -134,7 +153,7 @@ func (svc OrderTypeHttpService) DeleteOrderType(shopID string, guid string, auth
 		return fmt.Errorf("\"%s\" is referenced in product barcode", findDoc.Code)
 	}
 
-	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 	if err != nil {
 		return err
 	}
@@ -146,6 +165,9 @@ func (svc OrderTypeHttpService) DeleteOrderType(shopID string, guid string, auth
 
 func (svc OrderTypeHttpService) DeleteOrderTypeByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	existsInProduct, _ := svc.existsOrderTypeRefInProduct(shopID, GUIDs)
 
 	if existsInProduct {
@@ -156,7 +178,7 @@ func (svc OrderTypeHttpService) DeleteOrderTypeByGUIDs(shopID string, authUserna
 		"guidfixed": bson.M{"$in": GUIDs},
 	}
 
-	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	err := svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
@@ -166,7 +188,10 @@ func (svc OrderTypeHttpService) DeleteOrderTypeByGUIDs(shopID string, authUserna
 
 func (svc OrderTypeHttpService) InfoOrderType(shopID string, guid string) (models.OrderTypeInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.OrderTypeInfo{}, err
@@ -181,7 +206,10 @@ func (svc OrderTypeHttpService) InfoOrderType(shopID string, guid string) (model
 
 func (svc OrderTypeHttpService) InfoOrderTypeByCode(shopID string, code string) (models.OrderTypeInfo, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", code)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", code)
 
 	if err != nil {
 		return models.OrderTypeInfo{}, err
@@ -195,12 +223,16 @@ func (svc OrderTypeHttpService) InfoOrderTypeByCode(shopID string, code string) 
 }
 
 func (svc OrderTypeHttpService) SearchOrderType(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.OrderTypeInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"code",
 		"names.name",
 	}
 
-	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.OrderTypeInfo{}, pagination, err
@@ -210,6 +242,10 @@ func (svc OrderTypeHttpService) SearchOrderType(shopID string, filters map[strin
 }
 
 func (svc OrderTypeHttpService) SearchOrderTypeStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.OrderTypeInfo, int, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"code",
 		"names.name",
@@ -217,7 +253,7 @@ func (svc OrderTypeHttpService) SearchOrderTypeStep(shopID string, langCode stri
 
 	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(ctx, shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.OrderTypeInfo{}, 0, err
@@ -228,6 +264,9 @@ func (svc OrderTypeHttpService) SearchOrderTypeStep(shopID string, langCode stri
 
 func (svc OrderTypeHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.OrderType) (common.BulkImport, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.OrderType](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
@@ -235,7 +274,7 @@ func (svc OrderTypeHttpService) SaveInBatch(shopID string, authUsername string, 
 		itemCodeGuidList = append(itemCodeGuidList, doc.Code)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "code", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "code", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -274,7 +313,7 @@ func (svc OrderTypeHttpService) SaveInBatch(shopID string, authUsername string, 
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.OrderTypeDoc, error) {
-			return svc.repo.FindByDocIndentityGuid(shopID, "code", guid)
+			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", guid)
 		},
 		func(doc models.OrderTypeDoc) bool {
 			return doc.Code != ""
@@ -285,7 +324,7 @@ func (svc OrderTypeHttpService) SaveInBatch(shopID string, authUsername string, 
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
-			err = svc.repo.Update(shopID, doc.GuidFixed, doc)
+			err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
 			if err != nil {
 				return nil
 			}
@@ -294,7 +333,7 @@ func (svc OrderTypeHttpService) SaveInBatch(shopID string, authUsername string, 
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return common.BulkImport{}, err
@@ -353,7 +392,11 @@ func (svc OrderTypeHttpService) GetModuleName() string {
 }
 
 func (svc OrderTypeHttpService) existsOrderTypeRefInProduct(shopID string, GUIDs []string) (bool, error) {
-	docCount, err := svc.repoProductBarcode.CountByOrderTypes(shopID, GUIDs)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	docCount, err := svc.repoProductBarcode.CountByOrderTypes(ctx, shopID, GUIDs)
 	if err != nil {
 		return true, err
 	}

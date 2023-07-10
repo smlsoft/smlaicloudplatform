@@ -1,6 +1,7 @@
 package documentimage
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -1156,7 +1157,7 @@ func (h DocumentImageHttp) UpdateXSort(ctx microservice.IContext) error {
 		return err
 	}
 
-	err = h.service.XSortsUpdate(shopID, authUsername, taskGUID, reqBody)
+	err = h.service.XSortsUpdate(context.Background(), shopID, authUsername, taskGUID, reqBody)
 	if err != nil {
 		ctx.ResponseError(http.StatusBadRequest, err.Error())
 		return err

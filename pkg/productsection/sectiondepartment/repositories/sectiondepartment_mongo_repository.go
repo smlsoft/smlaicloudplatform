@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/productsection/sectiondepartment/models"
@@ -12,27 +13,27 @@ import (
 )
 
 type ISectionDepartmentRepository interface {
-	Count(shopID string) (int, error)
-	Create(doc models.SectionDepartmentDoc) (string, error)
-	CreateInBatch(docList []models.SectionDepartmentDoc) error
-	Update(shopID string, guid string, doc models.SectionDepartmentDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	Delete(shopID string, username string, filters map[string]interface{}) error
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SectionDepartmentInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.SectionDepartmentDoc, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	Create(ctx context.Context, doc models.SectionDepartmentDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.SectionDepartmentDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.SectionDepartmentDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	Delete(ctx context.Context, shopID string, username string, filters map[string]interface{}) error
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.SectionDepartmentInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.SectionDepartmentDoc, error)
 
-	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.SectionDepartmentItemGuid, error)
-	FindOneFilter(shopID string, filters map[string]interface{}) (models.SectionDepartmentDoc, error)
-	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.SectionDepartmentDoc, error)
-	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.SectionDepartmentInfo, mongopagination.PaginationData, error)
-	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.SectionDepartmentInfo, int, error)
+	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.SectionDepartmentItemGuid, error)
+	FindOneFilter(ctx context.Context, shopID string, filters map[string]interface{}) (models.SectionDepartmentDoc, error)
+	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.SectionDepartmentDoc, error)
+	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.SectionDepartmentInfo, mongopagination.PaginationData, error)
+	FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.SectionDepartmentInfo, int, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SectionDepartmentDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SectionDepartmentActivity, mongopagination.PaginationData, error)
-	FindDeletedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SectionDepartmentDeleteActivity, error)
-	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SectionDepartmentActivity, error)
+	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SectionDepartmentDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SectionDepartmentActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SectionDepartmentDeleteActivity, error)
+	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.SectionDepartmentActivity, error)
 
-	FindOneByCode(shopID, branchCode, departmentCode string) (models.SectionDepartmentDoc, error)
+	FindOneByCode(ctx context.Context, shopID, branchCode, departmentCode string) (models.SectionDepartmentDoc, error)
 }
 
 type SectionDepartmentRepository struct {
@@ -57,14 +58,18 @@ func NewSectionDepartmentRepository(pst microservice.IPersisterMongo) *SectionDe
 	return insRepo
 }
 
-func (repo SectionDepartmentRepository) FindOneByCode(shopID, branchCode, departmentCode string) (models.SectionDepartmentDoc, error) {
+func (repo SectionDepartmentRepository) FindOneByCode(ctx context.Context, shopID, branchCode, departmentCode string) (models.SectionDepartmentDoc, error) {
 	doc := models.SectionDepartmentDoc{}
-	err := repo.pst.FindOne(models.SectionDepartmentDoc{}, bson.M{
-		"shopid":         shopID,
-		"deletedat":      bson.M{"$exists": false},
-		"branchcode":     branchCode,
-		"departmentcode": departmentCode,
-	}, &doc)
+	err := repo.pst.FindOne(
+		ctx,
+		models.SectionDepartmentDoc{}, bson.M{
+			"shopid":         shopID,
+			"deletedat":      bson.M{"$exists": false},
+			"branchcode":     branchCode,
+			"departmentcode": departmentCode,
+		},
+		&doc,
+	)
 
 	if err != nil {
 		return doc, err

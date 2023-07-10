@@ -1,6 +1,7 @@
 package printer
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
@@ -34,22 +35,33 @@ type PrinterService struct {
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 
 	services.ActivityService[models.PrinterActivity, models.PrinterDeleteActivity]
+	contextTimeout time.Duration
 }
 
 func NewPrinterService(repo PrinterRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) PrinterService {
 
+	contextTimeout := time.Duration(15) * time.Second
+
 	insSvc := PrinterService{
-		repo:          repo,
-		syncCacheRepo: syncCacheRepo,
+		repo:           repo,
+		syncCacheRepo:  syncCacheRepo,
+		contextTimeout: contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.PrinterActivity, models.PrinterDeleteActivity](repo)
 	return insSvc
 }
 
+func (svc PrinterService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc PrinterService) CreatePrinter(shopID string, authUsername string, doc models.Printer) (string, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "code", doc.Code)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", doc.Code)
 
 	if err != nil {
 		return "", err
@@ -69,7 +81,7 @@ func (svc PrinterService) CreatePrinter(shopID string, authUsername string, doc 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -82,7 +94,10 @@ func (svc PrinterService) CreatePrinter(shopID string, authUsername string, doc 
 
 func (svc PrinterService) UpdatePrinter(shopID string, guid string, authUsername string, doc models.Printer) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -97,7 +112,7 @@ func (svc PrinterService) UpdatePrinter(shopID string, guid string, authUsername
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -109,7 +124,11 @@ func (svc PrinterService) UpdatePrinter(shopID string, guid string, authUsername
 }
 
 func (svc PrinterService) DeletePrinter(shopID string, guid string, authUsername string) error {
-	err := svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	err := svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 
 	if err != nil {
 		return err
@@ -122,7 +141,10 @@ func (svc PrinterService) DeletePrinter(shopID string, guid string, authUsername
 
 func (svc PrinterService) InfoPrinter(shopID string, guid string) (models.PrinterInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.PrinterInfo{}, err
@@ -137,6 +159,10 @@ func (svc PrinterService) InfoPrinter(shopID string, guid string) (models.Printe
 }
 
 func (svc PrinterService) SearchPrinter(shopID string, pageable micromodels.Pageable) ([]models.PrinterInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"code",
 		"names.name",
@@ -146,7 +172,7 @@ func (svc PrinterService) SearchPrinter(shopID string, pageable micromodels.Page
 		searchInFields = append(searchInFields, fmt.Sprintf("name%d", (i+1)))
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPage(ctx, shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.PrinterInfo{}, pagination, err
@@ -156,6 +182,10 @@ func (svc PrinterService) SearchPrinter(shopID string, pageable micromodels.Page
 }
 
 func (svc PrinterService) SearchPrinterStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.PrinterInfo, int, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"code",
 		"names.name",
@@ -163,7 +193,7 @@ func (svc PrinterService) SearchPrinterStep(shopID string, langCode string, page
 
 	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(ctx, shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.PrinterInfo{}, 0, err
@@ -174,8 +204,8 @@ func (svc PrinterService) SearchPrinterStep(shopID string, langCode string, page
 
 func (svc PrinterService) SaveInBatch(shopID string, authUsername string, dataList []models.Printer) (common.BulkImport, error) {
 
-	// createDataList := []models.PrinterDoc{}
-	// duplicateDataList := []models.Printer{}
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
 	payloadCategoryList, payloadDuplicateCategoryList := importdata.FilterDuplicate[models.Printer](dataList, svc.getDocIDKey)
 
@@ -184,7 +214,7 @@ func (svc PrinterService) SaveInBatch(shopID string, authUsername string, dataLi
 		itemCodeGuidList = append(itemCodeGuidList, doc.Code)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "code", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "code", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -224,7 +254,7 @@ func (svc PrinterService) SaveInBatch(shopID string, authUsername string, dataLi
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.PrinterDoc, error) {
-			return svc.repo.FindByGuid(shopID, guid)
+			return svc.repo.FindByGuid(ctx, shopID, guid)
 		},
 		func(doc models.PrinterDoc) bool {
 			return false
@@ -236,7 +266,7 @@ func (svc PrinterService) SaveInBatch(shopID string, authUsername string, dataLi
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return common.BulkImport{}, err

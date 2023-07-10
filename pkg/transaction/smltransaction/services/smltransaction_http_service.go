@@ -2,6 +2,7 @@ package services
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"smlcloudplatform/pkg/reportquery"
@@ -207,7 +208,7 @@ func (svc SMLTransactionHttpService) SaveInBatch(shopID string, authUsername str
 		return []string{}, fmt.Errorf("body request is empty")
 	}
 
-	err := svc.repo.Transaction(func() error {
+	err := svc.repo.Transaction(func(ctx context.Context) error {
 
 		filters := map[string]interface{}{
 			dataReq.KeyID: bson.M{"$in": identityKeys},
@@ -258,7 +259,7 @@ func (svc SMLTransactionHttpService) SaveInBatchOld(shopID string, authUsername 
 
 	guids := []string{}
 	tempSaveSuccess := []map[string]interface{}{}
-	err := svc.repo.Transaction(func() error {
+	err := svc.repo.Transaction(func(ctx context.Context) error {
 		for _, smlRequest := range dataReq.Body {
 			guidFixed, err := svc.CreateSMLTransaction(shopID, authUsername, models.SMLTransactionRequest{
 				Collection: dataReq.Collection,

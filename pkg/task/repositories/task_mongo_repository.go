@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
@@ -15,33 +16,33 @@ import (
 )
 
 type ITaskRepository interface {
-	FindTaskChild(shopID string, rejectFromTaskGUID string) (models.TaskChild, error)
-	FindLastTaskByCode(shopID string, codeFormat string) (models.TaskDoc, error)
-	FindOneTaskByCode(shopID string, taskCode string) (models.TaskInfo, error)
-	Count(shopID string) (int, error)
-	CountTaskParent(shopID string, taskGUID string) (int, error)
-	Create(doc models.TaskDoc) (string, error)
-	CreateInBatch(docList []models.TaskDoc) error
-	Update(shopID string, guid string, doc models.TaskDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	Delete(shopID string, username string, filters map[string]interface{}) error
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.TaskInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.TaskDoc, error)
+	FindTaskChild(ctx context.Context, shopID string, rejectFromTaskGUID string) (models.TaskChild, error)
+	FindLastTaskByCode(ctx context.Context, shopID string, codeFormat string) (models.TaskDoc, error)
+	FindOneTaskByCode(ctx context.Context, shopID string, taskCode string) (models.TaskInfo, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	CountTaskParent(ctx context.Context, shopID string, taskGUID string) (int, error)
+	Create(ctx context.Context, doc models.TaskDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.TaskDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.TaskDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	Delete(ctx context.Context, shopID string, username string, filters map[string]interface{}) error
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.TaskInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.TaskDoc, error)
 
-	UpdateTotalDocumentImageGroup(shopID string, taskGUID string, total int, countStatus []models.TotalStatus) error
-	UpdateTotalRejectDocumentImageGroup(shopID string, taskGUID string, total int) error
+	UpdateTotalDocumentImageGroup(ctx context.Context, shopID string, taskGUID string, total int, countStatus []models.TotalStatus) error
+	UpdateTotalRejectDocumentImageGroup(ctx context.Context, shopID string, taskGUID string, total int) error
 
-	FindPageByTaskReject(shopID string, module string, taskGUID string) ([]models.TaskInfo, error)
-	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.TaskItemGuid, error)
-	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.TaskDoc, error)
-	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.TaskInfo, int, error)
+	FindPageByTaskReject(ctx context.Context, shopID string, module string, taskGUID string) ([]models.TaskInfo, error)
+	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.TaskItemGuid, error)
+	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.TaskDoc, error)
+	FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.TaskInfo, int, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.TaskDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.TaskActivity, mongopagination.PaginationData, error)
-	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.TaskDeleteActivity, error)
-	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.TaskActivity, error)
+	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.TaskDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.TaskActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.TaskDeleteActivity, error)
+	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.TaskActivity, error)
 
-	FindPageTask(shopID string, module string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.TaskInfo, mongopagination.PaginationData, error)
+	FindPageTask(ctx context.Context, shopID string, module string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.TaskInfo, mongopagination.PaginationData, error)
 }
 
 type TaskRepository struct {
@@ -66,7 +67,7 @@ func NewTaskRepository(pst microservice.IPersisterMongo) *TaskRepository {
 	return &insRepo
 }
 
-func (repo *TaskRepository) FindTaskChild(shopID string, rejectFromTaskGUID string) (models.TaskChild, error) {
+func (repo *TaskRepository) FindTaskChild(ctx context.Context, shopID string, rejectFromTaskGUID string) (models.TaskChild, error) {
 
 	queryFilters := bson.M{
 		"shopid":             shopID,
@@ -79,7 +80,7 @@ func (repo *TaskRepository) FindTaskChild(shopID string, rejectFromTaskGUID stri
 	opts.SetSort(bson.M{"code": 1})
 
 	findDoc := models.TaskChild{}
-	err := repo.pst.FindOne(models.TaskChild{}, queryFilters, &findDoc, opts)
+	err := repo.pst.FindOne(ctx, models.TaskChild{}, queryFilters, &findDoc, opts)
 
 	if err != nil {
 		return models.TaskChild{}, err
@@ -88,7 +89,7 @@ func (repo *TaskRepository) FindTaskChild(shopID string, rejectFromTaskGUID stri
 	return findDoc, nil
 }
 
-func (repo *TaskRepository) FindLastTaskByCode(shopID string, codeFormat string) (models.TaskDoc, error) {
+func (repo *TaskRepository) FindLastTaskByCode(ctx context.Context, shopID string, codeFormat string) (models.TaskDoc, error) {
 
 	queryFilters := bson.M{
 		"shopid":    shopID,
@@ -104,7 +105,7 @@ func (repo *TaskRepository) FindLastTaskByCode(shopID string, codeFormat string)
 	opts.SetSort(bson.M{"code": -1})
 
 	findDoc := new(models.TaskDoc)
-	err := repo.pst.FindOne(models.TaskDoc{}, queryFilters, &findDoc, opts)
+	err := repo.pst.FindOne(ctx, models.TaskDoc{}, queryFilters, &findDoc, opts)
 	// err := repo.pst.FindOne(models.TaskDoc{}, bson.M{"shopid": shopID}, &findDoc)
 
 	if err != nil {
@@ -114,7 +115,7 @@ func (repo *TaskRepository) FindLastTaskByCode(shopID string, codeFormat string)
 	return *findDoc, nil
 }
 
-func (repo *TaskRepository) CountTaskParent(shopID string, taskGUID string) (int, error) {
+func (repo *TaskRepository) CountTaskParent(ctx context.Context, shopID string, taskGUID string) (int, error) {
 
 	queryFilters := bson.M{
 		"shopid":    shopID,
@@ -123,7 +124,7 @@ func (repo *TaskRepository) CountTaskParent(shopID string, taskGUID string) (int
 
 	queryFilters["parentguidfixed"] = taskGUID
 
-	count, err := repo.pst.Count(models.TaskInfo{}, queryFilters)
+	count, err := repo.pst.Count(ctx, models.TaskInfo{}, queryFilters)
 
 	if err != nil {
 		return 0, err
@@ -132,7 +133,7 @@ func (repo *TaskRepository) CountTaskParent(shopID string, taskGUID string) (int
 	return count, nil
 }
 
-func (repo *TaskRepository) UpdateTotalDocumentImageGroup(shopID string, taskGUID string, totalDoc int, totalDocStatus []models.TotalStatus) error {
+func (repo *TaskRepository) UpdateTotalDocumentImageGroup(ctx context.Context, shopID string, taskGUID string, totalDoc int, totalDocStatus []models.TotalStatus) error {
 
 	queryFilters := bson.M{
 		"shopid":    shopID,
@@ -142,7 +143,7 @@ func (repo *TaskRepository) UpdateTotalDocumentImageGroup(shopID string, taskGUI
 
 	queryFilters["guidfixed"] = taskGUID
 
-	err := repo.pst.UpdateOne(models.TaskDocumentTotal{}, queryFilters, models.TaskDocumentTotal{TotalDocument: totalDoc, TotalDocumentStatus: &totalDocStatus})
+	err := repo.pst.UpdateOne(ctx, models.TaskDocumentTotal{}, queryFilters, models.TaskDocumentTotal{TotalDocument: totalDoc, TotalDocumentStatus: &totalDocStatus})
 
 	if err != nil {
 		return err
@@ -151,7 +152,7 @@ func (repo *TaskRepository) UpdateTotalDocumentImageGroup(shopID string, taskGUI
 	return nil
 }
 
-func (repo *TaskRepository) UpdateTotalRejectDocumentImageGroup(shopID string, taskGUID string, total int) error {
+func (repo *TaskRepository) UpdateTotalRejectDocumentImageGroup(ctx context.Context, shopID string, taskGUID string, total int) error {
 
 	queryFilters := bson.M{
 		"shopid":    shopID,
@@ -161,7 +162,7 @@ func (repo *TaskRepository) UpdateTotalRejectDocumentImageGroup(shopID string, t
 
 	queryFilters["guidfixed"] = taskGUID
 
-	err := repo.pst.UpdateOne(models.TaskTotalReject{}, queryFilters, models.TaskTotalReject{ToTalReject: total})
+	err := repo.pst.UpdateOne(ctx, models.TaskTotalReject{}, queryFilters, models.TaskTotalReject{ToTalReject: total})
 
 	if err != nil {
 		return err
@@ -170,7 +171,7 @@ func (repo *TaskRepository) UpdateTotalRejectDocumentImageGroup(shopID string, t
 	return nil
 }
 
-func (repo *TaskRepository) FindPageByTaskReject(shopID string, module string, taskGUID string) ([]models.TaskInfo, error) {
+func (repo *TaskRepository) FindPageByTaskReject(ctx context.Context, shopID string, module string, taskGUID string) ([]models.TaskInfo, error) {
 
 	queryFilters := bson.M{
 		"shopid":    shopID,
@@ -185,7 +186,7 @@ func (repo *TaskRepository) FindPageByTaskReject(shopID string, module string, t
 
 	docList := []models.TaskInfo{}
 
-	err := repo.pst.Find(models.TaskInfo{}, queryFilters, &docList)
+	err := repo.pst.Find(ctx, models.TaskInfo{}, queryFilters, &docList)
 
 	if err != nil {
 		return []models.TaskInfo{}, err
@@ -194,7 +195,7 @@ func (repo *TaskRepository) FindPageByTaskReject(shopID string, module string, t
 	return docList, nil
 }
 
-func (repo *TaskRepository) FindOneTaskByCode(shopID string, taskCode string) (models.TaskInfo, error) {
+func (repo *TaskRepository) FindOneTaskByCode(ctx context.Context, shopID string, taskCode string) (models.TaskInfo, error) {
 
 	queryFilters := bson.M{
 		"shopid":    shopID,
@@ -204,7 +205,7 @@ func (repo *TaskRepository) FindOneTaskByCode(shopID string, taskCode string) (m
 
 	findDoc := models.TaskInfo{}
 
-	err := repo.pst.FindOne(models.TaskInfo{}, queryFilters, &findDoc)
+	err := repo.pst.FindOne(ctx, models.TaskInfo{}, queryFilters, &findDoc)
 
 	if err != nil {
 		return models.TaskInfo{}, err
@@ -213,7 +214,7 @@ func (repo *TaskRepository) FindOneTaskByCode(shopID string, taskCode string) (m
 	return findDoc, nil
 }
 
-func (repo *TaskRepository) FindPageTask(shopID string, module string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.TaskInfo, mongopagination.PaginationData, error) {
+func (repo *TaskRepository) FindPageTask(ctx context.Context, shopID string, module string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.TaskInfo, mongopagination.PaginationData, error) {
 
 	matchFilterList := []interface{}{}
 
@@ -266,7 +267,7 @@ func (repo *TaskRepository) FindPageTask(shopID string, module string, filters m
 		"$sort": sortFields,
 	}
 
-	aggData, err := repo.pst.AggregatePage(models.TaskInfo{}, pageable, matchQuery, sortQuery)
+	aggData, err := repo.pst.AggregatePage(ctx, models.TaskInfo{}, pageable, matchQuery, sortQuery)
 
 	if err != nil {
 		return []models.TaskInfo{}, mongopagination.PaginationData{}, err

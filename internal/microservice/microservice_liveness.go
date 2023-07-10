@@ -1,6 +1,7 @@
 package microservice
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -25,7 +26,7 @@ func (ms *Microservice) isMongoDBAlive() bool {
 	for _, pst := range ms.mongoPersisters {
 
 		// ms.Logger.Debug("Perform healthcheck on MongoDB")
-		err := pst.Healthcheck()
+		err := pst.Healthcheck(context.Background())
 		if err != nil {
 			return false
 		}

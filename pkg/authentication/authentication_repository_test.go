@@ -1,6 +1,7 @@
 package authentication_test
 
 import (
+	"context"
 	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
@@ -59,7 +60,7 @@ func TestFindUser(t *testing.T) {
 		CreatedAt:    createAt,
 	}
 
-	createUserID, err := repoMock.CreateUser(*give)
+	createUserID, err := repoMock.CreateUser(context.TODO(), *give)
 	if err != nil {
 		t.Error(err.Error())
 		return
@@ -67,7 +68,7 @@ func TestFindUser(t *testing.T) {
 
 	require.NotEqual(t, createUserID, primitive.NilObjectID, "Create User Failed")
 
-	getUser, err := repoMock.FindUser(want.Username)
+	getUser, err := repoMock.FindUser(context.TODO(), want.Username)
 
 	if err != nil {
 		t.Error(err.Error())

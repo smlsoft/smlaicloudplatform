@@ -1,6 +1,7 @@
 package repositories_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"smlcloudplatform/internal/microservice"
@@ -27,7 +28,7 @@ func TestFindByID(t *testing.T) {
 
 	idx, _ := primitive.ObjectIDFromHex("62398ea81e4743ecba54da23")
 
-	doc, err := repoMock.FindByID(idx)
+	doc, err := repoMock.FindByID(context.Background(), idx)
 
 	if err != nil {
 		t.Error(err)
@@ -46,7 +47,7 @@ func TestFindByItemGuid(t *testing.T) {
 	if os.Getenv("SERVERLESS") == "serverless" {
 		t.Skip()
 	}
-	doc, err := repoMock.FindByGuid("27dcEdktOoaSBYFmnN6G6ett4Jb", "2EQsi6PRQ3lAmXORqYD9zJltnsz")
+	doc, err := repoMock.FindByGuid(context.Background(), "27dcEdktOoaSBYFmnN6G6ett4Jb", "2EQsi6PRQ3lAmXORqYD9zJltnsz")
 
 	if err != nil {
 		t.Error(err)

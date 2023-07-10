@@ -1,6 +1,7 @@
 package repositories_test
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/mock"
 	"smlcloudplatform/pkg/vfgl/accountperiodmaster/repositories"
@@ -17,5 +18,5 @@ func init() {
 }
 
 func TestFindByDateRange(t *testing.T) {
-	repoMock.FindByDateRange("shopID", time.Now(), time.Now())
+	repoMock.FindByDateRange(context.TODO(), "shopID", time.Now(), time.Now())
 }

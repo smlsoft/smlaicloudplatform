@@ -1,12 +1,13 @@
 package shop
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/shop/models"
 )
 
 type IShopUserAccessLogRepository interface {
-	Create(shopUserAccessLog models.ShopUserAccessLog) error
+	Create(ctx context.Context, shopUserAccessLog models.ShopUserAccessLog) error
 }
 
 type ShopUserAccessLogRepository struct {
@@ -19,9 +20,9 @@ func NewShopUserAccessLogRepository(pst microservice.IPersisterMongo) ShopUserAc
 	}
 }
 
-func (svc ShopUserAccessLogRepository) Create(shopUserAccessLog models.ShopUserAccessLog) error {
+func (svc ShopUserAccessLogRepository) Create(ctx context.Context, shopUserAccessLog models.ShopUserAccessLog) error {
 
-	_, err := svc.pst.Create(&models.ShopUserAccessLog{}, shopUserAccessLog)
+	_, err := svc.pst.Create(ctx, &models.ShopUserAccessLog{}, shopUserAccessLog)
 
 	if err != nil {
 		return err

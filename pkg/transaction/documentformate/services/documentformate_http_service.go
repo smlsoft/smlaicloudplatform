@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -38,13 +39,17 @@ type DocumentFormateHttpService struct {
 
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.DocumentFormateActivity, models.DocumentFormateDeleteActivity]
+	contextTimeout time.Duration
 }
 
 func NewDocumentFormateHttpService(repo repositories.IDocumentFormateRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *DocumentFormateHttpService {
 
+	contextTimeout := time.Duration(15) * time.Second
+
 	insSvc := &DocumentFormateHttpService{
-		repo:          repo,
-		syncCacheRepo: syncCacheRepo,
+		repo:           repo,
+		syncCacheRepo:  syncCacheRepo,
+		contextTimeout: contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.DocumentFormateActivity, models.DocumentFormateDeleteActivity](repo)
@@ -52,9 +57,16 @@ func NewDocumentFormateHttpService(repo repositories.IDocumentFormateRepository,
 	return insSvc
 }
 
+func (svc DocumentFormateHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc DocumentFormateHttpService) CreateDocumentFormate(shopID string, authUsername string, doc models.DocumentFormate) (string, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "doccode", doc.DocCode)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "doccode", doc.DocCode)
 
 	if err != nil {
 		return "", err
@@ -74,7 +86,7 @@ func (svc DocumentFormateHttpService) CreateDocumentFormate(shopID string, authU
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -87,7 +99,10 @@ func (svc DocumentFormateHttpService) CreateDocumentFormate(shopID string, authU
 
 func (svc DocumentFormateHttpService) UpdateDocumentFormate(shopID string, guid string, authUsername string, doc models.DocumentFormate) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -102,7 +117,7 @@ func (svc DocumentFormateHttpService) UpdateDocumentFormate(shopID string, guid 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -115,7 +130,10 @@ func (svc DocumentFormateHttpService) UpdateDocumentFormate(shopID string, guid 
 
 func (svc DocumentFormateHttpService) DeleteDocumentFormate(shopID string, guid string, authUsername string) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -125,7 +143,7 @@ func (svc DocumentFormateHttpService) DeleteDocumentFormate(shopID string, guid 
 		return errors.New("document not found")
 	}
 
-	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 	if err != nil {
 		return err
 	}
@@ -137,11 +155,14 @@ func (svc DocumentFormateHttpService) DeleteDocumentFormate(shopID string, guid 
 
 func (svc DocumentFormateHttpService) DeleteDocumentFormateByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
 	}
 
-	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	err := svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
@@ -151,7 +172,10 @@ func (svc DocumentFormateHttpService) DeleteDocumentFormateByGUIDs(shopID string
 
 func (svc DocumentFormateHttpService) InfoDocumentFormate(shopID string, guid string) (models.DocumentFormateInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.DocumentFormateInfo{}, err
@@ -166,7 +190,10 @@ func (svc DocumentFormateHttpService) InfoDocumentFormate(shopID string, guid st
 
 func (svc DocumentFormateHttpService) InfoDocumentFormateByCode(shopID string, code string) (models.DocumentFormateInfo, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "doccode", code)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "doccode", code)
 
 	if err != nil {
 		return models.DocumentFormateInfo{}, err
@@ -180,11 +207,15 @@ func (svc DocumentFormateHttpService) InfoDocumentFormateByCode(shopID string, c
 }
 
 func (svc DocumentFormateHttpService) SearchDocumentFormate(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentFormateInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"doccode",
 	}
 
-	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.DocumentFormateInfo{}, pagination, err
@@ -194,6 +225,10 @@ func (svc DocumentFormateHttpService) SearchDocumentFormate(shopID string, filte
 }
 
 func (svc DocumentFormateHttpService) SearchDocumentFormateStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.DocumentFormateInfo, int, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"doccode",
 	}
@@ -208,7 +243,7 @@ func (svc DocumentFormateHttpService) SearchDocumentFormateStep(shopID string, l
 		}
 	*/
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(ctx, shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.DocumentFormateInfo{}, 0, err
@@ -219,6 +254,9 @@ func (svc DocumentFormateHttpService) SearchDocumentFormateStep(shopID string, l
 
 func (svc DocumentFormateHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.DocumentFormate) (common.BulkImport, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.DocumentFormate](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
@@ -226,7 +264,7 @@ func (svc DocumentFormateHttpService) SaveInBatch(shopID string, authUsername st
 		itemCodeGuidList = append(itemCodeGuidList, doc.DocCode)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "doccode", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "doccode", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -265,7 +303,7 @@ func (svc DocumentFormateHttpService) SaveInBatch(shopID string, authUsername st
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.DocumentFormateDoc, error) {
-			return svc.repo.FindByDocIndentityGuid(shopID, "doccode", guid)
+			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "doccode", guid)
 		},
 		func(doc models.DocumentFormateDoc) bool {
 			return doc.DocCode != ""
@@ -276,7 +314,7 @@ func (svc DocumentFormateHttpService) SaveInBatch(shopID string, authUsername st
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
-			err = svc.repo.Update(shopID, doc.GuidFixed, doc)
+			err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
 			if err != nil {
 				return nil
 			}
@@ -285,7 +323,7 @@ func (svc DocumentFormateHttpService) SaveInBatch(shopID string, authUsername st
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return common.BulkImport{}, err

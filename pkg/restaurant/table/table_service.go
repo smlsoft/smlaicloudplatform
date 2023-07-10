@@ -1,6 +1,7 @@
 package table
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
@@ -34,21 +35,32 @@ type TableService struct {
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 
 	services.ActivityService[models.TableActivity, models.TableDeleteActivity]
+	contextTimeout time.Duration
 }
 
 func NewTableService(repo ITableRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *TableService {
+
+	contextTimeout := time.Duration(15) * time.Second
+
 	insSvc := TableService{
-		repo:          repo,
-		syncCacheRepo: syncCacheRepo,
+		repo:           repo,
+		syncCacheRepo:  syncCacheRepo,
+		contextTimeout: contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.TableActivity, models.TableDeleteActivity](repo)
 	return &insSvc
 }
 
-func (svc TableService) CreateTable(shopID string, authUsername string, doc models.Table) (string, error) {
+func (svc TableService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "number", doc.Number)
+func (svc TableService) CreateTable(shopID string, authUsername string, doc models.Table) (string, error) {
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "number", doc.Number)
 
 	if err != nil {
 		return "", err
@@ -68,7 +80,7 @@ func (svc TableService) CreateTable(shopID string, authUsername string, doc mode
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -81,7 +93,10 @@ func (svc TableService) CreateTable(shopID string, authUsername string, doc mode
 
 func (svc TableService) UpdateTable(shopID string, guid string, authUsername string, doc models.Table) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -96,7 +111,7 @@ func (svc TableService) UpdateTable(shopID string, guid string, authUsername str
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -108,7 +123,11 @@ func (svc TableService) UpdateTable(shopID string, guid string, authUsername str
 }
 
 func (svc TableService) DeleteTable(shopID string, guid string, authUsername string) error {
-	err := svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	err := svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 
 	if err != nil {
 		return err
@@ -121,11 +140,14 @@ func (svc TableService) DeleteTable(shopID string, guid string, authUsername str
 
 func (svc TableService) DeleteByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
 	}
 
-	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	err := svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
@@ -135,7 +157,10 @@ func (svc TableService) DeleteByGUIDs(shopID string, authUsername string, GUIDs 
 
 func (svc TableService) InfoTable(shopID string, guid string) (models.TableInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.TableInfo{}, err
@@ -150,6 +175,10 @@ func (svc TableService) InfoTable(shopID string, guid string) (models.TableInfo,
 }
 
 func (svc TableService) SearchTable(shopID string, pageable micromodels.Pageable) ([]models.TableInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"code",
 		"names.name",
@@ -159,7 +188,7 @@ func (svc TableService) SearchTable(shopID string, pageable micromodels.Pageable
 		searchInFields = append(searchInFields, fmt.Sprintf("name%d", (i+1)))
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPage(ctx, shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.TableInfo{}, pagination, err
@@ -170,8 +199,8 @@ func (svc TableService) SearchTable(shopID string, pageable micromodels.Pageable
 
 func (svc TableService) SaveInBatch(shopID string, authUsername string, dataList []models.Table) (common.BulkImport, error) {
 
-	// createDataList := []models.TableDoc{}
-	// duplicateDataList := []models.Table{}
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
 	payloadCategoryList, payloadDuplicateCategoryList := importdata.FilterDuplicate[models.Table](dataList, svc.getDocIDKey)
 
@@ -180,7 +209,7 @@ func (svc TableService) SaveInBatch(shopID string, authUsername string, dataList
 		itemCodeGuidList = append(itemCodeGuidList, doc.Number)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "code", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "code", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -220,7 +249,7 @@ func (svc TableService) SaveInBatch(shopID string, authUsername string, dataList
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.TableDoc, error) {
-			return svc.repo.FindByGuid(shopID, guid)
+			return svc.repo.FindByGuid(ctx, shopID, guid)
 		},
 		func(doc models.TableDoc) bool {
 			return false
@@ -232,7 +261,7 @@ func (svc TableService) SaveInBatch(shopID string, authUsername string, dataList
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return common.BulkImport{}, err

@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
@@ -13,27 +14,27 @@ import (
 )
 
 type IPurchaseRepository interface {
-	Count(shopID string) (int, error)
-	Create(doc models.PurchaseDoc) (string, error)
-	CreateInBatch(docList []models.PurchaseDoc) error
-	Update(shopID string, guid string, doc models.PurchaseDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	Delete(shopID string, username string, filters map[string]interface{}) error
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.PurchaseInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.PurchaseDoc, error)
-	FindByGuids(shopID string, guids []string) ([]models.PurchaseDoc, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	Create(ctx context.Context, doc models.PurchaseDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.PurchaseDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.PurchaseDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	Delete(ctx context.Context, shopID string, username string, filters map[string]interface{}) error
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.PurchaseInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.PurchaseDoc, error)
+	FindByGuids(ctx context.Context, shopID string, guids []string) ([]models.PurchaseDoc, error)
 
-	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.PurchaseItemGuid, error)
-	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.PurchaseDoc, error)
-	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.PurchaseInfo, mongopagination.PaginationData, error)
-	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.PurchaseInfo, int, error)
+	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.PurchaseItemGuid, error)
+	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.PurchaseDoc, error)
+	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.PurchaseInfo, mongopagination.PaginationData, error)
+	FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.PurchaseInfo, int, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.PurchaseDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.PurchaseActivity, mongopagination.PaginationData, error)
-	FindDeletedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.PurchaseDeleteActivity, error)
-	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.PurchaseActivity, error)
+	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.PurchaseDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.PurchaseActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.PurchaseDeleteActivity, error)
+	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.PurchaseActivity, error)
 
-	FindLastDocNo(shopID string, prefixDocNo string) (models.PurchaseDoc, error)
+	FindLastDocNo(ctx context.Context, shopID string, prefixDocNo string) (models.PurchaseDoc, error)
 }
 
 type PurchaseRepository struct {
@@ -57,7 +58,7 @@ func NewPurchaseRepository(pst microservice.IPersisterMongo) *PurchaseRepository
 
 	return insRepo
 }
-func (repo PurchaseRepository) FindLastDocNo(shopID string, prefixDocNo string) (models.PurchaseDoc, error) {
+func (repo PurchaseRepository) FindLastDocNo(ctx context.Context, shopID string, prefixDocNo string) (models.PurchaseDoc, error) {
 	filters := bson.M{
 		"shopid": shopID,
 		"deletedat": bson.M{
@@ -75,7 +76,7 @@ func (repo PurchaseRepository) FindLastDocNo(shopID string, prefixDocNo string) 
 	})
 
 	doc := models.PurchaseDoc{}
-	err := repo.pst.FindOne(models.PurchaseDoc{}, filters, &doc, &optSort)
+	err := repo.pst.FindOne(ctx, models.PurchaseDoc{}, filters, &doc, &optSort)
 
 	if err != nil {
 		return doc, err

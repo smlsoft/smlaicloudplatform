@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/product/productbarcode/models"
 	"smlcloudplatform/pkg/product/productbarcode/repositories"
@@ -12,7 +13,7 @@ import (
 
 type IProductBarcodeConsumeService interface {
 	UpSert(shopID string, barcode string, doc models.ProductBarcodeDoc) (*models.ProductBarcodePg, error)
-	Delete(shopID string, barcode string) error
+	Delete(ctx context.Context, shopID string, barcode string) error
 	ReSync(shopID string) error
 }
 
@@ -63,7 +64,7 @@ func (svc ProductBarcodeConsumeService) UpSert(shopID string, barcode string, do
 	return nil, nil
 }
 
-func (svc ProductBarcodeConsumeService) Delete(shopID string, barcode string) error {
+func (svc ProductBarcodeConsumeService) Delete(ctx context.Context, shopID string, barcode string) error {
 
 	err := svc.productPgRepo.Delete(shopID, barcode)
 	if err != nil {
@@ -87,7 +88,7 @@ func (svc ProductBarcodeConsumeService) ReSync(shopID string) error {
 	}
 
 	for {
-		barcodes, pages, err := svc.productMongoRepo.FindPage(shopID, nil, pageRequest)
+		barcodes, pages, err := svc.productMongoRepo.FindPage(context.Background(), shopID, nil, pageRequest)
 		if err != nil {
 			return err
 		}

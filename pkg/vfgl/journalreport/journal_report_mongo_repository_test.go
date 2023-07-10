@@ -1,6 +1,7 @@
 package journalreport_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"smlcloudplatform/internal/microservice"
@@ -25,7 +26,7 @@ func TestFindDetailByGUIDs(t *testing.T) {
 		t.Skip()
 	}
 
-	docList, err := repoMock.FindCountDetailByDocs("27dcEdktOoaSBYFmnN6G6ett4Jb", []string{"JO-20220706F8F4CA", "JO-202207069A2102"})
+	docList, err := repoMock.FindCountDetailByDocs(context.Background(), "27dcEdktOoaSBYFmnN6G6ett4Jb", []string{"JO-20220706F8F4CA", "JO-202207069A2102"})
 
 	if err != nil {
 		fmt.Println(err)

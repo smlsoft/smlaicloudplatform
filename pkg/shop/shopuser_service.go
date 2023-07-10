@@ -1,6 +1,7 @@
 package shop
 
 import (
+	"context"
 	"errors"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/shop/models"
@@ -31,13 +32,13 @@ func (svc ShopUserService) InfoShopByUser(shopID string, username string) (model
 
 	shopUserProfile := models.ShopUserProfile{}
 
-	shopUser, err := svc.repo.FindByShopIDAndUsernameInfo(shopID, username)
+	shopUser, err := svc.repo.FindByShopIDAndUsernameInfo(context.Background(), shopID, username)
 
 	if err != nil {
 		return models.ShopUserProfile{}, err
 	}
 
-	userProfiles, err := svc.repo.FindUserProfileByUsernames([]string{username})
+	userProfiles, err := svc.repo.FindUserProfileByUsernames(context.Background(), []string{username})
 
 	if err != nil {
 		return models.ShopUserProfile{}, err
@@ -56,7 +57,7 @@ func (svc ShopUserService) InfoShopByUser(shopID string, username string) (model
 
 func (svc ShopUserService) ListShopByUser(authUsername string, pageable micromodels.Pageable) ([]models.ShopUserInfo, mongopagination.PaginationData, error) {
 
-	docList, pagination, err := svc.repo.FindByUsernamePage(authUsername, pageable)
+	docList, pagination, err := svc.repo.FindByUsernamePage(context.Background(), authUsername, pageable)
 
 	if err != nil {
 		return docList, pagination, err
@@ -68,7 +69,7 @@ func (svc ShopUserService) ListShopByUser(authUsername string, pageable micromod
 func (svc ShopUserService) ListUserInShop(shopID string, pageable micromodels.Pageable) ([]models.ShopUserProfile, mongopagination.PaginationData, error) {
 	shopUserProfiles := []models.ShopUserProfile{}
 
-	shopUsers, pagination, err := svc.repo.FindByUserInShopPage(shopID, pageable)
+	shopUsers, pagination, err := svc.repo.FindByUserInShopPage(context.Background(), shopID, pageable)
 
 	if err != nil {
 		return shopUserProfiles, pagination, err
@@ -80,7 +81,7 @@ func (svc ShopUserService) ListUserInShop(shopID string, pageable micromodels.Pa
 		usernames = append(usernames, doc.Username)
 	}
 
-	userProfiles, err := svc.repo.FindUserProfileByUsernames(usernames)
+	userProfiles, err := svc.repo.FindUserProfileByUsernames(context.Background(), usernames)
 
 	if err != nil {
 		return shopUserProfiles, pagination, err
@@ -112,7 +113,7 @@ func (svc ShopUserService) ListUserInShop(shopID string, pageable micromodels.Pa
 
 func (svc ShopUserService) SaveUserPermissionShop(shopID string, authUsername string, username string, role models.UserRole) error {
 
-	authUser, err := svc.repo.FindByShopIDAndUsername(shopID, authUsername)
+	authUser, err := svc.repo.FindByShopIDAndUsername(context.Background(), shopID, authUsername)
 
 	if err != nil {
 		return err
@@ -122,7 +123,7 @@ func (svc ShopUserService) SaveUserPermissionShop(shopID string, authUsername st
 		return errors.New("permission denied")
 	}
 
-	err = svc.repo.Save(shopID, username, role)
+	err = svc.repo.Save(context.Background(), shopID, username, role)
 
 	if err != nil {
 		return err
@@ -132,7 +133,7 @@ func (svc ShopUserService) SaveUserPermissionShop(shopID string, authUsername st
 
 func (svc ShopUserService) DeleteUserPermissionShop(shopID string, authUsername string, username string) error {
 
-	authUser, err := svc.repo.FindByShopIDAndUsername(shopID, authUsername)
+	authUser, err := svc.repo.FindByShopIDAndUsername(context.Background(), shopID, authUsername)
 
 	if err != nil {
 		return err
@@ -142,7 +143,7 @@ func (svc ShopUserService) DeleteUserPermissionShop(shopID string, authUsername 
 		return errors.New("permission denied")
 	}
 
-	findUser, err := svc.repo.FindByShopIDAndUsername(shopID, username)
+	findUser, err := svc.repo.FindByShopIDAndUsername(context.Background(), shopID, username)
 
 	if err != nil {
 		return err
@@ -156,7 +157,7 @@ func (svc ShopUserService) DeleteUserPermissionShop(shopID string, authUsername 
 		return errors.New("can't delete your permission")
 	}
 
-	err = svc.repo.Delete(shopID, username)
+	err = svc.repo.Delete(context.Background(), shopID, username)
 
 	if err != nil {
 		return err

@@ -1,6 +1,7 @@
 package optiongroup
 
 import (
+	"context"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/optiongroup/models"
 	"smlcloudplatform/pkg/utils"
@@ -20,16 +21,28 @@ type IOptionGroupService interface {
 }
 
 type OptionGroupService struct {
-	repo IOptionGroupRepository
+	repo           IOptionGroupRepository
+	contextTimeout time.Duration
 }
 
 func NewOptionGroupService(optionGroupRepository IOptionGroupRepository) OptionGroupService {
+
+	contextTimeout := time.Duration(15) * time.Second
+
 	return OptionGroupService{
-		repo: optionGroupRepository,
+		repo:           optionGroupRepository,
+		contextTimeout: contextTimeout,
 	}
 }
 
+func (svc OptionGroupService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc OptionGroupService) CreateOptionGroup(shopID string, authUsername string, doc models.InventoryOptionGroup) (string, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
 	newGuid := utils.NewGUID()
 	doc.ShopID = shopID
@@ -41,7 +54,7 @@ func (svc OptionGroupService) CreateOptionGroup(shopID string, authUsername stri
 		doc.Details[i].GuidFixed = utils.NewGUID()
 	}
 
-	_, err := svc.repo.Create(doc)
+	_, err := svc.repo.Create(ctx, doc)
 
 	if err != nil {
 		return "", err
@@ -52,7 +65,10 @@ func (svc OptionGroupService) CreateOptionGroup(shopID string, authUsername stri
 
 func (svc OptionGroupService) UpdateOptionGroup(shopID string, guid string, authUsername string, doc models.InventoryOptionGroup) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -71,7 +87,7 @@ func (svc OptionGroupService) UpdateOptionGroup(shopID string, guid string, auth
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -80,7 +96,11 @@ func (svc OptionGroupService) UpdateOptionGroup(shopID string, guid string, auth
 }
 
 func (svc OptionGroupService) DeleteOptionGroup(shopID string, guid string, username string) error {
-	err := svc.repo.Delete(shopID, guid, username)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	err := svc.repo.Delete(ctx, shopID, guid, username)
 
 	if err != nil {
 		return err
@@ -90,7 +110,10 @@ func (svc OptionGroupService) DeleteOptionGroup(shopID string, guid string, user
 
 func (svc OptionGroupService) InfoOptionGroup(shopID string, guid string) (models.InventoryOptionGroup, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.InventoryOptionGroup{}, err
@@ -105,7 +128,11 @@ func (svc OptionGroupService) InfoOptionGroup(shopID string, guid string) (model
 }
 
 func (svc OptionGroupService) SearchOptionGroup(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionGroup, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindPage(shopID, pageable)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	docList, pagination, err := svc.repo.FindPage(ctx, shopID, pageable)
 
 	if err != nil {
 		return []models.InventoryOptionGroup{}, pagination, err

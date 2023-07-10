@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/utils"
@@ -27,18 +28,30 @@ type IAccountPeriodMasterHttpService interface {
 }
 
 type AccountPeriodMasterHttpService struct {
-	repo repositories.IAccountPeriodMasterRepository
+	repo           repositories.IAccountPeriodMasterRepository
+	contextTimeout time.Duration
 }
 
 func NewAccountPeriodMasterHttpService(repo repositories.IAccountPeriodMasterRepository) *AccountPeriodMasterHttpService {
 
+	contextTimeout := time.Duration(15) * time.Second
+
 	return &AccountPeriodMasterHttpService{
-		repo: repo,
+		repo:           repo,
+		contextTimeout: contextTimeout,
 	}
 }
 
+func (svc AccountPeriodMasterHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc AccountPeriodMasterHttpService) CreateAccountPeriodMaster(shopID string, authUsername string, doc models.AccountPeriodMaster) (string, error) {
-	findDoc, err := svc.repo.FindByPeriod(shopID, doc.Period)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByPeriod(ctx, shopID, doc.Period)
 
 	if err != nil {
 		return "", err
@@ -48,7 +61,7 @@ func (svc AccountPeriodMasterHttpService) CreateAccountPeriodMaster(shopID strin
 		return "", errors.New("period already exists")
 	}
 
-	findDocExists, err := svc.repo.FindByDateRange(shopID, doc.StartDate, doc.EndDate)
+	findDocExists, err := svc.repo.FindByDateRange(ctx, shopID, doc.StartDate, doc.EndDate)
 
 	if err != nil {
 		return "", err
@@ -68,7 +81,7 @@ func (svc AccountPeriodMasterHttpService) CreateAccountPeriodMaster(shopID strin
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -79,7 +92,10 @@ func (svc AccountPeriodMasterHttpService) CreateAccountPeriodMaster(shopID strin
 
 func (svc AccountPeriodMasterHttpService) UpdateAccountPeriodMaster(shopID string, guid string, authUsername string, doc models.AccountPeriodMaster) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -89,7 +105,7 @@ func (svc AccountPeriodMasterHttpService) UpdateAccountPeriodMaster(shopID strin
 		return errors.New("document not found")
 	}
 
-	findDocPeriod, err := svc.repo.FindByPeriod(shopID, doc.Period)
+	findDocPeriod, err := svc.repo.FindByPeriod(ctx, shopID, doc.Period)
 
 	if err != nil {
 		return err
@@ -99,7 +115,7 @@ func (svc AccountPeriodMasterHttpService) UpdateAccountPeriodMaster(shopID strin
 		return errors.New("period already exists")
 	}
 
-	findDocExists, err := svc.repo.FindByDateRange(shopID, doc.StartDate, doc.EndDate)
+	findDocExists, err := svc.repo.FindByDateRange(ctx, shopID, doc.StartDate, doc.EndDate)
 
 	if err != nil {
 		return err
@@ -113,7 +129,7 @@ func (svc AccountPeriodMasterHttpService) UpdateAccountPeriodMaster(shopID strin
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -124,7 +140,10 @@ func (svc AccountPeriodMasterHttpService) UpdateAccountPeriodMaster(shopID strin
 
 func (svc AccountPeriodMasterHttpService) DeleteAccountPeriodMaster(shopID string, guid string, authUsername string) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -134,7 +153,7 @@ func (svc AccountPeriodMasterHttpService) DeleteAccountPeriodMaster(shopID strin
 		return errors.New("document not found")
 	}
 
-	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 	if err != nil {
 		return err
 	}
@@ -144,11 +163,14 @@ func (svc AccountPeriodMasterHttpService) DeleteAccountPeriodMaster(shopID strin
 
 func (svc AccountPeriodMasterHttpService) DeleteAccountPeriodMasterByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
 	}
 
-	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	err := svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
@@ -158,7 +180,10 @@ func (svc AccountPeriodMasterHttpService) DeleteAccountPeriodMasterByGUIDs(shopI
 
 func (svc AccountPeriodMasterHttpService) InfoAccountPeriodMaster(shopID string, guid string) (models.AccountPeriodMasterInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.AccountPeriodMasterInfo{}, err
@@ -174,7 +199,10 @@ func (svc AccountPeriodMasterHttpService) InfoAccountPeriodMaster(shopID string,
 
 func (svc AccountPeriodMasterHttpService) InfoAccountPeriodMasterByDate(shopID string, findDate time.Time) (models.AccountPeriodMasterInfo, error) {
 
-	findDoc, err := svc.repo.FindByDateRange(shopID, findDate, findDate)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDateRange(ctx, shopID, findDate, findDate)
 
 	if err != nil {
 		return models.AccountPeriodMasterInfo{}, err
@@ -189,12 +217,16 @@ func (svc AccountPeriodMasterHttpService) InfoAccountPeriodMasterByDate(shopID s
 }
 
 func (svc AccountPeriodMasterHttpService) SearchAccountPeriodMaster(shopID string, pageable micromodels.Pageable) ([]models.AccountPeriodMasterInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"guidfixed",
 		"docno",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPage(ctx, shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.AccountPeriodMasterInfo{}, pagination, err
@@ -204,6 +236,10 @@ func (svc AccountPeriodMasterHttpService) SearchAccountPeriodMaster(shopID strin
 }
 
 func (svc AccountPeriodMasterHttpService) SearchAccountPeriodMasterStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.AccountPeriodMasterInfo, int, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"guidfixed",
 		"docno",
@@ -220,7 +256,7 @@ func (svc AccountPeriodMasterHttpService) SearchAccountPeriodMasterStep(shopID s
 		selectFields["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(ctx, shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.AccountPeriodMasterInfo{}, 0, err
@@ -231,6 +267,9 @@ func (svc AccountPeriodMasterHttpService) SearchAccountPeriodMasterStep(shopID s
 
 func (svc AccountPeriodMasterHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.AccountPeriodMaster) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	err := svc.ValidatePeriod(dataList)
 	if err != nil {
 		return err
@@ -240,7 +279,7 @@ func (svc AccountPeriodMasterHttpService) SaveInBatch(shopID string, authUsernam
 
 	for _, doc := range dataList {
 
-		findDoc, err := svc.repo.FindByPeriod(shopID, doc.Period)
+		findDoc, err := svc.repo.FindByPeriod(ctx, shopID, doc.Period)
 
 		if err != nil {
 			return err
@@ -250,7 +289,7 @@ func (svc AccountPeriodMasterHttpService) SaveInBatch(shopID string, authUsernam
 			return errors.New("period already exists")
 		}
 
-		findDocExists, err := svc.repo.FindByDateRange(shopID, doc.StartDate, doc.EndDate)
+		findDocExists, err := svc.repo.FindByDateRange(ctx, shopID, doc.StartDate, doc.EndDate)
 
 		if err != nil {
 			return err
@@ -273,7 +312,7 @@ func (svc AccountPeriodMasterHttpService) SaveInBatch(shopID string, authUsernam
 		docList = append(docList, docData)
 	}
 
-	err = svc.repo.CreateInBatch(docList)
+	err = svc.repo.CreateInBatch(ctx, docList)
 
 	if err != nil {
 		return err
@@ -284,9 +323,10 @@ func (svc AccountPeriodMasterHttpService) SaveInBatch(shopID string, authUsernam
 
 func (svc AccountPeriodMasterHttpService) InfoAccountPeriodMasterByDateList(shopID string, findDateList []time.Time) ([]models.MapDateAccountPeriodMasterInfo, error) {
 
-	// minDate, maxDate := svc.findMinAndMaxTimes(findDateList)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
-	periodData, err := svc.repo.FindAll(shopID)
+	periodData, err := svc.repo.FindAll(ctx, shopID)
 
 	if err != nil {
 		return []models.MapDateAccountPeriodMasterInfo{}, err

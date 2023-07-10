@@ -1,6 +1,7 @@
 package authentication
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"smlcloudplatform/internal/microservice"
@@ -71,7 +72,7 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, au
 	userLoginReq.Username = strings.TrimSpace(userLoginReq.Username)
 	userLoginReq.ShopID = strings.TrimSpace(userLoginReq.ShopID)
 
-	findUser, err := svc.authRepo.FindUser(userLoginReq.Username)
+	findUser, err := svc.authRepo.FindUser(context.Background(), userLoginReq.Username)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		// svc.ms.Log("Authentication service", err.Error())
@@ -95,7 +96,7 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, au
 	}
 
 	if len(userLoginReq.ShopID) > 0 {
-		shopUser, err := svc.shopUserRepo.FindByShopIDAndUsername(userLoginReq.ShopID, userLoginReq.Username)
+		shopUser, err := svc.shopUserRepo.FindByShopIDAndUsername(context.Background(), userLoginReq.ShopID, userLoginReq.Username)
 
 		if err != nil {
 			return "", err
@@ -113,13 +114,13 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, au
 
 		lastAccessedAt := svc.timeNow()
 
-		err = svc.shopUserRepo.UpdateLastAccess(userLoginReq.ShopID, userLoginReq.Username, lastAccessedAt)
+		err = svc.shopUserRepo.UpdateLastAccess(context.Background(), userLoginReq.ShopID, userLoginReq.Username, lastAccessedAt)
 		if err != nil {
 			// implement log
 			fmt.Println("error :: ", err.Error())
 		}
 
-		err = svc.shopUserAccessLogRepo.Create(models.ShopUserAccessLog{
+		err = svc.shopUserAccessLogRepo.Create(context.Background(), models.ShopUserAccessLog{
 			ShopID:         userLoginReq.ShopID,
 			Username:       userLoginReq.Username,
 			Ip:             authContext.Ip,
@@ -139,7 +140,7 @@ func (svc AuthenticationService) Register(userRequest models.UserRequest) (strin
 
 	userRequest.Username = svc.normalizeUsername(userRequest.Username)
 
-	userFind, err := svc.authRepo.FindUser(userRequest.Username)
+	userFind, err := svc.authRepo.FindUser(context.Background(), userRequest.Username)
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return "", err
 	}
@@ -161,7 +162,7 @@ func (svc AuthenticationService) Register(userRequest models.UserRequest) (strin
 	user.UserDetail = userRequest.UserDetail
 	user.CreatedAt = svc.timeNow()
 
-	idx, err := svc.authRepo.CreateUser(user)
+	idx, err := svc.authRepo.CreateUser(context.Background(), user)
 
 	if err != nil {
 		return "", err
@@ -176,7 +177,7 @@ func (svc AuthenticationService) Update(username string, userRequest models.User
 		return errors.New("username invalid")
 	}
 
-	userFind, err := svc.authRepo.FindUser(username)
+	userFind, err := svc.authRepo.FindUser(context.Background(), username)
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return err
 	}
@@ -188,7 +189,7 @@ func (svc AuthenticationService) Update(username string, userRequest models.User
 	userFind.Name = userRequest.Name
 	userFind.UpdatedAt = svc.timeNow()
 
-	err = svc.authRepo.UpdateUser(username, *userFind)
+	err = svc.authRepo.UpdateUser(context.Background(), username, *userFind)
 
 	if err != nil {
 		return err
@@ -203,7 +204,7 @@ func (svc AuthenticationService) UpdatePassword(username string, currentPassword
 		return errors.New("username invalid")
 	}
 
-	userFind, err := svc.authRepo.FindUser(username)
+	userFind, err := svc.authRepo.FindUser(context.Background(), username)
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return err
 	}
@@ -227,7 +228,7 @@ func (svc AuthenticationService) UpdatePassword(username string, currentPassword
 	userFind.Password = hashPassword
 	userFind.UpdatedAt = svc.timeNow()
 
-	err = svc.authRepo.UpdateUser(username, *userFind)
+	err = svc.authRepo.UpdateUser(context.Background(), username, *userFind)
 
 	if err != nil {
 		return err
@@ -243,7 +244,7 @@ func (svc AuthenticationService) Logout(authorizationHeader string) error {
 func (svc AuthenticationService) Profile(username string) (models.UserProfile, error) {
 	stime := time.Now()
 	userProfile := models.UserProfile{}
-	user, err := svc.authRepo.FindUser(username)
+	user, err := svc.authRepo.FindUser(context.Background(), username)
 	if err != nil {
 		return userProfile, err
 	}
@@ -273,7 +274,7 @@ func (svc AuthenticationService) AccessShop(shopID string, username string, auth
 		return errors.New("token invalid")
 	}
 
-	shopUser, err := svc.shopUserRepo.FindByShopIDAndUsername(shopID, username)
+	shopUser, err := svc.shopUserRepo.FindByShopIDAndUsername(context.Background(), shopID, username)
 
 	if err != nil {
 		return err
@@ -290,18 +291,20 @@ func (svc AuthenticationService) AccessShop(shopID string, username string, auth
 	}
 
 	lastAccessedAt := svc.timeNow()
-	err = svc.shopUserRepo.UpdateLastAccess(shopID, username, lastAccessedAt)
+	err = svc.shopUserRepo.UpdateLastAccess(context.Background(), shopID, username, lastAccessedAt)
 	if err != nil {
 		// implement log
 		fmt.Println("error :: ", err.Error())
 	}
 
-	err = svc.shopUserAccessLogRepo.Create(models.ShopUserAccessLog{
-		ShopID:         shopID,
-		Username:       username,
-		Ip:             authContext.Ip,
-		LastAccessedAt: lastAccessedAt,
-	})
+	err = svc.shopUserAccessLogRepo.Create(
+		context.Background(),
+		models.ShopUserAccessLog{
+			ShopID:         shopID,
+			Username:       username,
+			Ip:             authContext.Ip,
+			LastAccessedAt: lastAccessedAt,
+		})
 
 	if err != nil {
 		// implement log
@@ -321,7 +324,7 @@ func (svc AuthenticationService) UpdateFavoriteShop(shopID string, username stri
 		return errors.New("username invalid")
 	}
 
-	shopUser, err := svc.shopUserRepo.FindByShopIDAndUsername(shopID, username)
+	shopUser, err := svc.shopUserRepo.FindByShopIDAndUsername(context.Background(), shopID, username)
 
 	if err != nil {
 		return err
@@ -331,7 +334,7 @@ func (svc AuthenticationService) UpdateFavoriteShop(shopID string, username stri
 		return errors.New("shop invalid")
 	}
 
-	err = svc.shopUserRepo.SaveFavorite(shopID, username, isFavorite)
+	err = svc.shopUserRepo.SaveFavorite(context.Background(), shopID, username, isFavorite)
 	if err != nil {
 		return errors.New("favorite failed")
 	}
@@ -347,7 +350,7 @@ func (svc AuthenticationService) LoginWithFirebaseToken(token string) (string, e
 	}
 
 	// find
-	userFind, err := svc.authRepo.FindUser(userInfo.Email)
+	userFind, err := svc.authRepo.FindUser(context.Background(), userInfo.Email)
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return "", err
 	}
@@ -361,11 +364,11 @@ func (svc AuthenticationService) LoginWithFirebaseToken(token string) (string, e
 		user.UserDetail.Name = userInfo.Name
 		user.CreatedAt = svc.timeNow()
 
-		_, err := svc.authRepo.CreateUser(user)
+		_, err := svc.authRepo.CreateUser(context.Background(), user)
 		if err != nil {
 			return "", err
 		}
-		userFind, err = svc.authRepo.FindUser(userInfo.Email)
+		userFind, err = svc.authRepo.FindUser(context.Background(), userInfo.Email)
 		if err != nil && err.Error() != "mongo: no documents in result" {
 			return "", err
 		}

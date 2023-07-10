@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/optionpattern/models"
@@ -10,16 +11,16 @@ import (
 )
 
 type IOptionPatternRepository interface {
-	Count(shopID string) (int, error)
-	Create(doc models.OptionPatternDoc) (string, error)
-	CreateInBatch(docList []models.OptionPatternDoc) error
-	Update(shopID string, guid string, doc models.OptionPatternDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.OptionPatternInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.OptionPatternDoc, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	Create(ctx context.Context, doc models.OptionPatternDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.OptionPatternDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.OptionPatternDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.OptionPatternInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.OptionPatternDoc, error)
 
-	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.OptionPatternItemGuid, error)
-	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.OptionPatternDoc, error)
+	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.OptionPatternItemGuid, error)
+	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.OptionPatternDoc, error)
 }
 
 type OptionPatternRepository struct {

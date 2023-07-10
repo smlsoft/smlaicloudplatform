@@ -1,6 +1,7 @@
 package member
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/member/models"
@@ -13,16 +14,16 @@ import (
 )
 
 type IMemberRepository interface {
-	Create(doc models.MemberDoc) (primitive.ObjectID, error)
-	Update(shopID string, guid string, doc models.MemberDoc) error
-	Delete(shopID string, guid string, username string) error
-	FindByGuid(shopID string, guid string) (models.MemberDoc, error)
-	FindPage(shopID string, pageable micromodels.Pageable) ([]models.MemberInfo, mongopagination.PaginationData, error)
+	Create(ctx context.Context, doc models.MemberDoc) (primitive.ObjectID, error)
+	Update(ctx context.Context, shopID string, guid string, doc models.MemberDoc) error
+	Delete(ctx context.Context, shopID string, guid string, username string) error
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.MemberDoc, error)
+	FindPage(ctx context.Context, shopID string, pageable micromodels.Pageable) ([]models.MemberInfo, mongopagination.PaginationData, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.MemberDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.MemberActivity, mongopagination.PaginationData, error)
-	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.MemberDeleteActivity, error)
-	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.MemberActivity, error)
+	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.MemberDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.MemberActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.MemberDeleteActivity, error)
+	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.MemberActivity, error)
 }
 
 type MemberRepository struct {
@@ -41,44 +42,44 @@ func NewMemberRepository(pst microservice.IPersisterMongo) *MemberRepository {
 	return insRepo
 }
 
-func (repo MemberRepository) Create(doc models.MemberDoc) (primitive.ObjectID, error) {
-	idx, err := repo.pst.Create(&models.MemberDoc{}, doc)
+func (repo MemberRepository) Create(ctx context.Context, doc models.MemberDoc) (primitive.ObjectID, error) {
+	idx, err := repo.pst.Create(ctx, &models.MemberDoc{}, doc)
 	if err != nil {
 		return primitive.NilObjectID, err
 	}
 	return idx, nil
 }
 
-func (repo MemberRepository) Update(shopID string, guid string, doc models.MemberDoc) error {
+func (repo MemberRepository) Update(ctx context.Context, shopID string, guid string, doc models.MemberDoc) error {
 	filterDoc := map[string]interface{}{
 		"shopid":    shopID,
 		"guidfixed": guid,
 	}
-	err := repo.pst.UpdateOne(&models.MemberDoc{}, filterDoc, doc)
+	err := repo.pst.UpdateOne(ctx, &models.MemberDoc{}, filterDoc, doc)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (repo MemberRepository) Delete(shopID string, guid string, uername string) error {
-	err := repo.pst.SoftDeleteLastUpdate(&models.MemberDoc{}, uername, bson.M{"guidfixed": guid, "shopid": shopID})
+func (repo MemberRepository) Delete(ctx context.Context, shopID string, guid string, uername string) error {
+	err := repo.pst.SoftDeleteLastUpdate(ctx, &models.MemberDoc{}, uername, bson.M{"guidfixed": guid, "shopid": shopID})
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (repo MemberRepository) FindByGuid(shopID string, guid string) (models.MemberDoc, error) {
+func (repo MemberRepository) FindByGuid(ctx context.Context, shopID string, guid string) (models.MemberDoc, error) {
 	doc := &models.MemberDoc{}
-	err := repo.pst.FindOne(&models.MemberDoc{}, bson.M{"shopid": shopID, "guidfixed": guid, "deletedat": bson.M{"$exists": false}}, doc)
+	err := repo.pst.FindOne(ctx, &models.MemberDoc{}, bson.M{"shopid": shopID, "guidfixed": guid, "deletedat": bson.M{"$exists": false}}, doc)
 	if err != nil {
 		return *doc, err
 	}
 	return *doc, nil
 }
 
-func (repo MemberRepository) FindPage(shopID string, pageable micromodels.Pageable) ([]models.MemberInfo, mongopagination.PaginationData, error) {
+func (repo MemberRepository) FindPage(ctx context.Context, shopID string, pageable micromodels.Pageable) ([]models.MemberInfo, mongopagination.PaginationData, error) {
 
 	filterQueries := bson.M{
 		"shopid":    shopID,
@@ -92,7 +93,7 @@ func (repo MemberRepository) FindPage(shopID string, pageable micromodels.Pageab
 	}
 
 	docList := []models.MemberInfo{}
-	pagination, err := repo.pst.FindPage(&models.MemberInfo{}, filterQueries, pageable, &docList)
+	pagination, err := repo.pst.FindPage(ctx, &models.MemberInfo{}, filterQueries, pageable, &docList)
 
 	if err != nil {
 		return []models.MemberInfo{}, mongopagination.PaginationData{}, err

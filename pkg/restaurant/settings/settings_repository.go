@@ -1,6 +1,7 @@
 package settings
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
@@ -11,22 +12,22 @@ import (
 )
 
 type IRestaurantSettingsRepository interface {
-	Count(shopID string) (int, error)
-	Create(category models.RestaurantSettingsDoc) (string, error)
-	CreateInBatch(docList []models.RestaurantSettingsDoc) error
-	Update(shopID string, guid string, category models.RestaurantSettingsDoc) error
-	Delete(shopID string, username string, filters map[string]interface{}) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.RestaurantSettingsDoc, error)
-	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.RestaurantSettingsItemGuid, error)
-	FindOne(shopID string, filters interface{}) (models.RestaurantSettingsDoc, error)
-	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	Create(ctx context.Context, doc models.RestaurantSettingsDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.RestaurantSettingsDoc) error
+	Update(ctx context.Context, shopID string, guid string, category models.RestaurantSettingsDoc) error
+	Delete(ctx context.Context, shopID string, username string, filters map[string]interface{}) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.RestaurantSettingsDoc, error)
+	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.RestaurantSettingsItemGuid, error)
+	FindOne(ctx context.Context, shopID string, filters interface{}) (models.RestaurantSettingsDoc, error)
+	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.RestaurantSettingsDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.RestaurantSettingsActivity, mongopagination.PaginationData, error)
-	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.RestaurantSettingsDeleteActivity, error)
-	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.RestaurantSettingsActivity, error)
+	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.RestaurantSettingsDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.RestaurantSettingsActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.RestaurantSettingsDeleteActivity, error)
+	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.RestaurantSettingsActivity, error)
 }
 
 type RestaurantSettingsRepository struct {

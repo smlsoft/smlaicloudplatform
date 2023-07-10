@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/product/inventory/config"
@@ -8,7 +9,7 @@ import (
 )
 
 type IInventoryMQRepository interface {
-	Create(doc models.InventoryData) error
+	Create(ctx context.Context, doc models.InventoryData) error
 	Update(doc models.InventoryData) error
 	Delete(doc common.Identity) error
 }
@@ -26,7 +27,7 @@ func NewInventoryMQRepository(prod microservice.IProducer) IInventoryMQRepositor
 	}
 }
 
-func (repo InventoryMQRepository) Create(doc models.InventoryData) error {
+func (repo InventoryMQRepository) Create(ctx context.Context, doc models.InventoryData) error {
 	err := repo.prod.SendMessage(config.MQ_TOPIC_INVENTORY_CREATED, repo.mqKey, doc)
 
 	if err != nil {

@@ -1,9 +1,11 @@
 package utils
 
 import (
+	"context"
 	"fmt"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/shop/models"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -23,8 +25,12 @@ func HasPermissionShopByID(pst microservice.IPersisterMongo, ctx microservice.IC
 		return false, fmt.Errorf("shop not found")
 	}
 
+	pstContect, pstContextCancel := context.WithTimeout(context.Background(), time.Duration(15)*time.Second)
+	defer pstContextCancel()
+
 	shop := &models.ShopDoc{}
-	pst.FindOne(&models.Shop{}, bson.M{"guidfixed": shopID, "deletedat": bson.M{"$exists": false}}, shop)
+
+	pst.FindOne(pstContect, &models.Shop{}, bson.M{"guidfixed": shopID, "deletedat": bson.M{"$exists": false}}, shop)
 
 	if len(shop.GuidFixed) < 1 {
 		return false, fmt.Errorf("shop invalid")

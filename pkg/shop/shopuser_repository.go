@@ -1,6 +1,7 @@
 package shop
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/shop/models"
@@ -13,18 +14,18 @@ import (
 )
 
 type IShopUserRepository interface {
-	Save(shopID string, username string, role models.UserRole) error
-	UpdateLastAccess(shopID string, username string, lastAccessedAt time.Time) error
-	SaveFavorite(shopID string, username string, isFavorite bool) error
-	Delete(shopID string, username string) error
-	FindByShopIDAndUsernameInfo(shopID string, username string) (models.ShopUserInfo, error)
-	FindByShopIDAndUsername(shopID string, username string) (models.ShopUser, error)
-	FindRole(shopID string, username string) (models.UserRole, error)
-	FindByShopID(shopID string) (*[]models.ShopUser, error)
-	FindByUsername(username string) (*[]models.ShopUser, error)
-	FindByUsernamePage(username string, pageable micromodels.Pageable) ([]models.ShopUserInfo, mongopagination.PaginationData, error)
-	FindByUserInShopPage(shopID string, pageable micromodels.Pageable) ([]models.ShopUser, mongopagination.PaginationData, error)
-	FindUserProfileByUsernames(usernames []string) ([]models.UserProfile, error)
+	Save(ctx context.Context, shopID string, username string, role models.UserRole) error
+	UpdateLastAccess(ctx context.Context, shopID string, username string, lastAccessedAt time.Time) error
+	SaveFavorite(ctx context.Context, shopID string, username string, isFavorite bool) error
+	Delete(ctx context.Context, shopID string, username string) error
+	FindByShopIDAndUsernameInfo(ctx context.Context, shopID string, username string) (models.ShopUserInfo, error)
+	FindByShopIDAndUsername(ctx context.Context, shopID string, username string) (models.ShopUser, error)
+	FindRole(ctx context.Context, shopID string, username string) (models.UserRole, error)
+	FindByShopID(ctx context.Context, shopID string) (*[]models.ShopUser, error)
+	FindByUsername(ctx context.Context, username string) (*[]models.ShopUser, error)
+	FindByUsernamePage(ctx context.Context, username string, pageable micromodels.Pageable) ([]models.ShopUserInfo, mongopagination.PaginationData, error)
+	FindByUserInShopPage(ctx context.Context, shopID string, pageable micromodels.Pageable) ([]models.ShopUser, mongopagination.PaginationData, error)
+	FindUserProfileByUsernames(ctx context.Context, usernames []string) ([]models.UserProfile, error)
 }
 
 type ShopUserRepository struct {
@@ -37,10 +38,10 @@ func NewShopUserRepository(pst microservice.IPersisterMongo) ShopUserRepository 
 	}
 }
 
-func (svc ShopUserRepository) Save(shopID string, username string, role models.UserRole) error {
+func (svc ShopUserRepository) Save(ctx context.Context, shopID string, username string, role models.UserRole) error {
 
 	optUpdate := options.Update().SetUpsert(true)
-	err := svc.pst.Update(&models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, bson.M{"$set": bson.M{"role": role}}, optUpdate)
+	err := svc.pst.Update(ctx, &models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, bson.M{"$set": bson.M{"role": role}}, optUpdate)
 
 	if err != nil {
 		return err
@@ -49,10 +50,10 @@ func (svc ShopUserRepository) Save(shopID string, username string, role models.U
 	return nil
 }
 
-func (svc ShopUserRepository) UpdateLastAccess(shopID string, username string, lastAccessedAt time.Time) error {
+func (svc ShopUserRepository) UpdateLastAccess(ctx context.Context, shopID string, username string, lastAccessedAt time.Time) error {
 
 	optUpdate := options.Update().SetUpsert(true)
-	err := svc.pst.Update(&models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, bson.M{"$set": bson.M{"lastaccessedat": lastAccessedAt}}, optUpdate)
+	err := svc.pst.Update(ctx, &models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, bson.M{"$set": bson.M{"lastaccessedat": lastAccessedAt}}, optUpdate)
 
 	if err != nil {
 		return err
@@ -61,10 +62,10 @@ func (svc ShopUserRepository) UpdateLastAccess(shopID string, username string, l
 	return nil
 }
 
-func (svc ShopUserRepository) SaveFavorite(shopID string, username string, isFavorite bool) error {
+func (svc ShopUserRepository) SaveFavorite(ctx context.Context, shopID string, username string, isFavorite bool) error {
 
 	optUpdate := options.Update().SetUpsert(true)
-	err := svc.pst.Update(&models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, bson.M{"$set": bson.M{"isfavorite": isFavorite}}, optUpdate)
+	err := svc.pst.Update(ctx, &models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, bson.M{"$set": bson.M{"isfavorite": isFavorite}}, optUpdate)
 
 	if err != nil {
 		return err
@@ -73,9 +74,9 @@ func (svc ShopUserRepository) SaveFavorite(shopID string, username string, isFav
 	return nil
 }
 
-func (svc ShopUserRepository) Delete(shopID string, username string) error {
+func (svc ShopUserRepository) Delete(ctx context.Context, shopID string, username string) error {
 
-	err := svc.pst.Delete(&models.ShopUser{}, bson.M{"shopid": shopID, "username": username})
+	err := svc.pst.Delete(ctx, &models.ShopUser{}, bson.M{"shopid": shopID, "username": username})
 
 	if err != nil {
 		return err
@@ -84,11 +85,11 @@ func (svc ShopUserRepository) Delete(shopID string, username string) error {
 	return nil
 }
 
-func (svc ShopUserRepository) FindByShopIDAndUsernameInfo(shopID string, username string) (models.ShopUserInfo, error) {
+func (svc ShopUserRepository) FindByShopIDAndUsernameInfo(ctx context.Context, shopID string, username string) (models.ShopUserInfo, error) {
 
 	shopUser := &models.ShopUserInfo{}
 
-	err := svc.pst.FindOne(&models.ShopUserInfo{}, bson.M{"shopid": shopID, "username": username}, shopUser)
+	err := svc.pst.FindOne(ctx, &models.ShopUserInfo{}, bson.M{"shopid": shopID, "username": username}, shopUser)
 	if err != nil {
 		return models.ShopUserInfo{}, err
 	}
@@ -96,11 +97,11 @@ func (svc ShopUserRepository) FindByShopIDAndUsernameInfo(shopID string, usernam
 	return *shopUser, nil
 }
 
-func (svc ShopUserRepository) FindByShopIDAndUsername(shopID string, username string) (models.ShopUser, error) {
+func (svc ShopUserRepository) FindByShopIDAndUsername(ctx context.Context, shopID string, username string) (models.ShopUser, error) {
 
 	shopUser := &models.ShopUser{}
 
-	err := svc.pst.FindOne(&models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, shopUser)
+	err := svc.pst.FindOne(ctx, &models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, shopUser)
 	if err != nil {
 		return models.ShopUser{}, err
 	}
@@ -108,11 +109,11 @@ func (svc ShopUserRepository) FindByShopIDAndUsername(shopID string, username st
 	return *shopUser, nil
 }
 
-func (svc ShopUserRepository) FindRole(shopID string, username string) (models.UserRole, error) {
+func (svc ShopUserRepository) FindRole(ctx context.Context, shopID string, username string) (models.UserRole, error) {
 
 	shopUser := &models.ShopUser{}
 
-	err := svc.pst.FindOne(&models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, shopUser)
+	err := svc.pst.FindOne(ctx, &models.ShopUser{}, bson.M{"shopid": shopID, "username": username}, shopUser)
 
 	if err != nil {
 		return models.ROLE_USER, err
@@ -121,10 +122,10 @@ func (svc ShopUserRepository) FindRole(shopID string, username string) (models.U
 	return shopUser.Role, nil
 }
 
-func (svc ShopUserRepository) FindByShopID(shopID string) (*[]models.ShopUser, error) {
+func (svc ShopUserRepository) FindByShopID(ctx context.Context, shopID string) (*[]models.ShopUser, error) {
 	shopUsers := &[]models.ShopUser{}
 
-	err := svc.pst.Find(&models.ShopUser{}, bson.M{"shopid": shopID}, shopUsers)
+	err := svc.pst.Find(ctx, &models.ShopUser{}, bson.M{"shopid": shopID}, shopUsers)
 
 	if err != nil {
 		return nil, err
@@ -133,10 +134,10 @@ func (svc ShopUserRepository) FindByShopID(shopID string) (*[]models.ShopUser, e
 	return shopUsers, nil
 }
 
-func (svc ShopUserRepository) FindByUsername(username string) (*[]models.ShopUser, error) {
+func (svc ShopUserRepository) FindByUsername(ctx context.Context, username string) (*[]models.ShopUser, error) {
 	shopUsers := &[]models.ShopUser{}
 
-	err := svc.pst.Find(&models.ShopUser{}, bson.M{"username": username}, shopUsers)
+	err := svc.pst.Find(ctx, &models.ShopUser{}, bson.M{"username": username}, shopUsers)
 
 	if err != nil {
 		return nil, err
@@ -145,7 +146,7 @@ func (svc ShopUserRepository) FindByUsername(username string) (*[]models.ShopUse
 	return shopUsers, nil
 }
 
-func (repo ShopUserRepository) FindByUsernamePage(username string, pageable micromodels.Pageable) ([]models.ShopUserInfo, mongopagination.PaginationData, error) {
+func (repo ShopUserRepository) FindByUsernamePage(ctx context.Context, username string, pageable micromodels.Pageable) ([]models.ShopUserInfo, mongopagination.PaginationData, error) {
 
 	docList := []models.ShopUserInfo{}
 
@@ -163,7 +164,7 @@ func (repo ShopUserRepository) FindByUsernamePage(username string, pageable micr
 		}}})
 	}
 
-	aggPaginatedData, err := repo.pst.AggregatePage(&models.ShopUser{}, pageable,
+	aggPaginatedData, err := repo.pst.AggregatePage(ctx, &models.ShopUser{}, pageable,
 		bson.M{"$match": bson.M{
 			"username": username,
 		}},
@@ -215,7 +216,7 @@ func (repo ShopUserRepository) FindByUsernamePage(username string, pageable micr
 	return docList, aggPaginatedData.Pagination, nil
 }
 
-func (repo ShopUserRepository) FindByUserInShopPage(shopID string, pageable micromodels.Pageable) ([]models.ShopUser, mongopagination.PaginationData, error) {
+func (repo ShopUserRepository) FindByUserInShopPage(ctx context.Context, shopID string, pageable micromodels.Pageable) ([]models.ShopUser, mongopagination.PaginationData, error) {
 
 	docList := []models.ShopUser{}
 
@@ -237,7 +238,7 @@ func (repo ShopUserRepository) FindByUserInShopPage(shopID string, pageable micr
 		"$or":    searchFilterList,
 	}
 
-	paginattion, err := repo.pst.FindPage(&models.ShopUser{}, filtter, pageable, &docList)
+	paginattion, err := repo.pst.FindPage(ctx, &models.ShopUser{}, filtter, pageable, &docList)
 
 	if err != nil {
 		return []models.ShopUser{}, mongopagination.PaginationData{}, err
@@ -246,7 +247,7 @@ func (repo ShopUserRepository) FindByUserInShopPage(shopID string, pageable micr
 	return docList, paginattion, nil
 }
 
-func (repo ShopUserRepository) FindUserProfileByUsernames(usernames []string) ([]models.UserProfile, error) {
+func (repo ShopUserRepository) FindUserProfileByUsernames(ctx context.Context, usernames []string) ([]models.UserProfile, error) {
 
 	docList := []models.UserProfile{}
 
@@ -256,7 +257,7 @@ func (repo ShopUserRepository) FindUserProfileByUsernames(usernames []string) ([
 		},
 	}
 
-	err := repo.pst.Find(&models.UserProfile{}, filters, &docList)
+	err := repo.pst.Find(ctx, &models.UserProfile{}, filters, &docList)
 
 	if err != nil {
 		return []models.UserProfile{}, err

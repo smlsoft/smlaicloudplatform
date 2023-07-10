@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	accountModel "smlcloudplatform/pkg/vfgl/chartofaccount/models"
 	chartofaccountrepositories "smlcloudplatform/pkg/vfgl/chartofaccount/repositories"
 )
@@ -13,7 +14,7 @@ func (m *MigrationService) ImportChartOfAccount(charts []accountModel.ChartOfAcc
 	for _, chart := range charts {
 		// t.logger.Infof("Process Chart %s:%s", charts[i].AccountCode, charts[i].AccountName)
 
-		findAccount, err := chartRepo.FindByGuid(chart.ShopID, chart.AccountCode)
+		findAccount, err := chartRepo.FindByGuid(context.Background(), chart.ShopID, chart.AccountCode)
 		if err != nil {
 			//t.logger.Errorf("Error Find Account %s:%s", charts[i].AccountCode, charts[i].AccountName)
 			return err
@@ -21,7 +22,7 @@ func (m *MigrationService) ImportChartOfAccount(charts []accountModel.ChartOfAcc
 
 		if findAccount.GuidFixed == "" {
 
-			_, err := chartRepo.Create(chart)
+			_, err := chartRepo.Create(context.Background(), chart)
 			if err != nil {
 				//t.logger.Errorf("Error Create Account %s:%s", charts[i].AccountCode, charts[i].AccountName)
 				return err

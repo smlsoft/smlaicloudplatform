@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"errors"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
@@ -15,24 +16,24 @@ import (
 )
 
 type IInventoryRepository interface {
-	CreateInBatch(inventories []models.InventoryDoc) error
-	Create(inventory models.InventoryDoc) (string, error)
-	Update(shopID string, guid string, inventory models.InventoryDoc) error
-	Delete(shopID string, guid string, username string) error
-	FindByItemCodeGuid(shopID string, itemCodeGuidList []string) ([]models.InventoryItemGuid, error)
-	FindByID(id primitive.ObjectID) (models.InventoryDoc, error)
-	FindByGuid(shopID string, guid string) (models.InventoryDoc, error)
-	FindByItemCode(shopID string, itemCode string) (models.InventoryDoc, error)
-	FindPage(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryInfo, mongopagination.PaginationData, error)
-	FindByItemGuid(shopId string, itemguid string) (models.InventoryDoc, error)
-	FindByItemGuidList(shopID string, guidList []string) ([]models.InventoryDoc, error)
-	FindByItemBarcode(shopId string, barcode string) (models.InventoryDoc, error)
-	FindByBarcodes(shopID string, barcodes []string) ([]models.InventoryDoc, error)
+	CreateInBatch(ctx context.Context, docs []models.InventoryDoc) error
+	Create(ctx context.Context, doc models.InventoryDoc) (string, error)
+	Update(ctx context.Context, shopID string, guid string, inventory models.InventoryDoc) error
+	Delete(ctx context.Context, shopID string, guid string, username string) error
+	FindByItemCodeGuid(ctx context.Context, shopID string, itemCodeGuidList []string) ([]models.InventoryItemGuid, error)
+	FindByID(ctx context.Context, id primitive.ObjectID) (models.InventoryDoc, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.InventoryDoc, error)
+	FindByItemCode(ctx context.Context, shopID string, itemCode string) (models.InventoryDoc, error)
+	FindPage(ctx context.Context, shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryInfo, mongopagination.PaginationData, error)
+	FindByItemGuid(ctx context.Context, shopId string, itemguid string) (models.InventoryDoc, error)
+	FindByItemGuidList(ctx context.Context, shopID string, guidList []string) ([]models.InventoryDoc, error)
+	FindByItemBarcode(ctx context.Context, shopId string, barcode string) (models.InventoryDoc, error)
+	FindByBarcodes(ctx context.Context, shopID string, barcodes []string) ([]models.InventoryDoc, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryActivity, mongopagination.PaginationData, error)
-	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.InventoryDeleteActivity, error)
-	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.InventoryActivity, error)
+	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.InventoryDeleteActivity, error)
+	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.InventoryActivity, error)
 }
 
 type InventoryRepository struct {
@@ -49,14 +50,14 @@ func NewInventoryRepository(pst microservice.IPersisterMongo) InventoryRepositor
 	return insRepo
 }
 
-func (repo InventoryRepository) CreateInBatch(inventories []models.InventoryDoc) error {
+func (repo InventoryRepository) CreateInBatch(ctx context.Context, inventories []models.InventoryDoc) error {
 	var tempList []interface{}
 
 	for _, inv := range inventories {
 		tempList = append(tempList, inv)
 	}
 
-	err := repo.pst.CreateInBatch(&models.InventoryDoc{}, tempList)
+	err := repo.pst.CreateInBatch(ctx, &models.InventoryDoc{}, tempList)
 
 	if err != nil {
 		return err
@@ -64,8 +65,8 @@ func (repo InventoryRepository) CreateInBatch(inventories []models.InventoryDoc)
 	return nil
 }
 
-func (repo InventoryRepository) Create(inventory models.InventoryDoc) (string, error) {
-	idx, err := repo.pst.Create(&models.InventoryDoc{}, inventory)
+func (repo InventoryRepository) Create(ctx context.Context, inventory models.InventoryDoc) (string, error) {
+	idx, err := repo.pst.Create(ctx, &models.InventoryDoc{}, inventory)
 
 	if err != nil {
 		return "", err
@@ -73,7 +74,7 @@ func (repo InventoryRepository) Create(inventory models.InventoryDoc) (string, e
 	return idx.Hex(), nil
 }
 
-func (repo InventoryRepository) Update(shopID string, guid string, inventory models.InventoryDoc) error {
+func (repo InventoryRepository) Update(ctx context.Context, shopID string, guid string, inventory models.InventoryDoc) error {
 
 	filterDoc := map[string]interface{}{
 		"shopid":    shopID,
@@ -81,7 +82,7 @@ func (repo InventoryRepository) Update(shopID string, guid string, inventory mod
 		"deletedat": bson.M{"$exists": false},
 	}
 
-	err := repo.pst.UpdateOne(&models.InventoryDoc{}, filterDoc, inventory)
+	err := repo.pst.UpdateOne(ctx, &models.InventoryDoc{}, filterDoc, inventory)
 
 	if err != nil {
 		return err
@@ -90,9 +91,9 @@ func (repo InventoryRepository) Update(shopID string, guid string, inventory mod
 	return nil
 }
 
-func (repo InventoryRepository) Delete(shopID string, guid string, username string) error {
+func (repo InventoryRepository) Delete(ctx context.Context, shopID string, guid string, username string) error {
 
-	err := repo.pst.SoftDeleteLastUpdate(&models.InventoryDoc{}, username, bson.M{"guidfixed": guid, "shopid": shopID})
+	err := repo.pst.SoftDeleteLastUpdate(ctx, &models.InventoryDoc{}, username, bson.M{"guidfixed": guid, "shopid": shopID})
 
 	if err != nil {
 		return err
@@ -104,7 +105,7 @@ func (repo InventoryRepository) Delete(shopID string, guid string, username stri
 	return nil
 }
 
-func (repo InventoryRepository) FindByBarcodes(shopID string, barcodes []string) ([]models.InventoryDoc, error) {
+func (repo InventoryRepository) FindByBarcodes(ctx context.Context, shopID string, barcodes []string) ([]models.InventoryDoc, error) {
 
 	findDoc := []models.InventoryDoc{}
 
@@ -120,7 +121,7 @@ func (repo InventoryRepository) FindByBarcodes(shopID string, barcodes []string)
 		},
 	}
 
-	err := repo.pst.Find(&models.InventoryDoc{}, filters, &findDoc)
+	err := repo.pst.Find(ctx, &models.InventoryDoc{}, filters, &findDoc)
 
 	if err != nil {
 		return []models.InventoryDoc{}, err
@@ -128,10 +129,14 @@ func (repo InventoryRepository) FindByBarcodes(shopID string, barcodes []string)
 	return findDoc, nil
 }
 
-func (repo InventoryRepository) FindByItemCodeGuid(shopID string, itemCodeGuidList []string) ([]models.InventoryItemGuid, error) {
+func (repo InventoryRepository) FindByItemCodeGuid(ctx context.Context, shopID string, itemCodeGuidList []string) ([]models.InventoryItemGuid, error) {
 
 	findDoc := []models.InventoryItemGuid{}
-	err := repo.pst.Find(&models.InventoryItemGuid{}, bson.M{"shopid": shopID, "itemguid": bson.M{"$in": itemCodeGuidList}, "deletedat": bson.M{"$exists": false}}, &findDoc)
+	err := repo.pst.Find(ctx,
+		&models.InventoryItemGuid{},
+		bson.M{"shopid": shopID, "itemguid": bson.M{"$in": itemCodeGuidList}, "deletedat": bson.M{"$exists": false}},
+		&findDoc,
+	)
 
 	if err != nil {
 		return []models.InventoryItemGuid{}, err
@@ -139,7 +144,7 @@ func (repo InventoryRepository) FindByItemCodeGuid(shopID string, itemCodeGuidLi
 	return findDoc, nil
 }
 
-func (repo InventoryRepository) FindByID(id primitive.ObjectID) (models.InventoryDoc, error) {
+func (repo InventoryRepository) FindByID(ctx context.Context, id primitive.ObjectID) (models.InventoryDoc, error) {
 
 	findDocList := []models.InventoryDoc{}
 
@@ -174,7 +179,7 @@ func (repo InventoryRepository) FindByID(id primitive.ObjectID) (models.Inventor
 		{"$limit": 1},
 	}
 
-	err := repo.pst.Aggregate(models.InventoryDoc{}, pipeline, &findDocList)
+	err := repo.pst.Aggregate(ctx, models.InventoryDoc{}, pipeline, &findDocList)
 
 	if err != nil {
 		return models.InventoryDoc{}, err
@@ -187,7 +192,7 @@ func (repo InventoryRepository) FindByID(id primitive.ObjectID) (models.Inventor
 	return findDocList[0], nil
 }
 
-func (repo InventoryRepository) FindByGuid(shopID string, guid string) (models.InventoryDoc, error) {
+func (repo InventoryRepository) FindByGuid(ctx context.Context, shopID string, guid string) (models.InventoryDoc, error) {
 
 	findDocList := []models.InventoryDoc{}
 
@@ -204,7 +209,7 @@ func (repo InventoryRepository) FindByGuid(shopID string, guid string) (models.I
 		{"$limit": 1},
 	}
 
-	err := repo.pst.Aggregate(models.InventoryDoc{}, pipeline, &findDocList)
+	err := repo.pst.Aggregate(ctx, models.InventoryDoc{}, pipeline, &findDocList)
 
 	if err != nil {
 		return models.InventoryDoc{}, err
@@ -216,7 +221,7 @@ func (repo InventoryRepository) FindByGuid(shopID string, guid string) (models.I
 	return findDocList[0], nil
 }
 
-func (repo InventoryRepository) FindByItemCode(shopID string, itemCode string) (models.InventoryDoc, error) {
+func (repo InventoryRepository) FindByItemCode(ctx context.Context, shopID string, itemCode string) (models.InventoryDoc, error) {
 
 	findDocList := []models.InventoryDoc{}
 
@@ -233,7 +238,7 @@ func (repo InventoryRepository) FindByItemCode(shopID string, itemCode string) (
 		{"$limit": 1},
 	}
 
-	err := repo.pst.Aggregate(models.InventoryDoc{}, pipeline, &findDocList)
+	err := repo.pst.Aggregate(ctx, models.InventoryDoc{}, pipeline, &findDocList)
 
 	if err != nil {
 		return models.InventoryDoc{}, err
@@ -245,7 +250,7 @@ func (repo InventoryRepository) FindByItemCode(shopID string, itemCode string) (
 	return findDocList[0], nil
 }
 
-func (repo InventoryRepository) FindPage(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryInfo, mongopagination.PaginationData, error) {
+func (repo InventoryRepository) FindPage(ctx context.Context, shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryInfo, mongopagination.PaginationData, error) {
 
 	filterQuery := bson.M{
 		"shopid":    shopID,
@@ -268,7 +273,7 @@ func (repo InventoryRepository) FindPage(shopID string, filters map[string]inter
 
 	matchQuery := bson.M{"$match": filterQuery}
 
-	aggData, err := repo.pst.AggregatePage(models.InventoryInfo{}, pageable, matchQuery, repo.unitLookupQuery(shopID), repo.unitUnwindQuery())
+	aggData, err := repo.pst.AggregatePage(ctx, models.InventoryInfo{}, pageable, matchQuery, repo.unitLookupQuery(shopID), repo.unitUnwindQuery())
 
 	if err != nil {
 		return []models.InventoryInfo{}, mongopagination.PaginationData{}, err
@@ -283,7 +288,7 @@ func (repo InventoryRepository) FindPage(shopID string, filters map[string]inter
 	return docList, aggData.Pagination, nil
 }
 
-func (repo InventoryRepository) FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryDeleteActivity, mongopagination.PaginationData, error) {
+func (repo InventoryRepository) FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryDeleteActivity, mongopagination.PaginationData, error) {
 
 	filterQueries := bson.M{
 		"shopid":    shopID,
@@ -291,7 +296,7 @@ func (repo InventoryRepository) FindDeletedPage(shopID string, lastUpdatedDate t
 	}
 
 	docList := []models.InventoryDeleteActivity{}
-	pagination, err := repo.pst.FindPage(&models.InventoryInfo{}, filterQueries, pageable, &docList)
+	pagination, err := repo.pst.FindPage(ctx, &models.InventoryInfo{}, filterQueries, pageable, &docList)
 
 	if err != nil {
 		return []models.InventoryDeleteActivity{}, mongopagination.PaginationData{}, err
@@ -300,7 +305,7 @@ func (repo InventoryRepository) FindDeletedPage(shopID string, lastUpdatedDate t
 	return docList, pagination, nil
 }
 
-func (repo InventoryRepository) FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryActivity, mongopagination.PaginationData, error) {
+func (repo InventoryRepository) FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryActivity, mongopagination.PaginationData, error) {
 
 	matchQuery := bson.M{
 		"$match": bson.M{
@@ -313,7 +318,7 @@ func (repo InventoryRepository) FindCreatedOrUpdatedPage(shopID string, lastUpda
 		},
 	}
 
-	aggData, err := repo.pst.AggregatePage(models.InventoryActivity{}, pageable, matchQuery, repo.unitLookupQuery(shopID), repo.unitUnwindQuery())
+	aggData, err := repo.pst.AggregatePage(ctx, models.InventoryActivity{}, pageable, matchQuery, repo.unitLookupQuery(shopID), repo.unitUnwindQuery())
 
 	if err != nil {
 		return []models.InventoryActivity{}, mongopagination.PaginationData{}, err
@@ -328,7 +333,7 @@ func (repo InventoryRepository) FindCreatedOrUpdatedPage(shopID string, lastUpda
 	return docList, aggData.Pagination, nil
 }
 
-func (repo InventoryRepository) FindByItemGuid(shopID string, itemguid string) (models.InventoryDoc, error) {
+func (repo InventoryRepository) FindByItemGuid(ctx context.Context, shopID string, itemguid string) (models.InventoryDoc, error) {
 
 	findDocList := []models.InventoryDoc{}
 
@@ -345,7 +350,7 @@ func (repo InventoryRepository) FindByItemGuid(shopID string, itemguid string) (
 		{"$limit": 1},
 	}
 
-	err := repo.pst.Aggregate(models.InventoryDoc{}, pipeline, &findDocList)
+	err := repo.pst.Aggregate(ctx, models.InventoryDoc{}, pipeline, &findDocList)
 
 	if err != nil {
 		return models.InventoryDoc{}, err
@@ -358,7 +363,7 @@ func (repo InventoryRepository) FindByItemGuid(shopID string, itemguid string) (
 	return findDocList[0], nil
 }
 
-func (repo InventoryRepository) FindByItemGuidList(shopID string, guidList []string) ([]models.InventoryDoc, error) {
+func (repo InventoryRepository) FindByItemGuidList(ctx context.Context, shopID string, guidList []string) ([]models.InventoryDoc, error) {
 
 	findDocList := []models.InventoryDoc{}
 
@@ -374,7 +379,7 @@ func (repo InventoryRepository) FindByItemGuidList(shopID string, guidList []str
 		repo.unitUnwindQuery(),
 	}
 
-	err := repo.pst.Aggregate(models.InventoryDoc{}, pipeline, &findDocList)
+	err := repo.pst.Aggregate(ctx, models.InventoryDoc{}, pipeline, &findDocList)
 
 	if err != nil {
 		return []models.InventoryDoc{}, err
@@ -382,7 +387,7 @@ func (repo InventoryRepository) FindByItemGuidList(shopID string, guidList []str
 	return findDocList, nil
 }
 
-func (repo InventoryRepository) FindByItemBarcode(shopID string, barcode string) (models.InventoryDoc, error) {
+func (repo InventoryRepository) FindByItemBarcode(ctx context.Context, shopID string, barcode string) (models.InventoryDoc, error) {
 
 	findDocList := []models.InventoryDoc{}
 
@@ -405,7 +410,7 @@ func (repo InventoryRepository) FindByItemBarcode(shopID string, barcode string)
 		{"$limit": 1},
 	}
 
-	err := repo.pst.Aggregate(models.InventoryDoc{}, pipeline, &findDocList)
+	err := repo.pst.Aggregate(ctx, models.InventoryDoc{}, pipeline, &findDocList)
 
 	if err != nil {
 		return models.InventoryDoc{}, err

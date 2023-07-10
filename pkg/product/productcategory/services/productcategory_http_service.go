@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"smlcloudplatform/pkg/product/productcategory/models"
@@ -38,13 +39,17 @@ type ProductCategoryHttpService struct {
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 
 	services.ActivityService[models.ProductCategoryActivity, models.ProductCategoryDeleteActivity]
+	contextTimeout time.Duration
 }
 
 func NewProductCategoryHttpService(repo repositories.IProductCategoryRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *ProductCategoryHttpService {
 
+	contextTimeout := time.Duration(15) * time.Second
+
 	insSvc := &ProductCategoryHttpService{
-		repo:          repo,
-		syncCacheRepo: syncCacheRepo,
+		repo:           repo,
+		syncCacheRepo:  syncCacheRepo,
+		contextTimeout: contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.ProductCategoryActivity, models.ProductCategoryDeleteActivity](repo)
@@ -52,7 +57,14 @@ func NewProductCategoryHttpService(repo repositories.IProductCategoryRepository,
 	return insSvc
 }
 
+func (svc ProductCategoryHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc ProductCategoryHttpService) CreateProductCategory(shopID string, authUsername string, doc models.ProductCategory) (string, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
 	newGuidFixed := utils.NewGUID()
 
@@ -64,7 +76,7 @@ func (svc ProductCategoryHttpService) CreateProductCategory(shopID string, authU
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err := svc.repo.Create(docData)
+	_, err := svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -77,7 +89,10 @@ func (svc ProductCategoryHttpService) CreateProductCategory(shopID string, authU
 
 func (svc ProductCategoryHttpService) UpdateProductCategory(shopID string, guid string, authUsername string, doc models.ProductCategory) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -92,7 +107,7 @@ func (svc ProductCategoryHttpService) UpdateProductCategory(shopID string, guid 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -105,7 +120,10 @@ func (svc ProductCategoryHttpService) UpdateProductCategory(shopID string, guid 
 
 func (svc ProductCategoryHttpService) DeleteProductCategory(shopID string, guid string, authUsername string) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -115,7 +133,7 @@ func (svc ProductCategoryHttpService) DeleteProductCategory(shopID string, guid 
 		return errors.New("document not found")
 	}
 
-	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 	if err != nil {
 		return err
 	}
@@ -127,7 +145,10 @@ func (svc ProductCategoryHttpService) DeleteProductCategory(shopID string, guid 
 
 func (svc ProductCategoryHttpService) InfoProductCategory(shopID string, guid string) (models.ProductCategoryInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.ProductCategoryInfo{}, err
@@ -142,12 +163,16 @@ func (svc ProductCategoryHttpService) InfoProductCategory(shopID string, guid st
 }
 
 func (svc ProductCategoryHttpService) SearchProductCategory(shopID string, pageable micromodels.Pageable) ([]models.ProductCategoryInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"code",
 		"names.name",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPage(ctx, shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ProductCategoryInfo{}, pagination, err
@@ -157,6 +182,10 @@ func (svc ProductCategoryHttpService) SearchProductCategory(shopID string, pagea
 }
 
 func (svc ProductCategoryHttpService) SearchProductCategoryStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.ProductCategoryInfo, int, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"code",
 		"names.name",
@@ -181,7 +210,7 @@ func (svc ProductCategoryHttpService) SearchProductCategoryStep(shopID string, l
 		selectFields["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(ctx, shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.ProductCategoryInfo{}, 0, err
@@ -191,6 +220,9 @@ func (svc ProductCategoryHttpService) SearchProductCategoryStep(shopID string, l
 }
 
 func (svc ProductCategoryHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.ProductCategory) error {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
 	createDataList := []models.ProductCategoryDoc{}
 
@@ -211,7 +243,7 @@ func (svc ProductCategoryHttpService) SaveInBatch(shopID string, authUsername st
 	}
 
 	if len(dataList) > 0 {
-		err := svc.repo.CreateInBatch(createDataList)
+		err := svc.repo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return err
@@ -225,11 +257,15 @@ func (svc ProductCategoryHttpService) SaveInBatch(shopID string, authUsername st
 }
 
 func (svc ProductCategoryHttpService) XSortsSave(shopID string, authUsername string, xsorts []common.XSortModifyReqesut) error {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	for _, xsort := range xsorts {
 		if len(xsort.GUIDFixed) < 1 {
 			continue
 		}
-		findDoc, err := svc.repo.FindByGuid(shopID, xsort.GUIDFixed)
+		findDoc, err := svc.repo.FindByGuid(ctx, shopID, xsort.GUIDFixed)
 
 		if err != nil {
 			return err
@@ -265,7 +301,7 @@ func (svc ProductCategoryHttpService) XSortsSave(shopID string, authUsername str
 		findDoc.UpdatedBy = authUsername
 		findDoc.UpdatedAt = time.Now()
 
-		err = svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
+		err = svc.repo.Update(ctx, shopID, findDoc.GuidFixed, findDoc)
 
 		if err != nil {
 			return err
@@ -279,11 +315,15 @@ func (svc ProductCategoryHttpService) XSortsSave(shopID string, authUsername str
 }
 
 func (svc ProductCategoryHttpService) XBarcodesSave(shopID string, authUsername string, xsorts []common.XSortModifyReqesut) error {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	for _, xsort := range xsorts {
 		if len(xsort.GUIDFixed) < 1 {
 			continue
 		}
-		findDoc, err := svc.repo.FindByGuid(shopID, xsort.GUIDFixed)
+		findDoc, err := svc.repo.FindByGuid(ctx, shopID, xsort.GUIDFixed)
 
 		if err != nil {
 			return err
@@ -319,7 +359,7 @@ func (svc ProductCategoryHttpService) XBarcodesSave(shopID string, authUsername 
 		findDoc.UpdatedBy = authUsername
 		findDoc.UpdatedAt = time.Now()
 
-		err = svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
+		err = svc.repo.Update(ctx, shopID, findDoc.GuidFixed, findDoc)
 
 		if err != nil {
 			return err
@@ -335,11 +375,14 @@ func (svc ProductCategoryHttpService) XBarcodesSave(shopID string, authUsername 
 
 func (svc ProductCategoryHttpService) DeleteProductCategoryByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
 	}
 
-	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	err := svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}

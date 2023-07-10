@@ -43,6 +43,7 @@ import (
 	"smlcloudplatform/pkg/productsection/sectionbranch"
 	"smlcloudplatform/pkg/productsection/sectionbusinesstype"
 	"smlcloudplatform/pkg/productsection/sectiondepartment"
+	"smlcloudplatform/pkg/report/reportquerym"
 
 	// "smlcloudplatform/pkg/report/reportquery"
 	"smlcloudplatform/pkg/restaurant/device"
@@ -256,6 +257,7 @@ func main() {
 		documentformate.NewDocumentFormateHttp(ms, cfg),
 
 		//reportquery.NewReportQueryHttp(ms, cfg),
+		reportquerym.NewReportQueryHttp(ms, cfg),
 	}
 
 	serviceStartHttp(services...)
