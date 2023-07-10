@@ -242,7 +242,6 @@ func (h DocumentFormateHttp) InfoDocumentFormate(ctx microservice.IContext) erro
 // Get DocumentFormate Default Module godoc
 // @Description get DocumentFormate Default Module info by guidfixed
 // @Tags		DocumentFormate
-// @Param		id  path      string  true  "DocumentFormate guidfixed"
 // @Accept 		json
 // @Success		200	{object}	common.ApiResponse
 // @Failure		401 {object}	common.AuthResponseFailed

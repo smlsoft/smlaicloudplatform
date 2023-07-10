@@ -35,7 +35,7 @@ type IStockTransferHttpService interface {
 }
 
 const (
-	MODULE_NAME = "IM"
+	MODULE_NAME = "TF"
 )
 
 type StockTransferHttpService struct {
