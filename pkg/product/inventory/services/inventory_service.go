@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
@@ -19,7 +20,7 @@ import (
 type IInventoryService interface {
 	IsExistsGuid(shopID string, guidFixed string) (bool, error)
 	CreateInBatch(shopID string, authUsername string, inventories []models.Inventory) (models.InventoryBulkImport, error)
-	CreateWithGuid(shopID string, authUsername string, guidFixed string, inventory models.Inventory) (string, error)
+	CreateWithGuid(ctx context.Context, shopID string, authUsername string, guidFixed string, inventory models.Inventory) (string, error)
 	CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, string, error)
 	UpdateInventory(shopID string, findDoc models.InventoryDoc, authUsername string, inventory models.Inventory) error
 	UpdateInventoryByGuidfixed(shopID string, guid string, authUsername string, inventory models.Inventory) error
@@ -39,22 +40,34 @@ type IInventoryService interface {
 }
 
 type InventoryService struct {
-	invRepo       repositories.IInventoryRepository
-	invMqRepo     repositories.IInventoryMQRepository
-	syncCacheRepo mastersync.IMasterSyncCacheRepository
+	invRepo        repositories.IInventoryRepository
+	invMqRepo      repositories.IInventoryMQRepository
+	syncCacheRepo  mastersync.IMasterSyncCacheRepository
+	contextTimeout time.Duration
 }
 
 func NewInventoryService(inventoryRepo repositories.IInventoryRepository, inventoryMqRepo repositories.IInventoryMQRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) InventoryService {
+
+	contextTimeout := time.Duration(15) * time.Second
+
 	return InventoryService{
-		invRepo:       inventoryRepo,
-		invMqRepo:     inventoryMqRepo,
-		syncCacheRepo: syncCacheRepo,
+		invRepo:        inventoryRepo,
+		invMqRepo:      inventoryMqRepo,
+		syncCacheRepo:  syncCacheRepo,
+		contextTimeout: contextTimeout,
 	}
+}
+
+func (svc InventoryService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
 }
 
 func (svc InventoryService) IsExistsGuid(shopID string, guidFixed string) (bool, error) {
 
-	findDoc, err := svc.invRepo.FindByGuid(shopID, guidFixed)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.invRepo.FindByGuid(ctx, shopID, guidFixed)
 
 	if err != nil {
 		return false, err
@@ -69,6 +82,9 @@ func (svc InventoryService) IsExistsGuid(shopID string, guidFixed string) (bool,
 
 func (svc InventoryService) CreateInBatch(shopID string, authUsername string, inventories []models.Inventory) (models.InventoryBulkImport, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	createDataList := []models.InventoryDoc{}
 	duplicateDataList := []models.Inventory{}
 
@@ -79,7 +95,7 @@ func (svc InventoryService) CreateInBatch(shopID string, authUsername string, in
 		itemCodeGuidList = append(itemCodeGuidList, inventory.ItemGuid)
 	}
 
-	findItemGuid, err := svc.invRepo.FindByItemCodeGuid(shopID, itemCodeGuidList)
+	findItemGuid, err := svc.invRepo.FindByItemCodeGuid(ctx, shopID, itemCodeGuidList)
 
 	if err != nil {
 		return models.InventoryBulkImport{}, err
@@ -87,10 +103,10 @@ func (svc InventoryService) CreateInBatch(shopID string, authUsername string, in
 
 	duplicateDataList, createDataList = preparePayloadDataInventory(shopID, authUsername, findItemGuid, payloadInventoryList)
 
-	updateSuccessDataList, updateFailDataList := updateOnDuplicateInventory(shopID, authUsername, duplicateDataList, svc.invRepo)
+	updateSuccessDataList, updateFailDataList := updateOnDuplicateInventory(ctx, shopID, authUsername, duplicateDataList, svc.invRepo)
 
 	if len(createDataList) > 0 {
-		err = svc.invRepo.CreateInBatch(createDataList)
+		err = svc.invRepo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return models.InventoryBulkImport{}, err
@@ -103,7 +119,7 @@ func (svc InventoryService) CreateInBatch(shopID string, authUsername string, in
 
 		// reply kafka
 		if svc.invMqRepo != nil {
-			err = svc.invMqRepo.Create(inv.InventoryData)
+			err = svc.invMqRepo.Create(ctx, inv.InventoryData)
 
 			if err != nil {
 				return models.InventoryBulkImport{}, err
@@ -161,11 +177,11 @@ func filterDuplicateInventory(inventories []models.Inventory) (itemTemp []models
 	return itemTemp, itemDuplicate
 }
 
-func updateOnDuplicateInventory(shopID string, authUsername string, duplicateDataList []models.Inventory, repo repositories.IInventoryRepository) ([]models.InventoryDoc, []models.Inventory) {
+func updateOnDuplicateInventory(ctx context.Context, shopID string, authUsername string, duplicateDataList []models.Inventory, repo repositories.IInventoryRepository) ([]models.InventoryDoc, []models.Inventory) {
 	updateSuccessDataList := []models.InventoryDoc{}
 	updateFailDataList := []models.Inventory{}
 	for _, inv := range duplicateDataList {
-		findDoc, err := repo.FindByItemGuid(shopID, inv.ItemGuid)
+		findDoc, err := repo.FindByItemGuid(ctx, shopID, inv.ItemGuid)
 
 		if err != nil || findDoc.ID == primitive.NilObjectID {
 			updateFailDataList = append(updateFailDataList, inv)
@@ -178,7 +194,7 @@ func updateOnDuplicateInventory(shopID string, authUsername string, duplicateDat
 		findDoc.UpdatedAt = time.Now()
 		findDoc.LastUpdatedAt = time.Now()
 
-		err = repo.Update(shopID, findDoc.GuidFixed, findDoc)
+		err = repo.Update(ctx, shopID, findDoc.GuidFixed, findDoc)
 
 		if err != nil {
 			updateFailDataList = append(updateFailDataList, inv)
@@ -224,11 +240,14 @@ func preparePayloadDataInventory(shopID string, authUsername string, findItemGui
 
 func (svc InventoryService) SaveInventory(shopID string, authUsername string, inventory models.Inventory) error {
 
-	findDoc, _ := svc.invRepo.FindByItemCode(shopID, inventory.ItemCode)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, _ := svc.invRepo.FindByItemCode(ctx, shopID, inventory.ItemCode)
 
 	if len(findDoc.GuidFixed) < 1 {
 		newGuid := utils.NewGUID()
-		_, err := svc.CreateWithGuid(shopID, authUsername, newGuid, inventory)
+		_, err := svc.CreateWithGuid(ctx, shopID, authUsername, newGuid, inventory)
 		return err
 	} else {
 		return svc.UpdateInventory(shopID, findDoc, authUsername, inventory)
@@ -236,7 +255,7 @@ func (svc InventoryService) SaveInventory(shopID string, authUsername string, in
 
 }
 
-func (svc InventoryService) CreateWithGuid(shopID string, authUsername string, guidFixed string, inventory models.Inventory) (string, error) {
+func (svc InventoryService) CreateWithGuid(ctx context.Context, shopID string, authUsername string, guidFixed string, inventory models.Inventory) (string, error) {
 
 	if inventory.Barcodes != nil {
 		reqBarcodes := []string{}
@@ -244,7 +263,7 @@ func (svc InventoryService) CreateWithGuid(shopID string, authUsername string, g
 			reqBarcodes = append(reqBarcodes, barcode.Barcode)
 		}
 
-		findDocBarcodes, err := svc.invRepo.FindByBarcodes(shopID, reqBarcodes)
+		findDocBarcodes, err := svc.invRepo.FindByBarcodes(ctx, shopID, reqBarcodes)
 
 		if err != nil {
 			return "", err
@@ -256,7 +275,7 @@ func (svc InventoryService) CreateWithGuid(shopID string, authUsername string, g
 		}
 	}
 
-	findDoc, _ := svc.invRepo.FindByItemCode(shopID, inventory.ItemCode)
+	findDoc, _ := svc.invRepo.FindByItemCode(ctx, shopID, inventory.ItemCode)
 
 	if len(findDoc.GuidFixed) > 0 {
 		return "", errors.New("item code is exists")
@@ -274,14 +293,14 @@ func (svc InventoryService) CreateWithGuid(shopID string, authUsername string, g
 	invDoc.CreatedAt = time.Now()
 	invDoc.LastUpdatedAt = time.Now()
 
-	mongoIdx, err := svc.invRepo.Create(invDoc)
+	mongoIdx, err := svc.invRepo.Create(ctx, invDoc)
 
 	if err != nil {
 		return "", err
 	}
 
 	if svc.invMqRepo != nil {
-		err = svc.invMqRepo.Create(invDoc.InventoryData)
+		err = svc.invMqRepo.Create(ctx, invDoc.InventoryData)
 
 		if err != nil {
 			return "", err
@@ -331,13 +350,20 @@ func (svc InventoryService) CreateWithGuid(shopID string, authUsername string, g
 
 func (svc InventoryService) CreateInventory(shopID string, authUsername string, inventory models.Inventory) (string, string, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	newGuid := utils.NewGUID()
-	mongoIdx, err := svc.CreateWithGuid(shopID, authUsername, newGuid, inventory)
+	mongoIdx, err := svc.CreateWithGuid(ctx, shopID, authUsername, newGuid, inventory)
 	return mongoIdx, newGuid, err
 }
 
 func (svc InventoryService) UpdateInventoryByGuidfixed(shopID string, guid string, authUsername string, inventory models.Inventory) error {
-	findDoc, err := svc.invRepo.FindByGuid(shopID, guid)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.invRepo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -351,7 +377,11 @@ func (svc InventoryService) UpdateInventoryByGuidfixed(shopID string, guid strin
 }
 
 func (svc InventoryService) UpdateInventoryByItemCode(shopID string, itemCode string, authUsername string, inventory models.Inventory) error {
-	findDoc, err := svc.invRepo.FindByItemCode(shopID, itemCode)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.invRepo.FindByItemCode(ctx, shopID, itemCode)
 
 	if err != nil {
 		return err
@@ -366,6 +396,9 @@ func (svc InventoryService) UpdateInventoryByItemCode(shopID string, itemCode st
 
 func (svc InventoryService) UpdateInventory(shopID string, findDoc models.InventoryDoc, authUsername string, inventory models.Inventory) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	tempItemCode := findDoc.ItemCode
 
 	if inventory.Barcodes != nil && len(*inventory.Barcodes) > 0 {
@@ -377,7 +410,7 @@ func (svc InventoryService) UpdateInventory(shopID string, findDoc models.Invent
 			idxReqBarcode[barcode.Barcode] = struct{}{}
 		}
 
-		findDocBarcodes, err := svc.invRepo.FindByBarcodes(shopID, reqBarcodes)
+		findDocBarcodes, err := svc.invRepo.FindByBarcodes(ctx, shopID, reqBarcodes)
 
 		if err != nil {
 			return err
@@ -405,7 +438,7 @@ func (svc InventoryService) UpdateInventory(shopID string, findDoc models.Invent
 	findDoc.UpdatedAt = time.Now()
 	findDoc.LastUpdatedAt = time.Now()
 
-	err := svc.invRepo.Update(shopID, findDoc.GuidFixed, findDoc)
+	err := svc.invRepo.Update(ctx, shopID, findDoc.GuidFixed, findDoc)
 
 	if err != nil {
 		return err
@@ -424,7 +457,10 @@ func (svc InventoryService) UpdateInventory(shopID string, findDoc models.Invent
 
 func (svc InventoryService) DeleteInventory(shopID string, guid string, username string) error {
 
-	err := svc.invRepo.Delete(shopID, guid, username)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	err := svc.invRepo.Delete(ctx, shopID, guid, username)
 
 	if err != nil {
 		return err
@@ -447,10 +483,14 @@ func (svc InventoryService) DeleteInventory(shopID string, guid string, username
 }
 
 func (svc InventoryService) InfoMongoInventory(id string) (models.InventoryInfo, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	start := time.Now()
 
 	idx, err := primitive.ObjectIDFromHex(id)
-	findDoc, err := svc.invRepo.FindByID(idx)
+	findDoc, err := svc.invRepo.FindByID(ctx, idx)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return models.InventoryInfo{}, err
@@ -464,7 +504,10 @@ func (svc InventoryService) InfoMongoInventory(id string) (models.InventoryInfo,
 
 func (svc InventoryService) InfoInventoryBarcode(shopID string, barcode string) (models.InventoryInfo, error) {
 
-	findDoc, err := svc.invRepo.FindByItemBarcode(shopID, barcode)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.invRepo.FindByItemBarcode(ctx, shopID, barcode)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return models.InventoryInfo{}, err
@@ -479,7 +522,10 @@ func (svc InventoryService) InfoInventoryBarcode(shopID string, barcode string) 
 
 func (svc InventoryService) InfoInventory(shopID string, guid string) (models.InventoryInfo, error) {
 
-	findDoc, err := svc.invRepo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.invRepo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return models.InventoryInfo{}, err
@@ -494,7 +540,10 @@ func (svc InventoryService) InfoInventory(shopID string, guid string) (models.In
 
 func (svc InventoryService) InfoInventoryItemCode(shopID string, itemCode string) (models.InventoryInfo, error) {
 
-	findDoc, err := svc.invRepo.FindByItemCode(shopID, itemCode)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.invRepo.FindByItemCode(ctx, shopID, itemCode)
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		return models.InventoryInfo{}, err
@@ -508,7 +557,11 @@ func (svc InventoryService) InfoInventoryItemCode(shopID string, itemCode string
 }
 
 func (svc InventoryService) SearchInventory(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.InventoryInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.invRepo.FindPage(shopID, filters, pageable)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	docList, pagination, err := svc.invRepo.FindPage(ctx, shopID, filters, pageable)
 
 	if err != nil {
 		return []models.InventoryInfo{}, pagination, err
@@ -519,9 +572,12 @@ func (svc InventoryService) SearchInventory(shopID string, filters map[string]in
 
 func (svc InventoryService) UpdateProductCategory(shopID string, authUsername string, catId string, guids []string) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	for _, guid := range guids {
 
-		findDoc, err := svc.invRepo.FindByItemGuid(shopID, guid)
+		findDoc, err := svc.invRepo.FindByItemGuid(ctx, shopID, guid)
 
 		if err != nil {
 			return err
@@ -535,7 +591,7 @@ func (svc InventoryService) UpdateProductCategory(shopID string, authUsername st
 		findDoc.UpdatedBy = authUsername
 		findDoc.UpdatedAt = time.Now()
 
-		err = svc.invRepo.Update(shopID, findDoc.GuidFixed, findDoc)
+		err = svc.invRepo.Update(ctx, shopID, findDoc.GuidFixed, findDoc)
 
 		if err != nil {
 			return err
@@ -556,6 +612,10 @@ func (svc InventoryService) UpdateProductCategory(shopID string, authUsername st
 }
 
 func (svc InventoryService) LastActivity(shopID string, lastUpdatedDate time.Time, pageable micromodels.Pageable) (common.LastActivity, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	var wg sync.WaitGroup
 
 	wg.Add(1)
@@ -564,7 +624,7 @@ func (svc InventoryService) LastActivity(shopID string, lastUpdatedDate time.Tim
 	var err1 error
 
 	go func() {
-		deleteDocList, pagination1, err1 = svc.invRepo.FindDeletedPage(shopID, lastUpdatedDate, map[string]interface{}{}, pageable)
+		deleteDocList, pagination1, err1 = svc.invRepo.FindDeletedPage(ctx, shopID, lastUpdatedDate, map[string]interface{}{}, pageable)
 		wg.Done()
 	}()
 
@@ -574,7 +634,7 @@ func (svc InventoryService) LastActivity(shopID string, lastUpdatedDate time.Tim
 	var err2 error
 
 	go func() {
-		createAndUpdateDocList, pagination2, err2 = svc.invRepo.FindCreatedOrUpdatedPage(shopID, lastUpdatedDate, map[string]interface{}{}, pageable)
+		createAndUpdateDocList, pagination2, err2 = svc.invRepo.FindCreatedOrUpdatedPage(ctx, shopID, lastUpdatedDate, map[string]interface{}{}, pageable)
 		wg.Done()
 	}()
 
@@ -603,6 +663,10 @@ func (svc InventoryService) LastActivity(shopID string, lastUpdatedDate time.Tim
 }
 
 func (svc InventoryService) LastActivityStep(shopID string, lastUpdatedDate time.Time, pageableStep micromodels.PageableStep) (common.LastActivity, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	var wg sync.WaitGroup
 
 	wg.Add(1)
@@ -610,7 +674,7 @@ func (svc InventoryService) LastActivityStep(shopID string, lastUpdatedDate time
 	var err1 error
 
 	go func() {
-		deleteDocList, err1 = svc.invRepo.FindDeletedStep(shopID, lastUpdatedDate, map[string]interface{}{}, pageableStep)
+		deleteDocList, err1 = svc.invRepo.FindDeletedStep(ctx, shopID, lastUpdatedDate, map[string]interface{}{}, pageableStep)
 		wg.Done()
 	}()
 
@@ -620,7 +684,7 @@ func (svc InventoryService) LastActivityStep(shopID string, lastUpdatedDate time
 	var err2 error
 
 	go func() {
-		createAndUpdateDocList, err2 = svc.invRepo.FindCreatedOrUpdatedStep(shopID, lastUpdatedDate, map[string]interface{}{}, pageableStep)
+		createAndUpdateDocList, err2 = svc.invRepo.FindCreatedOrUpdatedStep(ctx, shopID, lastUpdatedDate, map[string]interface{}{}, pageableStep)
 		wg.Done()
 	}()
 

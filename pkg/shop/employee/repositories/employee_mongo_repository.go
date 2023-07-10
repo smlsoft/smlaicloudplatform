@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
@@ -11,24 +12,24 @@ import (
 )
 
 type IEmployeeRepository interface {
-	Count(shopID string) (int, error)
-	Create(doc models.EmployeeDoc) (string, error)
-	CreateInBatch(docList []models.EmployeeDoc) error
-	Update(shopID string, guid string, doc models.EmployeeDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	Delete(shopID string, username string, filters map[string]interface{}) error
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.EmployeeInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.EmployeeDoc, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	Create(ctx context.Context, doc models.EmployeeDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.EmployeeDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.EmployeeDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	Delete(ctx context.Context, shopID string, username string, filters map[string]interface{}) error
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.EmployeeInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.EmployeeDoc, error)
 
-	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.EmployeeItemGuid, error)
-	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.EmployeeDoc, error)
-	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.EmployeeInfo, mongopagination.PaginationData, error)
-	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.EmployeeInfo, int, error)
+	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.EmployeeItemGuid, error)
+	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.EmployeeDoc, error)
+	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.EmployeeInfo, mongopagination.PaginationData, error)
+	FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.EmployeeInfo, int, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.EmployeeDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.EmployeeActivity, mongopagination.PaginationData, error)
-	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.EmployeeDeleteActivity, error)
-	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.EmployeeActivity, error)
+	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.EmployeeDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.EmployeeActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.EmployeeDeleteActivity, error)
+	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.EmployeeActivity, error)
 }
 
 type EmployeeRepository struct {

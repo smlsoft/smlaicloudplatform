@@ -18,7 +18,7 @@ type ProductBarcodePGRepository struct {
 	pst microservice.IPersister
 }
 
-func NewProductBarcodePGRepository(pst microservice.IPersister) IProductBarcodePGRepository {
+func NewProductBarcodePGRepository(pst microservice.IPersister) *ProductBarcodePGRepository {
 	return &ProductBarcodePGRepository{
 		pst: pst,
 	}

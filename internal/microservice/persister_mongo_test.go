@@ -2,6 +2,7 @@ package microservice_test
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"reflect"
@@ -92,7 +93,7 @@ func TestMongoPersisterCountWithmtest(t *testing.T) {
 		mt.AddMockResponses(first, killCursors)
 
 		pst := microservice.NewPersisterMongoWithDBContext(mt.DB)
-		count, err := pst.Count(&Product{}, bson.M{"product_code": "0001"})
+		count, err := pst.Count(context.TODO(), &Product{}, bson.M{"product_code": "0001"})
 		if err != nil {
 			t.Error(err.Error())
 			return
@@ -115,7 +116,7 @@ func TestMongodbCreate(t *testing.T) {
 		mt.AddMockResponses(mtest.CreateSuccessResponse())
 
 		pst := microservice.NewPersisterMongoWithDBContext(mt.DB)
-		objID, err := pst.Create(&Product{}, &Product{
+		objID, err := pst.Create(context.TODO(), &Product{}, &Product{
 			ProductCode: productCode,
 			ProductName: productName,
 		})
@@ -144,7 +145,7 @@ func TestMongodbCreateInBatchWithMtest(t *testing.T) {
 			})
 		}
 
-		err := pst.CreateInBatch(&Product{}, products)
+		err := pst.CreateInBatch(context.TODO(), &Product{}, products)
 
 		if err != nil {
 			t.Error(err.Error())
@@ -178,7 +179,7 @@ func TestMongoDBFindMockData(t *testing.T) {
 
 		pst := microservice.NewPersisterMongoWithDBContext(mt.DB)
 		products := []Product{}
-		err := pst.Find(&Product{}, bson.M{}, &products)
+		err := pst.Find(context.TODO(), &Product{}, bson.M{}, &products)
 
 		if err != nil {
 			t.Error(err.Error())
@@ -240,7 +241,7 @@ func TestMongodbFindPage(t *testing.T) {
 		pst := microservice.NewPersisterMongoWithDBContext(mt.DB)
 
 		products := []Product{}
-		pagination, err := pst.FindPage(&Product{}, bson.M{}, models.Pageable{Page: 1, Limit: 10}, &products)
+		pagination, err := pst.FindPage(context.TODO(), &Product{}, bson.M{}, models.Pageable{Page: 1, Limit: 10}, &products)
 
 		if err != nil {
 			t.Error(err.Error())
@@ -277,21 +278,24 @@ func TestMongoTransaction(t *testing.T) {
 
 	pst := microservice.NewPersisterMongo(mock.NewPersisterMongoConfig())
 
-	err := pst.Transaction(func() error {
-		idx, err := pst.Create(Model1{}, Model1{
-			Name: "name1",
-		})
+	ctx := context.Background()
+	err := pst.Transaction(ctx, func(sc context.Context) error {
 
-		if err != nil {
-			t.Log(idx)
-			return err
-		}
-
-		err = pst.Update(&Model1{}, bson.M{"name": "name1"}, bson.M{"$set": bson.M{"name": "name3"}})
+		idx, err := pst.Create(sc, &Model1{}, &Model1{Name: "xxx"})
 
 		if err != nil {
 			return err
 		}
+
+		fmt.Println(idx)
+
+		return errors.New("test")
+
+		// err = pst.Update(ctx, &Model1{}, bson.M{"name": "name3"}, bson.M{"$set": bson.M{"name": "name1"}})
+
+		// if err != nil {
+		// 	return err
+		// }
 
 		return nil
 	})

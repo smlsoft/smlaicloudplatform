@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
@@ -18,6 +19,9 @@ import (
 
 func (svc DocumentImageService) getDocumentImageNotReferencedInGroup(shopID string, currentGroupGUID string, docImageRefs []models.ImageReferenceBody) ([]models.ImageReference, []string, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	docImageGUIDs := []string{}
 
 	for _, imageRef := range docImageRefs {
@@ -26,7 +30,7 @@ func (svc DocumentImageService) getDocumentImageNotReferencedInGroup(shopID stri
 
 	passDocImagesRef := []models.ImageReference{}
 
-	findGroups, err := svc.repoImageGroup.FindWithoutGUIDByDocumentImageGUIDs(shopID, currentGroupGUID, docImageGUIDs)
+	findGroups, err := svc.repoImageGroup.FindWithoutGUIDByDocumentImageGUIDs(ctx, shopID, currentGroupGUID, docImageGUIDs)
 
 	if err != nil {
 		return []models.ImageReference{}, []string{}, err
@@ -58,6 +62,9 @@ func (svc DocumentImageService) getDocumentImageNotReferencedInGroup(shopID stri
 }
 
 func (svc DocumentImageService) CreateDocumentImageGroup(shopID string, authUsername string, docImageGroup models.DocumentImageGroup) (string, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
 	if docImageGroup.ImageReferences == nil || len(*docImageGroup.ImageReferences) < 1 {
 		return "", errors.New("document image is size 0")
@@ -94,7 +101,7 @@ func (svc DocumentImageService) CreateDocumentImageGroup(shopID string, authUser
 
 	docImageGroupData.References = []models.Reference{}
 
-	newXOrder, _ := svc.newXOrderDocumentImageGroup(shopID, docImageGroup.TaskGUID)
+	newXOrder, _ := svc.newXOrderDocumentImageGroup(ctx, shopID, docImageGroup.TaskGUID)
 	docImageGroupData.XOrder = newXOrder
 
 	docImageGroupData.CreatedBy = authUsername
@@ -125,7 +132,7 @@ func (svc DocumentImageService) CreateDocumentImageGroup(shopID string, authUser
 		return "", err
 	}
 
-	_, err = svc.repoImageGroup.Create(docImageGroupData)
+	_, err = svc.repoImageGroup.Create(ctx, docImageGroupData)
 
 	if err != nil {
 		return "", err
@@ -135,7 +142,11 @@ func (svc DocumentImageService) CreateDocumentImageGroup(shopID string, authUser
 }
 
 func (svc DocumentImageService) UpdateStatusDocumentImageGroup(shopID string, authUsername string, groupGUID string, status int8) error {
-	findDoc, err := svc.repoImageGroup.FindByGuid(shopID, groupGUID)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repoImageGroup.FindByGuid(ctx, shopID, groupGUID)
 
 	if err != nil {
 		return err
@@ -167,9 +178,9 @@ func (svc DocumentImageService) UpdateStatusDocumentImageGroup(shopID string, au
 
 	updateDoc.StatusHistories = append(updateDoc.StatusHistories, lastStatusHistory)
 	updateDoc.Status = status
-	svc.repoImageGroup.Update(shopID, groupGUID, updateDoc)
+	svc.repoImageGroup.Update(ctx, shopID, groupGUID, updateDoc)
 
-	_, err = svc.messageQueueReCountDocumentImageGroup(shopID, findDoc.TaskGUID)
+	_, err = svc.messageQueueReCountDocumentImageGroup(ctx, shopID, findDoc.TaskGUID)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
@@ -179,17 +190,20 @@ func (svc DocumentImageService) UpdateStatusDocumentImageGroup(shopID string, au
 
 func (svc DocumentImageService) UpdateStatusDocumentImageGroupByTask(shopID string, authUsername string, taskGUID string, status int8) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	if status != models.IMAGE_PENDING && status != models.IMAGE_CHECKED {
 		return errors.New("status out of range")
 	}
 
-	err := svc.repoImageGroup.UpdateStatusByTask(shopID, taskGUID, status)
+	err := svc.repoImageGroup.UpdateStatusByTask(ctx, shopID, taskGUID, status)
 
 	if err != nil {
 		return err
 	}
 
-	_, err = svc.messageQueueReCountDocumentImageGroup(shopID, taskGUID)
+	_, err = svc.messageQueueReCountDocumentImageGroup(ctx, shopID, taskGUID)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
@@ -199,7 +213,10 @@ func (svc DocumentImageService) UpdateStatusDocumentImageGroupByTask(shopID stri
 
 func (svc DocumentImageService) ReCountStatusDocumentImageGroupByTask(shopID string, authUsername string, taskGUID string) error {
 
-	_, err := svc.messageQueueReCountDocumentImageGroup(shopID, taskGUID)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	_, err := svc.messageQueueReCountDocumentImageGroup(ctx, shopID, taskGUID)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
@@ -208,11 +225,15 @@ func (svc DocumentImageService) ReCountStatusDocumentImageGroupByTask(shopID str
 }
 
 func (svc DocumentImageService) UpdateDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImageGroup models.DocumentImageGroup) error {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	if docImageGroup.ImageReferences == nil || len(*docImageGroup.ImageReferences) > svc.maxImageReferences {
 		return fmt.Errorf("document image is over size %d", svc.maxImageReferences)
 	}
 
-	findDoc, err := svc.repoImageGroup.FindByGuid(shopID, groupGUID)
+	findDoc, err := svc.repoImageGroup.FindByGuid(ctx, shopID, groupGUID)
 
 	if err != nil {
 		return err
@@ -265,7 +286,7 @@ func (svc DocumentImageService) UpdateDocumentImageGroup(shopID string, authUser
 		tempDocImageRef[docImageRef.DocumentImageGUID] = docImageRef
 	}
 
-	findDocImages, err := svc.repoImage.FindInGUIDs(shopID, tempDocImageGUIDs)
+	findDocImages, err := svc.repoImage.FindInGUIDs(ctx, shopID, tempDocImageGUIDs)
 	if err != nil {
 		return err
 	}
@@ -314,7 +335,7 @@ func (svc DocumentImageService) UpdateDocumentImageGroup(shopID string, authUser
 	updateDoc.StatusChangedAt = findDoc.StatusChangedAt
 	updateDoc.StatusHistories = findDoc.StatusHistories
 
-	if err = svc.repoImageGroup.Update(shopID, groupGUID, updateDoc); err != nil {
+	if err = svc.repoImageGroup.Update(ctx, shopID, groupGUID, updateDoc); err != nil {
 		return err
 	}
 
@@ -331,11 +352,11 @@ func (svc DocumentImageService) UpdateDocumentImageGroup(shopID string, authUser
 
 		docImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, imageGroupGUID, imageRef, imageRef.ImageURI, tempTags, findDoc.TaskGUID, findDoc.PathTask, timeAt)
 
-		newXOrderDocImgGroup, _ := svc.newXOrderDocumentImageGroup(shopID, findDoc.TaskGUID)
+		newXOrderDocImgGroup, _ := svc.newXOrderDocumentImageGroup(ctx, shopID, findDoc.TaskGUID)
 
 		docImageGroup.XOrder = newXOrderDocImgGroup
 
-		_, err = svc.repoImageGroup.Create(docImageGroup)
+		_, err = svc.repoImageGroup.Create(ctx, docImageGroup)
 
 		if err != nil {
 			return err
@@ -346,7 +367,11 @@ func (svc DocumentImageService) UpdateDocumentImageGroup(shopID string, authUser
 }
 
 func (svc DocumentImageService) UpdateImageReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docImages []models.ImageReferenceBody) error {
-	findDoc, err := svc.repoImageGroup.FindByGuid(shopID, groupGUID)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repoImageGroup.FindByGuid(ctx, shopID, groupGUID)
 
 	if err != nil {
 		return err
@@ -366,7 +391,7 @@ func (svc DocumentImageService) UpdateImageReferenceByDocumentImageGroup(shopID 
 		tempDocImageGUIDs = append(tempDocImageGUIDs, imageRef.DocumentImageGUID)
 	}
 
-	findDocImages, err := svc.repoImage.FindInGUIDs(shopID, tempDocImageGUIDs)
+	findDocImages, err := svc.repoImage.FindInGUIDs(ctx, shopID, tempDocImageGUIDs)
 
 	if err != nil {
 		return err
@@ -428,7 +453,7 @@ func (svc DocumentImageService) UpdateImageReferenceByDocumentImageGroup(shopID 
 	findDoc.UpdatedAt = timeAt
 	findDoc.UpdatedBy = authUsername
 
-	if err = svc.repoImageGroup.Update(shopID, groupGUID, findDoc); err != nil {
+	if err = svc.repoImageGroup.Update(ctx, shopID, groupGUID, findDoc); err != nil {
 		return err
 	}
 
@@ -445,11 +470,11 @@ func (svc DocumentImageService) UpdateImageReferenceByDocumentImageGroup(shopID 
 		}
 
 		docImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, imageGroupGUID, imageRef, imageRef.ImageURI, tempTags, findDoc.TaskGUID, findDoc.PathTask, timeAt)
-		newXOrderDocImgGroup, _ := svc.newXOrderDocumentImageGroup(shopID, findDoc.TaskGUID)
+		newXOrderDocImgGroup, _ := svc.newXOrderDocumentImageGroup(ctx, shopID, findDoc.TaskGUID)
 
 		docImageGroup.XOrder = newXOrderDocImgGroup
 
-		_, err = svc.repoImageGroup.Create(docImageGroup)
+		_, err = svc.repoImageGroup.Create(ctx, docImageGroup)
 
 		if err != nil {
 			return err
@@ -460,7 +485,11 @@ func (svc DocumentImageService) UpdateImageReferenceByDocumentImageGroup(shopID 
 }
 
 func (svc DocumentImageService) UpdateReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error {
-	findDoc, err := svc.repoImageGroup.FindByGuid(shopID, groupGUID)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repoImageGroup.FindByGuid(ctx, shopID, groupGUID)
 
 	if err != nil {
 		return err
@@ -481,12 +510,12 @@ func (svc DocumentImageService) UpdateReferenceByDocumentImageGroup(shopID strin
 	}
 
 	// Clear references
-	docImageClearRefs, err := svc.repoImage.FindByReference(shopID, docRef)
+	docImageClearRefs, err := svc.repoImage.FindByReference(ctx, shopID, docRef)
 	if err != nil {
 		return err
 	}
 
-	docImageGroupClearRefs, err := svc.repoImageGroup.FindByReference(shopID, docRef)
+	docImageGroupClearRefs, err := svc.repoImageGroup.FindByReference(ctx, shopID, docRef)
 	if err != nil {
 		return err
 	}
@@ -498,7 +527,7 @@ func (svc DocumentImageService) UpdateReferenceByDocumentImageGroup(shopID strin
 
 		docImage.References = tempDocRefs
 
-		svc.repoImage.Update(shopID, docImage.GuidFixed, docImage)
+		svc.repoImage.Update(ctx, shopID, docImage.GuidFixed, docImage)
 	}
 
 	for _, docImageGroup := range docImageGroupClearRefs {
@@ -508,7 +537,7 @@ func (svc DocumentImageService) UpdateReferenceByDocumentImageGroup(shopID strin
 
 		docImageGroup.References = tempDocRefs
 
-		svc.repoImageGroup.Update(shopID, docImageGroup.GuidFixed, docImageGroup)
+		svc.repoImageGroup.Update(ctx, shopID, docImageGroup.GuidFixed, docImageGroup)
 	}
 
 	tempDocImageGUIDs := []string{}
@@ -517,7 +546,7 @@ func (svc DocumentImageService) UpdateReferenceByDocumentImageGroup(shopID strin
 		tempDocImageGUIDs = append(tempDocImageGUIDs, imageRef.DocumentImageGUID)
 	}
 
-	findDocImages, err := svc.repoImage.FindInGUIDs(shopID, tempDocImageGUIDs)
+	findDocImages, err := svc.repoImage.FindInGUIDs(ctx, shopID, tempDocImageGUIDs)
 
 	if err != nil {
 		return err
@@ -530,7 +559,7 @@ func (svc DocumentImageService) UpdateReferenceByDocumentImageGroup(shopID strin
 	findDoc.UpdatedAt = timeAt
 	findDoc.UpdatedBy = authUsername
 
-	if err = svc.repoImageGroup.Update(shopID, groupGUID, findDoc); err != nil {
+	if err = svc.repoImageGroup.Update(ctx, shopID, groupGUID, findDoc); err != nil {
 		return err
 	}
 
@@ -541,7 +570,7 @@ func (svc DocumentImageService) UpdateReferenceByDocumentImageGroup(shopID strin
 
 		docImage.References = append(docImage.References, docRef)
 
-		if err = svc.repoImage.Update(shopID, docImage.GuidFixed, docImage); err != nil {
+		if err = svc.repoImage.Update(ctx, shopID, docImage.GuidFixed, docImage); err != nil {
 			return err
 		}
 	}
@@ -551,7 +580,10 @@ func (svc DocumentImageService) UpdateReferenceByDocumentImageGroup(shopID strin
 
 func (svc DocumentImageService) UpdateTagsInDocumentImageGroup(shopID string, authUsername string, groupGUID string, tags []string) error {
 
-	findDoc, err := svc.repoImageGroup.FindByGuid(shopID, groupGUID)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repoImageGroup.FindByGuid(ctx, shopID, groupGUID)
 
 	if err != nil {
 		return err
@@ -570,7 +602,7 @@ func (svc DocumentImageService) UpdateTagsInDocumentImageGroup(shopID string, au
 	findDoc.UpdatedAt = svc.timeNowFnc()
 	findDoc.UpdatedBy = authUsername
 
-	if err = svc.repoImageGroup.Update(shopID, groupGUID, findDoc); err != nil {
+	if err = svc.repoImageGroup.Update(ctx, shopID, groupGUID, findDoc); err != nil {
 		return err
 	}
 
@@ -578,7 +610,11 @@ func (svc DocumentImageService) UpdateTagsInDocumentImageGroup(shopID string, au
 }
 
 func (svc DocumentImageService) DeleteReferenceByDocumentImageGroup(shopID string, authUsername string, groupGUID string, docRef models.Reference) error {
-	findDoc, err := svc.repoImageGroup.FindByGuid(shopID, groupGUID)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repoImageGroup.FindByGuid(ctx, shopID, groupGUID)
 
 	if err != nil {
 		return err
@@ -589,12 +625,12 @@ func (svc DocumentImageService) DeleteReferenceByDocumentImageGroup(shopID strin
 	}
 
 	// Clear references
-	docImageClearRefs, err := svc.repoImage.FindByReference(shopID, docRef)
+	docImageClearRefs, err := svc.repoImage.FindByReference(ctx, shopID, docRef)
 	if err != nil {
 		return err
 	}
 
-	docImageGroupClearRefs, err := svc.repoImageGroup.FindByReference(shopID, docRef)
+	docImageGroupClearRefs, err := svc.repoImageGroup.FindByReference(ctx, shopID, docRef)
 	if err != nil {
 		return err
 	}
@@ -606,7 +642,7 @@ func (svc DocumentImageService) DeleteReferenceByDocumentImageGroup(shopID strin
 
 		docImage.References = tempDocRefs
 
-		svc.repoImage.Update(shopID, docImage.GuidFixed, docImage)
+		svc.repoImage.Update(ctx, shopID, docImage.GuidFixed, docImage)
 	}
 
 	for _, docImageGroup := range docImageGroupClearRefs {
@@ -616,10 +652,10 @@ func (svc DocumentImageService) DeleteReferenceByDocumentImageGroup(shopID strin
 
 		docImageGroup.References = tempDocRefs
 
-		svc.repoImageGroup.Update(shopID, docImageGroup.GuidFixed, docImageGroup)
+		svc.repoImageGroup.Update(ctx, shopID, docImageGroup.GuidFixed, docImageGroup)
 	}
 
-	_, err = svc.messageQueueReCountDocumentImageGroup(shopID, findDoc.TaskGUID)
+	_, err = svc.messageQueueReCountDocumentImageGroup(ctx, shopID, findDoc.TaskGUID)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
@@ -629,7 +665,10 @@ func (svc DocumentImageService) DeleteReferenceByDocumentImageGroup(shopID strin
 
 func (svc DocumentImageService) DeleteDocumentImageGroupByGuid(shopID string, authUsername string, documentImageGroupGuidFixed string) error {
 
-	findDocGroup, err := svc.repoImageGroup.FindByGuid(shopID, documentImageGroupGuidFixed)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDocGroup, err := svc.repoImageGroup.FindByGuid(ctx, shopID, documentImageGroupGuidFixed)
 
 	if err != nil {
 		return err
@@ -643,17 +682,17 @@ func (svc DocumentImageService) DeleteDocumentImageGroupByGuid(shopID string, au
 		return errors.New("document has referenced")
 	}
 
-	err = svc.repoImageGroup.Transaction(func() error {
+	err = svc.repoImageGroup.Transaction(ctx, func(ctx context.Context) error {
 
 		for _, docImage := range *findDocGroup.ImageReferences {
-			err = svc.repoImage.DeleteByGuidfixed(shopID, docImage.DocumentImageGUID, authUsername)
+			err = svc.repoImage.DeleteByGuidfixed(ctx, shopID, docImage.DocumentImageGUID, authUsername)
 
 			if err != nil {
 				return err
 			}
 		}
 
-		if err = svc.repoImageGroup.DeleteByGuidfixed(shopID, findDocGroup.GuidFixed); err != nil {
+		if err = svc.repoImageGroup.DeleteByGuidfixed(ctx, shopID, findDocGroup.GuidFixed); err != nil {
 			return err
 		}
 
@@ -664,7 +703,7 @@ func (svc DocumentImageService) DeleteDocumentImageGroupByGuid(shopID string, au
 		return err
 	}
 
-	_, err = svc.messageQueueReCountDocumentImageGroup(shopID, findDocGroup.TaskGUID)
+	_, err = svc.messageQueueReCountDocumentImageGroup(ctx, shopID, findDocGroup.TaskGUID)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
@@ -674,9 +713,12 @@ func (svc DocumentImageService) DeleteDocumentImageGroupByGuid(shopID string, au
 
 func (svc DocumentImageService) DeleteDocumentImageGroupByGuids(shopID string, authUsername string, documentImageGroupGuidFixeds []string) error {
 
-	err := svc.repoImageGroup.Transaction(func() error {
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	err := svc.repoImageGroup.Transaction(ctx, func(ctx context.Context) error {
 		for _, DocumentImageGroupGuidFixed := range documentImageGroupGuidFixeds {
-			findDocGroup, err := svc.repoImageGroup.FindByGuid(shopID, DocumentImageGroupGuidFixed)
+			findDocGroup, err := svc.repoImageGroup.FindByGuid(ctx, shopID, DocumentImageGroupGuidFixed)
 
 			if err != nil {
 				return err
@@ -687,18 +729,18 @@ func (svc DocumentImageService) DeleteDocumentImageGroupByGuids(shopID string, a
 			}
 
 			for _, docImage := range *findDocGroup.ImageReferences {
-				err = svc.repoImage.DeleteByGuidfixed(shopID, docImage.DocumentImageGUID, authUsername)
+				err = svc.repoImage.DeleteByGuidfixed(ctx, shopID, docImage.DocumentImageGUID, authUsername)
 
 				if err != nil {
 					return err
 				}
 			}
 
-			if err = svc.repoImageGroup.DeleteByGuidfixed(shopID, findDocGroup.GuidFixed); err != nil {
+			if err = svc.repoImageGroup.DeleteByGuidfixed(ctx, shopID, findDocGroup.GuidFixed); err != nil {
 				return err
 			}
 
-			_, err = svc.messageQueueReCountDocumentImageGroup(shopID, findDocGroup.TaskGUID)
+			_, err = svc.messageQueueReCountDocumentImageGroup(ctx, shopID, findDocGroup.TaskGUID)
 			if err != nil {
 				fmt.Println(err.Error())
 			}
@@ -714,7 +756,11 @@ func (svc DocumentImageService) DeleteDocumentImageGroupByGuids(shopID string, a
 }
 
 func (svc DocumentImageService) UnGroupDocumentImageGroup(shopID string, authUsername string, groupGUID string) ([]string, error) {
-	findDocGroup, err := svc.repoImageGroup.FindByGuid(shopID, groupGUID)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDocGroup, err := svc.repoImageGroup.FindByGuid(ctx, shopID, groupGUID)
 
 	if err != nil {
 		return []string{}, err
@@ -740,10 +786,10 @@ func (svc DocumentImageService) UnGroupDocumentImageGroup(shopID string, authUse
 
 		docImageGroup := svc.createImageGroupByDocumentImage(shopID, authUsername, imageGroupGUID, imageRef, imageRef.ImageURI, tags, findDocGroup.TaskGUID, findDocGroup.PathTask, updatedAt)
 
-		newXOrderDocImgGroup, _ := svc.newXOrderDocumentImageGroup(shopID, docImageGroup.TaskGUID)
+		newXOrderDocImgGroup, _ := svc.newXOrderDocumentImageGroup(ctx, shopID, docImageGroup.TaskGUID)
 
 		docImageGroup.XOrder = newXOrderDocImgGroup
-		_, err = svc.repoImageGroup.Create(docImageGroup)
+		_, err = svc.repoImageGroup.Create(ctx, docImageGroup)
 
 		if err != nil {
 			return []string{}, err
@@ -752,20 +798,28 @@ func (svc DocumentImageService) UnGroupDocumentImageGroup(shopID string, authUse
 		newImageGroupGUIDs = append(newImageGroupGUIDs, imageGroupGUID)
 	}
 
-	svc.repoImageGroup.DeleteByGuidfixed(shopID, groupGUID)
+	svc.repoImageGroup.DeleteByGuidfixed(ctx, shopID, groupGUID)
 
 	return newImageGroupGUIDs, nil
 }
 
 func (svc DocumentImageService) ListDocumentImageGroup(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.DocumentImageGroupInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{"title"}
-	docList, pagination, err := svc.repoImageGroup.FindPageImageGroup(shopID, filters, searchInFields, pageable)
+	docList, pagination, err := svc.repoImageGroup.FindPageImageGroup(ctx, shopID, filters, searchInFields, pageable)
 
 	return docList, pagination, err
 }
 
 func (svc DocumentImageService) GetDocumentImageDocRefGroup(shopID string, docImageGroupGUID string) (models.DocumentImageGroupInfo, error) {
-	doc, err := svc.repoImageGroup.FindByGuid(shopID, docImageGroupGUID)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	doc, err := svc.repoImageGroup.FindByGuid(ctx, shopID, docImageGroupGUID)
 
 	if err != nil {
 		return models.DocumentImageGroupInfo{}, err
@@ -780,7 +834,10 @@ func (svc DocumentImageService) GetDocumentImageDocRefGroup(shopID string, docIm
 
 func (svc DocumentImageService) GetDocumentImageGroupByDocRef(shopID string, docRef string) (models.DocumentImageGroupInfo, error) {
 
-	findDoc, err := svc.repoImageGroup.FindOne(shopID, bson.M{"references.docno": docRef})
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repoImageGroup.FindOne(ctx, shopID, bson.M{"references.docno": docRef})
 
 	if err != nil {
 		return models.DocumentImageGroupInfo{}, err
@@ -794,13 +851,13 @@ func (svc DocumentImageService) GetDocumentImageGroupByDocRef(shopID string, doc
 
 }
 
-func (svc DocumentImageService) XSortsUpdate(shopID string, authUsername string, taskGUID string, xsorts []models.XSortDocumentImageGroupRequest) error {
+func (svc DocumentImageService) XSortsUpdate(ctx context.Context, shopID string, authUsername string, taskGUID string, xsorts []models.XSortDocumentImageGroupRequest) error {
 	for _, xsort := range xsorts {
 		if len(xsort.GUIDFixed) < 1 {
 			continue
 		}
 
-		err := svc.repoImageGroup.UpdateXOrder(shopID, taskGUID, xsort.GUIDFixed, xsort.XOrder)
+		err := svc.repoImageGroup.UpdateXOrder(ctx, shopID, taskGUID, xsort.GUIDFixed, xsort.XOrder)
 
 		if err != nil {
 			return err
@@ -859,12 +916,15 @@ func (svc DocumentImageService) createImageGroupByDocumentImage(shopID string, a
 
 func (svc DocumentImageService) clearCreateDocumentImageGroupByDocumentGUIDs(shopID string, docImageGroupGUIDs []string, docImageGUIDs []string) error {
 
-	err := svc.repoImageGroup.RemoveDocumentImageByDocumentImageGUIDs(shopID, docImageGUIDs)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	err := svc.repoImageGroup.RemoveDocumentImageByDocumentImageGUIDs(ctx, shopID, docImageGUIDs)
 	if err != nil {
 		return err
 	}
 
-	err = svc.repoImageGroup.DeleteByGUIDsIsDocumentImageEmpty(shopID, docImageGroupGUIDs)
+	err = svc.repoImageGroup.DeleteByGUIDsIsDocumentImageEmpty(ctx, shopID, docImageGroupGUIDs)
 	if err != nil {
 		return err
 	}
@@ -874,17 +934,20 @@ func (svc DocumentImageService) clearCreateDocumentImageGroupByDocumentGUIDs(sho
 
 func (svc DocumentImageService) clearUpdateDocumentImageGroupByDocumentGUIDs(shopID string, docGroupGUID string, clearDocImageGUIDs []string, docImageGUIDs []string) error {
 
-	err := svc.repoImageGroup.RemoveDocumentImageByDocumentImageGUIDsWithoutDocumentImageGroupGUID(shopID, docGroupGUID, docImageGUIDs)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	err := svc.repoImageGroup.RemoveDocumentImageByDocumentImageGUIDsWithoutDocumentImageGroupGUID(ctx, shopID, docGroupGUID, docImageGUIDs)
 	if err != nil {
 		return err
 	}
 
-	err = svc.repoImageGroup.DeleteByGUIDsIsDocumentImageEmptyWithoutDocumentImageGroupGUID(shopID, docGroupGUID, clearDocImageGUIDs)
+	err = svc.repoImageGroup.DeleteByGUIDsIsDocumentImageEmptyWithoutDocumentImageGroupGUID(ctx, shopID, docGroupGUID, clearDocImageGUIDs)
 	if err != nil {
 		return err
 	}
 
-	err = svc.repoImageGroup.DeleteByGUIDIsDocumentImageEmpty(shopID, docGroupGUID)
+	err = svc.repoImageGroup.DeleteByGUIDIsDocumentImageEmpty(ctx, shopID, docGroupGUID)
 	if err != nil {
 		return err
 	}
@@ -892,9 +955,9 @@ func (svc DocumentImageService) clearUpdateDocumentImageGroupByDocumentGUIDs(sho
 	return nil
 }
 
-func (svc DocumentImageService) messageQueueReCountDocumentImageGroup(shopID string, taskGUID string) (int, error) {
+func (svc DocumentImageService) messageQueueReCountDocumentImageGroup(ctx context.Context, shopID string, taskGUID string) (int, error) {
 
-	docList, err := svc.repoImageGroup.FindStatusByDocumentImageGroupTask(shopID, taskGUID)
+	docList, err := svc.repoImageGroup.FindStatusByDocumentImageGroupTask(ctx, shopID, taskGUID)
 
 	if err != nil {
 		return 0, err
@@ -941,9 +1004,9 @@ func (svc DocumentImageService) messageQueueReCountDocumentImageGroup(shopID str
 	return countDoc, nil
 }
 
-func (svc DocumentImageService) newXOrderDocumentImageGroup(shopID string, taskGUID string) (int, error) {
+func (svc DocumentImageService) newXOrderDocumentImageGroup(ctx context.Context, shopID string, taskGUID string) (int, error) {
 
-	findDoc, err := svc.repoImageGroup.FindLastOneByTask(shopID, taskGUID)
+	findDoc, err := svc.repoImageGroup.FindLastOneByTask(ctx, shopID, taskGUID)
 
 	if err != nil {
 		return 0, err

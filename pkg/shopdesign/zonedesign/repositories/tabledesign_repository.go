@@ -1,8 +1,13 @@
 package repositories
 
-import "smlcloudplatform/internal/microservice"
+import (
+	"context"
+	"smlcloudplatform/internal/microservice"
+)
 
-type ITableDesign interface{}
+type ITableDesign interface {
+	Create(ctx context.Context, zoneGuidfixed string, tableIndex int, doc TableDesign) error
+}
 
 type TableDesign struct {
 }
@@ -19,9 +24,12 @@ func NewTableDesignRepository(pst microservice.IPersisterMongo) ZoneDesignReposi
 
 }
 
-func (repo TableDesignRepository) Create(zoneGuidfixed string, tableIndex int, doc TableDesign) error {
-	return repo.pst.UpdateOne(doc, map[string]interface{}{
-		"guidfixed":    zoneGuidfixed,
-		"tables.index": tableIndex,
-	}, doc)
+func (repo TableDesignRepository) Create(ctx context.Context, zoneGuidfixed string, tableIndex int, doc TableDesign) error {
+	return repo.pst.UpdateOne(
+		ctx,
+		doc,
+		map[string]interface{}{
+			"guidfixed":    zoneGuidfixed,
+			"tables.index": tableIndex,
+		}, doc)
 }

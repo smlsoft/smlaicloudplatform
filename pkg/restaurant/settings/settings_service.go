@@ -1,6 +1,7 @@
 package settings
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
@@ -36,19 +37,31 @@ type RestaurantSettingsService struct {
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 
 	services.ActivityService[models.RestaurantSettingsActivity, models.RestaurantSettingsDeleteActivity]
+	contextTimeout time.Duration
 }
 
 func NewRestaurantSettingsService(repo IRestaurantSettingsRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) RestaurantSettingsService {
+
+	contextTimeout := time.Duration(15) * time.Second
+
 	insSvc := RestaurantSettingsService{
-		repo:          repo,
-		syncCacheRepo: syncCacheRepo,
+		repo:           repo,
+		syncCacheRepo:  syncCacheRepo,
+		contextTimeout: contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.RestaurantSettingsActivity, models.RestaurantSettingsDeleteActivity](repo)
 	return insSvc
 }
 
+func (svc RestaurantSettingsService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc RestaurantSettingsService) CreateRestaurantSettings(shopID string, authUsername string, doc models.RestaurantSettings) (string, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
 	newGuidFixed := utils.NewGUID()
 
@@ -62,7 +75,7 @@ func (svc RestaurantSettingsService) CreateRestaurantSettings(shopID string, aut
 
 	docData.LastUpdatedAt = time.Now()
 
-	_, err := svc.repo.Create(docData)
+	_, err := svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -75,7 +88,10 @@ func (svc RestaurantSettingsService) CreateRestaurantSettings(shopID string, aut
 
 func (svc RestaurantSettingsService) UpdateRestaurantSettings(shopID string, guid string, authUsername string, doc models.RestaurantSettings) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -92,7 +108,7 @@ func (svc RestaurantSettingsService) UpdateRestaurantSettings(shopID string, gui
 
 	findDoc.LastUpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -104,7 +120,11 @@ func (svc RestaurantSettingsService) UpdateRestaurantSettings(shopID string, gui
 }
 
 func (svc RestaurantSettingsService) DeleteRestaurantSettings(shopID string, guid string, authUsername string) error {
-	err := svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	err := svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 
 	if err != nil {
 		return err
@@ -117,11 +137,14 @@ func (svc RestaurantSettingsService) DeleteRestaurantSettings(shopID string, gui
 
 func (svc RestaurantSettingsService) DeleteByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
 	}
 
-	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	err := svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
@@ -131,7 +154,10 @@ func (svc RestaurantSettingsService) DeleteByGUIDs(shopID string, authUsername s
 
 func (svc RestaurantSettingsService) InfoRestaurantSettings(shopID string, guid string) (models.RestaurantSettingsInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.RestaurantSettingsInfo{}, err
@@ -146,7 +172,10 @@ func (svc RestaurantSettingsService) InfoRestaurantSettings(shopID string, guid 
 
 func (svc RestaurantSettingsService) ListRestaurantSettingsByCode(shopID string, code string, pagable micromodels.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error) {
 
-	docList, pagination, err := svc.repo.FindPageFilter(shopID, map[string]interface{}{"code": code}, []string{"body"}, pagable)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, map[string]interface{}{"code": code}, []string{"body"}, pagable)
 
 	if err != nil {
 		return []models.RestaurantSettingsInfo{}, mongopagination.PaginationData{}, err
@@ -157,11 +186,15 @@ func (svc RestaurantSettingsService) ListRestaurantSettingsByCode(shopID string,
 }
 
 func (svc RestaurantSettingsService) SearchRestaurantSettings(shopID string, pageable micromodels.Pageable) ([]models.RestaurantSettingsInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		// "body",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPage(ctx, shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.RestaurantSettingsInfo{}, pagination, err
@@ -172,8 +205,8 @@ func (svc RestaurantSettingsService) SearchRestaurantSettings(shopID string, pag
 
 func (svc RestaurantSettingsService) SaveInBatch(shopID string, authUsername string, dataList []models.RestaurantSettings) (common.BulkImport, error) {
 
-	// createDataList := []models.RestaurantSettingsDoc{}
-	// duplicateDataList := []models.RestaurantSettings{}
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
 	payloadCategoryList, payloadDuplicateCategoryList := importdata.FilterDuplicate[models.RestaurantSettings](dataList, svc.getDocIDKey)
 
@@ -182,7 +215,7 @@ func (svc RestaurantSettingsService) SaveInBatch(shopID string, authUsername str
 		itemCodeGuidList = append(itemCodeGuidList, doc.Code)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "code", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "code", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -222,7 +255,7 @@ func (svc RestaurantSettingsService) SaveInBatch(shopID string, authUsername str
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.RestaurantSettingsDoc, error) {
-			return svc.repo.FindByGuid(shopID, guid)
+			return svc.repo.FindByGuid(ctx, shopID, guid)
 		},
 		func(doc models.RestaurantSettingsDoc) bool {
 			return false
@@ -234,7 +267,7 @@ func (svc RestaurantSettingsService) SaveInBatch(shopID string, authUsername str
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return common.BulkImport{}, err

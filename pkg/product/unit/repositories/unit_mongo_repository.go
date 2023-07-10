@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"errors"
 	"os"
 	"smlcloudplatform/internal/microservice"
@@ -14,29 +15,29 @@ import (
 )
 
 type IUnitRepository interface {
-	Count(shopID string) (int, error)
-	Create(doc models.UnitDoc) (string, error)
-	CreateInBatch(docList []models.UnitDoc) error
-	Update(shopID string, guid string, doc models.UnitDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	Delete(shopID string, username string, filters map[string]interface{}) error
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.UnitInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.UnitDoc, error)
-	FindByGuids(shopID string, guids []string) ([]models.UnitDoc, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	Create(ctx context.Context, doc models.UnitDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.UnitDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.UnitDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	Delete(ctx context.Context, shopID string, username string, filters map[string]interface{}) error
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.UnitInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.UnitDoc, error)
+	FindByGuids(ctx context.Context, shopID string, guids []string) ([]models.UnitDoc, error)
 
-	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.UnitItemGuid, error)
-	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.UnitDoc, error)
+	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.UnitItemGuid, error)
+	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.UnitDoc, error)
 
-	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.UnitInfo, mongopagination.PaginationData, error)
-	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, selectFields map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.UnitInfo, int, error)
+	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.UnitInfo, mongopagination.PaginationData, error)
+	FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, selectFields map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.UnitInfo, int, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.UnitDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.UnitActivity, mongopagination.PaginationData, error)
-	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.UnitDeleteActivity, error)
-	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.UnitActivity, error)
-	FindMasterInCodes(codes []string) ([]models.UnitInfo, error)
+	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.UnitDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.UnitActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.UnitDeleteActivity, error)
+	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.UnitActivity, error)
+	FindMasterInCodes(ctx context.Context, codes []string) ([]models.UnitInfo, error)
 
-	Transaction(callback func() error) error
+	Transaction(ctx context.Context, callback func(ctx context.Context) error) error
 }
 
 type UnitRepository struct {
@@ -61,7 +62,7 @@ func NewUnitRepository(pst microservice.IPersisterMongo) *UnitRepository {
 	return insRepo
 }
 
-func (repo UnitRepository) FindMasterInCodes(codes []string) ([]models.UnitInfo, error) {
+func (repo UnitRepository) FindMasterInCodes(ctx context.Context, codes []string) ([]models.UnitInfo, error) {
 
 	masterShopID := os.Getenv("MASTER_SHOP_ID")
 
@@ -78,7 +79,7 @@ func (repo UnitRepository) FindMasterInCodes(codes []string) ([]models.UnitInfo,
 		},
 	}
 
-	err := repo.pst.Find([]models.UnitInfo{}, filters, &docList)
+	err := repo.pst.Find(ctx, []models.UnitInfo{}, filters, &docList)
 
 	if err != nil {
 		return nil, err
@@ -87,6 +88,6 @@ func (repo UnitRepository) FindMasterInCodes(codes []string) ([]models.UnitInfo,
 	return docList, nil
 }
 
-func (repo UnitRepository) Transaction(callback func() error) error {
-	return repo.pst.Transaction(callback)
+func (repo UnitRepository) Transaction(ctx context.Context, callback func(ctx context.Context) error) error {
+	return repo.pst.Transaction(ctx, callback)
 }

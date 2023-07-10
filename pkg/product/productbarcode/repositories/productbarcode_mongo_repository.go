@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"errors"
 	"os"
 	"smlcloudplatform/internal/microservice"
@@ -14,41 +15,41 @@ import (
 )
 
 type IProductBarcodeRepository interface {
-	Count(shopID string) (int, error)
-	CountByRefBarcode(shopID string, refBarcode string) (int, error)
-	CountByRefGuids(shopID string, GUIDs []string) (int, error)
-	CountByUnitCodes(shopID string, unitCodes []string) (int, error)
-	CountByGroupCodes(shopID string, unitCodes []string) (int, error)
-	CountByOrderTypes(shopID string, GUIDs []string) (int, error)
-	Create(doc models.ProductBarcodeDoc) (string, error)
-	CreateInBatch(docList []models.ProductBarcodeDoc) error
-	Update(shopID string, guid string, doc models.ProductBarcodeDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	Delete(shopID string, username string, filters map[string]interface{}) error
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
-	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.ProductBarcodeDoc, error)
-	FindByGuids(shopID string, guids []string) ([]models.ProductBarcodeDoc, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	CountByRefBarcode(ctx context.Context, shopID string, refBarcode string) (int, error)
+	CountByRefGuids(ctx context.Context, shopID string, GUIDs []string) (int, error)
+	CountByUnitCodes(ctx context.Context, shopID string, unitCodes []string) (int, error)
+	CountByGroupCodes(ctx context.Context, shopID string, unitCodes []string) (int, error)
+	CountByOrderTypes(ctx context.Context, shopID string, GUIDs []string) (int, error)
+	Create(ctx context.Context, doc models.ProductBarcodeDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.ProductBarcodeDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.ProductBarcodeDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	Delete(ctx context.Context, shopID string, username string, filters map[string]interface{}) error
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.ProductBarcodeDoc, error)
+	FindByGuids(ctx context.Context, shopID string, guids []string) ([]models.ProductBarcodeDoc, error)
+	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 
-	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.ProductBarcodeItemGuid, error)
-	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.ProductBarcodeDoc, error)
-	FindByDocIndentityGuids(shopID string, indentityField string, indentityValues interface{}) ([]models.ProductBarcodeDoc, error)
+	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.ProductBarcodeItemGuid, error)
+	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.ProductBarcodeDoc, error)
+	FindByDocIndentityGuids(ctx context.Context, shopID string, indentityField string, indentityValues interface{}) ([]models.ProductBarcodeDoc, error)
 
-	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, selectFields map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeInfo, int, error)
+	FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, selectFields map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeInfo, int, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductBarcodeDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductBarcodeActivity, mongopagination.PaginationData, error)
-	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeDeleteActivity, error)
-	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeActivity, error)
+	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductBarcodeDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductBarcodeActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeDeleteActivity, error)
+	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductBarcodeActivity, error)
 
-	FindMasterInCodes(codes []string) ([]models.ProductBarcodeInfo, error)
-	UpdateParentGuidByGuids(shopID string, parentGUID string, guids []string) error
-	Transaction(fnc func() error) error
-	FindByRefBarcode(shopID string, barcode string) ([]models.ProductBarcodeDoc, error)
+	FindMasterInCodes(ctx context.Context, codes []string) ([]models.ProductBarcodeInfo, error)
+	UpdateParentGuidByGuids(ctx context.Context, shopID string, parentGUID string, guids []string) error
+	Transaction(ctx context.Context, fnc func(ctx context.Context) error) error
+	FindByRefBarcode(ctx context.Context, shopID string, barcode string) ([]models.ProductBarcodeDoc, error)
 
-	FindByBarcodes(shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error)
-	FindPageByUnits(shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
-	FindPageByGroups(shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
+	FindByBarcodes(ctx context.Context, shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error)
+	FindPageByUnits(ctx context.Context, shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
+	FindPageByGroups(ctx context.Context, shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 }
 
 type ProductBarcodeRepository struct {
@@ -75,32 +76,32 @@ func NewProductBarcodeRepository(pst microservice.IPersisterMongo, cache microse
 	return insRepo
 }
 
-func (repo ProductBarcodeRepository) CountByRefBarcode(shopID string, refBarcode string) (int, error) {
+func (repo ProductBarcodeRepository) CountByRefBarcode(ctx context.Context, shopID string, refBarcode string) (int, error) {
 
-	return repo.CountByKey(shopID, "refbarcodes.barcode", refBarcode)
+	return repo.CountByKey(ctx, shopID, "refbarcodes.barcode", refBarcode)
 }
 
-func (repo ProductBarcodeRepository) CountByRefGuids(shopID string, GUIDs []string) (int, error) {
+func (repo ProductBarcodeRepository) CountByRefGuids(ctx context.Context, shopID string, GUIDs []string) (int, error) {
 
-	return repo.CountByInKeys(shopID, "refbarcodes.guidfixed", GUIDs)
+	return repo.CountByInKeys(ctx, shopID, "refbarcodes.guidfixed", GUIDs)
 }
 
-func (repo ProductBarcodeRepository) CountByUnitCodes(shopID string, unitCodes []string) (int, error) {
+func (repo ProductBarcodeRepository) CountByUnitCodes(ctx context.Context, shopID string, unitCodes []string) (int, error) {
 
-	return repo.CountByInKeys(shopID, "itemunitcode", unitCodes)
+	return repo.CountByInKeys(ctx, shopID, "itemunitcode", unitCodes)
 }
 
-func (repo ProductBarcodeRepository) CountByGroupCodes(shopID string, unitCodes []string) (int, error) {
+func (repo ProductBarcodeRepository) CountByGroupCodes(ctx context.Context, shopID string, unitCodes []string) (int, error) {
 
-	return repo.CountByInKeys(shopID, "groupcode", unitCodes)
+	return repo.CountByInKeys(ctx, shopID, "groupcode", unitCodes)
 }
 
-func (repo ProductBarcodeRepository) CountByOrderTypes(shopID string, GUIDs []string) (int, error) {
+func (repo ProductBarcodeRepository) CountByOrderTypes(ctx context.Context, shopID string, GUIDs []string) (int, error) {
 
-	return repo.CountByInKeys(shopID, "ordertypes.guidfixed", GUIDs)
+	return repo.CountByInKeys(ctx, shopID, "ordertypes.guidfixed", GUIDs)
 }
 
-func (repo ProductBarcodeRepository) UpdateParentGuidByGuids(shopID string, parentGUID string, guids []string) error {
+func (repo ProductBarcodeRepository) UpdateParentGuidByGuids(ctx context.Context, shopID string, parentGUID string, guids []string) error {
 
 	filters := bson.M{
 		"shopid":    shopID,
@@ -108,10 +109,10 @@ func (repo ProductBarcodeRepository) UpdateParentGuidByGuids(shopID string, pare
 		"guidfixed": bson.M{"$in": guids},
 	}
 
-	return repo.pst.Update(models.ProductBarcodeDoc{}, filters, bson.M{"$set": bson.M{"parentguid": parentGUID}})
+	return repo.pst.Update(ctx, models.ProductBarcodeDoc{}, filters, bson.M{"$set": bson.M{"parentguid": parentGUID}})
 }
 
-func (repo ProductBarcodeRepository) FindMasterInCodes(codes []string) ([]models.ProductBarcodeInfo, error) {
+func (repo ProductBarcodeRepository) FindMasterInCodes(ctx context.Context, codes []string) ([]models.ProductBarcodeInfo, error) {
 
 	masterShopID := os.Getenv("MASTER_SHOP_ID")
 
@@ -128,7 +129,7 @@ func (repo ProductBarcodeRepository) FindMasterInCodes(codes []string) ([]models
 		},
 	}
 
-	err := repo.pst.Find(models.ProductBarcodeInfo{}, filters, &docList)
+	err := repo.pst.Find(ctx, models.ProductBarcodeInfo{}, filters, &docList)
 
 	if err != nil {
 		return nil, err
@@ -137,7 +138,7 @@ func (repo ProductBarcodeRepository) FindMasterInCodes(codes []string) ([]models
 	return docList, nil
 }
 
-func (repo ProductBarcodeRepository) FindByRefBarcode(shopID string, barcode string) ([]models.ProductBarcodeDoc, error) {
+func (repo ProductBarcodeRepository) FindByRefBarcode(ctx context.Context, shopID string, barcode string) ([]models.ProductBarcodeDoc, error) {
 
 	docList := []models.ProductBarcodeDoc{}
 
@@ -148,7 +149,7 @@ func (repo ProductBarcodeRepository) FindByRefBarcode(shopID string, barcode str
 		"deletedat":           bson.M{"$exists": false},
 	}
 
-	err := repo.pst.Find(models.ProductBarcodeDoc{}, filters, &docList)
+	err := repo.pst.Find(ctx, models.ProductBarcodeDoc{}, filters, &docList)
 
 	if err != nil {
 		return nil, err
@@ -157,13 +158,13 @@ func (repo ProductBarcodeRepository) FindByRefBarcode(shopID string, barcode str
 	return docList, nil
 }
 
-func (repo ProductBarcodeRepository) Transaction(fnc func() error) error {
-	return repo.pst.Transaction(fnc)
+func (repo ProductBarcodeRepository) Transaction(ctx context.Context, fnc func(ctx context.Context) error) error {
+	return repo.pst.Transaction(ctx, fnc)
 }
 
-func (repo ProductBarcodeRepository) FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
+func (repo ProductBarcodeRepository) FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
 
-	results, pagination, err := repo.SearchRepository.FindPage(shopID, searchInFields, pageable)
+	results, pagination, err := repo.SearchRepository.FindPage(ctx, shopID, searchInFields, pageable)
 
 	if err != nil {
 		return nil, mongopagination.PaginationData{}, err
@@ -172,7 +173,7 @@ func (repo ProductBarcodeRepository) FindPage(shopID string, searchInFields []st
 	return results, pagination, nil
 }
 
-func (repo ProductBarcodeRepository) FindByBarcodes(shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error) {
+func (repo ProductBarcodeRepository) FindByBarcodes(ctx context.Context, shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error) {
 
 	filters := bson.M{
 		"shopid":    shopID,
@@ -181,7 +182,7 @@ func (repo ProductBarcodeRepository) FindByBarcodes(shopID string, barcodes []st
 	}
 
 	var results []models.ProductBarcodeInfo
-	err := repo.pst.Find(models.ProductBarcodeInfo{}, filters, &results)
+	err := repo.pst.Find(ctx, models.ProductBarcodeInfo{}, filters, &results)
 
 	if err != nil {
 		return nil, err
@@ -190,7 +191,7 @@ func (repo ProductBarcodeRepository) FindByBarcodes(shopID string, barcodes []st
 	return results, nil
 }
 
-func (repo ProductBarcodeRepository) FindPageByUnits(shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
+func (repo ProductBarcodeRepository) FindPageByUnits(ctx context.Context, shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
 
 	filters := bson.M{
 		"shopid": shopID,
@@ -203,7 +204,7 @@ func (repo ProductBarcodeRepository) FindPageByUnits(shopID string, unitCodes []
 	}
 
 	results := []models.ProductBarcodeInfo{}
-	pagination, err := repo.pst.FindPage(models.ProductBarcodeInfo{}, filters, pageable, &results)
+	pagination, err := repo.pst.FindPage(ctx, models.ProductBarcodeInfo{}, filters, pageable, &results)
 
 	if err != nil {
 		return nil, mongopagination.PaginationData{}, err
@@ -212,7 +213,7 @@ func (repo ProductBarcodeRepository) FindPageByUnits(shopID string, unitCodes []
 	return results, pagination, nil
 }
 
-func (repo ProductBarcodeRepository) FindPageByGroups(shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
+func (repo ProductBarcodeRepository) FindPageByGroups(ctx context.Context, shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error) {
 
 	filters := bson.M{
 		"shopid": shopID,
@@ -225,7 +226,7 @@ func (repo ProductBarcodeRepository) FindPageByGroups(shopID string, groupCodes 
 	}
 
 	results := []models.ProductBarcodeInfo{}
-	pagination, err := repo.pst.FindPage(models.ProductBarcodeInfo{}, filters, pageable, &results)
+	pagination, err := repo.pst.FindPage(ctx, models.ProductBarcodeInfo{}, filters, pageable, &results)
 
 	if err != nil {
 		return nil, mongopagination.PaginationData{}, err

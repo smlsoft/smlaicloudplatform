@@ -1,6 +1,7 @@
 package member
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
@@ -34,22 +35,34 @@ type MemberService struct {
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 
 	services.ActivityService[models.MemberActivity, models.MemberDeleteActivity]
+	contextTimeout time.Duration
 }
 
 func NewMemberService(repo IMemberRepository, memberPgRepo IMemberPGRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) MemberService {
+
+	contextTimeout := time.Duration(15) * time.Second
+
 	insSvc := MemberService{
-		repo:          repo,
-		memberPgRepo:  memberPgRepo,
-		syncCacheRepo: syncCacheRepo,
+		repo:           repo,
+		memberPgRepo:   memberPgRepo,
+		syncCacheRepo:  syncCacheRepo,
+		contextTimeout: contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.MemberActivity, models.MemberDeleteActivity](repo)
 	return insSvc
 }
 
+func (svc MemberService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc MemberService) IsExistsGuid(shopID string, guidFixed string) (bool, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guidFixed)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guidFixed)
 
 	if err != nil {
 		return false, err
@@ -64,6 +77,10 @@ func (svc MemberService) IsExistsGuid(shopID string, guidFixed string) (bool, er
 }
 
 func (svc MemberService) CreateWithGuid(shopID string, username string, guid string, doc models.Member) (string, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	dataDoc := models.MemberDoc{}
 
 	newGuid := guid
@@ -76,7 +93,7 @@ func (svc MemberService) CreateWithGuid(shopID string, username string, guid str
 
 	dataDoc.Member = doc
 
-	_, err := svc.repo.Create(dataDoc)
+	_, err := svc.repo.Create(ctx, dataDoc)
 
 	if err != nil {
 		return "", err
@@ -86,6 +103,10 @@ func (svc MemberService) CreateWithGuid(shopID string, username string, guid str
 }
 
 func (svc MemberService) Create(shopID string, username string, doc models.Member) (string, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	dataDoc := models.MemberDoc{}
 
 	newGuid := utils.NewGUID()
@@ -98,7 +119,7 @@ func (svc MemberService) Create(shopID string, username string, doc models.Membe
 
 	dataDoc.Member = doc
 
-	_, err := svc.repo.Create(dataDoc)
+	_, err := svc.repo.Create(ctx, dataDoc)
 
 	if err != nil {
 		return "", err
@@ -111,7 +132,10 @@ func (svc MemberService) Create(shopID string, username string, doc models.Membe
 
 func (svc MemberService) Update(shopID string, guid string, username string, doc models.Member) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -127,7 +151,7 @@ func (svc MemberService) Update(shopID string, guid string, username string, doc
 
 	findDoc.LastUpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -140,7 +164,10 @@ func (svc MemberService) Update(shopID string, guid string, username string, doc
 
 func (svc MemberService) Delete(shopID string, guid string, username string) error {
 
-	err := svc.repo.Delete(shopID, guid, username)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	err := svc.repo.Delete(ctx, shopID, guid, username)
 	if err != nil {
 		return err
 	}
@@ -151,7 +178,11 @@ func (svc MemberService) Delete(shopID string, guid string, username string) err
 }
 
 func (svc MemberService) Info(shopID string, guid string) (models.MemberInfo, error) {
-	doc, err := svc.repo.FindByGuid(shopID, guid)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	doc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.MemberInfo{}, err
@@ -161,7 +192,11 @@ func (svc MemberService) Info(shopID string, guid string) (models.MemberInfo, er
 }
 
 func (svc MemberService) Search(shopID string, pageable micromodels.Pageable) ([]models.MemberInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.repo.FindPage(shopID, pageable)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	docList, pagination, err := svc.repo.FindPage(ctx, shopID, pageable)
 
 	if err != nil {
 		return docList, pagination, err

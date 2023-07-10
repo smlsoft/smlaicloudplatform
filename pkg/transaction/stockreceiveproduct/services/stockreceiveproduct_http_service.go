@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
@@ -45,6 +46,7 @@ type StockReceiveProductHttpService struct {
 	cacheExpireDocNo time.Duration
 	syncCacheRepo    mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.StockReceiveProductActivity, models.StockReceiveProductDeleteActivity]
+	contextTimeout time.Duration
 }
 
 func NewStockReceiveProductHttpService(
@@ -54,12 +56,15 @@ func NewStockReceiveProductHttpService(
 	syncCacheRepo mastersync.IMasterSyncCacheRepository,
 ) *StockReceiveProductHttpService {
 
+	contextTimeout := time.Duration(15) * time.Second
+
 	insSvc := &StockReceiveProductHttpService{
 		repoMq:           repoMq,
 		repo:             repo,
 		repoCache:        repoCache,
 		syncCacheRepo:    syncCacheRepo,
 		cacheExpireDocNo: time.Hour * 24,
+		contextTimeout:   contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.StockReceiveProductActivity, models.StockReceiveProductDeleteActivity](repo)
@@ -67,16 +72,20 @@ func NewStockReceiveProductHttpService(
 	return insSvc
 }
 
+func (svc StockReceiveProductHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc StockReceiveProductHttpService) getDocNoPrefix(docDate time.Time) string {
 	docDateStr := docDate.Format("20060102")
 	return fmt.Sprintf("%s%s", MODULE_NAME, docDateStr)
 }
 
-func (svc StockReceiveProductHttpService) generateNewDocNo(shopID, prefixDocNo string, docNumber int) (string, int, error) {
+func (svc StockReceiveProductHttpService) generateNewDocNo(ctx context.Context, shopID, prefixDocNo string, docNumber int) (string, int, error) {
 	prevoiusDocNumber, err := svc.repoCache.Get(shopID, prefixDocNo)
 
 	if prevoiusDocNumber == 0 || err != nil {
-		lastDoc, err := svc.repo.FindLastDocNo(shopID, prefixDocNo)
+		lastDoc, err := svc.repo.FindLastDocNo(ctx, shopID, prefixDocNo)
 
 		if err != nil {
 			return "", 0, err
@@ -96,7 +105,7 @@ func (svc StockReceiveProductHttpService) generateNewDocNo(shopID, prefixDocNo s
 	newDocNumber := prevoiusDocNumber + 1
 	newDocNo := fmt.Sprintf("%s%05d", prefixDocNo, newDocNumber)
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", newDocNo)
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "docno", newDocNo)
 
 	if err != nil {
 		return "", 0, err
@@ -110,10 +119,13 @@ func (svc StockReceiveProductHttpService) generateNewDocNo(shopID, prefixDocNo s
 }
 func (svc StockReceiveProductHttpService) CreateStockReceiveProduct(shopID string, authUsername string, doc models.StockReceiveProduct) (string, string, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	docDate := doc.DocDatetime
 	prefixDocNo := svc.getDocNoPrefix(docDate)
 
-	newDocNo, newDocNumber, err := svc.generateNewDocNo(shopID, prefixDocNo, 1)
+	newDocNo, newDocNumber, err := svc.generateNewDocNo(ctx, shopID, prefixDocNo, 1)
 
 	if err != nil {
 		return "", "", err
@@ -130,7 +142,7 @@ func (svc StockReceiveProductHttpService) CreateStockReceiveProduct(shopID strin
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", "", err
@@ -147,7 +159,10 @@ func (svc StockReceiveProductHttpService) CreateStockReceiveProduct(shopID strin
 
 func (svc StockReceiveProductHttpService) UpdateStockReceiveProduct(shopID string, guid string, authUsername string, doc models.StockReceiveProduct) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -163,7 +178,7 @@ func (svc StockReceiveProductHttpService) UpdateStockReceiveProduct(shopID strin
 	docData.UpdatedBy = authUsername
 	docData.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, docData)
+	err = svc.repo.Update(ctx, shopID, guid, docData)
 
 	if err != nil {
 		return err
@@ -179,7 +194,10 @@ func (svc StockReceiveProductHttpService) UpdateStockReceiveProduct(shopID strin
 
 func (svc StockReceiveProductHttpService) DeleteStockReceiveProduct(shopID string, guid string, authUsername string) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -189,7 +207,7 @@ func (svc StockReceiveProductHttpService) DeleteStockReceiveProduct(shopID strin
 		return errors.New("document not found")
 	}
 
-	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 	if err != nil {
 		return err
 	}
@@ -204,17 +222,20 @@ func (svc StockReceiveProductHttpService) DeleteStockReceiveProduct(shopID strin
 
 func (svc StockReceiveProductHttpService) DeleteStockReceiveProductByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
 	}
 
-	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	err := svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
 
 	func() {
-		docs, _ := svc.repo.FindByGuids(shopID, GUIDs)
+		docs, _ := svc.repo.FindByGuids(ctx, shopID, GUIDs)
 		svc.repoMq.DeleteInBatch(docs)
 		svc.saveMasterSync(shopID)
 	}()
@@ -224,7 +245,10 @@ func (svc StockReceiveProductHttpService) DeleteStockReceiveProductByGUIDs(shopI
 
 func (svc StockReceiveProductHttpService) InfoStockReceiveProduct(shopID string, guid string) (models.StockReceiveProductInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.StockReceiveProductInfo{}, err
@@ -239,7 +263,10 @@ func (svc StockReceiveProductHttpService) InfoStockReceiveProduct(shopID string,
 
 func (svc StockReceiveProductHttpService) InfoStockReceiveProductByCode(shopID string, code string) (models.StockReceiveProductInfo, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "docno", code)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "docno", code)
 
 	if err != nil {
 		return models.StockReceiveProductInfo{}, err
@@ -253,11 +280,15 @@ func (svc StockReceiveProductHttpService) InfoStockReceiveProductByCode(shopID s
 }
 
 func (svc StockReceiveProductHttpService) SearchStockReceiveProduct(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockReceiveProductInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"docno",
 	}
 
-	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.StockReceiveProductInfo{}, pagination, err
@@ -267,13 +298,17 @@ func (svc StockReceiveProductHttpService) SearchStockReceiveProduct(shopID strin
 }
 
 func (svc StockReceiveProductHttpService) SearchStockReceiveProductStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockReceiveProductInfo, int, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"docno",
 	}
 
 	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(ctx, shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.StockReceiveProductInfo{}, 0, err
@@ -284,6 +319,9 @@ func (svc StockReceiveProductHttpService) SearchStockReceiveProductStep(shopID s
 
 func (svc StockReceiveProductHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.StockReceiveProduct) (common.BulkImport, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.StockReceiveProduct](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
@@ -291,7 +329,7 @@ func (svc StockReceiveProductHttpService) SaveInBatch(shopID string, authUsernam
 		itemCodeGuidList = append(itemCodeGuidList, doc.DocNo)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "docno", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "docno", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -330,7 +368,7 @@ func (svc StockReceiveProductHttpService) SaveInBatch(shopID string, authUsernam
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.StockReceiveProductDoc, error) {
-			return svc.repo.FindByDocIndentityGuid(shopID, "docno", guid)
+			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "docno", guid)
 		},
 		func(doc models.StockReceiveProductDoc) bool {
 			return doc.DocNo != ""
@@ -341,7 +379,7 @@ func (svc StockReceiveProductHttpService) SaveInBatch(shopID string, authUsernam
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
-			err = svc.repo.Update(shopID, doc.GuidFixed, doc)
+			err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
 			if err != nil {
 				return nil
 			}
@@ -350,7 +388,7 @@ func (svc StockReceiveProductHttpService) SaveInBatch(shopID string, authUsernam
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return common.BulkImport{}, err

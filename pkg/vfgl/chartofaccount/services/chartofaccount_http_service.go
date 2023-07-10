@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	common "smlcloudplatform/pkg/models"
@@ -26,22 +27,34 @@ type IChartOfAccountHttpService interface {
 }
 
 type ChartOfAccountHttpService struct {
-	repoJournal journalRepo.JournalRepository
-	repo        repositories.ChartOfAccountRepository
-	mqRepo      repositories.ChartOfAccountMQRepository
+	repoJournal    journalRepo.JournalRepository
+	repo           repositories.ChartOfAccountRepository
+	mqRepo         repositories.ChartOfAccountMQRepository
+	contextTimeout time.Duration
 }
 
 func NewChartOfAccountHttpService(repo repositories.ChartOfAccountRepository, repoJournal journalRepo.JournalRepository, mqRepo repositories.ChartOfAccountMQRepository) ChartOfAccountHttpService {
+
+	contextTimeout := time.Duration(15) * time.Second
+
 	return ChartOfAccountHttpService{
-		repo:        repo,
-		repoJournal: repoJournal,
-		mqRepo:      mqRepo,
+		repo:           repo,
+		repoJournal:    repoJournal,
+		mqRepo:         mqRepo,
+		contextTimeout: contextTimeout,
 	}
+}
+
+func (svc ChartOfAccountHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
 }
 
 func (svc ChartOfAccountHttpService) Create(shopID string, authUsername string, doc models.ChartOfAccount) (string, error) {
 
-	findDoc, err := svc.repo.FindOne(shopID, bson.M{"accountcode": doc.AccountCode})
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindOne(ctx, shopID, bson.M{"accountcode": doc.AccountCode})
 
 	if err != nil {
 		return "", err
@@ -61,7 +74,7 @@ func (svc ChartOfAccountHttpService) Create(shopID string, authUsername string, 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -77,7 +90,10 @@ func (svc ChartOfAccountHttpService) Create(shopID string, authUsername string, 
 
 func (svc ChartOfAccountHttpService) Update(guid string, shopID string, authUsername string, doc models.ChartOfAccount) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -87,7 +103,7 @@ func (svc ChartOfAccountHttpService) Update(guid string, shopID string, authUser
 		return errors.New("document not found")
 	}
 
-	findDocCode, err := svc.repo.FindOne(shopID, bson.M{"accountcode": doc.AccountCode})
+	findDocCode, err := svc.repo.FindOne(ctx, shopID, bson.M{"accountcode": doc.AccountCode})
 
 	if err != nil {
 		return err
@@ -104,7 +120,7 @@ func (svc ChartOfAccountHttpService) Update(guid string, shopID string, authUser
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -118,7 +134,10 @@ func (svc ChartOfAccountHttpService) Update(guid string, shopID string, authUser
 
 func (svc ChartOfAccountHttpService) Delete(guid string, shopID string, authUsername string) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -128,7 +147,7 @@ func (svc ChartOfAccountHttpService) Delete(guid string, shopID string, authUser
 		return errors.New("document not found")
 	}
 
-	isAccountCodeUsed, err := svc.repoJournal.IsAccountCodeUsed(shopID, findDoc.AccountCode)
+	isAccountCodeUsed, err := svc.repoJournal.IsAccountCodeUsed(ctx, shopID, findDoc.AccountCode)
 
 	if err != nil {
 		return err
@@ -138,7 +157,7 @@ func (svc ChartOfAccountHttpService) Delete(guid string, shopID string, authUser
 		return errors.New("document is used")
 	}
 
-	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 	if err != nil {
 		return err
 	}
@@ -152,7 +171,10 @@ func (svc ChartOfAccountHttpService) Delete(guid string, shopID string, authUser
 
 func (svc ChartOfAccountHttpService) Info(guid string, shopID string) (models.ChartOfAccountInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.ChartOfAccountInfo{}, err
@@ -167,6 +189,10 @@ func (svc ChartOfAccountHttpService) Info(guid string, shopID string) (models.Ch
 }
 
 func (svc ChartOfAccountHttpService) Search(shopID string, accountCodeRanges []models.AccountCodeRange, pageable micromodels.Pageable) ([]models.ChartOfAccountInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"accountcode",
 		"accountname",
@@ -187,7 +213,7 @@ func (svc ChartOfAccountHttpService) Search(shopID string, accountCodeRanges []m
 		filterQuery["$or"] = accountCodeRangeQuery
 	}
 
-	docList, pagination, err := svc.repo.FindPageFilter(shopID, filterQuery, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filterQuery, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ChartOfAccountInfo{}, pagination, err
@@ -198,6 +224,9 @@ func (svc ChartOfAccountHttpService) Search(shopID string, accountCodeRanges []m
 
 func (svc ChartOfAccountHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.ChartOfAccount) (common.BulkImport, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.ChartOfAccount](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
@@ -205,7 +234,7 @@ func (svc ChartOfAccountHttpService) SaveInBatch(shopID string, authUsername str
 		itemCodeGuidList = append(itemCodeGuidList, doc.AccountCode)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "accountcode", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "accountcode", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -244,7 +273,7 @@ func (svc ChartOfAccountHttpService) SaveInBatch(shopID string, authUsername str
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.ChartOfAccountDoc, error) {
-			return svc.repo.FindByDocIndentityGuid(shopID, "accountcode", guid)
+			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "accountcode", guid)
 		},
 		func(doc models.ChartOfAccountDoc) bool {
 			if doc.AccountCode != "" {
@@ -258,7 +287,7 @@ func (svc ChartOfAccountHttpService) SaveInBatch(shopID string, authUsername str
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
-			err = svc.repo.Update(shopID, doc.GuidFixed, doc)
+			err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
 			if err != nil {
 				return nil
 			}
@@ -267,7 +296,7 @@ func (svc ChartOfAccountHttpService) SaveInBatch(shopID string, authUsername str
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return common.BulkImport{}, err

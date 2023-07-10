@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
@@ -38,21 +39,34 @@ type ProductHttpService struct {
 	mqRepo        repositories.IProductMessageQueueRepository
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.ProductActivity, models.ProductDeleteActivity]
+	contextTimeout time.Duration
 }
 
 func NewProductHttpService(repo repositories.IProductRepository, mqRepo repositories.IProductMessageQueueRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *ProductHttpService {
 
+	contextTimeout := time.Duration(15) * time.Second
+
 	insSvc := &ProductHttpService{
-		repo:   repo,
-		mqRepo: mqRepo,
+		repo:           repo,
+		mqRepo:         mqRepo,
+		syncCacheRepo:  syncCacheRepo,
+		contextTimeout: contextTimeout,
 	}
+
 	insSvc.ActivityService = services.NewActivityService[models.ProductActivity, models.ProductDeleteActivity](repo)
 	return insSvc
 }
 
+func (svc ProductHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc ProductHttpService) SaveProduct(shopID string, authUsername string, doc models.Product) (string, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "itemcode", doc.ItemCode)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "itemcode", doc.ItemCode)
 
 	if err != nil {
 		return "", err
@@ -64,7 +78,7 @@ func (svc ProductHttpService) SaveProduct(shopID string, authUsername string, do
 		findDoc.UpdatedBy = authUsername
 		findDoc.UpdatedAt = time.Now()
 
-		err = svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
+		err = svc.repo.Update(ctx, shopID, findDoc.GuidFixed, findDoc)
 
 		if err != nil {
 			return "", err
@@ -92,7 +106,7 @@ func (svc ProductHttpService) SaveProduct(shopID string, authUsername string, do
 		docData.CreatedBy = authUsername
 		docData.CreatedAt = time.Now()
 
-		_, err = svc.repo.Create(docData)
+		_, err = svc.repo.Create(ctx, docData)
 
 		if err != nil {
 			return "", err
@@ -111,7 +125,10 @@ func (svc ProductHttpService) SaveProduct(shopID string, authUsername string, do
 
 func (svc ProductHttpService) CreateProduct(shopID string, authUsername string, doc models.Product) (string, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "itemcode", doc.ItemCode)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "itemcode", doc.ItemCode)
 
 	if err != nil {
 		return "", err
@@ -131,7 +148,7 @@ func (svc ProductHttpService) CreateProduct(shopID string, authUsername string, 
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -149,7 +166,10 @@ func (svc ProductHttpService) CreateProduct(shopID string, authUsername string, 
 
 func (svc ProductHttpService) UpdateProduct(shopID string, guid string, authUsername string, doc models.Product) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -164,7 +184,7 @@ func (svc ProductHttpService) UpdateProduct(shopID string, guid string, authUser
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -183,7 +203,10 @@ func (svc ProductHttpService) UpdateProduct(shopID string, guid string, authUser
 
 func (svc ProductHttpService) DeleteProduct(shopID string, guid string, authUsername string) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -193,7 +216,7 @@ func (svc ProductHttpService) DeleteProduct(shopID string, guid string, authUser
 		return errors.New("document not found")
 	}
 
-	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 	if err != nil {
 		return err
 	}
@@ -211,16 +234,19 @@ func (svc ProductHttpService) DeleteProduct(shopID string, guid string, authUser
 
 func (svc ProductHttpService) DeleteProductByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
 	}
 
-	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	err := svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
 
-	findDocAllTemp, err := svc.repo.FindByGuids(shopID, GUIDs)
+	findDocAllTemp, err := svc.repo.FindByGuids(ctx, shopID, GUIDs)
 	if err != nil {
 		return err
 	}
@@ -238,7 +264,10 @@ func (svc ProductHttpService) DeleteProductByGUIDs(shopID string, authUsername s
 
 func (svc ProductHttpService) InfoProduct(shopID string, guid string) (models.ProductInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.ProductInfo{}, err
@@ -253,10 +282,14 @@ func (svc ProductHttpService) InfoProduct(shopID string, guid string) (models.Pr
 }
 
 func (svc ProductHttpService) InfoWTFArray(shopID string, codes []string) ([]interface{}, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	docList := []interface{}{}
 
 	for _, code := range codes {
-		findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "itemcode", code)
+		findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "itemcode", code)
 		if err != nil || findDoc.ID == primitive.NilObjectID {
 			// add item empty
 			docList = append(docList, nil)
@@ -269,7 +302,11 @@ func (svc ProductHttpService) InfoWTFArray(shopID string, codes []string) ([]int
 }
 
 func (svc ProductHttpService) InfoMaster(code string) (models.ProductInfo, error) {
-	findDoc, err := svc.repo.FindMasterProductByCode(code)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindMasterProductByCode(ctx, code)
 
 	if err != nil {
 		return models.ProductInfo{}, err
@@ -284,7 +321,10 @@ func (svc ProductHttpService) InfoMaster(code string) (models.ProductInfo, error
 
 func (svc ProductHttpService) InfoProductByBarcode(shopID string, barcode string) (models.ProductInfo, error) {
 
-	findDoc, err := svc.repo.FindByBarcode(shopID, barcode)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByBarcode(ctx, shopID, barcode)
 
 	if err != nil {
 		return models.ProductInfo{}, err
@@ -298,6 +338,10 @@ func (svc ProductHttpService) InfoProductByBarcode(shopID string, barcode string
 }
 
 func (svc ProductHttpService) SearchProduct(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"itemcode",
 		"names.name",
@@ -305,7 +349,7 @@ func (svc ProductHttpService) SearchProduct(shopID string, filters map[string]in
 		"groupcode",
 	}
 
-	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.ProductInfo{}, pagination, err
@@ -315,6 +359,10 @@ func (svc ProductHttpService) SearchProduct(shopID string, filters map[string]in
 }
 
 func (svc ProductHttpService) SearchProductStep(shopID string, langCode string, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductInfo, int, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"itemcode",
 		"names.name",
@@ -324,7 +372,7 @@ func (svc ProductHttpService) SearchProductStep(shopID string, langCode string, 
 
 	selectFields := map[string]interface{}{}
 
-	docList, total, err := svc.repo.FindStep(shopID, filters, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(ctx, shopID, filters, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.ProductInfo{}, 0, err
@@ -335,6 +383,9 @@ func (svc ProductHttpService) SearchProductStep(shopID string, langCode string, 
 
 func (svc ProductHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.Product) (common.BulkImport, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.Product](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
@@ -342,7 +393,7 @@ func (svc ProductHttpService) SaveInBatch(shopID string, authUsername string, da
 		itemCodeGuidList = append(itemCodeGuidList, doc.ItemCode)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "itemcode", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "itemcode", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -381,7 +432,7 @@ func (svc ProductHttpService) SaveInBatch(shopID string, authUsername string, da
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.ProductDoc, error) {
-			return svc.repo.FindByDocIndentityGuid(shopID, "itemcode", guid)
+			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "itemcode", guid)
 		},
 		func(doc models.ProductDoc) bool {
 			return doc.ItemCode != ""
@@ -392,7 +443,7 @@ func (svc ProductHttpService) SaveInBatch(shopID string, authUsername string, da
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
-			err = svc.repo.Update(shopID, doc.GuidFixed, doc)
+			err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
 			if err != nil {
 				return nil
 			}
@@ -401,7 +452,7 @@ func (svc ProductHttpService) SaveInBatch(shopID string, authUsername string, da
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return common.BulkImport{}, err

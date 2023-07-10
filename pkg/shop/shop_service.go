@@ -1,6 +1,7 @@
 package shop
 
 import (
+	"context"
 	"errors"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/shop/models"
@@ -43,13 +44,13 @@ func (svc ShopService) CreateShop(username string, doc models.Shop) (string, err
 	dataDoc.CreatedAt = svc.timeNow()
 	dataDoc.Shop = doc
 
-	_, err := svc.shopRepo.Create(dataDoc)
+	_, err := svc.shopRepo.Create(context.Background(), dataDoc)
 
 	if err != nil {
 		return "", err
 	}
 
-	err = svc.shopUserRepo.Save(shopID, username, models.ROLE_OWNER)
+	err = svc.shopUserRepo.Save(context.Background(), shopID, username, models.ROLE_OWNER)
 
 	if err != nil {
 		return "", err
@@ -60,7 +61,7 @@ func (svc ShopService) CreateShop(username string, doc models.Shop) (string, err
 
 func (svc ShopService) UpdateShop(guid string, username string, shop models.Shop) error {
 
-	findShop, err := svc.shopRepo.FindByGuid(guid)
+	findShop, err := svc.shopRepo.FindByGuid(context.Background(), guid)
 
 	if err != nil {
 		return err
@@ -79,7 +80,7 @@ func (svc ShopService) UpdateShop(guid string, username string, shop models.Shop
 
 	findShop.GuidFixed = guidx
 
-	err = svc.shopRepo.Update(guid, findShop)
+	err = svc.shopRepo.Update(context.Background(), guid, findShop)
 
 	if err != nil {
 		return err
@@ -90,7 +91,7 @@ func (svc ShopService) UpdateShop(guid string, username string, shop models.Shop
 
 func (svc ShopService) DeleteShop(guid string, username string) error {
 
-	err := svc.shopRepo.Delete(guid, username)
+	err := svc.shopRepo.Delete(context.Background(), guid, username)
 
 	if err != nil {
 		return err
@@ -99,7 +100,7 @@ func (svc ShopService) DeleteShop(guid string, username string) error {
 }
 
 func (svc ShopService) InfoShop(guid string) (models.ShopInfo, error) {
-	findShop, err := svc.shopRepo.FindByGuid(guid)
+	findShop, err := svc.shopRepo.FindByGuid(context.Background(), guid)
 
 	if err != nil {
 		return models.ShopInfo{}, err
@@ -109,7 +110,7 @@ func (svc ShopService) InfoShop(guid string) (models.ShopInfo, error) {
 }
 
 func (svc ShopService) SearchShop(pageable micromodels.Pageable) ([]models.ShopInfo, mongopagination.PaginationData, error) {
-	shopList, pagination, err := svc.shopRepo.FindPage(pageable)
+	shopList, pagination, err := svc.shopRepo.FindPage(context.Background(), pageable)
 
 	if err != nil {
 		return shopList, pagination, err

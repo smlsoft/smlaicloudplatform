@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	micromodels "smlcloudplatform/internal/microservice/models"
@@ -35,13 +36,17 @@ type SectionBusinessTypeHttpService struct {
 
 	syncCacheRepo mastersync.IMasterSyncCacheRepository
 	services.ActivityService[models.SectionBusinessTypeActivity, models.SectionBusinessTypeDeleteActivity]
+	contextTimeout time.Duration
 }
 
 func NewSectionBusinessTypeHttpService(repo repositories.ISectionBusinessTypeRepository, syncCacheRepo mastersync.IMasterSyncCacheRepository) *SectionBusinessTypeHttpService {
 
+	contextTimeout := time.Duration(15) * time.Second
+
 	insSvc := &SectionBusinessTypeHttpService{
-		repo:          repo,
-		syncCacheRepo: syncCacheRepo,
+		repo:           repo,
+		syncCacheRepo:  syncCacheRepo,
+		contextTimeout: contextTimeout,
 	}
 
 	insSvc.ActivityService = services.NewActivityService[models.SectionBusinessTypeActivity, models.SectionBusinessTypeDeleteActivity](repo)
@@ -49,9 +54,16 @@ func NewSectionBusinessTypeHttpService(repo repositories.ISectionBusinessTypeRep
 	return insSvc
 }
 
+func (svc SectionBusinessTypeHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc SectionBusinessTypeHttpService) SaveSectionBusinessType(shopID string, authUsername string, doc models.SectionBusinessType) (string, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "businesstypecode", doc.BusinessTypeCode)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "businesstypecode", doc.BusinessTypeCode)
 
 	if err != nil {
 		return "", err
@@ -74,6 +86,9 @@ func (svc SectionBusinessTypeHttpService) SaveSectionBusinessType(shopID string,
 
 func (svc SectionBusinessTypeHttpService) create(findDoc models.SectionBusinessTypeDoc, shopID string, authUsername string, doc models.SectionBusinessType) (string, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	newGuidFixed := utils.NewGUID()
 
 	docData := models.SectionBusinessTypeDoc{}
@@ -84,7 +99,7 @@ func (svc SectionBusinessTypeHttpService) create(findDoc models.SectionBusinessT
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err := svc.repo.Create(docData)
+	_, err := svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -97,12 +112,15 @@ func (svc SectionBusinessTypeHttpService) create(findDoc models.SectionBusinessT
 
 func (svc SectionBusinessTypeHttpService) update(findDoc models.SectionBusinessTypeDoc, shopID string, authUsername string, doc models.SectionBusinessType) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	findDoc.SectionBusinessType = doc
 
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err := svc.repo.Update(shopID, findDoc.GuidFixed, findDoc)
+	err := svc.repo.Update(ctx, shopID, findDoc.GuidFixed, findDoc)
 
 	if err != nil {
 		return err
@@ -115,7 +133,10 @@ func (svc SectionBusinessTypeHttpService) update(findDoc models.SectionBusinessT
 
 func (svc SectionBusinessTypeHttpService) DeleteSectionBusinessType(shopID string, guid string, authUsername string) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -125,7 +146,7 @@ func (svc SectionBusinessTypeHttpService) DeleteSectionBusinessType(shopID strin
 		return errors.New("document not found")
 	}
 
-	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 	if err != nil {
 		return err
 	}
@@ -137,11 +158,14 @@ func (svc SectionBusinessTypeHttpService) DeleteSectionBusinessType(shopID strin
 
 func (svc SectionBusinessTypeHttpService) DeleteSectionBusinessTypeByGUIDs(shopID string, authUsername string, GUIDs []string) error {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	deleteFilterQuery := map[string]interface{}{
 		"guidfixed": bson.M{"$in": GUIDs},
 	}
 
-	err := svc.repo.Delete(shopID, authUsername, deleteFilterQuery)
+	err := svc.repo.Delete(ctx, shopID, authUsername, deleteFilterQuery)
 	if err != nil {
 		return err
 	}
@@ -151,7 +175,10 @@ func (svc SectionBusinessTypeHttpService) DeleteSectionBusinessTypeByGUIDs(shopI
 
 func (svc SectionBusinessTypeHttpService) InfoSectionBusinessType(shopID string, guid string) (models.SectionBusinessTypeInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.SectionBusinessTypeInfo{}, err
@@ -166,7 +193,10 @@ func (svc SectionBusinessTypeHttpService) InfoSectionBusinessType(shopID string,
 
 func (svc SectionBusinessTypeHttpService) InfoSectionBusinessTypeByBusinessTypeCode(shopID string, businessTypeCode string) (models.SectionBusinessTypeInfo, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "businesstypecode", businessTypeCode)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "businesstypecode", businessTypeCode)
 
 	if err != nil {
 		return models.SectionBusinessTypeInfo{}, err
@@ -180,11 +210,15 @@ func (svc SectionBusinessTypeHttpService) InfoSectionBusinessTypeByBusinessTypeC
 }
 
 func (svc SectionBusinessTypeHttpService) SearchSectionBusinessType(shopID string, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.SectionBusinessTypeInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"businesstypecode",
 	}
 
-	docList, pagination, err := svc.repo.FindPageFilter(shopID, filters, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPageFilter(ctx, shopID, filters, searchInFields, pageable)
 
 	if err != nil {
 		return []models.SectionBusinessTypeInfo{}, pagination, err
@@ -194,6 +228,10 @@ func (svc SectionBusinessTypeHttpService) SearchSectionBusinessType(shopID strin
 }
 
 func (svc SectionBusinessTypeHttpService) SearchSectionBusinessTypeStep(shopID string, langCode string, pageableStep micromodels.PageableStep) ([]models.SectionBusinessTypeInfo, int, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"businesstypecode",
 	}
@@ -206,7 +244,7 @@ func (svc SectionBusinessTypeHttpService) SearchSectionBusinessTypeStep(shopID s
 		selectFields["names"] = 1
 	}
 
-	docList, total, err := svc.repo.FindStep(shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
+	docList, total, err := svc.repo.FindStep(ctx, shopID, map[string]interface{}{}, searchInFields, selectFields, pageableStep)
 
 	if err != nil {
 		return []models.SectionBusinessTypeInfo{}, 0, err
@@ -217,6 +255,9 @@ func (svc SectionBusinessTypeHttpService) SearchSectionBusinessTypeStep(shopID s
 
 func (svc SectionBusinessTypeHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.SectionBusinessType) (common.BulkImport, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.SectionBusinessType](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
@@ -224,7 +265,7 @@ func (svc SectionBusinessTypeHttpService) SaveInBatch(shopID string, authUsernam
 		itemCodeGuidList = append(itemCodeGuidList, doc.BusinessTypeCode)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "businesstypecode", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "businesstypecode", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -263,7 +304,7 @@ func (svc SectionBusinessTypeHttpService) SaveInBatch(shopID string, authUsernam
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.SectionBusinessTypeDoc, error) {
-			return svc.repo.FindByDocIndentityGuid(shopID, "businesstypecode", guid)
+			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "businesstypecode", guid)
 		},
 		func(doc models.SectionBusinessTypeDoc) bool {
 			return doc.BusinessTypeCode != ""
@@ -274,7 +315,7 @@ func (svc SectionBusinessTypeHttpService) SaveInBatch(shopID string, authUsernam
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
-			err = svc.repo.Update(shopID, doc.GuidFixed, doc)
+			err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
 			if err != nil {
 				return nil
 			}
@@ -283,7 +324,7 @@ func (svc SectionBusinessTypeHttpService) SaveInBatch(shopID string, authUsernam
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return common.BulkImport{}, err

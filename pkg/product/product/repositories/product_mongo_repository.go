@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"errors"
 	"os"
 	"smlcloudplatform/internal/microservice"
@@ -14,29 +15,29 @@ import (
 )
 
 type IProductRepository interface {
-	Count(shopID string) (int, error)
-	Create(doc models.ProductDoc) (string, error)
-	CreateInBatch(docList []models.ProductDoc) error
-	Update(shopID string, guid string, doc models.ProductDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	Delete(shopID string, username string, filters map[string]interface{}) error
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.ProductDoc, error)
-	FindByGuids(shopID string, guids []string) ([]models.ProductDoc, error)
-	FindMasterProductByCode(code string) (models.ProductInfo, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	Create(ctx context.Context, doc models.ProductDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.ProductDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.ProductDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	Delete(ctx context.Context, shopID string, username string, filters map[string]interface{}) error
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.ProductDoc, error)
+	FindByGuids(ctx context.Context, shopID string, guids []string) ([]models.ProductDoc, error)
+	FindMasterProductByCode(ctx context.Context, code string) (models.ProductInfo, error)
 
-	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.ProductItemGuid, error)
-	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.ProductDoc, error)
+	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.ProductItemGuid, error)
+	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.ProductDoc, error)
 
-	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, selectFields map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductInfo, int, error)
-	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductInfo, mongopagination.PaginationData, error)
+	FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, selectFields map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductInfo, int, error)
+	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.ProductInfo, mongopagination.PaginationData, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductActivity, mongopagination.PaginationData, error)
-	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductDeleteActivity, error)
-	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductActivity, error)
+	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ProductActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductDeleteActivity, error)
+	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ProductActivity, error)
 
-	FindByBarcode(shopID string, barcode string) (models.ProductInfo, error)
+	FindByBarcode(ctx context.Context, shopID string, barcode string) (models.ProductInfo, error)
 }
 
 type ProductRepository struct {
@@ -61,7 +62,7 @@ func NewProductRepository(pst microservice.IPersisterMongo) *ProductRepository {
 	return insRepo
 }
 
-func (repo *ProductRepository) FindMasterProductByCode(code string) (models.ProductInfo, error) {
+func (repo *ProductRepository) FindMasterProductByCode(ctx context.Context, code string) (models.ProductInfo, error) {
 	masterShopID := os.Getenv("MASTER_SHOP_ID")
 
 	if len(masterShopID) == 0 {
@@ -75,7 +76,7 @@ func (repo *ProductRepository) FindMasterProductByCode(code string) (models.Prod
 		"itemcode": code,
 	}
 
-	err := repo.pst.FindOne(models.ProductInfo{}, filters, &doc)
+	err := repo.pst.FindOne(ctx, models.ProductInfo{}, filters, &doc)
 
 	if err != nil {
 		return models.ProductInfo{}, err
@@ -84,7 +85,7 @@ func (repo *ProductRepository) FindMasterProductByCode(code string) (models.Prod
 	return doc, nil
 }
 
-func (repo *ProductRepository) FindByBarcode(shopID string, barcode string) (models.ProductInfo, error) {
+func (repo *ProductRepository) FindByBarcode(ctx context.Context, shopID string, barcode string) (models.ProductInfo, error) {
 
 	filters := bson.M{
 		"shopid":    shopID,
@@ -93,7 +94,7 @@ func (repo *ProductRepository) FindByBarcode(shopID string, barcode string) (mod
 	}
 
 	doc := models.ProductInfo{}
-	err := repo.pst.FindOne(models.ProductInfo{}, filters, &doc)
+	err := repo.pst.FindOne(ctx, models.ProductInfo{}, filters, &doc)
 
 	return doc, err
 }

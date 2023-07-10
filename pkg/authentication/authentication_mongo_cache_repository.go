@@ -1,6 +1,7 @@
 package authentication
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"smlcloudplatform/internal/microservice"
@@ -13,9 +14,9 @@ import (
 )
 
 type IAuthenticationMongoCacheRepository interface {
-	FindUser(id string) (*models.UserDoc, error)
-	CreateUser(models.UserDoc) (primitive.ObjectID, error)
-	UpdateUser(username string, user models.UserDoc) error
+	FindUser(ctx context.Context, id string) (*models.UserDoc, error)
+	CreateUser(ctx context.Context, doc models.UserDoc) (primitive.ObjectID, error)
+	UpdateUser(ctx context.Context, username string, user models.UserDoc) error
 }
 
 type AuthenticationMongoCacheRepository struct {
@@ -45,7 +46,7 @@ func (r AuthenticationMongoCacheRepository) clearnCache(username string) {
 	r.cache.Del(cacheKey)
 }
 
-func (r AuthenticationMongoCacheRepository) FindUser(username string) (*models.UserDoc, error) {
+func (r AuthenticationMongoCacheRepository) FindUser(ctx context.Context, username string) (*models.UserDoc, error) {
 
 	cacheKey := r.getCacheKey(username)
 
@@ -75,7 +76,7 @@ func (r AuthenticationMongoCacheRepository) FindUser(username string) (*models.U
 
 	fmt.Println("get user from mongo ")
 	findUser := &models.UserDoc{}
-	err = r.pst.FindOne(&models.UserDoc{}, bson.M{"username": username}, findUser)
+	err = r.pst.FindOne(ctx, &models.UserDoc{}, bson.M{"username": username}, findUser)
 
 	if err != nil {
 		return nil, err
@@ -101,9 +102,9 @@ func (r AuthenticationMongoCacheRepository) FindUser(username string) (*models.U
 	return findUser, nil
 }
 
-func (r AuthenticationMongoCacheRepository) CreateUser(user models.UserDoc) (primitive.ObjectID, error) {
+func (r AuthenticationMongoCacheRepository) CreateUser(ctx context.Context, user models.UserDoc) (primitive.ObjectID, error) {
 
-	idx, err := r.pst.Create(&models.UserDoc{}, user)
+	idx, err := r.pst.Create(ctx, &models.UserDoc{}, user)
 
 	if err != nil {
 		return primitive.NilObjectID, err
@@ -114,13 +115,13 @@ func (r AuthenticationMongoCacheRepository) CreateUser(user models.UserDoc) (pri
 	return idx, nil
 }
 
-func (r AuthenticationMongoCacheRepository) UpdateUser(username string, user models.UserDoc) error {
+func (r AuthenticationMongoCacheRepository) UpdateUser(ctx context.Context, username string, user models.UserDoc) error {
 
 	filterDoc := map[string]interface{}{
 		"username": username,
 	}
 
-	err := r.pst.UpdateOne(&models.UserDoc{}, filterDoc, user)
+	err := r.pst.UpdateOne(ctx, &models.UserDoc{}, filterDoc, user)
 
 	if err != nil {
 		return err

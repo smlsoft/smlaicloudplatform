@@ -1,6 +1,7 @@
 package shop_test
 
 import (
+	"context"
 	"os"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/shop"
@@ -37,7 +38,7 @@ func TestShopMemberSave(t *testing.T) {
 	}
 	setup()
 
-	err := shopUserRepo.Save("mx1", "ux3", models.ROLE_OWNER)
+	err := shopUserRepo.Save(context.TODO(), "mx1", "ux3", models.ROLE_OWNER)
 
 	if err != nil {
 		t.Error(err)
@@ -50,7 +51,7 @@ func TestShopMemberFindRole(t *testing.T) {
 	}
 	setup()
 
-	role, err := shopUserRepo.FindRole("mx1", "ux3")
+	role, err := shopUserRepo.FindRole(context.TODO(), "mx1", "ux3")
 
 	if err != nil {
 		t.Error(err)
@@ -65,7 +66,7 @@ func TestShopMemberFindByShop(t *testing.T) {
 	}
 	setup()
 
-	members, err := shopUserRepo.FindByShopID("mx1")
+	members, err := shopUserRepo.FindByShopID(context.TODO(), "mx1")
 
 	if err != nil {
 		t.Error(err)
@@ -81,7 +82,7 @@ func TestShopMemberFindByUsername(t *testing.T) {
 	}
 	setup()
 
-	members, err := shopUserRepo.FindByUsername("ux1")
+	members, err := shopUserRepo.FindByUsername(context.TODO(), "ux1")
 
 	if err != nil {
 		t.Error(err)

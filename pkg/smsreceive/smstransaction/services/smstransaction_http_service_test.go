@@ -26,12 +26,12 @@ type SmsTransactionRepositoryMock struct {
 	mock.Mock
 }
 
-func (m *SmsTransactionRepositoryMock) Count(shopID string) (int, error) {
+func (m *SmsTransactionRepositoryMock) Count(ctx context.Context, shopID string) (int, error) {
 	args := m.Called(shopID)
 	return args.Int(0), args.Error(1)
 }
 
-func (m *SmsTransactionRepositoryMock) Create(doc models.SmsTransactionDoc) (string, error) {
+func (m *SmsTransactionRepositoryMock) Create(ctx context.Context, doc models.SmsTransactionDoc) (string, error) {
 	args := m.Called(doc)
 	return args.String(0), args.Error(1)
 }

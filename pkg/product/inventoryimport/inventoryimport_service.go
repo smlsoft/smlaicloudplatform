@@ -1,6 +1,7 @@
 package inventoryimport
 
 import (
+	"context"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/inventoryimport/models"
 	"smlcloudplatform/pkg/utils"
@@ -16,16 +17,28 @@ type IInventoryImportService interface {
 }
 
 type InventoryImportService struct {
-	invRepo IInventoryImportRepository
+	invRepo        IInventoryImportRepository
+	contextTimeout time.Duration
 }
 
 func NewInventoryImportService(inventoryRepo IInventoryImportRepository) InventoryImportService {
+
+	contextTimeout := time.Duration(15) * time.Second
+
 	return InventoryImportService{
-		invRepo: inventoryRepo,
+		invRepo:        inventoryRepo,
+		contextTimeout: contextTimeout,
 	}
 }
 
+func (svc InventoryImportService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
+}
+
 func (svc InventoryImportService) CreateInBatch(shopID string, authUsername string, inventories []models.InventoryImport) error {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
 	codeList := []string{}
 
@@ -47,9 +60,9 @@ func (svc InventoryImportService) CreateInBatch(shopID string, authUsername stri
 		tempInvDataList = append(tempInvDataList, invDoc)
 	}
 	//Clear old items
-	svc.invRepo.DeleteInBatchCode(shopID, codeList)
+	svc.invRepo.DeleteInBatchCode(ctx, shopID, codeList)
 
-	err := svc.invRepo.CreateInBatch(tempInvDataList)
+	err := svc.invRepo.CreateInBatch(ctx, tempInvDataList)
 
 	if err != nil {
 		return err
@@ -61,7 +74,10 @@ func (svc InventoryImportService) CreateInBatch(shopID string, authUsername stri
 
 func (svc InventoryImportService) Delete(shopID string, guidList []string) error {
 
-	err := svc.invRepo.DeleteInBatch(shopID, guidList)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	err := svc.invRepo.DeleteInBatch(ctx, shopID, guidList)
 
 	if err != nil {
 		return err
@@ -71,7 +87,11 @@ func (svc InventoryImportService) Delete(shopID string, guidList []string) error
 }
 
 func (svc InventoryImportService) ListInventory(shopID string, pageable micromodels.Pageable) ([]models.InventoryImportInfo, mongopagination.PaginationData, error) {
-	docList, pagination, err := svc.invRepo.FindPage(shopID, pageable)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	docList, pagination, err := svc.invRepo.FindPage(ctx, shopID, pageable)
 
 	if err != nil {
 		return []models.InventoryImportInfo{}, pagination, err

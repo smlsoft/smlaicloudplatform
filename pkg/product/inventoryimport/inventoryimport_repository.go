@@ -1,6 +1,7 @@
 package inventoryimport
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/inventoryimport/models"
@@ -10,10 +11,10 @@ import (
 )
 
 type IInventoryImportRepository interface {
-	CreateInBatch(inventories []models.InventoryImportDoc) error
-	DeleteInBatch(shopID string, guidList []string) error
-	DeleteInBatchCode(shopID string, codeList []string) error
-	FindPage(shopID string, pageable micromodels.Pageable) ([]models.InventoryImportInfo, mongopagination.PaginationData, error)
+	CreateInBatch(ctx context.Context, docs []models.InventoryImportDoc) error
+	DeleteInBatch(ctx context.Context, shopID string, guidList []string) error
+	DeleteInBatchCode(ctx context.Context, shopID string, codeList []string) error
+	FindPage(ctx context.Context, shopID string, pageable micromodels.Pageable) ([]models.InventoryImportInfo, mongopagination.PaginationData, error)
 }
 
 type InventoryImportRepository struct {
@@ -26,14 +27,14 @@ func NewInventoryImportRepository(pst microservice.IPersisterMongo) InventoryImp
 	}
 }
 
-func (repo InventoryImportRepository) CreateInBatch(inventories []models.InventoryImportDoc) error {
+func (repo InventoryImportRepository) CreateInBatch(ctx context.Context, docs []models.InventoryImportDoc) error {
 	var tempList []interface{}
 
-	for _, inv := range inventories {
+	for _, inv := range docs {
 		tempList = append(tempList, inv)
 	}
 
-	err := repo.pst.CreateInBatch(&models.InventoryImportDoc{}, tempList)
+	err := repo.pst.CreateInBatch(ctx, &models.InventoryImportDoc{}, tempList)
 
 	if err != nil {
 		return err
@@ -41,9 +42,9 @@ func (repo InventoryImportRepository) CreateInBatch(inventories []models.Invento
 	return nil
 }
 
-func (repo InventoryImportRepository) DeleteInBatch(shopID string, guidList []string) error {
+func (repo InventoryImportRepository) DeleteInBatch(ctx context.Context, shopID string, guidList []string) error {
 
-	err := repo.pst.Delete(&models.InventoryImportDoc{}, bson.M{
+	err := repo.pst.Delete(ctx, &models.InventoryImportDoc{}, bson.M{
 		"shopid":    shopID,
 		"guidfixed": bson.M{"$in": guidList},
 	})
@@ -54,9 +55,9 @@ func (repo InventoryImportRepository) DeleteInBatch(shopID string, guidList []st
 	return nil
 }
 
-func (repo InventoryImportRepository) DeleteInBatchCode(shopID string, codeList []string) error {
+func (repo InventoryImportRepository) DeleteInBatchCode(ctx context.Context, shopID string, codeList []string) error {
 
-	err := repo.pst.Delete(&models.InventoryImportDoc{}, bson.M{
+	err := repo.pst.Delete(ctx, &models.InventoryImportDoc{}, bson.M{
 		"shopid":   shopID,
 		"itemcode": bson.M{"$in": codeList},
 	})
@@ -67,14 +68,14 @@ func (repo InventoryImportRepository) DeleteInBatchCode(shopID string, codeList 
 	return nil
 }
 
-func (repo InventoryImportRepository) FindPage(shopID string, pageable micromodels.Pageable) ([]models.InventoryImportInfo, mongopagination.PaginationData, error) {
+func (repo InventoryImportRepository) FindPage(ctx context.Context, shopID string, pageable micromodels.Pageable) ([]models.InventoryImportInfo, mongopagination.PaginationData, error) {
 
 	filterQueries := bson.M{
 		"shopid": shopID,
 	}
 
 	docList := []models.InventoryImportInfo{}
-	pagination, err := repo.pst.FindPage(&models.InventoryImportInfo{}, filterQueries, pageable, &docList)
+	pagination, err := repo.pst.FindPage(ctx, &models.InventoryImportInfo{}, filterQueries, pageable, &docList)
 
 	if err != nil {
 		return []models.InventoryImportInfo{}, mongopagination.PaginationData{}, err

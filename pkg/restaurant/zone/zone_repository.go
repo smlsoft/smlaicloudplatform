@@ -1,6 +1,7 @@
 package zone
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
@@ -11,22 +12,22 @@ import (
 )
 
 type IZoneRepository interface {
-	Count(shopID string) (int, error)
-	Create(category models.ZoneDoc) (string, error)
-	CreateInBatch(docList []models.ZoneDoc) error
-	Update(shopID string, guid string, category models.ZoneDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	Delete(shopID string, authUsername string, filters map[string]interface{}) error
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ZoneInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.ZoneDoc, error)
-	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.ZoneItemGuid, error)
-	FindByDocIndentityGuid(shopID string, columnName string, filters interface{}) (models.ZoneDoc, error)
-	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.ZoneInfo, int, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	Create(ctx context.Context, category models.ZoneDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.ZoneDoc) error
+	Update(ctx context.Context, shopID string, guid string, category models.ZoneDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	Delete(ctx context.Context, shopID string, authUsername string, filters map[string]interface{}) error
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.ZoneInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.ZoneDoc, error)
+	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.ZoneItemGuid, error)
+	FindByDocIndentityGuid(ctx context.Context, shopID string, columnName string, filters interface{}) (models.ZoneDoc, error)
+	FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.ZoneInfo, int, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ZoneDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ZoneActivity, mongopagination.PaginationData, error)
-	FindDeletedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ZoneDeleteActivity, error)
-	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ZoneActivity, error)
+	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ZoneDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageable micromodels.Pageable) ([]models.ZoneActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ZoneDeleteActivity, error)
+	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, extraFilters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.ZoneActivity, error)
 }
 
 type ZoneRepository struct {

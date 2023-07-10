@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
@@ -13,27 +14,27 @@ import (
 )
 
 type IStockReturnProductRepository interface {
-	Count(shopID string) (int, error)
-	Create(doc models.StockReturnProductDoc) (string, error)
-	CreateInBatch(docList []models.StockReturnProductDoc) error
-	Update(shopID string, guid string, doc models.StockReturnProductDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	Delete(shopID string, username string, filters map[string]interface{}) error
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.StockReturnProductInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.StockReturnProductDoc, error)
-	FindByGuids(shopID string, guids []string) ([]models.StockReturnProductDoc, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	Create(ctx context.Context, doc models.StockReturnProductDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.StockReturnProductDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.StockReturnProductDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	Delete(ctx context.Context, shopID string, username string, filters map[string]interface{}) error
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.StockReturnProductInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.StockReturnProductDoc, error)
+	FindByGuids(ctx context.Context, shopID string, guids []string) ([]models.StockReturnProductDoc, error)
 
-	FindInItemGuid(shopID string, columnName string, itemGuidList []string) ([]models.StockReturnProductItemGuid, error)
-	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.StockReturnProductDoc, error)
-	FindPageFilter(shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.StockReturnProductInfo, mongopagination.PaginationData, error)
-	FindStep(shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.StockReturnProductInfo, int, error)
+	FindInItemGuid(ctx context.Context, shopID string, columnName string, itemGuidList []string) ([]models.StockReturnProductItemGuid, error)
+	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.StockReturnProductDoc, error)
+	FindPageFilter(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, pageable micromodels.Pageable) ([]models.StockReturnProductInfo, mongopagination.PaginationData, error)
+	FindStep(ctx context.Context, shopID string, filters map[string]interface{}, searchInFields []string, projects map[string]interface{}, pageableLimit micromodels.PageableStep) ([]models.StockReturnProductInfo, int, error)
 
-	FindDeletedPage(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockReturnProductDeleteActivity, mongopagination.PaginationData, error)
-	FindCreatedOrUpdatedPage(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockReturnProductActivity, mongopagination.PaginationData, error)
-	FindDeletedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockReturnProductDeleteActivity, error)
-	FindCreatedOrUpdatedStep(shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockReturnProductActivity, error)
+	FindDeletedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockReturnProductDeleteActivity, mongopagination.PaginationData, error)
+	FindCreatedOrUpdatedPage(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageable micromodels.Pageable) ([]models.StockReturnProductActivity, mongopagination.PaginationData, error)
+	FindDeletedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockReturnProductDeleteActivity, error)
+	FindCreatedOrUpdatedStep(ctx context.Context, shopID string, lastUpdatedDate time.Time, filters map[string]interface{}, pageableStep micromodels.PageableStep) ([]models.StockReturnProductActivity, error)
 
-	FindLastDocNo(shopID string, prefixDocNo string) (models.StockReturnProductDoc, error)
+	FindLastDocNo(ctx context.Context, shopID string, prefixDocNo string) (models.StockReturnProductDoc, error)
 }
 
 type StockReturnProductRepository struct {
@@ -58,7 +59,7 @@ func NewStockReturnProductRepository(pst microservice.IPersisterMongo) *StockRet
 	return insRepo
 }
 
-func (repo StockReturnProductRepository) FindLastDocNo(shopID string, prefixDocNo string) (models.StockReturnProductDoc, error) {
+func (repo StockReturnProductRepository) FindLastDocNo(ctx context.Context, shopID string, prefixDocNo string) (models.StockReturnProductDoc, error) {
 	filters := bson.M{
 		"shopid": shopID,
 		"deletedat": bson.M{
@@ -75,7 +76,7 @@ func (repo StockReturnProductRepository) FindLastDocNo(shopID string, prefixDocN
 	})
 
 	doc := models.StockReturnProductDoc{}
-	err := repo.pst.FindOne(models.StockReturnProductDoc{}, filters, &doc, &optSort)
+	err := repo.pst.FindOne(ctx, models.StockReturnProductDoc{}, filters, &doc, &optSort)
 
 	if err != nil {
 		return doc, err

@@ -10,7 +10,7 @@ func (m *MockDocumentImageRepository) Minus(a int, b int) (int, error) {
 	return args.Int(0), args.Error(1)
 }
 
-func (m *MockDocumentImageRepository) Create(doc models.DocumentImageDoc) (string, error) {
+func (m *MockDocumentImageRepository) Create(ctx context.Context, doc models.DocumentImageDoc) (string, error) {
 	args := m.Called(doc)
 	return args.String(0), args.Error(1)
 }

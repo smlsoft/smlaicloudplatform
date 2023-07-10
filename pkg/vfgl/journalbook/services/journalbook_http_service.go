@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	common "smlcloudplatform/pkg/models"
@@ -25,21 +26,32 @@ type IJournalBookHttpService interface {
 }
 
 type JournalBookHttpService struct {
-	repo   repositories.JournalBookMongoRepository
-	mqRepo repositories.JournalBookMqRepository
+	repo           repositories.JournalBookMongoRepository
+	mqRepo         repositories.JournalBookMqRepository
+	contextTimeout time.Duration
 }
 
 func NewJournalBookHttpService(repo repositories.JournalBookMongoRepository, mqRepo repositories.JournalBookMqRepository) JournalBookHttpService {
 
+	contextTimeout := time.Duration(15) * time.Second
+
 	return JournalBookHttpService{
-		repo:   repo,
-		mqRepo: mqRepo,
+		repo:           repo,
+		mqRepo:         mqRepo,
+		contextTimeout: contextTimeout,
 	}
+}
+
+func (svc JournalBookHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
 }
 
 func (svc JournalBookHttpService) Create(shopID string, authUsername string, doc models.JournalBook) (string, error) {
 
-	findDoc, err := svc.repo.FindOne(shopID, bson.M{"code": doc.Code})
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindOne(ctx, shopID, bson.M{"code": doc.Code})
 
 	if err != nil {
 		return "", err
@@ -59,7 +71,7 @@ func (svc JournalBookHttpService) Create(shopID string, authUsername string, doc
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -75,7 +87,10 @@ func (svc JournalBookHttpService) Create(shopID string, authUsername string, doc
 
 func (svc JournalBookHttpService) Update(guid string, shopID string, authUsername string, doc models.JournalBook) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -85,7 +100,7 @@ func (svc JournalBookHttpService) Update(guid string, shopID string, authUsernam
 		return errors.New("document not found")
 	}
 
-	findDocCode, err := svc.repo.FindOne(shopID, bson.M{"code": doc.Code})
+	findDocCode, err := svc.repo.FindOne(ctx, shopID, bson.M{"code": doc.Code})
 
 	if err != nil {
 		return err
@@ -100,7 +115,7 @@ func (svc JournalBookHttpService) Update(guid string, shopID string, authUsernam
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -109,7 +124,11 @@ func (svc JournalBookHttpService) Update(guid string, shopID string, authUsernam
 }
 
 func (svc JournalBookHttpService) Delete(guid string, shopID string, authUsername string) error {
-	err := svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	err := svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 
 	if err != nil {
 		return err
@@ -119,7 +138,10 @@ func (svc JournalBookHttpService) Delete(guid string, shopID string, authUsernam
 
 func (svc JournalBookHttpService) Info(guid string, shopID string) (models.JournalBookInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.JournalBookInfo{}, err
@@ -134,12 +156,16 @@ func (svc JournalBookHttpService) Info(guid string, shopID string) (models.Journ
 }
 
 func (svc JournalBookHttpService) Search(shopID string, pageable micromodels.Pageable) ([]models.JournalBookInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"guidfixed",
 		"code",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPage(ctx, shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.JournalBookInfo{}, pagination, err
@@ -149,6 +175,9 @@ func (svc JournalBookHttpService) Search(shopID string, pageable micromodels.Pag
 }
 
 func (svc JournalBookHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.JournalBook) (common.BulkImport, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
 
 	createDataList := []models.JournalBookDoc{}
 	duplicateDataList := []models.JournalBook{}
@@ -160,7 +189,7 @@ func (svc JournalBookHttpService) SaveInBatch(shopID string, authUsername string
 		itemCodeGuidList = append(itemCodeGuidList, doc.Code)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "docno", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "docno", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -199,7 +228,7 @@ func (svc JournalBookHttpService) SaveInBatch(shopID string, authUsername string
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.JournalBookDoc, error) {
-			return svc.repo.FindByDocIndentityGuid(shopID, "code", guid)
+			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "code", guid)
 		},
 		func(doc models.JournalBookDoc) bool {
 			if doc.Code != "" {
@@ -213,7 +242,7 @@ func (svc JournalBookHttpService) SaveInBatch(shopID string, authUsername string
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
-			err = svc.repo.Update(shopID, doc.GuidFixed, doc)
+			err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
 			if err != nil {
 				return nil
 			}
@@ -222,7 +251,7 @@ func (svc JournalBookHttpService) SaveInBatch(shopID string, authUsername string
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return common.BulkImport{}, err

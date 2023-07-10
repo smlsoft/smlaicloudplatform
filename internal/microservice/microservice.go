@@ -1,6 +1,7 @@
 package microservice
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -136,7 +137,7 @@ func (ms *Microservice) CheckReadyToStart() error {
 	if mongodbUri != "" {
 		ms.Logger.Debug("[MONGODB]Test Connection.")
 		pst := NewPersisterMongo(ms.config.MongoPersisterConfig())
-		err := pst.TestConnect()
+		err := pst.TestConnect(context.Background())
 		if err != nil {
 			ms.Logger.Errorf("[MONGODB]Connection Failed(%v)., with error %v", mongodbUri, err)
 			return err
@@ -265,7 +266,7 @@ func (ms *Microservice) Cleanup() error {
 
 	if ms.mongoPersisters != nil {
 		for _, pst := range ms.mongoPersisters {
-			pst.Cleanup()
+			pst.Cleanup(context.TODO())
 		}
 	}
 

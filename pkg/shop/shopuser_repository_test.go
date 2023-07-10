@@ -1,6 +1,7 @@
 package shop_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"smlcloudplatform/internal/microservice"
@@ -22,14 +23,14 @@ func TestCreateShopUser(t *testing.T) {
 	mongoPersister := microservice.NewPersisterMongo(mongoPersisterConfig)
 	repo := shop.NewShopUserRepository(mongoPersister)
 
-	err := repo.Save("25H2pZ8v2jRVGwjOLKBAzSaHgOA", "dev01", models.ROLE_USER)
+	err := repo.Save(context.TODO(), "25H2pZ8v2jRVGwjOLKBAzSaHgOA", "dev01", models.ROLE_USER)
 
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
 
-	memUser, err := repo.FindByShopIDAndUsername("25H2pZ8v2jRVGwjOLKBAzSaHgOA", "dev01")
+	memUser, err := repo.FindByShopIDAndUsername(context.TODO(), "25H2pZ8v2jRVGwjOLKBAzSaHgOA", "dev01")
 
 	if err != nil {
 		t.Error(err.Error())
@@ -58,7 +59,7 @@ func TestFindByUsernamePage(t *testing.T) {
 		Limit: 20,
 		Query: "",
 	}
-	docList, paginated, err := repo.FindByUsernamePage("dev01", pageable)
+	docList, paginated, err := repo.FindByUsernamePage(context.TODO(), "dev01", pageable)
 
 	if err != nil {
 		t.Error(err.Error())

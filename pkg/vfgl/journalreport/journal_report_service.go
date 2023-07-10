@@ -1,6 +1,7 @@
 package journalreport
 
 import (
+	"context"
 	"fmt"
 	chartofaccountModel "smlcloudplatform/pkg/vfgl/chartofaccount/models"
 	"smlcloudplatform/pkg/vfgl/journalreport/models"
@@ -18,20 +19,28 @@ type IJournalReportService interface {
 }
 
 type JournalReportService struct {
-	repoPg    IJournalReportPgRepository
-	repoMongo IJournalReportMongoRepository
-	usecase   usecase.ITrialBalanceSheetReportUsecase
+	repoPg         IJournalReportPgRepository
+	repoMongo      IJournalReportMongoRepository
+	usecase        usecase.ITrialBalanceSheetReportUsecase
+	contextTimeout time.Duration
 }
 
 func NewJournalReportService(repoPg IJournalReportPgRepository, repoMongo IJournalReportMongoRepository) JournalReportService {
 
+	contextTimeout := time.Duration(15) * time.Second
+
 	usecase := &usecase.TrialBalanceSheetReportUsecase{}
 
 	return JournalReportService{
-		repoPg:    repoPg,
-		repoMongo: repoMongo,
-		usecase:   usecase,
+		repoPg:         repoPg,
+		repoMongo:      repoMongo,
+		usecase:        usecase,
+		contextTimeout: contextTimeout,
 	}
+}
+
+func (svc JournalReportService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
 }
 
 func (svc JournalReportService) ProcessTrialBalanceSheetReport(shopId string, accountGroup string, includeCloseAccountMode bool, startDate time.Time, endDate time.Time) (*models.TrialBalanceSheetReport, error) {
@@ -218,6 +227,9 @@ func (svc JournalReportService) ProcessBalanceSheetReport(shopId string, account
 
 func (svc JournalReportService) ProcessLedgerAccount(shopID string, accountGroup string, consolidateAccountCode string, accountRanges []models.LedgerAccountCodeRange, startDate time.Time, endDate time.Time) ([]models.LedgerAccount, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	rawDocList, err := svc.repoPg.GetDataLedgerAccount(shopID, accountGroup, consolidateAccountCode, accountRanges, startDate, endDate)
 
 	if err != nil {
@@ -282,7 +294,7 @@ func (svc JournalReportService) ProcessLedgerAccount(shopID string, accountGroup
 			tempDocNoList = append(tempDocNoList, k)
 		}
 
-		journalSummaryList, err := svc.repoMongo.FindCountDetailByDocs(shopID, tempDocNoList)
+		journalSummaryList, err := svc.repoMongo.FindCountDetailByDocs(ctx, shopID, tempDocNoList)
 
 		if err != nil {
 			return nil, err
@@ -303,7 +315,7 @@ func (svc JournalReportService) ProcessLedgerAccount(shopID string, accountGroup
 			}
 		}
 
-		journalImageSummaryList, err := svc.repoMongo.FindCountImageByDocs(shopID, tempDocNoList)
+		journalImageSummaryList, err := svc.repoMongo.FindCountImageByDocs(ctx, shopID, tempDocNoList)
 
 		if err != nil {
 			return nil, err

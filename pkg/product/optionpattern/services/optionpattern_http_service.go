@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	common "smlcloudplatform/pkg/models"
@@ -24,19 +25,30 @@ type IOptionPatternHttpService interface {
 }
 
 type OptionPatternHttpService struct {
-	repo repositories.IOptionPatternRepository
+	repo           repositories.IOptionPatternRepository
+	contextTimeout time.Duration
 }
 
 func NewOptionPatternHttpService(repo repositories.IOptionPatternRepository) *OptionPatternHttpService {
 
+	contextTimeout := time.Duration(15) * time.Second
+
 	return &OptionPatternHttpService{
-		repo: repo,
+		repo:           repo,
+		contextTimeout: contextTimeout,
 	}
+}
+
+func (svc OptionPatternHttpService) getContextTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), svc.contextTimeout)
 }
 
 func (svc OptionPatternHttpService) CreateOptionPattern(shopID string, authUsername string, doc models.OptionPattern) (string, error) {
 
-	findDoc, err := svc.repo.FindByDocIndentityGuid(shopID, "patterncode", doc.PatternCode)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByDocIndentityGuid(ctx, shopID, "patterncode", doc.PatternCode)
 
 	if err != nil {
 		return "", err
@@ -60,7 +72,7 @@ func (svc OptionPatternHttpService) CreateOptionPattern(shopID string, authUsern
 	docData.CreatedBy = authUsername
 	docData.CreatedAt = time.Now()
 
-	_, err = svc.repo.Create(docData)
+	_, err = svc.repo.Create(ctx, docData)
 
 	if err != nil {
 		return "", err
@@ -71,7 +83,10 @@ func (svc OptionPatternHttpService) CreateOptionPattern(shopID string, authUsern
 
 func (svc OptionPatternHttpService) UpdateOptionPattern(shopID string, guid string, authUsername string, doc models.OptionPattern) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -86,7 +101,7 @@ func (svc OptionPatternHttpService) UpdateOptionPattern(shopID string, guid stri
 	findDoc.UpdatedBy = authUsername
 	findDoc.UpdatedAt = time.Now()
 
-	err = svc.repo.Update(shopID, guid, findDoc)
+	err = svc.repo.Update(ctx, shopID, guid, findDoc)
 
 	if err != nil {
 		return err
@@ -97,7 +112,10 @@ func (svc OptionPatternHttpService) UpdateOptionPattern(shopID string, guid stri
 
 func (svc OptionPatternHttpService) DeleteOptionPattern(shopID string, guid string, authUsername string) error {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return err
@@ -107,7 +125,7 @@ func (svc OptionPatternHttpService) DeleteOptionPattern(shopID string, guid stri
 		return errors.New("document not found")
 	}
 
-	err = svc.repo.DeleteByGuidfixed(shopID, guid, authUsername)
+	err = svc.repo.DeleteByGuidfixed(ctx, shopID, guid, authUsername)
 	if err != nil {
 		return err
 	}
@@ -117,7 +135,10 @@ func (svc OptionPatternHttpService) DeleteOptionPattern(shopID string, guid stri
 
 func (svc OptionPatternHttpService) InfoOptionPattern(shopID string, guid string) (models.OptionPatternInfo, error) {
 
-	findDoc, err := svc.repo.FindByGuid(shopID, guid)
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
+	findDoc, err := svc.repo.FindByGuid(ctx, shopID, guid)
 
 	if err != nil {
 		return models.OptionPatternInfo{}, err
@@ -132,12 +153,16 @@ func (svc OptionPatternHttpService) InfoOptionPattern(shopID string, guid string
 }
 
 func (svc OptionPatternHttpService) SearchOptionPattern(shopID string, pageable micromodels.Pageable) ([]models.OptionPatternInfo, mongopagination.PaginationData, error) {
+
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	searchInFields := []string{
 		"guidfixed",
 		"patterncode",
 	}
 
-	docList, pagination, err := svc.repo.FindPage(shopID, searchInFields, pageable)
+	docList, pagination, err := svc.repo.FindPage(ctx, shopID, searchInFields, pageable)
 
 	if err != nil {
 		return []models.OptionPatternInfo{}, pagination, err
@@ -148,6 +173,9 @@ func (svc OptionPatternHttpService) SearchOptionPattern(shopID string, pageable 
 
 func (svc OptionPatternHttpService) SaveInBatch(shopID string, authUsername string, dataList []models.OptionPattern) (common.BulkImport, error) {
 
+	ctx, ctxCancel := svc.getContextTimeout()
+	defer ctxCancel()
+
 	payloadList, payloadDuplicateList := importdata.FilterDuplicate[models.OptionPattern](dataList, svc.getDocIDKey)
 
 	itemCodeGuidList := []string{}
@@ -155,7 +183,7 @@ func (svc OptionPatternHttpService) SaveInBatch(shopID string, authUsername stri
 		itemCodeGuidList = append(itemCodeGuidList, doc.PatternCode)
 	}
 
-	findItemGuid, err := svc.repo.FindInItemGuid(shopID, "patterncode", itemCodeGuidList)
+	findItemGuid, err := svc.repo.FindInItemGuid(ctx, shopID, "patterncode", itemCodeGuidList)
 
 	if err != nil {
 		return common.BulkImport{}, err
@@ -194,7 +222,7 @@ func (svc OptionPatternHttpService) SaveInBatch(shopID string, authUsername stri
 		duplicateDataList,
 		svc.getDocIDKey,
 		func(shopID string, guid string) (models.OptionPatternDoc, error) {
-			return svc.repo.FindByDocIndentityGuid(shopID, "patterncode", guid)
+			return svc.repo.FindByDocIndentityGuid(ctx, shopID, "patterncode", guid)
 		},
 		func(doc models.OptionPatternDoc) bool {
 			return doc.PatternCode != ""
@@ -205,7 +233,7 @@ func (svc OptionPatternHttpService) SaveInBatch(shopID string, authUsername stri
 			doc.UpdatedBy = authUsername
 			doc.UpdatedAt = time.Now()
 
-			err = svc.repo.Update(shopID, doc.GuidFixed, doc)
+			err = svc.repo.Update(ctx, shopID, doc.GuidFixed, doc)
 			if err != nil {
 				return nil
 			}
@@ -214,7 +242,7 @@ func (svc OptionPatternHttpService) SaveInBatch(shopID string, authUsername stri
 	)
 
 	if len(createDataList) > 0 {
-		err = svc.repo.CreateInBatch(createDataList)
+		err = svc.repo.CreateInBatch(ctx, createDataList)
 
 		if err != nil {
 			return common.BulkImport{}, err

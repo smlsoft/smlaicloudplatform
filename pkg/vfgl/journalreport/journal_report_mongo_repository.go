@@ -1,6 +1,7 @@
 package journalreport
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/vfgl/journalreport/models"
 
@@ -8,8 +9,8 @@ import (
 )
 
 type IJournalReportMongoRepository interface {
-	FindCountDetailByDocs(shopID string, docs []string) ([]models.JournalSummary, error)
-	FindCountImageByDocs(shopID string, docs []string) ([]models.JournalImageSummary, error)
+	FindCountDetailByDocs(ctx context.Context, shopID string, docs []string) ([]models.JournalSummary, error)
+	FindCountImageByDocs(ctx context.Context, shopID string, docs []string) ([]models.JournalImageSummary, error)
 }
 
 type JournalMongoRepository struct {
@@ -25,7 +26,7 @@ func NewJournalMongoRepository(pst microservice.IPersisterMongo) *JournalMongoRe
 	return insRepo
 }
 
-func (repo *JournalMongoRepository) FindCountDetailByDocs(shopID string, docs []string) ([]models.JournalSummary, error) {
+func (repo *JournalMongoRepository) FindCountDetailByDocs(ctx context.Context, shopID string, docs []string) ([]models.JournalSummary, error) {
 
 	matchQuery := bson.M{
 		"shopid": shopID,
@@ -46,7 +47,7 @@ func (repo *JournalMongoRepository) FindCountDetailByDocs(shopID string, docs []
 	}
 
 	docList := []models.JournalSummary{}
-	err := repo.pst.Aggregate(&models.JournalSummary{}, query, &docList)
+	err := repo.pst.Aggregate(ctx, &models.JournalSummary{}, query, &docList)
 
 	if err != nil {
 		return []models.JournalSummary{}, err
@@ -55,7 +56,7 @@ func (repo *JournalMongoRepository) FindCountDetailByDocs(shopID string, docs []
 	return docList, nil
 }
 
-func (repo *JournalMongoRepository) FindCountImageByDocs(shopID string, docs []string) ([]models.JournalImageSummary, error) {
+func (repo *JournalMongoRepository) FindCountImageByDocs(ctx context.Context, shopID string, docs []string) ([]models.JournalImageSummary, error) {
 
 	matchQuery := bson.M{
 		"shopid":            shopID,
@@ -75,7 +76,7 @@ func (repo *JournalMongoRepository) FindCountImageByDocs(shopID string, docs []s
 	}
 
 	docList := []models.JournalImageSummary{}
-	err := repo.pst.Aggregate(&models.JournalImageSummary{}, query, &docList)
+	err := repo.pst.Aggregate(ctx, &models.JournalImageSummary{}, query, &docList)
 
 	if err != nil {
 		return []models.JournalImageSummary{}, err

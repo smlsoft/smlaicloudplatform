@@ -1,6 +1,7 @@
 package syncdata
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -93,7 +94,7 @@ func (h SyncDataHttp) Save(ctx microservice.IContext) error {
 				return h.inventoryService.IsExistsGuid(userInfo.ShopID, syncData.MyGuid)
 			},
 			func() (string, error) {
-				idx, err := h.inventoryService.CreateWithGuid(userInfo.ShopID, userInfo.Username, syncData.MyGuid, inv)
+				idx, err := h.inventoryService.CreateWithGuid(context.Background(), userInfo.ShopID, userInfo.Username, syncData.MyGuid, inv)
 				if err != nil {
 					return "", err
 				}

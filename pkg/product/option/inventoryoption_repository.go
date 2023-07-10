@@ -1,6 +1,7 @@
 package option
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/product/option/models"
@@ -12,12 +13,12 @@ import (
 )
 
 type IOptionRepository interface {
-	Create(doc models.InventoryOptionMainDoc) (string, error)
-	Update(shopID string, guid string, doc models.InventoryOptionMainDoc) error
-	Delete(shopID string, guid string, username string) error
-	FindByGuid(shopID string, guid string) (models.InventoryOptionMainDoc, error)
-	FindPage(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionMainInfo, mongopagination.PaginationData, error)
-	FindByDocIndentityGuid(shopID string, indentityField string, indentityValue interface{}) (models.InventoryOptionMainDoc, error)
+	Create(ctx context.Context, doc models.InventoryOptionMainDoc) (string, error)
+	Update(ctx context.Context, shopID string, guid string, doc models.InventoryOptionMainDoc) error
+	Delete(ctx context.Context, shopID string, guid string, username string) error
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.InventoryOptionMainDoc, error)
+	FindPage(ctx context.Context, shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionMainInfo, mongopagination.PaginationData, error)
+	FindByDocIndentityGuid(ctx context.Context, shopID string, indentityField string, indentityValue interface{}) (models.InventoryOptionMainDoc, error)
 }
 
 type OptionRepository struct {
@@ -34,8 +35,8 @@ func NewOptionRepository(pst microservice.IPersisterMongo) *OptionRepository {
 	return insRepo
 }
 
-func (repo OptionRepository) Create(doc models.InventoryOptionMainDoc) (string, error) {
-	idx, err := repo.pst.Create(&models.InventoryOptionMainDoc{}, doc)
+func (repo OptionRepository) Create(ctx context.Context, doc models.InventoryOptionMainDoc) (string, error) {
+	idx, err := repo.pst.Create(ctx, &models.InventoryOptionMainDoc{}, doc)
 
 	if err != nil {
 		return "", err
@@ -44,14 +45,14 @@ func (repo OptionRepository) Create(doc models.InventoryOptionMainDoc) (string, 
 	return idx.Hex(), nil
 }
 
-func (repo OptionRepository) Update(shopID string, guid string, doc models.InventoryOptionMainDoc) error {
+func (repo OptionRepository) Update(ctx context.Context, shopID string, guid string, doc models.InventoryOptionMainDoc) error {
 
 	filterDoc := map[string]interface{}{
 		"shopid":    shopID,
 		"guidfixed": guid,
 	}
 
-	err := repo.pst.UpdateOne(&models.InventoryOptionMainDoc{}, filterDoc, doc)
+	err := repo.pst.UpdateOne(ctx, &models.InventoryOptionMainDoc{}, filterDoc, doc)
 
 	if err != nil {
 		return err
@@ -60,8 +61,8 @@ func (repo OptionRepository) Update(shopID string, guid string, doc models.Inven
 	return nil
 }
 
-func (repo OptionRepository) Delete(shopID string, guid string, username string) error {
-	err := repo.pst.SoftDelete(&models.InventoryOptionMainDoc{}, username, bson.M{"guidfixed": guid, "shopid": shopID})
+func (repo OptionRepository) Delete(ctx context.Context, shopID string, guid string, username string) error {
+	err := repo.pst.SoftDelete(ctx, &models.InventoryOptionMainDoc{}, username, bson.M{"guidfixed": guid, "shopid": shopID})
 
 	if err != nil {
 		return err
@@ -70,10 +71,10 @@ func (repo OptionRepository) Delete(shopID string, guid string, username string)
 	return nil
 }
 
-func (repo OptionRepository) FindByGuid(shopID string, guid string) (models.InventoryOptionMainDoc, error) {
+func (repo OptionRepository) FindByGuid(ctx context.Context, shopID string, guid string) (models.InventoryOptionMainDoc, error) {
 
 	doc := &models.InventoryOptionMainDoc{}
-	err := repo.pst.FindOne(&models.InventoryOptionMainDoc{}, bson.M{"guidfixed": guid, "shopid": shopID, "deletedat": bson.M{"$exists": false}}, doc)
+	err := repo.pst.FindOne(ctx, &models.InventoryOptionMainDoc{}, bson.M{"guidfixed": guid, "shopid": shopID, "deletedat": bson.M{"$exists": false}}, doc)
 
 	if err != nil {
 		return models.InventoryOptionMainDoc{}, err
@@ -82,7 +83,7 @@ func (repo OptionRepository) FindByGuid(shopID string, guid string) (models.Inve
 	return *doc, nil
 }
 
-func (repo OptionRepository) FindPage(shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionMainInfo, mongopagination.PaginationData, error) {
+func (repo OptionRepository) FindPage(ctx context.Context, shopID string, pageable micromodels.Pageable) ([]models.InventoryOptionMainInfo, mongopagination.PaginationData, error) {
 
 	filterQueries := bson.M{
 		"shopid":    shopID,
@@ -104,7 +105,7 @@ func (repo OptionRepository) FindPage(shopID string, pageable micromodels.Pageab
 	}
 
 	docList := []models.InventoryOptionMainInfo{}
-	pagination, err := repo.pst.FindPage(&models.InventoryOptionMainInfo{}, filterQueries, pageable, &docList)
+	pagination, err := repo.pst.FindPage(ctx, &models.InventoryOptionMainInfo{}, filterQueries, pageable, &docList)
 
 	if err != nil {
 		return []models.InventoryOptionMainInfo{}, mongopagination.PaginationData{}, err

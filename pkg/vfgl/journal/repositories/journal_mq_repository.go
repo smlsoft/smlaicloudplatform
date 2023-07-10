@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	common "smlcloudplatform/pkg/models"
 	"smlcloudplatform/pkg/repositories"
@@ -9,10 +10,10 @@ import (
 )
 
 type IJournalMqRepository interface {
-	Create(doc models.JournalDoc) error
+	Create(ctx context.Context, doc models.JournalDoc) error
 	Update(doc models.JournalDoc) error
 	Delete(doc common.Identity) error
-	CreateInBatch(docList []models.JournalDoc) error
+	CreateInBatch(ctx context.Context, docList []models.JournalDoc) error
 }
 
 type JournalMqRepository struct {

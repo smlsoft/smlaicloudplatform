@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"smlcloudplatform/internal/microservice"
 	micromodels "smlcloudplatform/internal/microservice/models"
 	"smlcloudplatform/pkg/repositories"
@@ -10,14 +11,14 @@ import (
 )
 
 type IAccountGroupMongoRepository interface {
-	Count(shopID string) (int, error)
-	Create(category models.AccountGroupDoc) (string, error)
-	CreateInBatch(docList []models.AccountGroupDoc) error
-	Update(shopID string, guid string, category models.AccountGroupDoc) error
-	DeleteByGuidfixed(shopID string, guid string, username string) error
-	FindOne(shopID string, filters interface{}) (models.AccountGroupDoc, error)
-	FindPage(shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.AccountGroupInfo, mongopagination.PaginationData, error)
-	FindByGuid(shopID string, guid string) (models.AccountGroupDoc, error)
+	Count(ctx context.Context, shopID string) (int, error)
+	Create(ctx context.Context, doc models.AccountGroupDoc) (string, error)
+	CreateInBatch(ctx context.Context, docList []models.AccountGroupDoc) error
+	Update(ctx context.Context, shopID string, guid string, doc models.AccountGroupDoc) error
+	DeleteByGuidfixed(ctx context.Context, shopID string, guid string, username string) error
+	FindOne(ctx context.Context, shopID string, filters interface{}) (models.AccountGroupDoc, error)
+	FindPage(ctx context.Context, shopID string, searchInFields []string, pageable micromodels.Pageable) ([]models.AccountGroupInfo, mongopagination.PaginationData, error)
+	FindByGuid(ctx context.Context, shopID string, guid string) (models.AccountGroupDoc, error)
 }
 
 type AccountGroupMongoRepository struct {
