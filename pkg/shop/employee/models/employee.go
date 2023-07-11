@@ -15,6 +15,7 @@ type Employee struct {
 	ProfilePicture string    `json:"profilepicture" bson:"profilepicture"`
 	Roles          *[]string `json:"roles" bson:"roles"`
 	IsEnabled      bool      `json:"isenabled" bson:"isenabled"`
+	IsUsePOS       bool      `json:"isusepos" bson:"isusepos"`
 	Contact        Contact   `json:"contact" bson:"contact"`
 	PinCode        string    `json:"pincode" bson:"pincode"`
 }

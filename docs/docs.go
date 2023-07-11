@@ -7168,7 +7168,7 @@ const docTemplate = `{
         },
         "/login": {
             "post": {
-                "description": "get struct array by ID",
+                "description": "refresh token",
                 "consumes": [
                     "application/json"
                 ],
@@ -7177,12 +7177,12 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "User Account",
-                        "name": "User",
+                        "description": "Reresh Token",
+                        "name": "TokenLoginRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserLoginRequest"
+                            "$ref": "#/definitions/authentication.TokenLoginRequest"
                         }
                     }
                 ],
@@ -28545,6 +28545,9 @@ const docTemplate = `{
         },
         "authentication.TokenLoginRequest": {
             "type": "object",
+            "required": [
+                "token"
+            ],
             "properties": {
                 "token": {
                     "type": "string"
@@ -29055,15 +29058,32 @@ const docTemplate = `{
         "models.Branch": {
             "type": "object",
             "required": [
-                "guidfixed",
                 "names"
             ],
             "properties": {
+                "businesstypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "code": {
                     "type": "string"
                 },
-                "guidfixed": {
-                    "type": "string"
+                "contact": {
+                    "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact"
+                },
+                "departments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Department"
+                    }
+                },
+                "languages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "names": {
                     "type": "array",
@@ -29560,38 +29580,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "comment": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Contact": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "districtcode": {
-                    "type": "string"
-                },
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                },
-                "phonenumber": {
-                    "type": "string"
-                },
-                "provincecode": {
-                    "type": "string"
-                },
-                "subdistrictcode": {
-                    "type": "string"
-                },
-                "zipcode": {
                     "type": "string"
                 }
             }
@@ -30289,12 +30277,15 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/models.Contact"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
                 },
                 "email": {
                     "type": "string"
                 },
                 "isenabled": {
+                    "type": "boolean"
+                },
+                "isusepos": {
                     "type": "boolean"
                 },
                 "name": {
@@ -30324,12 +30315,15 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/models.Contact"
+                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
                 },
                 "email": {
                     "type": "string"
                 },
                 "isenabled": {
+                    "type": "boolean"
+                },
+                "isusepos": {
                     "type": "boolean"
                 },
                 "name": {
@@ -30354,9 +30348,6 @@ const docTemplate = `{
             "properties": {
                 "uri": {
                     "type": "string"
-                },
-                "xorder": {
-                    "type": "integer"
                 }
             }
         },
@@ -36050,6 +36041,38 @@ const docTemplate = `{
                 }
             }
         },
+        "smlcloudplatform_pkg_organization_branch_models.Contact": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
         "smlcloudplatform_pkg_pos_setting_models.Warehouse": {
             "type": "object",
             "required": [
@@ -36261,6 +36284,38 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_shop_employee_models.Contact": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
                 }
             }
         },
