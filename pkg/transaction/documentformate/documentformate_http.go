@@ -49,6 +49,7 @@ func (h DocumentFormateHttp) RouteSetup() {
 	h.ms.GET("/transaction/document-formate/default", h.InfoDocumentFormateByCode)
 	h.ms.PUT("/transaction/document-formate/:id", h.UpdateDocumentFormate)
 	h.ms.DELETE("/transaction/document-formate/:id", h.DeleteDocumentFormate)
+	h.ms.DELETE("/transaction/document-formate", h.DeleteDocumentFormateByGUIDs)
 	h.ms.GET("/transaction/document-formate/default", h.InfoDocumentFormateDefault)
 }
 
