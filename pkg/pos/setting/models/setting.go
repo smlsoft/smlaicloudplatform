@@ -32,18 +32,18 @@ type POSEmployee struct {
 type Branch struct {
 	models.DocIdentity `bson:"inline"`
 	Code               string          `json:"code" bson:"code"`
-	Names              *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	Names              *[]models.NameX `json:"names" bson:"names"`
 }
 
 type Warehouse struct {
 	models.DocIdentity `bson:"inline"`
 	Code               string          `json:"code" bson:"code"`
-	Names              *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	Names              *[]models.NameX `json:"names" bson:"names"`
 }
 
 type Location struct {
 	Code  string          `json:"code" bson:"code"`
-	Names *[]models.NameX `json:"names" bson:"names" validate:"required,min=1,unique=Code,dive"`
+	Names *[]models.NameX `json:"names" bson:"names"`
 }
 
 type SettingInfo struct {
