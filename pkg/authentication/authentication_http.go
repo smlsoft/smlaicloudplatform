@@ -131,7 +131,7 @@ func (h AuthenticationHttp) Login(ctx microservice.IContext) error {
 // @Accept 		json
 // @Success		200	{object}	common.AuthResponse
 // @Failure		400 {object}	common.AuthResponseFailed
-// @Router /login [post]
+// @Router /refresh [post]
 func (h AuthenticationHttp) RefreshToken(ctx microservice.IContext) error {
 
 	input := ctx.ReadInput()

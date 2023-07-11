@@ -7168,7 +7168,7 @@ const docTemplate = `{
         },
         "/login": {
             "post": {
-                "description": "refresh token",
+                "description": "get struct array by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -7177,12 +7177,12 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "description": "Reresh Token",
-                        "name": "TokenLoginRequest",
+                        "description": "User Account",
+                        "name": "User",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/authentication.TokenLoginRequest"
+                            "$ref": "#/definitions/models.UserLoginRequest"
                         }
                     }
                 ],
@@ -15339,6 +15339,42 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponseFailed"
+                        }
+                    }
+                }
+            }
+        },
+        "/refresh": {
+            "post": {
+                "description": "refresh token",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "parameters": [
+                    {
+                        "description": "Reresh Token",
+                        "name": "TokenLoginRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/authentication.TokenLoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/models.AuthResponseFailed"
                         }
@@ -29061,29 +29097,18 @@ const docTemplate = `{
                 "names"
             ],
             "properties": {
-                "businesstypes": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "code": {
-                    "type": "string"
-                },
-                "contact": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact"
+                    "type": "integer"
                 },
                 "departments": {
                     "type": "array",
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.Department"
                     }
                 },
-                "languages": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "location": {
+                    "$ref": "#/definitions/models.Location"
                 },
                 "names": {
                     "type": "array",
@@ -29092,6 +29117,10 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "telephone": {
+                    "type": "string",
+                    "maxLength": 100
                 }
             }
         },
@@ -29584,6 +29613,38 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Contact": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "countrycode": {
+                    "type": "string"
+                },
+                "districtcode": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "phonenumber": {
+                    "type": "string"
+                },
+                "provincecode": {
+                    "type": "string"
+                },
+                "subdistrictcode": {
+                    "type": "string"
+                },
+                "zipcode": {
+                    "type": "string"
+                }
+            }
+        },
         "models.CreditorGroup": {
             "type": "object",
             "required": [
@@ -29838,13 +29899,18 @@ const docTemplate = `{
         },
         "models.Department": {
             "type": "object",
+            "required": [
+                "code",
+                "names"
+            ],
             "properties": {
                 "code": {
-                    "description": "GuidFixed string         ` + "`" + `json:\"guidfixed\"` + "`" + `",
                     "type": "string"
                 },
                 "names": {
                     "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
@@ -30277,7 +30343,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
+                    "$ref": "#/definitions/models.Contact"
                 },
                 "email": {
                     "type": "string"
@@ -30315,7 +30381,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "contact": {
-                    "$ref": "#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact"
+                    "$ref": "#/definitions/models.Contact"
                 },
                 "email": {
                     "type": "string"
@@ -31842,6 +31908,13 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
+                },
+                "shelf": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/definitions/models.Shelf"
+                    }
                 }
             }
         },
@@ -32830,7 +32903,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "taxtype": {
@@ -32874,68 +32947,15 @@ const docTemplate = `{
         },
         "models.ProductBarcode": {
             "type": "object",
-            "required": [
-                "barcode",
-                "names"
-            ],
             "properties": {
                 "barcode": {
-                    "type": "string",
-                    "minLength": 1
-                },
-                "colorselect": {
                     "type": "string"
                 },
-                "colorselecthex": {
+                "guidfixed": {
                     "type": "string"
-                },
-                "condition": {
-                    "type": "boolean"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "groupcode": {
-                    "type": "string"
-                },
-                "groupnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage"
-                    }
-                },
-                "imageuri": {
-                    "type": "string"
-                },
-                "isalacarte": {
-                    "type": "boolean"
-                },
-                "isdividend": {
-                    "type": "boolean"
-                },
-                "isonlystaff": {
-                    "type": "boolean"
-                },
-                "issplitunitprint": {
-                    "type": "boolean"
-                },
-                "issumpoint": {
-                    "type": "boolean"
-                },
-                "isusesubbarcodes": {
-                    "type": "boolean"
                 },
                 "itemcode": {
                     "type": "string"
-                },
-                "itemtype": {
-                    "type": "integer"
                 },
                 "itemunitcode": {
                     "type": "string"
@@ -32946,82 +32966,16 @@ const docTemplate = `{
                         "$ref": "#/definitions/models.NameX"
                     }
                 },
-                "itemunitsize": {
-                    "type": "number"
-                },
-                "maxdiscount": {
-                    "type": "string"
-                },
                 "names": {
                     "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
                     "items": {
                         "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "options": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductOption"
-                    }
-                },
-                "ordertypes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ProductOrderType"
                     }
                 },
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
-                    }
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "refbarcodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.RefProductBarcode"
-                    }
-                },
-                "refdividevalue": {
-                    "type": "number"
-                },
-                "refstandvalue": {
-                    "type": "number"
-                },
-                "refunitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "standvalue": {
-                    "type": "number"
-                },
-                "stockbarcode": {
-                    "type": "string"
-                },
-                "taxtype": {
-                    "type": "integer"
-                },
-                "useimageorcolor": {
-                    "type": "boolean"
-                },
-                "vatcal": {
-                    "type": "integer"
-                },
-                "vattype": {
-                    "type": "integer"
-                },
-                "xsorts": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.XSort"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice"
                     }
                 }
             }
@@ -33129,7 +33083,7 @@ const docTemplate = `{
                 "prices": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.ProductPrice"
+                        "$ref": "#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice"
                     }
                 },
                 "qty": {
@@ -33358,17 +33312,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.NameX"
                     }
-                },
-                "price": {
-                    "type": "number"
-                }
-            }
-        },
-        "models.ProductPrice": {
-            "type": "object",
-            "properties": {
-                "keynumber": {
-                    "type": "integer"
                 },
                 "price": {
                     "type": "number"
@@ -33837,48 +33780,6 @@ const docTemplate = `{
                 },
                 "wallettype": {
                     "type": "integer"
-                }
-            }
-        },
-        "models.RefProductBarcode": {
-            "type": "object",
-            "required": [
-                "barcode"
-            ],
-            "properties": {
-                "barcode": {
-                    "type": "string",
-                    "minLength": 1
-                },
-                "condition": {
-                    "type": "boolean"
-                },
-                "dividevalue": {
-                    "type": "number"
-                },
-                "guidfixed": {
-                    "type": "string"
-                },
-                "itemunitcode": {
-                    "type": "string"
-                },
-                "itemunitnames": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "qty": {
-                    "type": "number"
-                },
-                "standvalue": {
-                    "type": "number"
                 }
             }
         },
@@ -36041,38 +35942,6 @@ const docTemplate = `{
                 }
             }
         },
-        "smlcloudplatform_pkg_organization_branch_models.Contact": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "districtcode": {
-                    "type": "string"
-                },
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                },
-                "phonenumber": {
-                    "type": "string"
-                },
-                "provincecode": {
-                    "type": "string"
-                },
-                "subdistrictcode": {
-                    "type": "string"
-                },
-                "zipcode": {
-                    "type": "string"
-                }
-            }
-        },
         "smlcloudplatform_pkg_pos_setting_models.Warehouse": {
             "type": "object",
             "required": [
@@ -36130,6 +35999,17 @@ const docTemplate = `{
                 }
             }
         },
+        "smlcloudplatform_pkg_product_product_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
         "smlcloudplatform_pkg_product_productbarcode_models.ProductImage": {
             "type": "object",
             "properties": {
@@ -36138,6 +36018,17 @@ const docTemplate = `{
                 },
                 "xorder": {
                     "type": "integer"
+                }
+            }
+        },
+        "smlcloudplatform_pkg_product_productbarcode_models.ProductPrice": {
+            "type": "object",
+            "properties": {
+                "keynumber": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
                 }
             }
         },
@@ -36284,38 +36175,6 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "integer"
-                }
-            }
-        },
-        "smlcloudplatform_pkg_shop_employee_models.Contact": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "countrycode": {
-                    "type": "string"
-                },
-                "districtcode": {
-                    "type": "string"
-                },
-                "latitude": {
-                    "type": "number"
-                },
-                "longitude": {
-                    "type": "number"
-                },
-                "phonenumber": {
-                    "type": "string"
-                },
-                "provincecode": {
-                    "type": "string"
-                },
-                "subdistrictcode": {
-                    "type": "string"
-                },
-                "zipcode": {
-                    "type": "string"
                 }
             }
         },

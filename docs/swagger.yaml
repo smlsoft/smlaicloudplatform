@@ -361,28 +361,24 @@ definitions:
     type: object
   models.Branch:
     properties:
-      businesstypes:
-        items:
-          type: string
-        type: array
       code:
-        type: string
-      contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_organization_branch_models.Contact'
+        type: integer
       departments:
         items:
           $ref: '#/definitions/models.Department'
         type: array
-      languages:
-        items:
-          type: string
-        type: array
+        uniqueItems: true
+      location:
+        $ref: '#/definitions/models.Location'
       names:
         items:
           $ref: '#/definitions/models.NameX'
         minItems: 1
         type: array
         uniqueItems: true
+      telephone:
+        maxLength: 100
+        type: string
     required:
     - names
     type: object
@@ -720,6 +716,27 @@ definitions:
       comment:
         type: string
     type: object
+  models.Contact:
+    properties:
+      address:
+        type: string
+      countrycode:
+        type: string
+      districtcode:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      phonenumber:
+        type: string
+      provincecode:
+        type: string
+      subdistrictcode:
+        type: string
+      zipcode:
+        type: string
+    type: object
   models.CreditorGroup:
     properties:
       groupcode:
@@ -893,12 +910,16 @@ definitions:
   models.Department:
     properties:
       code:
-        description: GuidFixed string         `json:"guidfixed"`
         type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
+        minItems: 1
         type: array
+        uniqueItems: true
+    required:
+    - code
+    - names
     type: object
   models.Detail:
     properties:
@@ -1189,7 +1210,7 @@ definitions:
       code:
         type: string
       contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
+        $ref: '#/definitions/models.Contact'
       email:
         type: string
       isenabled:
@@ -1214,7 +1235,7 @@ definitions:
       code:
         type: string
       contact:
-        $ref: '#/definitions/smlcloudplatform_pkg_shop_employee_models.Contact'
+        $ref: '#/definitions/models.Contact'
       email:
         type: string
       isenabled:
@@ -2264,6 +2285,11 @@ definitions:
         minItems: 1
         type: array
         uniqueItems: true
+      shelf:
+        items:
+          $ref: '#/definitions/models.Shelf'
+        type: array
+        uniqueItems: true
     required:
     - names
     type: object
@@ -2931,7 +2957,7 @@ definitions:
         uniqueItems: true
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       taxtype:
         description: 0 ภาษีมูลค่าเพิ่ม 7%, 1 ยกเว้นภาษี
@@ -2966,106 +2992,25 @@ definitions:
   models.ProductBarcode:
     properties:
       barcode:
-        minLength: 1
         type: string
-      colorselect:
+      guidfixed:
         type: string
-      colorselecthex:
-        type: string
-      condition:
-        type: boolean
-      dividevalue:
-        type: number
-      groupcode:
-        type: string
-      groupnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      images:
-        items:
-          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductImage'
-        type: array
-      imageuri:
-        type: string
-      isalacarte:
-        type: boolean
-      isdividend:
-        type: boolean
-      isonlystaff:
-        type: boolean
-      issplitunitprint:
-        type: boolean
-      issumpoint:
-        type: boolean
-      isusesubbarcodes:
-        type: boolean
       itemcode:
         type: string
-      itemtype:
-        type: integer
       itemunitcode:
         type: string
       itemunitnames:
         items:
           $ref: '#/definitions/models.NameX'
         type: array
-      itemunitsize:
-        type: number
-      maxdiscount:
-        type: string
       names:
         items:
           $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      options:
-        items:
-          $ref: '#/definitions/models.ProductOption'
-        type: array
-      ordertypes:
-        items:
-          $ref: '#/definitions/models.ProductOrderType'
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_productbarcode_models.ProductPrice'
         type: array
-      qty:
-        type: number
-      refbarcodes:
-        items:
-          $ref: '#/definitions/models.RefProductBarcode'
-        type: array
-      refdividevalue:
-        type: number
-      refstandvalue:
-        type: number
-      refunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      standvalue:
-        type: number
-      stockbarcode:
-        type: string
-      taxtype:
-        type: integer
-      useimageorcolor:
-        type: boolean
-      vatcal:
-        type: integer
-      vattype:
-        type: integer
-      xsorts:
-        items:
-          $ref: '#/definitions/models.XSort'
-        type: array
-        uniqueItems: true
-    required:
-    - barcode
-    - names
     type: object
   models.ProductBarcodeRequest:
     properties:
@@ -3134,7 +3079,7 @@ definitions:
         type: array
       prices:
         items:
-          $ref: '#/definitions/models.ProductPrice'
+          $ref: '#/definitions/smlcloudplatform_pkg_product_product_models.ProductPrice'
         type: array
       qty:
         type: number
@@ -3297,13 +3242,6 @@ definitions:
         type: number
     required:
     - guidfixed
-    type: object
-  models.ProductPrice:
-    properties:
-      keynumber:
-        type: integer
-      price:
-        type: number
     type: object
   models.ProductUnit:
     properties:
@@ -3618,34 +3556,6 @@ definitions:
         type: integer
     required:
     - names
-    type: object
-  models.RefProductBarcode:
-    properties:
-      barcode:
-        minLength: 1
-        type: string
-      condition:
-        type: boolean
-      dividevalue:
-        type: number
-      guidfixed:
-        type: string
-      itemunitcode:
-        type: string
-      itemunitnames:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        type: array
-      qty:
-        type: number
-      standvalue:
-        type: number
-    required:
-    - barcode
     type: object
   models.Reference:
     properties:
@@ -5100,27 +5010,6 @@ definitions:
       success:
         type: boolean
     type: object
-  smlcloudplatform_pkg_organization_branch_models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
-    type: object
   smlcloudplatform_pkg_pos_setting_models.Warehouse:
     properties:
       code:
@@ -5159,12 +5048,26 @@ definitions:
       xorder:
         type: integer
     type: object
+  smlcloudplatform_pkg_product_product_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
+    type: object
   smlcloudplatform_pkg_product_productbarcode_models.ProductImage:
     properties:
       uri:
         type: string
       xorder:
         type: integer
+    type: object
+  smlcloudplatform_pkg_product_productbarcode_models.ProductPrice:
+    properties:
+      keynumber:
+        type: integer
+      price:
+        type: number
     type: object
   smlcloudplatform_pkg_product_unit_models.Unit:
     properties:
@@ -5264,27 +5167,6 @@ definitions:
     required:
     - code
     - names
-    type: object
-  smlcloudplatform_pkg_shop_employee_models.Contact:
-    properties:
-      address:
-        type: string
-      countrycode:
-        type: string
-      districtcode:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      phonenumber:
-        type: string
-      provincecode:
-        type: string
-      subdistrictcode:
-        type: string
-      zipcode:
-        type: string
     type: object
   smlcloudplatform_pkg_storefront_models.Device:
     properties:
@@ -9789,14 +9671,14 @@ paths:
     post:
       consumes:
       - application/json
-      description: refresh token
+      description: get struct array by ID
       parameters:
-      - description: Reresh Token
+      - description: User Account
         in: body
-        name: TokenLoginRequest
+        name: User
         required: true
         schema:
-          $ref: '#/definitions/authentication.TokenLoginRequest'
+          $ref: '#/definitions/models.UserLoginRequest'
       responses:
         "200":
           description: OK
@@ -14858,6 +14740,29 @@ paths:
             $ref: '#/definitions/models.AuthResponseFailed'
       security:
       - AccessToken: []
+      tags:
+      - Authentication
+  /refresh:
+    post:
+      consumes:
+      - application/json
+      description: refresh token
+      parameters:
+      - description: Reresh Token
+        in: body
+        name: TokenLoginRequest
+        required: true
+        schema:
+          $ref: '#/definitions/authentication.TokenLoginRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.AuthResponseFailed'
       tags:
       - Authentication
   /register:
