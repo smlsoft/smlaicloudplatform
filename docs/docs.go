@@ -30052,6 +30052,9 @@ const docTemplate = `{
                     "type": "string",
                     "minLength": 1
                 },
+                "description": {
+                    "type": "string"
+                },
                 "details": {
                     "type": "array",
                     "items": {
@@ -30064,9 +30067,6 @@ const docTemplate = `{
                 },
                 "docnumber": {
                     "type": "integer"
-                },
-                "explain": {
-                    "type": "string"
                 },
                 "module": {
                     "type": "string",
@@ -31892,27 +31892,12 @@ const docTemplate = `{
         },
         "models.Location": {
             "type": "object",
-            "required": [
-                "names"
-            ],
             "properties": {
-                "code": {
+                "lat": {
                     "type": "string"
                 },
-                "names": {
-                    "type": "array",
-                    "minItems": 1,
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.NameX"
-                    }
-                },
-                "shelf": {
-                    "type": "array",
-                    "uniqueItems": true,
-                    "items": {
-                        "$ref": "#/definitions/models.Shelf"
-                    }
+                "lng": {
+                    "type": "string"
                 }
             }
         },

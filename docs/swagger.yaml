@@ -1005,6 +1005,8 @@ definitions:
       dateformate:
         minLength: 1
         type: string
+      description:
+        type: string
       details:
         items:
           $ref: '#/definitions/models.DocumentFormateDetail'
@@ -1014,8 +1016,6 @@ definitions:
         type: string
       docnumber:
         type: integer
-      explain:
-        type: string
       module:
         minLength: 1
         type: string
@@ -2273,21 +2273,10 @@ definitions:
     type: object
   models.Location:
     properties:
-      code:
+      lat:
         type: string
-      names:
-        items:
-          $ref: '#/definitions/models.NameX'
-        minItems: 1
-        type: array
-        uniqueItems: true
-      shelf:
-        items:
-          $ref: '#/definitions/models.Shelf'
-        type: array
-        uniqueItems: true
-    required:
-    - names
+      lng:
+        type: string
     type: object
   models.LocationRequest:
     properties:

@@ -14,7 +14,7 @@ type DocumentFormate struct {
 	Module                   string                   `json:"module" bson:"module" validate:"required,min=1"`
 	DateFormate              string                   `json:"dateformate" bson:"dateformate" validate:"required,min=1"`
 	DocNumber                int                      `json:"docnumber" bson:"docnumber" validate:"required"`
-	Explain                  string                   `json:"explain" bson:"explain"`
+	Description              string                   `json:"description" bson:"description"`
 	Details                  *[]DocumentFormateDetail `json:"details" bson:"details"`
 }
 
