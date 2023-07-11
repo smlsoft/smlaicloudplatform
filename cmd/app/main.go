@@ -44,6 +44,7 @@ import (
 	"smlcloudplatform/pkg/productsection/sectionbusinesstype"
 	"smlcloudplatform/pkg/productsection/sectiondepartment"
 	"smlcloudplatform/pkg/report/reportquerym"
+	"time"
 
 	// "smlcloudplatform/pkg/report/reportquery"
 	"smlcloudplatform/pkg/restaurant/device"
@@ -107,12 +108,13 @@ func main() {
 
 	cacher := ms.Cacher(cfg.CacherConfig())
 	// jwtService := microservice.NewJwtService(cacher, cfg.JwtSecretKey(), 24*3)
-	authService := microservice.NewAuthService(cacher, 24*3)
+	authService := microservice.NewAuthService(cacher, 24*3*time.Hour, 24*30*time.Hour)
 
 	publicPath := []string{
 		"/swagger",
 		"/login",
 		"/register",
+		"/refresh",
 
 		"/employee/login",
 

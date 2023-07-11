@@ -4,6 +4,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/images"
+	"time"
 )
 
 func main() {
@@ -20,7 +21,7 @@ func main() {
 	}
 
 	cacher := ms.Cacher(cfg.CacherConfig())
-	authService := microservice.NewAuthService(cacher, 24*3)
+	authService := microservice.NewAuthService(cacher, 24*3*time.Hour, 24*30*time.Hour)
 	ms.HttpMiddleware(authService.MWFuncWithRedis(cacher, publicPath...))
 
 	filePersister := microservice.NewPersisterFile(config.NewStorageFileConfig())

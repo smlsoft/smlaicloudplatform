@@ -15,6 +15,7 @@ import (
 	deparmentRepositories "smlcloudplatform/pkg/organization/department/repositories"
 	"smlcloudplatform/pkg/shop/models"
 	"smlcloudplatform/pkg/utils"
+	"time"
 
 	warehouseModels "smlcloudplatform/pkg/warehouse/models"
 	warehouseRepositories "smlcloudplatform/pkg/warehouse/repositories"
@@ -47,7 +48,7 @@ func NewShopHttp(ms *microservice.Microservice, cfg config.IConfig) ShopHttp {
 	shopUserRepo := NewShopUserRepository(pst)
 	service := NewShopService(repo, shopUserRepo, utils.NewGUID, ms.TimeNow)
 
-	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
+	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3*time.Hour, 24*30*time.Hour)
 
 	repoBrach := branchRepositories.NewBranchRepository(pst)
 

@@ -10,5 +10,10 @@ type ShopFavoriteRequest struct {
 }
 
 type TokenLoginRequest struct {
-	Token string `json:"token"`
+	Token string `json:"token" validate:"required"`
+}
+
+type TokenLoginResponse struct {
+	Token   string `json:"token"`
+	Refresh string `json:"refresh"`
 }

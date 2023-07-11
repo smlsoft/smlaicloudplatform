@@ -17,7 +17,7 @@ import (
 )
 
 type IAuthenticationService interface {
-	Login(userReq *models.UserLoginRequest, authContext AuthenticationContext) (string, error)
+	Login(userReq *models.UserLoginRequest, authContext AuthenticationContext) (TokenLoginResponse, error)
 	Register(userRequest models.UserRequest) (string, error)
 	Update(username string, userRequest models.UserProfileRequest) error
 	UpdatePassword(username string, currentPassword string, newPassword string) error
@@ -26,6 +26,7 @@ type IAuthenticationService interface {
 	AccessShop(shopID string, username string, authorizationHeader string, authContext AuthenticationContext) error
 	UpdateFavoriteShop(shopID string, username string, isFavorite bool) error
 	LoginWithFirebaseToken(token string) (string, error)
+	RefreshToken(tokenRequest TokenLoginRequest) (TokenLoginResponse, error)
 }
 
 type AuthenticationService struct {
@@ -65,7 +66,7 @@ func (svc AuthenticationService) normalizeUsername(username string) string {
 	return username
 }
 
-func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, authContext AuthenticationContext) (string, error) {
+func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, authContext AuthenticationContext) (TokenLoginResponse, error) {
 
 	userLoginReq.Username = svc.normalizeUsername(userLoginReq.Username)
 
@@ -76,40 +77,47 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, au
 
 	if err != nil && err.Error() != "mongo: no documents in result" {
 		// svc.ms.Log("Authentication service", err.Error())
-		return "", errors.New("auth: database connect error")
+		return TokenLoginResponse{}, errors.New("auth: database connect error")
 	}
 
 	if len(findUser.Username) < 1 {
-		return "", errors.New("username or password is invalid")
+		return TokenLoginResponse{}, errors.New("username or password is invalid")
 	}
 
 	passwordInvalid := !svc.checkHashPassword(userLoginReq.Password, findUser.Password)
 
 	if passwordInvalid {
-		return "", errors.New("username or password is invalid")
+		return TokenLoginResponse{}, errors.New("username or password is invalid")
 	}
 
 	tokenString, err := svc.authService.GenerateTokenWithRedis(microservice.AUTHTYPE_BEARER, micromodel.UserInfo{Username: findUser.Username, Name: findUser.Name})
 
 	if err != nil {
-		return "", errors.New("login failed")
+		return TokenLoginResponse{}, errors.New("login failed")
+	}
+
+	refreshTokenString, err := svc.authService.GenerateTokenWithRedis(microservice.AUTHTYPE_REFRESH, micromodel.UserInfo{Username: findUser.Username, Name: findUser.Name})
+
+	if err != nil {
+		svc.authService.DeleteToken(microservice.AUTHTYPE_BEARER, tokenString)
+		return TokenLoginResponse{}, errors.New("login failed")
 	}
 
 	if len(userLoginReq.ShopID) > 0 {
 		shopUser, err := svc.shopUserRepo.FindByShopIDAndUsername(context.Background(), userLoginReq.ShopID, userLoginReq.Username)
 
 		if err != nil {
-			return "", err
+			return TokenLoginResponse{}, err
 		}
 
 		if shopUser.ID == primitive.NilObjectID {
-			return "", errors.New("shop invalid")
+			return TokenLoginResponse{}, errors.New("shop invalid")
 		}
 
 		err = svc.authService.SelectShop(microservice.AUTHTYPE_BEARER, tokenString, userLoginReq.ShopID, shopUser.Role)
 
 		if err != nil {
-			return "", errors.New("failed shop select")
+			return TokenLoginResponse{}, errors.New("failed shop select")
 		}
 
 		lastAccessedAt := svc.timeNow()
@@ -133,7 +141,24 @@ func (svc AuthenticationService) Login(userLoginReq *models.UserLoginRequest, au
 		}
 	}
 
-	return tokenString, nil
+	return TokenLoginResponse{
+		Token:   tokenString,
+		Refresh: refreshTokenString,
+	}, nil
+}
+
+func (svc AuthenticationService) RefreshToken(tokenRequest TokenLoginRequest) (TokenLoginResponse, error) {
+
+	token, refreshToken, err := svc.authService.RefreshToken(tokenRequest.Token)
+
+	if err != nil {
+		return TokenLoginResponse{}, err
+	}
+
+	return TokenLoginResponse{
+		Token:   token,
+		Refresh: refreshToken,
+	}, nil
 }
 
 func (svc AuthenticationService) Register(userRequest models.UserRequest) (string, error) {

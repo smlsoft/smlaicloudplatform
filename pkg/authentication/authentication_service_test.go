@@ -608,6 +608,16 @@ func (m *AuthServiceMock) ExpireToken(tokenType microservice.TokenType, tokenAut
 	return args.Error(0)
 }
 
+func (m *AuthServiceMock) DeleteToken(tokenType microservice.TokenType, tokenStr string) error {
+	args := m.Called(tokenType, tokenStr)
+	return args.Error(0)
+}
+
+func (m *AuthServiceMock) RefreshToken(token string) (string, string, error) {
+	args := m.Called(token)
+	return args.String(0), args.String(1), args.Error(2)
+}
+
 func MockObjectID() primitive.ObjectID {
 	idx, _ := primitive.ObjectIDFromHex("62f9cb12c76fd9e83ac1b2ff")
 	return idx

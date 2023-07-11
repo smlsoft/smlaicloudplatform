@@ -4,6 +4,7 @@ import (
 	"smlcloudplatform/internal/microservice"
 	"smlcloudplatform/pkg/authentication"
 	"smlcloudplatform/pkg/config"
+	"time"
 )
 
 func main() {
@@ -17,7 +18,7 @@ func main() {
 
 	cacher := ms.Cacher(cfg.CacherConfig())
 	// jwtService := microservice.NewJwtService(cacher, cfg.JwtSecretKey(), 24*3)
-	authService := microservice.NewAuthService(cacher, 24*3)
+	authService := microservice.NewAuthService(cacher, 24*3*time.Hour, 24*30*time.Hour)
 
 	publicPath := []string{
 		"/login",

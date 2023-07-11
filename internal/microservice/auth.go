@@ -24,6 +24,8 @@ type IAuthService interface {
 	GenerateTokenWithRedisExpire(tokenType TokenType, userInfo models.UserInfo, expireTime time.Duration) (string, error)
 	SelectShop(tokenType TokenType, tokenStr string, shopID string, role uint8) error
 	ExpireToken(tokenType TokenType, tokenAuthorizationHeader string) error
+	DeleteToken(tokenType TokenType, tokenStr string) error
+	RefreshToken(token string) (string, string, error)
 }
 
 type TokenType = int
@@ -32,6 +34,7 @@ const (
 	AUTHTYPE_BEARER TokenType = iota
 	AUTHTYPE_WEBSOCKET
 	AUTHTYPE_XAPIKEY
+	AUTHTYPE_REFRESH
 )
 
 type TokenContext struct {
@@ -43,22 +46,26 @@ type AuthService struct {
 	cacheMemoryExpire     time.Duration
 	cacheMemory           memorycache.IMemoryCache
 	cacher                ICacher
-	expireBearer          time.Duration
+	expireTimeBearer      time.Duration
 	prefixBearerCacheKey  string
 	prefixBearerToken     string
 	expireXApiKey         time.Duration
 	prefixXApiKeyCacheKey string
+	prefixRefreshCacheKey string
+	expireTimeRefresh     time.Duration
 	encrypt               encrypt.Encrypt
 }
 
-func NewAuthService(cacher ICacher, expireHour int) *AuthService {
+func NewAuthService(cacher ICacher, expireTimeBearer time.Duration, expireTimeRefresh time.Duration) *AuthService {
 
 	return &AuthService{
 		cacher:                cacher,
-		expireBearer:          time.Duration(expireHour) * time.Hour,
+		expireTimeBearer:      expireTimeBearer,
+		expireTimeRefresh:     expireTimeRefresh,
 		prefixBearerCacheKey:  "auth-",
 		prefixBearerToken:     "Bearer",
 		prefixXApiKeyCacheKey: "xapikey-",
+		prefixRefreshCacheKey: "refresh-",
 		encrypt:               *encrypt.NewEncrypt(),
 		cacheMemory:           memorycache.NewMemoryCache(),
 		cacheMemoryExpire:     time.Duration(5) * time.Second,
@@ -314,6 +321,8 @@ func (authService *AuthService) GetPrefixCacheKey(tokenType TokenType) string {
 		prefixCacheKey = authService.prefixBearerCacheKey
 	} else if tokenType == AUTHTYPE_XAPIKEY {
 		prefixCacheKey = authService.prefixXApiKeyCacheKey
+	} else if tokenType == AUTHTYPE_REFRESH {
+		prefixCacheKey = authService.prefixRefreshCacheKey
 	}
 
 	return prefixCacheKey
@@ -422,17 +431,48 @@ func (authService *AuthService) SelectShop(tokenType TokenType, tokenStr string,
 	return nil
 }
 
+func (authService *AuthService) RefreshToken(token string) (string, string, error) {
+	cacheKey := authService.GetPrefixCacheKey(AUTHTYPE_REFRESH) + token
+
+	tempUserInfo, err := authService.cacher.HMGet(cacheKey, []string{"username", "name"})
+
+	if err != nil || tempUserInfo[0] == nil {
+		return "", "", err
+	}
+
+	userInfo := models.UserInfo{
+		Username: fmt.Sprintf("%v", tempUserInfo[0]),
+		Name:     fmt.Sprintf("%v", tempUserInfo[1]),
+	}
+
+	tokenStr, err := authService.GenerateTokenWithRedis(AUTHTYPE_BEARER, userInfo)
+
+	if err != nil {
+		return "", "", err
+	}
+
+	refreshTokenStr, err := authService.GenerateTokenWithRedis(AUTHTYPE_REFRESH, userInfo)
+
+	if err != nil {
+		return "", "", err
+	}
+
+	return tokenStr, refreshTokenStr, err
+}
+
 func (authService *AuthService) ReTokenExpire(tokenType TokenType, cacheKey string) {
 	if tokenType == AUTHTYPE_BEARER || tokenType == AUTHTYPE_WEBSOCKET {
-		authService.cacher.Expire(cacheKey, authService.expireBearer)
+		authService.cacher.Expire(cacheKey, authService.expireTimeBearer)
 	}
 }
 
 func (authService *AuthService) SetTokenExpire(tokenType TokenType, cacheKey string) {
 	if tokenType == AUTHTYPE_BEARER || tokenType == AUTHTYPE_WEBSOCKET {
-		authService.cacher.Expire(cacheKey, authService.expireBearer)
+		authService.cacher.Expire(cacheKey, authService.expireTimeBearer)
 	} else if tokenType == AUTHTYPE_XAPIKEY {
 		authService.cacher.Expire(cacheKey, authService.expireXApiKey)
+	} else if tokenType == AUTHTYPE_REFRESH {
+		authService.cacher.Expire(cacheKey, authService.expireTimeRefresh)
 	}
 }
 
@@ -441,6 +481,12 @@ func (authService *AuthService) ExpireToken(tokenType TokenType, tokenAuthorizat
 	if err != nil {
 		return err
 	}
+	cacheKey := authService.GetPrefixCacheKey(tokenType) + tokenStr
+	authService.cacher.Expire(cacheKey, -1)
+	return nil
+}
+
+func (authService *AuthService) DeleteToken(tokenType TokenType, tokenStr string) error {
 	cacheKey := authService.GetPrefixCacheKey(tokenType) + tokenStr
 	authService.cacher.Expire(cacheKey, -1)
 	return nil

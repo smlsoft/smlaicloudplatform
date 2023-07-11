@@ -5,6 +5,7 @@ import (
 	"smlcloudplatform/pkg/config"
 	"smlcloudplatform/pkg/migration"
 	"smlcloudplatform/pkg/syncdata"
+	"time"
 )
 
 func main() {
@@ -18,7 +19,7 @@ func main() {
 	migration.StartMigrateModel(ms, cfg)
 
 	cacher := ms.Cacher(cfg.CacherConfig())
-	authService := microservice.NewAuthService(cacher, 24*3)
+	authService := microservice.NewAuthService(cacher, 24*3*time.Hour, 24*30*time.Hour)
 
 	ms.HttpMiddleware(authService.MWFuncWithRedis(cacher))
 

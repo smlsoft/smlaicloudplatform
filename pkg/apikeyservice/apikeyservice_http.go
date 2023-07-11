@@ -22,7 +22,7 @@ type ApiKeyServiceHttp struct {
 
 func NewApiKeyServiceHttp(ms *microservice.Microservice, cfg config.IConfig) ApiKeyServiceHttp {
 
-	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3)
+	authService := microservice.NewAuthService(ms.Cacher(cfg.CacherConfig()), 24*3*time.Hour, 24*30*time.Hour)
 	svc := services.NewApiKeyServiceHttpService(authService)
 
 	return ApiKeyServiceHttp{

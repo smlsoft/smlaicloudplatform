@@ -79,6 +79,7 @@ import (
 	"smlcloudplatform/pkg/vfgl/journalbook"
 	"smlcloudplatform/pkg/vfgl/journalreport"
 	"smlcloudplatform/pkg/warehouse"
+	"time"
 
 	"github.com/joho/godotenv"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -134,7 +135,7 @@ func main() {
 		ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)
 
 		cacher := ms.Cacher(cfg.CacherConfig())
-		authService := microservice.NewAuthService(cacher, 24*3)
+		authService := microservice.NewAuthService(cacher, 24*3*time.Hour, 24*30*time.Hour)
 		publicPath := []string{
 			"/migrationtools/",
 			"/swagger",
