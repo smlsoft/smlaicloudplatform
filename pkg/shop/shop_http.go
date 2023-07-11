@@ -299,17 +299,7 @@ func (h ShopHttp) DeleteShop(ctx microservice.IContext) error {
 // @Security     AccessToken
 // @Router /shop/{id} [get]
 func (h ShopHttp) InfoShop(ctx microservice.IContext) error {
-	userInfo := ctx.UserInfo()
 	id := ctx.Param("id")
-
-	if userInfo.Role != models.ROLE_OWNER {
-		ctx.Response(http.StatusOK, &common.ApiResponse{
-			Success: false,
-			Message: "permission denied",
-		})
-
-		return errors.New("permission denied")
-	}
 
 	shopInfo, err := h.service.InfoShop(id)
 
