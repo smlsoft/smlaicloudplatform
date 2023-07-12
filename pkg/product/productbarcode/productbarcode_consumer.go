@@ -66,17 +66,17 @@ func NewProductBarcodeConsumer(ms *microservice.Microservice, cfg msConfig.IConf
 	}
 }
 
-func (pbc *ProductBarcodeConsumer) RegisterConsumer(ms *microservice.Microservice) {
+func (pbc *ProductBarcodeConsumer) RegisterConsumer() {
 
 	// create topic
-	mq := microservice.NewMQ(pbc.cfg.MQConfig(), ms.Logger)
+	mq := microservice.NewMQ(pbc.cfg.MQConfig(), pbc.ms.Logger)
 	mq.CreateTopicR(pbc.productMessageQueueConfig.TopicCreated(), 5, 1, time.Hour*24*7)
 	mq.CreateTopicR(pbc.productMessageQueueConfig.TopicUpdated(), 5, 1, time.Hour*24*7)
 	mq.CreateTopicR(pbc.productMessageQueueConfig.TopicDeleted(), 5, 1, time.Hour*24*7)
 
-	ms.Consume(pbc.cfg.MQConfig().URI(), pbc.productMessageQueueConfig.TopicCreated(), pbc.groupId, time.Duration(-1), pbc.ConsumerOnProductBarcodeCreate)
-	ms.Consume(pbc.cfg.MQConfig().URI(), pbc.productMessageQueueConfig.TopicUpdated(), pbc.groupId, time.Duration(-1), pbc.ConsumerOnProductBarcodeUpdate)
-	ms.Consume(pbc.cfg.MQConfig().URI(), pbc.productMessageQueueConfig.TopicDeleted(), pbc.groupId, time.Duration(-1), pbc.ConsumerOnProductBarcodeDelete)
+	pbc.ms.Consume(pbc.cfg.MQConfig().URI(), pbc.productMessageQueueConfig.TopicCreated(), pbc.groupId, time.Duration(-1), pbc.ConsumerOnProductBarcodeCreate)
+	pbc.ms.Consume(pbc.cfg.MQConfig().URI(), pbc.productMessageQueueConfig.TopicUpdated(), pbc.groupId, time.Duration(-1), pbc.ConsumerOnProductBarcodeUpdate)
+	pbc.ms.Consume(pbc.cfg.MQConfig().URI(), pbc.productMessageQueueConfig.TopicDeleted(), pbc.groupId, time.Duration(-1), pbc.ConsumerOnProductBarcodeDelete)
 }
 
 func (pbc *ProductBarcodeConsumer) ConsumerOnProductBarcodeCreate(ctx microservice.IContext) error {
@@ -102,9 +102,9 @@ func (pbc *ProductBarcodeConsumer) ConsumerOnProductBarcodeCreate(ctx microservi
 func (pbc *ProductBarcodeConsumer) ConsumerOnProductBarcodeUpdate(ctx microservice.IContext) error {
 
 	msg := ctx.ReadInput()
-	moduleName := "Consumer On Product barcode Created"
+	moduleName := "Consumer On Product barcode Updated"
 
-	pbc.ms.Logger.Debugf("Consume Product Barcode Create : %v", msg)
+	pbc.ms.Logger.Debugf("Consume Product Barcode Update : %v", msg)
 	doc := models.ProductBarcodeDoc{}
 	err := json.Unmarshal([]byte(msg), &doc)
 
@@ -112,11 +112,17 @@ func (pbc *ProductBarcodeConsumer) ConsumerOnProductBarcodeUpdate(ctx microservi
 		pbc.ms.Logger.Errorf(moduleName, err.Error())
 	}
 
-	_, err = pbc.svc.UpSert(doc.ShopID, doc.Barcode, doc)
+	err = pbc.svc.UpdateRefBarcode(doc.ShopID, doc)
 
 	if err != nil {
 		pbc.ms.Logger.Errorf(moduleName, err.Error())
 	}
+
+	// _, err = pbc.svc.UpSert(doc.ShopID, doc.Barcode, doc)
+
+	// if err != nil {
+	// 	pbc.ms.Logger.Errorf(moduleName, err.Error())
+	// }
 
 	return nil
 }
@@ -124,9 +130,9 @@ func (pbc *ProductBarcodeConsumer) ConsumerOnProductBarcodeUpdate(ctx microservi
 func (pbc *ProductBarcodeConsumer) ConsumerOnProductBarcodeDelete(ctx microservice.IContext) error {
 
 	msg := ctx.ReadInput()
-	moduleName := "Consumer On Product barcode Created"
+	moduleName := "Consumer On Product barcode Deleted"
 
-	pbc.ms.Logger.Debugf("Consume Product Barcode Create : %v", msg)
+	pbc.ms.Logger.Debugf("Consume Product Barcode Delete : %v", msg)
 	doc := models.ProductBarcodeDoc{}
 	err := json.Unmarshal([]byte(msg), &doc)
 

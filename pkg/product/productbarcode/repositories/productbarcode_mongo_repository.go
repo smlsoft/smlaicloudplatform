@@ -50,6 +50,8 @@ type IProductBarcodeRepository interface {
 	FindByBarcodes(ctx context.Context, shopID string, barcodes []string) ([]models.ProductBarcodeInfo, error)
 	FindPageByUnits(ctx context.Context, shopID string, unitCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
 	FindPageByGroups(ctx context.Context, shopID string, groupCodes []string, pageable micromodels.Pageable) ([]models.ProductBarcodeInfo, mongopagination.PaginationData, error)
+
+	UpdateRefBarcodeByGUID(ctx context.Context, shopID string, guid string, refBarcode models.RefProductBarcode) error
 }
 
 type ProductBarcodeRepository struct {
@@ -233,4 +235,27 @@ func (repo ProductBarcodeRepository) FindPageByGroups(ctx context.Context, shopI
 	}
 
 	return results, pagination, nil
+}
+
+func (repo ProductBarcodeRepository) UpdateRefBarcodeByGUID(ctx context.Context, shopID string, guid string, refBarcode models.RefProductBarcode) error {
+
+	filters := bson.M{
+		"shopid":                shopID,
+		"deletedat":             bson.M{"$exists": false},
+		"refbarcodes.guidfixed": guid,
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"refbarcodes.$.names":         refBarcode.Names,
+			"refbarcodes.$.itemunitcode":  refBarcode.ItemUnitCode,
+			"refbarcodes.$.itemunitnames": refBarcode.ItemUnitNames,
+			"refbarcodes.$.condition":     refBarcode.Condition,
+			"refbarcodes.$.dividevalue":   refBarcode.DivideValue,
+			"refbarcodes.$.standvalue":    refBarcode.StandValue,
+			"refbarcodes.$.qty":           refBarcode.Qty,
+		},
+	}
+
+	return repo.pst.Update(ctx, models.ProductBarcodeDoc{}, filters, update)
 }

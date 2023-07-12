@@ -235,7 +235,7 @@ func (svc ProductBarcodeHttpService) UpdateProductBarcode(shopID string, guid st
 		return err
 	}
 
-	err = svc.mqRepo.Update(findDoc)
+	err = svc.mqRepo.Update(docData)
 	if err != nil {
 		return err
 	}

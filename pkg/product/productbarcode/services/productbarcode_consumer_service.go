@@ -12,6 +12,7 @@ import (
 )
 
 type IProductBarcodeConsumeService interface {
+	UpdateRefBarcode(shopID string, doc models.ProductBarcodeDoc) error
 	UpSert(shopID string, barcode string, doc models.ProductBarcodeDoc) (*models.ProductBarcodePg, error)
 	Delete(ctx context.Context, shopID string, barcode string) error
 	ReSync(shopID string) error
@@ -41,6 +42,19 @@ func NewProductBarcodeConsumerService(
 		phaser:                phaser,
 		productClickhouseRepo: productClickhouseRepo,
 	}
+}
+
+func (svc ProductBarcodeConsumeService) UpdateRefBarcode(shopID string, doc models.ProductBarcodeDoc) error {
+
+	refProductBarcode := doc.ToRefBarcode()
+
+	err := svc.productMongoRepo.UpdateRefBarcodeByGUID(context.Background(), shopID, doc.GuidFixed, refProductBarcode)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (svc ProductBarcodeConsumeService) UpSert(shopID string, barcode string, doc models.ProductBarcodeDoc) (*models.ProductBarcodePg, error) {
