@@ -34,7 +34,7 @@ func NewStorefrontHttp(ms *microservice.Microservice, cfg config.IConfig) Storef
 	}
 }
 
-func (h StorefrontHttp) RouteSetup() {
+func (h StorefrontHttp) RegisterHttp() {
 
 	h.ms.GET("/storefront", h.SearchStorefront)
 	h.ms.POST("/storefront", h.CreateStorefront)

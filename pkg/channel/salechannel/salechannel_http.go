@@ -37,7 +37,7 @@ func NewSaleChannelHttp(ms *microservice.Microservice, cfg config.IConfig) SaleC
 	}
 }
 
-func (h SaleChannelHttp) RouteSetup() {
+func (h SaleChannelHttp) RegisterHttp() {
 
 	h.ms.POST("/sale-channel/bulk", h.SaveBulk)
 

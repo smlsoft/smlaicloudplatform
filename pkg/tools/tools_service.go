@@ -20,7 +20,7 @@ func NewToolsService(ms *microservice.Microservice, cfg config.IConfig) *ToolsSe
 	}
 }
 
-func (svc *ToolsService) RouteSetup() {
+func (svc *ToolsService) RegisterHttp() {
 	svc.ms.GET("tool/mongo", svc.CheckMongodbConnect)
 	svc.ms.GET("tool/env", svc.AllEnv)
 }

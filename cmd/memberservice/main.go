@@ -19,7 +19,7 @@ func main() {
 	ms.HttpMiddleware(authService.MWFuncWithRedis(cacher))
 
 	memberapi := member.NewMemberHttp(ms, cfg)
-	memberapi.RouteSetup()
+	memberapi.RegisterHttp()
 
 	ms.Start()
 }

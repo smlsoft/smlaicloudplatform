@@ -30,7 +30,7 @@ func main() {
 	}
 
 	ms.HttpMiddleware(authService.MWFuncWithShop(cacher, publicPath...))
-	svc.RouteSetup()
+	svc.RegisterHttp()
 
 	// ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)
 

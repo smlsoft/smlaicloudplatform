@@ -50,7 +50,7 @@ func NewEOrderHttp(ms *microservice.Microservice, cfg config.IConfig) EOrderHttp
 	}
 }
 
-func (h EOrderHttp) RouteSetup() {
+func (h EOrderHttp) RegisterHttp() {
 
 	h.ms.GET("/e-order/category", h.SearchProductCategoryPage)
 	h.ms.GET("/e-order/product", h.SearchProductBarcodePage)

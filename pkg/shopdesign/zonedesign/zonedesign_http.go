@@ -32,7 +32,7 @@ func NewZoneDesignHttp(ms *microservice.Microservice, cfg config.IConfig) ZoneDe
 	}
 }
 
-func (h ZoneDesignHttp) RouteSetup() {
+func (h ZoneDesignHttp) RegisterHttp() {
 
 	h.ms.GET("/zone-design", h.SearchZoneDesign)
 	h.ms.POST("/zone-design", h.CreateZoneDesign)

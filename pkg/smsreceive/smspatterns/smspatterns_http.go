@@ -34,7 +34,7 @@ func NewSmsPatternsHttp(ms *microservice.Microservice, cfg config.IConfig) SmsPa
 	}
 }
 
-func (h SmsPatternsHttp) RouteSetup() {
+func (h SmsPatternsHttp) RegisterHttp() {
 
 	h.ms.GET("/smspatterns", h.SearchSmsPatterns)
 	h.ms.POST("/smspatterns", h.CreateSmsPatterns)

@@ -37,7 +37,7 @@ func NewStaffHttp(ms *microservice.Microservice, cfg config.IConfig) StaffHttp {
 	}
 }
 
-func (h StaffHttp) RouteSetup() {
+func (h StaffHttp) RegisterHttp() {
 
 	h.ms.POST("/restaurant/staff/bulk", h.SaveBulk)
 

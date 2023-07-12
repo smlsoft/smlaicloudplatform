@@ -40,7 +40,7 @@ func NewChartOfAccountHttp(ms *microservice.Microservice, cfg config.IConfig) Ch
 	}
 }
 
-func (h ChartOfAccountHttp) RouteSetup() {
+func (h ChartOfAccountHttp) RegisterHttp() {
 	h.ms.GET("/gl/chartofaccount", h.Search)
 	h.ms.POST("/gl/chartofaccount", h.Create)
 	h.ms.GET("/gl/chartofaccount/:id", h.Info)

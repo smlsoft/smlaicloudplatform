@@ -41,7 +41,7 @@ func NewUnitHttp(ms *microservice.Microservice, cfg config.IConfig) UnitHttp {
 	}
 }
 
-func (h UnitHttp) RouteSetup() {
+func (h UnitHttp) RegisterHttp() {
 
 	h.ms.POST("/unit/bulk", h.SaveBulk)
 

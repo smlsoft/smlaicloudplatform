@@ -42,7 +42,7 @@ func NewStockPickupProductHttp(ms *microservice.Microservice, cfg config.IConfig
 	}
 }
 
-func (h StockPickupProductHttp) RouteSetup() {
+func (h StockPickupProductHttp) RegisterHttp() {
 
 	h.ms.POST("/transaction/stock-prickup-product/bulk", h.SaveBulk)
 

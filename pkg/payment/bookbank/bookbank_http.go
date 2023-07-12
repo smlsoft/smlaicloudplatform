@@ -37,7 +37,7 @@ func NewBookBankHttp(ms *microservice.Microservice, cfg config.IConfig) BookBank
 	}
 }
 
-func (h BookBankHttp) RouteSetup() {
+func (h BookBankHttp) RegisterHttp() {
 
 	h.ms.POST("/payment/bookbank/bulk", h.SaveBulk)
 

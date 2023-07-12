@@ -42,7 +42,7 @@ func NewStockTransferHttp(ms *microservice.Microservice, cfg config.IConfig) Sto
 	}
 }
 
-func (h StockTransferHttp) RouteSetup() {
+func (h StockTransferHttp) RegisterHttp() {
 
 	h.ms.GET("/transaction/stock-transfer", h.SearchStockTransferPage)
 	h.ms.GET("/transaction/stock-transfer/list", h.SearchStockTransferStep)

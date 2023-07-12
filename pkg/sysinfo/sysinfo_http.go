@@ -22,7 +22,7 @@ func NewSysInfoHttp(ms *microservice.Microservice, cfg config.IConfig) SysInfoHt
 	}
 }
 
-func (h SysInfoHttp) RouteSetup() {
+func (h SysInfoHttp) RegisterHttp() {
 
 	h.ms.GET("/sys-info/version", h.Version)
 	h.ms.GET("/sys-info/wordcut", h.Wordcut)

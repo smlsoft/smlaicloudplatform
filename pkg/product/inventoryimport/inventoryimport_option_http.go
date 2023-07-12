@@ -11,7 +11,7 @@ import (
 )
 
 type IInventoryImporOptionMaintHttp interface {
-	RouteSetup()
+	RegisterHttp()
 }
 
 type InventoryImporOptionMaintHttp struct {
@@ -34,7 +34,7 @@ func NewInventoryImporOptionMaintHttp(ms *microservice.Microservice, cfg config.
 	}
 }
 
-func (h *InventoryImporOptionMaintHttp) RouteSetup() {
+func (h *InventoryImporOptionMaintHttp) RegisterHttp() {
 
 	h.ms.GET("/import/option", h.ListInventoryOptionMain)
 	h.ms.POST("/import/option", h.CreateInventoryOptionMain)

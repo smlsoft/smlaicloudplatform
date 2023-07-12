@@ -38,7 +38,7 @@ func NewPromotionHttp(ms *microservice.Microservice, cfg config.IConfig) Promoti
 	}
 }
 
-func (h PromotionHttp) RouteSetup() {
+func (h PromotionHttp) RegisterHttp() {
 
 	h.ms.POST("/product/promotion/bulk", h.SaveBulk)
 

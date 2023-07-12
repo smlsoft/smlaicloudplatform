@@ -26,7 +26,7 @@ func main() {
 
 	svc := shop.NewShopHttp(ms, cfg)
 
-	svc.RouteSetup()
+	svc.RegisterHttp()
 
 	//ms.Echo().GET("/swagger/*", echoSwagger.WrapHandler)
 

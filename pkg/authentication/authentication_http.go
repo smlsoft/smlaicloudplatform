@@ -56,7 +56,7 @@ func NewAuthenticationHttp(ms *microservice.Microservice, cfg config.IConfig) Au
 	}
 }
 
-func (h AuthenticationHttp) RouteSetup() {
+func (h AuthenticationHttp) RegisterHttp() {
 
 	h.ms.POST("/login", h.Login)
 	h.ms.POST("/tokenlogin", h.TokenLogin)

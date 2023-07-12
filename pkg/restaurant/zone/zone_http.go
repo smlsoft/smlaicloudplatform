@@ -36,7 +36,7 @@ func NewZoneHttp(ms *microservice.Microservice, cfg config.IConfig) ZoneHttp {
 	}
 }
 
-func (h ZoneHttp) RouteSetup() {
+func (h ZoneHttp) RegisterHttp() {
 
 	h.ms.POST("/restaurant/zone/bulk", h.SaveBulk)
 

@@ -42,7 +42,7 @@ func NewSaleInvoiceReturnHttp(ms *microservice.Microservice, cfg config.IConfig)
 	}
 }
 
-func (h SaleInvoiceReturnHttp) RouteSetup() {
+func (h SaleInvoiceReturnHttp) RegisterHttp() {
 
 	h.ms.POST("/transaction/sale-invoice-return/bulk", h.SaveBulk)
 

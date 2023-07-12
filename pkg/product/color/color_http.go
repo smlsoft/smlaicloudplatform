@@ -34,7 +34,7 @@ func NewColorHttp(ms *microservice.Microservice, cfg config.IConfig) ColorHttp {
 	}
 }
 
-func (h ColorHttp) RouteSetup() {
+func (h ColorHttp) RegisterHttp() {
 
 	h.ms.POST("/color/bulk", h.SaveBulk)
 

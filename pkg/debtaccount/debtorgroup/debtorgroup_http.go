@@ -37,7 +37,7 @@ func NewDebtorGroupHttp(ms *microservice.Microservice, cfg config.IConfig) Debto
 	}
 }
 
-func (h DebtorGroupHttp) RouteSetup() {
+func (h DebtorGroupHttp) RegisterHttp() {
 
 	h.ms.POST("/debtaccount/debtor-group/bulk", h.SaveBulk)
 

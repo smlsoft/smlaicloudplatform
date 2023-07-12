@@ -34,7 +34,7 @@ func NewAccountGroupHttp(ms *microservice.Microservice, cfg config.IConfig) Acco
 	}
 }
 
-func (h AccountGroupHttp) RouteSetup() {
+func (h AccountGroupHttp) RegisterHttp() {
 
 	h.ms.POST("/gl/accountgroup/bulk", h.SaveBulk)
 

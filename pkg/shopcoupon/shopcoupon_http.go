@@ -36,7 +36,7 @@ func NewShopCouponHttp(ms *microservice.Microservice, cfg config.IConfig) ShopCo
 	}
 }
 
-func (h ShopCouponHttp) RouteSetup() {
+func (h ShopCouponHttp) RegisterHttp() {
 
 	h.ms.GET("/shopcoupon", h.SearchShopCoupon)
 	h.ms.POST("/shopcoupon", h.CreateShopCoupon)

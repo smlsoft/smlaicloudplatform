@@ -37,7 +37,7 @@ func NewWarehouseHttp(ms *microservice.Microservice, cfg config.IConfig) Warehou
 	}
 }
 
-func (h WarehouseHttp) RouteSetup() {
+func (h WarehouseHttp) RegisterHttp() {
 
 	h.ms.POST("/warehouse/bulk", h.SaveBulk)
 

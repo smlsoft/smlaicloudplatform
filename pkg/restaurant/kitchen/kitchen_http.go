@@ -34,7 +34,7 @@ func NewKitchenHttp(ms *microservice.Microservice, cfg config.IConfig) KitchenHt
 	}
 }
 
-func (h KitchenHttp) RouteSetup() {
+func (h KitchenHttp) RegisterHttp() {
 
 	h.ms.POST("/restaurant/kitchen/bulk", h.SaveBulk)
 

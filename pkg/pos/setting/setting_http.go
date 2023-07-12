@@ -37,7 +37,7 @@ func NewSettingHttp(ms *microservice.Microservice, cfg config.IConfig) SettingHt
 	}
 }
 
-func (h SettingHttp) RouteSetup() {
+func (h SettingHttp) RegisterHttp() {
 
 	h.ms.POST("/pos/setting/bulk", h.SaveBulk)
 

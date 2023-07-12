@@ -40,7 +40,7 @@ func NewPayHttp(ms *microservice.Microservice, cfg config.IConfig) PayHttp {
 	}
 }
 
-func (h PayHttp) RouteSetup() {
+func (h PayHttp) RegisterHttp() {
 
 	h.ms.POST("/transaction/pay/bulk", h.SaveBulk)
 

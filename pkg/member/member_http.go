@@ -12,7 +12,7 @@ import (
 )
 
 type IMemberHttp interface {
-	RouteSetup()
+	RegisterHttp()
 	CreateMember(ctx microservice.IContext) error
 	UpdateMember(ctx microservice.IContext) error
 	DeleteMember(ctx microservice.IContext) error
@@ -44,7 +44,7 @@ func NewMemberHttp(ms *microservice.Microservice, cfg config.IConfig) MemberHttp
 	}
 }
 
-func (h MemberHttp) RouteSetup() {
+func (h MemberHttp) RegisterHttp() {
 
 	h.ms.GET("/member/:id", h.InfoMember)
 	h.ms.GET("/member", h.SearchMember)

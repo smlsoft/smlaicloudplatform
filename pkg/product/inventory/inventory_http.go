@@ -17,7 +17,7 @@ import (
 )
 
 type IInventoryHttp interface {
-	RouteSetup()
+	RegisterHttp()
 	CreateInventory(ctx microservice.IContext) error
 	UpdateInventory(ctx microservice.IContext) error
 	DeleteInventory(ctx microservice.IContext) error
@@ -60,7 +60,7 @@ func NewInventoryHttp(ms *microservice.Microservice, cfg config.IConfig) *Invent
 	}
 }
 
-func (h InventoryHttp) RouteSetup() {
+func (h InventoryHttp) RegisterHttp() {
 	h.ms.GET("/inventory/:id", h.InfoInventory)
 	h.ms.GET("/inventory/itemcode/:itemcode", h.InfoInventoryItemCode)
 	h.ms.GET("/inventory/barcode/:barcode", h.InfoInventoryBarcode)

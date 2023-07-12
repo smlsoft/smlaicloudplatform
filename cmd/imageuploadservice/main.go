@@ -29,7 +29,7 @@ func main() {
 
 	ms.Logger.Debugf("Store File Path %v", filePersister.StoreFilePath)
 	imageHttp := images.NewImagesHttp(ms, cfg, imagePersister)
-	imageHttp.RouteSetup()
+	imageHttp.RegisterHttp()
 
 	ms.Start()
 }

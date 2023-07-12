@@ -30,7 +30,7 @@ func NewOptionGroupHttp(ms *microservice.Microservice, cfg config.IConfig) *Opti
 	}
 }
 
-func (h OptionGroupHttp) RouteSetup() {
+func (h OptionGroupHttp) RegisterHttp() {
 
 	h.ms.GET("/optgroup/:id", h.InfoOptionGroup)
 	h.ms.GET("/optgroup", h.SearchOptionGroup)

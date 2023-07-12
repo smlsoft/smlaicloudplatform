@@ -24,7 +24,7 @@ func main() {
 	ms.HttpMiddleware(authService.MWFuncWithRedis(cacher))
 
 	syncapi := syncdata.NewSyncDataHttp(ms, cfg)
-	syncapi.RouteSetup()
+	syncapi.RegisterHttp()
 
 	ms.Start()
 }

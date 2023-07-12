@@ -172,7 +172,7 @@ func NewMasterSyncHttp(ms *microservice.Microservice, cfg config.IConfig) Master
 	}
 }
 
-func (h MasterSyncHttp) RouteSetup() {
+func (h MasterSyncHttp) RegisterHttp() {
 	h.ms.GET("/master-sync", h.LastActivitySync)
 	h.ms.GET("/master-sync/status", h.SyncStatus)
 	h.ms.GET("/master-sync/list", h.LastActivitySyncOffset)

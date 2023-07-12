@@ -34,7 +34,7 @@ func NewJournalReportHttp(ms *microservice.Microservice, cfg config.IConfig) Jou
 	}
 }
 
-func (h JournalReportHttp) RouteSetup() {
+func (h JournalReportHttp) RegisterHttp() {
 	h.ms.GET("/gl/report/trialbalancesheet", h.ProcessReportTrialBalanceSheet)
 	h.ms.GET("/gl/report/balancesheet", h.ProcessBalanceSheetReport)
 	h.ms.GET("/gl/report/profitandloss", h.ProcessProfitAndLossReport)

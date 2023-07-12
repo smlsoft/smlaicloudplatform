@@ -34,7 +34,7 @@ func NewJournalBookHttp(ms *microservice.Microservice, cfg config.IConfig) Journ
 	}
 }
 
-func (h JournalBookHttp) RouteSetup() {
+func (h JournalBookHttp) RegisterHttp() {
 
 	h.ms.POST("/gl/journalbook/bulk", h.SaveBulk)
 

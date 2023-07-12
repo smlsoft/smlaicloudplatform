@@ -40,7 +40,7 @@ func NewProductGroupHttp(ms *microservice.Microservice, cfg config.IConfig) Prod
 	}
 }
 
-func (h ProductGroupHttp) RouteSetup() {
+func (h ProductGroupHttp) RegisterHttp() {
 
 	h.ms.POST("/product/group/bulk", h.SaveBulk)
 

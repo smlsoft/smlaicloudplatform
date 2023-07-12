@@ -43,7 +43,7 @@ func NewProductBarcodeHttp(ms *microservice.Microservice, cfg config.IConfig) Pr
 	}
 }
 
-func (h ProductBarcodeHttp) RouteSetup() {
+func (h ProductBarcodeHttp) RegisterHttp() {
 
 	h.ms.POST("/product/barcode/bulk", h.SaveBulk)
 

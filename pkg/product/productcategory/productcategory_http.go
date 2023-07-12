@@ -37,7 +37,7 @@ func NewProductCategoryHttp(ms *microservice.Microservice, cfg config.IConfig) P
 	}
 }
 
-func (h ProductCategoryHttp) RouteSetup() {
+func (h ProductCategoryHttp) RegisterHttp() {
 
 	h.ms.POST("/product/category/bulk", h.SaveBulk)
 

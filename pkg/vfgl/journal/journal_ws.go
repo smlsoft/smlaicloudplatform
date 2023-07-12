@@ -40,7 +40,7 @@ func NewJournalWs(ms *microservice.Microservice, cfg msConfig.IConfig) JournalWs
 	}
 }
 
-func (h JournalWs) RouteSetup() {
+func (h JournalWs) RegisterHttp() {
 	h.ms.GET("/gl/journal/ws/image", h.WebsocketImage)
 	h.ms.GET("/gl/journal/ws/form", h.WebsocketForm)
 

@@ -23,7 +23,7 @@ import (
 )
 
 type IShopHttp interface {
-	RouteSetup()
+	RegisterHttp()
 	CreateShop(ctx microservice.IContext) error
 	UpdateShop(ctx microservice.IContext) error
 	DeleteShop(ctx microservice.IContext) error
@@ -71,7 +71,7 @@ func NewShopHttp(ms *microservice.Microservice, cfg config.IConfig) ShopHttp {
 	}
 }
 
-func (h ShopHttp) RouteSetup() {
+func (h ShopHttp) RegisterHttp() {
 	h.ms.GET("/shop/:id", h.InfoShop)
 	// h.ms.GET("/shop", h.SearchShop)
 

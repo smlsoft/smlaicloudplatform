@@ -33,7 +33,7 @@ func NewApiKeyServiceHttp(ms *microservice.Microservice, cfg config.IConfig) Api
 	}
 }
 
-func (h ApiKeyServiceHttp) RouteSetup() {
+func (h ApiKeyServiceHttp) RegisterHttp() {
 
 	h.ms.POST("/apikeyservice", h.CreateApiKey)
 	h.ms.DELETE("/apikeyservice", h.RemoveApiKey)

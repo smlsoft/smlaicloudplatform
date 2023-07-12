@@ -39,7 +39,7 @@ func NewCustomerHttp(ms *microservice.Microservice, cfg config.IConfig) Customer
 	}
 }
 
-func (h CustomerHttp) RouteSetup() {
+func (h CustomerHttp) RegisterHttp() {
 
 	h.ms.POST("/debtaccount/customer/bulk", h.SaveBulk)
 

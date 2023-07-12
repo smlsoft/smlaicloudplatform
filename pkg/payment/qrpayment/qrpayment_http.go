@@ -37,7 +37,7 @@ func NewQrPaymentHttp(ms *microservice.Microservice, cfg config.IConfig) QrPayme
 	}
 }
 
-func (h QrPaymentHttp) RouteSetup() {
+func (h QrPaymentHttp) RegisterHttp() {
 
 	h.ms.POST("/payment/qrpayment/bulk", h.SaveBulk)
 

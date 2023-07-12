@@ -34,7 +34,7 @@ func NewOptionPatternHttp(ms *microservice.Microservice, cfg config.IConfig) Opt
 	}
 }
 
-func (h OptionPatternHttp) RouteSetup() {
+func (h OptionPatternHttp) RegisterHttp() {
 
 	h.ms.POST("/optionpattern/bulk", h.SaveBulk)
 

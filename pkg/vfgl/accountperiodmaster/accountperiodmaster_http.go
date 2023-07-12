@@ -36,7 +36,7 @@ func NewAccountPeriodMasterHttp(ms *microservice.Microservice, cfg config.IConfi
 	}
 }
 
-func (h AccountPeriodMasterHttp) RouteSetup() {
+func (h AccountPeriodMasterHttp) RegisterHttp() {
 
 	h.ms.GET("/gl/accountperiodmaster", h.SearchAccountPeriodMasterPage)
 	h.ms.GET("/gl/accountperiodmaster/list", h.SearchAccountPeriodMasterLimit)

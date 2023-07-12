@@ -37,7 +37,7 @@ func NewTransportChannelHttp(ms *microservice.Microservice, cfg config.IConfig) 
 	}
 }
 
-func (h TransportChannelHttp) RouteSetup() {
+func (h TransportChannelHttp) RegisterHttp() {
 
 	h.ms.POST("/transport-channel/bulk", h.SaveBulk)
 

@@ -37,7 +37,7 @@ func NewSmsTransactionHttp(ms *microservice.Microservice, cfg config.IConfig) Sm
 	}
 }
 
-func (h SmsTransactionHttp) RouteSetup() {
+func (h SmsTransactionHttp) RegisterHttp() {
 	h.ms.GET("/smstransaction", h.SearchSmsTransaction)
 	h.ms.POST("/smstransaction", h.CreateSmsTransaction)
 	h.ms.GET("/smstransaction/:id", h.InfoSmsTransaction)

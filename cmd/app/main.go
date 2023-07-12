@@ -146,7 +146,7 @@ func main() {
 
 	ms.RegisterLivenessProbeEndpoint("/healthz")
 
-	services := []HttpRouteSetup{
+	httpServices := []HttpRegister{
 		authentication.NewAuthenticationHttp(ms, cfg),
 		shop.NewShopHttp(ms, cfg),
 		shop.NewShopMemberHttp(ms, cfg),
@@ -262,16 +262,22 @@ func main() {
 		reportquerym.NewReportQueryHttp(ms, cfg),
 	}
 
-	serviceStartHttp(services...)
+	serviceStartHttp(ms, httpServices...)
 
-	inventory.StartInventoryAsync(ms, cfg)
-	inventory.StartInventoryComsumeCreated(ms, cfg)
+	// inventory.StartInventoryAsync(ms, cfg)
+	// inventory.StartInventoryComsumeCreated(ms, cfg)
 
-	task.NewTaskConsumer(ms, cfg).RegisterConsumer()
+	consumeServices := []ConsumerRegister{
+		task.NewTaskConsumer(ms, cfg),
+		productbarcode.NewProductBarcodeConsumer(ms, cfg),
+		productbarcode.NewProductBarcodeConsumer(ms, cfg),
+	}
+
+	serviceStartConsumer(ms, consumeServices...)
 
 	toolSvc := tools.NewToolsService(ms, cfg)
 
-	toolSvc.RouteSetup()
+	toolSvc.RegisterHttp()
 
 	ms.Echo().GET("/routes", func(ctx echo.Context) error {
 		data, err := json.MarshalIndent(ms.Echo().Routes(), "", "  ")
@@ -294,12 +300,22 @@ func main() {
 	ms.Start()
 }
 
-type HttpRouteSetup interface {
-	RouteSetup()
+type HttpRegister interface {
+	RegisterHttp()
 }
 
-func serviceStartHttp(services ...HttpRouteSetup) {
+func serviceStartHttp(ms *microservice.Microservice, services ...HttpRegister) {
 	for _, service := range services {
-		service.RouteSetup()
+		ms.RegisterHttp(service)
+	}
+}
+
+type ConsumerRegister interface {
+	RegisterConsumer()
+}
+
+func serviceStartConsumer(ms *microservice.Microservice, services ...ConsumerRegister) {
+	for _, service := range services {
+		ms.RegisterConsumer(service)
 	}
 }

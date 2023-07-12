@@ -18,7 +18,7 @@ type CategoryImportHttp struct {
 }
 
 type ICategoryImportHttp interface {
-	RouteSetup()
+	RegisterHttp()
 }
 
 func NewCategoryImportHttp(ms *microservice.Microservice, cfg config.IConfig) ICategoryImportHttp {
@@ -35,7 +35,7 @@ func NewCategoryImportHttp(ms *microservice.Microservice, cfg config.IConfig) IC
 	}
 }
 
-func (h *CategoryImportHttp) RouteSetup() {
+func (h *CategoryImportHttp) RegisterHttp() {
 	h.ms.GET("/import/category", h.ListCategoryImport)
 	h.ms.POST("/import/category", h.CreateCategoryImport)
 	h.ms.DELETE("/import/category", h.DeleteCategoryImport)

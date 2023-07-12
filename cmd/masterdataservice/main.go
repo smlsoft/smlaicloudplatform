@@ -22,13 +22,13 @@ func main() {
 	ms.HttpMiddleware(authService.MWFuncWithRedis(cacher))
 
 	inventoryapi := inventory.NewInventoryHttp(ms, cfg)
-	inventoryapi.RouteSetup()
+	inventoryapi.RegisterHttp()
 
 	categoryHttp := productcategory.NewProductCategoryHttp(ms, cfg)
-	categoryHttp.RouteSetup()
+	categoryHttp.RegisterHttp()
 
 	memberapi := member.NewMemberHttp(ms, cfg)
-	memberapi.RouteSetup()
+	memberapi.RegisterHttp()
 
 	ms.Start()
 

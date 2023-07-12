@@ -39,7 +39,7 @@ func NewSMLTransactionHttp(ms *microservice.Microservice, cfg config.IConfig) SM
 	}
 }
 
-func (h SMLTransactionHttp) RouteSetup() {
+func (h SMLTransactionHttp) RegisterHttp() {
 
 	// h.ms.GET("/sml-transaction", h.Query)
 	// h.ms.GET("/sml-transaction/param", h.Query2)

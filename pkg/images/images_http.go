@@ -11,7 +11,7 @@ import (
 )
 
 type IImageHttp interface {
-	RouteSetup()
+	RegisterHttp()
 	GetProductImage(ctx microservice.IContext) error
 	UploadImage(ctx microservice.IContext) error
 }
@@ -37,7 +37,7 @@ func NewImagesHttp(
 	}
 }
 
-func (svc ImagesHttp) RouteSetup() {
+func (svc ImagesHttp) RegisterHttp() {
 
 	storageConfig := config.NewStorageFileConfig()
 

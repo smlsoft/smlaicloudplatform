@@ -37,7 +37,7 @@ func NewDeviceHttp(ms *microservice.Microservice, cfg config.IConfig) DeviceHttp
 	}
 }
 
-func (h DeviceHttp) RouteSetup() {
+func (h DeviceHttp) RegisterHttp() {
 
 	h.ms.POST("/restaurant/device/bulk", h.SaveBulk)
 

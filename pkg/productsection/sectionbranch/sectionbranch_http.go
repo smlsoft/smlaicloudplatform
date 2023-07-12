@@ -37,7 +37,7 @@ func NewSectionBranchHttp(ms *microservice.Microservice, cfg config.IConfig) Sec
 	}
 }
 
-func (h SectionBranchHttp) RouteSetup() {
+func (h SectionBranchHttp) RegisterHttp() {
 
 	h.ms.POST("/product-section/branch/bulk", h.SaveBulk)
 

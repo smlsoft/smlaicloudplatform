@@ -37,7 +37,7 @@ func NewDocumentFormateHttp(ms *microservice.Microservice, cfg config.IConfig) D
 	}
 }
 
-func (h DocumentFormateHttp) RouteSetup() {
+func (h DocumentFormateHttp) RegisterHttp() {
 
 	h.ms.POST("/transaction/document-formate/bulk", h.SaveBulk)
 

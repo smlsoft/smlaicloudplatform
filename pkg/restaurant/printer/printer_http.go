@@ -34,7 +34,7 @@ func NewPrinterHttp(ms *microservice.Microservice, cfg config.IConfig) PrinterHt
 	}
 }
 
-func (h PrinterHttp) RouteSetup() {
+func (h PrinterHttp) RegisterHttp() {
 
 	h.ms.POST("/restaurant/printer/bulk", h.SaveBulk)
 

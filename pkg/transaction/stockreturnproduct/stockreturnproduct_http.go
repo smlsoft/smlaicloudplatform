@@ -42,7 +42,7 @@ func NewStockReturnProductHttp(ms *microservice.Microservice, cfg config.IConfig
 	}
 }
 
-func (h StockReturnProductHttp) RouteSetup() {
+func (h StockReturnProductHttp) RegisterHttp() {
 
 	h.ms.POST("/transaction/stock-return-product/bulk", h.SaveBulk)
 

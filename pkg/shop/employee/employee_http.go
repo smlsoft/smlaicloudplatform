@@ -37,7 +37,7 @@ func NewEmployeeHttp(ms *microservice.Microservice, cfg config.IConfig) Employee
 	}
 }
 
-func (h EmployeeHttp) RouteSetup() {
+func (h EmployeeHttp) RegisterHttp() {
 
 	h.ms.GET("/shop/employee", h.SearchEmployeePage)
 	h.ms.GET("/shop/employee/list", h.SearchEmployeeStep)

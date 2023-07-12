@@ -24,7 +24,7 @@ import (
 )
 
 type IDocumentImageHttp interface {
-	RouteSetup()
+	RegisterHttp()
 	SearchDocumentImage(ctx microservice.IContext) error
 	GetDocumentImageInfo(ctx microservice.IContext) error
 	UploadDocumentImage(ctx microservice.IContext) error
@@ -67,7 +67,7 @@ func NewDocumentImageHttp(ms *microservice.Microservice, cfg config.IConfig) *Do
 	}
 }
 
-func (h DocumentImageHttp) RouteSetup() {
+func (h DocumentImageHttp) RegisterHttp() {
 	h.ms.GET("/documentimage", h.SearchDocumentImage)
 	// h.ms.GET("/documentimage/special", h.DocumentImageSpecial)
 	h.ms.GET("/documentimage/:guid", h.GetDocumentImageInfo)

@@ -35,10 +35,10 @@ func NewMigrationAPI(ms *microservice.Microservice, cfg config.IConfig) *Migrati
 	}
 }
 
-func (m *MigrationAPI) RegisterHttp(ms *microservice.Microservice) {
-	ms.POST("/migrationtools/journalimport", m.ImportJournal)
-	ms.POST("/migrationtools/shopimport", m.ImportShop)
-	ms.POST("/migrationtools/chartimport", m.ImportChartOfAccount)
+func (m *MigrationAPI) RegisterHttp() {
+	m.ms.POST("/migrationtools/journalimport", m.ImportJournal)
+	m.ms.POST("/migrationtools/shopimport", m.ImportShop)
+	m.ms.POST("/migrationtools/chartimport", m.ImportChartOfAccount)
 }
 
 func (m *MigrationAPI) ImportJournal(ctx microservice.IContext) error {

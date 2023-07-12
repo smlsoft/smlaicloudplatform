@@ -31,7 +31,7 @@ func NewOptionHttp(ms *microservice.Microservice, cfg config.IConfig) *OptionHtt
 	}
 }
 
-func (h OptionHttp) RouteSetup() {
+func (h OptionHttp) RegisterHttp() {
 
 	h.ms.GET("/option/:id", h.InfoInventoryOptionMain)
 	h.ms.GET("/option/by-code", h.InfoArray)

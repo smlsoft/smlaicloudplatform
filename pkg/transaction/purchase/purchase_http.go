@@ -43,7 +43,7 @@ func NewPurchaseHttp(ms *microservice.Microservice, cfg config.IConfig) Purchase
 	}
 }
 
-func (h PurchaseHttp) RouteSetup() {
+func (h PurchaseHttp) RegisterHttp() {
 
 	h.ms.POST("/transaction/purchase/bulk", h.SaveBulk)
 

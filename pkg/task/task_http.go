@@ -47,7 +47,7 @@ func NewTaskHttp(ms *microservice.Microservice, cfg config.IConfig) TaskHttp {
 	}
 }
 
-func (h TaskHttp) RouteSetup() {
+func (h TaskHttp) RegisterHttp() {
 
 	h.ms.POST("/task/bulk", h.SaveBulk)
 

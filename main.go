@@ -174,7 +174,7 @@ func main() {
 		azureFileBlob := microservice.NewPersisterAzureBlob()
 		imagePersister := microservice.NewPersisterImage(azureFileBlob)
 
-		httpServices := []HttpRouteSetup{
+		httpServices := []HttpRegister{
 
 			apikeyservice.NewApiKeyServiceHttp(ms, cfg),
 			authentication.NewAuthenticationHttp(ms, cfg),
@@ -282,7 +282,7 @@ func main() {
 			documentformate.NewDocumentFormateHttp(ms, cfg),
 		}
 
-		startHttpServices(httpServices...)
+		serviceStartHttp(ms, httpServices...)
 
 	}
 
@@ -311,21 +311,35 @@ func main() {
 		chartofaccount.StartChartOfAccountConsumerBlukCreated(ms, cfg, consumerGroupName)
 
 		// transactionconsumer.MigrationDatabase(ms, cfg)
-		task.NewTaskConsumer(ms, cfg).RegisterConsumer()
-		ms.RegisterConsumer(productbarcode.NewProductBarcodeConsumer(ms, cfg))
 
+		consumerServices := []ConsumerRegister{
+			task.NewTaskConsumer(ms, cfg),
+			productbarcode.NewProductBarcodeConsumer(ms, cfg),
+		}
+
+		serviceStartConsumer(ms, consumerServices...)
 	}
 	ms.RegisterHttp(migrationAPI.NewMigrationAPI(ms, cfg))
 
 	ms.Start()
 }
 
-type HttpRouteSetup interface {
-	RouteSetup()
+type HttpRegister interface {
+	RegisterHttp()
 }
 
-func startHttpServices(services ...HttpRouteSetup) {
+func serviceStartHttp(ms *microservice.Microservice, services ...HttpRegister) {
 	for _, service := range services {
-		service.RouteSetup()
+		ms.RegisterHttp(service)
+	}
+}
+
+type ConsumerRegister interface {
+	RegisterConsumer()
+}
+
+func serviceStartConsumer(ms *microservice.Microservice, services ...ConsumerRegister) {
+	for _, service := range services {
+		ms.RegisterConsumer(service)
 	}
 }

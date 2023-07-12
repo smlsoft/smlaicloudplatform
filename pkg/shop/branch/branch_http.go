@@ -37,7 +37,7 @@ func NewBranchHttp(ms *microservice.Microservice, cfg config.IConfig) BranchHttp
 	}
 }
 
-func (h BranchHttp) RouteSetup() {
+func (h BranchHttp) RegisterHttp() {
 
 	h.ms.GET("/shop/branch", h.SearchBranchPage)
 	h.ms.GET("/shop/branch/list", h.SearchBranchStep)

@@ -42,7 +42,7 @@ func NewBranchHttp(ms *microservice.Microservice, cfg config.IConfig) BranchHttp
 	}
 }
 
-func (h BranchHttp) RouteSetup() {
+func (h BranchHttp) RegisterHttp() {
 
 	h.ms.POST("/organization/branch/bulk", h.SaveBulk)
 

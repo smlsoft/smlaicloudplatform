@@ -19,7 +19,7 @@ func main() {
 	ms.HttpMiddleware(authService.MWFuncWithRedis(cacher))
 
 	purchase := purchase.NewPurchaseHttp(ms, cfg)
-	purchase.RouteSetup()
+	purchase.RegisterHttp()
 
 	ms.Start()
 }

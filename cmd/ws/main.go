@@ -47,10 +47,10 @@ func main() {
 	ms.RegisterLivenessProbeEndpoint("/healthz")
 
 	authHttp := authentication.NewAuthenticationHttp(ms, cfg)
-	authHttp.RouteSetup()
+	authHttp.RegisterHttp()
 
 	journalWs := journal.NewJournalWs(ms, cfg)
-	journalWs.RouteSetup()
+	journalWs.RegisterHttp()
 
 	ms.Start()
 }

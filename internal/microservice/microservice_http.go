@@ -8,7 +8,7 @@ import (
 )
 
 type IMicroserviceHTTP interface {
-	RegisterHttp(ms *Microservice)
+	RegisterHttp()
 }
 
 // GET register service endpoint for HTTP GET
@@ -86,5 +86,5 @@ func (ms *Microservice) stopHTTP() {
 }
 
 func (ms *Microservice) RegisterHttp(http IMicroserviceHTTP) {
-	http.RegisterHttp(ms)
+	http.RegisterHttp()
 }

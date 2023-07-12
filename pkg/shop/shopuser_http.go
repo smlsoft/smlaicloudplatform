@@ -29,7 +29,7 @@ func NewShopMemberHttp(ms *microservice.Microservice, cfg config.IConfig) *ShopM
 	}
 }
 
-func (h *ShopMemberHttp) RouteSetup() {
+func (h *ShopMemberHttp) RegisterHttp() {
 	h.ms.GET("/user/permissions", h.ListShopUser)
 	h.ms.GET("/shop/users", h.ListUserInShop)
 

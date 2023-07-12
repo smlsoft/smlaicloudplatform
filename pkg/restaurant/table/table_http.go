@@ -35,7 +35,7 @@ func NewTableHttp(ms *microservice.Microservice, cfg config.IConfig) TableHttp {
 	}
 }
 
-func (h TableHttp) RouteSetup() {
+func (h TableHttp) RegisterHttp() {
 
 	h.ms.POST("/restaurant/table/bulk", h.SaveBulk)
 

@@ -39,7 +39,7 @@ func NewOrderTypeHttp(ms *microservice.Microservice, cfg config.IConfig) OrderTy
 	}
 }
 
-func (h OrderTypeHttp) RouteSetup() {
+func (h OrderTypeHttp) RegisterHttp() {
 
 	h.ms.POST("/product/order-type/bulk", h.SaveBulk)
 

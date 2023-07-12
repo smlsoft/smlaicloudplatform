@@ -37,7 +37,7 @@ func NewSmsPaymentSettingsHttp(ms *microservice.Microservice, cfg config.IConfig
 	}
 }
 
-func (h SmsPaymentSettingsHttp) RouteSetup() {
+func (h SmsPaymentSettingsHttp) RegisterHttp() {
 
 	h.ms.PUT("/smspaymentsettings/:storefrontguid", h.CreateSmsPaymentSettings)
 	h.ms.GET("/smspaymentsettings/:storefrontguid", h.InfoSmsPaymentSettings)

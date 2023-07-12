@@ -52,7 +52,7 @@ func NewSyncDataHttp(ms *microservice.Microservice, cfg config.IConfig) SyncData
 	}
 }
 
-func (h SyncDataHttp) RouteSetup() {
+func (h SyncDataHttp) RegisterHttp() {
 
 	h.ms.POST("/sync", h.Save)
 	h.ms.POST("/syncproduct", h.SyncInventory)

@@ -18,7 +18,7 @@ type InventoryImportHttp struct {
 }
 
 type IInventoryImportHttp interface {
-	RouteSetup()
+	RegisterHttp()
 }
 
 func NewInventoryImportHttp(ms *microservice.Microservice, cfg config.IConfig) IInventoryImportHttp {
@@ -35,7 +35,7 @@ func NewInventoryImportHttp(ms *microservice.Microservice, cfg config.IConfig) I
 	}
 }
 
-func (h *InventoryImportHttp) RouteSetup() {
+func (h *InventoryImportHttp) RegisterHttp() {
 
 	h.ms.GET("/import/inventory", h.ListInventoryImport)
 	h.ms.POST("/import/inventory", h.CreateInventoryImport)
