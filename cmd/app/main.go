@@ -38,6 +38,7 @@ import (
 	"smlcloudplatform/pkg/product/productbarcode"
 	"smlcloudplatform/pkg/product/productcategory"
 	"smlcloudplatform/pkg/product/productgroup"
+	"smlcloudplatform/pkg/product/producttype"
 	"smlcloudplatform/pkg/product/promotion"
 	"smlcloudplatform/pkg/product/unit"
 	"smlcloudplatform/pkg/productsection/sectionbranch"
@@ -260,6 +261,7 @@ func main() {
 
 		//reportquery.NewReportQueryHttp(ms, cfg),
 		reportquerym.NewReportQueryHttp(ms, cfg),
+		producttype.NewProductTypeHttp(ms, cfg),
 	}
 
 	serviceStartHttp(ms, httpServices...)
